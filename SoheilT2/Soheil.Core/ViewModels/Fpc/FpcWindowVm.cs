@@ -13,12 +13,21 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class FpcWindowVm : FpcVm
 	{
-		//ctor
 		public FpcWindowVm()
 		{
 			init();
 			Model = new Model.FPC();
 		}
+
+		//Message Dependency Property
+		public DependencyMessageBox Message
+		{
+			get { return (DependencyMessageBox)GetValue(MessageProperty); }
+			set { SetValue(MessageProperty, value); }
+		}
+		public static readonly DependencyProperty MessageProperty =
+			DependencyProperty.Register("Message", typeof(DependencyMessageBox), typeof(FpcWindowVm), new UIPropertyMetadata(null));
+
 
 		#region Init, ChangeFPC & Reset
 		/// <summary>
@@ -28,8 +37,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			_lock = false;
 			Message = new DependencyMessageBox();
-			_fpcDataService = new FPCDataService();
-			_stateDataService = new StateDataService();
+			fpcDataService = new FPCDataService();
 			_stationDataService = new StationDataService();
 			_activityGroupDataService = new ActivityGroupDataService();
 
@@ -63,7 +71,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				try
 				{
-					_fpcDataService.ApplyChanges();
+					fpcDataService.ApplyChanges();
 					//check for tracability
 					Soheil.Core.PP.Smart.SmartJob.AutoRouteCheck(this.Id);
 					//always throws, so no after lines
@@ -107,19 +115,19 @@ namespace Soheil.Core.ViewModels.Fpc
 				//-----------
 				//load states
 				//-----------
-				_fpcDataService.CorrectFPCStates(model);
+				fpcDataService.CorrectFPCStates(model);
 				//reload states
-				var states = _stateDataService.GetStatesByFpcId(Id);
+				var states = fpcDataService.stateDataService.GetStatesByFpcId(Id);
 				//show all states
 				foreach (var item in states)
 				{
-					States.Add(new StateVm(item, this, _stateDataService));
+					States.Add(new StateVm(item, this));
 				}
 
 				//----------
 				//load conns
 				//----------
-				var conns = _connectorDataService.GetByFpcId(Id);
+				var conns = fpcDataService.connectorDataService.GetByFpcId(Id);
 				foreach (var item in conns)
 				{
 					Connectors.Add(new ConnectorVm(
@@ -184,11 +192,154 @@ namespace Soheil.Core.ViewModels.Fpc
 		} 
 		#endregion
 
+		#region OnScreenToolbox (stations, activities, machines)
+		//SelectedToolboxItem Dependency Property
+		public ToolboxItemVm SelectedToolboxItem
+		{
+			get { return (ToolboxItemVm)GetValue(SelectedToolboxItemProperty); }
+			set { SetValue(SelectedToolboxItemProperty, value); }
+		}
+		public static readonly DependencyProperty SelectedToolboxItemProperty =
+			DependencyProperty.Register("SelectedToolboxItem", typeof(ToolboxItemVm), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 
-		public DragTarget DragTarget;
-		public Point RelativeDragPoint;
-		public Point OriginalAbsoluteDragPoint;
+		//Stations Observable Collection
+		private ObservableCollection<StationVm> _stations = new ObservableCollection<StationVm>();
+		public ObservableCollection<StationVm> Stations { get { return _stations; } }
+		//ActivityGroups Observable Collection
+		private ObservableCollection<ActivityGroupVm> _activityGroups = new ObservableCollection<ActivityGroupVm>();
+		public ObservableCollection<ActivityGroupVm> ActivityGroups { get { return _activityGroups; } }
+		//MachineFamilies Observable Collection
+		private ObservableCollection<MachineFamilyVm> _machineFamilies = new ObservableCollection<MachineFamilyVm>();
+		public ObservableCollection<MachineFamilyVm> MachineFamilies { get { return _machineFamilies; } }
 
+		#endregion
+
+		#region MainToolbox
+		bool _lock;
+		//MainToolbox item : Select
+		public bool ToolSelection
+		{
+			get { return (bool)GetValue(ToolSelectionProperty); }
+			set { SetValue(ToolSelectionProperty, value); }
+		}
+		public static readonly DependencyProperty ToolSelectionProperty =
+			DependencyProperty.Register("ToolSelection", typeof(bool), typeof(FpcWindowVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				if (((FpcWindowVm)d)._lock) return;
+				((FpcWindowVm)d)._lock = true;
+				if ((bool)e.NewValue)
+				{
+					if ((bool)d.GetValue(ToolConnectorProperty)) d.SetValue(ToolConnectorProperty, false);
+					if ((bool)d.GetValue(ToolStateProperty)) d.SetValue(ToolStateProperty, false);
+				}
+				else if ((bool)e.OldValue) d.SetValue(ToolSelectionProperty, true);
+				((FpcWindowVm)d)._lock = false;
+			}));
+		//MainToolbox item : State
+		public bool ToolState
+		{
+			get { return (bool)GetValue(ToolStateProperty); }
+			set { SetValue(ToolStateProperty, value); }
+		}
+		public static readonly DependencyProperty ToolStateProperty =
+			DependencyProperty.Register("ToolState", typeof(bool), typeof(FpcWindowVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = d as FpcWindowVm;
+				vm.RemoveNewDraggingState();
+				if (((FpcWindowVm)d)._lock) return;
+				((FpcWindowVm)d)._lock = true;
+				if ((bool)e.NewValue)
+				{
+					if ((bool)d.GetValue(ToolConnectorProperty)) d.SetValue(ToolConnectorProperty, false);
+					if ((bool)d.GetValue(ToolSelectionProperty)) d.SetValue(ToolSelectionProperty, false);
+					vm._newDraggingStateVm = new StateVm(null, vm)
+					{
+						Id = -1,
+						ParentWindowVm = vm,
+						Location = new Vector(-50, -20),
+						StateType = StateType.Mid,
+						Opacity = 0.4d,
+					};
+					vm._newDraggingStateVm.Config = new StateConfigVm(vm._newDraggingStateVm, vm);
+					vm.States.Add(vm._newDraggingStateVm);
+					vm.DragTarget = vm._newDraggingStateVm;
+					vm.RelativeDragPoint = new Point(50, 20);
+				}
+				else if ((bool)e.OldValue) d.SetValue(ToolStateProperty, true);
+				((FpcWindowVm)d)._lock = false;
+			}));
+		//MainToolbox item : Connector
+		public bool ToolConnector
+		{
+			get { return (bool)GetValue(ToolConnectorProperty); }
+			set { SetValue(ToolConnectorProperty, value); }
+		}
+		public static readonly DependencyProperty ToolConnectorProperty =
+			DependencyProperty.Register("ToolConnector", typeof(bool), typeof(FpcWindowVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				(d as FpcWindowVm).RemoveHalfDrawnConnector();
+				if (((FpcWindowVm)d)._lock) return;
+				((FpcWindowVm)d)._lock = true;
+				if ((bool)e.NewValue)
+				{
+					if ((bool)d.GetValue(ToolStateProperty)) d.SetValue(ToolStateProperty, false);
+					if ((bool)d.GetValue(ToolSelectionProperty)) d.SetValue(ToolSelectionProperty, false);
+				}
+				else if ((bool)e.OldValue) d.SetValue(ToolConnectorProperty, true);
+				((FpcWindowVm)d)._lock = false;
+			}));
+		#endregion
+
+		#region Select and focus
+		/// <summary>
+		/// Gets FocusedState or 
+		/// <para>Sets FocusedState and FocusedStateStation and selects a Station</para>
+		/// </summary>
+		public StateVm FocusedState
+		{
+			get { return (StateVm)GetValue(FocusedStateProperty); }
+			set { SetValue(FocusedStateProperty, value); }
+		}
+		public static readonly DependencyProperty FocusedStateProperty =
+			DependencyProperty.Register("FocusedState", typeof(StateVm), typeof(FpcWindowVm),
+			new UIPropertyMetadata(null, (d, e) =>
+			{
+				var vm = d as FpcWindowVm;
+				var state = e.NewValue as StateVm;
+				if (state == null) { vm.FocusedStateStation = null; return; }
+				if (state.Config == null) { vm.FocusedStateStation = null; return; }
+				var station = state.Config.ContentsList.FirstOrDefault(x => x.IsExpanded);
+				vm.FocusedStateStation = station as StateStationVm;
+				vm.OnStationSelected(vm.FocusedStateStation);
+			}));
+		/// <summary>
+		/// Gets FocusedStateStation or 
+		/// <para>Sets FocusedStateStation and FocusedState and selects a Station</para>
+		/// </summary>
+		public StateStationVm FocusedStateStation
+		{
+			get { return (StateStationVm)GetValue(FocusedStateStationProperty); }
+			set { SetValue(FocusedStateStationProperty, value); }
+		}
+		public static readonly DependencyProperty FocusedStateStationProperty =
+			DependencyProperty.Register("FocusedStateStation", typeof(StateStationVm), typeof(FpcWindowVm),
+			new UIPropertyMetadata(null, (d, e) =>
+			{
+				var vm = d as FpcWindowVm;
+				var ss = e.NewValue as StateStationVm;
+				if (ss == null) return;
+				var s = (ss.Container as StateConfigVm).State;
+				if (s != vm.FocusedState)
+					(d as FpcWindowVm).FocusedState = s;
+				vm.OnStationSelected(ss);
+			}));
+		/// <summary>
+		/// Updates the OnScreenToolbox according to specified stateStation
+		/// </summary>
+		/// <param name="ss"></param>
 		public void OnStationSelected(StateStationVm ss)
 		{
 			MachineFamilies.Clear();
@@ -211,36 +362,21 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 		}
 
-		#region Right-Docked Toolbox
-		//MachineFamilies Observable Collection
-		private ObservableCollection<MachineFamilyVm> _machineFamilies = new ObservableCollection<MachineFamilyVm>();
-		public ObservableCollection<MachineFamilyVm> MachineFamilies { get { return _machineFamilies; } }
-		//ActivityGroups Observable Collection
-		private ObservableCollection<ActivityGroupVm> _activityGroups = new ObservableCollection<ActivityGroupVm>();
-		public ObservableCollection<ActivityGroupVm> ActivityGroups { get { return _activityGroups; } }
-		//Stations Observable Collection
-		private ObservableCollection<StationVm> _stations = new ObservableCollection<StationVm>();
-		public ObservableCollection<StationVm> Stations { get { return _stations; } }
-		//SelectedToolboxItem Dependency Property
-		public ToolboxItemVm SelectedToolboxItem
-		{
-			get { return (ToolboxItemVm)GetValue(SelectedToolboxItemProperty); }
-			set { SetValue(SelectedToolboxItemProperty, value); }
-		}
-		public static readonly DependencyProperty SelectedToolboxItemProperty =
-			DependencyProperty.Register("SelectedToolboxItem", typeof(ToolboxItemVm), typeof(FpcWindowVm), new UIPropertyMetadata(null));
-		public TreeItemVm DropIndicator;
 		#endregion
 
-		#region Tools
-		//Save All
-		public Commands.Command SaveAllCommand
+		#region Commands and etc
+		//FpcVm will call this method
+		public override void IsDefaultChanged(bool newValue)
 		{
-			get { return (Commands.Command)GetValue(SaveAllCommandProperty); }
-			set { SetValue(SaveAllCommandProperty, value); }
+			try
+			{
+				fpcDataService.ChangeDefault(Model, newValue);
+			}
+			catch (Exception exp)
+			{
+				Message = new DependencyMessageBox(exp.Message);
+			}
 		}
-		public static readonly DependencyProperty SaveAllCommandProperty =
-			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new PropertyMetadata(null));
 		/*//Check For being Tracable
 		public Commands.Command CheckForTracableCommand
 		{
@@ -250,145 +386,16 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty CheckForTracableCommandProperty =
 			DependencyProperty.Register("CheckForTracableCommand", typeof(Commands.Command), typeof(FpcWindowVm), new PropertyMetadata(null));
 		*/
-		bool _lock;
-		//ToolSelection Dependency Property
-		public bool ToolSelection
-		{
-			get { return (bool)GetValue(ToolSelectionProperty); }
-			set { SetValue(ToolSelectionProperty, value); }
-		}
-		public static readonly DependencyProperty ToolSelectionProperty =
-			DependencyProperty.Register("ToolSelection", typeof(bool), typeof(FpcWindowVm),
-			new UIPropertyMetadata(true, (d, e) =>
-			{
-				if (((FpcWindowVm)d)._lock) return;
-				((FpcWindowVm)d)._lock = true;
-				if ((bool)e.NewValue)
-				{
-					if ((bool)d.GetValue(ToolConnectorProperty)) d.SetValue(ToolConnectorProperty, false);
-					if ((bool)d.GetValue(ToolStateProperty)) d.SetValue(ToolStateProperty, false);
-				}
-				else if ((bool)e.OldValue) d.SetValue(ToolSelectionProperty, true);
-				((FpcWindowVm)d)._lock = false;
-			}));
-		//ToolState Dependency Property
-		public bool ToolState
-		{
-			get { return (bool)GetValue(ToolStateProperty); }
-			set { SetValue(ToolStateProperty, value); }
-		}
-		public static readonly DependencyProperty ToolStateProperty =
-			DependencyProperty.Register("ToolState", typeof(bool), typeof(FpcWindowVm),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				var vm = d as FpcWindowVm;
-				vm.RemoveNewDraggingState();
-				if (((FpcWindowVm)d)._lock) return;
-				((FpcWindowVm)d)._lock = true;
-				if ((bool)e.NewValue)
-				{
-					if ((bool)d.GetValue(ToolConnectorProperty)) d.SetValue(ToolConnectorProperty, false);
-					if ((bool)d.GetValue(ToolSelectionProperty)) d.SetValue(ToolSelectionProperty, false);
-					vm._newDraggingStateVm = new StateVm(null, vm, vm._stateDataService)
-					{
-						Id = -1,
-						ParentWindowVm = vm,
-						Location = new Vector(-50, -20),
-						StateType = StateType.Mid,
-						Opacity = 0.4d,
-					};
-					vm._newDraggingStateVm.Config = new StateConfigVm(vm._newDraggingStateVm, vm);
-					vm.States.Add(vm._newDraggingStateVm);
-					vm.DragTarget = vm._newDraggingStateVm;
-					vm.RelativeDragPoint = new Point(50, 20);
-				}
-				else if ((bool)e.OldValue) d.SetValue(ToolStateProperty, true);
-				((FpcWindowVm)d)._lock = false;
-			}));
-		//ToolConnector Dependency Property
-		public bool ToolConnector
-		{
-			get { return (bool)GetValue(ToolConnectorProperty); }
-			set { SetValue(ToolConnectorProperty, value); }
-		}
-		public static readonly DependencyProperty ToolConnectorProperty =
-			DependencyProperty.Register("ToolConnector", typeof(bool), typeof(FpcWindowVm),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				(d as FpcWindowVm).RemoveHalfDrawnConnector();
-				if (((FpcWindowVm)d)._lock) return;
-				((FpcWindowVm)d)._lock = true;
-				if ((bool)e.NewValue)
-				{
-					if ((bool)d.GetValue(ToolStateProperty)) d.SetValue(ToolStateProperty, false);
-					if ((bool)d.GetValue(ToolSelectionProperty)) d.SetValue(ToolSelectionProperty, false);
-				}
-				else if ((bool)e.OldValue) d.SetValue(ToolConnectorProperty, true);
-				((FpcWindowVm)d)._lock = false;
-			}));
-		public void RemoveHalfDrawnConnector()
-		{
-			var conn = Connectors.Where(x => x.End.StateType == StateType.Temp).FirstOrDefault();
-			if (conn == null) return;
-			States.Remove(conn.End);
-			Connectors.Remove(conn);
-			_connectorDropTargetStateVm = null;
-		}
-		public void RemoveNewDraggingState()
-		{
-			if (_newDraggingStateVm != null)
-				if (States.Contains(_newDraggingStateVm))
-					States.Remove(_newDraggingStateVm);
-		}
-		StateVm _connectorDropTargetStateVm;
-		StateVm _newDraggingStateVm;
-		#endregion
 
-		#region Select and focus
-		//FocusedState Dependency Property
-		public StateVm FocusedState
+		//Save All
+		public Commands.Command SaveAllCommand
 		{
-			get { return (StateVm)GetValue(FocusedStateProperty); }
-			set { SetValue(FocusedStateProperty, value); }
+			get { return (Commands.Command)GetValue(SaveAllCommandProperty); }
+			set { SetValue(SaveAllCommandProperty, value); }
 		}
-		public static readonly DependencyProperty FocusedStateProperty =
-			DependencyProperty.Register("FocusedState", typeof(StateVm), typeof(FpcWindowVm),
-			new UIPropertyMetadata(null, (d, e) =>
-			{
-				var vm = d as FpcWindowVm;
-				var state = e.NewValue as StateVm;
-				if (state == null) { vm.FocusedStateStation = null; return; }
-				if (state.Config == null) { vm.FocusedStateStation = null; return; }
-				var station = state.Config.ContentsList.FirstOrDefault(x => x.IsExpanded);
-				vm.FocusedStateStation = station as StateStationVm;
-				vm.OnStationSelected(vm.FocusedStateStation);
-			}));
-		//FocusedStateStation Dependency Property
-		public StateStationVm FocusedStateStation
-		{
-			get { return (StateStationVm)GetValue(FocusedStateStationProperty); }
-			set { SetValue(FocusedStateStationProperty, value); }
-		}
-		public static readonly DependencyProperty FocusedStateStationProperty =
-			DependencyProperty.Register("FocusedStateStation", typeof(StateStationVm), typeof(FpcWindowVm),
-			new UIPropertyMetadata(null, (d, e) =>
-			{
-				var ss = e.NewValue as StateStationVm;
-				if (ss == null) return;
-				var s = (ss.Container as StateConfigVm).State;
-				if (s != (d as FpcWindowVm).FocusedState)
-					(d as FpcWindowVm).FocusedState = s;
-			}));
-
-		internal delegate void AddNewStateEventHandler(StateVm state);
-		internal event AddNewStateEventHandler AddNewState;
-		public void CallPPEditorToCreateNewStateFrom(StateVm state)
-		{
-			if (AddNewState != null) AddNewState(state);
-		}
-		#endregion
-
-		#region Commands and etc
+		public static readonly DependencyProperty SaveAllCommandProperty =
+			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new PropertyMetadata(null));
+		
 		//ExpandAllCommand Dependency Property
 		public Commands.Command ExpandAllCommand
 		{
@@ -405,20 +412,157 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty CollapseAllCommandProperty =
 			DependencyProperty.Register("CollapseAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new UIPropertyMetadata(null));
-		public override void IsDefaultChanged(bool newValue)
+
+		#endregion
+
+
+
+		#region Mouse and drag
+		/// <summary>
+		/// current dragged connector, state or toolbox item
+		/// </summary>
+		public DragTarget DragTarget { get; protected set; }
+		/// <summary>
+		/// some drag point??? related to drag target
+		/// </summary>
+		public Point RelativeDragPoint { get; protected set; }
+		/// <summary>
+		/// The new state where the End-point of current incomplete connector enters
+		/// </summary>
+		StateVm _connectorDropTargetStateVm;
+		/// <summary>
+		/// A new state when not placed yet
+		/// </summary>
+		StateVm _newDraggingStateVm;
+		/// <summary>
+		/// Initial location of mouse on the drag target visual
+		/// </summary>
+		Point _initialDragPoint;
+		/// <summary>
+		/// A TreeItemVm temporarily added to TreeItemVm container willing to accept current OnScreenToolbox item
+		/// </summary>
+		TreeItemVm _dropIndicator;
+
+		/// <summary>
+		/// View calls this method when any kind of mouse release happens (drag&drop|click&release)
+		/// </summary>
+		/// <param name="curPos">release point</param>
+		public void ReleaseDragAt(Point curPos)
 		{
-			try
+			if (DragTarget is StateVm)
 			{
-				_fpcDataService.ChangeDefault(Model, newValue);
+				var draggedState = DragTarget as StateVm;
+
+				//click-released
+				if (Math.Abs(curPos.X - _initialDragPoint.X) < 2 && Math.Abs(curPos.Y - _initialDragPoint.Y) < 2)
+				{
+					//if midState is clicked
+					if (draggedState.StateType == StateType.Mid)
+					{
+						if (!draggedState.ShowDetails)
+						{
+							draggedState.ShowDetails = true;
+						}
+					}
+				}
+
+				//drag-released
+				else
+				{
+					//if connector is dragging
+					if (draggedState.StateType == StateType.Temp)
+					{
+						var conn = Connectors.FirstOrDefault(x => x.End == draggedState);
+						if (conn != null)
+						{
+							//if can add this connector to fpc
+							if (!conn.IsLoose)
+							{
+								States.Remove(draggedState);
+								conn.End = _connectorDropTargetStateVm;
+								fpcDataService.connectorDataService.AddConnector(conn.Start.Id, conn.End.Id);
+							}
+						}
+					}
+					RemoveHalfDrawnConnector();
+				}
 			}
-			catch (Exception exp)
+			DragTarget = null;
+		}
+
+		public void UpdateDropIndicator(Point mouse)
+		{
+			TreeItemVm item = null;
+			if (SelectedToolboxItem.ContentData is StationVm)
+				item = SelectedToolboxItem.GetUnderlyingStateConfig(mouse);
+			else if (SelectedToolboxItem.ContentData is ActivityVm)
+				item = SelectedToolboxItem.GetUnderlyingStateStation(mouse);
+			else if (SelectedToolboxItem.ContentData is MachineVm)
+				item = SelectedToolboxItem.GetUnderlyingStateStationActivity(mouse);
+			//if can't drop
+			if (item == null)
 			{
-				Message = new DependencyMessageBox(exp.Message);
+				SelectedToolboxItem.CanDrop = false;
+				RemoveDropIndicator();
+			}
+			//if can drop (transition from can't drop)
+			else if (!item.ContentsList.Any(x => x.IsDropIndicator))
+			{
+				SelectedToolboxItem.CanDrop = true;
+				_dropIndicator = new TreeItemVm(this)
+				{
+					Container = item,
+					Containment = SelectedToolboxItem.ContentData,
+					IsDropIndicator = true,
+				};
+				item.ContentsList.Add(_dropIndicator);
 			}
 		}
 		#endregion
 
-		#region Mouse&State + DropIndicator
+		#region Remove extra visuals (incomplete connectors or temp states)
+		/// <summary>
+		/// Removes the current dotted line (an incomplete connector)
+		/// </summary>
+		public void RemoveHalfDrawnConnector()
+		{
+			var conn = Connectors.Where(x => x.End.StateType == StateType.Temp).FirstOrDefault();
+			if (conn == null) return;
+			States.Remove(conn.End);
+			Connectors.Remove(conn);
+			_connectorDropTargetStateVm = null;
+		}
+		/// <summary>
+		/// Removes the hollow state (Status=temp) from the end of the current connector
+		/// </summary>
+		public void RemoveNewDraggingState()
+		{
+			if (_newDraggingStateVm != null)
+				if (States.Contains(_newDraggingStateVm))
+					States.Remove(_newDraggingStateVm);
+		}
+		/// <summary>
+		/// Stops the current toolbox item from getting dragged
+		/// </summary>
+		public void StopDragToolboxItem()
+		{
+			SelectedToolboxItem = null;
+			RemoveDropIndicator();
+		}
+		/// <summary>
+		/// Removes the current drop indicator from its container
+		/// </summary>
+		public void RemoveDropIndicator()
+		{
+			if (_dropIndicator != null)
+			{
+				_dropIndicator.Container.ContentsList.Remove(_dropIndicator);
+				_dropIndicator = null;
+			}
+		}
+		#endregion
+		
+		#region Mouse and State
 		public void MouseEntersState(StateVm state)
 		{
 			var dt = DragTarget as StateVm;
@@ -482,98 +626,18 @@ namespace Soheil.Core.ViewModels.Fpc
 					RelativeDragPoint = pos_firstChild;
 				}
 			}
-			OriginalAbsoluteDragPoint = pos_canvas;
-		}
-		
-		public void ReleaseDragAt(Point curPos)
-		{
-			if (DragTarget is StateVm)
-			{
-				var draggedState = DragTarget as StateVm;
-				//click-released
-				if (Math.Abs(curPos.X - OriginalAbsoluteDragPoint.X) < 2
-					&& Math.Abs(curPos.Y - OriginalAbsoluteDragPoint.Y) < 2)
-				{
-					if (draggedState.StateType == StateType.Mid)
-					{
-						if (!draggedState.ShowDetails)
-						{
-							draggedState.ShowDetails = true;
-						}
-					}
-				}
-				//drag-released
-				else
-				{
-					if (draggedState.StateType == StateType.Temp)
-					{
-						var conn = Connectors.FirstOrDefault(x => x.End == draggedState);
-						if (conn != null)
-						{
-							if (!conn.IsLoose)
-							{
-								States.Remove(draggedState);
-								conn.End = _connectorDropTargetStateVm;
-							}
-						}
-					}
-					RemoveHalfDrawnConnector();
-				}
-			}
-			DragTarget = null;
-		}
-
-		public void StopDragToolboxItem()
-		{
-			SelectedToolboxItem = null;
-			RemoveDropIndicator();
-		}
-		public void RemoveDropIndicator()
-		{
-			//remove current drop indicator from its container
-			if (DropIndicator != null)
-			{
-				DropIndicator.Container.ContentsList.Remove(DropIndicator);
-				DropIndicator = null;
-			}
-		}
-		public void UpdateDropIndicator(Point mouse)
-		{
-			TreeItemVm item = null;
-			if (SelectedToolboxItem.ContentData is StationVm)
-				item = SelectedToolboxItem.GetUnderlyingStateConfig(mouse);
-			else if (SelectedToolboxItem.ContentData is ActivityVm)
-				item = SelectedToolboxItem.GetUnderlyingStateStation(mouse);
-			else if (SelectedToolboxItem.ContentData is MachineVm)
-				item = SelectedToolboxItem.GetUnderlyingStateStationActivity(mouse);
-			//can't drop
-			if (item == null)
-			{
-				SelectedToolboxItem.CanDrop = false;
-				RemoveDropIndicator();
-			}
-			else if (!item.ContentsList.Any(x => x.IsDropIndicator))//can drop (transition from can't drop)
-			{
-				SelectedToolboxItem.CanDrop = true;
-				DropIndicator = new TreeItemVm(this)
-				{
-					Container = item,
-					Containment = SelectedToolboxItem.ContentData,
-					IsDropIndicator = true,
-				};
-				item.ContentsList.Add(DropIndicator);
-			}
+			_initialDragPoint = pos_canvas;
 		}
 		#endregion
 
-		//Message Dependency Property
-		public DependencyMessageBox Message
+		#region Add new State
+		internal delegate void AddNewStateEventHandler(StateVm state);
+		internal event AddNewStateEventHandler AddNewState;
+		public void CallPPEditorToCreateNewStateFrom(StateVm state)
 		{
-			get { return (DependencyMessageBox)GetValue(MessageProperty); }
-			set { SetValue(MessageProperty, value); }
+			if (AddNewState != null) AddNewState(state);
 		}
-		public static readonly DependencyProperty MessageProperty =
-			DependencyProperty.Register("Message", typeof(DependencyMessageBox), typeof(FpcWindowVm), new UIPropertyMetadata(null));
+		#endregion
 
 	}
 }

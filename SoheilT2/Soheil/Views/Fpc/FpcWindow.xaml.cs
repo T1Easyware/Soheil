@@ -27,7 +27,17 @@ namespace Soheil.Views.Fpc
 			VM = new FpcWindowVm();
 		}
 
+		#region VM
+		//VM Dependency Property
+		public FpcWindowVm VM
+		{
+			get { return DataContext as FpcWindowVm; }
+			set { DataContext = value; }
+		} 
 		//Fpc Dependency Property
+		/// <summary>
+		/// When Fpc is changed, ChangeFpc of VM is called
+		/// </summary>
 		public Core.ViewModels.FpcVm Fpc
 		{
 			get { return (Core.ViewModels.FpcVm)GetValue(FpcProperty); }
@@ -42,14 +52,10 @@ namespace Soheil.Views.Fpc
 				if (val == null) return;
 				view.VM.ChangeFpc(val);
 			}));
+		#endregion
 
-		//VM Dependency Property
-		public FpcWindowVm VM
-		{
-			get { return DataContext as FpcWindowVm; }
-			set { DataContext = value; }
-		}
-
+		#region Other Events
+		//This event contains important VM calls
 		[System.Diagnostics.DebuggerStepThrough]
 		private void Area_MouseUp(object sender, MouseButtonEventArgs e)
 		{
@@ -58,7 +64,7 @@ namespace Soheil.Views.Fpc
 			if (VM == null) return;
 			//perform release mechanism
 			if (VM.DragTarget != null) VM.ReleaseDragAt(e.GetPosition(DrawingArea));
-		}
+		} 
 
 		[System.Diagnostics.DebuggerStepThrough]
 		private void Area_MouseMove(object sender, MouseEventArgs e)
@@ -83,12 +89,13 @@ namespace Soheil.Views.Fpc
 
 		private void RootWindow_KeyDown(object sender, KeyEventArgs e)
 		{
-			if(VM.Message.IsEnabled)
-				if (e.Key == Key.Enter || e.Key == Key.Return)
+			if (VM.Message.IsEnabled)
+				if (e.Key == Key.Enter || e.Key == Key.Return || e.Key == Key.Space)
 				{
 					VM.Message.DefaultButton.Clicked.Execute(null);
 					e.Handled = true;
 				}
-		}
+		} 
+		#endregion
 	}
 }

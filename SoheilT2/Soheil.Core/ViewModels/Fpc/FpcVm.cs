@@ -11,14 +11,14 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public abstract class FpcVm : ViewModel
 	{
-		protected FPCDataService _fpcDataService;
+		public FPCDataService fpcDataService { get; protected set; }
+
 		protected StationDataService _stationDataService;
 		protected ActivityGroupDataService _activityGroupDataService;
-		protected StateDataService _stateDataService;
-		protected ConnectorDataService _connectorDataService;
 
 		public Model.FPC Model { get; protected set; }
-
+		
+		#region Virtual Methods
 		public virtual void LoadAll(Model.FPC model)
 		{
 			Model = model;
@@ -32,7 +32,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				Id = model.Id;
 				IsDefault = model.IsDefault;
-				var productReworkModels = _fpcDataService.GetProductReworks(model, includeMainProduct: false);
+				var productReworkModels = fpcDataService.GetProductReworks(model, includeMainProduct: false);
 				foreach (var prodrew in productReworkModels)
 				{
 					ProductReworks.Add(new ProductReworkVm(prodrew));
@@ -40,7 +40,10 @@ namespace Soheil.Core.ViewModels.Fpc
 				Product = new ProductVm(model.Product);
 			}
 		}
+		public virtual void IsDefaultChanged(bool newValue) { /* will be handled thru DS of derived */ }
+		#endregion
 
+		#region Props
 		//Product Dependency Property
 		public ProductVm Product
 		{
@@ -58,7 +61,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty IsDefaultProperty =
 			DependencyProperty.Register("IsDefault", typeof(bool), typeof(FpcVm),
 			new UIPropertyMetadata(true, (d, e) => ((FpcVm)d).IsDefaultChanged((bool)e.NewValue)));
-		public virtual void IsDefaultChanged(bool newValue) { /* will be handled thru DS of derived */ }
+
 		//connectors Observable Collection
 		private ObservableCollection<ConnectorVm> _connectors = new ObservableCollection<ConnectorVm>();
 		public ObservableCollection<ConnectorVm> Connectors { get { return _connectors; } }
@@ -67,6 +70,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public ObservableCollection<StateVm> States { get { return _states; } }
 		//ProductReworks Observable Collection
 		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
-		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } }
+		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } } 
+		#endregion
 	}
 }

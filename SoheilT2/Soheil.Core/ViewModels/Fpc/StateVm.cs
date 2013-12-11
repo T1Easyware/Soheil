@@ -12,7 +12,8 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class StateVm : DragTarget
 	{
-		StateDataService _stateDs;
+		public StateDataService _stateDataService { get { return ParentWindowVm.fpcDataService.stateDataService; } }
+
 		public event EventHandler<ModelRemovedEventArgs> StateDeleted;
 
 		#region Ctor
@@ -36,11 +37,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// <param name="model">Must be full of data or completely null</param>
 		/// <param name="parentWindowVm"></param>
 		/// <param name="stateDataService"></param>
-		public StateVm(Model.State model, FpcWindowVm parentWindowVm, StateDataService stateDataService)
+		public StateVm(Model.State model, FpcWindowVm parentWindowVm)
 		{
 			InitializingPhase = true;
 			ParentWindowVm = parentWindowVm;
-			_stateDs = stateDataService;
 
 			if (model != null)
 			{
@@ -104,7 +104,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				try
 				{
-					_stateDs.AttachModel(this);
+					_stateDataService.AttachModel(this);
 					IsChanged = false;
 					_isSavedAtLeastOnce = true;
 				}
@@ -127,7 +127,7 @@ namespace Soheil.Core.ViewModels.Fpc
 				try
 				{
 					var connectors = FPC.Connectors.Where(x => x.Start.Id == Id || x.End.Id == Id).ToList();
-					_stateDs.DeleteModel(this);
+					_stateDataService.DeleteModel(this);
 
 					if (StateDeleted != null)
 						StateDeleted(this, new ModelRemovedEventArgs(Id));
@@ -351,5 +351,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty SelectCommandProperty =
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(StateVm), new UIPropertyMetadata(null));
 		#endregion
+
 	}
 }

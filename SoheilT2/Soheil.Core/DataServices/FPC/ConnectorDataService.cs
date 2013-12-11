@@ -13,31 +13,48 @@ namespace Soheil.Core.DataServices
 {
 	public class ConnectorDataService : DataServiceBase, IDataService<Connector>
 	{
-		Repository<Connector> connectorRepository;
-		Repository<State> stateRepository;
-		public ConnectorDataService(SoheilEdmContext context)
+		Repository<Connector> _connectorRepository;
+		FPCDataService _parentDataService;
+		internal ConnectorDataService(SoheilEdmContext context, FPCDataService parentDataService)
 		{
 			this.context = context;
-			connectorRepository = new Repository<Connector>(context);
-			stateRepository = new Repository<State>(context);
+			_connectorRepository = new Repository<Connector>(context);
+			_parentDataService = parentDataService;
 		}
 
 		public IEnumerable<Connector> GetByFpcId(int fpcId)
 		{
-			return connectorRepository
+			return _connectorRepository
 					.Find(x => x.StartState.FPC.Id == fpcId, "StartState", "EndState")
 					.ToList();
 		}
+		/// <summary>
+		/// No Save changes... just add
+		/// </summary>
+		/// <param name="startStateId"></param>
+		/// <param name="endStateId"></param>
+		internal void AddConnector(int startStateId, int endStateId)
+		{
+			var startStateModel = _parentDataService.stateDataService.GetSingle(startStateId);
+			var endStateModel = _parentDataService.stateDataService.GetSingle(endStateId);
+			var connectorModel = new Soheil.Model.Connector
+			{
+				StartState = startStateModel,
+				EndState = endStateModel
+			};
+			_connectorRepository.Add(connectorModel);
+		}
 
+		#region IDataService
 
 		public Connector GetSingle(int id)
 		{
-			throw new NotImplementedException();
+			return _connectorRepository.FirstOrDefault(x => x.Id == id);
 		}
 
 		public System.Collections.ObjectModel.ObservableCollection<Connector> GetAll()
 		{
-			throw new NotImplementedException();
+			return new System.Collections.ObjectModel.ObservableCollection<Connector>(_connectorRepository.GetAll());
 		}
 
 		public System.Collections.ObjectModel.ObservableCollection<Connector> GetActives()
@@ -49,10 +66,10 @@ namespace Soheil.Core.DataServices
 		{
 			var entity = new Connector
 			{
-				StartState = stateRepository.FirstOrDefault(x => x.Id == model.StartState.Id),
-				EndState = stateRepository.FirstOrDefault(x => x.Id == model.EndState.Id),
+				StartState = _parentDataService.stateDataService.GetSingle(model.StartState.Id),
+				EndState = _parentDataService.stateDataService.GetSingle(model.EndState.Id),
 			};
-			connectorRepository.Add(entity);
+			_connectorRepository.Add(entity);
 			context.Commit();
 			return entity.Id;
 		}
@@ -64,12 +81,14 @@ namespace Soheil.Core.DataServices
 
 		public void DeleteModel(Connector model)
 		{
-			connectorRepository.Delete(model);
+			_connectorRepository.Delete(model);
 		}
 
 		public void AttachModel(Connector model)
 		{
 			throw new NotImplementedException();
-		}
+		} 
+		#endregion
+
 	}
 }

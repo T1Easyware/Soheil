@@ -14,8 +14,9 @@ namespace Soheil.Core.DataServices
 {
 	public class StateDataService : DataServiceBase, IDataService<State>
 	{
-		Repository<State> stateRepository;
-		Repository<StateStation> stateStationRepository;
+		Repository<State> _stateRepository;
+		Repository<StateStation> _stateStationRepository;
+		Repository<StateStationActivity> _stateStationActivityRepository;
 
 		/// <summary>
 		/// Use this constructor only if no Fpc viewModel is involved in furthur calls
@@ -23,18 +24,21 @@ namespace Soheil.Core.DataServices
 		public StateDataService()
 		{
 			context = new SoheilEdmContext();
-			stateRepository = new Repository<State>(context);
-			stateStationRepository = new Repository<StateStation>(context);
+			_stateRepository = new Repository<State>(context);
+			_stateStationRepository = new Repository<StateStation>(context);
+			_stateStationActivityRepository = new Repository<StateStationActivity>(context);
 		}
 		public StateDataService(SoheilEdmContext context)
-			:this()
 		{
 			this.context = context;
+			_stateRepository = new Repository<State>(context);
+			_stateStationRepository = new Repository<StateStation>(context);
+			_stateStationActivityRepository = new Repository<StateStationActivity>(context);
 		}
 
 		public IEnumerable<State> GetStatesByFpcId(int fpcId)
 		{
-				return stateRepository
+				return _stateRepository
 					.Find(x => x.FPC.Id == fpcId,
 					"OnProductRework",
 					"OnProductRework.Rework",
@@ -52,37 +56,28 @@ namespace Soheil.Core.DataServices
 		}
 		public State GetStartingState(int fpcId, ProductRework productRework)
 		{
-			using (var context = new SoheilEdmContext())
-			{
-				if (productRework.Rework == null) 
-					return new Repository<State>(context).
-					 FirstOrDefault(x => 
-						 x.FPC.Id == fpcId 
-						 && x.StateTypeNr == (int)StateType.Start,
-					 "FPC");
-				return new Repository<State>(context)
-					.FirstOrDefault(x => 
+			if (productRework.Rework == null)
+				return _stateRepository.FirstOrDefault(x => 
 						x.FPC.Id == fpcId 
-						&& x.StateTypeNr == (int)StateType.Rework 
-						&& x.OnProductRework.Id == productRework.Id,
-					"OnProductRework", "FPC");
-			}
+						&& x.StateTypeNr == (int)StateType.Start,
+					"FPC");
+			return _stateRepository.FirstOrDefault(x => 
+					x.FPC.Id == fpcId 
+					&& x.StateTypeNr == (int)StateType.Rework 
+					&& x.OnProductRework.Id == productRework.Id,
+				"OnProductRework", "FPC");
 		}
 
 		public IEnumerable<StateStationActivity> GetStateStationActivities(int stationId, params string[] includePath)
 		{
-			using (var context = new SoheilEdmContext())
-			{
 				if (includePath != null)
-					return new Repository<StateStationActivity>(context)
+					return _stateStationActivityRepository
 						.Find(x => x.StateStation.Station.Id == stationId, includePath)
 						.ToList();
 				else
-					return new Repository<StateStationActivity>(context)
+					return _stateStationActivityRepository
 						.Find(x => x.StateStation.Station.Id == stationId)
 						.ToList();
-
-			}
 		}
 
 
@@ -91,26 +86,23 @@ namespace Soheil.Core.DataServices
 
 		public State GetSingle(int id)
 		{
-			using (var context = new SoheilEdmContext())
-			{
-				return new Repository<State>(context).FirstOrDefault(x => x.Id == id);
-			}
+			return _stateRepository.FirstOrDefault(x => x.Id == id);
 		}
 
 		public ObservableCollection<State> GetAll()
 		{
-			throw new NotImplementedException();
+			return new ObservableCollection<State>(_stateRepository.GetAll());
 		}
 
 		public ObservableCollection<State> GetActives()
 		{
-			throw new NotImplementedException();
+			return new ObservableCollection<State>(_stateRepository.Find(x=>x.StateTypeNr == (int)StateType.Mid));
 		}
 
 		public int AddModel(State model)
 		{
 			//!@#$%^
-			stateRepository.Add(model);
+			_stateRepository.Add(model);
 			context.SaveChanges();
 			return model.Id;
 		}
@@ -144,7 +136,6 @@ namespace Soheil.Core.DataServices
 			using (var context = new SoheilEdmContext())
 			{
 				var fpcRepository = new Repository<FPC>(context);
-				var stateRepository = new Repository<State>(context);
 				var prRepository = new Repository<ProductRework>(context);
 				var state = new State
 				{
@@ -202,7 +193,7 @@ namespace Soheil.Core.DataServices
 						state.StateStations.Add(stateStation);
 					}
 				}
-				stateRepository.Add(state);
+				_stateRepository.Add(state);
 				context.Commit();
 				if (StateAdded != null)
 					StateAdded(this, new ModelAddedEventArgs<State>(state));
@@ -329,10 +320,10 @@ namespace Soheil.Core.DataServices
 								new Repository<StateStationActivityMachine>(context).Delete(ssamEnt);
 							}
 							ssEnt.StateStationActivities.Remove(ssaEnt);
-							new Repository<StateStationActivity>(context).Delete(ssaEnt);
+							_stateStationActivityRepository.Delete(ssaEnt);
 						}
 						stateEnt.StateStations.Remove(ssEnt);
-						new Repository<StateStation>(context).Delete(ssEnt);
+						_stateStationRepository.Delete(ssEnt);
 					}
 					else//search ss.ssa
 					{
@@ -347,7 +338,7 @@ namespace Soheil.Core.DataServices
 									new Repository<StateStationActivityMachine>(context).Delete(ssamEnt);
 								}
 								ssEnt.StateStationActivities.Remove(ssaEnt);
-								new Repository<StateStationActivity>(context).Delete(ssaEnt);
+								_stateStationActivityRepository.Delete(ssaEnt);
 							}
 							else//search ss.ssa.ssam
 							{
@@ -428,17 +419,13 @@ namespace Soheil.Core.DataServices
 		/// <param name="viewModel">The view model.</param>
 		public void AttachModel(StateVm viewModel)
 		{
-			using (var context = new SoheilEdmContext())
+			if (_stateRepository.Exists(s => s.Id == viewModel.Id))
 			{
-				var repository = new Repository<State>(context);
-				if (repository.Exists(s => s.Id == viewModel.Id))
-				{
-					UpdateModel(viewModel);
-				}
-				else
-				{
-					viewModel.Id = AddModel(viewModel);
-				}
+				UpdateModel(viewModel);
+			}
+			else
+			{
+				viewModel.Id = AddModel(viewModel);
 			}
 		}
 

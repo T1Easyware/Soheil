@@ -19,21 +19,21 @@ namespace Soheil.Core.DataServices
 
 		Repository<FPC> fpcRepository;
 
-		StateDataService stateDataService;
-		ConnectorDataService connectorDataService;
+		internal StateDataService stateDataService { get; private set; }
+		internal ConnectorDataService connectorDataService { get; private set; }
 
 		public FPCDataService()
 			: this(new SoheilEdmContext())
 		{
 		}
-		public FPCDataService(SoheilEdmContext context)
+		internal FPCDataService(SoheilEdmContext context)
 		{
 			this.context = context;
 			fpcRepository = new Repository<FPC>(context);
 
 			//other dataservices
 			stateDataService = new StateDataService(context);
-			connectorDataService = new ConnectorDataService(context);
+			connectorDataService = new ConnectorDataService(context, this);
 		}
 
 		public IEnumerable<FPC> GetAllForProduct(int productId)
@@ -60,14 +60,15 @@ namespace Soheil.Core.DataServices
 			context.Commit();
 		}
 
-		//IDataService
-		public FPC GetSingle(int id)
-		{
-			return fpcRepository.FirstOrDefault(x => x.Id == id, "Product");
-		}
 		public FPC GetSingleWithStates(int id)
 		{
 			return fpcRepository.FirstOrDefault(x => x.Id == id, "Product", "States", "States.OnProductRework");
+		}
+
+		#region IDataService
+		public FPC GetSingle(int id)
+		{
+			return fpcRepository.FirstOrDefault(x => x.Id == id, "Product");
 		}
 
 		public ObservableCollection<FPC> GetAll()
@@ -114,7 +115,8 @@ namespace Soheil.Core.DataServices
 			model.ModifiedDate = DateTime.Now;
 			model.ModifiedBy = LoginInfo.Id;
 			context.SaveChanges();
-		}
+		} 
+		#endregion
 
 
 		/// <summary>

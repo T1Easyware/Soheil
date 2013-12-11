@@ -141,7 +141,7 @@ namespace Soheil.Core.DataServices
             using (var context = new SoheilEdmContext())
             {
                 var repository = new Repository<Rework>(context);
-                Rework entity = repository.FirstOrDefault(rework => rework.Id == reworkId, "ProductRework.Product", "ProductRework.Rework");
+                Rework entity = repository.FirstOrDefault(rework => rework.Id == reworkId, "ProductReworks.Product", "ProductReworks.Rework");
                 viewModel = new ObservableCollection<ProductRework>(entity.ProductReworks);
             }
 

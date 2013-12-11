@@ -266,7 +266,7 @@ namespace Soheil.Core.DataServices
             using (var context = new SoheilEdmContext())
             {
                 var repository = new Repository<Product>(context);
-                Product entity = repository.FirstOrDefault(product => product.Id == productId, "ProductRework.Product", "ProductRework.Rework");
+                Product entity = repository.FirstOrDefault(product => product.Id == productId, "ProductReworks.Product", "ProductReworks.Rework");
                 models = new ObservableCollection<ProductRework>(entity.ProductReworks.Where(item=>item.Rework != null && item.Rework.Status == (decimal)Status.Active));
             }
 

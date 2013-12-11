@@ -6,6 +6,9 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
+	/// <summary>
+	/// connector, state, toolbox item are DragTarget
+	/// </summary>
 	public class DragTarget : ViewModel
 	{
 		//Location(Margin) Dependency Property
