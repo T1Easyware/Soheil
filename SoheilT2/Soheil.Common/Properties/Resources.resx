@@ -1,0 +1,603 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="enumDirection" xml:space="preserve">
+    <value>RightToLeft</value>
+  </data>
+  <data name="txtActivities" xml:space="preserve">
+    <value>فعالیت ها</value>
+  </data>
+  <data name="txtActivity" xml:space="preserve">
+    <value>فعالیت</value>
+  </data>
+  <data name="txtBack" xml:space="preserve">
+    <value>بازگشت</value>
+  </data>
+  <data name="txtCancel" xml:space="preserve">
+    <value>انصراف</value>
+  </data>
+  <data name="txtCDate" xml:space="preserve">
+    <value>تاریخ ایجاد :</value>
+  </data>
+  <data name="txtCode" xml:space="preserve">
+    <value>کد :</value>
+  </data>
+  <data name="txtControl" xml:space="preserve">
+    <value>کنترل تولید</value>
+  </data>
+  <data name="txtDefection" xml:space="preserve">
+    <value>عیب</value>
+  </data>
+  <data name="txtDefections" xml:space="preserve">
+    <value>عیوب</value>
+  </data>
+  <data name="txtDefinitions" xml:space="preserve">
+    <value>تعاریف</value>
+  </data>
+  <data name="txtDelete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="txtEdit" xml:space="preserve">
+    <value>ویرایش</value>
+  </data>
+  <data name="txtGenSkill" xml:space="preserve">
+    <value>مهارت کلی</value>
+  </data>
+  <data name="txtGenSkills" xml:space="preserve">
+    <value>مهارت های کلی</value>
+  </data>
+  <data name="txtGroup" xml:space="preserve">
+    <value>گروه :</value>
+  </data>
+  <data name="txtMBy" xml:space="preserve">
+    <value>ویرایش کننده :</value>
+  </data>
+  <data name="txtMDate" xml:space="preserve">
+    <value>تاریخ ویرایش :</value>
+  </data>
+  <data name="txtName" xml:space="preserve">
+    <value>نام :</value>
+  </data>
+  <data name="txtNew" xml:space="preserve">
+    <value>جدید</value>
+  </data>
+  <data name="txtOperator" xml:space="preserve">
+    <value>اپراتور</value>
+  </data>
+  <data name="txtOperators" xml:space="preserve">
+    <value>اپراتورها</value>
+  </data>
+  <data name="txtOrgChart" xml:space="preserve">
+    <value>چارت سازمانی</value>
+  </data>
+  <data name="txtOrgCharts" xml:space="preserve">
+    <value>چارت های سازمانی</value>
+  </data>
+  <data name="txtPosition" xml:space="preserve">
+    <value>پست سازمانی</value>
+  </data>
+  <data name="txtPositions" xml:space="preserve">
+    <value>پست های سازمانی</value>
+  </data>
+  <data name="txtProduct" xml:space="preserve">
+    <value>محصول</value>
+  </data>
+  <data name="txtProducts" xml:space="preserve">
+    <value>محصولات</value>
+  </data>
+  <data name="txtRework" xml:space="preserve">
+    <value>دوباره کاری</value>
+  </data>
+  <data name="txtReworks" xml:space="preserve">
+    <value>دوباره کاری ها</value>
+  </data>
+  <data name="txtRule" xml:space="preserve">
+    <value>قانون دسترسی</value>
+  </data>
+  <data name="txtRules" xml:space="preserve">
+    <value>قوانین دسترسی</value>
+  </data>
+  <data name="txtSave" xml:space="preserve">
+    <value>ذخیره</value>
+  </data>
+  <data name="txtSettings" xml:space="preserve">
+    <value>تنظیمات</value>
+  </data>
+  <data name="txtSpeSkill" xml:space="preserve">
+    <value>مهارت ویژه</value>
+  </data>
+  <data name="txtSpeSkills" xml:space="preserve">
+    <value>مهارت های ویژه</value>
+  </data>
+  <data name="txtStatus" xml:space="preserve">
+    <value>وضعیت :</value>
+  </data>
+  <data name="txtUser" xml:space="preserve">
+    <value>کاربر</value>
+  </data>
+  <data name="txtUserAccounts" xml:space="preserve">
+    <value>دسترسی کاربران</value>
+  </data>
+  <data name="txtUsers" xml:space="preserve">
+    <value>کاربران</value>
+  </data>
+  <data name="txtCodeRequired" xml:space="preserve">
+    <value>کد رکورد را وارد نمایید</value>
+  </data>
+  <data name="txtNameRequired" xml:space="preserve">
+    <value>نام رکورد را وارد نمایید</value>
+  </data>
+  <data name="txtEducation" xml:space="preserve">
+    <value>تحصیلات :</value>
+  </data>
+  <data name="txtPhysicals" xml:space="preserve">
+    <value>وضعیت بدنی :</value>
+  </data>
+  <data name="txtRes1" xml:space="preserve">
+    <value>توضیحات1 :</value>
+  </data>
+  <data name="txtRes2" xml:space="preserve">
+    <value>توضیحات2 :</value>
+  </data>
+  <data name="txtRes3" xml:space="preserve">
+    <value>توضیحات3 :</value>
+  </data>
+  <data name="txtPassword" xml:space="preserve">
+    <value>کلمه عبور :</value>
+  </data>
+  <data name="txtUsername" xml:space="preserve">
+    <value>نام کاربری :</value>
+  </data>
+  <data name="txtCost" xml:space="preserve">
+    <value>هزینه :</value>
+  </data>
+  <data name="txtCostCenter" xml:space="preserve">
+    <value>مرکز هزینه :</value>
+  </data>
+  <data name="txtCosts" xml:space="preserve">
+    <value>هزینه ها</value>
+  </data>
+  <data name="txtSetupTimes" xml:space="preserve">
+    <value>زمان راه اندازی</value>
+  </data>
+  <data name="txtPartWarehouse" xml:space="preserve">
+    <value>انبار قطعات</value>
+  </data>
+  <data name="txtPartWarehouses" xml:space="preserve">
+    <value>انبار های قطعات</value>
+  </data>
+  <data name="txtOriginalQty" xml:space="preserve">
+    <value>تعداد اولیه :</value>
+  </data>
+  <data name="txtQty" xml:space="preserve">
+    <value>تعداد :</value>
+  </data>
+  <data name="txtTotalQty" xml:space="preserve">
+    <value>تعداد کل :</value>
+  </data>
+  <data name="txtAbout" xml:space="preserve">
+    <value>درباره ی سهیل</value>
+  </data>
+  <data name="txtAccessRules" xml:space="preserve">
+    <value>قوانین دسترسی</value>
+  </data>
+  <data name="txtActionPlans" xml:space="preserve">
+    <value>برنامه ها</value>
+  </data>
+  <data name="txtCauses" xml:space="preserve">
+    <value>علت ها</value>
+  </data>
+  <data name="txtDiagnosis" xml:space="preserve">
+    <value>عیب یابی</value>
+  </data>
+  <data name="txtExit" xml:space="preserve">
+    <value>خروج</value>
+  </data>
+  <data name="txtFPC" xml:space="preserve">
+    <value>FPC</value>
+  </data>
+  <data name="txtHelp" xml:space="preserve">
+    <value>راهنما</value>
+  </data>
+  <data name="txtIndices" xml:space="preserve">
+    <value>شاخص ها</value>
+  </data>
+  <data name="txtLogin" xml:space="preserve">
+    <value>ورود</value>
+  </data>
+  <data name="txtMachines" xml:space="preserve">
+    <value>ماشین ها</value>
+  </data>
+  <data name="txtModules" xml:space="preserve">
+    <value>واحد ها</value>
+  </data>
+  <data name="txtOptions" xml:space="preserve">
+    <value>اختیارات</value>
+  </data>
+  <data name="txtPerformance" xml:space="preserve">
+    <value>عملکرد</value>
+  </data>
+  <data name="txtProductControl" xml:space="preserve">
+    <value>کنترل تولید</value>
+  </data>
+  <data name="txtProductPlan" xml:space="preserve">
+    <value>برنامه تولید</value>
+  </data>
+  <data name="txtRoots" xml:space="preserve">
+    <value>ریشه ها</value>
+  </data>
+  <data name="txtStartPage" xml:space="preserve">
+    <value>شروع</value>
+  </data>
+  <data name="txtStations" xml:space="preserve">
+    <value>ایستگاه ها</value>
+  </data>
+  <data name="txtUsersAccess" xml:space="preserve">
+    <value>دسترسی کاربران</value>
+  </data>
+  <data name="txtActualCostReports" xml:space="preserve">
+    <value>گزارش هزینه های تمام شده</value>
+  </data>
+  <data name="txtCostReports" xml:space="preserve">
+    <value>گزارش هزینه ها</value>
+  </data>
+  <data name="txtReports" xml:space="preserve">
+    <value>گزارشات</value>
+  </data>
+  <data name="CostSourceType_Activities" xml:space="preserve">
+    <value>فعالیت</value>
+  </data>
+  <data name="CostSourceType_Machines" xml:space="preserve">
+    <value>ماشین</value>
+  </data>
+  <data name="CostSourceType_Operators" xml:space="preserve">
+    <value>اپراتور</value>
+  </data>
+  <data name="CostSourceType_Other" xml:space="preserve">
+    <value>متفرقه</value>
+  </data>
+  <data name="CostSourceType_Stations" xml:space="preserve">
+    <value>ایستگاه</value>
+  </data>
+  <data name="txtAccessToSubItems" xml:space="preserve">
+    <value>اعمال در آیتم های داخلی</value>
+  </data>
+  <data name="txtBypassAccess" xml:space="preserve">
+    <value>عدم تاثیر پست سازمانی</value>
+  </data>
+  <data name="txtCash" xml:space="preserve">
+    <value>نقدی</value>
+  </data>
+  <data name="txtConfirmPassword" xml:space="preserve">
+    <value>تایید کلمه عبور :</value>
+  </data>
+  <data name="txtCostSource" xml:space="preserve">
+    <value>منبع هزینه :</value>
+  </data>
+  <data name="txtCostType" xml:space="preserve">
+    <value>نوع هزینه :</value>
+  </data>
+  <data name="txtDescription" xml:space="preserve">
+    <value>توضیحات :</value>
+  </data>
+  <data name="txtFishboneNodes" xml:space="preserve">
+    <value>استخوان ماهی</value>
+  </data>
+  <data name="txtIndexInterval" xml:space="preserve">
+    <value>زمان بندی :</value>
+  </data>
+  <data name="txtIndexType" xml:space="preserve">
+    <value>نوع شاخص :</value>
+  </data>
+  <data name="txtMachine" xml:space="preserve">
+    <value>ماشین آلات</value>
+  </data>
+  <data name="txtMaintenance" xml:space="preserve">
+    <value>تعمیر و نگهداری</value>
+  </data>
+  <data name="txtMan" xml:space="preserve">
+    <value>نیروی انسانی</value>
+  </data>
+  <data name="txtMaterial" xml:space="preserve">
+    <value>مواد</value>
+  </data>
+  <data name="txtMethod" xml:space="preserve">
+    <value>روش</value>
+  </data>
+  <data name="txtSoheil" xml:space="preserve">
+    <value>سهیل</value>
+  </data>
+  <data name="txtStock" xml:space="preserve">
+    <value>موجودی</value>
+  </data>
+  <data name="AccessType_Full" xml:space="preserve">
+    <value>دسترسی کامل</value>
+  </data>
+  <data name="AccessType_Insert" xml:space="preserve">
+    <value>افزودن</value>
+  </data>
+  <data name="AccessType_None" xml:space="preserve">
+    <value>بدون دسترسی</value>
+  </data>
+  <data name="AccessType_Print" xml:space="preserve">
+    <value>چاپ</value>
+  </data>
+  <data name="AccessType_Update" xml:space="preserve">
+    <value>ویرایش</value>
+  </data>
+  <data name="AccessType_View" xml:space="preserve">
+    <value>نمایش</value>
+  </data>
+  <data name="CauseLevel_Level1" xml:space="preserve">
+    <value>سطح 1</value>
+  </data>
+  <data name="CauseLevel_Level2" xml:space="preserve">
+    <value>سطح 2</value>
+  </data>
+  <data name="CauseLevel_Level3" xml:space="preserve">
+    <value>سطح 3</value>
+  </data>
+  <data name="CauseLevel_None" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CostType_All" xml:space="preserve">
+    <value>هزینه کل</value>
+  </data>
+  <data name="CostType_Cash" xml:space="preserve">
+    <value>نقدی</value>
+  </data>
+  <data name="CostType_Stock" xml:space="preserve">
+    <value>موجودی</value>
+  </data>
+  <data name="DateTimeIntervals_Daily" xml:space="preserve">
+    <value>روزانه</value>
+  </data>
+  <data name="DateTimeIntervals_Hourly" xml:space="preserve">
+    <value>ساعتی</value>
+  </data>
+  <data name="DateTimeIntervals_Monthly" xml:space="preserve">
+    <value>ماهانه</value>
+  </data>
+  <data name="DateTimeIntervals_None" xml:space="preserve">
+    <value>انتخاب نشده</value>
+  </data>
+  <data name="DateTimeIntervals_Shiftly" xml:space="preserve">
+    <value>شیفتی</value>
+  </data>
+  <data name="DateTimeIntervals_Weekly" xml:space="preserve">
+    <value>هفتگی</value>
+  </data>
+  <data name="DateTimeIntervals_Yearly" xml:space="preserve">
+    <value>سالانه</value>
+  </data>
+  <data name="FishboneNodeType_Machine" xml:space="preserve">
+    <value>ماشین آلات</value>
+  </data>
+  <data name="FishboneNodeType_Maintenance" xml:space="preserve">
+    <value>تعمیر و نگهداری</value>
+  </data>
+  <data name="FishboneNodeType_Man" xml:space="preserve">
+    <value>نیروی انسانی</value>
+  </data>
+  <data name="FishboneNodeType_Material" xml:space="preserve">
+    <value>مواد</value>
+  </data>
+  <data name="FishboneNodeType_Method" xml:space="preserve">
+    <value>روش</value>
+  </data>
+  <data name="IndexType_InternalPPM" xml:space="preserve">
+    <value>PPM داخلی</value>
+  </data>
+  <data name="IndexType_None" xml:space="preserve">
+    <value>انتخاب نشده</value>
+  </data>
+  <data name="IndexType_OEE" xml:space="preserve">
+    <value>OEE</value>
+  </data>
+  <data name="IndexType_Performance" xml:space="preserve">
+    <value>درصد اجرا</value>
+  </data>
+  <data name="IndexType_RemainingCapacity" xml:space="preserve">
+    <value>ظرفیت باقیمانده</value>
+  </data>
+  <data name="Status_Active" xml:space="preserve">
+    <value>فعال</value>
+  </data>
+  <data name="Status_Deleted" xml:space="preserve">
+    <value>حذف شده</value>
+  </data>
+  <data name="Status_Inactive" xml:space="preserve">
+    <value>غیر فعال</value>
+  </data>
+  <data name="StockStatus_Empty" xml:space="preserve">
+    <value>به اتمام رسیده</value>
+  </data>
+  <data name="StockStatus_Full" xml:space="preserve">
+    <value>اولیه</value>
+  </data>
+  <data name="StockStatus_Used" xml:space="preserve">
+    <value>مصرف شده</value>
+  </data>
+  <data name="ModificationStatus_Saved" xml:space="preserve">
+    <value>ثبت شد</value>
+  </data>
+  <data name="ModificationStatus_Unchanged" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ModificationStatus_Unsaved" xml:space="preserve">
+    <value>ذخیره نشده</value>
+  </data>
+  <data name="txtQuantity" xml:space="preserve">
+    <value>تعداد : </value>
+  </data>
+  <data name="txtTotalCost" xml:space="preserve">
+    <value>هزینه کل : </value>
+  </data>
+  <data name="txtCostValue" xml:space="preserve">
+    <value>هزینه کل :</value>
+  </data>
+  <data name="txtSelectedCostSource" xml:space="preserve">
+    <value>منبع هزینه :</value>
+  </data>
+  <data name="txtMode" xml:space="preserve">
+    <value>اطلاعات</value>
+  </data>
+  <data name="txtSearch" xml:space="preserve">
+    <value>جستجو :</value>
+  </data>
+  <data name="txtHolidays" xml:space="preserve">
+    <value>تعطیلات رسمی</value>
+    <comment>definition of holdiays</comment>
+  </data>
+  <data name="txtWorkProfiles" xml:space="preserve">
+    <value>تعریف ساعات کاری</value>
+    <comment>definition of shifts</comment>
+  </data>
+  <data name="txtWorkProfilePlan" xml:space="preserve">
+    <value>برنامه زمانی</value>
+    <comment>activating a profile</comment>
+  </data>
+  <data name="txtOrganizationCalendar" xml:space="preserve">
+    <value>زمانهای کاری</value>
+    <comment>working time main menu</comment>
+  </data>
+  <data name="txtBusinessDayState" xml:space="preserve">
+    <value>وضعیت کاری روز</value>
+    <comment>باز،تعطیل غیره</comment>
+  </data>
+  <data name="txtWeekDays" xml:space="preserve">
+    <value>ایام هفته</value>
+  </data>
+  <data name="txtWeekStart" xml:space="preserve">
+    <value>شروع هفته</value>
+  </data>
+  <data name="txtNumberOfShifts" xml:space="preserve">
+    <value>تعداد شیفت</value>
+  </data>
+  <data name="txtShiftPrototypeColor" xml:space="preserve">
+    <value>رنگ هر شیفت</value>
+  </data>
+  <data name="txtShiftPrototypeName" xml:space="preserve">
+    <value>نام هر شیفت</value>
+  </data>
+  <data name="splitContentMoreInfo" xml:space="preserve">
+    <value>اطلاعات بیشتر...</value>
+    <comment>On SplitContentLower Expander's Header</comment>
+  </data>
+</root>
