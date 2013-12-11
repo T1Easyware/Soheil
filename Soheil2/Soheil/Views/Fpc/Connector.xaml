@@ -1,0 +1,190 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					x:Class="Soheil.Views.Fpc.Connector"
+					xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
+					xmlns:my="clr-namespace:System;assembly=mscorlib"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<Style x:Key="lineStyle" TargetType="{x:Type Line}">
+		<Setter Property="Stroke" Value="{StaticResource cyanBrush}"/>
+		<Setter Property="StrokeThickness" Value="3"/>
+		<Setter Property="StrokeStartLineCap" Value="Square"/>
+		<Setter Property="StrokeEndLineCap" Value="Triangle"/>
+		<Setter Property="X1" Value="0"/>
+		<Setter Property="Y1" Value="0"/>
+		<Setter Property="Y2" Value="0"/>
+		<Style.Triggers>
+			<DataTrigger Binding="{Binding IsLoose}" Value="True">
+				<Setter Property="StrokeDashArray" Value="1,1"/>
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="lineCapStyle" TargetType="{x:Type Line}">
+		<Setter Property="Stroke" Value="{StaticResource cyanBrush}"/>
+		<Setter Property="StrokeThickness" Value="15"/>
+		<Setter Property="StrokeStartLineCap" Value="Flat"/>
+		<Setter Property="StrokeEndLineCap" Value="Triangle"/>
+		<Setter Property="X1" Value="-9"/>
+		<Setter Property="Y1" Value="0"/>
+		<Setter Property="X2" Value="-7"/>
+		<Setter Property="Y2" Value="0"/>
+	</Style>
+
+	<!--Connector-->
+	<DataTemplate x:Key="connectorTemplate" DataType="{x:Type vm:ConnectorVm}">
+		<Canvas Width="0" Height="0">
+			<Canvas.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
+			</Canvas.BitmapEffect>
+			<AdornerDecorator>
+				<AdornerDecorator.Triggers>
+					<EventTrigger RoutedEvent="Mouse.MouseEnter">
+						<BeginStoryboard>
+							<Storyboard>
+								<DoubleAnimation To="0.5" Duration="0:0:0.1"
+												 Storyboard.TargetName="deleteConnectorButton"
+												 Storyboard.TargetProperty="Opacity"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+					<EventTrigger RoutedEvent="Mouse.MouseLeave">
+						<BeginStoryboard>
+							<Storyboard>
+								<DoubleAnimation To="0" Duration="0:0:0.5"
+												 Storyboard.TargetName="deleteConnectorButton"
+												 Storyboard.TargetProperty="Opacity"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+				</AdornerDecorator.Triggers>
+				<AdornerDecorator.Margin>
+					<MultiBinding Converter="{StaticResource connectorLocationConverter}">
+						<Binding Path="Start.Location"/>
+						<Binding Path="Start.Width"/>
+						<Binding Path="Start.Height"/>
+						<Binding Path="End.Location"/>
+						<Binding Path="End.Width"/>
+						<Binding Path="End.Height"/>
+					</MultiBinding>
+				</AdornerDecorator.Margin>
+				<AdornerDecorator.RenderTransform>
+					<RotateTransform CenterX="0" CenterY="0">
+						<RotateTransform.Angle>
+							<MultiBinding Converter="{StaticResource connectorAngleConverter}">
+								<Binding Path="Start.Location"/>
+								<Binding Path="Start.Width"/>
+								<Binding Path="Start.Height"/>
+								<Binding Path="End.Location"/>
+								<Binding Path="End.Width"/>
+								<Binding Path="End.Height"/>
+							</MultiBinding>
+						</RotateTransform.Angle>
+					</RotateTransform>
+				</AdornerDecorator.RenderTransform>
+				<Grid>
+					<Rectangle Fill="#00000000" Height="16" Margin="0,-8,0,0"/>
+					<DockPanel>
+						<Line Style="{StaticResource lineStyle}">
+							<Line.X2>
+								<MultiBinding Converter="{StaticResource connectorLengthConverter}">
+									<Binding Path="Start.Location"/>
+									<Binding Path="Start.Width"/>
+									<Binding Path="Start.Height"/>
+									<Binding Path="End.Location"/>
+									<Binding Path="End.Width"/>
+									<Binding Path="End.Height"/>
+								</MultiBinding>
+							</Line.X2>
+						</Line>
+						<Line Style="{StaticResource lineCapStyle}" DockPanel.Dock="Left"/>
+						<!--For a bug-->
+						<Canvas/>
+					</DockPanel>
+					<Image 
+						MouseDown="DeleteConnectorButton_Click" Name="deleteConnectorButton" ToolTip="حذف اتصال" Opacity="0"
+						HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0"
+						Style="{StaticResource deleteImage}">
+						<Image.Triggers>
+							<EventTrigger RoutedEvent="Mouse.MouseEnter">
+								<BeginStoryboard>
+									<Storyboard>
+										<DoubleAnimation 
+												To="1" Duration="0:0:0.1"
+												Storyboard.TargetName="deleteConnectorButton"
+												Storyboard.TargetProperty="Opacity"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+							<EventTrigger RoutedEvent="Mouse.MouseLeave">
+								<BeginStoryboard>
+									<Storyboard>
+										<DoubleAnimation 
+												To="0.5" Duration="0:0:0.5"
+												Storyboard.TargetName="deleteConnectorButton"
+												Storyboard.TargetProperty="Opacity"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+						</Image.Triggers>
+					</Image>
+				</Grid>
+			</AdornerDecorator>
+		</Canvas>
+	</DataTemplate>
+
+	<!--Connector-->
+	<DataTemplate x:Key="connectorViewerTemplate" DataType="{x:Type vm:ConnectorVm}">
+		<Canvas Width="0" Height="0">
+			<Canvas.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
+			</Canvas.BitmapEffect>
+			<AdornerDecorator>
+				<AdornerDecorator.Margin>
+					<MultiBinding Converter="{StaticResource connectorLocationConverter}">
+						<Binding Path="Start.Location"/>
+						<Binding Path="Start.Width"/>
+						<Binding Path="Start.Height"/>
+						<Binding Path="End.Location"/>
+						<Binding Path="End.Width"/>
+						<Binding Path="End.Height"/>
+					</MultiBinding>
+				</AdornerDecorator.Margin>
+				<AdornerDecorator.RenderTransform>
+					<RotateTransform CenterX="0" CenterY="0">
+						<RotateTransform.Angle>
+							<MultiBinding Converter="{StaticResource connectorAngleConverter}">
+								<Binding Path="Start.Location"/>
+								<Binding Path="Start.Width"/>
+								<Binding Path="Start.Height"/>
+								<Binding Path="End.Location"/>
+								<Binding Path="End.Width"/>
+								<Binding Path="End.Height"/>
+							</MultiBinding>
+						</RotateTransform.Angle>
+					</RotateTransform>
+				</AdornerDecorator.RenderTransform>
+				<Grid>
+					<Rectangle Fill="#00000000" Height="16" Margin="0,-8,0,0"/>
+					<DockPanel>
+						<Line Style="{StaticResource lineStyle}">
+							<Line.X2>
+								<MultiBinding Converter="{StaticResource connectorLengthConverter}">
+									<Binding Path="Start.Location"/>
+									<Binding Path="Start.Width"/>
+									<Binding Path="Start.Height"/>
+									<Binding Path="End.Location"/>
+									<Binding Path="End.Width"/>
+									<Binding Path="End.Height"/>
+								</MultiBinding>
+							</Line.X2>
+						</Line>
+						<Line Style="{StaticResource lineCapStyle}" DockPanel.Dock="Left"/>
+						<!--For a bug-->
+						<Canvas/>
+					</DockPanel>
+				</Grid>
+			</AdornerDecorator>
+		</Canvas>
+	</DataTemplate>
+
+</ResourceDictionary>

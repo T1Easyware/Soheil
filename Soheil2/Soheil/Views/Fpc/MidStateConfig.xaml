@@ -1,0 +1,212 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					x:Class="Soheil.Views.Fpc.MidStateConfig"
+					xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
+					xmlns:v="clr-namespace:Soheil.Views.Fpc"
+					xmlns:my="clr-namespace:System;assembly=mscorlib"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+	<Color x:Key="stroke">#ECF8C0</Color>
+	<Color x:Key="fill">#ECF8C0</Color>
+
+	<Style x:Key="stackStyle" TargetType="ItemsControl">
+		<Setter Property="ItemsPanel">
+			<Setter.Value>
+				<ItemsPanelTemplate>
+					<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+				</ItemsPanelTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- Tree SubItems -->
+	<DataTemplate x:Key="dropIndicatorTemplate" DataType="{x:Type vm:TreeItemVm}">
+		<Grid>
+			<Rectangle Stroke="DimGray" StrokeDashArray="1,1" StrokeThickness="2" RadiusX="5" RadiusY="5" Fill="#1000"/>
+			<WrapPanel VerticalAlignment="Center">
+				<Image HorizontalAlignment="Left" Margin="5" Style="{StaticResource newImage}"/>
+				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Name}" Margin="1,5"/>
+			</WrapPanel>
+		</Grid>
+	</DataTemplate>
+
+	<DataTemplate x:Key="stateSubItemTemplate" DataType="{x:Type vm:StateConfigVm}">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<TextBlock Foreground="#B33" Grid.ColumnSpan="2"
+					   Text="[ذخیره نشده است]" 
+					   ToolTip="تغییرات این مرحله هنوز ذخیره نشده است"
+						Visibility="{Binding State.IsChanged, Converter={StaticResource visibilityConverter}}"/>
+			<TextBlock Margin="4" Text="نام مرحله" Grid.Row="1"/>
+			<TextBox Margin="2" Text="{Binding State.Name}" Grid.Row="1" Grid.Column="1"/>
+			<TextBlock Margin="4" Text="کد مرحله" Grid.Row="2"/>
+			<TextBox Margin="2" Text="{Binding State.Code}" Grid.Row="2" Grid.Column="1"/>
+			<CheckBox Margin="3" Grid.Row="3" Content="دوباره کاری"
+					  IsChecked="{Binding State.IsRework}"/>
+			<ComboBox Grid.Row="3" Grid.Column="1" Margin="2,0" 
+				ItemsSource="{Binding Parent.ProductReworks}" 
+				SelectedItem="{Binding State.ProductRework, Mode=TwoWay}" 
+				Visibility="{Binding State.IsRework, Converter={StaticResource booleanToVisibilityConverter}}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<DockPanel>
+							<TextBlock Text="{Binding ReworkName}" DockPanel.Dock="Left"/>
+							<TextBlock Text="{Binding Name}" FontSize="10" Foreground="Gray" Margin="2,0,0,0"/>
+						</DockPanel>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+		</Grid>
+	</DataTemplate>
+	<DataTemplate x:Key="stationSubItemTemplate" DataType="{x:Type vm:StateStationVm}">
+	</DataTemplate>
+	<DataTemplate x:Key="activitySubItemTemplate" DataType="{x:Type vm:StateStationActivityVm}">
+		<StackPanel>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<TextBlock Margin="4" Text="زمان سیکل(ثانیه)"/>
+				<TextBox Margin="2" Text="{Binding CycleTime}" Grid.Column="1"/>
+				<TextBlock Margin="4" Text="نفر ساعت" Grid.Row="1"/>
+				<TextBox Margin="2" Text="{Binding ManHour}" Grid.Row="1" Grid.Column="1"/>
+			</Grid>
+		</StackPanel>
+	</DataTemplate>
+	<DataTemplate x:Key="machineSubItemTemplate" DataType="{x:Type vm:StateStationActivityMachineVm}">
+	</DataTemplate>
+
+	<!-- Tree -->
+
+	<DataTemplate x:Key="treeItemTemplate" DataType="{x:Type vm:TreeItemVm}">
+		<Expander
+			Template="{StaticResource configExpanderTemplate}"
+			Margin="2,0"
+			Tag="{Binding}"
+			IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
+			VerticalAlignment="Top">
+			<Expander.Header>
+				<DockPanel LastChildFill="False">
+					<TextBlock DockPanel.Dock="Left" VerticalAlignment="Center"
+							   Foreground="Black"
+							   Text="{Binding Name}" Opacity="{Binding TextOpacity}"/>
+					<ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsDefault}" ToolTip="آیا این ماشین بطور پیش فرض استفاده می شود؟"
+						Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=3}">
+						<Image Style="{StaticResource isDefaultImageStyle}"/>
+					</ToggleButton>
+				</DockPanel>
+			</Expander.Header>
+			<StackPanel
+				Visibility="{Binding Converter={StaticResource invisibilityConverter}, Path=TreeLevel, ConverterParameter=3}">
+				<!-- special contents -->
+				<ContentPresenter
+					ContentSource="{Binding}"
+					ContentTemplateSelector="{StaticResource stateTemplateSelector}"/>
+				<!-- ContentsList -->
+				<Border 
+					Background="{Binding BackColor}"
+					HorizontalAlignment="Left" 
+					BorderThickness="1,1,1,0" 
+					BorderBrush="WhiteSmoke" 
+					CornerRadius="5,5,0,0">
+					<TextBlock 
+						Text="{Binding TitleText}"
+						HorizontalAlignment="Left" 
+						Foreground="Gray"
+						Margin="4,1"/>
+				</Border>
+				<Border
+					Background="{Binding BackColor}"
+					BorderBrush="WhiteSmoke" 
+					BorderThickness="1" 
+					CornerRadius="0,5,5,5" 
+					Padding="2">
+					<StackPanel>
+						<TextBlock
+							Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=ContentsList.Count, ConverterParameter=0}"
+							HorizontalAlignment="Center" 
+							Foreground="#AA6600" 
+							Text="خالی"/>
+						<ItemsControl
+							Visibility="{Binding Converter={StaticResource invisibilityConverter}, Path=ContentsList.Count, ConverterParameter=0}"
+							Style="{StaticResource stackStyle}"
+							ItemsSource="{Binding ContentsList}"
+							ItemTemplateSelector="{StaticResource treeItemTemplateSelector}"/>
+					</StackPanel>
+				</Border>
+			</StackPanel>
+		</Expander>
+	</DataTemplate>
+
+	<DataTemplate x:Key="treeItemViewerTemplate" DataType="{x:Type vm:TreeItemVm}">
+		<Expander
+			Template="{StaticResource configViewerExpanderTemplate}"
+			Margin="2,0"
+			Tag="{Binding}"
+			IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
+			VerticalAlignment="Top">
+			<Expander.Header>
+				<DockPanel LastChildFill="False">
+					<TextBlock DockPanel.Dock="Left" VerticalAlignment="Center"
+							   Foreground="Black"
+							   Text="{Binding Name}" Opacity="{Binding TextOpacity}"/>
+					<Button DockPanel.Dock="Right" Content="+" Click="SelectStateButton_Click"
+							Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=0}"/>
+				</DockPanel>
+			</Expander.Header>
+			<StackPanel
+				Visibility="{Binding Converter={StaticResource invisibilityConverter}, Path=TreeLevel, ConverterParameter=3}">
+				<!-- special contents -->
+				<ContentPresenter
+					ContentSource="{Binding}"
+					ContentTemplateSelector="{StaticResource stateViewerTemplateSelector}"/>
+				<!-- ContentsList -->
+				<Border 
+					Background="{Binding BackColor}"
+					HorizontalAlignment="Left" 
+					BorderThickness="1,1,1,0" 
+					BorderBrush="WhiteSmoke" 
+					CornerRadius="5,5,0,0">
+					<TextBlock 
+						Text="{Binding TitleText}"
+						HorizontalAlignment="Left" 
+						Foreground="Gray"
+						Margin="4,1"/>
+				</Border>
+				<Border
+					Background="{Binding BackColor}"
+					BorderBrush="WhiteSmoke" 
+					BorderThickness="1" 
+					CornerRadius="0,5,5,5" 
+					Padding="2">
+					<StackPanel>
+						<TextBlock
+							Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=ContentsList.Count, ConverterParameter=0}"
+							HorizontalAlignment="Center" 
+							Foreground="#AA6600" 
+							Text="خالی"/>
+						<ItemsControl
+							Visibility="{Binding Converter={StaticResource invisibilityConverter}, Path=ContentsList.Count, ConverterParameter=0}"
+							Style="{StaticResource stackStyle}"
+							ItemsSource="{Binding ContentsList}"
+							ItemTemplateSelector="{StaticResource treeItemViewerTemplateSelector}"/>
+					</StackPanel>
+				</Border>
+			</StackPanel>
+		</Expander>
+	</DataTemplate>
+</ResourceDictionary>

@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="Soheil.Views.Fpc.FpcStateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 FlowDirection="RightToLeft" FontFamily="Tahoma" Name="ParentWindow"
+             mc:Ignorable="d" Height="600" Width="800"
+			 MouseMove="Area_MouseMove" MouseUp="Area_MouseUp">
+	<Grid Background="{StaticResource fpcBackBrush}">
+		<Border BorderBrush="WhiteSmoke" BorderThickness="1" CornerRadius="0,0,3,3" ClipToBounds="True">
+			<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea"
+					HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown">
+				<Canvas.Style>
+					<Style TargetType="Canvas">
+						<Setter Property="Cursor" Value="/Images/openhand.cur"/>
+						<Style.Triggers>
+							<Trigger Property="IsMouseCaptured" Value="True">
+								<Setter Property="Cursor" Value="/Images/closehand.cur"/>
+							</Trigger>
+						</Style.Triggers>
+					</Style>
+				</Canvas.Style>
+
+				<ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Cursor="Arrow"
+					ItemsSource="{Binding Connectors}"
+					ItemTemplate="{StaticResource connectorViewerTemplate}"/>
+				<ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Cursor="Arrow"
+					ItemsSource="{Binding States}"
+					ItemTemplateSelector="{StaticResource stateViewerTemplateSelector}"/>
+			</Canvas>
+		</Border>
+	</Grid>
+</UserControl>
