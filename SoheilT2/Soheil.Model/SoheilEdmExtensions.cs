@@ -263,6 +263,10 @@ namespace Soheil.Model
 			set { ColorNumber = (((((value.A << 8) + value.R) << 8) + value.G) << 8) + value.B; }
 		}
 
+		/// <summary>
+		/// Gets the only ProductRework of this Product with Rework = null
+		/// </summary>
+		public ProductRework MainProductRework { get { return ProductReworks.First(x => x.Rework == null); } }
 	}
 
 	public partial class ProductDefection

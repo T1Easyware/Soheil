@@ -8,8 +8,11 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class ProductReworkVm : NamedVM
 	{
+		public Model.ProductRework Model { get; set; }
+
 		public ProductReworkVm(Model.ProductRework model)
 		{
+			Model = model;
 			if (model.Rework == null)
 			{
 				Name = "محصول نهایی";
@@ -26,14 +29,8 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 			Id = model.Id;
 		}
-		/// <summary>
-		/// For main production only (used in coerce value of ProductRework of State when new Object() is passed by isNotNull converter's convertBack)
-		/// </summary>
-		public ProductReworkVm()
-		{
-			Name = "تولید عادی";
-			IsMainProduction = true;
-		}
+		public bool IsMainProduction { get; private set; }
+
 		//Code Dependency Property
 		public string Code
 		{
@@ -50,6 +47,5 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty ReworkNameProperty =
 			DependencyProperty.Register("ReworkName", typeof(string), typeof(ProductReworkVm), new UIPropertyMetadata(null));
-		public bool IsMainProduction { get; private set; }
 	}
 }

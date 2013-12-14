@@ -9,9 +9,11 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class StationVm : NamedVM
 	{
-		public StationVm() { }
+		public Model.Station Model { get; private set; }
+		
 		public StationVm(Model.Station model)
 		{
+			Model = model;
 			Id = model.Id;
 			Name = model.Name;
 			foreach (var sm in model.StationMachines)
@@ -22,5 +24,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		//Station-Machines Observable Collection
 		private ObservableCollection<StationMachineVm> _stationMachines = new ObservableCollection<StationMachineVm>();
 		public ObservableCollection<StationMachineVm> StationMachines { get { return _stationMachines; } }
+
 	}
 }

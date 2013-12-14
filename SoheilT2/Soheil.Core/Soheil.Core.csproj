@@ -383,6 +383,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="DataServices\_ClassDiagram.cd" />
     <None Include="Interfaces\BaseAndInterfaceDiagram.cd" />
   </ItemGroup>

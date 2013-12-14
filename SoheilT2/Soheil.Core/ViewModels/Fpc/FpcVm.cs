@@ -13,9 +13,6 @@ namespace Soheil.Core.ViewModels.Fpc
 	{
 		public FPCDataService fpcDataService { get; protected set; }
 
-		protected StationDataService _stationDataService;
-		protected ActivityGroupDataService _activityGroupDataService;
-
 		public Model.FPC Model { get; protected set; }
 		
 		#region Virtual Methods

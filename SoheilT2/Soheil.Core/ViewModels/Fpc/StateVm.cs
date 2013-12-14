@@ -15,6 +15,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public StateDataService _stateDataService { get { return ParentWindowVm.fpcDataService.stateDataService; } }
 
 		public event EventHandler<ModelRemovedEventArgs> StateDeleted;
+		public Model.State Model { get; private set; }
 
 		#region Ctor
 		/// <summary>
@@ -41,6 +42,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			InitializingPhase = true;
 			ParentWindowVm = parentWindowVm;
+			Model = model;
 
 			if (model != null)
 			{
@@ -52,113 +54,9 @@ namespace Soheil.Core.ViewModels.Fpc
 				if (StateType == Common.StateType.Mid || StateType == Common.StateType.Rework)
 					if(model.OnProductRework!=null)//***dlete
 					ProductRework = parentWindowVm.ProductReworks.FirstOrDefault(x => x.Id == model.OnProductRework.Id);
-				//config will be filled with executing reset command (at the end of this ctor)
 			}
-
-			//---------
-			#region Commands
-			//---------
-			ResetCommand = new Commands.Command(o =>
-			{
-				ShowDetails = false;
-				Config = new StateConfigVm(this, parentWindowVm);
-				if (model == null) return;
-				//fetch from db and update state config
-				foreach (var ss in model.StateStations)
-				{
-					var stateStation = new StateStationVm(parentWindowVm)
-					{
-						Container = Config,
-						Containment = new StationVm(ss.Station),
-					};
-					foreach (var ssa in ss.StateStationActivities)
-					{
-						var stateStationActivity = new StateStationActivityVm(parentWindowVm)
-						{
-							Container = stateStation,
-							ManHour = ssa.ManHour,
-							CycleTime = ssa.CycleTime,
-							Containment = new ActivityVm(ssa.Activity, null),
-							//CreatedDate
-							//ModifiedBy
-							//ModifiedDate
-							//Status
-						};
-						foreach (var ssam in ssa.StateStationActivityMachines)
-						{
-							stateStationActivity.ContentsList.Add(new StateStationActivityMachineVm(parentWindowVm)
-							{
-								Container = stateStationActivity,
-								Containment = new MachineVm(ssam.Machine, null),
-								IsDefault = ssam.IsFixed,
-							});
-						}
-						stateStation.ContentsList.Add(stateStationActivity);
-					}
-					Config.ContentsList.Add(stateStation);
-				}
-				IsChanged = _isSavedAtLeastOnce;
-			});
-
-			SaveCommand = new Commands.Command(o =>
-			{
-				try
-				{
-					_stateDataService.AttachModel(this);
-					IsChanged = false;
-					_isSavedAtLeastOnce = true;
-				}
-				catch (Common.SoheilException.SoheilExceptionBase exp)
-				{
-					string msg = "";
-					if (exp.Level == Common.SoheilException.ExceptionLevel.Error)
-						msg += "قادر به ذخیره مرحله نیست\n";
-					msg += exp.Message;
-					parentWindowVm.Message = new Common.SoheilException.DependencyMessageBox(msg, exp.Caption, MessageBoxButton.OK, exp.Level);
-				}
-				catch (Exception exp)
-				{
-					parentWindowVm.Message = new Common.SoheilException.DependencyMessageBox(exp);
-				}
-			});
-
-			DeleteCommand = new Commands.Command(o =>
-			{
-				try
-				{
-					var connectors = FPC.Connectors.Where(x => x.Start.Id == Id || x.End.Id == Id).ToList();
-					_stateDataService.DeleteModel(this);
-
-					if (StateDeleted != null)
-						StateDeleted(this, new ModelRemovedEventArgs(Id));
-					FPC.States.Remove(this);
-					foreach (var connector in connectors)
-					{
-						FPC.Connectors.Remove(connector);
-					}
-				}
-				catch (Common.SoheilException.SoheilExceptionBase exp)
-				{
-					string msg = "";
-					if (exp.Level == Common.SoheilException.ExceptionLevel.Error)
-						msg += "قادر به حذف مرحله نیست\n";
-					msg += exp.Message;
-					parentWindowVm.Message = new Common.SoheilException.DependencyMessageBox(msg, exp.Caption, MessageBoxButton.OK, exp.Level);
-				}
-				catch (Exception exp)
-				{
-					parentWindowVm.Message = new Common.SoheilException.DependencyMessageBox(exp);
-				}
-			});
-
-			SelectCommand = new Command(o =>
-			{
-				ParentWindowVm.CallPPEditorToCreateNewStateFrom(this);
-			});
-			#endregion
-			//---------
-
-			ResetCommand.Execute(null);
+			initCommands();
+			ResetCommand.Execute(null);//Updates StateConfigVm
 		}
 		#endregion
 
@@ -201,8 +99,17 @@ namespace Soheil.Core.ViewModels.Fpc
 			var vm = d as StateVm;
 			if (vm != null)
 			{
-				if (!vm.InitializingPhase) 
+				if (!vm.InitializingPhase)
+				{
 					vm.IsChanged = true;
+					if (e.Property == NameProperty) vm.Model.Name = (string)e.NewValue;
+					else if (e.Property == CodeProperty) vm.Model.Code = (string)e.NewValue;
+					else if (e.Property == ProductReworkProperty)
+					{
+						var prvm = (ProductReworkVm)e.NewValue;
+						vm.Model.OnProductRework = prvm == null ? vm.ParentWindowVm.Model.Product.MainProductRework : prvm.Model;
+					}
+				}
 			}
 		}
 		
@@ -270,8 +177,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		private bool _lockPR = false;
 		#endregion
 
-
-
 		#region Visual
 		//Width Dependency Property
 		public double Width
@@ -314,10 +219,108 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("Opacity", typeof(double), typeof(StateVm), new UIPropertyMetadata(1d)); 
 		#endregion
 
-
-
-
 		#region Commands
+		private void initCommands()
+		{
+			ResetCommand = new Commands.Command(o =>
+			{
+				ShowDetails = false;
+				Config = new StateConfigVm(this, ParentWindowVm);
+				if (Model == null) return;
+				//fetch from db and update state config
+				foreach (var ss in Model.StateStations)
+				{
+					var stateStation = new StateStationVm(ParentWindowVm, ss)
+					{
+						Container = Config,
+						Containment = new StationVm(ss.Station),
+					};
+					foreach (var ssa in ss.StateStationActivities)
+					{
+						var stateStationActivity = new StateStationActivityVm(ParentWindowVm, ssa)
+						{
+							Container = stateStation,
+							ManHour = ssa.ManHour,
+							CycleTime = ssa.CycleTime,
+							Containment = new ActivityVm(ssa.Activity, null),
+							//CreatedDate
+							//ModifiedBy
+							//ModifiedDate
+							//Status
+						};
+						foreach (var ssam in ssa.StateStationActivityMachines)
+						{
+							stateStationActivity.ContentsList.Add(new StateStationActivityMachineVm(ParentWindowVm, ssam)
+							{
+								Container = stateStationActivity,
+								Containment = new MachineVm(ssam.Machine, null),
+								IsDefault = ssam.IsFixed,
+							});
+						}
+						stateStation.ContentsList.Add(stateStationActivity);
+					}
+					Config.ContentsList.Add(stateStation);
+				}
+				IsChanged = _isSavedAtLeastOnce;
+			});
+
+			SaveCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					_stateDataService.AttachModel(this);
+					IsChanged = false;
+					_isSavedAtLeastOnce = true;
+				}
+				catch (Common.SoheilException.SoheilExceptionBase exp)
+				{
+					string msg = "";
+					if (exp.Level == Common.SoheilException.ExceptionLevel.Error)
+						msg += "قادر به ذخیره مرحله نیست\n";
+					msg += exp.Message;
+					ParentWindowVm.Message = new Common.SoheilException.DependencyMessageBox(msg, exp.Caption, MessageBoxButton.OK, exp.Level);
+				}
+				catch (Exception exp)
+				{
+					ParentWindowVm.Message = new Common.SoheilException.DependencyMessageBox(exp);
+				}
+			});
+
+			DeleteCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					var connectors = FPC.Connectors.Where(x => x.Start.Id == Id || x.End.Id == Id).ToList();
+					_stateDataService.DeleteModel(this);
+
+					if (StateDeleted != null)
+						StateDeleted(this, new ModelRemovedEventArgs(Id));
+					FPC.States.Remove(this);
+					foreach (var connector in connectors)
+					{
+						FPC.Connectors.Remove(connector);
+					}
+				}
+				catch (Common.SoheilException.SoheilExceptionBase exp)
+				{
+					string msg = "";
+					if (exp.Level == Common.SoheilException.ExceptionLevel.Error)
+						msg += "قادر به حذف مرحله نیست\n";
+					msg += exp.Message;
+					ParentWindowVm.Message = new Common.SoheilException.DependencyMessageBox(msg, exp.Caption, MessageBoxButton.OK, exp.Level);
+				}
+				catch (Exception exp)
+				{
+					ParentWindowVm.Message = new Common.SoheilException.DependencyMessageBox(exp);
+				}
+			});
+
+			SelectCommand = new Command(o =>
+			{
+				ParentWindowVm.FireSelectState(this);
+			});
+		}
+
 		//SaveCommand
 		public Commands.Command SaveCommand
 		{
@@ -351,6 +354,5 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty SelectCommandProperty =
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(StateVm), new UIPropertyMetadata(null));
 		#endregion
-
 	}
 }

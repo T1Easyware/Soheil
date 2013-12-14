@@ -8,12 +8,10 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class ActivityVm : NamedVM
 	{
-		public ActivityVm()
-		{
-
-		}
+		public Model.Activity Model { get; private set; }
 		public ActivityVm(Model.Activity model, ActivityGroupVm groupVm)
 		{
+			Model = model;
 			Id = model.Id;
 			Name = model.Name;
 			Group = groupVm;
@@ -26,5 +24,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty GroupProperty =
 			DependencyProperty.Register("Group", typeof(ActivityGroupVm), typeof(ActivityVm), new UIPropertyMetadata(null));
+
 	}
 }

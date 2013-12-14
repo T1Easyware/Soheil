@@ -8,12 +8,11 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class MachineVm : NamedVM
 	{
-		public MachineVm()
-		{
+		public Model.Machine Model { get; private set; }
 
-		}
 		public MachineVm(Model.Machine model, MachineFamilyVm familyVm)
 		{
+			Model = model;
 			Id = model.Id;
 			Name = model.Name;
 			Code = model.Code;
@@ -35,5 +34,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty FamilyProperty =
 			DependencyProperty.Register("Family", typeof(MachineFamilyVm), typeof(MachineVm), new UIPropertyMetadata(null));
+
 	}
 }

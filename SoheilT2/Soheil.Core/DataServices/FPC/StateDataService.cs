@@ -21,12 +21,10 @@ namespace Soheil.Core.DataServices
 		/// <summary>
 		/// Use this constructor only if no Fpc viewModel is involved in furthur calls
 		/// </summary>
+	
 		public StateDataService()
+			:this(new SoheilEdmContext())
 		{
-			context = new SoheilEdmContext();
-			_stateRepository = new Repository<State>(context);
-			_stateStationRepository = new Repository<StateStation>(context);
-			_stateStationActivityRepository = new Repository<StateStationActivity>(context);
 		}
 		public StateDataService(SoheilEdmContext context)
 		{

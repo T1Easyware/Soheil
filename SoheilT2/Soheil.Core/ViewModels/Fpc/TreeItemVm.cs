@@ -28,6 +28,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			Parent = parentWindowVm;
 		}
+
 		//Parent Dependency Property
 		public FpcWindowVm Parent
 		{
@@ -37,36 +38,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty ParentProperty =
 			DependencyProperty.Register("Parent", typeof(FpcWindowVm), typeof(TreeItemVm), new UIPropertyMetadata(null));
 
-		public SolidColorBrush GetLevelColor(int level)
-		{
-			switch (level)
-			{
-				case 0:
-					return new SolidColorBrush(Color.FromRgb(190, 175, 210)) { Opacity = 0.5 };
-				case 1:
-					return new SolidColorBrush(Color.FromRgb(150, 180, 220)) { Opacity = 0.5 };
-				case 2:
-					return new SolidColorBrush(Color.FromRgb(160, 200, 180)) { Opacity = 0.5 };
-				default:
-					return new SolidColorBrush(Colors.Red);
-			}
-		}
-		public string GetLevelTitle(int level)
-		{
-			switch (level)
-			{
-				case 0:
-					return "ایستگاه ها:";
-				case 1:
-					return "فعالیت ها:";
-				case 2:
-					return "ماشین ها:";
-				default:
-					return "";
-			}
-		}
-
-		//Name Dependency Property
+		#region Structure
+		/// <summary>
+		/// Effective name of Containment
+		/// </summary>
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
@@ -74,7 +49,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty NameProperty =
 			DependencyProperty.Register("Name", typeof(string), typeof(TreeItemVm), new UIPropertyMetadata(""));
-		//Containment Dependency Property
+
+		/// <summary>
+		/// Containment in TreeItemVm=XYZ is Z
+		/// </summary>
 		public NamedVM Containment
 		{
 			get { return (NamedVM)GetValue(ContainmentProperty); }
@@ -82,7 +60,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty ContainmentProperty =
 			DependencyProperty.Register("Containment", typeof(NamedVM), typeof(TreeItemVm), new UIPropertyMetadata(null));
-		//Container Dependency Property
+
+		/// <summary>
+		/// Container in TreeItemVm=XYZ is XY
+		/// </summary>
 		public TreeItemVm Container
 		{
 			get { return (TreeItemVm)GetValue(ContainerProperty); }
@@ -90,10 +71,15 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty ContainerProperty =
 			DependencyProperty.Register("Container", typeof(TreeItemVm), typeof(TreeItemVm), new UIPropertyMetadata(null));
-		//ContentsList Observable Collection
-		private ObservableCollection<TreeItemVm> _contentsList = new ObservableCollection<TreeItemVm>();
-		public ObservableCollection<TreeItemVm> ContentsList { get { return _contentsList; } }
 
+		/// <summary>
+		/// ContentsList in TreeItemVm=XYZ is XYZW[ ]
+		/// </summary>
+		public ObservableCollection<TreeItemVm> ContentsList { get { return _contentsList; } }
+		private ObservableCollection<TreeItemVm> _contentsList = new ObservableCollection<TreeItemVm>();
+		#endregion
+
+		#region Level info
 		//TreeLevel Dependency Property
 		public int TreeLevel
 		{
@@ -115,6 +101,20 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty TitleTextProperty =
 			DependencyProperty.Register("TitleText", typeof(string), typeof(TreeItemVm), new UIPropertyMetadata(""));
+		public string GetLevelTitle(int level)
+		{
+			switch (level)
+			{
+				case 0:
+					return "ایستگاه ها:";
+				case 1:
+					return "فعالیت ها:";
+				case 2:
+					return "ماشین ها:";
+				default:
+					return "";
+			}
+		}
 		//BackColor Dependency Property
 		public SolidColorBrush BackColor
 		{
@@ -123,6 +123,23 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty BackColorProperty =
 			DependencyProperty.Register("BackColor", typeof(SolidColorBrush), typeof(TreeItemVm), new UIPropertyMetadata(null));
+		public SolidColorBrush GetLevelColor(int level)
+		{
+			switch (level)
+			{
+				case 0:
+					return new SolidColorBrush(Color.FromRgb(190, 175, 210)) { Opacity = 0.5 };
+				case 1:
+					return new SolidColorBrush(Color.FromRgb(150, 180, 220)) { Opacity = 0.5 };
+				case 2:
+					return new SolidColorBrush(Color.FromRgb(160, 200, 180)) { Opacity = 0.5 };
+				default:
+					return new SolidColorBrush(Colors.Red);
+			}
+		}
+		#endregion
+
+		#region Other
 		//IsExpanded Dependency Property
 		public bool IsExpanded
 		{
@@ -130,29 +147,29 @@ namespace Soheil.Core.ViewModels.Fpc
 			set { SetValue(IsExpandedProperty, value); }
 		}
 		public static readonly DependencyProperty IsExpandedProperty =
-			DependencyProperty.Register("IsExpanded", typeof(bool), typeof(TreeItemVm),
-			new UIPropertyMetadata(false, (d, e) =>
+			DependencyProperty.Register("IsExpanded", typeof(bool), typeof(TreeItemVm), new UIPropertyMetadata(false, isExpandedChanged));
+		public static void isExpandedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (!(bool)e.NewValue)
 			{
-				if (!(bool)e.NewValue)
-				{
-					if (d as StateConfigVm != null)
-						(d as StateConfigVm).State.ShowDetails = false;
-				}
-				else if (!(d is StateConfigVm))
-				{
-					var conf = (d as TreeItemVm);
-					var q = (d as TreeItemVm).Container.ContentsList.Where(x => x.IsExpanded && x != d);
-					foreach (var item in q) item.IsExpanded = false;
-					if (d is StateStationVm)
-						conf.Parent.FocusedStateStation = d as StateStationVm;
-					else if (d is StateStationActivityVm)
-						conf.Parent.FocusedStateStation = (d as StateStationActivityVm).Container as StateStationVm;
-					else if (d is StateStationActivityMachineVm)
-						conf.Parent.FocusedStateStation
-							= ((d as StateStationActivityMachineVm).Container as StateStationActivityVm).Container as StateStationVm;
-					conf.Parent.OnStationSelected(conf.Parent.FocusedStateStation);
-				}
-			}));
+				if (d as StateConfigVm != null)
+					(d as StateConfigVm).State.ShowDetails = false;
+			}
+			else if (!(d is StateConfigVm))
+			{
+				var conf = (d as TreeItemVm);
+				var q = (d as TreeItemVm).Container.ContentsList.Where(x => x.IsExpanded && x != d);
+				foreach (var item in q) item.IsExpanded = false;
+				if (d is StateStationVm)
+					conf.Parent.FocusedStateStation = d as StateStationVm;
+				else if (d is StateStationActivityVm)
+					conf.Parent.FocusedStateStation = (d as StateStationActivityVm).Container as StateStationVm;
+				else if (d is StateStationActivityMachineVm)
+					conf.Parent.FocusedStateStation
+						= ((d as StateStationActivityMachineVm).Container as StateStationActivityVm).Container as StateStationVm;
+				conf.Parent.OnStationSelected(conf.Parent.FocusedStateStation);
+			}
+		}
 		//IsDropIndicator Dependency Property
 		public bool IsDropIndicator
 		{
@@ -184,6 +201,7 @@ namespace Soheil.Core.ViewModels.Fpc
 
 		public virtual void Change()
 		{
-		}
+		} 
+		#endregion
 	}
 }

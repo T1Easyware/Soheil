@@ -58,13 +58,7 @@ namespace Soheil.Views.Fpc
 			{
 				var mouse = Mouse.GetPosition(window.DrawingArea);
 				var config = window.VM.SelectedToolboxItem.GetUnderlyingStateConfig(mouse);
-				if (config != null)
-					config.ContentsList.Add(new StateStationVm(window.VM)
-					{
-						Container = config,
-						Containment = window.VM.SelectedToolboxItem.ContentData,
-						IsExpanded = true,
-					});
+				if (config != null) config.AddNewStateStation(window.VM, window.VM.SelectedToolboxItem.ContentData as StationVm);
 				window.VM.FocusedState.IsChanged = true;
 			}
 			window.VM.StopDragToolboxItem();
@@ -79,14 +73,8 @@ namespace Soheil.Views.Fpc
 			if (window.VM.SelectedToolboxItem.CanDrop == true)
 			{
 				var mouse = Mouse.GetPosition(window.DrawingArea);
-				var station = window.VM.SelectedToolboxItem.GetUnderlyingStateStation(mouse);
-				if (station != null)
-					station.ContentsList.Add(new StateStationActivityVm(window.VM)
-					{
-						Container = station,
-						Containment = window.VM.SelectedToolboxItem.ContentData,
-						IsExpanded = true,
-					});
+				var stateStation = window.VM.SelectedToolboxItem.GetUnderlyingStateStation(mouse);
+				if (stateStation != null) stateStation.AddNewStateStationActivity(window.VM, window.VM.SelectedToolboxItem.ContentData as ActivityVm);
 				window.VM.FocusedState.IsChanged = true;
 			}
 			window.VM.StopDragToolboxItem();
@@ -101,14 +89,8 @@ namespace Soheil.Views.Fpc
 			if (window.VM.SelectedToolboxItem.CanDrop == true)
 			{
 				var mouse = Mouse.GetPosition(window.DrawingArea);
-				var activity = window.VM.SelectedToolboxItem.GetUnderlyingStateStationActivity(mouse);
-				if (activity != null)
-					activity.ContentsList.Add(new StateStationActivityMachineVm(window.VM)
-					{
-						Container = activity,
-						Containment = window.VM.SelectedToolboxItem.ContentData,
-						IsDefault = true,
-					});
+				var stateStationActivity = window.VM.SelectedToolboxItem.GetUnderlyingStateStationActivity(mouse);
+				if (stateStationActivity != null) stateStationActivity.AddNewStateStationActivityMachine(window.VM, window.VM.SelectedToolboxItem.ContentData as MachineVm);
 				window.VM.FocusedState.IsChanged = true;
 			}
 			window.VM.StopDragToolboxItem();

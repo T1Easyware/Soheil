@@ -29,7 +29,7 @@ namespace Soheil.Views.Fpc
 			var config = ((sender as FrameworkElement).TemplatedParent as ContentPresenter).Content as StateConfigVm;
 			if (config != null)
 			{
-				config.State.ParentWindowVm.CallPPEditorToCreateNewStateFrom(config.State);
+				config.State.ParentWindowVm.FireSelectState(config.State);
 			}
 		}
 	}

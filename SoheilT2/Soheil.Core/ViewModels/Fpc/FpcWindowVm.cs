@@ -15,8 +15,22 @@ namespace Soheil.Core.ViewModels.Fpc
 	{
 		public FpcWindowVm()
 		{
-			init();
 			Model = new Model.FPC();
+
+			_lock = false;
+			Message = new DependencyMessageBox();
+			fpcDataService = new FPCDataService();
+
+			//items
+			var stations = fpcDataService.stationDataService.GetAllWithStationMachines();
+			foreach (var item in stations)
+				Stations.Add(new StationVm(item));
+
+			var actgs = fpcDataService.activityGroupDataService.GetAllWithActivities();
+			foreach (var item in actgs)
+				ActivityGroups.Add(new ActivityGroupVm(item));
+
+			initCommands();
 		}
 
 		//Message Dependency Property
@@ -29,78 +43,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("Message", typeof(DependencyMessageBox), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 
 
-		#region Init, ChangeFPC & Reset
-		/// <summary>
-		/// Initialize Ds, Commands and items
-		/// </summary>
-		private void init()
-		{
-			_lock = false;
-			Message = new DependencyMessageBox();
-			fpcDataService = new FPCDataService();
-			_stationDataService = new StationDataService();
-			_activityGroupDataService = new ActivityGroupDataService();
-
-			//items
-			var stations = _stationDataService.GetAllWithStationMachines();
-			foreach (var item in stations)
-				Stations.Add(new StationVm(item));
-
-			_activityGroupDataService = new ActivityGroupDataService();
-			var actgs = _activityGroupDataService.GetAllWithActivities();
-			foreach (var item in actgs)
-				ActivityGroups.Add(new ActivityGroupVm(item));
-
-			#region commands
-			ExpandAllCommand = new Commands.Command(o =>
-			{
-				var items = States.Where(x => x.StateType == StateType.Mid);
-				foreach (var item in items)
-				{
-					item.ShowDetails = true;
-				}
-			});
-			CollapseAllCommand = new Commands.Command(o =>
-			{
-				foreach (var item in States.Where(x => x.StateType == StateType.Mid))
-				{
-					item.ShowDetails = false;
-				}
-			});
-			SaveAllCommand = new Commands.Command(o =>
-			{
-				try
-				{
-					fpcDataService.ApplyChanges();
-					//check for tracability
-					Soheil.Core.PP.Smart.SmartJob.AutoRouteCheck(this.Id);
-					//always throws, so no after lines
-				}
-				catch (SoheilExceptionBase exp)
-				{
-					string msg = "";
-					if (exp.Level == ExceptionLevel.Error)
-						msg += "FPC تعریف شده قابل مسیریابی نمی باشد.\nدر صورتی که می خواهید از قابلیت افزودن خودکار Job استفاده نمایید بایستی FPC را اصلاح کنید.\n";
-					msg += exp.Message;
-					Message = new DependencyMessageBox(msg, exp.Caption, MessageBoxButton.OK, exp.Level);
-					//this is actual after line for _fpcDataService.ApplyChanges(this);
-					if (exp.Level == ExceptionLevel.Info)
-						foreach (var state in States)
-							state.IsChanged = false;
-				}
-				catch (Exception exp)
-				{
-					Message = new DependencyMessageBox(
-						exp,
-						"در ذخیره سازی خطای پیش آمد.",
-						"خطا",
-						MessageBoxButton.OK,
-						ExceptionLevel.Error);
-				}
-			});
-			#endregion
-		}
-
+		#region ChangeFPC & Reset
 		/// <summary>
 		/// Loads a model into the current viewModel
 		/// <para>To change a fpc use ChangeFpc(...)</para>
@@ -365,6 +308,59 @@ namespace Soheil.Core.ViewModels.Fpc
 		#endregion
 
 		#region Commands and etc
+		/// <summary>
+		/// Initialize Commands
+		/// </summary>
+		private void initCommands()
+		{
+			ExpandAllCommand = new Commands.Command(o =>
+			{
+				var items = States.Where(x => x.StateType == StateType.Mid);
+				foreach (var item in items)
+				{
+					item.ShowDetails = true;
+				}
+			});
+			CollapseAllCommand = new Commands.Command(o =>
+			{
+				foreach (var item in States.Where(x => x.StateType == StateType.Mid))
+				{
+					item.ShowDetails = false;
+				}
+			});
+			SaveAllCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					fpcDataService.ApplyChanges();
+					//check for tracability
+					Soheil.Core.PP.Smart.SmartJob.AutoRouteCheck(this.Id);
+					//always throws, so no after lines
+				}
+				catch (SoheilExceptionBase exp)
+				{
+					string msg = "";
+					if (exp.Level == ExceptionLevel.Error)
+						msg += "FPC تعریف شده قابل مسیریابی نمی باشد.\nدر صورتی که می خواهید از قابلیت افزودن خودکار Job استفاده نمایید بایستی FPC را اصلاح کنید.\n";
+					msg += exp.Message;
+					Message = new DependencyMessageBox(msg, exp.Caption, MessageBoxButton.OK, exp.Level);
+					//this is actual after line for _fpcDataService.ApplyChanges(this); because it throws
+					if (exp.Level == ExceptionLevel.Info)
+						foreach (var state in States)
+							state.IsChanged = false;
+				}
+				catch (Exception exp)
+				{
+					Message = new DependencyMessageBox(
+						exp,
+						"در ذخیره سازی خطای پیش آمد.",
+						"خطا",
+						MessageBoxButton.OK,
+						ExceptionLevel.Error);
+				}
+			});
+		}
+
 		//FpcVm will call this method
 		public override void IsDefaultChanged(bool newValue)
 		{
@@ -416,8 +412,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		#endregion
 
 
-
-		#region Mouse and drag
+		#region Mouse props
 		/// <summary>
 		/// current dragged connector, state or toolbox item
 		/// </summary>
@@ -442,6 +437,75 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// A TreeItemVm temporarily added to TreeItemVm container willing to accept current OnScreenToolbox item
 		/// </summary>
 		TreeItemVm _dropIndicator;
+
+		#endregion
+
+		#region Mouse methods
+		public void MouseEntersState(StateVm state)
+		{
+			var dt = DragTarget as StateVm;
+			if (dt == null) return;
+			if (dt.StateType != StateType.Temp) return;
+
+			var conn = Connectors.FirstOrDefault(x => x.End == dt);
+			if (conn != null)
+			{
+				if (state != conn.Start && !Connectors.Any(x => x.End == state && x.Start == conn.Start))
+				{
+					conn.IsLoose = false;
+					_connectorDropTargetStateVm = state;
+				}
+			}
+		}
+		public void MouseLeavesState(StateVm state)
+		{
+			var dt = DragTarget as StateVm;
+			if (dt == null) return;
+			if (dt.StateType != StateType.Temp) return;
+
+			var conn = Connectors.FirstOrDefault(x => x.End == dt);
+			if (conn != null)
+			{
+				conn.IsLoose = true;
+				_connectorDropTargetStateVm = null;
+			}
+		}
+		public void MouseClicksState(StateVm state, Point pos_drawingArea, Point pos_firstChild, Point pos_canvas)
+		{
+			FocusedState = state;
+			//new state is dragging
+			if (state == _newDraggingStateVm)
+			{
+				_newDraggingStateVm = null;
+				state.Opacity = 1;
+				ToolSelection = true;
+			}
+			else
+			{
+				//connector is dragging
+				if (ToolConnector)
+				{
+					RemoveHalfDrawnConnector();
+					var end = new StateVm(pos_drawingArea, this);
+					DragTarget = end;
+					States.Add(end);
+					Connectors.Add(new ConnectorVm
+					{
+						Start = state,
+						End = end,
+						IsLoose = true
+					});
+					RelativeDragPoint = new Point(0, 0);
+				}
+				//state is dragging
+				else
+				{
+					DragTarget = state;
+					RelativeDragPoint = pos_firstChild;
+				}
+			}
+			_initialDragPoint = pos_canvas;
+		}
 
 		/// <summary>
 		/// View calls this method when any kind of mouse release happens (drag&drop|click&release)
@@ -518,6 +582,7 @@ namespace Soheil.Core.ViewModels.Fpc
 				item.ContentsList.Add(_dropIndicator);
 			}
 		}
+
 		#endregion
 
 		#region Remove extra visuals (incomplete connectors or temp states)
@@ -561,83 +626,19 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 		}
 		#endregion
-		
-		#region Mouse and State
-		public void MouseEntersState(StateVm state)
-		{
-			var dt = DragTarget as StateVm;
-			if (dt == null) return;
-			if (dt.StateType != StateType.Temp) return;
 
-			var conn = Connectors.FirstOrDefault(x => x.End == dt);
-			if (conn != null)
-			{
-				if (state != conn.Start && !Connectors.Any(x => x.End == state && x.Start == conn.Start))
-				{
-					conn.IsLoose = false;
-					_connectorDropTargetStateVm = state;
-				}
-			}
-		}
-		public void MouseLeavesState(StateVm state)
-		{
-			var dt = DragTarget as StateVm;
-			if (dt == null) return;
-			if (dt.StateType != StateType.Temp) return;
-
-			var conn = Connectors.FirstOrDefault(x => x.End == dt);
-			if (conn != null)
-			{
-				conn.IsLoose = true;
-				_connectorDropTargetStateVm = null;
-			}
-		}
-		public void MouseClicksState(StateVm state, Point pos_drawingArea, Point pos_firstChild, Point pos_canvas)
-		{
-			FocusedState = state;
-			//new state is dragging
-			if (state == _newDraggingStateVm)
-			{
-				_newDraggingStateVm = null;
-				state.Opacity = 1;
-				ToolSelection = true;
-			}
-			else
-			{
-				//connector is dragging
-				if (ToolConnector)
-				{
-					RemoveHalfDrawnConnector();
-					var end = new StateVm(pos_drawingArea, this);
-					DragTarget = end;
-					States.Add(end);
-					Connectors.Add(new ConnectorVm
-					{
-						Start = state,
-						End = end,
-						IsLoose = true
-					});
-					RelativeDragPoint = new Point(0, 0);
-				}
-				//state is dragging
-				else
-				{
-					DragTarget = state;
-					RelativeDragPoint = pos_firstChild;
-				}
-			}
-			_initialDragPoint = pos_canvas;
-		}
-		#endregion
 
 		#region Add new State
-		internal delegate void AddNewStateEventHandler(StateVm state);
-		internal event AddNewStateEventHandler AddNewState;
-		public void CallPPEditorToCreateNewStateFrom(StateVm state)
+		internal delegate void SelectStateEventHandler(StateVm state);
+		internal event SelectStateEventHandler SelectState;
+		/// <summary>
+		/// Fires SelectState event (for use in PPTaskEditor)
+		/// </summary>
+		/// <param name="state"></param>
+		public void FireSelectState(StateVm state)
 		{
-			if (AddNewState != null) AddNewState(state);
+			if (SelectState != null) SelectState(state);
 		}
 		#endregion
-
 	}
 }

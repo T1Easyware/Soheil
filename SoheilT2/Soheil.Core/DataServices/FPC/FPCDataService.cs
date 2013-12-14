@@ -21,6 +21,9 @@ namespace Soheil.Core.DataServices
 
 		internal StateDataService stateDataService { get; private set; }
 		internal ConnectorDataService connectorDataService { get; private set; }
+		internal StationDataService stationDataService { get; private set; }
+		internal ActivityGroupDataService activityGroupDataService { get; private set; }
+		internal MachineFamilyDataService machineFamilyDataService { get; private set; }
 
 		public FPCDataService()
 			: this(new SoheilEdmContext())
@@ -34,6 +37,9 @@ namespace Soheil.Core.DataServices
 			//other dataservices
 			stateDataService = new StateDataService(context);
 			connectorDataService = new ConnectorDataService(context, this);
+			stationDataService = new StationDataService(context);
+			activityGroupDataService = new ActivityGroupDataService(context);
+			machineFamilyDataService = new MachineFamilyDataService(context);
 		}
 
 		public IEnumerable<FPC> GetAllForProduct(int productId)

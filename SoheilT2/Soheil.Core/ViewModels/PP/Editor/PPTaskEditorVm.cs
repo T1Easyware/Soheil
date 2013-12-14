@@ -30,7 +30,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			_operatorDs = new DataServices.OperatorDataService();
 
 			FpcViewer = new Fpc.FpcWindowVm();
-			FpcViewer.AddNewState += FpcViewer_AddNewTask;
+			FpcViewer.SelectState += FpcViewer_AddNewTask;
 		}
 
 		#region Interactions

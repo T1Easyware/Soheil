@@ -4,71 +4,74 @@ using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
 using Soheil.Model;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.DataServices
 {
-    public class StationMachineDataService : IDataService<StationMachine>
-    {
-        public event EventHandler<ModelAddedEventArgs<StationMachine>> ModelUpdated;
-        /// <summary>
-        /// Gets a single view model.
-        /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns></returns>
-        public StationMachine GetSingle(int id)
-        {
-            StationMachine entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<StationMachine>(context);
-                entity = repository.Single(productDefection => productDefection.Id == id);
-            }
-            return entity;
-        }
+	public class StationMachineDataService : DataServiceBase, IDataService<StationMachine>
+	{
+		public event EventHandler<ModelAddedEventArgs<StationMachine>> ModelUpdated;
+		Repository<StationMachine> _stationMachineRepository;
 
-        /// <summary>
-        /// Gets a list of view models representing all records of the entity.
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<StationMachine> GetAll()
-        {
-            throw new System.NotImplementedException();
-        }
+		public StationMachineDataService()
+			: this(new SoheilEdmContext())
+		{
+		}
+		public StationMachineDataService(SoheilEdmContext context)
+		{
+			this.context = context;
+			_stationMachineRepository = new Repository<StationMachine>(context);
+		}
 
-        /// <summary>
-        /// Gets a list of view models representing currently active records of the entity.
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<StationMachine> GetActives()
-        {
-            throw new NotImplementedException();
-        }
+		/// <summary>
+		/// Gets a single view model.
+		/// </summary>
+		/// <param name="id">The id.</param>
+		/// <returns></returns>
+		public StationMachine GetSingle(int id)
+		{
+			return _stationMachineRepository.Single(productDefection => productDefection.Id == id);
+		}
 
-        public int AddModel(StationMachine model)
-        {
-            throw new System.NotImplementedException();
-        }
+		/// <summary>
+		/// Gets a list of view models representing all records of the entity.
+		/// </summary>
+		/// <returns></returns>
+		public ObservableCollection<StationMachine> GetAll()
+		{
+			throw new System.NotImplementedException();
+		}
 
-        public void UpdateModel(StationMachine model)
-        {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<StationMachine>(context);
-                StationMachine entity = repository.Single(productDefection => productDefection.Id == model.Id);
+		/// <summary>
+		/// Gets a list of view models representing currently active records of the entity.
+		/// </summary>
+		/// <returns></returns>
+		public ObservableCollection<StationMachine> GetActives()
+		{
+			throw new NotImplementedException();
+		}
 
-                context.Commit();
-                if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<StationMachine>(entity));
-            }
-        }
+		public int AddModel(StationMachine model)
+		{
+			throw new System.NotImplementedException();
+		}
 
-        public void DeleteModel(StationMachine model)
-        {
-            throw new System.NotImplementedException();
-        }
+		public void UpdateModel(StationMachine model)
+		{
+			StationMachine entity = _stationMachineRepository.Single(productDefection => productDefection.Id == model.Id);
 
-        public void AttachModel(StationMachine model)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
+			context.Commit();
+			if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<StationMachine>(entity));
+		}
+
+		public void DeleteModel(StationMachine model)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void AttachModel(StationMachine model)
+		{
+			throw new System.NotImplementedException();
+		}
+	}
 }
