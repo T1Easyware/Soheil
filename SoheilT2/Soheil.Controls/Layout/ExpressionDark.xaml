@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 					xmlns:PersianCal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"
-                    xmlns:Convertors="clr-namespace:Soheil.Controls.Convertors"
+                    xmlns:Converters="clr-namespace:Soheil.Controls.Converters"
                     xmlns:Controls="clr-namespace:Soheil.Controls"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     mc:Ignorable="d">
@@ -10,7 +10,7 @@
         <ResourceDictionary Source="Brushes.xaml" />
         <ResourceDictionary Source="Fonts.xaml" />
         <ResourceDictionary>
-            <Convertors:DebugConverter x:Key="debugc" />
+            <Converters:DebugConverter x:Key="debugc" />
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
@@ -3135,7 +3135,7 @@
         <Setter Property="Border.CornerRadius" Value="2,2,2,2"/>
     </Style>
 
-    <Convertors:SearchValueConverter x:Key="SearchValueConverter" />
+    <Converters:SearchValueConverter x:Key="SearchValueConverter" />
     
     <!-- ### Metro ### -->
 
@@ -3609,14 +3609,19 @@
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
-                                <Rectangle HorizontalAlignment="Stretch" x:Name="FocusVisual"                                            VerticalAlignment="Stretch"                                             IsHitTestVisible="false" Opacity="0" Fill="{StaticResource                                            BorderBrushSelected}" Stroke="{StaticResource GlyphBrush}"                                             StrokeThickness="1" />
+                                <Rectangle HorizontalAlignment="Stretch" x:Name="FocusVisual" 
+                                           VerticalAlignment="Stretch" 
+                                            IsHitTestVisible="false" Opacity="0" Fill="{StaticResource 
+                                           BorderBrushSelected}" Stroke="{StaticResource GlyphBrush}" 
+                                            StrokeThickness="1" />
                                 <ContentPresenter Cursor="{TemplateBinding Cursor}" 
 		                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
 		                                    Margin="{TemplateBinding Padding}" 
 		                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 		                                    Content="{TemplateBinding Content}" 
 		                                    ContentTemplate="{TemplateBinding ContentTemplate}" />
-                                <Rectangle x:Name="RightGridLine" VerticalAlignment="Stretch"                                             Width="1" Grid.Column="1"/>
+                                <Rectangle x:Name="RightGridLine" VerticalAlignment="Stretch" 
+                                            Width="1" Grid.Column="1"/>
                             </Grid>
                         </ControlTemplate>
                     </Setter.Value>

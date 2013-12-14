@@ -1,14 +1,14 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:Convertors="clr-namespace:Soheil.Controls.Convertors"
+                    xmlns:Converters="clr-namespace:Soheil.Controls.Converters"
                     xmlns:Sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:ColorPicker="clr-namespace:Soheil.Controls.CustomControls.ColorPicker">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Brushes.xaml" />
         <ResourceDictionary>
-            <Convertors:MarginConverter x:Key="MarginConvertor" />
-            <Convertors:MultiSizeSubtractConverter x:Key="SizeConverter" />
-            <Convertors:DebugConverter x:Key="debugc" />
+            <Converters:MarginConverter x:Key="MarginConverter" />
+            <Converters:MultiSizeSubtractConverter x:Key="SizeConverter" />
+            <Converters:DebugConverter x:Key="debugc" />
         </ResourceDictionary>
         <ResourceDictionary>
             <Thickness x:Key="contentMargin">0.1,0.05,0.01,0.05</Thickness>

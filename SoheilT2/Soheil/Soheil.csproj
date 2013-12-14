@@ -120,7 +120,6 @@
     <Compile Include="Views\Fpc\Toolbox.xaml.cs">
       <DependentUpon>Toolbox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PP\Convertors.cs" />
     <Compile Include="Views\PP\GridHelper.cs" />
     <Compile Include="Views\PP\PPJobEditor.xaml.cs">
       <DependentUpon>PPJobEditor.xaml</DependentUpon>

@@ -1,60 +1,60 @@
 ﻿<ResourceDictionary 
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:local="clr-namespace:Soheil.Views.PP"
+	xmlns:ppconv="clr-namespace:Soheil.Controls.Converters.PP;assembly=Soheil.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	
 	<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
-	<local:BooleanToInvisibilityConverter x:Key="booleanToInvisibilityConverter"/>
-	<local:IsNotNull x:Key="isNotNull"/>
-	<local:IsNotNullToVisibility x:Key="isNotNullToVisibility"/>
-	<local:IsNullToVisibility x:Key="isNullToVisibility"/>
-	<local:Inverter x:Key="inverter"/>
-	<local:GridColumnToMargin x:Key="gridColumnToMargin"/>
-	<local:LogicalAnd x:Key="logicalAnd"/>
-	<local:LogicalAndToVisibility x:Key="logicalAndToVisibility"/>
-	
-	<local:FloatMultiplier x:Key="floatMultiplier"/>
-	<local:DoubleMultiplier x:Key="doubleMultiplier"/>
-	<local:DoubleMultiplier2 x:Key="doubleMultiplier2"/>
-	<local:IntX7Converter x:Key="intX7Converter"/>
-	<local:DoubleMultiplierToThickness x:Key="doubleMultiplierToThickness"/>
-	<local:ACrossBDividebByC x:Key="aCrossBDividebByC"/>
+    <ppconv:BooleanToInvisibilityConverter x:Key="booleanToInvisibilityConverter"/>
+    <ppconv:IsNotNull x:Key="isNotNull"/>
+    <ppconv:IsNotNullToVisibility x:Key="isNotNullToVisibility"/>
+    <ppconv:IsNullToVisibility x:Key="isNullToVisibility"/>
+    <ppconv:Inverter x:Key="inverter"/>
+    <ppconv:GridColumnToMargin x:Key="gridColumnToMargin"/>
+    <ppconv:LogicalAnd x:Key="logicalAnd"/>
+    <ppconv:LogicalAndToVisibility x:Key="logicalAndToVisibility"/>
 
-	<local:PortionToStarConverter x:Key="portionToStarConverter"/>
-	<local:TaskReportMargin x:Key="taskReportMargin"/>
-	<local:TaskReportWidth x:Key="taskReportWidth"/>
-	<local:PPTaskBorderWidthConverter x:Key="ppTaskBorderWidthConverter"/>
-	<local:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
-	<local:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
-	<local:TaskReportBuilderMarginConverter x:Key="taskReportBuilderMarginConverter"/>
-	<local:TaskReportBuilderInProcessMarginConverter x:Key="taskReportBuilderInProcessMarginConverter"/>
-	<local:ProcessReportBuilderMarginConverter x:Key="processReportBuilderMarginConverter"/>
-	
-	<local:ColorFixer x:Key="colorFixer"/>
-	<local:HighContrastForecolor x:Key="highContrastForecolor"/>
-	<local:TimeRollItemBackgroundConverter x:Key="timeRollItemBackgroundConverter"/>
-	<local:TimeRollItemForegroundConverter x:Key="timeRollItemForegroundConverter"/>
-	<local:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>
-	<local:OpaqueIfPositiveInt x:Key="opaqueIfPositiveInt"/>
-	<local:HasErrorToShadowColor x:Key="hasErrorToShadowColor"/>
-	<local:PPTableViewModeMatcher x:Key="ppTableViewModeMatcher"/>
-	<local:PPTableViewModeToInvisibilityConverter x:Key="ppTableViewModeToInvisibilityConverter"/>
-	<local:PPTableViewModeToVisibilityConverter x:Key="ppTableViewModeToVisibilityConverter"/>
-	
-	<local:ZoomMathDayLittleWindowWidth x:Key="zoomMathDayLittleWindowWidth"/>
-	<local:ZoomMathDayLittleWindowMargin x:Key="zoomMathDayLittleWindowMargin"/>
-	<local:HoursPanelMarginConverter x:Key="hoursPanelMarginConverter"/>
-	<local:MainPanelMarginConverter x:Key="mainPanelMarginConverter"/>
-	
-	<local:OperatorRoleTextConverter x:Key="operatorRoleTextConverter"/>
-	<local:OperatorRoleIsValue x:Key="operatorRoleIsValue"/>
-	<local:FilterMaker x:Key="filterMaker"/>
+    <ppconv:FloatMultiplier x:Key="floatMultiplier"/>
+    <ppconv:DoubleMultiplier x:Key="doubleMultiplier"/>
+    <ppconv:DoubleMultiplier2 x:Key="doubleMultiplier2"/>
+    <ppconv:IntX7Converter x:Key="intX7Converter"/>
+    <ppconv:DoubleMultiplierToThickness x:Key="doubleMultiplierToThickness"/>
+    <ppconv:ACrossBDividebByC x:Key="aCrossBDividebByC"/>
 
-	<local:TimeSpanToStringConverter x:Key="timeSpanToStringConverter"/>
-	<local:SecondsToStringConverter x:Key="secondsToStringConverter"/>
-	<local:CycleTimeToStringConverter x:Key="cycleTimeToStringConverter"/>
-	<local:DateToLocalStringConverter x:Key="dateToLocalStringConverter"/>
-	<local:DateToPersianDateConverter x:Key="dateToPersianDateConverter"/>
+    <ppconv:PortionToStarConverter x:Key="portionToStarConverter"/>
+    <ppconv:TaskReportMargin x:Key="taskReportMargin"/>
+    <ppconv:TaskReportWidth x:Key="taskReportWidth"/>
+    <ppconv:PPTaskBorderWidthConverter x:Key="ppTaskBorderWidthConverter"/>
+    <ppconv:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
+    <ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
+    <ppconv:TaskReportBuilderMarginConverter x:Key="taskReportBuilderMarginConverter"/>
+    <ppconv:TaskReportBuilderInProcessMarginConverter x:Key="taskReportBuilderInProcessMarginConverter"/>
+    <ppconv:ProcessReportBuilderMarginConverter x:Key="processReportBuilderMarginConverter"/>
+
+    <ppconv:ColorFixer x:Key="colorFixer"/>
+    <ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>
+    <ppconv:TimeRollItemBackgroundConverter x:Key="timeRollItemBackgroundConverter"/>
+    <ppconv:TimeRollItemForegroundConverter x:Key="timeRollItemForegroundConverter"/>
+    <ppconv:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>
+    <ppconv:OpaqueIfPositiveInt x:Key="opaqueIfPositiveInt"/>
+    <ppconv:HasErrorToShadowColor x:Key="hasErrorToShadowColor"/>
+    <ppconv:PPTableViewModeMatcher x:Key="ppTableViewModeMatcher"/>
+    <ppconv:PPTableViewModeToInvisibilityConverter x:Key="ppTableViewModeToInvisibilityConverter"/>
+    <ppconv:PPTableViewModeToVisibilityConverter x:Key="ppTableViewModeToVisibilityConverter"/>
+
+    <ppconv:ZoomMathDayLittleWindowWidth x:Key="zoomMathDayLittleWindowWidth"/>
+    <ppconv:ZoomMathDayLittleWindowMargin x:Key="zoomMathDayLittleWindowMargin"/>
+    <ppconv:HoursPanelMarginConverter x:Key="hoursPanelMarginConverter"/>
+    <ppconv:MainPanelMarginConverter x:Key="mainPanelMarginConverter"/>
+
+    <ppconv:OperatorRoleTextConverter x:Key="operatorRoleTextConverter"/>
+    <ppconv:OperatorRoleIsValue x:Key="operatorRoleIsValue"/>
+    <ppconv:FilterMaker x:Key="filterMaker"/>
+
+    <ppconv:TimeSpanToStringConverter x:Key="timeSpanToStringConverter"/>
+    <ppconv:SecondsToStringConverter x:Key="secondsToStringConverter"/>
+    <ppconv:CycleTimeToStringConverter x:Key="cycleTimeToStringConverter"/>
+    <ppconv:DateToLocalStringConverter x:Key="dateToLocalStringConverter"/>
+    <ppconv:DateToPersianDateConverter x:Key="dateToPersianDateConverter"/>
 	
 	<SolidColorBrush x:Key="stationBorderBrush" Color="Silver"/>
 	<SolidColorBrush x:Key="activityBorderBrush" Color="Silver"/>

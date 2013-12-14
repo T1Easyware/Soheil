@@ -1,7 +1,7 @@
 ﻿<Application x:Class="Soheil.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Convertors="clr-namespace:Soheil.Controls.Convertors;assembly=Soheil.Controls"
+             xmlns:Converters="clr-namespace:Soheil.Controls.Converters;assembly=Soheil.Controls"
              StartupUri="MainWindow.xaml">
 	<!--copy one of these before ?.xaml		Views\SetupTime\SetupTimeTest		MainWindow		-->
 	<Application.Resources>

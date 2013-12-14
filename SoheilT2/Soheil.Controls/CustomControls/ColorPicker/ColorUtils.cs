@@ -87,7 +87,7 @@ namespace Soheil.Controls.CustomControls.ColorPicker
             Type colorsType = typeof(System.Windows.Media.Colors);
             PropertyInfo[] colorsProperties = colorsType.GetProperties();
 
-            ColorConverter convertor = new ColorConverter();
+            ColorConverter converter = new ColorConverter();
 
             List<String> colorNames = new List<String>();
             foreach (PropertyInfo colorProperty in colorsProperties)

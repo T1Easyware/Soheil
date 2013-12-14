@@ -4,7 +4,7 @@
              xmlns:Behavior="clr-namespace:Soheil.Core.DataValidation.Behavior;assembly=Soheil.Core"
              xmlns:Common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
              xmlns:ControlBehaviors="clr-namespace:Soheil.Controls.Behaviors;assembly=Soheil.Controls"
-             xmlns:Convertors="clr-namespace:Soheil.Controls.Convertors;assembly=Soheil.Controls"
+             xmlns:Converters="clr-namespace:Soheil.Controls.Converters;assembly=Soheil.Controls"
              xmlns:D="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:I="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:Mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -29,22 +29,22 @@
         <SolidColorBrush x:Key="UpdateColor">Gold</SolidColorBrush>
         <SolidColorBrush x:Key="InsertColor">DodgerBlue</SolidColorBrush>
         <SolidColorBrush x:Key="FullColor">LimeGreen</SolidColorBrush>
-        <Convertors:InsertAccessTypeConverter x:Key="InsertConvertor"/>
-        <Convertors:UpdateAccessTypeConverter x:Key="UpdateConvertor"/>
-        <Convertors:PrintAccessTypeConverter x:Key="PrintConvertor"/>
-        <Convertors:ViewAccessTypeConverter x:Key="ViewConvertor"/>
-        <Convertors:FullAccessTypeConverter x:Key="FullConvertor"/>
-        <Convertors:ItemExtendedConverter x:Key="ItemExpandedConvertor" />
-        <Convertors:ReverseVisibilityConverter x:Key="ReverseVisibilityConvertor" />
-        <Convertors:ColumnVisibilityConverter x:Key="VisibilityConvertor" />
-        <Convertors:ComparisonConverter x:Key="ComparisonConverter" />
-        <Convertors:ComparisonVisibilityConverter x:Key="ComparisonVisibilityConverter" />
-        <Convertors:DateTimeConverter x:Key="DtConverter" />
-        <Convertors:MultiParameterConvertor x:Key="MultiParamConverter" />
-        <Convertors:CostMultiValueConvertor x:Key="MultiCostConverter" />
-        <Convertors:AccessTypeColorConverter x:Key="AccessColorConverter" />
-        <Convertors:ColorToBrushConverter x:Key="ColorConverter" />
-		<Convertors:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Converters:InsertAccessTypeConverter x:Key="InsertConverter"/>
+        <Converters:UpdateAccessTypeConverter x:Key="UpdateConverter"/>
+        <Converters:PrintAccessTypeConverter x:Key="PrintConverter"/>
+        <Converters:ViewAccessTypeConverter x:Key="ViewConverter"/>
+        <Converters:FullAccessTypeConverter x:Key="FullConverter"/>
+        <Converters:ItemExtendedConverter x:Key="ItemExpandedConverter" />
+        <Converters:ReverseVisibilityConverter x:Key="ReverseVisibilityConverter" />
+        <Converters:ColumnVisibilityConverter x:Key="VisibilityConverter" />
+        <Converters:ComparisonConverter x:Key="ComparisonConverter" />
+        <Converters:ComparisonVisibilityConverter x:Key="ComparisonVisibilityConverter" />
+        <Converters:DateTimeConverter x:Key="DtConverter" />
+        <Converters:MultiParameterConverter x:Key="MultiParamConverter" />
+        <Converters:CostMultiValueConverter x:Key="MultiCostConverter" />
+        <Converters:AccessTypeColorConverter x:Key="AccessColorConverter" />
+        <Converters:ColorToBrushConverter x:Key="ColorConverter" />
+		<Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <!--..........................................................................................................-->
 
         <!-- Data Providers -->
@@ -769,7 +769,7 @@
         </DataTemplate>
         <DataTemplate x:Key="UserPositionsTemplate" DataType="ViewModels:UserPositionsVM">
             <DockPanel  DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtPositions}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -791,7 +791,7 @@
         </DataTemplate>
         <DataTemplate x:Key="UserAccessRulesTemplate" DataType="ViewModels:UserAccessRulesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtModules}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -822,46 +822,46 @@
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="V" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource ViewColor}"
-                                                       Visibility="{Binding UserAccess,  Converter={StaticResource ViewConvertor}}"/>
+                                                       Visibility="{Binding UserAccess,  Converter={StaticResource ViewConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="P"  
                                                        FontWeight="ExtraBold" Foreground="{StaticResource PrintColor}"
-                                                       Visibility="{Binding UserAccess,  Converter={StaticResource PrintConvertor}}"/>
+                                                       Visibility="{Binding UserAccess,  Converter={StaticResource PrintConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="U" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource UpdateColor}"
-                                                       Visibility="{Binding  UserAccess, Converter={StaticResource UpdateConvertor}}"/>
+                                                       Visibility="{Binding  UserAccess, Converter={StaticResource UpdateConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="I" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource InsertColor}"
-                                                       Visibility="{Binding  UserAccess, Converter={StaticResource InsertConvertor}}"/>
+                                                       Visibility="{Binding  UserAccess, Converter={StaticResource InsertConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="  " 
                                                        FontWeight="ExtraBold" Background="{StaticResource FullColor}" 
-                                                       Visibility="{Binding  UserAccess, Converter={StaticResource FullConvertor}}"/>
+                                                       Visibility="{Binding  UserAccess, Converter={StaticResource FullConverter}}"/>
                                             <!--   +   -->
                                             <TextBlock Text=" "/>
                                             <TextBlock Text=" " Background="{StaticResource ControlBackgroundBrush}" />
                                             <TextBlock Text=" + " FontWeight="ExtraBold"/>
                                             <TextBlock Text="V" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource ViewColor}"
-                                                       Visibility="{Binding PositionAccess,  Converter={StaticResource ViewConvertor}}"/>
+                                                       Visibility="{Binding PositionAccess,  Converter={StaticResource ViewConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="P"  
                                                        FontWeight="ExtraBold" Foreground="{StaticResource PrintColor}"
-                                                       Visibility="{Binding PositionAccess,  Converter={StaticResource PrintConvertor}}"/>
+                                                       Visibility="{Binding PositionAccess,  Converter={StaticResource PrintConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="U" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource UpdateColor}"
-                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource UpdateConvertor}}"/>
+                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource UpdateConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="I" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource InsertColor}"
-                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource InsertConvertor}}"/>
+                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource InsertConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="  " 
                                                        FontWeight="ExtraBold" Background="{StaticResource FullColor}" 
-                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource FullConvertor}}"/>
+                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource FullConverter}}"/>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
                                 </ResourceDictionary>
@@ -962,7 +962,7 @@
         </DataTemplate>
         <DataTemplate x:Key="PositionUsersTemplate" DataType="ViewModels:PositionUsersVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtUsers}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -984,7 +984,7 @@
         </DataTemplate>
         <DataTemplate x:Key="PositionAccessRulesTemplate" DataType="ViewModels:PositionAccessRulesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
-                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtModules}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -1015,23 +1015,23 @@
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="V" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource ViewColor}"
-                                                       Visibility="{Binding PositionAccess,  Converter={StaticResource ViewConvertor}}"/>
+                                                       Visibility="{Binding PositionAccess,  Converter={StaticResource ViewConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="P"  
                                                        FontWeight="ExtraBold" Foreground="{StaticResource PrintColor}"
-                                                       Visibility="{Binding PositionAccess,  Converter={StaticResource PrintConvertor}}"/>
+                                                       Visibility="{Binding PositionAccess,  Converter={StaticResource PrintConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="U" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource UpdateColor}"
-                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource UpdateConvertor}}"/>
+                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource UpdateConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="I" 
                                                        FontWeight="ExtraBold" Foreground="{StaticResource InsertColor}"
-                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource InsertConvertor}}"/>
+                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource InsertConverter}}"/>
                                             <TextBlock Text=" "/>
                                             <TextBlock Text="  " 
                                                        FontWeight="ExtraBold" Background="{StaticResource FullColor}" 
-                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource FullConvertor}}"/>
+                                                       Visibility="{Binding  PositionAccess, Converter={StaticResource FullConverter}}"/>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
                                 </ResourceDictionary>
@@ -1468,16 +1468,16 @@
 		<!--  1.2.1. Work Profile  -->
 		<DataTemplate x:Key="WorkProfileTemplate" DataType="wt:WorkProfileVm"
 					  xmlns:wt="clr-namespace:Soheil.Core.ViewModels.OrganizationCalendar"
-					  xmlns:conv="clr-namespace:Soheil.Views.PP">
+					  xmlns:conv="clr-namespace:Soheil.Controls.Converters.PP;assembly=Soheil.Controls">
 			<DataTemplate.Resources>
 				<conv:ColorFixer x:Key="colorFixer"/>
-				<Convertors:ColorToRgbBrush x:Key="ColorToRgbBrush"/>
-				<Convertors:ShiftStartSecondsToMargin x:Key="ShiftStartSecondsToMargin"/>
-				<Convertors:ShiftEndSecondsToMargin x:Key="ShiftEndSecondsToMargin"/>
-				<Convertors:ShiftDurationToWidth x:Key="ShiftDurationToWidth"/>
-				<Convertors:ShiftBreakDurationToEndMargin x:Key="ShiftBreakDurationToEndMargin"/>
-				<Convertors:ShiftBreakDurationToWidth x:Key="ShiftBreakDurationToWidth"/>
-				<Convertors:WorkShiftSecondsToString x:Key="WorkShiftSecondsToString"/>
+				<Converters:ColorToRgbBrush x:Key="ColorToRgbBrush"/>
+				<Converters:ShiftStartSecondsToMargin x:Key="ShiftStartSecondsToMargin"/>
+				<Converters:ShiftEndSecondsToMargin x:Key="ShiftEndSecondsToMargin"/>
+				<Converters:ShiftDurationToWidth x:Key="ShiftDurationToWidth"/>
+				<Converters:ShiftBreakDurationToEndMargin x:Key="ShiftBreakDurationToEndMargin"/>
+				<Converters:ShiftBreakDurationToWidth x:Key="ShiftBreakDurationToWidth"/>
+				<Converters:WorkShiftSecondsToString x:Key="WorkShiftSecondsToString"/>
 				
 			</DataTemplate.Resources>
 			<GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
@@ -2038,7 +2038,7 @@
         </DataTemplate>
         <DataTemplate x:Key="ProductDefectionsTemplate" DataType="ContentControl">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView},  Path=ViewModel}"
-                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtDefections}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -2060,7 +2060,7 @@
         </DataTemplate>
         <DataTemplate x:Key="ProductReworksTemplate" DataType="ViewModels:ProductReworksVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtReworks}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -2150,7 +2150,7 @@
         </DataTemplate>
         <DataTemplate x:Key="ReworkProductsTemplate" DataType="ViewModels:ReworkProductsVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtProducts}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -2245,7 +2245,7 @@
         </DataTemplate>
         <DataTemplate x:Key="DefectionProductsTemplate" DataType="ViewModels:DefectionProductsVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtProducts}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -2335,11 +2335,11 @@
                                                         <GradientStop Offset="1" Color="Black" />
                                                     </LinearGradientBrush>
                                                     <DropShadowBitmapEffect x:Key="DropShadowEffect" />
-                                                    <Convertors:FishboneHorizontalUpVisibilityConverter x:Key="HorizontalUpVisibilityConverter"/>
-                                                    <Convertors:FishboneHorizontalDownVisibilityConverter x:Key="HorizontalDownVisibilityConverter"/>
-                                                    <Convertors:FishboneUpGapVisibilityConverter x:Key="UpGapVisibilityConverter"/>
-                                                    <Convertors:FishboneDownGapVisibilityConverter x:Key="DownGapVisibilityConverter"/>
-                                                    <Convertors:FishboneVerticalVisibilityConverter x:Key="VerticalVisibilityConverter"/>
+                                                    <Converters:FishboneHorizontalUpVisibilityConverter x:Key="HorizontalUpVisibilityConverter"/>
+                                                    <Converters:FishboneHorizontalDownVisibilityConverter x:Key="HorizontalDownVisibilityConverter"/>
+                                                    <Converters:FishboneUpGapVisibilityConverter x:Key="UpGapVisibilityConverter"/>
+                                                    <Converters:FishboneDownGapVisibilityConverter x:Key="DownGapVisibilityConverter"/>
+                                                    <Converters:FishboneVerticalVisibilityConverter x:Key="VerticalVisibilityConverter"/>
                                                 </Style.Resources>
                                                 <Setter Property="Template">
                                                     <Setter.Value>
@@ -2642,7 +2642,7 @@
         </DataTemplate>
         <DataTemplate x:Key="FishboneNodeActionPlansTemplate" DataType="ViewModels:FishboneNodeActionPlansVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtActionPlans}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -2693,7 +2693,7 @@
         </DataTemplate>
         <DataTemplate x:Key="ActionPlanFishboneNodesTemplate" DataType="ViewModels:ActionPlanFishbonesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtFishboneNodes}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -2862,7 +2862,7 @@
         </DataTemplate>
         <DataTemplate x:Key="StationMachinesTemplate" DataType="ContentControl">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtMachines}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -2913,7 +2913,7 @@
         </DataTemplate>
         <DataTemplate x:Key="MachineStationsTemplate" DataType="ContentControl">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView},  Path=ViewModel}"
-                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtStations}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -2982,7 +2982,7 @@
         </DataTemplate>
         <DataTemplate x:Key="ActivityOperatorsTemplate" DataType="ViewModels:ActivityOperatorsVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtOperators}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -3094,7 +3094,7 @@
         </DataTemplate>
         <DataTemplate x:Key="OperatorActivitiesTemplate" DataType="ViewModels:OperatorActivitiesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConvertor}}">
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtActivities}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
@@ -3608,7 +3608,7 @@
                                             <Expander>
                                                 <Expander.IsExpanded>
                                                     <Binding RelativeSource="{RelativeSource AncestorType=GroupItem}"
-                                                             Converter="{StaticResource ItemExpandedConvertor}" Mode="OneWay">
+                                                             Converter="{StaticResource ItemExpandedConverter}" Mode="OneWay">
                                                         <Binding.Path>Content.Items</Binding.Path>
                                                     </Binding>
                                                 </Expander.IsExpanded>
