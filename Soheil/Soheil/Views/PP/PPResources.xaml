@@ -1,0 +1,71 @@
+﻿<ResourceDictionary 
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:ppconv="clr-namespace:Soheil.Controls.Converters.PP;assembly=Soheil.Controls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	
+	<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
+    <ppconv:BooleanToInvisibilityConverter x:Key="booleanToInvisibilityConverter"/>
+    <ppconv:IsNotNull x:Key="isNotNull"/>
+    <ppconv:IsNotNullToVisibility x:Key="isNotNullToVisibility"/>
+    <ppconv:IsNullToVisibility x:Key="isNullToVisibility"/>
+    <ppconv:Inverter x:Key="inverter"/>
+    <ppconv:GridColumnToMargin x:Key="gridColumnToMargin"/>
+    <ppconv:LogicalAnd x:Key="logicalAnd"/>
+    <ppconv:LogicalAndToVisibility x:Key="logicalAndToVisibility"/>
+
+    <ppconv:FloatMultiplier x:Key="floatMultiplier"/>
+    <ppconv:DoubleMultiplier x:Key="doubleMultiplier"/>
+    <ppconv:DoubleMultiplier2 x:Key="doubleMultiplier2"/>
+    <ppconv:IntX7Converter x:Key="intX7Converter"/>
+    <ppconv:DoubleMultiplierToThickness x:Key="doubleMultiplierToThickness"/>
+    <ppconv:ACrossBDividebByC x:Key="aCrossBDividebByC"/>
+
+    <ppconv:PortionToStarConverter x:Key="portionToStarConverter"/>
+    <ppconv:TaskReportMargin x:Key="taskReportMargin"/>
+    <ppconv:TaskReportWidth x:Key="taskReportWidth"/>
+    <ppconv:PPTaskBorderWidthConverter x:Key="ppTaskBorderWidthConverter"/>
+    <ppconv:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
+    <ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
+    <ppconv:TaskReportBuilderMarginConverter x:Key="taskReportBuilderMarginConverter"/>
+    <ppconv:TaskReportBuilderInProcessMarginConverter x:Key="taskReportBuilderInProcessMarginConverter"/>
+    <ppconv:ProcessReportBuilderMarginConverter x:Key="processReportBuilderMarginConverter"/>
+
+    <ppconv:ColorFixer x:Key="colorFixer"/>
+    <ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>
+    <ppconv:TimeRollItemBackgroundConverter x:Key="timeRollItemBackgroundConverter"/>
+    <ppconv:TimeRollItemForegroundConverter x:Key="timeRollItemForegroundConverter"/>
+    <ppconv:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>
+    <ppconv:OpaqueIfPositiveInt x:Key="opaqueIfPositiveInt"/>
+    <ppconv:HasErrorToShadowColor x:Key="hasErrorToShadowColor"/>
+    <ppconv:PPTableViewModeMatcher x:Key="ppTableViewModeMatcher"/>
+    <ppconv:PPTableViewModeToInvisibilityConverter x:Key="ppTableViewModeToInvisibilityConverter"/>
+    <ppconv:PPTableViewModeToVisibilityConverter x:Key="ppTableViewModeToVisibilityConverter"/>
+
+    <ppconv:ZoomMathDayLittleWindowWidth x:Key="zoomMathDayLittleWindowWidth"/>
+    <ppconv:ZoomMathDayLittleWindowMargin x:Key="zoomMathDayLittleWindowMargin"/>
+    <ppconv:HoursPanelMarginConverter x:Key="hoursPanelMarginConverter"/>
+    <ppconv:MainPanelMarginConverter x:Key="mainPanelMarginConverter"/>
+
+    <ppconv:OperatorRoleTextConverter x:Key="operatorRoleTextConverter"/>
+    <ppconv:OperatorRoleIsValue x:Key="operatorRoleIsValue"/>
+    <ppconv:FilterMaker x:Key="filterMaker"/>
+
+    <ppconv:TimeSpanToStringConverter x:Key="timeSpanToStringConverter"/>
+    <ppconv:SecondsToStringConverter x:Key="secondsToStringConverter"/>
+    <ppconv:CycleTimeToStringConverter x:Key="cycleTimeToStringConverter"/>
+    <ppconv:DateToLocalStringConverter x:Key="dateToLocalStringConverter"/>
+    <ppconv:DateToPersianDateConverter x:Key="dateToPersianDateConverter"/>
+	
+	<SolidColorBrush x:Key="stationBorderBrush" Color="Silver"/>
+	<SolidColorBrush x:Key="activityBorderBrush" Color="Silver"/>
+	<SolidColorBrush x:Key="activityBackBrush" Color="#677"/>
+	<SolidColorBrush x:Key="taskDateStuffHeaderBackground" Color="DimGray"/>
+	<SolidColorBrush x:Key="taskDateStuffInsideBackground" Color="#444"/>
+	<SolidColorBrush x:Key="taskDateStuffBorderBrush" Color="Silver"/>
+
+	<Color x:Key="HighlightColor">#40FF</Color>
+	<SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource HighlightColor}" />
+	<SolidColorBrush x:Key="HeaderBackground" Color="#A012" />
+	<SolidColorBrush x:Key="HeaderBorderBrush" Color="#6044" />
+	<SolidColorBrush x:Key="GlyphBrush" Color="#444" />
+</ResourceDictionary>
