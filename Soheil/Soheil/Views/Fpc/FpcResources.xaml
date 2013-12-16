@@ -1,0 +1,74 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:comm="clr-namespace:Soheil.Common;assembly=Soheil.Common"
+					xmlns:format="clr-namespace:Soheil.Common;assembly=Soheil.Common"
+					xmlns:core="clr-namespace:Soheil.Core.Fpc;assembly=Soheil.Core"
+					xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
+					xmlns:my="clr-namespace:System;assembly=mscorlib"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<SolidColorBrush x:Key="cyanBrush" Color="#40BCBC"/>
+	<SolidColorBrush x:Key="greenBrush" Color="#40BC40"/>
+	<SolidColorBrush x:Key="blueBrush" Color="#4040BC"/>
+	<SolidColorBrush x:Key="redBrush" Color="#BC4040"/>
+	<Border x:Key="fpcBackBrushVisual" BorderBrush="#5FFF" BorderThickness="0.1" Width="64" Height="64"/>
+	<VisualBrush x:Key="fpcBackBrush" Viewport="0,0,64,64" TileMode="Tile" ViewportUnits="Absolute" Visual="{StaticResource fpcBackBrushVisual}"/>
+
+	<comm:BindingProxy x:Key="root" Data="{Binding}"/>
+	<core:ConnectorLocationConverter x:Key="connectorLocationConverter"/>
+	<core:ConnectorAngleConverter x:Key="connectorAngleConverter"/>
+	<core:ConnectorLengthConverter x:Key="connectorLengthConverter"/>
+	<core:BooleanToVisibilityConverter x:Key="visibilityConverter"/>
+	<core:BooleanToInvisibilityConverter x:Key="invisibilityConverter"/>
+	<core:NullToInvisibilityConverter x:Key="nullToInvisibilityConverter"/>
+	<core:StateTemplateSelector x:Key="stateTemplateSelector"/>
+	<core:StateViewerTemplateSelector x:Key="stateViewerTemplateSelector"/>
+	<core:TreeItemTemplateSelector x:Key="treeItemTemplateSelector"/>
+	<core:TreeItemViewerTemplateSelector x:Key="treeItemViewerTemplateSelector"/>
+	<format:SafeRound1FloatConverter x:Key="round1Converter"/>
+	<core:TreeItemToExpanderButtonWidthConverter x:Key="treeItemToExpanderButtonWidthConverter"/>
+	<core:SelectedStateBorderBrushConverter x:Key="selectedStateBorderBrushConverter"/>
+	<core:FocusedStateBorderBrushConverter x:Key="focusedStateBorderBrushConverter"/>
+	<core:ExpanderHeaderOpacityConverter x:Key="expanderHeaderOpacityConverter"/>
+
+	<my:Double x:Key="shadowOpacity">0.3</my:Double>
+
+	<!--Button Images-->
+	<Style x:Key="deleteImage" TargetType="{x:Type Image}">
+		<Setter Property="Source" Value="/Images/Fpc/Delete16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="saveImage" TargetType="{x:Type Image}">
+		<Setter Property="Source" Value="/Images/Fpc/Save16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="resetImage" TargetType="{x:Type Image}">
+		<Setter Property="Source" Value="/Images/Fpc/Undo16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="expandedImage" TargetType="{x:Type Image}">
+		<Setter Property="Source" Value="/Images/Fpc/Collapse16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="shrunkImage" TargetType="{x:Type Image}">
+		<Setter Property="Source" Value="/Images/Fpc/Expand16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="newImage" TargetType="{x:Type Image}">
+		<Setter Property="Source" Value="/Images/Fpc/New16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<!--isDefaultImageStyle-->
+	<Style x:Key="isDefaultImageStyle" TargetType="Image">
+		<Setter Property="Source" Value="/Images/Fpc/default.png"/>
+		<Setter Property="Width" Value="16"/>
+		<Style.Triggers>
+			<DataTrigger Binding="{Binding IsDefault}" Value="False">
+				<Setter Property="Source" Value="/Images/Fpc/notdefault.png"/>
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+	<!--fpc ComboBox-->
+	<DataTemplate x:Key="fpcTemplate" DataType="{x:Type vm:FpcVm}">
+		<TextBlock Text="{Binding Rework.Name}" Margin="1" Background="#1FFF"/>
+	</DataTemplate>
+</ResourceDictionary>

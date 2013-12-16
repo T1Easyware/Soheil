@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{10F42FD7-ED4D-4EBD-BCC2-FF0AABAA4B56}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Soheil.Controls</RootNamespace>
+    <AssemblyName>Soheil.Controls</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External Assemblies\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="PersianDate">
+      <HintPath>..\External Assemblies\PersianDate.dll</HintPath>
+    </Reference>
+    <Reference Include="PersianDateControls">
+      <HintPath>..\External Assemblies\PersianDateControls.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External Assemblies\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Behaviors\BindableSelectedItemBehavior.cs" />
+    <Compile Include="Behaviors\LinqToVisualTree.cs" />
+    <Compile Include="Behaviors\ScrollOffsetBinding.cs" />
+    <Compile Include="Converters\BooleanToLengthConverter.cs" />
+    <Compile Include="Converters\ColorToBrushConvertor.cs" />
+    <Compile Include="Converters\ColumnVisibilityConverter.cs" />
+    <Compile Include="Converters\AccessTypeColorConverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\AccessTypeVisibilityConverter.cs" />
+    <Compile Include="Converters\PPTableConvertors.cs" />
+    <Compile Include="Converters\SearchValueConverter.cs" />
+    <Compile Include="Converters\TreeNodeAlignmentConverter.cs" />
+    <Compile Include="Converters\FishboneLabelRotateAngelConverter.cs" />
+    <Compile Include="Converters\FishboneRotateAngelConverter.cs" />
+    <Compile Include="Converters\FishboneHorizontalVisibilityConverter.cs" />
+    <Compile Include="Converters\ComparisonConverter.cs" />
+    <Compile Include="Converters\CostMultiValueConvertor.cs" />
+    <Compile Include="Converters\FishboneVerticalVisibilityConverter.cs" />
+    <Compile Include="Converters\ItemsPanelOrientationConverter.cs" />
+    <Compile Include="Converters\ReverseVisibilityConverter.cs" />
+    <Compile Include="Converters\DataVisibilityConverter.cs" />
+    <Compile Include="Converters\NodeExtractorConverter.cs" />
+    <Compile Include="Converters\DateTimeConverter.cs" />
+    <Compile Include="Converters\MarginConverter.cs" />
+    <Compile Include="Converters\MultiParameterConvertor.cs" />
+    <Compile Include="Converters\SizeMultiplierConverter.cs" />
+    <Compile Include="Converters\ItemExtendedConverter.cs" />
+    <Compile Include="Converters\DebugConverter.cs" />
+    <Compile Include="Converters\MultiSizeSubtractConverter.cs" />
+    <Compile Include="Converters\MultiSizeSumConverter.cs" />
+    <Compile Include="Converters\WorkProfileConverters.cs" />
+    <Compile Include="CustomControls\AdornedControl.cs" />
+    <Compile Include="CustomControls\AdornerPlacement.cs" />
+    <Compile Include="CustomControls\AutoHeightCanvas.cs" />
+    <Compile Include="CustomControls\ChromeTabControl.cs" />
+    <Compile Include="CustomControls\ChromeTabItem.cs" />
+    <Compile Include="CustomControls\ChromeTabPanel.cs" />
+    <Compile Include="CustomControls\CliplessCanvas.cs" />
+    <Compile Include="CustomControls\ColorPicker\BindOnEnterTextBox.cs" />
+    <Compile Include="CustomControls\ColorPicker\ColorComboBox.cs" />
+    <Compile Include="CustomControls\ColorPicker\ColorPicker.cs" />
+    <Compile Include="CustomControls\ColorPicker\ColorSlider.cs" />
+    <Compile Include="CustomControls\ColorPicker\ColorUtils.cs" />
+    <Compile Include="CustomControls\ColorPicker\HsvControl.cs" />
+    <Compile Include="CustomControls\ColorPicker\SpectrumSlider.cs" />
+    <Compile Include="CustomControls\FrameworkElementAdorner.cs" />
+    <Compile Include="ControlExtensions.cs" />
+    <Compile Include="CustomControls\GridLengthAnimation.cs" />
+    <Compile Include="CustomControls\OverlayMessageBox.xaml.cs">
+      <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataGridTextSearch.cs" />
+    <Compile Include="PasswordHelper.cs" />
+    <Compile Include="CustomControls\GridHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Layout\WindowStyle.xaml.cs">
+      <DependentUpon>WindowStyle.xaml</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="CustomControls\OverlayMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Layout\Brushes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Layout\Colors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Layout\ExpressionDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Layout\Fonts.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Layout\PPStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Layout\Styles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Layout\WindowStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Soheil.Common\Soheil.Common.csproj">
+      <Project>{75AD5F1E-719C-4B8A-B573-DFE6FC05E2C9}</Project>
+      <Name>Soheil.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Soheil.Core\Soheil.Core.csproj">
+      <Project>{52709bb8-fdb0-472d-8419-7c0ddbd397b3}</Project>
+      <Name>Soheil.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\unpin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\highlightedMaximize.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\highlightedMinimize.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\normalMaximize.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\normalMinimize.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ExpanderButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PlusButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DMBerror.png" />
+    <Resource Include="Images\DMBinfo.png" />
+    <Resource Include="Images\DMBquestion.png" />
+    <Resource Include="Images\DMBwarning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\GhostButton.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
