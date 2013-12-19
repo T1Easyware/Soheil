@@ -16,21 +16,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		#region Ctor, ChangeFPC & Reset
 		public FpcWindowVm()
 		{
-			Model = new Model.FPC();
-
-			_lock = false;
-			Message = new DependencyMessageBox();
-			fpcDataService = new FPCDataService();
-
-			//items
-			var stations = fpcDataService.stationDataService.GetAllIncludingMachines();
-			foreach (var item in stations)
-				Stations.Add(new StationVm(item));
-
-			var actgs = fpcDataService.activityGroupDataService.GetAllWithActivities();
-			foreach (var item in actgs)
-				ActivityGroups.Add(new ActivityGroupVm(item));
-
 			initCommands();
 		}
 
@@ -64,10 +49,9 @@ namespace Soheil.Core.ViewModels.Fpc
 				var conns = fpcDataService.connectorDataService.GetByFpcId(Id);
 				foreach (var item in conns)
 				{
-					Connectors.Add(new ConnectorVm(
+					Connectors.Add(new ConnectorVm(item,
 						States.FirstOrDefault(x => x.Id == item.StartState.Id),
-						States.FirstOrDefault(x => x.Id == item.EndState.Id),
-						this));
+						States.FirstOrDefault(x => x.Id == item.EndState.Id)));
 				}
 			}
 			catch (SoheilExceptionBase exp)
@@ -93,10 +77,29 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		public void ResetFPC(bool clearModel = false)
 		{
+			_lock = false;
+			Message = new DependencyMessageBox();
+			fpcDataService = new FPCDataService();
+
+			//Stations
+			Stations.Clear();
+			var stations = fpcDataService.stationDataService.GetAllIncludingMachines();
+			foreach (var item in stations)
+				Stations.Add(new StationVm(item));
+
+			//ActivityGroups
+			ActivityGroups.Clear();
+			var actgs = fpcDataService.activityGroupDataService.GetAllWithActivities();
+			foreach (var item in actgs)
+				ActivityGroups.Add(new ActivityGroupVm(item));
+
+			//Drawing area
 			States.Clear();
 			Connectors.Clear();
+
 			FocusedState = null;
-			if (clearModel) Model = new Model.FPC();
+			if (clearModel) 
+				Model = new Model.FPC();
 		}
 		#endregion
 
@@ -164,22 +167,30 @@ namespace Soheil.Core.ViewModels.Fpc
 				{
 					if ((bool)d.GetValue(ToolConnectorProperty)) d.SetValue(ToolConnectorProperty, false);
 					if ((bool)d.GetValue(ToolSelectionProperty)) d.SetValue(ToolSelectionProperty, false);
-					vm._newDraggingStateVm = new StateVm(null, vm)
-					{
-						Id = -1,
-						ParentWindowVm = vm,
-						Location = new Vector(-50, -20),
-						StateType = StateType.Mid,
-						Opacity = 0.4d,
-					};
-					vm._newDraggingStateVm.Config = new StateConfigVm(vm._newDraggingStateVm, vm);
-					vm.States.Add(vm._newDraggingStateVm);
-					vm.DragTarget = vm._newDraggingStateVm;
-					vm.RelativeDragPoint = new Point(50, 20);
+					vm.addStateByTool();
 				}
 				else if ((bool)e.OldValue) d.SetValue(ToolStateProperty, true);
 				((FpcWindowVm)d)._lock = false;
 			}));
+		private void addStateByTool()
+		{
+			var stateModel = new Model.State
+			{
+				StateType = StateType.Mid,
+				X = -50,
+				Y = -20,
+			};
+			this.Model.States.Add(stateModel);
+
+			_newDraggingStateVm = new StateVm(stateModel, this)
+			{
+				Opacity = 0.4d,
+			};
+			_newDraggingStateVm.Config = new StateConfigVm(_newDraggingStateVm);
+			this.States.Add(_newDraggingStateVm);
+			DragTarget = _newDraggingStateVm;
+			RelativeDragPoint = new Point(50, 20);
+		}
 		//MainToolbox item : Connector
 		public bool ToolConnector
 		{
@@ -300,7 +311,16 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				try
 				{
+					foreach (var state in States)
+					{
+						state.PromptSave();
+					}
 					fpcDataService.ApplyChanges();
+					foreach (var state in States)
+					{
+						state.IsChanged = false;
+					}
+
 					//check for tracability
 					Soheil.Core.PP.Smart.SmartJob.AutoRouteCheck(this.Id);
 					//always throws, so no after lines
@@ -454,15 +474,18 @@ namespace Soheil.Core.ViewModels.Fpc
 				if (ToolConnector)
 				{
 					RemoveHalfDrawnConnector();
-					var end = new StateVm(pos_drawingArea, this);
+					
+					//create a temporary state attached to the end of connector
+					var end = new StateVm(new Model.State
+					{
+						X = (float)pos_drawingArea.X,
+						Y = (float)pos_drawingArea.Y,
+					}, 
+					this, true);
+
 					DragTarget = end;
 					States.Add(end);
-					Connectors.Add(new ConnectorVm
-					{
-						Start = state,
-						End = end,
-						IsLoose = true
-					});
+					Connectors.Add(new ConnectorVm(null, state, end, true));
 					RelativeDragPoint = new Point(0, 0);
 				}
 				//state is dragging
@@ -541,12 +564,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			else if (!item.ContentsList.Any(x => x.IsDropIndicator))
 			{
 				SelectedToolboxItem.CanDrop = true;
-				_dropIndicator = new TreeItemVm(this)
-				{
-					Container = item,
-					Containment = SelectedToolboxItem.ContentData,
-					IsDropIndicator = true,
-				};
+				_dropIndicator = new DropIndicatorVm(this, item, SelectedToolboxItem.ContentData);
 				item.ContentsList.Add(_dropIndicator);
 			}
 		}

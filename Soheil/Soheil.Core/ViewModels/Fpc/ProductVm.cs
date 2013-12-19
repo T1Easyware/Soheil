@@ -5,34 +5,33 @@ using System.Text;
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
-	public class ProductVm : NamedVM
+	public class ProductVm : ViewModelBase, IToolboxData
 	{
-		public ProductVm() { }
-		public ProductVm(Model.Product model)
+		public Model.Product Model { get; protected set; }
+		public int Id { get { return Model == null ? -1 : Model.Id; } }
+		public string Name
 		{
-			Id = model.Id;
-			Name = model.Name;
-			Code = model.Code;
-			Color = model.Color;
+			get { return Model == null ? "" : Model.Name; }
+			set { Model.Name = value; OnPropertyChanged("Name"); }
 		}
-		//Code Dependency Property
 		public string Code
 		{
-			get { return (string)GetValue(CodeProperty); }
-			set { SetValue(CodeProperty, value); }
+			get { return Model == null ? "" : Model.Code; }
+			set { Model.Code = value; OnPropertyChanged("Code"); }
 		}
-		public static readonly DependencyProperty CodeProperty =
-			DependencyProperty.Register("Code", typeof(string), typeof(ProductVm), new UIPropertyMetadata(null));
-		//Color Dependency Property
 		public Color Color
 		{
-			get { return (System.Windows.Media.Color)GetValue(ColorProperty); }
-			set { SetValue(ColorProperty, value); }
+			get { return Model == null ? Colors.White : Model.Color; }
+			set { Model.Color = value; OnPropertyChanged("Color"); }
 		}
-		public static readonly DependencyProperty ColorProperty =
-			DependencyProperty.Register("Color", typeof(Color), typeof(ProductVm), new UIPropertyMetadata(Colors.White));
+
+		public ProductVm(Model.Product model)
+		{
+			Model = model;
+		}
 	}
 }

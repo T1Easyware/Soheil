@@ -4,17 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using Soheil.Core.DataServices;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
-	public class StationMachineVm : ViewModel
+	public class StationMachineVm : ViewModelBase
 	{
-		public StationMachineVm()
-		{
-
-		}
 		public StationMachineVm(Model.StationMachine model, StationVm station)
 		{
+			Model = model;
 			Station = station;
 			var machineDs = new MachineDataService();
 			var machineFamilyDs = new MachineFamilyDataService();
@@ -22,6 +20,10 @@ namespace Soheil.Core.ViewModels.Fpc
 			var machineFamilyModel = machineFamilyDs.GetSingle(machineModel.MachineFamily.Id);
 			Machine = new MachineVm(machineModel, new MachineFamilyVm(machineFamilyModel));
 		}
+
+		public Model.StationMachine Model { get; protected set; }
+		public int Id { get { return Model == null ? -1 : Model.Id; } }
+
 		//Station Dependency Property
 		public StationVm Station
 		{

@@ -214,6 +214,8 @@ namespace Soheil.Core.DataServices
 
 		internal void CorrectFPCStates(Model.FPC model)
 		{
+			//stateDataService.AddModel does not need commit but it has
+
 			//add start state
 			if (!model.States.Any(x => x.StateTypeNr == (int)StateType.Start))
 				stateDataService.AddModel(new State

@@ -12,6 +12,8 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			_parentWindowVm = parentWindowVm;
 		}
+		public override int Id { get { return ContentData.Id; } }
+
 		FpcWindowVm _parentWindowVm;
 
 		public StateConfigVm GetUnderlyingStateConfig(Point mouse)
@@ -66,13 +68,13 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty TextProperty =
 			DependencyProperty.Register("Text", typeof(string), typeof(ToolboxItemVm), new UIPropertyMetadata(""));
 		//ContentData Dependency Property
-		public NamedVM ContentData
+		public IToolboxData ContentData
 		{
-			get { return (NamedVM)GetValue(ContentDataProperty); }
+			get { return (IToolboxData)GetValue(ContentDataProperty); }
 			set { SetValue(ContentDataProperty, value); }
 		}
 		public static readonly DependencyProperty ContentDataProperty =
-			DependencyProperty.Register("ContentData", typeof(NamedVM), typeof(ToolboxItemVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("ContentData", typeof(IToolboxData), typeof(ToolboxItemVm), new UIPropertyMetadata(null));
 		//CanDrop Dependency Property
 		public bool CanDrop
 		{

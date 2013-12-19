@@ -10,6 +10,9 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class StateStationVm : TreeItemVm
 	{
+		public Model.StateStation Model { get; private set; }
+		public override int Id { get { return Model == null ? -1 : Model.Id; } }
+
 		public StateStationVm(FpcWindowVm parentWindowVm, Model.StateStation model)
 			: base(parentWindowVm)
 		{
@@ -18,7 +21,6 @@ namespace Soheil.Core.ViewModels.Fpc
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
 
-		public Model.StateStation Model { get; private set; }
 
 		public StateConfigVm ContainerS { get { return (StateConfigVm)base.Container; } set { base.Container = value; } }
 		public StationVm ContainmentStation { get { return (StationVm)base.Containment; } set { base.Containment = value; } }
@@ -33,7 +35,7 @@ namespace Soheil.Core.ViewModels.Fpc
 					var vm = item as StateStationActivityVm;
 					if (vm != null)
 					{
-						Model.StateStationActivities.Remove(vm.Model);
+						Parent.fpcDataService.stateDataService.RemoveRecursive(vm.Model);
 						Change();
 					}
 				}

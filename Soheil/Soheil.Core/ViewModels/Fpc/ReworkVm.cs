@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soheil.Core.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,20 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
-	public class ProductReworkVm : NamedVM
+	public class ProductReworkVm : ViewModelBase, IToolboxData
 	{
-		public Model.ProductRework Model { get; set; }
+		public Model.ProductRework Model { get; protected set; }
+		public int Id { get { return Model == null ? -1 : Model.Id; } }
+		public string Name
+		{
+			get { return Model == null ? "" : Model.Name; }
+			set { Model.Name = value; OnPropertyChanged("Name"); }
+		}
+		public string Code
+		{
+			get { return Model == null ? "" : Model.Code; }
+			set { Model.Code = value; OnPropertyChanged("Code"); }
+		}
 
 		public ProductReworkVm(Model.ProductRework model)
 		{
@@ -17,28 +29,16 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				Name = "محصول نهایی";
 				ReworkName = "محصول نهایی";
-				Code = "";
 				IsMainProduction = true;
 			}
 			else
 			{
-				Name = model.Name;
 				ReworkName = model.Rework.Name;
-				Code = model.Code;
 				IsMainProduction = false;
 			}
-			Id = model.Id;
 		}
 		public bool IsMainProduction { get; private set; }
 
-		//Code Dependency Property
-		public string Code
-		{
-			get { return (string)GetValue(CodeProperty); }
-			set { SetValue(CodeProperty, value); }
-		}
-		public static readonly DependencyProperty CodeProperty =
-			DependencyProperty.Register("Code", typeof(string), typeof(ProductReworkVm), new UIPropertyMetadata(null));
 		//ReworkName Dependency Property
 		public string ReworkName
 		{

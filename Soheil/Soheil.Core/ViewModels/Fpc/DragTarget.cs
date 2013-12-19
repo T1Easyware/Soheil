@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soheil.Core.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Soheil.Core.ViewModels.Fpc
 	/// <summary>
 	/// connector, state, toolbox item are DragTarget
 	/// </summary>
-	public class DragTarget : ViewModel
+	public abstract class DragTarget : ViewModelBase
 	{
 		//Location(Margin) Dependency Property
 		public Vector Location
@@ -24,5 +25,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty LocationProperty =
 			DependencyProperty.Register("Location", typeof(Thickness), typeof(DragTarget), 
 			new UIPropertyMetadata(new Thickness(0), StateVm.AnyPropertyChangedCallback));
+
+		public abstract int Id { get; }
 	}
 }

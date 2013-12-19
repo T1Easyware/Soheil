@@ -101,6 +101,8 @@
     <Compile Include="Reports\CostBarProvider.cs" />
     <Compile Include="Reports\CostBarSlideProvider.cs" />
     <Compile Include="Reports\KeyValueTriple.cs" />
+    <Compile Include="ViewModels\Fpc\DropIndicatorVm.cs" />
+    <Compile Include="ViewModels\Fpc\IToolboxData.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\DayOfWeekVm.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\HolidayVm.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\ShiftColorVm.cs" />
@@ -168,7 +170,6 @@
     <Compile Include="ViewModels\Fpc\FpcWindowVm.cs" />
     <Compile Include="ViewModels\Fpc\MachineFamilyVm.cs" />
     <Compile Include="ViewModels\Fpc\MachineVm.cs" />
-    <Compile Include="ViewModels\Fpc\NamedVM.cs" />
     <Compile Include="ViewModels\Fpc\ProductVm.cs" />
     <Compile Include="ViewModels\Fpc\ReworkVm.cs" />
     <Compile Include="ViewModels\Fpc\StateConfigVm.cs" />
@@ -180,7 +181,6 @@
     <Compile Include="ViewModels\Fpc\StationVm.cs" />
     <Compile Include="ViewModels\Fpc\ToolboxItemVm.cs" />
     <Compile Include="ViewModels\Fpc\TreeItemVm.cs" />
-    <Compile Include="ViewModels\Fpc\ViewModel.cs" />
     <Compile Include="ViewModels\Index\IndexBarSlideItemVm.cs" />
     <Compile Include="ViewModels\Index\IndicesVm.cs" />
     <Compile Include="ViewModels\Index\IndexBarVm.cs" />
@@ -384,6 +384,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="DataServices\_ClassDiagram.cd" />
     <None Include="Interfaces\BaseAndInterfaceDiagram.cd" />
   </ItemGroup>

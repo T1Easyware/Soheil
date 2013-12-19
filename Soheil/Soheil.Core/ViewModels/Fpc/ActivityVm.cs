@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soheil.Core.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,14 +7,19 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
-	public class ActivityVm : NamedVM
+	public class ActivityVm : ViewModelBase, IToolboxData
 	{
-		public Model.Activity Model { get; private set; }
+		public Model.Activity Model { get; protected set; }
+		public int Id { get { return Model == null ? -1 : Model.Id; } }
+		public string Name
+		{
+			get { return Model == null ? "" : Model.Name; }
+			set { Model.Name = value; OnPropertyChanged("Name"); }
+		}
+
 		public ActivityVm(Model.Activity model, ActivityGroupVm groupVm)
 		{
 			Model = model;
-			Id = model.Id;
-			Name = model.Name;
 			Group = groupVm;
 		}
 		//Group Dependency Property

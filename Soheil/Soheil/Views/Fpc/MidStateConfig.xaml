@@ -47,9 +47,9 @@
 					   ToolTip="تغییرات این مرحله هنوز ذخیره نشده است"
 						Visibility="{Binding State.IsChanged, Converter={StaticResource visibilityConverter}}"/>
 			<TextBlock Margin="4" Text="نام مرحله" Grid.Row="1"/>
-			<TextBox Margin="2" Text="{Binding State.Name}" Grid.Row="1" Grid.Column="1"/>
+			<TextBox Margin="2" Text="{Binding State.Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
 			<TextBlock Margin="4" Text="کد مرحله" Grid.Row="2"/>
-			<TextBox Margin="2" Text="{Binding State.Code}" Grid.Row="2" Grid.Column="1"/>
+            <TextBox Margin="2" Text="{Binding State.Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1"/>
 			<CheckBox Margin="3" Grid.Row="3" Content="دوباره کاری"
 					  IsChecked="{Binding State.IsRework}"/>
 			<ComboBox Grid.Row="3" Grid.Column="1" Margin="2,0" 

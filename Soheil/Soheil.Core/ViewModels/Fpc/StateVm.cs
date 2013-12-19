@@ -12,49 +12,39 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class StateVm : DragTarget
 	{
-		public StateDataService _stateDataService { get { return ParentWindowVm.fpcDataService.stateDataService; } }
-
 		public event EventHandler<ModelRemovedEventArgs> StateDeleted;
 		public Model.State Model { get; private set; }
+		public override int Id { get { return Model == null ? -1 : Model.Id; } }
+		public string Name
+		{
+			get { return Model.Name; }
+			set { Model.Name = value; IsChanged = true; OnPropertyChanged("Name"); }
+		}
+		public string Code
+		{
+			get { return Model.Code; }
+			set { Model.Code = value; IsChanged = true; OnPropertyChanged("Code"); }
+		}
+		public StateType StateType
+		{
+			get { return Model.StateType; }
+			set { Model.StateType = value; OnPropertyChanged("StateType"); }
+		}
 
 		#region Ctor
 		/// <summary>
-		/// Create a temporary state for drag and drop
-		/// </summary>
-		/// <param name="pos"></param>
-		/// <param name="parentWindowVm"></param>
-		public StateVm(Point pos, FpcWindowVm parentWindowVm)
-		{
-			InitializingPhase = true;
-			ParentWindowVm = parentWindowVm;
-			Location = new Vector(pos.X, pos.Y);
-			Width = 1;
-			Height = 1;
-			StateType = StateType.Temp;
-		}
-		/// <summary>
-		/// Create a state from the model (if specified or empty state otherwise) on parentWindow with specified dataService
+		/// Create a state from a model
 		/// </summary>
 		/// <param name="model">Must be full of data or completely null</param>
-		/// <param name="parentWindowVm"></param>
-		/// <param name="stateDataService"></param>
-		public StateVm(Model.State model, FpcWindowVm parentWindowVm)
+		/// <param name="parentWindowVm">parent window vm</param>
+		/// <param name="isTemporary">If it's a temporary state just for drag and drop</param>
+		public StateVm(Model.State model, FpcWindowVm parentWindowVm, bool isTemporary = false)
 		{
 			InitializingPhase = true;
 			ParentWindowVm = parentWindowVm;
 			Model = model;
-
-			if (model != null)
-			{
-				Id = model.Id;
-				Name = model.Name;
-				Code = model.Code;
-				Location = new Vector(model.X, model.Y);
-				StateType = model.StateType;
-				if (StateType == Common.StateType.Mid || StateType == Common.StateType.Rework)
-					if(model.OnProductRework!=null)//***dlete
-					ProductRework = parentWindowVm.ProductReworks.FirstOrDefault(x => x.Id == model.OnProductRework.Id);
-			}
+			if (isTemporary) { Width = 1; Height = 1; StateType = Common.StateType.Temp; }
+			Location = new Vector(model.X, model.Y);
 			initCommands();
 			ResetCommand.Execute(null);//Updates StateConfigVm
 		}
@@ -82,63 +72,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty ConfigProperty =
 			DependencyProperty.Register("Config", typeof(StateConfigVm), typeof(StateVm), new UIPropertyMetadata(null)); 
 
-		//IsChanged Dependency Property
-		public bool IsChanged
-		{
-			get { return (bool)GetValue(IsChangedProperty); }
-			set { SetValue(IsChangedProperty, value); }
-		}
-		public static readonly DependencyProperty IsChangedProperty =
-			DependencyProperty.Register("IsChanged", typeof(bool), typeof(StateVm), new UIPropertyMetadata(false));
-
-		private bool _isSavedAtLeastOnce = false;
-		public bool InitializingPhase { get; set; }
-
-		public static void AnyPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var vm = d as StateVm;
-			if (vm != null)
-			{
-				if (!vm.InitializingPhase)
-				{
-					vm.IsChanged = true;
-					if (e.Property == NameProperty) vm.Model.Name = (string)e.NewValue;
-					else if (e.Property == CodeProperty) vm.Model.Code = (string)e.NewValue;
-					else if (e.Property == ProductReworkProperty)
-					{
-						var prvm = (ProductReworkVm)e.NewValue;
-						vm.Model.OnProductRework = prvm == null ? vm.ParentWindowVm.Model.Product.MainProductRework : prvm.Model;
-					}
-				}
-			}
-		}
-		
-		//Name Dependency Property
-		public string Name
-		{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
-		}
-		public static readonly DependencyProperty NameProperty =
-			DependencyProperty.Register("Name", typeof(string), typeof(StateVm), new UIPropertyMetadata("مرحله بدون نام", AnyPropertyChangedCallback));
-		//Code Dependency Property
-		public string Code
-		{
-			get { return (string)GetValue(CodeProperty); }
-			set { SetValue(CodeProperty, value); }
-		}
-		public static readonly DependencyProperty CodeProperty =
-			DependencyProperty.Register("Code", typeof(string), typeof(StateVm), 
-			new UIPropertyMetadata("", AnyPropertyChangedCallback));
-		//StateType Dependency Property
-		public StateType StateType
-		{
-			get { return (StateType)GetValue(StateTypeProperty); }
-			set { SetValue(StateTypeProperty, value); }
-		}
-		public static readonly DependencyProperty StateTypeProperty =
-			DependencyProperty.Register("StateType", typeof(StateType), typeof(StateVm), new UIPropertyMetadata(StateType.Mid));
-		
 		//ProductRework Dependency Property
 		public ProductReworkVm ProductRework
 		{
@@ -177,7 +110,38 @@ namespace Soheil.Core.ViewModels.Fpc
 		private bool _lockPR = false;
 		#endregion
 
-		#region Visual
+		#region IsChanged and other Visual dp
+		//IsChanged Dependency Property
+		public bool IsChanged
+		{
+			get { return (bool)GetValue(IsChangedProperty); }
+			set { SetValue(IsChangedProperty, value); }
+		}
+		public static readonly DependencyProperty IsChangedProperty =
+			DependencyProperty.Register("IsChanged", typeof(bool), typeof(StateVm), new UIPropertyMetadata(false));
+
+		private bool _isSavedAtLeastOnce = false;
+		public bool InitializingPhase { get; set; }
+
+		public static void AnyPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var vm = d as StateVm;
+			if (vm != null)
+			{
+				if (!vm.InitializingPhase)
+				{
+					vm.IsChanged = true;
+					if (e.Property == ProductReworkProperty)
+					{
+						var prvm = (ProductReworkVm)e.NewValue;
+						vm.Model.OnProductRework = prvm == null ? vm.ParentWindowVm.Model.Product.MainProductRework : prvm.Model;
+					}
+				}
+			}
+		}
+		
+
+
 		//Width Dependency Property
 		public double Width
 		{
@@ -225,8 +189,17 @@ namespace Soheil.Core.ViewModels.Fpc
 			ResetCommand = new Commands.Command(o =>
 			{
 				ShowDetails = false;
-				Config = new StateConfigVm(this, ParentWindowVm);
+				Config = new StateConfigVm(this);
 				if (Model == null) return;
+
+				Location = new Vector(Model.X, Model.Y);
+				Name = Model.Name;
+				Code = Model.Code;
+				if (StateType == Common.StateType.Mid || StateType == Common.StateType.Rework)
+					if (Model.OnProductRework != null)//***dlete
+						ProductRework = ParentWindowVm.ProductReworks.FirstOrDefault(x => x.Id == Model.OnProductRework.Id);
+
+				
 				//fetch from db and update state config
 				foreach (var ss in Model.StateStations)
 				{
@@ -268,7 +241,8 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				try
 				{
-					_stateDataService.AttachModel(this);
+					PromptSave();
+					ParentWindowVm.fpcDataService.stateDataService.AttachModel(Model);
 					IsChanged = false;
 					_isSavedAtLeastOnce = true;
 				}
@@ -291,7 +265,7 @@ namespace Soheil.Core.ViewModels.Fpc
 				try
 				{
 					var connectors = FPC.Connectors.Where(x => x.Start.Id == Id || x.End.Id == Id).ToList();
-					_stateDataService.DeleteModel(this);
+					ParentWindowVm.fpcDataService.stateDataService.DeleteModel(Model);
 
 					if (StateDeleted != null)
 						StateDeleted(this, new ModelRemovedEventArgs(Id));
@@ -321,6 +295,12 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				ParentWindowVm.FireSelectState(this);
 			});
+		}
+
+		internal void PromptSave()
+		{
+			Model.X = (float)this.Location.X;
+			Model.Y = (float)this.Location.Y;
 		}
 
 		//SaveCommand
