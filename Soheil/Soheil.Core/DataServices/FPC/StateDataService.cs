@@ -441,21 +441,44 @@ namespace Soheil.Core.DataServices
 
 		public State Clone(State model)
 		{
-			var clone = new State();
-			clone.Code = model.Code;
-			clone.Name = model.Name;
-			clone.StateType = model.StateType;
-			clone.X = model.X;
-			clone.Y = model.Y;
-			clone.OnProductRework = model.OnProductRework;
-			foreach (var stateStations in model.StateStations.ToArray())
+			var cloneS = new State();
+			cloneS.Code = model.Code;
+			cloneS.Name = model.Name;
+			cloneS.StateType = model.StateType;
+			cloneS.X = model.X;
+			cloneS.Y = model.Y;
+			cloneS.OnProductRework = model.OnProductRework;
+			foreach (var ss in model.StateStations.ToArray())
 			{
-				clone.StateStations.Add(new StateStation
+				var cloneSS = new StateStation
 				{
-					//State = new //!@#$%
-				});
+					State = cloneS,
+					Station = ss.Station,
+				};
+				foreach (var ssa in ss.StateStationActivities)
+				{
+					var cloneSSA = new StateStationActivity
+					{
+						StateStation = cloneSS,
+						Activity = ssa.Activity,
+						ManHour = ssa.ManHour,
+						CycleTime = ssa.CycleTime,
+					};
+					foreach (var ssam in ssa.StateStationActivityMachines)
+					{
+						cloneSSA.StateStationActivityMachines.Add(
+							new StateStationActivityMachine
+							{
+								IsFixed = ssam.IsFixed,
+								Machine = ssam.Machine,
+								StateStationActivity = cloneSSA,
+							});
+					} 
+					cloneSS.StateStationActivities.Add(cloneSSA);
+				}
+				cloneS.StateStations.Add(cloneSS);
 			}
-			return clone;
+			return cloneS;
 		}
 	}
 }
