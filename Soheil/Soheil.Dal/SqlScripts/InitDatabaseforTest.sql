@@ -853,7 +853,7 @@ insert into dbo.Causes (Id, [Level], Name, Code, Parent_Id, CreatedDate, Modifie
 ('36','2',N'تراکم','12', '11', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 ('37','2',N'پسا پست مدرنسیم','20', '12', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 ('38','2',N'تنهایی انسان در عصر ماشینی','21', '12', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
-SET IDENTITY_INSERT dbo.StateStationActivityMachines OFF
+SET IDENTITY_INSERT dbo.Causes OFF
 
 --SET IDENTITY_INSERT dbo.xxxxxx ON
 --insert into dbo.Causes (Id, [Level], Name, Code, Parent_Id, CreatedDate, ModifiedDate, [Status], ModifiedBy) values 

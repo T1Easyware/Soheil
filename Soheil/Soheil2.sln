@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soheil.Dal", "Soheil.Dal\So
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soheil.Model", "Soheil.Model\Soheil.Model.csproj", "{7E5A8E05-411B-4425-8746-C67A9B10F55A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soheil.DbFix", "Soheil.DbFix\Soheil.DbFix.csproj", "{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,16 @@ Global
 		{7E5A8E05-411B-4425-8746-C67A9B10F55A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7E5A8E05-411B-4425-8746-C67A9B10F55A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7E5A8E05-411B-4425-8746-C67A9B10F55A}.Release|x86.ActiveCfg = Release|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{422C54B0-AE9B-4E42-B433-ABBFEDC890DD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
