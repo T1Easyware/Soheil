@@ -6,15 +6,18 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using Soheil.Core.DataServices;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
-	public abstract class FpcVm : ViewModel
+	public abstract class FpcVm : ViewModelBase
 	{
 		public FPCDataService fpcDataService { get; protected set; }
 
 		public Model.FPC Model { get; protected set; }
-		
+
+		public int Id { get { return Model == null ? -1 : Model.Id; } }
+
 		#region Methods
 		/// <summary>
 		/// Loads PRs and sets Model basic props
@@ -26,12 +29,10 @@ namespace Soheil.Core.ViewModels.Fpc
 			ProductReworks.Clear();
 			if (model == null)
 			{
-				Id = -1;
 				Product = null;
 			}
 			else
 			{
-				Id = model.Id;
 				IsDefault = model.IsDefault;
 				var productReworkModels = fpcDataService.GetProductReworks(model, includeMainProduct: false);
 				foreach (var prodrew in productReworkModels)
@@ -73,5 +74,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
 		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } } 
 		#endregion
+
 	}
 }

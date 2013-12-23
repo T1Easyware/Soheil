@@ -10,13 +10,14 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class StateConfigVm : TreeItemVm
 	{
-		public StateConfigVm(StateVm state, FpcWindowVm parentWindowVm)
-			: base(parentWindowVm)
+		public override int Id { get { return State.Model == null ? -1 : State.Model.Id; } }
+
+		public StateConfigVm(StateVm state)
+			: base(state.ParentWindowVm)
 		{
 			State = state;
 			TreeLevel = 0;
 			IsExpanded = true;
-			Id = state.Id;
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
 		//State Dependency Property
@@ -39,7 +40,7 @@ namespace Soheil.Core.ViewModels.Fpc
 					var vm = item as StateStationVm;
 					if (vm != null)
 					{
-						State.Model.StateStations.Remove(vm.Model);
+						Parent.fpcDataService.stateDataService.RemoveRecursive(vm.Model);
 						Change();
 					}
 				}

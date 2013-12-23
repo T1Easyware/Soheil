@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
@@ -22,13 +23,17 @@ namespace Soheil.Core.ViewModels.Fpc
 	//	ContentsList is XYZ.Ws as TreeItemVM 
 	//XYZW : TreeItemVM 
 	//...
-	public class TreeItemVm : ViewModel
+	public abstract class TreeItemVm : ViewModelBase
 	{
+		/// <summary>
+		/// Must be overriden if Id is extracted directly from the Model
+		/// </summary>
+		public abstract int Id { get; }
+
 		public TreeItemVm(FpcWindowVm parentWindowVm)
 		{
 			Parent = parentWindowVm;
 		}
-
 		//Parent Dependency Property
 		public FpcWindowVm Parent
 		{
@@ -53,13 +58,13 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// <summary>
 		/// Containment in TreeItemVm=XYZ is Z
 		/// </summary>
-		public NamedVM Containment
+		public IToolboxData Containment
 		{
-			get { return (NamedVM)GetValue(ContainmentProperty); }
+			get { return (IToolboxData)GetValue(ContainmentProperty); }
 			set { SetValue(ContainmentProperty, value); Name = value == null ? "" : value.Name; }
 		}
 		public static readonly DependencyProperty ContainmentProperty =
-			DependencyProperty.Register("Containment", typeof(NamedVM), typeof(TreeItemVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Containment", typeof(IToolboxData), typeof(TreeItemVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Container in TreeItemVm=XYZ is XY

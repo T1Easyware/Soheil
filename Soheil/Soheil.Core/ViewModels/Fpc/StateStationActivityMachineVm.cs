@@ -8,6 +8,9 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class StateStationActivityMachineVm : TreeItemVm
 	{
+		public Model.StateStationActivityMachine Model { get; private set; }
+		public override int Id { get { return Model == null ? -1 : Model.Id; } }
+
 		public StateStationActivityMachineVm(FpcWindowVm parentWindowVm, Model.StateStationActivityMachine model)
 			: base(parentWindowVm)
 		{
@@ -15,7 +18,6 @@ namespace Soheil.Core.ViewModels.Fpc
 			Model = model;
 		}
 
-		public Model.StateStationActivityMachine Model { get; private set; }
 
 		//IsDefault Dependency Property
 		public bool IsDefault

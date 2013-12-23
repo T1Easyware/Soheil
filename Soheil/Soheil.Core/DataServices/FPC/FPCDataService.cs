@@ -133,17 +133,26 @@ namespace Soheil.Core.DataServices
 		internal FPC CloneModelById(int fpcId)
 		{
 			var model = _fpcRepository.Single(x => x.Id == fpcId,
-				"WorkDays",
-				"WorkShiftPrototypes",
-				"WorkDays.WorkShifts",
-				"WorkDays.WorkShifts.WorkShiftPrototype",
-				"WorkDays.WorkShifts.WorkBreaks");
+				"States",
+				"States.OutConnectors",
+				"States.InConnectors",
+				"States.StateStations",
+				"States.StateStations.Station",
+				"States.StateStations.StateStationActivities",
+				"States.StateStations.StateStationActivities.Activity",
+				"States.StateStations.StateStationActivities.Activity.ActivityGroup",
+				"States.StateStations.StateStationActivities.StateStationActivityMachines",
+				"States.StateStations.StateStationActivities.StateStationActivityMachines.Machine",
+				"Product",
+				"Product.ProductGroup",
+				"Product.ProductReworks");
 			var clone = cloneModel(model);
-			context.SaveChanges();
+			context.Commit();
 			return clone;
 		}
 		protected FPC cloneModel(FPC model)
 		{
+			//clone FPC
 			var clone = new FPC();
 			clone.Name = model.Name;
 			clone.Code = model.Code;
@@ -153,12 +162,42 @@ namespace Soheil.Core.DataServices
 			clone.CreatedDate = DateTime.Now;
 			clone.ModifiedDate = DateTime.Now;
 			clone.Status = (byte)Status.Active;
+
+			//this array is used to match states for their connectors
+			//a connector clone can find its start and end states by looking into this array
+			var match = new List<KeyValuePair<State, State>>();
+			
+			//clone states
 			foreach (var stateModel in model.States.ToArray())
 			{
 				var stateClone = stateDataService.Clone(stateModel);
 				stateClone.FPC = model;
 				clone.States.Add(stateClone);
+				//add to match
+				match.Add(new KeyValuePair<State, State>(stateModel, stateClone));
 			}
+
+			//clone connectors
+			foreach (var startStateModel in model.States.ToArray())
+			{
+				//find the corresponding clone of startStateModel
+				var cloneStartState = match.First(x => x.Key == startStateModel).Value;
+				//find all out connectors of startStateModel
+				foreach (var outConnectorModel in startStateModel.OutConnectors)
+				{
+					//find the corresponding clone of this connector's endState
+					var cloneEndState = match.First(x => x.Key == outConnectorModel.EndState).Value;
+					//add a connector clone to cloneStartState
+					//no need to add the connector also to cloneEndState
+					cloneStartState.OutConnectors.Add(new Connector
+					{
+						StartState = cloneStartState,
+						EndState = cloneEndState,
+					});
+				}
+			}
+
+			//done
 			if (FpcAdded != null)
 				FpcAdded(this, new ModelAddedEventArgs<FPC>(clone));
 			return clone;
@@ -214,6 +253,8 @@ namespace Soheil.Core.DataServices
 
 		internal void CorrectFPCStates(Model.FPC model)
 		{
+			//stateDataService.AddModel does not need commit but it has
+
 			//add start state
 			if (!model.States.Any(x => x.StateTypeNr == (int)StateType.Start))
 				stateDataService.AddModel(new State

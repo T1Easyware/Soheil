@@ -24,7 +24,7 @@ namespace Soheil.Views.Fpc
 			var window = FindAndSetParentWindow(sender);
 			var fe = sender as FrameworkElement;
 			if (fe == null) return;
-			var data = fe.DataContext as NamedVM;
+			var data = fe.DataContext as IToolboxData;
 			if (data == null) return;
 			var dragPoint = Mouse.GetPosition(fe);
 			var dA = window.DrawingArea;
@@ -34,7 +34,6 @@ namespace Soheil.Views.Fpc
 			window.VM.SelectedToolboxItem = new ToolboxItemVm(window.VM)
 			{
 				ContentData = data,
-				Id = data.Id,
 				Text = data.Name,
 				Location = _dragStart
 			};

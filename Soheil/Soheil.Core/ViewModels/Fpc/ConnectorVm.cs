@@ -8,14 +8,15 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class ConnectorVm : DragTarget
 	{
-		public ConnectorVm()
+		public Model.Connector Model { get; protected set; }
+		public override int Id { get { return Model == null ? -1 : Model.Id; } }
+
+		public ConnectorVm(Model.Connector model, StateVm start, StateVm end, bool isLoose = false)
 		{
-		}
-		public ConnectorVm(StateVm start, StateVm end, FpcVm fpc)
-		{
+			Model = model;
 			Start = start;
 			End = end;
-			FPC = fpc;
+			IsLoose = isLoose;
 		}
 		//Start Dependency Property
 		public StateVm Start
@@ -33,14 +34,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty EndProperty =
 			DependencyProperty.Register("End", typeof(StateVm), typeof(ConnectorVm), new UIPropertyMetadata(null));
-		//FPC Dependency Property
-		public FpcVm FPC
-		{
-			get { return (FpcVm)GetValue(FPCProperty); }
-			set { SetValue(FPCProperty, value); }
-		}
-		public static readonly DependencyProperty FPCProperty =
-			DependencyProperty.Register("FPC", typeof(FpcVm), typeof(ConnectorVm), new UIPropertyMetadata(null));
 		//IsLoose Dependency Property
 		public bool IsLoose
 		{

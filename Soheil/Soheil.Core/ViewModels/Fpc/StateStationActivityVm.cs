@@ -9,6 +9,9 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class StateStationActivityVm : TreeItemVm
 	{
+		public Model.StateStationActivity Model { get; private set; }
+		public override int Id { get { return Model == null ? -1 : Model.Id; } }
+		
 		public StateStationActivityVm(FpcWindowVm parentWindowVm, Model.StateStationActivity model)
 			: base(parentWindowVm)
 		{
@@ -16,8 +19,6 @@ namespace Soheil.Core.ViewModels.Fpc
 			Model = model;
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
-
-		public Model.StateStationActivity Model { get; private set; }
 
 		//CycleTime Dependency Property
 		public float CycleTime
@@ -51,7 +52,7 @@ namespace Soheil.Core.ViewModels.Fpc
 					var vm = item as StateStationActivityMachineVm;
 					if (vm != null)
 					{
-						Model.StateStationActivityMachines.Remove(vm.Model);
+						Parent.fpcDataService.stateDataService.RemoveRecursive(vm.Model);
 						Change();
 					}
 				}
@@ -69,6 +70,7 @@ namespace Soheil.Core.ViewModels.Fpc
 				}
 			}
 		}
+
 		protected override void isExpandedChanged(bool newValue)
 		{
 			if (newValue)
@@ -95,8 +97,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			var ssam = new Soheil.Model.StateStationActivityMachine
 			{
 				StateStationActivity = this.Model,
-				Machine = /*machine.Model???*/ 
-				Parent.fpcDataService.machineFamilyDataService.GetMachine__(machine.Id),
+				Machine = /*machine.Model???*/ Parent.fpcDataService.machineFamilyDataService.GetMachine__(machine.Id),
 				IsFixed = true,
 			};
 			ContentsList.Add(new StateStationActivityMachineVm(fpc, ssam)

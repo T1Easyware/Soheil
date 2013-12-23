@@ -101,8 +101,8 @@ INSERT INTO User_AccessRules(AccessRule_Id, [User_Id], ModifiedBy,ModifiedDate,[
 (43,1,0,'2013-01-01',31);
 
 
-INSERT INTO Causes([Name],[Code],[Description],[ModifiedDate],[CreatedDate],[Status],[ModifiedBy],[Level]) VALUES
-('Causes',0,'','2013-01-01','2013-01-01',1,0,0);
+--INSERT INTO Causes([Name],[Code],[Description],[ModifiedDate],[CreatedDate],[Status],[ModifiedBy],[Level]) VALUES
+--('Causes',0,'','2013-01-01','2013-01-01',1,0,0);
 
 
 
