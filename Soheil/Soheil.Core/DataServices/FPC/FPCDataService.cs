@@ -279,10 +279,20 @@ namespace Soheil.Core.DataServices
 				});
 
 			//add rework states for the newly added productReworks
-			var prs = model.Product.ProductReworks;
+			if (!model.Product.ProductReworks.Any(x=>x.Rework == null))
+				model.Product.ProductReworks.Add(
+					new ProductRework
+					{
+						Product = model.Product,
+						Code = model.Product.Code + "[Main]",
+						Name = model.Product.Name,
+						Rework = null,
+						ModifiedBy = LoginInfo.Id,
+					});
+
 			int reworkStateCounter = 0;
 			var rnd = new Random();
-			foreach (var productRework in prs.Where(x => x.Rework != null))
+			foreach (var productRework in model.Product.ProductReworks.Where(x => x.Rework != null))
 			{
 				if (!model.States.Any(x =>
 					x.StateTypeNr == (int)StateType.Rework
@@ -307,7 +317,7 @@ namespace Soheil.Core.DataServices
 				&& x.OnProductRework == null);
 			foreach (var state in states)
 			{
-				state.OnProductRework = prs.First(x => x.Rework == null);
+				state.OnProductRework = model.Product.ProductReworks.First(x => x.Rework == null);
 			}
 			//...
 			context.SaveChanges();

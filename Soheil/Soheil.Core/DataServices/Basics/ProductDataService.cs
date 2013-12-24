@@ -29,6 +29,31 @@ namespace Soheil.Core.DataServices
 		{
 			this.context = context;
 			_productRepository = new Repository<Product>(context);
+
+			//along with this event a default FPC and PR is added
+			ProductAdded += (sender, e) =>
+			{
+				new Repository<FPC>(context).Add(
+					new FPC
+					{
+						Name = "*",
+						Code = "*",
+						CreatedDate = DateTime.Now,
+						ModifiedDate = DateTime.Now,
+						ModifiedBy = LoginInfo.Id,
+						Product = e.NewModel,
+						IsDefault = true,
+					});
+				new Repository<ProductRework>(context).Add(
+					new ProductRework
+					{
+						Name = "*",
+						Code = "*",
+						Rework = null,
+						Product = e.NewModel,
+						ModifiedBy = LoginInfo.Id,
+					});
+			};
 		}
 
 		#region IDataService<Product> Members
@@ -75,6 +100,10 @@ namespace Soheil.Core.DataServices
 		{
 			model.ModifiedBy = LoginInfo.Id;
 			model.ModifiedDate = DateTime.Now;
+
+			//if default FPC and PR exist, update their Name & Code
+			createDefaultFPCAndProductRework(model);
+			
 			context.Commit();
 		}
 
@@ -88,6 +117,10 @@ namespace Soheil.Core.DataServices
 			model.ModifiedDate = DateTime.Now;
 
 			model.ProductGroup = group;
+
+			//if default FPC and PR exist, update their Name & Code
+			createDefaultFPCAndProductRework(model);
+
 			context.Commit();
 		}
 
@@ -120,6 +153,28 @@ namespace Soheil.Core.DataServices
 		}
 
 		#endregion
+
+		void createDefaultFPCAndProductRework(Product model)
+		{
+			if (model.FPCs.Count == 1)
+			{
+				var def = model.FPCs.First();
+				if (def.Name == "*" && def.Code == "*")
+				{
+					def.Name = model.Name;
+					def.Code = model.Code;
+				}
+			}
+			if (model.ProductReworks.Count == 1)
+			{
+				var def = model.ProductReworks.First();
+				if (def.Name == "*" && def.Code == "*")
+				{
+					def.Name = model.Name;
+					def.Code = model.Code;
+				}
+			} 
+		}
 
 		public ObservableCollection<Product> GetActives()
 		{

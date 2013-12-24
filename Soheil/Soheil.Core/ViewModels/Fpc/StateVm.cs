@@ -336,5 +336,15 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty SelectCommandProperty =
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(StateVm), new UIPropertyMetadata(null));
 		#endregion
+
+		internal void PlaceInFpc()
+		{
+			Name = "*";
+			Code = "*";
+			Model.X = (float)Location.X;
+			Model.Y = (float)Location.Y;
+			SaveCommand.Execute(null);
+			Opacity = 1;
+		}
 	}
 }
