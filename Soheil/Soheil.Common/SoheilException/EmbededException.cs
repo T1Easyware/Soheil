@@ -40,6 +40,11 @@ namespace Soheil.Common.SoheilException
 				FullExceptionText += "\n";
 			FullExceptionText += text;
 		}
-		public void ResetEmbeddedException() { HasException = false; MainExceptionText = string.Empty; FullExceptionText = string.Empty; }
+		public void ResetEmbeddedException()
+		{
+			HasException = false;
+			MainExceptionText = string.Empty;
+			FullExceptionText = string.Empty;
+		}
 	}
 }

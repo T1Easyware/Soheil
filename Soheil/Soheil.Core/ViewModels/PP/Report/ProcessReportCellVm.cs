@@ -11,213 +11,85 @@ using Soheil.Common.SoheilException;
 
 namespace Soheil.Core.ViewModels.PP
 {
-	public class ProcessReportCellVm : EmbeddedException
+	public class ProcessReportCellVm : PPItemVm
 	{
 		DataServices.ProcessReportDataService _processReportDataService;
-		public ProcessReportCellVm(
-			TaskReportBaseVm taskReport, 
-			ProcessReportRowVm processReportRow, 
-			DataServices.ProcessReportDataService processReportDataService)
-		{
-			_processReportDataService = processReportDataService;
-			Parent = processReportRow;
-			DefectionReports = new DefectionReportCollection(this);
-			StoppageReports = new StoppageReportCollection(this);
+		DataServices.TaskReportDataService _taskReportDataService;
+		Model.ProcessReport _model;
+		public override int Id { get { return _model.Id; } }
+		public int ProcessId { get { return _model.Process.Id; } }
+		public ProcessReportRowVm ParentRow { get; private set; }
+		public TaskReportBaseVm ParentColumn { get; private set; }
 
-			var cycleTime = processReportRow.Process.StateStationActivity.CycleTime;
-			var realTaskReport = taskReport as TaskReportVm;
-			if (realTaskReport == null)
+
+		#region Ctor
+		/// <summary>
+		/// Creates a ViewModel for the given ProcessReport with given row and column
+		/// </summary>
+		/// <param name="model">if null, it automatically assign unreported process space</param>
+		/// <param name="taskReport">column of the viewModel cell within the report grid</param>
+		/// <param name="processReportRow">row of the viewModel cell within the report grid</param>
+		public ProcessReportCellVm(Model.ProcessReport model, TaskReportBaseVm taskReport, ProcessReportRowVm processReportRow)
+		{
+			ParentRow = processReportRow;
+			ParentColumn = taskReport;
+			_model = model;
+			_processReportDataService = processReportRow.Parent.ProcessReportDataService;
+			_taskReportDataService = processReportRow.Parent.TaskReportDataService;
+
+			if (model == null)
 			{
-				Id = -1;
 				ProcessReportTargetPoint =
-					processReportRow.Process.TargetCount
-					- processReportRow.ProcessReportCells.Where(y => y.Id != -1).Sum(x => x.ProcessReportTargetPoint);
+					model.ProcessReportTargetPoint
+					- processReportRow.ProcessReportCells.Where(y => y.Id > 0).Sum(x => x.ProcessReportTargetPoint);
 			}
 			else
 			{
-				var model = _processReportDataService.GetByTaskReportIdAndProcessId(realTaskReport.Id, processReportRow.ProcessId);
-				if (model == null)
-				{
-					Id = -1;
-					//DurationSeconds = 
-				}
-				else
-				{
-					Id = model.Id;
-					ProducedG1 = model.ProducedG1;
-					ProcessReportTargetPoint = model.ProcessReportTargetPoint;
-				}
+				ProducedG1 = model.ProducedG1;
+				ProcessReportTargetPoint = model.ProcessReportTargetPoint;
 			}
+
 			StartDateTime = taskReport.StartDateTime;
-			DurationSeconds = (int)(ProcessReportTargetPoint * cycleTime);
+			DurationSeconds = (int)(ProcessReportTargetPoint * processReportRow.StateStationActivity.CycleTime);
+			DefectionReports = new DefectionReportCollection(this);
+			StoppageReports = new StoppageReportCollection(this);
 
-			OpenCommand = new Commands.Command(o =>
-			{
-				if (ViewMode == PPProcessViewMode.Normal) IsSelected = true;
-				else if(ViewMode == PPProcessViewMode.Empty)
-					Parent.Parent.CurrentTaskReportBuilderInProcess = new ProcessReportCellTaskReportHolder(
-						this, 
-						new TaskReportHolderVm(
-							Parent.Process.Task,
-							Parent.ProcessReportCells.Where(x => x.ViewMode == PPProcessViewMode.Normal).Sum(x => x.DurationSeconds),
-							Parent.ProcessReportCells.Where(x => x.ViewMode == PPProcessViewMode.Normal).Sum(x => x.ProcessReportTargetPoint), 
-							Parent.ProcessReportCells.Count - 1));
-			});
-			CloseCommand = new Commands.Command(o => { IsSelected = false; });
-			SaveCommand = new Commands.Command(o => { 
-				Save(); 
-				IsSelected = false;
-				Parent.Parent.SelectedTask.ReloadProcessReportRows();
-			});
-			DeleteTaskReportCommand = new Commands.Command(o =>
-			{
-				try
-				{
-					if (realTaskReport != null)
-					{
-						taskReport.TaskReportDataService.DeleteById(realTaskReport.Id);
-						Parent.Parent.SelectedTask.ReloadTaskReports();
-						Parent.Parent.SelectedTask.ReloadProcessReportRows();
-					}
-					else
-						AddEmbeddedException("این بازه هیچ گزارشی ندارد");
-				}
-				catch
-				{
-					AddEmbeddedException("قادر به حذف گزارشهای این بازه نمی باشد");
-				}
-			});
-			DeleteProcessReportCommand = new Commands.Command(o =>
-			{
-				try
-				{
-					_processReportDataService.ResetById(Id, 
-						processReportRow.Process.TargetCount
-						- processReportRow.ProcessReportCells.Where(y => y.Id != -1).Sum(x => x.ProcessReportTargetPoint));
-					Parent.Parent.SelectedTask.ReloadProcessReportRows();
-				}
-				catch
-				{
-					AddEmbeddedException("قادر به حذف این گزارش فعالیت نمی باشد یا این فعالیت در این بازه هیچ گزارشی ندارد");
-				}
-			});
+			initializeCommands();
 		}
 
-
-		/// <summary>
-		/// ProcessReport Id
-		/// </summary>
-		public int Id { get; set; }
-		//Parent Dependency Property
-		public ProcessReportRowVm Parent
-		{
-			get { return (ProcessReportRowVm)GetValue(ParentProperty); }
-			set { SetValue(ParentProperty, value); }
-		}
-		public static readonly DependencyProperty ParentProperty =
-			DependencyProperty.Register("Parent", typeof(ProcessReportRowVm), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
-		//IsSelected Dependency Property
-		public bool IsSelected
-		{
-			get { return (bool)GetValue(IsSelectedProperty); }
-			set { SetValue(IsSelectedProperty, value); }
-		}
-		public static readonly DependencyProperty IsSelectedProperty =
-			DependencyProperty.Register("IsSelected", typeof(bool), typeof(ProcessReportCellVm),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				var vm = (ProcessReportCellVm)d;
-				if ((bool)e.NewValue)
-				{
-					vm.Parent.Parent.CurrentProcessReportBuilder = vm;
-					vm.LoadInnerData();
-				}
-				else
-					vm.Parent.Parent.CurrentProcessReportBuilder = null;
-			}));
-		//Offset Dependency Property
-		public Point Offset
-		{
-			get { return (Point)GetValue(OffsetProperty); }
-			set { SetValue(OffsetProperty, value); }
-		}
-		public static readonly DependencyProperty OffsetProperty =
-			DependencyProperty.Register("Offset", typeof(Point), typeof(ProcessReportCellVm), new UIPropertyMetadata(new Point()));
+		#endregion
 
 		#region Thread/Load/Save
-		Model.ProcessReport _model;
-		//ViewMode Dependency Property
-		public PPProcessViewMode ViewMode
-		{
-			get { return (PPProcessViewMode)GetValue(ViewModeProperty); }
-			set { SetValue(ViewModeProperty, value); }
-		}
-		public static readonly DependencyProperty ViewModeProperty =
-			DependencyProperty.Register("ViewMode", typeof(PPProcessViewMode), typeof(ProcessReportCellVm), new UIPropertyMetadata(PPProcessViewMode.Acquiring));
-		//Members and Props
-		Timer _delayAcquisitor;
-		private Thread _acqusitionThread;
-		//Object threadLock;
 		public static int AcquisitionStartDelay = 100;
 		public static int AcquisitionPeriodicDelay = System.Threading.Timeout.Infinite;//5000???
 
-		//Main Functions
-		public void BeginAcquisition()
-		{
-			try
-			{
-				_delayAcquisitor = new Timer((s) =>
-				{
-					try
-					{
-						Dispatcher.Invoke(() =>
-						{
-							_acqusitionThread.ForceQuit();
-							_acqusitionThread = new Thread(_acqusitionThreadStart);
-							_acqusitionThread.Priority = ThreadPriority.Lowest;
-							_acqusitionThread.Start();
-						});
-					}
-					catch { }
-				}, null, AcquisitionStartDelay, AcquisitionPeriodicDelay);
-			}
-			catch { }
-		}
-
 		//Thread Functions
-		private void _acqusitionThreadStart()
+		protected override void acqusitionThreadStart()
 		{
 			//try
 			{
 				var model = _processReportDataService.GetSingleFull(Id);
 				Dispatcher.Invoke(new Action(() =>
 				{
-					Dispatcher.InvokeInBackground<Model.ProcessReport>(_acqusitionThreadEnd, model);
+					Dispatcher.InvokeInBackground(acqusitionThreadEnd);
 				}));
 			}
 			//catch { }
 		}
-		private void _acqusitionThreadEnd(Model.ProcessReport model)
+		protected override void acqusitionThreadEnd()
 		{
-			_model = model;
-			if (model == null)
+			if (_model == null)
 			{
-				ViewMode = PPProcessViewMode.Empty;
+				ViewMode = PPViewMode.Empty;
 			}
 			else
 			{
-				ProcessReportTargetPoint = model.ProcessReportTargetPoint;
-				ProducedG1 = model.ProducedG1;
-				DefectionCount = (int)model.DefectionReports.Sum(x => x.CountEquivalence);
-				StoppageCount = (int)model.StoppageReports.Sum(x => x.CountEquivalence);
-				ViewMode = PPProcessViewMode.Normal;
+				ProcessReportTargetPoint = _model.ProcessReportTargetPoint;
+				ProducedG1 = _model.ProducedG1;
+				DefectionCount = (int)_model.DefectionReports.Sum(x => x.CountEquivalence);
+				StoppageCount = (int)_model.StoppageReports.Sum(x => x.CountEquivalence);
+				ViewMode = PPViewMode.Simple;
 			}
-		}
-
-		public void UnloadData()
-		{
-			_acqusitionThread.ForceQuit();
-			if (_delayAcquisitor != null) _delayAcquisitor.Dispose();
 		}
 
 		public void LoadInnerData()
@@ -239,6 +111,7 @@ namespace Soheil.Core.ViewModels.PP
 			_processReportDataService.Save(this);
 		}
 		#endregion
+
 
 		#region Count
 		//ProcessTargetPoint Dependency Property
@@ -277,7 +150,7 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("StoppageCount", typeof(int), typeof(ProcessReportCellVm), new UIPropertyMetadata(0));
 		#endregion
 
-		#region Time/Duration
+		#region Startdt
 		//StartDate Dependency Property
 		public DateTime StartDate
 		{
@@ -294,33 +167,41 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessReportCellVm), new UIPropertyMetadata(TimeSpan.Zero));
-		public DateTime StartDateTime
+		public new DateTime StartDateTime
 		{
 			get { return StartDate.Add(StartTime); }
 			set { StartDate = value.Date; StartTime = value.TimeOfDay; }
 		}
-		//DurationSeconds Dependency Property
-		public int DurationSeconds
-		{
-			get { return (int)GetValue(DurationSecondsProperty); }
-			set { SetValue(DurationSecondsProperty, value); }
-		}
-		public static readonly DependencyProperty DurationSecondsProperty =
-			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(ProcessReportCellVm),
-			new UIPropertyMetadata(0, (d, e) =>
-			{
-				var vm = (ProcessReportCellVm)d;
-				d.SetValue(DurationProperty, new TimeSpan((int)e.NewValue * TimeSpan.TicksPerSecond));
-			}));
-		//Duration Dependency Property
-		public TimeSpan Duration
-		{
-			get { return (TimeSpan)GetValue(DurationProperty); }
-		}
-		public static readonly DependencyProperty DurationProperty =
-			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(ProcessReportCellVm), new UIPropertyMetadata(TimeSpan.Zero)); 
 		#endregion
 
+		#region Other Members
+		//IsSelected Dependency Property
+		public bool IsSelected
+		{
+			get { return (bool)GetValue(IsSelectedProperty); }
+			set { SetValue(IsSelectedProperty, value); }
+		}
+		public static readonly DependencyProperty IsSelectedProperty =
+			DependencyProperty.Register("IsSelected", typeof(bool), typeof(ProcessReportCellVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = (ProcessReportCellVm)d;
+				if ((bool)e.NewValue)
+				{
+					vm.ParentRow.Parent.CurrentProcessReportBuilder = vm;
+					vm.LoadInnerData();
+				}
+				else
+					vm.ParentRow.Parent.CurrentProcessReportBuilder = null;
+			}));
+		//Offset Dependency Property
+		public Point Offset
+		{
+			get { return (Point)GetValue(OffsetProperty); }
+			set { SetValue(OffsetProperty, value); }
+		}
+		public static readonly DependencyProperty OffsetProperty =
+			DependencyProperty.Register("Offset", typeof(Point), typeof(ProcessReportCellVm), new UIPropertyMetadata(new Point()));
 		//DefectionReports Dependency Property
 		public DefectionReportCollection DefectionReports
 		{
@@ -338,7 +219,70 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty StoppageReportsProperty =
 			DependencyProperty.Register("StoppageReports", typeof(StoppageReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
 
+		#endregion
+
 		#region Commands
+		void initializeCommands()
+		{
+			OpenCommand = new Commands.Command(o =>
+			{
+				if (ViewMode == PPViewMode.Simple) IsSelected = true;
+				else if (ViewMode == PPViewMode.Empty)
+				{
+					ParentRow.Parent.CurrentTaskReportBuilderInProcess = new ProcessReportCellTaskReportHolder(
+						this,
+						new TaskReportHolderVm(
+							ParentColumn.Task,
+							ParentRow.ProcessReportCells.Where(x => x.ViewMode == PPViewMode.Simple).Sum(x => x.DurationSeconds),
+							ParentRow.ProcessReportCells.Where(x => x.ViewMode == PPViewMode.Simple).Sum(x => x.ProcessReportTargetPoint)));
+					ParentRow.Parent.CurrentTaskReportBuilderInProcess.RequestForChangeOfCurrentTaskReportBuilderInProcess += vm => ParentRow.Parent.CurrentTaskReportBuilderInProcess = vm;
+				}
+			});
+			CloseCommand = new Commands.Command(o => { IsSelected = false; });
+			SaveCommand = new Commands.Command(o =>
+			{
+				Save();
+				IsSelected = false;
+				ParentRow.Parent.SelectedBlock.BlockReport.ReloadProcessReportRows();
+			});
+			DeleteTaskReportCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					if (_model != null)
+					{
+						var realTaskReport = ParentColumn as TaskReportVm;
+						if (realTaskReport != null)
+						{
+							_taskReportDataService.DeleteById(realTaskReport.Id);
+							realTaskReport.Task.ReloadTaskReports();
+							ParentRow.Parent.SelectedBlock.BlockReport.ReloadProcessReportRows();
+						}
+					}
+					else
+						Message.AddEmbeddedException("این بازه هیچ گزارشی ندارد");
+				}
+				catch
+				{
+					Message.AddEmbeddedException("قادر به حذف گزارشهای این بازه نمی باشد");
+				}
+			});
+			DeleteProcessReportCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					_processReportDataService.ResetById(Id,
+						_model.Process.TargetCount
+						- ParentRow.ProcessReportCells.Where(y => y.Id != -1).Sum(x => x.ProcessReportTargetPoint));
+					ParentColumn.Task.Block.BlockReport.ReloadProcessReportRows();
+				}
+				catch
+				{
+					Message.AddEmbeddedException("قادر به حذف این گزارش فعالیت نمی باشد یا این فعالیت در این بازه هیچ گزارشی ندارد");
+				}
+			});
+		}
+
 		//OpenCommand Dependency Property
 		public Commands.Command OpenCommand
 		{

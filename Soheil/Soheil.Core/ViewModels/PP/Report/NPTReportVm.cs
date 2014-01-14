@@ -159,9 +159,9 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				var vm = (NPTReportVm)d;
 				if ((bool)e.NewValue)
-					vm.Parent.Parent.Parent.CurrentNPTReportBuilder = vm;
+					vm.Parent.Parent.PPTable.CurrentNPTReportBuilder = vm;
 				else
-					vm.Parent.Parent.Parent.CurrentNPTReportBuilder = null;
+					vm.Parent.Parent.PPTable.CurrentNPTReportBuilder = null;
 			}));
 		//Offset Dependency Property
 		public Point Offset

@@ -37,7 +37,7 @@ namespace Soheil.Core.PP.Smart
 				Type = RangeType.Empty,
 			};
 		}
-		public static SmartRange ExistingTask(Model.Task model)
+		public static SmartRange ExistingBlock(Model.Block model)
 		{
 			if (model == null) return null;
 			return new SmartRange

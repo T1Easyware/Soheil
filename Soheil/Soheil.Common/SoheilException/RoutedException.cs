@@ -9,11 +9,11 @@ namespace Soheil.Common.SoheilException
 {
 	public class RoutedException : SoheilExceptionBase
 	{
-		public RoutedException(string message, ExceptionLevel level, Object target)
+		public RoutedException(string message, ExceptionLevel level, object target)
 			: base(message, level)
 		{
 			Target = target;
 		}
-		public Object Target { get; set; }
+		public object Target { get; set; }
 	}
 }

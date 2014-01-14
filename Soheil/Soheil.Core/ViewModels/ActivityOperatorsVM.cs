@@ -82,7 +82,7 @@ namespace Soheil.Core.ViewModels
             }
         }
 
-        private void OnOperatorAdded(object sender, ModelAddedEventArgs<OperatorActivity> e)
+        private void OnOperatorAdded(object sender, ModelAddedEventArgs<GeneralActivitySkill> e)
         {
             var activityOperatorVm = new ActivityOperatorVM(e.NewModel, Access, ActivityOperatorDataService, RelationDirection.Straight);
             SelectedItems.AddNewItem(activityOperatorVm);

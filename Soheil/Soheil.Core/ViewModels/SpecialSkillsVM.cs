@@ -74,7 +74,7 @@ namespace Soheil.Core.ViewModels
             }
         }
 
-        private void OnSpecialSkillAdded(object sender, ModelAddedEventArgs<SpecialSkill> e)
+        private void OnSpecialSkillAdded(object sender, ModelAddedEventArgs<GeneralActivitySkill> e)
         {
             var newSpecialSkillVm = new SpecialSkillVM(e.NewModel, Access, SpecialSkillDataService);
             Items.AddNewItem(newSpecialSkillVm);

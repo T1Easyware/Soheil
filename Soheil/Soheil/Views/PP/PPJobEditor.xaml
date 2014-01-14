@@ -37,7 +37,7 @@
 				</Rectangle>
 				<TextBlock Text="{Binding Name}" Grid.Column="1"/>
 				<TextBlock Text="{Binding Code}" Grid.Column="2" Foreground="Gray"/>
-				<Button Content="افزودن به Jobها" Grid.Column="3" Click="AddToJobs_Click"/>
+				<Button Content="افزودن به Jobها" Grid.Column="3" Command="{Binding CreateNewJob}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext}"/>
 			</Grid>
 		</DataTemplate>
 

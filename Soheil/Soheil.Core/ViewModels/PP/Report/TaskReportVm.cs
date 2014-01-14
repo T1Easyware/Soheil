@@ -8,8 +8,8 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class TaskReportVm : TaskReportBaseVm
 	{
-		public TaskReportVm(PPTaskVm parent, Model.TaskReport model, int index)
-			:base(parent, index)
+		public TaskReportVm(PPTaskVm parent, Model.TaskReport model)
+			: base(parent)
 		{
 			if (model != null)
 			{
@@ -25,16 +25,12 @@ namespace Soheil.Core.ViewModels.PP
 
 				SumOfDefectionCount = TaskReportDataService.GetSumOfDefectionCounts(model.Id);
 				SumOfStoppageCount = TaskReportDataService.GetSumOfStoppageCounts(model.Id);
-
-				CanUserEditTaskTPAndG1 = true;
-				_isInInitializingPhase = false;
-				
-				DeleteReport = new Commands.Command(o =>
-				{
-					TaskReportDataService.DeleteById(Id);
-					Task.ReloadTaskReports();
-				});
 			}
+			
+			CanUserEditTaskTPAndG1 = true;
+			_isInInitializingPhase = false;
+
+			initializeCommands();
 		}
 		protected bool _isInInitializingPhase = true;
 
@@ -42,6 +38,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// TaskReport Id
 		/// </summary>
 		public int Id { get; set; }
+
 
 		#region Count
 		//ProducedG1 Dependency Property
@@ -100,14 +97,22 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Commands
-		//DeleteReport Dependency Property
-		public Commands.Command DeleteReport
+		void initializeCommands()
 		{
-			get { return (Commands.Command)GetValue(DeleteReportProperty); }
-			set { SetValue(DeleteReportProperty, value); }
+			DeleteCommand = new Commands.Command(o =>
+			{
+				TaskReportDataService.DeleteById(Id);
+				Task.ReloadTaskReports();
+			});
 		}
-		public static readonly DependencyProperty DeleteReportProperty =
-			DependencyProperty.Register("DeleteReport", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
+		//DeleteCommand Dependency Property
+		public Commands.Command DeleteCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

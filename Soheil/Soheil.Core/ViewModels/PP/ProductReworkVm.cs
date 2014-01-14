@@ -19,6 +19,7 @@ namespace Soheil.Core.ViewModels.PP
 			Rework = new ReworkVm(model.Rework);
 		}
 		/// <summary>
+		/// Creates a productRework viewModel for the given model (ignores productGroup)
 		/// <para>Use this constructor if you don't care for the links between the same products</para>
 		/// <para>It automatically create a new ProductVm for each instance or ProductReworkVm</para>
 		/// </summary>

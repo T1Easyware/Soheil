@@ -193,17 +193,9 @@ namespace Soheil.Common
     {
         Hours, Days, Month
     }
-	public enum PPTaskViewMode
+	public enum PPViewMode
 	{
-		Acquiring, Simple, ReportSimple, ReportDetailed
-	}
-	public enum PPProcessViewMode
-	{
-		Acquiring, Empty, Normal
-	}
-	public enum PPTableViewMode
-	{ 
-		Task, TaskReport, ProcessReport
+		Acquiring, Simple, Report, Empty
 	}
 
 

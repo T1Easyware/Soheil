@@ -7,20 +7,20 @@ using Soheil.Model;
 
 namespace Soheil.Core.DataServices
 {
-    public class ActivityOperatorDataService : IDataService<OperatorActivity>
+    public class ActivityOperatorDataService : IDataService<GeneralActivitySkill>
     {
-        public event EventHandler<ModelAddedEventArgs<OperatorActivity>> ModelUpdated;
+        public event EventHandler<ModelAddedEventArgs<GeneralActivitySkill>> ModelUpdated;
         /// <summary>
         /// Gets a single view model.
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns></returns>
-        public OperatorActivity GetSingle(int id)
+        public GeneralActivitySkill GetSingle(int id)
         {
-            OperatorActivity entity;
+            GeneralActivitySkill entity;
             using (var context = new SoheilEdmContext())
             {
-                var operatorRepository = new Repository<OperatorActivity>(context);
+                var operatorRepository = new Repository<GeneralActivitySkill>(context);
                 entity = operatorRepository.FirstOrDefault(model => model.Id == id, "Operator","Activity");
             }
             return entity;
@@ -30,7 +30,7 @@ namespace Soheil.Core.DataServices
         /// Gets a list of view models representing all records of the entity.
         /// </summary>
         /// <returns></returns>
-        public ObservableCollection<OperatorActivity> GetAll()
+        public ObservableCollection<GeneralActivitySkill> GetAll()
         {
             throw new System.NotImplementedException();
         }
@@ -39,36 +39,36 @@ namespace Soheil.Core.DataServices
         /// Gets a list of view models representing currently active records of the entity.
         /// </summary>
         /// <returns></returns>
-        public ObservableCollection<OperatorActivity> GetActives()
+        public ObservableCollection<GeneralActivitySkill> GetActives()
         {
             throw new NotImplementedException();
         }
 
-        public int AddModel(OperatorActivity model)
+        public int AddModel(GeneralActivitySkill model)
         {
             throw new System.NotImplementedException();
         }
 
-        public void UpdateModel(OperatorActivity model)
+        public void UpdateModel(GeneralActivitySkill model)
         {
             using (var context = new SoheilEdmContext())
             {
-                var repository = new Repository<OperatorActivity>(context);
-                OperatorActivity entity = repository.Single(operatorActivity => operatorActivity.Id == model.Id);
+                var repository = new Repository<GeneralActivitySkill>(context);
+                GeneralActivitySkill entity = repository.Single(generalActivitySkill => generalActivitySkill.Id == model.Id);
 
                 entity.IluoNr = model.IluoNr;
 
                 context.Commit();
-                if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<OperatorActivity>(entity));
+                if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<GeneralActivitySkill>(entity));
             }
         }
 
-        public void DeleteModel(OperatorActivity model)
+        public void DeleteModel(GeneralActivitySkill model)
         {
             throw new System.NotImplementedException();
         }
 
-        public void AttachModel(OperatorActivity model)
+        public void AttachModel(GeneralActivitySkill model)
         {
             throw new System.NotImplementedException();
         }

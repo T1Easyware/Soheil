@@ -7,85 +7,65 @@ using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
 using Soheil.Model;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.DataServices
 {
-    public class OperatorDataService : IDataService<Operator>
+    public class OperatorDataService : DataServiceBase, IDataService<Operator>
     {
+		Repository<Operator> _operatorRepository;
+		public OperatorDataService()
+			:this(new SoheilEdmContext())
+		{
+
+		}
+		public OperatorDataService(SoheilEdmContext context)
+		{
+			this.context = context;
+			_operatorRepository = new Repository<Operator>(context);
+		}
+
         #region IDataService<Operator> Members
 
         public Operator GetSingle(int id)
         {
-            Operator entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var operatorRepository = new Repository<Operator>(context);
-                entity = operatorRepository.Single(opr => opr.Id == id);
-            }
-            return entity;
+			return _operatorRepository.Single(opr => opr.Id == id);
         }
 
         public ObservableCollection<Operator> GetAll()
         {
-            ObservableCollection<Operator> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Operator>(context);
-                IEnumerable<Operator> entityList = repository.Find(opr=> opr.Status != (decimal)Status.Deleted);
-                models = new ObservableCollection<Operator>(entityList);
-            }
-            return models;
+                IEnumerable<Operator> entityList = _operatorRepository.Find(opr=> opr.Status != (decimal)Status.Deleted);
+                return new ObservableCollection<Operator>(entityList);
         }
 
         public ObservableCollection<Operator> GetActives()
         {
-            ObservableCollection<Operator> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Operator>(context);
-                IEnumerable<Operator> entityList = repository.Find(opr => opr.Status == (decimal)Status.Active);
-                models = new ObservableCollection<Operator>(entityList);
-            }
-            return models;
+                IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active);
+                return new ObservableCollection<Operator>(entityList);
         }
 
         public ObservableCollection<Operator> GetActives(SoheilEntityType linkType)
         {
             if (linkType == SoheilEntityType.Activities)
             {
-                ObservableCollection<Operator> models;
-                using (var context = new SoheilEdmContext())
-                {
-                    var repository = new Repository<Operator>(context);
-                    IEnumerable<Operator> entityList = repository.Find(opr => opr.Status == (decimal)Status.Active && opr.OperatorActivities.Count == 0);
-                    models = new ObservableCollection<Operator>(entityList);
-                }
-                return models;
+                    IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active && opr.OperatorActivities.Count == 0);
+                    return new ObservableCollection<Operator>(entityList);
             }
             return GetActives();
         }
 
         public int AddModel(Operator model)
         {
-            int id;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Operator>(context);
-                repository.Add(model);
+                _operatorRepository.Add(model);
                 context.Commit();
                 if (OperatorAdded != null)
                     OperatorAdded(this, new ModelAddedEventArgs<Operator>(model));
-                id = model.Id;
-            }
-            return id;
+                return model.Id;
         }
 
         public void UpdateModel(Operator model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var operatorRepository = new Repository<Operator>(context);
-                Operator entity = operatorRepository.Single(opr => opr.Id == model.Id);
+                Operator entity = _operatorRepository.Single(opr => opr.Id == model.Id);
 
                 entity.Code = model.Code;
                 entity.Name = model.Name;
@@ -93,7 +73,6 @@ namespace Soheil.Core.DataServices
                 entity.ModifiedBy = LoginInfo.Id;
                 entity.ModifiedDate = DateTime.Now;
                 context.Commit();
-            }
         }
 
         public void DeleteModel(Operator model)
@@ -102,10 +81,7 @@ namespace Soheil.Core.DataServices
 
         public void AttachModel(Operator model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Operator>(context);
-                if (repository.Exists(opr => opr.Id == model.Id))
+                if (_operatorRepository.Exists(opr => opr.Id == model.Id))
                 {
                     UpdateModel(model);
                 }
@@ -113,64 +89,51 @@ namespace Soheil.Core.DataServices
                 {
                     AddModel(model);
                 }
-            }
         }
 
         #endregion
 
         public event EventHandler<ModelAddedEventArgs<Operator>> OperatorAdded;
-        public event EventHandler<ModelAddedEventArgs<OperatorActivity>> ActivityAdded;
+        public event EventHandler<ModelAddedEventArgs<GeneralActivitySkill>> ActivityAdded;
         public event EventHandler<ModelRemovedEventArgs> ActivityRemoved;
 
 
-        public ObservableCollection<OperatorActivity> GetActivities(int oprId)
-        {
-            ObservableCollection<OperatorActivity> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Operator>(context);
-                Operator entity = repository.FirstOrDefault(opr => opr.Id == oprId, "OperatorActivities.Operator", "OperatorActivities.Activity");
-                models = new ObservableCollection<OperatorActivity>(entity.OperatorActivities.Where(item => item.Activity.Status == (decimal)Status.Active));
-            }
-
-            return models;
-        }
+		public ObservableCollection<GeneralActivitySkill> GetActivities(int oprId)
+		{
+			Operator entity = _operatorRepository.FirstOrDefault(opr => opr.Id == oprId,
+				"OperatorActivities.Operator",
+				"OperatorActivities.Activity");
+			return new ObservableCollection<GeneralActivitySkill>(
+				entity.OperatorActivities.Where(item => item.Activity.Status == (decimal)Status.Active).ToList());
+		}
 
         public void AddActivity(int oprId, int activityId)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var oprRepository = new Repository<Operator>(context);
                 var operatorRepository = new Repository<Activity>(context);
-                Operator currentOperator = oprRepository.Single(opr => opr.Id == oprId);
+                Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
                 Activity newActivity = operatorRepository.Single(opr => opr.Id == activityId);
                 if (currentOperator.OperatorActivities.Any(oprActivity => oprActivity.Operator.Id == oprId && oprActivity.Activity.Id == activityId))
                 {
                     return;
                 }
-                var newOperatorActivity = new OperatorActivity { Activity = newActivity, Operator = currentOperator };
-				currentOperator.OperatorActivities.Add(newOperatorActivity);
+                var newGeneralActivitySkill = new GeneralActivitySkill { Activity = newActivity, Operator = currentOperator };
+				currentOperator.OperatorActivities.Add(newGeneralActivitySkill);
                 context.Commit();
-                ActivityAdded(this, new ModelAddedEventArgs<OperatorActivity>(newOperatorActivity));
-            }
+                ActivityAdded(this, new ModelAddedEventArgs<GeneralActivitySkill>(newGeneralActivitySkill));
         }
 
         public void RemoveActivity(int oprId, int activityId)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var oprRepository = new Repository<Operator>(context);
-                var oprActivityRepository = new Repository<OperatorActivity>(context);
-                Operator currentOperator = oprRepository.Single(opr => opr.Id == oprId);
-                OperatorActivity currentOperatorActivity =
+                var oprActivityRepository = new Repository<GeneralActivitySkill>(context);
+                Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
+                GeneralActivitySkill currentGeneralActivitySkill =
 					currentOperator.OperatorActivities.First(
                         oprActivity =>
                         oprActivity.Operator.Id == oprId && oprActivity.Id == activityId);
-                int id = currentOperatorActivity.Id;
-                oprActivityRepository.Delete(currentOperatorActivity);
+                int id = currentGeneralActivitySkill.Id;
+                oprActivityRepository.Delete(currentGeneralActivitySkill);
                 context.Commit();
                 ActivityRemoved(this, new ModelRemovedEventArgs(id));
-            }
         }
     }
 }

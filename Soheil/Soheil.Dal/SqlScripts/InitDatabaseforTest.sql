@@ -235,27 +235,27 @@ insert into dbo.FPCs (Id, Code, Name, IsDefault, Product_Id, ModifiedDate, Creat
 SET IDENTITY_INSERT dbo.FPCs OFF
 
 SET IDENTITY_INSERT dbo.Operators ON
-insert into dbo.Operators (Id, Name, Code, Score, CreatedDate, ModifiedDate, [Status], ModifiedBy) values 
-(1, N'پژمان مسعودی', '001', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(2, N'سید جواد کرمی زاده', '002', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(3, N'مهدی علیدوست', '003', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(4, N'سجاد سلطانیان', '004', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(5, N'هوشنگ هدایت', '005', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(6, N'فریدون هاشمی', '006', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(7, N'سهیل سعادتیان', '007', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(8, N'فرهاد حاج مرادی', '008', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(9, N'پشمان مجعودی', '009', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(10, N'پجمان مسفودی', '011', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(11, N'پچمان مستودی', '021', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(12, N'سید جلاد نرمی زاده', '102', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(13, N'مهلی علیداست', '103', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(14, N'سعاد سلصانیان', '204', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(15, N'هوبنگ هتایت', '015', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(16, N'فرییون هاخمی', '106', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(17, N'سهیم سقدتیان', '237', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(18, N'فرجاد حاج مقادی', '128', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(19, N'فریاد حاج مدادی', '328', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1),
-(20, N'فرخاد حاج منادی', '458', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1);
+insert into dbo.Operators (Id, Name, Code, Score, CreatedDate, ModifiedDate, [Status], ModifiedBy, Age, Sex) values 
+(1, N'پژمان مسعودی', '001', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(2, N'زهرا کرمی زاده', '002', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'False'),
+(3, N'مهدی علیدوست', '003', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(4, N'سجاد سلطانیان', '004', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(5, N'هوشنگ هدایت', '005', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(6, N'فریدون هاشمی', '006', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(7, N'سهیلا سعادتیان', '007', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'False'),
+(8, N'فرهاد حاج مرادی', '008', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(9, N'پشمان مجعودی', '009', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(10, N'پجمان مسفودی', '011', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(11, N'پچمان مستودی', '021', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(12, N'سید جلاد نرمی زاده', '102', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(13, N'مهلی علیداست', '103', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(14, N'سعاد سلصانیان', '204', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(15, N'هوبنگ هتایت', '015', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(16, N'فرییون هاخمی', '106', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(17, N'سهیمه سقدتیان', '237', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'False'),
+(18, N'فرجاد حاج مقادی', '128', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(19, N'فریاد حاج مدادی', '328', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True'),
+(20, N'فرخاد حاج منادی', '458', 0, {fn CURRENT_TIMESTAMP()},{fn CURRENT_TIMESTAMP()}, 1, 1, 20, 'True');
 SET IDENTITY_INSERT dbo.Operators OFF
 
 SET IDENTITY_INSERT dbo.States ON

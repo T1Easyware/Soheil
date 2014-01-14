@@ -11,7 +11,7 @@ namespace Soheil.Core.ViewModels
     {
         #region Properties
 
-        private SpecialSkill _model;
+        private GeneralActivitySkill _model;
 
         public override int Id
         {
@@ -19,7 +19,7 @@ namespace Soheil.Core.ViewModels
             set { _model.Id = value; OnPropertyChanged("Id"); }
         }
 
-        public override string SearchItem {get {return Reserve1 + Reserve2 + Reserve3;} set{} }
+        public override string SearchItem {get {return "Reserve1 + Reserve2 + Reserve3???";} set{} }
 
         /// <summary>
         /// Gets or sets the data service.
@@ -37,7 +37,7 @@ namespace Soheil.Core.ViewModels
         /// </value>
         public OperatorVM OperatorVM { get; set; }
 
-        public string Reserve1
+       /* public string Reserve1
         {
             get { return _model.Reserve1; }
             set { _model.Reserve1 = value; OnPropertyChanged("Reserve1"); }
@@ -53,7 +53,7 @@ namespace Soheil.Core.ViewModels
         {
             get { return _model.Reserve3; }
             set { _model.Reserve3 = value; OnPropertyChanged("Reserve3"); }
-        }
+        }???*/
 
         public string ModifiedBy
         {
@@ -69,7 +69,7 @@ namespace Soheil.Core.ViewModels
         /// </summary>
         public SpecialSkillVM(AccessType access, SpecialSkillDataService dataService):base(access)
         {
-            _model = new SpecialSkill();
+            _model = new GeneralActivitySkill();
             InitializeData(dataService);
         }
 
@@ -78,15 +78,15 @@ namespace Soheil.Core.ViewModels
         /// </summary>
         /// <param name="entity">The model.</param>
         /// <param name="access"></param>
-        public SpecialSkillVM(SpecialSkill entity, AccessType access, SpecialSkillDataService dataService)
+        public SpecialSkillVM(GeneralActivitySkill entity, AccessType access, SpecialSkillDataService dataService)
             : base(access)
         {
             _model = entity;
             InitializeData(dataService);
             Id = entity.Id;
-            Reserve1 = entity.Reserve1;
+            /*Reserve1 = entity.Reserve1;
             Reserve2 = entity.Reserve2;
-            Reserve3 = entity.Reserve3;
+            Reserve3 = entity.Reserve3;???*/
             //OperatorVM = new OperatorVM(entity.Operator);
         }
 
@@ -110,9 +110,9 @@ namespace Soheil.Core.ViewModels
         #endregion
 
         #region Static Methods
-        public static SpecialSkill CreateNew(SpecialSkillDataService dataService)
+        public static GeneralActivitySkill CreateNew(SpecialSkillDataService dataService)
         {
-            int id = dataService.AddModel(new SpecialSkill { Reserve1 = "جدید" });
+            int id = dataService.AddModel(new GeneralActivitySkill { /*???*/});
             return dataService.GetSingle(id);
         }
         #endregion

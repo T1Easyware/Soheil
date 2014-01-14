@@ -56,21 +56,6 @@ namespace Soheil.Model
         }
         private StateStation _stateStation;
     
-        public virtual Activity Activity
-        {
-            get { return _activity; }
-            set
-            {
-                if (!ReferenceEquals(_activity, value))
-                {
-                    var previousValue = _activity;
-                    _activity = value;
-                    FixupActivity(previousValue);
-                }
-            }
-        }
-        private Activity _activity;
-    
         public virtual ICollection<StateStationActivityMachine> StateStationActivityMachines
         {
             get
@@ -103,6 +88,21 @@ namespace Soheil.Model
         }
         private ICollection<StateStationActivityMachine> _stateStationActivityMachines;
     
+        public virtual Activity Activity
+        {
+            get { return _activity; }
+            set
+            {
+                if (!ReferenceEquals(_activity, value))
+                {
+                    var previousValue = _activity;
+                    _activity = value;
+                    FixupActivity(previousValue);
+                }
+            }
+        }
+        private Activity _activity;
+    
         public virtual ICollection<Process> Processes
         {
             get
@@ -134,6 +134,38 @@ namespace Soheil.Model
             }
         }
         private ICollection<Process> _processes;
+    
+        public virtual ICollection<UniqueActivitySkill> UniqueActivitySkills
+        {
+            get
+            {
+                if (_uniqueActivitySkills == null)
+                {
+                    var newCollection = new FixupCollection<UniqueActivitySkill>();
+                    newCollection.CollectionChanged += FixupUniqueActivitySkills;
+                    _uniqueActivitySkills = newCollection;
+                }
+                return _uniqueActivitySkills;
+            }
+            set
+            {
+                if (!ReferenceEquals(_uniqueActivitySkills, value))
+                {
+                    var previousValue = _uniqueActivitySkills as FixupCollection<UniqueActivitySkill>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupUniqueActivitySkills;
+                    }
+                    _uniqueActivitySkills = value;
+                    var newValue = value as FixupCollection<UniqueActivitySkill>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupUniqueActivitySkills;
+                    }
+                }
+            }
+        }
+        private ICollection<UniqueActivitySkill> _uniqueActivitySkills;
 
         #endregion
 
@@ -206,6 +238,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (Process item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.StateStationActivity, this))
+                    {
+                        item.StateStationActivity = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupUniqueActivitySkills(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (UniqueActivitySkill item in e.NewItems)
+                {
+                    item.StateStationActivity = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (UniqueActivitySkill item in e.OldItems)
                 {
                     if (ReferenceEquals(item.StateStationActivity, this))
                     {

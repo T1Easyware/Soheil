@@ -6,11 +6,24 @@ using System.Threading.Tasks;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
 using Soheil.Model;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.DataServices
 {
-	public class NPTDataService : IDataService<NonProductiveTask>
+	public class NPTDataService : DataServiceBase, IDataService<NonProductiveTask>
 	{
+		Repository<NonProductiveTask> _nptRepository;
+
+		public NPTDataService()
+			: this(new SoheilEdmContext())
+		{
+
+		}
+		public NPTDataService(SoheilEdmContext context)
+		{
+			_nptRepository = new Repository<NonProductiveTask>(context);
+		}
+
 		#region IDataService
 		public NonProductiveTask GetSingle(int id)
 		{
@@ -78,23 +91,21 @@ namespace Soheil.Core.DataServices
 		public void AttachModel(NonProductiveTask model)
 		{
 			throw new NotImplementedException();
-		} 
+		}
 		#endregion
 
-		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, DateTime endDate, SoheilEdmContext context)
+		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, DateTime endDate)
 		{
-			var repository = new Repository<NonProductiveTask>(context);
 			var entityList = new List<NonProductiveTask>();
-			entityList.AddRange(repository.Find(x => x.StartDateTime < endDate && x.EndDateTime >= startDate, y => y.StartDateTime));
+			entityList.AddRange(_nptRepository.Find(x => x.StartDateTime < endDate && x.EndDateTime >= startDate, y => y.StartDateTime));
 			return entityList;
 		}
-		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, int stationId, SoheilEdmContext context)
+		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, int stationId)
 		{
-			var repository = new Repository<NonProductiveTask>(context);
 			var entityList = new List<NonProductiveTask>();
-			entityList.AddRange(repository.OfType<Setup>(
-				"Warmup", "Warmup.Station", "Warmup.ProductRework", 
-				"Changeover", "Changeover.FromProductRework","Changeover.ToProductRework", "Changeover.Station")
+			entityList.AddRange(_nptRepository.OfType<Setup>(
+				"Warmup", "Warmup.Station", "Warmup.ProductRework",
+				"Changeover", "Changeover.FromProductRework", "Changeover.ToProductRework", "Changeover.Station")
 				.Where(x => x.EndDateTime >= startDate && x.Warmup.Station.Id == stationId)
 				.OrderBy(y => y.StartDateTime));//???
 			return entityList;
@@ -107,17 +118,14 @@ namespace Soheil.Core.DataServices
 		/// <returns></returns>
 		internal bool UpdateViewModel(ViewModels.PP.NPTVm vm)
 		{
-			using (var context = new SoheilEdmContext())
-			{
-				var model = new Repository<Model.NonProductiveTask>(context).FirstOrDefault(x => x.Id == vm.Id);
-				if (model == null) return false;
-				vm.StartDateTime = model.StartDateTime;
-				vm.DurationSeconds = model.DurationSeconds;
-				if (vm is ViewModels.PP.SetupVm && model is Setup)
-					updateViewModel(vm as ViewModels.PP.SetupVm, model as Setup);
-				else//???
-					return false;
-			}
+			var model = _nptRepository.FirstOrDefault(x => x.Id == vm.Id);
+			if (model == null) return false;
+			vm.StartDateTime = model.StartDateTime;
+			vm.DurationSeconds = model.DurationSeconds;
+			if (vm is ViewModels.PP.SetupVm && model is Setup)
+				updateViewModel(vm as ViewModels.PP.SetupVm, model as Setup);
+			else//???
+				return false;
 			return true;
 		}
 		private void updateViewModel(ViewModels.PP.SetupVm vm, Setup model)

@@ -17,9 +17,9 @@
     <EntitySet Name="Tasks" EntityType="SoheilEdm.Store.Tasks" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Activities" EntityType="SoheilEdm.Store.Activities" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ActivityGroups" EntityType="SoheilEdm.Store.ActivityGroups" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="OperatorActivities" EntityType="SoheilEdm.Store.OperatorActivities" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="GeneralActivitySkills" EntityType="SoheilEdm.Store.GeneralActivitySkills" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Operators" EntityType="SoheilEdm.Store.Operators" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="SpecialSkills" EntityType="SoheilEdm.Store.SpecialSkills" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UniqueActivitySkills" EntityType="SoheilEdm.Store.UniqueActivitySkills" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Machines" EntityType="SoheilEdm.Store.Machines" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="MachineFamilies" EntityType="SoheilEdm.Store.MachineFamilies" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="States" EntityType="SoheilEdm.Store.States" store:Type="Tables" Schema="dbo" />
@@ -34,7 +34,7 @@
     <EntitySet Name="Roots" EntityType="SoheilEdm.Store.Roots" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Reworks" EntityType="SoheilEdm.Store.Reworks" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ProductReworks" EntityType="SoheilEdm.Store.ProductReworks" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="GeneralSkills" EntityType="SoheilEdm.Store.GeneralSkills" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="PersonalSkills" EntityType="SoheilEdm.Store.PersonalSkills" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Users" EntityType="SoheilEdm.Store.Users" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="AccessRules" EntityType="SoheilEdm.Store.AccessRules" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="User_AccessRules" EntityType="SoheilEdm.Store.User_AccessRules" store:Type="Tables" Schema="dbo" />
@@ -69,6 +69,8 @@
     <EntitySet Name="WorkProfilePlans" EntityType="SoheilEdm.Store.WorkProfilePlans" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Holidays" EntityType="SoheilEdm.Store.Holidays" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="WorkShiftPrototypes" EntityType="SoheilEdm.Store.WorkShiftPrototypes" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="OperatorProcessReports" EntityType="SoheilEdm.Store.OperatorProcessReports" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Blocks" EntityType="SoheilEdm.Store.Blocks" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_PM" EntityType="SoheilEdm.Store.NonProductiveTasks_PM" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_Education" EntityType="SoheilEdm.Store.NonProductiveTasks_Education" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_Setup" EntityType="SoheilEdm.Store.NonProductiveTasks_Setup" store:Type="Tables" Schema="dbo" />
@@ -120,10 +122,6 @@
     <AssociationSet Name="ProductGroupProduct" Association="SoheilEdm.Store.ProductGroupProduct">
       <End Role="ProductGroup" EntitySet="ProductGroups" />
       <End Role="Product" EntitySet="Products" />
-    </AssociationSet>
-    <AssociationSet Name="OperatorGeneralSkill" Association="SoheilEdm.Store.OperatorGeneralSkill">
-      <End Role="Operator" EntitySet="Operators" />
-      <End Role="GeneralSkill" EntitySet="GeneralSkills" />
     </AssociationSet>
     <AssociationSet Name="PositionOrganizationChart_Position" Association="SoheilEdm.Store.PositionOrganizationChart_Position">
       <End Role="Position" EntitySet="Positions" />
@@ -181,17 +179,9 @@
       <End Role="FPC" EntitySet="FPCs" />
       <End Role="State" EntitySet="States" />
     </AssociationSet>
-    <AssociationSet Name="OperatorOperatorActivity" Association="SoheilEdm.Store.OperatorOperatorActivity">
+    <AssociationSet Name="OperatorGeneralActivitySkill" Association="SoheilEdm.Store.OperatorGeneralActivitySkill">
       <End Role="Operator" EntitySet="Operators" />
-      <End Role="OperatorActivity" EntitySet="OperatorActivities" />
-    </AssociationSet>
-    <AssociationSet Name="SpecialSkillOperatorActivity" Association="SoheilEdm.Store.SpecialSkillOperatorActivity">
-      <End Role="SpecialSkill" EntitySet="SpecialSkills" />
-      <End Role="OperatorActivity" EntitySet="OperatorActivities" />
-    </AssociationSet>
-    <AssociationSet Name="StateStationTask" Association="SoheilEdm.Store.StateStationTask">
-      <End Role="StateStation" EntitySet="StateStations" />
-      <End Role="Task" EntitySet="Tasks" />
+      <End Role="GeneralActivitySkill" EntitySet="GeneralActivitySkills" />
     </AssociationSet>
     <AssociationSet Name="ProductProductRework" Association="SoheilEdm.Store.ProductProductRework">
       <End Role="Product" EntitySet="Products" />
@@ -201,9 +191,9 @@
       <End Role="Rework" EntitySet="Reworks" />
       <End Role="ProductRework" EntitySet="ProductReworks" />
     </AssociationSet>
-    <AssociationSet Name="ActivityOperatorActivity" Association="SoheilEdm.Store.ActivityOperatorActivity">
+    <AssociationSet Name="ActivityGeneralActivitySkill" Association="SoheilEdm.Store.ActivityGeneralActivitySkill">
       <End Role="Activity" EntitySet="Activities" />
-      <End Role="OperatorActivity" EntitySet="OperatorActivities" />
+      <End Role="GeneralActivitySkill" EntitySet="GeneralActivitySkills" />
     </AssociationSet>
     <AssociationSet Name="ActionPlanDefectionReport" Association="SoheilEdm.Store.ActionPlanDefectionReport">
       <End Role="ActionPlan" EntitySet="ActionPlans" />
@@ -211,10 +201,6 @@
     </AssociationSet>
     <AssociationSet Name="StateStationStateStationActivity" Association="SoheilEdm.Store.StateStationStateStationActivity">
       <End Role="StateStation" EntitySet="StateStations" />
-      <End Role="StateStationActivity" EntitySet="StateStationActivities" />
-    </AssociationSet>
-    <AssociationSet Name="ActivityStateStationActivity" Association="SoheilEdm.Store.ActivityStateStationActivity">
-      <End Role="Activity" EntitySet="Activities" />
       <End Role="StateStationActivity" EntitySet="StateStationActivities" />
     </AssociationSet>
     <AssociationSet Name="StateStationActivityStateStationActivityMachine" Association="SoheilEdm.Store.StateStationActivityStateStationActivityMachine">
@@ -232,10 +218,6 @@
     <AssociationSet Name="ProcessProcessOperator" Association="SoheilEdm.Store.ProcessProcessOperator">
       <End Role="Process" EntitySet="Process" />
       <End Role="ProcessOperator" EntitySet="ProcessOperators" />
-    </AssociationSet>
-    <AssociationSet Name="ProcessProcessReport" Association="SoheilEdm.Store.ProcessProcessReport">
-      <End Role="Process" EntitySet="Process" />
-      <End Role="ProcessReport" EntitySet="ProcessReports" />
     </AssociationSet>
     <AssociationSet Name="ProcessSelectedMachine" Association="SoheilEdm.Store.ProcessSelectedMachine">
       <End Role="Process" EntitySet="Process" />
@@ -277,24 +259,8 @@
       <End Role="DefectionReport" EntitySet="DefectionReports" />
       <End Role="OperatorDefectionReport" EntitySet="OperatorDefectionReports" />
     </AssociationSet>
-    <AssociationSet Name="OperatorOperatorDefectionReport" Association="SoheilEdm.Store.OperatorOperatorDefectionReport">
-      <End Role="Operator" EntitySet="Operators" />
-      <End Role="OperatorDefectionReport" EntitySet="OperatorDefectionReports" />
-    </AssociationSet>
-    <AssociationSet Name="StateStationActivityProcess" Association="SoheilEdm.Store.StateStationActivityProcess">
-      <End Role="StateStationActivity" EntitySet="StateStationActivities" />
-      <End Role="Process" EntitySet="Process" />
-    </AssociationSet>
-    <AssociationSet Name="StationCost" Association="SoheilEdm.Store.StationCost">
-      <End Role="Station" EntitySet="Stations" />
-      <End Role="Cost" EntitySet="Costs" />
-    </AssociationSet>
     <AssociationSet Name="MachineCost" Association="SoheilEdm.Store.MachineCost">
       <End Role="Machine" EntitySet="Machines" />
-      <End Role="Cost" EntitySet="Costs" />
-    </AssociationSet>
-    <AssociationSet Name="OperatorCost" Association="SoheilEdm.Store.OperatorCost">
-      <End Role="Operator" EntitySet="Operators" />
       <End Role="Cost" EntitySet="Costs" />
     </AssociationSet>
     <AssociationSet Name="CostCenterCost" Association="SoheilEdm.Store.CostCenterCost">
@@ -341,10 +307,6 @@
       <End Role="StationMachine" EntitySet="StationMachines" />
       <End Role="PM" EntitySet="NonProductiveTasks_PM" />
     </AssociationSet>
-    <AssociationSet Name="TaskEducation" Association="SoheilEdm.Store.TaskEducation">
-      <End Role="Task" EntitySet="Tasks" />
-      <End Role="Education" EntitySet="NonProductiveTasks_Education" />
-    </AssociationSet>
     <AssociationSet Name="OperatorEducatingOperator" Association="SoheilEdm.Store.OperatorEducatingOperator">
       <End Role="Operator" EntitySet="Operators" />
       <End Role="EducatingOperator" EntitySet="EducatingOperators" />
@@ -361,17 +323,9 @@
       <End Role="Warmup" EntitySet="Warmups" />
       <End Role="Setup" EntitySet="NonProductiveTasks_Setup" />
     </AssociationSet>
-    <AssociationSet Name="StationTest" Association="SoheilEdm.Store.StationTest">
-      <End Role="Station" EntitySet="Stations" />
-      <End Role="Test" EntitySet="NonProductiveTasks_Test" />
-    </AssociationSet>
     <AssociationSet Name="NonProductiveTaskReportNonProductiveTask" Association="SoheilEdm.Store.NonProductiveTaskReportNonProductiveTask">
       <End Role="NonProductiveTaskReport" EntitySet="NonProductiveTaskReports" />
       <End Role="NonProductiveTask" EntitySet="NonProductiveTasks" />
-    </AssociationSet>
-    <AssociationSet Name="JobTask" Association="SoheilEdm.Store.JobTask">
-      <End Role="Job" EntitySet="Jobs" />
-      <End Role="Task" EntitySet="Tasks" />
     </AssociationSet>
     <AssociationSet Name="ProductReworkJob" Association="SoheilEdm.Store.ProductReworkJob">
       <End Role="ProductRework" EntitySet="ProductReworks" />
@@ -381,10 +335,6 @@
       <End Role="Product" EntitySet="Products" />
       <End Role="FPC" EntitySet="FPCs" />
     </AssociationSet>
-    <AssociationSet Name="FPCJob" Association="SoheilEdm.Store.FPCJob">
-      <End Role="FPC" EntitySet="FPCs" />
-      <End Role="Job" EntitySet="Jobs" />
-    </AssociationSet>
     <AssociationSet Name="ProductReworkState" Association="SoheilEdm.Store.ProductReworkState">
       <End Role="ProductRework" EntitySet="ProductReworks" />
       <End Role="State" EntitySet="States" />
@@ -393,10 +343,6 @@
       <End Role="Station" EntitySet="Stations" />
       <End Role="StationMachine" EntitySet="StationMachines" />
     </AssociationSet>
-    <AssociationSet Name="StationStateStation" Association="SoheilEdm.Store.StationStateStation">
-      <End Role="Station" EntitySet="Stations" />
-      <End Role="StateStation" EntitySet="StateStations" />
-    </AssociationSet>
     <AssociationSet Name="ActivityCost" Association="SoheilEdm.Store.ActivityCost">
       <End Role="Activity" EntitySet="Activities" />
       <End Role="Cost" EntitySet="Costs" />
@@ -404,10 +350,6 @@
     <AssociationSet Name="ProductReworkChangeover1" Association="SoheilEdm.Store.ProductReworkChangeover1">
       <End Role="ProductRework" EntitySet="ProductReworks" />
       <End Role="Changeover" EntitySet="Changeovers" />
-    </AssociationSet>
-    <AssociationSet Name="ProductDefectionDefectionReport" Association="SoheilEdm.Store.ProductDefectionDefectionReport">
-      <End Role="ProductDefection" EntitySet="ProductDefections" />
-      <End Role="DefectionReport" EntitySet="DefectionReports" />
     </AssociationSet>
     <AssociationSet Name="WorkShiftWorkBreak" Association="SoheilEdm.Store.WorkShiftWorkBreak">
       <End Role="WorkShift" EntitySet="WorkShifts" />
@@ -432,6 +374,86 @@
     <AssociationSet Name="WorkShiftPrototypeWorkShift" Association="SoheilEdm.Store.WorkShiftPrototypeWorkShift">
       <End Role="WorkShiftPrototype" EntitySet="WorkShiftPrototypes" />
       <End Role="WorkShift" EntitySet="WorkShifts" />
+    </AssociationSet>
+    <AssociationSet Name="ActivityStateStationActivity" Association="SoheilEdm.Store.ActivityStateStationActivity">
+      <End Role="Activity" EntitySet="Activities" />
+      <End Role="StateStationActivity" EntitySet="StateStationActivities" />
+    </AssociationSet>
+    <AssociationSet Name="StateStationActivityProcess" Association="SoheilEdm.Store.StateStationActivityProcess">
+      <End Role="StateStationActivity" EntitySet="StateStationActivities" />
+      <End Role="Process" EntitySet="Process" />
+    </AssociationSet>
+    <AssociationSet Name="OperatorCost" Association="SoheilEdm.Store.OperatorCost">
+      <End Role="Operator" EntitySet="Operators" />
+      <End Role="Cost" EntitySet="Costs" />
+    </AssociationSet>
+    <AssociationSet Name="ProductDefectionDefectionReport" Association="SoheilEdm.Store.ProductDefectionDefectionReport">
+      <End Role="ProductDefection" EntitySet="ProductDefections" />
+      <End Role="DefectionReport" EntitySet="DefectionReports" />
+    </AssociationSet>
+    <AssociationSet Name="OperatorOperatorProcessReport" Association="SoheilEdm.Store.OperatorOperatorProcessReport">
+      <End Role="Operator" EntitySet="Operators" />
+      <End Role="OperatorProcessReport" EntitySet="OperatorProcessReports" />
+    </AssociationSet>
+    <AssociationSet Name="OperatorPersonalSkill" Association="SoheilEdm.Store.OperatorPersonalSkill">
+      <End Role="Operator" EntitySet="Operators" />
+      <End Role="PersonalSkill" EntitySet="PersonalSkills" />
+    </AssociationSet>
+    <AssociationSet Name="OperatorUniqueActivitySkill" Association="SoheilEdm.Store.OperatorUniqueActivitySkill">
+      <End Role="Operator" EntitySet="Operators" />
+      <End Role="UniqueActivitySkill" EntitySet="UniqueActivitySkills" />
+    </AssociationSet>
+    <AssociationSet Name="StateStationActivityMachineUniqueActivitySkill" Association="SoheilEdm.Store.StateStationActivityMachineUniqueActivitySkill">
+      <End Role="StateStationActivityMachine" EntitySet="StateStationActivityMachines" />
+      <End Role="UniqueActivitySkill" EntitySet="UniqueActivitySkills" />
+    </AssociationSet>
+    <AssociationSet Name="OperatorOperatorDefectionReport" Association="SoheilEdm.Store.OperatorOperatorDefectionReport">
+      <End Role="Operator" EntitySet="Operators" />
+      <End Role="OperatorDefectionReport" EntitySet="OperatorDefectionReports" />
+    </AssociationSet>
+    <AssociationSet Name="FPCJob" Association="SoheilEdm.Store.FPCJob">
+      <End Role="FPC" EntitySet="FPCs" />
+      <End Role="Job" EntitySet="Jobs" />
+    </AssociationSet>
+    <AssociationSet Name="ProcessReportOperatorProcessReport" Association="SoheilEdm.Store.ProcessReportOperatorProcessReport">
+      <End Role="ProcessReport" EntitySet="ProcessReports" />
+      <End Role="OperatorProcessReport" EntitySet="OperatorProcessReports" />
+    </AssociationSet>
+    <AssociationSet Name="StateStationBlock" Association="SoheilEdm.Store.StateStationBlock">
+      <End Role="StateStation" EntitySet="StateStations" />
+      <End Role="Block" EntitySet="Blocks" />
+    </AssociationSet>
+    <AssociationSet Name="BlockTask" Association="SoheilEdm.Store.BlockTask">
+      <End Role="Block" EntitySet="Blocks" />
+      <End Role="Task" EntitySet="Tasks" />
+    </AssociationSet>
+    <AssociationSet Name="JobBlock" Association="SoheilEdm.Store.JobBlock">
+      <End Role="Job" EntitySet="Jobs" />
+      <End Role="Block" EntitySet="Blocks" />
+    </AssociationSet>
+    <AssociationSet Name="StationCost" Association="SoheilEdm.Store.StationCost">
+      <End Role="Station" EntitySet="Stations" />
+      <End Role="Cost" EntitySet="Costs" />
+    </AssociationSet>
+    <AssociationSet Name="StationTest" Association="SoheilEdm.Store.StationTest">
+      <End Role="Station" EntitySet="Stations" />
+      <End Role="Test" EntitySet="NonProductiveTasks_Test" />
+    </AssociationSet>
+    <AssociationSet Name="ProcessProcessReport" Association="SoheilEdm.Store.ProcessProcessReport">
+      <End Role="Process" EntitySet="Process" />
+      <End Role="ProcessReport" EntitySet="ProcessReports" />
+    </AssociationSet>
+    <AssociationSet Name="StationStateStation" Association="SoheilEdm.Store.StationStateStation">
+      <End Role="Station" EntitySet="Stations" />
+      <End Role="StateStation" EntitySet="StateStations" />
+    </AssociationSet>
+    <AssociationSet Name="EducationBlock" Association="SoheilEdm.Store.EducationBlock">
+      <End Role="Education" EntitySet="NonProductiveTasks_Education" />
+      <End Role="Block" EntitySet="Blocks" />
+    </AssociationSet>
+    <AssociationSet Name="StateStationActivityUniqueActivitySkill" Association="SoheilEdm.Store.StateStationActivityUniqueActivitySkill">
+      <End Role="StateStationActivity" EntitySet="StateStationActivities" />
+      <End Role="UniqueActivitySkill" EntitySet="UniqueActivitySkills" />
     </AssociationSet>
     <AssociationSet Name="FK_PM_inherits_NonProductiveTask" Association="SoheilEdm.Store.FK_PM_inherits_NonProductiveTask">
       <End Role="NonProductiveTask" EntitySet="NonProductiveTasks" />
@@ -556,15 +578,12 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="PPFlagsNr" Type="tinyint" Nullable="false" />
-    <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="DurationSeconds" Type="int" Nullable="false" />
     <Property Name="StartDateTime" Type="datetime" Nullable="false" />
-    <Property Name="Code" Type="nvarchar(max)" Nullable="true" />
     <Property Name="TaskTargetPoint" Type="int" Nullable="false" />
     <Property Name="EndDateTime" Type="datetime" Nullable="false" />
-    <Property Name="StateStation_Id" Type="int" Nullable="false" />
-    <Property Name="Job_Id" Type="int" Nullable="true" />
+    <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="Block_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Activities">
     <Key>
@@ -590,15 +609,16 @@
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
   </EntityType>
-  <EntityType Name="OperatorActivities">
+  <EntityType Name="GeneralActivitySkills">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IluoNr" Type="tinyint" Nullable="false" DefaultValue="0" />
-    <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="Operator_Id" Type="int" Nullable="false" />
-    <Property Name="SpecialSkill_Id" Type="int" Nullable="true" />
     <Property Name="Activity_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Operators">
@@ -613,16 +633,21 @@
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="Sex" Type="bit" Nullable="false" DefaultValue="true" />
+    <Property Name="Age" Type="int" Nullable="false" DefaultValue="1" />
   </EntityType>
-  <EntityType Name="SpecialSkills">
+  <EntityType Name="UniqueActivitySkills">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Reserve1" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Reserve2" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Reserve3" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="IluoNr" Type="tinyint" Nullable="false" DefaultValue="0" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="Operator_Id" Type="int" Nullable="false" />
+    <Property Name="StateStationActivityMachineUniqueActivitySkill_UniqueActivitySkill_Id" Type="int" Nullable="false" />
+    <Property Name="StateStationActivity_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Machines">
     <Key>
@@ -696,11 +721,11 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Code" Type="nvarchar" Nullable="true" MaxLength="60" />
-    <Property Name="ProducedG1" Type="int" Nullable="false" />
+    <Property Name="ProducedG1" Type="int" Nullable="false" DefaultValue="0" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ProcessReportTargetPoint" Type="int" Nullable="false" />
-    <Property Name="Process_Id" Type="int" Nullable="false" />
     <Property Name="TaskReport_Id" Type="int" Nullable="false" />
+    <Property Name="Process_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="TaskReports">
     <Key>
@@ -789,18 +814,18 @@
     <Property Name="Product_Id" Type="int" Nullable="false" />
     <Property Name="Rework_Id" Type="int" Nullable="true" />
   </EntityType>
-  <EntityType Name="GeneralSkills">
+  <EntityType Name="PersonalSkills">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Education" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="PhysicalState" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Reserve1" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Reserve2" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Reserve3" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Experience" Type="int" Nullable="false" />
+    <Property Name="ReserveText1" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="ReserveText2" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="ReserveInteger1" Type="int" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
-    <Property Name="Operator_Id" Type="int" Nullable="true" />
+    <Property Name="Operator_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Users">
     <Key>
@@ -978,12 +1003,12 @@
     <Property Name="Quantity" Type="int" Nullable="true" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="CostType" Type="tinyint" Nullable="false" DefaultValue="1" />
-    <Property Name="Station_Id" Type="int" Nullable="true" />
     <Property Name="Machine_Id" Type="int" Nullable="true" />
-    <Property Name="Operator_Id" Type="int" Nullable="true" />
     <Property Name="CostCenter_Id" Type="int" Nullable="false" />
     <Property Name="PartWarehouse_Id" Type="int" Nullable="true" />
     <Property Name="Activity_Id" Type="int" Nullable="true" />
+    <Property Name="Operator_Id" Type="int" Nullable="true" />
+    <Property Name="Station_Id" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="CostCenters">
     <Key>
@@ -1169,6 +1194,32 @@
     <Property Name="Index" Type="tinyint" Nullable="false" DefaultValue="0" />
     <Property Name="WorkProfile_Id" Type="int" Nullable="false" />
   </EntityType>
+  <EntityType Name="OperatorProcessReports">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="OperatorProducedG1" Type="int" Nullable="false" DefaultValue="0" />
+    <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="Operator_Id" Type="int" Nullable="false" />
+    <Property Name="ProcessReport_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Blocks">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DurationSeconds" Type="int" Nullable="false" />
+    <Property Name="StartDateTime" Type="datetime" Nullable="false" />
+    <Property Name="Code" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="BlockTargetPoint" Type="int" Nullable="false" />
+    <Property Name="EndDateTime" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="PPFlagsNr" Type="tinyint" Nullable="false" />
+    <Property Name="StateStation_Id" Type="int" Nullable="false" />
+    <Property Name="Job_Id" Type="int" Nullable="true" />
+    <Property Name="Education_Id" Type="int" Nullable="false" />
+  </EntityType>
   <EntityType Name="NonProductiveTasks_PM">
     <Key>
       <PropertyRef Name="Id" />
@@ -1182,7 +1233,6 @@
     </Key>
     <Property Name="StartOffset" Type="datetimeoffset" Nullable="false" />
     <Property Name="Id" Type="int" Nullable="false" />
-    <Property Name="Task_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="NonProductiveTasks_Setup">
     <Key>
@@ -1340,18 +1390,6 @@
       </Principal>
       <Dependent Role="Product">
         <PropertyRef Name="ProductGroup_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="OperatorGeneralSkill">
-    <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="0..1" />
-    <End Role="GeneralSkill" Type="SoheilEdm.Store.GeneralSkills" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Operator">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="GeneralSkill">
-        <PropertyRef Name="Operator_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1523,39 +1561,15 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="OperatorOperatorActivity">
+  <Association Name="OperatorGeneralActivitySkill">
     <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="1" />
-    <End Role="OperatorActivity" Type="SoheilEdm.Store.OperatorActivities" Multiplicity="*" />
+    <End Role="GeneralActivitySkill" Type="SoheilEdm.Store.GeneralActivitySkills" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Operator">
         <PropertyRef Name="Id" />
       </Principal>
-      <Dependent Role="OperatorActivity">
+      <Dependent Role="GeneralActivitySkill">
         <PropertyRef Name="Operator_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="SpecialSkillOperatorActivity">
-    <End Role="SpecialSkill" Type="SoheilEdm.Store.SpecialSkills" Multiplicity="0..1" />
-    <End Role="OperatorActivity" Type="SoheilEdm.Store.OperatorActivities" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="SpecialSkill">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="OperatorActivity">
-        <PropertyRef Name="SpecialSkill_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="StateStationTask">
-    <End Role="StateStation" Type="SoheilEdm.Store.StateStations" Multiplicity="1" />
-    <End Role="Task" Type="SoheilEdm.Store.Tasks" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="StateStation">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Task">
-        <PropertyRef Name="StateStation_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1583,14 +1597,14 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="ActivityOperatorActivity">
+  <Association Name="ActivityGeneralActivitySkill">
     <End Role="Activity" Type="SoheilEdm.Store.Activities" Multiplicity="1" />
-    <End Role="OperatorActivity" Type="SoheilEdm.Store.OperatorActivities" Multiplicity="*" />
+    <End Role="GeneralActivitySkill" Type="SoheilEdm.Store.GeneralActivitySkills" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Activity">
         <PropertyRef Name="Id" />
       </Principal>
-      <Dependent Role="OperatorActivity">
+      <Dependent Role="GeneralActivitySkill">
         <PropertyRef Name="Activity_Id" />
       </Dependent>
     </ReferentialConstraint>
@@ -1616,18 +1630,6 @@
       </Principal>
       <Dependent Role="StateStationActivity">
         <PropertyRef Name="StateStation_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="ActivityStateStationActivity">
-    <End Role="Activity" Type="SoheilEdm.Store.Activities" Multiplicity="1" />
-    <End Role="StateStationActivity" Type="SoheilEdm.Store.StateStationActivities" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Activity">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="StateStationActivity">
-        <PropertyRef Name="Activity_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1675,18 +1677,6 @@
         <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="ProcessOperator">
-        <PropertyRef Name="Process_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="ProcessProcessReport">
-    <End Role="Process" Type="SoheilEdm.Store.Process" Multiplicity="1" />
-    <End Role="ProcessReport" Type="SoheilEdm.Store.ProcessReports" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Process">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="ProcessReport">
         <PropertyRef Name="Process_Id" />
       </Dependent>
     </ReferentialConstraint>
@@ -1811,42 +1801,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="OperatorOperatorDefectionReport">
-    <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="1" />
-    <End Role="OperatorDefectionReport" Type="SoheilEdm.Store.OperatorDefectionReports" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Operator">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="OperatorDefectionReport">
-        <PropertyRef Name="Operator_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="StateStationActivityProcess">
-    <End Role="StateStationActivity" Type="SoheilEdm.Store.StateStationActivities" Multiplicity="1" />
-    <End Role="Process" Type="SoheilEdm.Store.Process" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="StateStationActivity">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Process">
-        <PropertyRef Name="StateStationActivity_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="StationCost">
-    <End Role="Station" Type="SoheilEdm.Store.Stations" Multiplicity="0..1" />
-    <End Role="Cost" Type="SoheilEdm.Store.Costs" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Station">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Cost">
-        <PropertyRef Name="Station_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="MachineCost">
     <End Role="Machine" Type="SoheilEdm.Store.Machines" Multiplicity="0..1" />
     <End Role="Cost" Type="SoheilEdm.Store.Costs" Multiplicity="*" />
@@ -1856,18 +1810,6 @@
       </Principal>
       <Dependent Role="Cost">
         <PropertyRef Name="Machine_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="OperatorCost">
-    <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="0..1" />
-    <End Role="Cost" Type="SoheilEdm.Store.Costs" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Operator">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Cost">
-        <PropertyRef Name="Operator_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2003,18 +1945,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="TaskEducation">
-    <End Role="Task" Type="SoheilEdm.Store.Tasks" Multiplicity="1" />
-    <End Role="Education" Type="SoheilEdm.Store.NonProductiveTasks_Education" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Task">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Education">
-        <PropertyRef Name="Task_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="OperatorEducatingOperator">
     <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="1" />
     <End Role="EducatingOperator" Type="SoheilEdm.Store.EducatingOperators" Multiplicity="*" />
@@ -2063,18 +1993,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="StationTest">
-    <End Role="Station" Type="SoheilEdm.Store.Stations" Multiplicity="1" />
-    <End Role="Test" Type="SoheilEdm.Store.NonProductiveTasks_Test" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Station">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Test">
-        <PropertyRef Name="Station_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="NonProductiveTaskReportNonProductiveTask">
     <End Role="NonProductiveTaskReport" Type="SoheilEdm.Store.NonProductiveTaskReports" Multiplicity="*" />
     <End Role="NonProductiveTask" Type="SoheilEdm.Store.NonProductiveTasks" Multiplicity="1" />
@@ -2084,18 +2002,6 @@
       </Principal>
       <Dependent Role="NonProductiveTaskReport">
         <PropertyRef Name="NonProductiveTasks_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="JobTask">
-    <End Role="Job" Type="SoheilEdm.Store.Jobs" Multiplicity="0..1" />
-    <End Role="Task" Type="SoheilEdm.Store.Tasks" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Job">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Task">
-        <PropertyRef Name="Job_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2123,18 +2029,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FPCJob">
-    <End Role="FPC" Type="SoheilEdm.Store.FPCs" Multiplicity="1" />
-    <End Role="Job" Type="SoheilEdm.Store.Jobs" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="FPC">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Job">
-        <PropertyRef Name="FPC_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="ProductReworkState">
     <End Role="ProductRework" Type="SoheilEdm.Store.ProductReworks" Multiplicity="0..1" />
     <End Role="State" Type="SoheilEdm.Store.States" Multiplicity="*" />
@@ -2155,18 +2049,6 @@
         <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="StationMachine">
-        <PropertyRef Name="Station_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="StationStateStation">
-    <End Role="Station" Type="SoheilEdm.Store.Stations" Multiplicity="1" />
-    <End Role="StateStation" Type="SoheilEdm.Store.StateStations" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Station">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="StateStation">
         <PropertyRef Name="Station_Id" />
       </Dependent>
     </ReferentialConstraint>
@@ -2192,18 +2074,6 @@
       </Principal>
       <Dependent Role="Changeover">
         <PropertyRef Name="ToProductRework_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="ProductDefectionDefectionReport">
-    <End Role="ProductDefection" Type="SoheilEdm.Store.ProductDefections" Multiplicity="1" />
-    <End Role="DefectionReport" Type="SoheilEdm.Store.DefectionReports" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="ProductDefection">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="DefectionReport">
-        <PropertyRef Name="ProductDefection_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2276,6 +2146,246 @@
       </Principal>
       <Dependent Role="WorkShift">
         <PropertyRef Name="WorkShiftPrototype_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ActivityStateStationActivity">
+    <End Role="Activity" Type="SoheilEdm.Store.Activities" Multiplicity="1" />
+    <End Role="StateStationActivity" Type="SoheilEdm.Store.StateStationActivities" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Activity">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="StateStationActivity">
+        <PropertyRef Name="Activity_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StateStationActivityProcess">
+    <End Role="StateStationActivity" Type="SoheilEdm.Store.StateStationActivities" Multiplicity="1" />
+    <End Role="Process" Type="SoheilEdm.Store.Process" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateStationActivity">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Process">
+        <PropertyRef Name="StateStationActivity_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="OperatorCost">
+    <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="0..1" />
+    <End Role="Cost" Type="SoheilEdm.Store.Costs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Operator">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Cost">
+        <PropertyRef Name="Operator_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ProductDefectionDefectionReport">
+    <End Role="ProductDefection" Type="SoheilEdm.Store.ProductDefections" Multiplicity="1" />
+    <End Role="DefectionReport" Type="SoheilEdm.Store.DefectionReports" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProductDefection">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="DefectionReport">
+        <PropertyRef Name="ProductDefection_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="OperatorOperatorProcessReport">
+    <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="1" />
+    <End Role="OperatorProcessReport" Type="SoheilEdm.Store.OperatorProcessReports" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Operator">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="OperatorProcessReport">
+        <PropertyRef Name="Operator_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="OperatorPersonalSkill">
+    <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="1" />
+    <End Role="PersonalSkill" Type="SoheilEdm.Store.PersonalSkills" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Operator">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PersonalSkill">
+        <PropertyRef Name="Operator_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="OperatorUniqueActivitySkill">
+    <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="1" />
+    <End Role="UniqueActivitySkill" Type="SoheilEdm.Store.UniqueActivitySkills" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Operator">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UniqueActivitySkill">
+        <PropertyRef Name="Operator_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StateStationActivityMachineUniqueActivitySkill">
+    <End Role="StateStationActivityMachine" Type="SoheilEdm.Store.StateStationActivityMachines" Multiplicity="1" />
+    <End Role="UniqueActivitySkill" Type="SoheilEdm.Store.UniqueActivitySkills" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateStationActivityMachine">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UniqueActivitySkill">
+        <PropertyRef Name="StateStationActivityMachineUniqueActivitySkill_UniqueActivitySkill_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="OperatorOperatorDefectionReport">
+    <End Role="Operator" Type="SoheilEdm.Store.Operators" Multiplicity="1" />
+    <End Role="OperatorDefectionReport" Type="SoheilEdm.Store.OperatorDefectionReports" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Operator">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="OperatorDefectionReport">
+        <PropertyRef Name="Operator_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FPCJob">
+    <End Role="FPC" Type="SoheilEdm.Store.FPCs" Multiplicity="1" />
+    <End Role="Job" Type="SoheilEdm.Store.Jobs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="FPC">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Job">
+        <PropertyRef Name="FPC_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ProcessReportOperatorProcessReport">
+    <End Role="ProcessReport" Type="SoheilEdm.Store.ProcessReports" Multiplicity="1" />
+    <End Role="OperatorProcessReport" Type="SoheilEdm.Store.OperatorProcessReports" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProcessReport">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="OperatorProcessReport">
+        <PropertyRef Name="ProcessReport_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StateStationBlock">
+    <End Role="StateStation" Type="SoheilEdm.Store.StateStations" Multiplicity="1" />
+    <End Role="Block" Type="SoheilEdm.Store.Blocks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateStation">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Block">
+        <PropertyRef Name="StateStation_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="BlockTask">
+    <End Role="Block" Type="SoheilEdm.Store.Blocks" Multiplicity="1" />
+    <End Role="Task" Type="SoheilEdm.Store.Tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Block">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Task">
+        <PropertyRef Name="Block_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="JobBlock">
+    <End Role="Job" Type="SoheilEdm.Store.Jobs" Multiplicity="0..1" />
+    <End Role="Block" Type="SoheilEdm.Store.Blocks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Job">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Block">
+        <PropertyRef Name="Job_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StationCost">
+    <End Role="Station" Type="SoheilEdm.Store.Stations" Multiplicity="0..1" />
+    <End Role="Cost" Type="SoheilEdm.Store.Costs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Station">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Cost">
+        <PropertyRef Name="Station_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StationTest">
+    <End Role="Station" Type="SoheilEdm.Store.Stations" Multiplicity="1" />
+    <End Role="Test" Type="SoheilEdm.Store.NonProductiveTasks_Test" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Station">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Test">
+        <PropertyRef Name="Station_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ProcessProcessReport">
+    <End Role="Process" Type="SoheilEdm.Store.Process" Multiplicity="1" />
+    <End Role="ProcessReport" Type="SoheilEdm.Store.ProcessReports" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Process">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProcessReport">
+        <PropertyRef Name="Process_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StationStateStation">
+    <End Role="Station" Type="SoheilEdm.Store.Stations" Multiplicity="1" />
+    <End Role="StateStation" Type="SoheilEdm.Store.StateStations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Station">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="StateStation">
+        <PropertyRef Name="Station_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="EducationBlock">
+    <End Role="Education" Type="SoheilEdm.Store.NonProductiveTasks_Education" Multiplicity="1" />
+    <End Role="Block" Type="SoheilEdm.Store.Blocks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Education">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Block">
+        <PropertyRef Name="Education_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StateStationActivityUniqueActivitySkill">
+    <End Role="StateStationActivity" Type="SoheilEdm.Store.StateStationActivities" Multiplicity="1" />
+    <End Role="UniqueActivitySkill" Type="SoheilEdm.Store.UniqueActivitySkills" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateStationActivity">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UniqueActivitySkill">
+        <PropertyRef Name="StateStationActivity_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2489,9 +2599,9 @@
             <End Role="State" EntitySet="States" />
           </AssociationSet>
           <EntitySet Name="SelectedMachines" EntityType="SoheilEdm.SelectedMachine" />
-          <AssociationSet Name="OperatorOperatorActivity" Association="SoheilEdm.OperatorOperatorActivity">
+          <AssociationSet Name="OperatorGeneralActivitySkill" Association="SoheilEdm.OperatorGeneralActivitySkill">
             <End EntitySet="Operators" Role="Operator" />
-            <End EntitySet="GeneralActivitySkills" Role="OperatorActivity" />
+            <End EntitySet="GeneralActivitySkills" Role="GeneralActivitySkill" />
           </AssociationSet>
           <AssociationSet Name="ProductProductRework" Association="SoheilEdm.ProductProductRework">
             <End Role="Product" EntitySet="Products" />
@@ -2501,9 +2611,9 @@
             <End Role="Rework" EntitySet="Reworks" />
             <End Role="ProductRework" EntitySet="ProductReworks" />
           </AssociationSet>
-          <AssociationSet Name="ActivityOperatorActivity" Association="SoheilEdm.ActivityOperatorActivity">
+          <AssociationSet Name="ActivityGeneralActivitySkill" Association="SoheilEdm.ActivityGeneralActivitySkill">
             <End EntitySet="Activities" Role="Activity" />
-            <End EntitySet="GeneralActivitySkills" Role="OperatorActivity" />
+            <End EntitySet="GeneralActivitySkills" Role="GeneralActivitySkill" />
           </AssociationSet>
           <AssociationSet Name="ActionPlanDefectionReport" Association="SoheilEdm.ActionPlanDefectionReport">
             <End Role="ActionPlan" EntitySet="ActionPlans" />
@@ -2748,18 +2858,18 @@
             <End Role="ProcessReport" EntitySet="ProcessReports" />
             <End Role="OperatorProcessReport" EntitySet="OperatorProcessReports" />
           </AssociationSet>
-          <EntitySet Name="PPBlocks" EntityType="SoheilEdm.PPBlock" />
-          <AssociationSet Name="StateStationPPBlock" Association="SoheilEdm.StateStationPPBlock">
+          <EntitySet Name="Blocks" EntityType="SoheilEdm.Block" />
+          <AssociationSet Name="StateStationBlock" Association="SoheilEdm.StateStationBlock">
             <End EntitySet="StateStations" Role="StateStation" />
-            <End EntitySet="PPBlocks" Role="PPBlock" />
+            <End EntitySet="Blocks" Role="Block" />
           </AssociationSet>
-          <AssociationSet Name="PPBlockTask" Association="SoheilEdm.PPBlockTask">
-            <End Role="PPBlock" EntitySet="PPBlocks" />
+          <AssociationSet Name="BlockTask" Association="SoheilEdm.BlockTask">
+            <End Role="Block" EntitySet="Blocks" />
             <End Role="Task" EntitySet="Tasks" />
           </AssociationSet>
-          <AssociationSet Name="JobPPBlock" Association="SoheilEdm.JobPPBlock">
+          <AssociationSet Name="JobBlock" Association="SoheilEdm.JobBlock">
             <End Role="Job" EntitySet="Jobs" />
-            <End Role="PPBlock" EntitySet="PPBlocks" />
+            <End Role="Block" EntitySet="Blocks" />
           </AssociationSet>
           <AssociationSet Name="StationCost" Association="SoheilEdm.StationCost">
             <End Role="Station" EntitySet="Stations" />
@@ -2777,9 +2887,13 @@
             <End EntitySet="Stations" Role="Station" />
             <End EntitySet="StateStations" Role="StateStation" />
           </AssociationSet>
-          <AssociationSet Name="EducationPPBlock" Association="SoheilEdm.EducationPPBlock">
+          <AssociationSet Name="EducationBlock" Association="SoheilEdm.EducationBlock">
             <End Role="Education" EntitySet="NonProductiveTasks" />
-            <End Role="PPBlock" EntitySet="PPBlocks" />
+            <End Role="Block" EntitySet="Blocks" />
+          </AssociationSet>
+          <AssociationSet Name="StateStationActivityUniqueActivitySkill" Association="SoheilEdm.StateStationActivityUniqueActivitySkill">
+            <End Role="StateStationActivity" EntitySet="StateStationActivities" />
+            <End Role="UniqueActivitySkill" EntitySet="UniqueActivitySkills" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Product">
@@ -2932,7 +3046,7 @@
             </Documentation>
           </Property>
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="PPBlock" Relationship="SoheilEdm.PPBlockTask" FromRole="Task" ToRole="PPBlock" />
+          <NavigationProperty Name="Block" Relationship="SoheilEdm.BlockTask" FromRole="Task" ToRole="Block" />
         </EntityType>
         <EntityType Name="Activity">
           <Key>
@@ -2946,7 +3060,7 @@
           <Property Type="Byte" Name="Status" Nullable="false" DefaultValue="1" cg:SetterAccess="Public" cg:GetterAccess="Public" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Type="Int32" Name="ModifiedBy" Nullable="false" />
           <NavigationProperty Name="ActivityGroup" Relationship="SoheilEdm.ActivityGroupActivity" FromRole="Activity" ToRole="ActivityGroup" />
-          <NavigationProperty Name="OperatorActivities" Relationship="SoheilEdm.ActivityOperatorActivity" FromRole="Activity" ToRole="OperatorActivity" />
+          <NavigationProperty Name="OperatorActivities" Relationship="SoheilEdm.ActivityGeneralActivitySkill" FromRole="Activity" ToRole="GeneralActivitySkill" />
           <NavigationProperty Name="Costs" Relationship="SoheilEdm.ActivityCost" FromRole="Activity" ToRole="Cost" />
           <NavigationProperty Name="StateStationActivities" Relationship="SoheilEdm.ActivityStateStationActivity" FromRole="Activity" ToRole="StateStationActivity" />
         </EntityType>
@@ -2968,8 +3082,8 @@
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Byte" Name="IluoNr" Nullable="false" cg:GetterAccess="Public" cg:SetterAccess="Public" DefaultValue="0" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
-          <NavigationProperty Name="Operator" Relationship="SoheilEdm.OperatorOperatorActivity" FromRole="OperatorActivity" ToRole="Operator" />
-          <NavigationProperty Name="Activity" Relationship="SoheilEdm.ActivityOperatorActivity" FromRole="OperatorActivity" ToRole="Activity" />
+          <NavigationProperty Name="Operator" Relationship="SoheilEdm.OperatorGeneralActivitySkill" FromRole="GeneralActivitySkill" ToRole="Operator" />
+          <NavigationProperty Name="Activity" Relationship="SoheilEdm.ActivityGeneralActivitySkill" FromRole="GeneralActivitySkill" ToRole="Activity" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
@@ -2986,7 +3100,7 @@
           <Property Type="DateTime" Name="CreatedDate" Nullable="false" Precision="3" />
           <Property Type="Byte" Name="Status" Nullable="false" DefaultValue="1" cg:GetterAccess="Public" cg:SetterAccess="Public" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Type="Int32" Name="ModifiedBy" Nullable="false" />
-          <NavigationProperty Name="OperatorActivities" Relationship="SoheilEdm.OperatorOperatorActivity" FromRole="Operator" ToRole="OperatorActivity" />
+          <NavigationProperty Name="OperatorActivities" Relationship="SoheilEdm.OperatorGeneralActivitySkill" FromRole="Operator" ToRole="GeneralActivitySkill" />
           <NavigationProperty Name="ProcessOperators" Relationship="SoheilEdm.OperatorProcessOperator" FromRole="Operator" ToRole="ProcessOperator" />
           <NavigationProperty Name="OperatorStoppageReports" Relationship="SoheilEdm.OperatorOperatorStoppageReport" FromRole="Operator" ToRole="OperatorStoppageReport" />
           <NavigationProperty Name="EducatingOperators" Relationship="SoheilEdm.OperatorEducatingOperator" FromRole="Operator" ToRole="EducatingOperator" />
@@ -2995,6 +3109,12 @@
           <NavigationProperty Name="PersonalSkill" Relationship="SoheilEdm.OperatorPersonalSkill" FromRole="Operator" ToRole="PersonalSkill" />
           <NavigationProperty Name="UniqueActivitySkills" Relationship="SoheilEdm.OperatorUniqueActivitySkill" FromRole="Operator" ToRole="UniqueActivitySkill" />
           <NavigationProperty Name="OperatorDefectionReports" Relationship="SoheilEdm.OperatorOperatorDefectionReport" FromRole="Operator" ToRole="OperatorDefectionReport" />
+          <Property Name="Sex" Type="Boolean" Nullable="false" DefaultValue="True" >
+            <Documentation>
+              <Summary>Is male</Summary>
+            </Documentation>
+          </Property>
+          <Property Name="Age" Type="Int32" Nullable="false" DefaultValue="1" />
         </EntityType>
         <EntityType Name="UniqueActivitySkill">
           <Key>
@@ -3006,7 +3126,7 @@
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Operator" Relationship="SoheilEdm.OperatorUniqueActivitySkill" FromRole="UniqueActivitySkill" ToRole="Operator" />
-          <NavigationProperty Name="StateStationActivityMachine" Relationship="SoheilEdm.StateStationActivityMachineUniqueActivitySkill" FromRole="UniqueActivitySkill" ToRole="StateStationActivityMachine" />
+          <NavigationProperty Name="StateStationActivity" Relationship="SoheilEdm.StateStationActivityUniqueActivitySkill" FromRole="UniqueActivitySkill" ToRole="StateStationActivity" />
           </EntityType>
         <EntityType Name="Machine">
           <Key>
@@ -3060,7 +3180,7 @@
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="State" Relationship="SoheilEdm.StateStateStation" FromRole="State_Station" ToRole="State" />
           <NavigationProperty Name="StateStationActivities" Relationship="SoheilEdm.StateStationStateStationActivity" FromRole="StateStation" ToRole="StateStationActivity" />
-          <NavigationProperty Name="PPBlocks" Relationship="SoheilEdm.StateStationPPBlock" FromRole="StateStation" ToRole="PPBlock" />
+          <NavigationProperty Name="Blocks" Relationship="SoheilEdm.StateStationBlock" FromRole="StateStation" ToRole="Block" />
           <NavigationProperty Name="Station" Relationship="SoheilEdm.StationStateStation" FromRole="StateStation" ToRole="Station" />
         </EntityType>
         <EntityType Name="Process">
@@ -3359,6 +3479,7 @@
           <NavigationProperty Name="StateStationActivityMachines" Relationship="SoheilEdm.StateStationActivityStateStationActivityMachine" FromRole="StateStationActivity" ToRole="StateStationActivityMachine" />
           <NavigationProperty Name="Activity" Relationship="SoheilEdm.ActivityStateStationActivity" FromRole="StateStationActivity" ToRole="Activity" />
           <NavigationProperty Name="Processes" Relationship="SoheilEdm.StateStationActivityProcess" FromRole="StateStationActivity" ToRole="Process" />
+          <NavigationProperty Name="UniqueActivitySkills" Relationship="SoheilEdm.StateStationActivityUniqueActivitySkill" FromRole="StateStationActivity" ToRole="UniqueActivitySkill" />
         </EntityType>
         <EntityType Name="StateStationActivityMachine">
           <Key>
@@ -3489,9 +3610,9 @@
           <NavigationProperty Name="StateStationActivityMachine" Relationship="SoheilEdm.StateStationActivityMachineSelectedMachine" FromRole="SelectedMachine" ToRole="StateStationActivityMachine" />
           <NavigationProperty Name="Process" Relationship="SoheilEdm.ProcessSelectedMachine" FromRole="SelectedMachine" ToRole="Process" />
         </EntityType>
-        <Association Name="OperatorOperatorActivity">
+        <Association Name="OperatorGeneralActivitySkill">
           <End Type="SoheilEdm.Operator" Multiplicity="1" Role="Operator" />
-          <End Type="SoheilEdm.GeneralActivitySkill" Multiplicity="*" Role="OperatorActivity" />
+          <End Type="SoheilEdm.GeneralActivitySkill" Multiplicity="*" Role="GeneralActivitySkill" />
         </Association>
         <Association Name="ProductProductRework">
           <End Type="SoheilEdm.Product" Role="Product" Multiplicity="1" />
@@ -3501,9 +3622,9 @@
           <End Type="SoheilEdm.Rework" Role="Rework" Multiplicity="0..1" />
           <End Type="SoheilEdm.ProductRework" Role="ProductRework" Multiplicity="*" />
         </Association>
-        <Association Name="ActivityOperatorActivity">
+        <Association Name="ActivityGeneralActivitySkill">
           <End Type="SoheilEdm.Activity" Multiplicity="1" Role="Activity" />
-          <End Type="SoheilEdm.GeneralActivitySkill" Multiplicity="*" Role="OperatorActivity" />
+          <End Type="SoheilEdm.GeneralActivitySkill" Multiplicity="*" Role="GeneralActivitySkill" />
         </Association>
         <Association Name="ActionPlanDefectionReport">
           <End Type="SoheilEdm.ActionPlan" Role="ActionPlan" Multiplicity="0..1" />
@@ -3707,7 +3828,7 @@
         <EntityType Name="Education" BaseType="SoheilEdm.NonProductiveTask">
           <NavigationProperty Name="EducatingOperators" Relationship="SoheilEdm.EducationEducatingOperator" FromRole="Education" ToRole="EducatingOperator" />
           <Property Type="DateTimeOffset" Name="StartOffset" Nullable="false" />
-          <NavigationProperty Name="PPBlocks" Relationship="SoheilEdm.EducationPPBlock" FromRole="Education" ToRole="PPBlock" />
+          <NavigationProperty Name="Blocks" Relationship="SoheilEdm.EducationBlock" FromRole="Education" ToRole="Block" />
         </EntityType>
         <Association Name="StationMachinePM">
           <End Type="SoheilEdm.StationMachine" Role="StationMachine" Multiplicity="1" />
@@ -3770,7 +3891,7 @@
           <Property Type="String" Name="Code" />
           <Property Type="DateTime" Name="ReleaseTime" Nullable="false" />
           <NavigationProperty Name="FPC" Relationship="SoheilEdm.FPCJob" FromRole="Job" ToRole="FPC" />
-          <NavigationProperty Name="PPBlocks" Relationship="SoheilEdm.JobPPBlock" FromRole="Job" ToRole="PPBlock" />
+          <NavigationProperty Name="Blocks" Relationship="SoheilEdm.JobBlock" FromRole="Job" ToRole="Block" />
         </EntityType>
         <Association Name="ProductReworkJob">
           <End Type="SoheilEdm.ProductRework" Multiplicity="1" Role="ProductRework" />
@@ -3969,34 +4090,34 @@
           <End Type="SoheilEdm.ProcessReport" Role="ProcessReport" Multiplicity="1" />
           <End Type="SoheilEdm.OperatorProcessReport" Role="OperatorProcessReport" Multiplicity="*" />
         </Association>
-        <EntityType Name="PPBlock">
+        <EntityType Name="Block">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <NavigationProperty Name="StateStation" Relationship="SoheilEdm.StateStationPPBlock" FromRole="PPBlock" ToRole="StateStation" />
+          <NavigationProperty Name="StateStation" Relationship="SoheilEdm.StateStationBlock" FromRole="Block" ToRole="StateStation" />
           <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
           <Property Name="StartDateTime" Type="DateTime" Nullable="false" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Code" Type="String" />
-          <Property Name="PPBlockTargetPoint" Type="Int32" Nullable="false" />
+          <Property Name="BlockTargetPoint" Type="Int32" Nullable="false" />
           <Property Name="EndDateTime" Type="DateTime" Nullable="false" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="PPFlagsNr" Type="Byte" Nullable="false" cg:GetterAccess="Private" cg:SetterAccess="Private" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
-          <NavigationProperty Name="Tasks" Relationship="SoheilEdm.PPBlockTask" FromRole="PPBlock" ToRole="Task" />
-          <NavigationProperty Name="Job" Relationship="SoheilEdm.JobPPBlock" FromRole="PPBlock" ToRole="Job" />
-          <NavigationProperty Name="Education" Relationship="SoheilEdm.EducationPPBlock" FromRole="PPBlock" ToRole="Education" />
+          <NavigationProperty Name="Tasks" Relationship="SoheilEdm.BlockTask" FromRole="Block" ToRole="Task" />
+          <NavigationProperty Name="Job" Relationship="SoheilEdm.JobBlock" FromRole="Block" ToRole="Job" />
+          <NavigationProperty Name="Education" Relationship="SoheilEdm.EducationBlock" FromRole="Block" ToRole="Education" />
         </EntityType>
-        <Association Name="StateStationPPBlock">
+        <Association Name="StateStationBlock">
           <End Type="SoheilEdm.StateStation" Multiplicity="1" Role="StateStation" />
-          <End Type="SoheilEdm.PPBlock" Multiplicity="*" Role="PPBlock" />
+          <End Type="SoheilEdm.Block" Multiplicity="*" Role="Block" />
         </Association>
-        <Association Name="PPBlockTask">
-          <End Type="SoheilEdm.PPBlock" Role="PPBlock" Multiplicity="1" />
+        <Association Name="BlockTask">
+          <End Type="SoheilEdm.Block" Role="Block" Multiplicity="1" />
           <End Type="SoheilEdm.Task" Role="Task" Multiplicity="*" />
         </Association>
-        <Association Name="JobPPBlock">
+        <Association Name="JobBlock">
           <End Type="SoheilEdm.Job" Role="Job" Multiplicity="0..1" />
-          <End Type="SoheilEdm.PPBlock" Role="PPBlock" Multiplicity="*" />
+          <End Type="SoheilEdm.Block" Role="Block" Multiplicity="*" />
         </Association>
         <Association Name="StationCost">
           <End Type="SoheilEdm.Station" Role="Station" Multiplicity="0..1" />
@@ -4014,9 +4135,13 @@
           <End Type="SoheilEdm.Station" Multiplicity="1" Role="Station" />
           <End Type="SoheilEdm.StateStation" Multiplicity="*" Role="StateStation" />
         </Association>
-        <Association Name="EducationPPBlock">
+        <Association Name="EducationBlock">
           <End Type="SoheilEdm.Education" Role="Education" Multiplicity="1" />
-          <End Type="SoheilEdm.PPBlock" Role="PPBlock" Multiplicity="*" />
+          <End Type="SoheilEdm.Block" Role="Block" Multiplicity="*" />
+        </Association>
+        <Association Name="StateStationActivityUniqueActivitySkill">
+          <End Type="SoheilEdm.StateStationActivity" Role="StateStationActivity" Multiplicity="1" />
+          <End Type="SoheilEdm.UniqueActivitySkill" Role="UniqueActivitySkill" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -4130,6 +4255,7 @@
           <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
           <ScalarProperty Name="TaskTargetPoint" ColumnName="TaskTargetPoint" />
           <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4160,9 +4286,12 @@
     </EntitySetMapping>
     <EntitySetMapping Name="GeneralActivitySkills">
       <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.GeneralActivitySkill)">
-        <MappingFragment StoreEntitySet="OperatorActivities">
+        <MappingFragment StoreEntitySet="GeneralActivitySkills">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="IluoNr" ColumnName="IluoNr" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4177,13 +4306,19 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="Status" ColumnName="Status" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="Sex" ColumnName="Sex" />
+          <ScalarProperty Name="Age" ColumnName="Age" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="UniqueActivitySkills">
       <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.UniqueActivitySkill)">
-        <MappingFragment StoreEntitySet="SpecialSkills">
+        <MappingFragment StoreEntitySet="UniqueActivitySkills">
           <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="IluoNr" ColumnName="IluoNr" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4347,13 +4482,13 @@
     </EntitySetMapping>
     <EntitySetMapping Name="PersonalSkills">
       <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.PersonalSkill)">
-        <MappingFragment StoreEntitySet="GeneralSkills">
+        <MappingFragment StoreEntitySet="PersonalSkills">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Education" ColumnName="Education" />
-          <ScalarProperty Name="Experience" ColumnName="PhysicalState" />
-          <ScalarProperty Name="ReserveText1" ColumnName="Reserve1" />
-          <ScalarProperty Name="ReserveText2" ColumnName="Reserve2" />
-          <ScalarProperty Name="ReserveInteger1" ColumnName="Reserve3" />
+          <ScalarProperty Name="Experience" ColumnName="Experience" />
+          <ScalarProperty Name="ReserveText1" ColumnName="ReserveText1" />
+          <ScalarProperty Name="ReserveText2" ColumnName="ReserveText2" />
+          <ScalarProperty Name="ReserveInteger1" ColumnName="ReserveInteger1" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -4734,6 +4869,29 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="OperatorProcessReports">
+      <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.OperatorProcessReport)">
+        <MappingFragment StoreEntitySet="OperatorProcessReports">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="OperatorProducedG1" ColumnName="OperatorProducedG1" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Blocks">
+      <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.Block)">
+        <MappingFragment StoreEntitySet="Blocks">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="DurationSeconds" ColumnName="DurationSeconds" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="BlockTargetPoint" ColumnName="BlockTargetPoint" />
+          <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="PPFlagsNr" ColumnName="PPFlagsNr" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <AssociationSetMapping Name="ActivityGroupActivity" TypeName="SoheilEdm.ActivityGroupActivity" StoreEntitySet="Activities">
       <EndProperty Name="ActivityGroup">
         <ScalarProperty Name="Id" ColumnName="ActivityGroup_Id" />
@@ -4947,11 +5105,11 @@
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
-    <AssociationSetMapping Name="OperatorOperatorActivity" TypeName="SoheilEdm.OperatorOperatorActivity" StoreEntitySet="OperatorActivities">
+    <AssociationSetMapping Name="OperatorGeneralActivitySkill" TypeName="SoheilEdm.OperatorGeneralActivitySkill" StoreEntitySet="GeneralActivitySkills">
       <EndProperty Name="Operator">
         <ScalarProperty Name="Id" ColumnName="Operator_Id" />
       </EndProperty>
-      <EndProperty Name="OperatorActivity">
+      <EndProperty Name="GeneralActivitySkill">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
@@ -4972,11 +5130,11 @@
       </EndProperty>
       <Condition ColumnName="Rework_Id" IsNull="false" />
     </AssociationSetMapping>
-    <AssociationSetMapping Name="ActivityOperatorActivity" TypeName="SoheilEdm.ActivityOperatorActivity" StoreEntitySet="OperatorActivities">
+    <AssociationSetMapping Name="ActivityGeneralActivitySkill" TypeName="SoheilEdm.ActivityGeneralActivitySkill" StoreEntitySet="GeneralActivitySkills">
       <EndProperty Name="Activity">
         <ScalarProperty Name="Id" ColumnName="Activity_Id" />
       </EndProperty>
-      <EndProperty Name="OperatorActivity">
+      <EndProperty Name="GeneralActivitySkill">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
@@ -5348,6 +5506,169 @@
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
+    <AssociationSetMapping Name="ActivityStateStationActivity" TypeName="SoheilEdm.ActivityStateStationActivity" StoreEntitySet="StateStationActivities">
+      <EndProperty Name="Activity">
+        <ScalarProperty Name="Id" ColumnName="Activity_Id" />
+      </EndProperty>
+      <EndProperty Name="StateStationActivity">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StateStationActivityProcess" TypeName="SoheilEdm.StateStationActivityProcess" StoreEntitySet="Process">
+      <EndProperty Name="StateStationActivity">
+        <ScalarProperty Name="Id" ColumnName="StateStationActivity_Id" />
+      </EndProperty>
+      <EndProperty Name="Process">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="OperatorCost" TypeName="SoheilEdm.OperatorCost" StoreEntitySet="Costs">
+      <EndProperty Name="Operator">
+        <ScalarProperty Name="Id" ColumnName="Operator_Id" />
+      </EndProperty>
+      <EndProperty Name="Cost">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="Operator_Id" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ProductDefectionDefectionReport" TypeName="SoheilEdm.ProductDefectionDefectionReport" StoreEntitySet="DefectionReports">
+      <EndProperty Name="ProductDefection">
+        <ScalarProperty Name="Id" ColumnName="ProductDefection_Id" />
+      </EndProperty>
+      <EndProperty Name="DefectionReport">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="OperatorOperatorProcessReport" TypeName="SoheilEdm.OperatorOperatorProcessReport" StoreEntitySet="OperatorProcessReports">
+      <EndProperty Name="Operator">
+        <ScalarProperty Name="Id" ColumnName="Operator_Id" />
+      </EndProperty>
+      <EndProperty Name="OperatorProcessReport">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="OperatorPersonalSkill" TypeName="SoheilEdm.OperatorPersonalSkill" StoreEntitySet="PersonalSkills">
+      <EndProperty Name="Operator">
+        <ScalarProperty Name="Id" ColumnName="Operator_Id" />
+      </EndProperty>
+      <EndProperty Name="PersonalSkill">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="OperatorUniqueActivitySkill" TypeName="SoheilEdm.OperatorUniqueActivitySkill" StoreEntitySet="UniqueActivitySkills">
+      <EndProperty Name="Operator">
+        <ScalarProperty Name="Id" ColumnName="Operator_Id" />
+      </EndProperty>
+      <EndProperty Name="UniqueActivitySkill">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StateStationActivityMachineUniqueActivitySkill" TypeName="SoheilEdm.StateStationActivityMachineUniqueActivitySkill" StoreEntitySet="UniqueActivitySkills">
+      <EndProperty Name="StateStationActivityMachine">
+        <ScalarProperty Name="Id" ColumnName="StateStationActivityMachineUniqueActivitySkill_UniqueActivitySkill_Id" />
+      </EndProperty>
+      <EndProperty Name="UniqueActivitySkill">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="OperatorOperatorDefectionReport" TypeName="SoheilEdm.OperatorOperatorDefectionReport" StoreEntitySet="OperatorDefectionReports">
+      <EndProperty Name="Operator">
+        <ScalarProperty Name="Id" ColumnName="Operator_Id" />
+      </EndProperty>
+      <EndProperty Name="OperatorDefectionReport">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FPCJob" TypeName="SoheilEdm.FPCJob" StoreEntitySet="Jobs">
+      <EndProperty Name="FPC">
+        <ScalarProperty Name="Id" ColumnName="FPC_Id" />
+      </EndProperty>
+      <EndProperty Name="Job">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ProcessReportOperatorProcessReport" TypeName="SoheilEdm.ProcessReportOperatorProcessReport" StoreEntitySet="OperatorProcessReports">
+      <EndProperty Name="ProcessReport">
+        <ScalarProperty Name="Id" ColumnName="ProcessReport_Id" />
+      </EndProperty>
+      <EndProperty Name="OperatorProcessReport">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StateStationBlock" TypeName="SoheilEdm.StateStationBlock" StoreEntitySet="Blocks">
+      <EndProperty Name="StateStation">
+        <ScalarProperty Name="Id" ColumnName="StateStation_Id" />
+      </EndProperty>
+      <EndProperty Name="Block">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="BlockTask" TypeName="SoheilEdm.BlockTask" StoreEntitySet="Tasks">
+      <EndProperty Name="Block">
+        <ScalarProperty Name="Id" ColumnName="Block_Id" />
+      </EndProperty>
+      <EndProperty Name="Task">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="JobBlock" TypeName="SoheilEdm.JobBlock" StoreEntitySet="Blocks">
+      <EndProperty Name="Job">
+        <ScalarProperty Name="Id" ColumnName="Job_Id" />
+      </EndProperty>
+      <EndProperty Name="Block">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="Job_Id" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StationCost" TypeName="SoheilEdm.StationCost" StoreEntitySet="Costs">
+      <EndProperty Name="Station">
+        <ScalarProperty Name="Id" ColumnName="Station_Id" />
+      </EndProperty>
+      <EndProperty Name="Cost">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="Station_Id" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StationTest" TypeName="SoheilEdm.StationTest" StoreEntitySet="NonProductiveTasks_Test">
+      <EndProperty Name="Station">
+        <ScalarProperty Name="Id" ColumnName="Station_Id" />
+      </EndProperty>
+      <EndProperty Name="Test">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ProcessProcessReport" TypeName="SoheilEdm.ProcessProcessReport" StoreEntitySet="ProcessReports">
+      <EndProperty Name="Process">
+        <ScalarProperty Name="Id" ColumnName="Process_Id" />
+      </EndProperty>
+      <EndProperty Name="ProcessReport">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StationStateStation" TypeName="SoheilEdm.StationStateStation" StoreEntitySet="StateStations">
+      <EndProperty Name="Station">
+        <ScalarProperty Name="Id" ColumnName="Station_Id" />
+      </EndProperty>
+      <EndProperty Name="StateStation">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="EducationBlock" TypeName="SoheilEdm.EducationBlock" StoreEntitySet="Blocks">
+      <EndProperty Name="Education">
+        <ScalarProperty Name="Id" ColumnName="Education_Id" />
+      </EndProperty>
+      <EndProperty Name="Block">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StateStationActivityUniqueActivitySkill" TypeName="SoheilEdm.StateStationActivityUniqueActivitySkill" StoreEntitySet="UniqueActivitySkills">
+      <EndProperty Name="StateStationActivity">
+        <ScalarProperty Name="Id" ColumnName="StateStationActivity_Id" />
+      </EndProperty>
+      <EndProperty Name="UniqueActivitySkill">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -5369,37 +5690,37 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="SoheilEdm" ZoomLevel="85" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
-        <EntityTypeShape EntityType="SoheilEdm.Product" Width="2.125" PointX="16.5" PointY="12.5" Height="3.5186979166666656" FillColor="ForestGreen" />
-        <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="16.25" PointY="17.125" Height="2.9417936197916674" FillColor="0, 122, 204" />
+      <Diagram Name="SoheilEdm" ZoomLevel="63" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+        <EntityTypeShape EntityType="SoheilEdm.Product" Width="6.25" PointX="12.375" PointY="12" Height="3.5186979166666656" FillColor="ForestGreen" />
+        <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="16.25" PointY="16.625" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="28.375" PointY="14.25" Height="1.5956835937499996" FillColor="110, 100, 50" />
         <EntityTypeShape EntityType="SoheilEdm.Defection" Width="1.875" PointX="26" PointY="11.25" Height="2.7494921874999996" FillColor="110, 100, 50" />
-        <EntityTypeShape EntityType="SoheilEdm.Connector" Width="1.5" PointX="18.75" PointY="22.5" Height="1.7879850260416674" FillColor="0, 122, 204" />
+        <EntityTypeShape EntityType="SoheilEdm.Connector" Width="1.5" PointX="14.25" PointY="22.375" Height="1.7879850260416674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.Cause" Width="1.625" PointX="38.25" PointY="18.125" Height="2.5571907552083335" FillColor="255, 125, 75" />
         <EntityTypeShape EntityType="SoheilEdm.ActionPlan" Width="2" PointX="35.5" PointY="12" Height="2.7494921875" FillColor="110, 100, 50" />
         <EntityTypeShape EntityType="SoheilEdm.DefectionReport" Width="4.5" PointX="33.125" PointY="15.25" Height="2.7494921874999996" FillColor="228, 223, 190" />
-        <EntityTypeShape EntityType="SoheilEdm.Station" Width="8.375" PointX="0.75" PointY="27.625" Height="2.7494921874999996" FillColor="Teal" IsExpanded="true" />
-        <EntityTypeShape EntityType="SoheilEdm.Task" Width="2.25" PointX="23.875" PointY="23.625" Height="2.364889322916671" FillColor="64, 64, 64" />
-        <EntityTypeShape EntityType="SoheilEdm.Activity" Width="4.5" PointX="17.25" PointY="36" Height="3.5186979166666656" FillColor="DarkOrchid" />
-        <EntityTypeShape EntityType="SoheilEdm.ActivityGroup" Width="1.5" PointX="22.375" PointY="36.625" Height="2.364889322916671" FillColor="DarkOrchid" />
-        <EntityTypeShape EntityType="SoheilEdm.GeneralActivitySkill" Width="2" PointX="32.375" PointY="36" Height="2.1725878906250031" FillColor="YellowGreen" />
+        <EntityTypeShape EntityType="SoheilEdm.Station" Width="8.375" PointX="0.5" PointY="27.625" Height="2.7494921874999996" FillColor="Teal" IsExpanded="true" />
+        <EntityTypeShape EntityType="SoheilEdm.Task" Width="2.25" PointX="23.875" PointY="23.125" Height="2.364889322916671" FillColor="64, 64, 64" />
+        <EntityTypeShape EntityType="SoheilEdm.Activity" Width="4.5" PointX="17.25" PointY="36.75" Height="3.5186979166666656" FillColor="DarkOrchid" />
+        <EntityTypeShape EntityType="SoheilEdm.ActivityGroup" Width="1.5" PointX="22.375" PointY="37.375" Height="2.364889322916671" FillColor="DarkOrchid" />
+        <EntityTypeShape EntityType="SoheilEdm.GeneralActivitySkill" Width="2" PointX="31.75" PointY="35.5" Height="2.1725878906250031" FillColor="YellowGreen" />
         <EntityTypeShape EntityType="SoheilEdm.Operator" Width="9" PointX="31.875" PointY="28" Height="3.5186979166666656" FillColor="YellowGreen" />
-        <EntityTypeShape EntityType="SoheilEdm.UniqueActivitySkill" Width="2" PointX="31.625" PointY="33.5" Height="2.1725878906249996" FillColor="YellowGreen" />
-        <EntityTypeShape EntityType="SoheilEdm.Machine" Width="3.25" PointX="10.75" PointY="33.875" Height="2.7494921874999996" FillColor="Sienna" />
-        <EntityTypeShape EntityType="SoheilEdm.MachineFamily" Width="1.75" PointX="14.5" PointY="34.375" Height="2.5571907552083353" FillColor="Sienna" />
-        <EntityTypeShape EntityType="SoheilEdm.State" Width="1.75" PointX="16.375" PointY="22.5" Height="2.5571907552083326" FillColor="0, 122, 204" />
-        <EntityTypeShape EntityType="SoheilEdm.StateStation" Width="4.125" PointX="17.25" PointY="27.5" Height="1.5956835937499996" FillColor="0, 122, 204" />
-        <EntityTypeShape EntityType="SoheilEdm.Process" Width="3.25" PointX="26.75" PointY="23.625" Height="2.364889322916671" FillColor="75, 50, 100" />
-        <EntityTypeShape EntityType="SoheilEdm.ProcessOperator" Width="1.875" PointX="31.25" PointY="24.875" Height="1.9802864583333335" IsExpanded="true" FillColor="182, 236, 108" />
-        <EntityTypeShape EntityType="SoheilEdm.ProcessReport" Width="5.125" PointX="26.75" PointY="19" Height="2.5571907552083326" FillColor="75, 50, 100" />
-        <EntityTypeShape EntityType="SoheilEdm.TaskReport" Width="2.25" PointX="23.875" PointY="19" Height="2.5571907552083353" FillColor="64, 64, 64" />
+        <EntityTypeShape EntityType="SoheilEdm.UniqueActivitySkill" Width="2" PointX="29" PointY="30.625" Height="2.1725878906249996" FillColor="YellowGreen" />
+        <EntityTypeShape EntityType="SoheilEdm.Machine" Width="3.25" PointX="10.5" PointY="34.625" Height="2.7494921874999996" FillColor="Sienna" />
+        <EntityTypeShape EntityType="SoheilEdm.MachineFamily" Width="1.75" PointX="14.5" PointY="35.125" Height="2.5571907552083353" FillColor="Sienna" />
+        <EntityTypeShape EntityType="SoheilEdm.State" Width="3.625" PointX="16.375" PointY="20.5" Height="2.5571907552083326" FillColor="0, 122, 204" />
+        <EntityTypeShape EntityType="SoheilEdm.StateStation" Width="5.875" PointX="17.25" PointY="27.25" Height="1.5956835937499996" FillColor="0, 122, 204" />
+        <EntityTypeShape EntityType="SoheilEdm.Process" Width="3.25" PointX="26.75" PointY="23.125" Height="2.364889322916671" FillColor="64, 64, 64" />
+        <EntityTypeShape EntityType="SoheilEdm.ProcessOperator" Width="1.875" PointX="30.875" PointY="24.75" Height="1.9802864583333335" IsExpanded="true" FillColor="YellowGreen" />
+        <EntityTypeShape EntityType="SoheilEdm.ProcessReport" Width="5.125" PointX="26.75" PointY="19" Height="2.5571907552083326" FillColor="150, 150, 150" />
+        <EntityTypeShape EntityType="SoheilEdm.TaskReport" Width="2.25" PointX="23.875" PointY="19" Height="2.5571907552083353" FillColor="150, 150, 150" />
         <EntityTypeShape EntityType="SoheilEdm.StoppageReport" Width="4.5" PointX="33.125" PointY="18.625" Height="2.5571907552083317" FillColor="235, 200, 140" />
         <EntityTypeShape EntityType="SoheilEdm.OperatorStoppageReport" Width="2" PointX="34.375" PointY="22.75" Height="1.9802864583333353" FillColor="224, 247, 193" />
         <EntityTypeShape EntityType="SoheilEdm.OperatorDefectionReport" Width="2" PointX="39" PointY="22.75" Height="1.9802864583333353" FillColor="224, 247, 193" />
-        <EntityTypeShape EntityType="SoheilEdm.Root" Width="1.875" PointX="32.375" PointY="7.125" Height="2.5571907552083331" FillColor="110, 100, 50" />
-        <EntityTypeShape EntityType="SoheilEdm.Rework" Width="1.5" PointX="10.875" PointY="16" Height="2.5571907552083353" FillColor="ForestGreen" />
-        <EntityTypeShape EntityType="SoheilEdm.ProductRework" Width="4" PointX="10.875" PointY="12.375" Height="2.5571907552083335" FillColor="ForestGreen" />
-        <EntityTypeShape EntityType="SoheilEdm.PersonalSkill" Width="2" PointX="34.625" PointY="33.375" Height="2.5571907552083353" FillColor="YellowGreen" />
+        <EntityTypeShape EntityType="SoheilEdm.Root" Width="1.875" PointX="29.125" PointY="10.5" Height="2.5571907552083331" FillColor="110, 100, 50" />
+        <EntityTypeShape EntityType="SoheilEdm.Rework" Width="1.5" PointX="10.625" PointY="13.875" Height="2.5571907552083353" FillColor="ForestGreen" />
+        <EntityTypeShape EntityType="SoheilEdm.ProductRework" Width="4" PointX="10.875" PointY="18.375" Height="2.5571907552083335" FillColor="ForestGreen" />
+        <EntityTypeShape EntityType="SoheilEdm.PersonalSkill" Width="2" PointX="34.625" PointY="33.5" Height="2.5571907552083353" FillColor="YellowGreen" />
         <EntityTypeShape EntityType="SoheilEdm.User" Width="2" PointX="19.375" PointY="0.5" Height="3.3263964843749996" FillColor="Gold" />
         <EntityTypeShape EntityType="SoheilEdm.AccessRule" Width="2.125" PointX="16.125" PointY="4.25" Height="1.9802864583333335" FillColor="Gold" />
         <EntityTypeShape EntityType="SoheilEdm.User_AccessRule" Width="1.75" PointX="16.5" PointY="1.25" Height="2.1725878906249996" FillColor="Gold" />
@@ -5450,13 +5771,13 @@
           <ConnectorPoint PointX="5.25" PointY="8.8362939453125" />
           <ConnectorPoint PointX="3.625" PointY="8.8362939453125" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="SoheilEdm.ProductGroup" Width="1.5" PointX="19.375" PointY="12.5" Height="2.5571907552083317" FillColor="ForestGreen" />
+        <EntityTypeShape EntityType="SoheilEdm.ProductGroup" Width="1.5" PointX="19.375" PointY="12" Height="2.5571907552083317" FillColor="ForestGreen" />
         <AssociationConnector Association="SoheilEdm.ProductGroupProduct">
           <ConnectorPoint PointX="17.625" PointY="3.1343489583333328" />
           <ConnectorPoint PointX="16.625" PointY="3.1343489583333328" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="SoheilEdm.StateStationActivity" Width="3.875" PointX="19.75" PointY="30.125" Height="2.5571907552083353" FillColor="0, 122, 204" />
-        <EntityTypeShape EntityType="SoheilEdm.StateStationActivityMachine" Width="3.5" PointX="20.875" PointY="33.625" Height="1.2110807291666674" FillColor="0, 122, 204" />
+        <EntityTypeShape EntityType="SoheilEdm.StateStationActivity" Width="7.625" PointX="19.875" PointY="30.75" Height="2.5571907552083353" FillColor="0, 122, 204" />
+        <EntityTypeShape EntityType="SoheilEdm.StateStationActivityMachine" Width="3.5" PointX="23" PointY="33.75" Height="1.2110807291666674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.OrganizationChart" Width="2.25" PointX="19.125" PointY="7.375" Height="2.1725878906249996" FillColor="DarkOrange" />
         <EntityTypeShape EntityType="SoheilEdm.OrganizationChart_Position" Width="2.5" PointX="22.25" PointY="7.375" Height="1.9802864583333353" FillColor="DarkOrange" />
         <AssociationConnector Association="SoheilEdm.PositionOrganizationChart_Position">
@@ -5518,14 +5839,14 @@
           <ConnectorPoint PointX="28.375" PointY="5.172841796875" />
           <ConnectorPoint PointX="29.625" PointY="5.172841796875" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="SoheilEdm.StationMachine" Width="1.625" PointX="9.875" PointY="29.375" FillColor="Teal" IsExpanded="true" />
+        <EntityTypeShape EntityType="SoheilEdm.StationMachine" Width="1.625" PointX="9.625" PointY="29.375" FillColor="Teal" IsExpanded="true" />
         <AssociationConnector Association="SoheilEdm.MachineStationMachine" />
         <AssociationConnector Association="SoheilEdm.FPCState" />
-        <EntityTypeShape EntityType="SoheilEdm.SelectedMachine" Width="2" PointX="27.875" PointY="32.875" FillColor="Sienna" />
-        <AssociationConnector Association="SoheilEdm.OperatorOperatorActivity" />
+        <EntityTypeShape EntityType="SoheilEdm.SelectedMachine" Width="2" PointX="27.5" PointY="33.75" FillColor="Sienna" />
+        <AssociationConnector Association="SoheilEdm.OperatorGeneralActivitySkill" />
         <AssociationConnector Association="SoheilEdm.ProductProductRework" />
         <AssociationConnector Association="SoheilEdm.ReworkProductRework" />
-        <AssociationConnector Association="SoheilEdm.ActivityOperatorActivity" />
+        <AssociationConnector Association="SoheilEdm.ActivityGeneralActivitySkill" />
         <AssociationConnector Association="SoheilEdm.ActionPlanDefectionReport" />
         <AssociationConnector Association="SoheilEdm.StateStationStateStationActivity" />
         <AssociationConnector Association="SoheilEdm.StateStationActivityStateStationActivityMachine" />
@@ -5542,44 +5863,44 @@
         <AssociationConnector Association="SoheilEdm.TaskReportProcessReport" />
         <AssociationConnector Association="SoheilEdm.ProcessReportDefectionReport" />
         <AssociationConnector Association="SoheilEdm.DefectionReportOperatorDefectionReport" />
-        <EntityTypeShape EntityType="SoheilEdm.Cost" Width="3.875" PointX="5.875" PointY="36.125" FillColor="Orange" />
+        <EntityTypeShape EntityType="SoheilEdm.Cost" Width="3.875" PointX="5.625" PointY="36.875" FillColor="Orange" />
         <AssociationConnector Association="SoheilEdm.MachineCost" />
-        <EntityTypeShape EntityType="SoheilEdm.CostCenter" Width="4.125" PointX="5.875" PointY="39.875" FillColor="Orange" />
+        <EntityTypeShape EntityType="SoheilEdm.CostCenter" Width="4.125" PointX="5.625" PointY="40.625" FillColor="Orange" />
         <AssociationConnector Association="SoheilEdm.CostCenterCost" />
-        <EntityTypeShape EntityType="SoheilEdm.PartWarehouse" Width="1.75" PointX="3.25" PointY="37.125" FillColor="255, 128, 0" />
-        <EntityTypeShape EntityType="SoheilEdm.PartWarehouseGroup" Width="1.875" PointX="0.875" PointY="37.5" FillColor="255, 128, 0" />
+        <EntityTypeShape EntityType="SoheilEdm.PartWarehouse" Width="1.75" PointX="3" PointY="37.875" FillColor="255, 128, 0" />
+        <EntityTypeShape EntityType="SoheilEdm.PartWarehouseGroup" Width="1.875" PointX="0.625" PointY="38.25" FillColor="255, 128, 0" />
         <AssociationConnector Association="SoheilEdm.PartsWarehouseGroupPartsWarehouse" />
         <AssociationConnector Association="SoheilEdm.PartsWarehouseCost" />
         <AssociationConnector Association="SoheilEdm.ProductDefectionRoot" />
         <AssociationConnector Association="SoheilEdm.CauseStoppageReport" />
         <AssociationConnector Association="SoheilEdm.CauseCause" />
-        <EntityTypeShape EntityType="SoheilEdm.Warmup" Width="1.25" PointX="0.875" PointY="15.625" FillColor="150, 0, 100" />
-        <EntityTypeShape EntityType="SoheilEdm.Changeover" Width="1.5" PointX="2.5" PointY="14.875" FillColor="150, 0, 100" />
+        <EntityTypeShape EntityType="SoheilEdm.Warmup" Width="1.25" PointX="0.625" PointY="21.625" FillColor="150, 0, 100" />
+        <EntityTypeShape EntityType="SoheilEdm.Changeover" Width="1.5" PointX="2.25" PointY="20.875" FillColor="150, 0, 100" />
         <AssociationConnector Association="SoheilEdm.StationChangeover" />
         <AssociationConnector Association="SoheilEdm.StationWarmup" />
         <AssociationConnector Association="SoheilEdm.ProductReworkChangeover" />
         <AssociationConnector Association="SoheilEdm.ProductReworkWarmup" />
-        <EntityTypeShape EntityType="SoheilEdm.NonProductiveTask" Width="3" PointX="7" PointY="21.875" FillColor="100, 0, 75" />
-        <EntityTypeShape EntityType="SoheilEdm.PM" Width="1.75" PointX="9.5" PointY="24.75" FillColor="100, 0, 75" />
-        <EntityTypeShape EntityType="SoheilEdm.Education" Width="1.875" PointX="12" PointY="24.75" FillColor="100, 0, 75" />
+        <EntityTypeShape EntityType="SoheilEdm.NonProductiveTask" Width="3" PointX="6.75" PointY="21.875" FillColor="100, 0, 75" />
+        <EntityTypeShape EntityType="SoheilEdm.PM" Width="1.75" PointX="9.25" PointY="24.75" FillColor="100, 0, 75" />
+        <EntityTypeShape EntityType="SoheilEdm.Education" Width="1.875" PointX="11.75" PointY="24.75" FillColor="100, 0, 75" />
         <AssociationConnector Association="SoheilEdm.StationMachinePM" />
         <InheritanceConnector EntityType="SoheilEdm.PM" />
-        <EntityTypeShape EntityType="SoheilEdm.EducatingOperator" Width="2" PointX="12.875" PointY="29.375" FillColor="224, 247, 193" />
+        <EntityTypeShape EntityType="SoheilEdm.EducatingOperator" Width="2" PointX="11.875" PointY="29" FillColor="224, 247, 193" />
         <AssociationConnector Association="SoheilEdm.OperatorEducatingOperator" />
         <AssociationConnector Association="SoheilEdm.EducationEducatingOperator" ManuallyRouted="false" >
         </AssociationConnector>
         <InheritanceConnector EntityType="SoheilEdm.Education" />
-        <EntityTypeShape EntityType="SoheilEdm.Setup" Width="2.25" PointX="4.25" PointY="24.75" FillColor="100, 0, 75" />
+        <EntityTypeShape EntityType="SoheilEdm.Setup" Width="2.25" PointX="4" PointY="24.75" FillColor="100, 0, 75" />
         <InheritanceConnector EntityType="SoheilEdm.Setup" />
         <AssociationConnector Association="SoheilEdm.ChangeoverSetup" />
         <AssociationConnector Association="SoheilEdm.WarmupSetup" />
-        <EntityTypeShape EntityType="SoheilEdm.Test" Width="1.75" PointX="7" PointY="24.75" FillColor="100, 0, 75" />
+        <EntityTypeShape EntityType="SoheilEdm.Test" Width="1.75" PointX="6.75" PointY="24.75" FillColor="100, 0, 75" />
         <InheritanceConnector EntityType="SoheilEdm.Test" />
-        <EntityTypeShape EntityType="SoheilEdm.NonProductiveTaskReport" Width="2.125" PointX="10.875" PointY="22.125" FillColor="200, 100, 150" />
+        <EntityTypeShape EntityType="SoheilEdm.NonProductiveTaskReport" Width="2.125" PointX="10.625" PointY="22.125" FillColor="200, 100, 150" />
         <AssociationConnector Association="SoheilEdm.NonProductiveTaskReportNonProductiveTask" />
-        <EntityTypeShape EntityType="SoheilEdm.Job" Width="2" PointX="20.875" PointY="19.375" FillColor="64, 64, 64" />
+        <EntityTypeShape EntityType="SoheilEdm.Job" Width="2" PointX="20.875" PointY="17.875" FillColor="64, 64, 64" />
         <AssociationConnector Association="SoheilEdm.ProductReworkJob" />
-        <EntityTypeShape EntityType="SoheilEdm.ObjectiveFunction" Width="1.625" PointX="20.875" PointY="17.5" FillColor="64, 64, 64" />
+        <EntityTypeShape EntityType="SoheilEdm.ObjectiveFunction" Width="1.625" PointX="20.875" PointY="16" FillColor="64, 64, 64" />
         <AssociationConnector Association="SoheilEdm.ProductFPC" />
         <AssociationConnector Association="SoheilEdm.ProductReworkState" />
         <AssociationConnector Association="SoheilEdm.StationStationMachine" />
@@ -5607,19 +5928,19 @@
         <AssociationConnector Association="SoheilEdm.OperatorOperatorProcessReport" />
         <AssociationConnector Association="SoheilEdm.OperatorPersonalSkill" />
         <AssociationConnector Association="SoheilEdm.OperatorUniqueActivitySkill" />
-        <AssociationConnector Association="SoheilEdm.StateStationActivityMachineUniqueActivitySkill" />
         <AssociationConnector Association="SoheilEdm.OperatorOperatorDefectionReport" />
         <AssociationConnector Association="SoheilEdm.FPCJob" />
         <AssociationConnector Association="SoheilEdm.ProcessReportOperatorProcessReport" />
-        <EntityTypeShape EntityType="SoheilEdm.PPBlock" Width="2.25" PointX="20.875" PointY="23.625" FillColor="64, 64, 64" />
-        <AssociationConnector Association="SoheilEdm.StateStationPPBlock" />
-        <AssociationConnector Association="SoheilEdm.PPBlockTask" />
-        <AssociationConnector Association="SoheilEdm.JobPPBlock" />
+        <EntityTypeShape EntityType="SoheilEdm.Block" Width="2.25" PointX="20.875" PointY="23.125" FillColor="64, 64, 64" />
+        <AssociationConnector Association="SoheilEdm.StateStationBlock" />
+        <AssociationConnector Association="SoheilEdm.BlockTask" />
+        <AssociationConnector Association="SoheilEdm.JobBlock" />
         <AssociationConnector Association="SoheilEdm.StationCost" />
         <AssociationConnector Association="SoheilEdm.StationTest" />
         <AssociationConnector Association="SoheilEdm.ProcessProcessReport" />
         <AssociationConnector Association="SoheilEdm.StationStateStation" />
-        <AssociationConnector Association="SoheilEdm.EducationPPBlock" />
+        <AssociationConnector Association="SoheilEdm.EducationBlock" />
+        <AssociationConnector Association="SoheilEdm.StateStationActivityUniqueActivitySkill" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

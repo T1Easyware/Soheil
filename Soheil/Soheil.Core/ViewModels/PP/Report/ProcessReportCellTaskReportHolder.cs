@@ -33,11 +33,14 @@ namespace Soheil.Core.ViewModels.PP
 				{
 					IsSelected = false;
 					TaskReportHolder.Task.ReloadTaskReports();
-					TaskReportHolder.Task.ReloadProcessReportRows();
+					TaskReportHolder.Task.Block.BlockReport.ReloadProcessReportRows();
 				}
 			});
 			CancelCommand = new Commands.Command(o => IsSelected = false);
 		}
+
+		public event Action<ProcessReportCellTaskReportHolder> RequestForChangeOfCurrentTaskReportBuilderInProcess;
+
 		//IsSelected Dependency Property
 		public bool IsSelected
 		{
@@ -49,10 +52,13 @@ namespace Soheil.Core.ViewModels.PP
 						new UIPropertyMetadata(false, (d, e) =>
 			{
 				var vm = (ProcessReportCellTaskReportHolder)d;
-				if ((bool)e.NewValue)
-					vm.ProcessReportCell.Parent.Parent.CurrentTaskReportBuilderInProcess = vm;
-				else
-					vm.ProcessReportCell.Parent.Parent.CurrentTaskReportBuilderInProcess = null;
+				if (vm.RequestForChangeOfCurrentTaskReportBuilderInProcess != null)
+				{
+					if ((bool)e.NewValue)
+						vm.RequestForChangeOfCurrentTaskReportBuilderInProcess(vm);
+					else
+						vm.RequestForChangeOfCurrentTaskReportBuilderInProcess(null);
+				}
 			}));
 		//Offset Dependency Property
 		public Point Offset

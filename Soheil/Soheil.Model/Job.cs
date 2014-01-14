@@ -65,38 +65,6 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual ICollection<Task> Tasks
-        {
-            get
-            {
-                if (_tasks == null)
-                {
-                    var newCollection = new FixupCollection<Task>();
-                    newCollection.CollectionChanged += FixupTasks;
-                    _tasks = newCollection;
-                }
-                return _tasks;
-            }
-            set
-            {
-                if (!ReferenceEquals(_tasks, value))
-                {
-                    var previousValue = _tasks as FixupCollection<Task>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupTasks;
-                    }
-                    _tasks = value;
-                    var newValue = value as FixupCollection<Task>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupTasks;
-                    }
-                }
-            }
-        }
-        private ICollection<Task> _tasks;
-    
         public virtual ProductRework ProductRework
         {
             get { return _productRework; }
@@ -126,6 +94,38 @@ namespace Soheil.Model
             }
         }
         private FPC _fPC;
+    
+        public virtual ICollection<Block> Blocks
+        {
+            get
+            {
+                if (_blocks == null)
+                {
+                    var newCollection = new FixupCollection<Block>();
+                    newCollection.CollectionChanged += FixupBlocks;
+                    _blocks = newCollection;
+                }
+                return _blocks;
+            }
+            set
+            {
+                if (!ReferenceEquals(_blocks, value))
+                {
+                    var previousValue = _blocks as FixupCollection<Block>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupBlocks;
+                    }
+                    _blocks = value;
+                    var newValue = value as FixupCollection<Block>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupBlocks;
+                    }
+                }
+            }
+        }
+        private ICollection<Block> _blocks;
 
         #endregion
 
@@ -163,11 +163,11 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupTasks(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupBlocks(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (Task item in e.NewItems)
+                foreach (Block item in e.NewItems)
                 {
                     item.Job = this;
                 }
@@ -175,7 +175,7 @@ namespace Soheil.Model
     
             if (e.OldItems != null)
             {
-                foreach (Task item in e.OldItems)
+                foreach (Block item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Job, this))
                     {

@@ -9,17 +9,18 @@ namespace Soheil.Core.PP.Smart
 {
 	internal class SmartManager
 	{
-		internal SmartManager(TaskDataService taskDs, SoheilEdmContext context)
+		internal SmartManager(BlockDataService blockDs, NPTDataService nptDs)
 		{
-			_taskDataService = taskDs;
-			_context = context;
+			_blockDataService = blockDs;
+			_nptDataService = nptDs;
 			SmartJobs = new List<SmartJob>();
 			_reserve = new List<KeyValuePair<int, List<SmartRange>>>();
 		}
 
 		internal List<SmartJob> SmartJobs { get; private set; }
 		protected TaskDataService _taskDataService;
-		protected SoheilEdmContext _context;
+		protected BlockDataService _blockDataService;
+		protected NPTDataService _nptDataService;
 
 		#region Reserve
 		/// <summary>
@@ -93,13 +94,13 @@ namespace Soheil.Core.PP.Smart
 		internal List<SmartRange> FindNextFreeSpace(int stationId, int productReworkId, DateTime startFrom, int durationOftask, bool snapToLast = true)
 		{
 			//Find all tasks in database, which end after startFrom
-			var inRangeItems = _taskDataService.GetInRange(startFrom, stationId, _context)
-				.Select(x => SmartRange.ExistingTask(x)).ToList();
-			var inRangeNPTs = new NPTDataService().GetInRange(startFrom, stationId, _context)
+			var inRangeItems = _blockDataService.GetInRange(startFrom, stationId)
+				.Select(x => SmartRange.ExistingBlock(x)).ToList();
+			var inRangeNPTs = _nptDataService.GetInRange(startFrom, stationId)
 				.Select(x => SmartRange.ExistingSetup(x)).ToList();
 			//find the task and setup in database, which is just before startFrom
-			var previousItem = _taskDataService.FindPreviousTask(stationId, startFrom);
-			var previousTask = SmartRange.ExistingTask(previousItem.Value1);
+			var previousItem = _blockDataService.FindPreviousTask(stationId, startFrom);
+			var previousTask = SmartRange.ExistingBlock(previousItem.Value1);
 			var previousSetup = SmartRange.ExistingSetup(previousItem.Value2);
 
 			//create a row for specified station if needed

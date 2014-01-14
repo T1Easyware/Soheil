@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soheil.Core.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,30 +8,25 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP
 {
-	public class ActivityVm : DependencyObject
+	public class ActivityVm : ViewModelBase
 	{
 		public ActivityVm(Model.Activity model)
 		{
-			Id = model.Id;
+			_model = model;
 			Name = model.Name;
 			Code = model.Code;
 		}
-		public int Id { get; set; }
-		//Name Dependency Property
+		Model.Activity _model;
+		public int Id { get { return _model.Id; } }
 		public string Name
 		{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
+			get { return _model == null ? "" : _model.Name; }
+			set { _model.Name = value; OnPropertyChanged("Name"); }
 		}
-		public static readonly DependencyProperty NameProperty =
-			DependencyProperty.Register("Name", typeof(string), typeof(ActivityVm), new UIPropertyMetadata(""));
-		//Code Dependency Property
 		public string Code
 		{
-			get { return (string)GetValue(CodeProperty); }
-			set { SetValue(CodeProperty, value); }
+			get { return _model == null ? "" : _model.Code; }
+			set { _model.Code = value; OnPropertyChanged("Code"); }
 		}
-		public static readonly DependencyProperty CodeProperty =
-			DependencyProperty.Register("Code", typeof(string), typeof(ActivityVm), new UIPropertyMetadata(""));
 	}
 }

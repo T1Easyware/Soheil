@@ -35,12 +35,6 @@
     <Reference Include="Soheil.Common">
       <HintPath>..\..\..\..\GitHub\Soheil2\Soheil\Soheil.Dal\bin\Debug\Soheil.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Soheil.Dal">
-      <HintPath>..\..\..\..\GitHub\Soheil2\Soheil\Soheil.Dal\bin\Debug\Soheil.Dal.dll</HintPath>
-    </Reference>
-    <Reference Include="Soheil.Model">
-      <HintPath>..\..\..\..\GitHub\Soheil2\Soheil\Soheil.Dal\bin\Debug\Soheil.Model.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
@@ -57,6 +51,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Soheil.Dal\Soheil.Dal.csproj">
+      <Project>{0b5b73d2-f69a-4836-b10f-df957b60a0b6}</Project>
+      <Name>Soheil.Dal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Soheil.Model\Soheil.Model.csproj">
+      <Project>{7e5a8e05-411b-4425-8746-c67a9b10f55a}</Project>
+      <Name>Soheil.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

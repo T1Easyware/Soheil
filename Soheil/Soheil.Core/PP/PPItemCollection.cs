@@ -10,22 +10,22 @@ using System.Data.Entity;
 
 namespace Soheil.Core.PP
 {
-	public class TaskCollection : ObservableCollection<PPStationVm>
+	public class PPItemCollection : ObservableCollection<PPStationVm>
 	{
 		DateTime _rangeStart;
 		DateTime _rangeEnd;
-		public PPTableVm Parent { get; private set; }
+		public PPTableVm PPTable { get; private set; }
 		System.Windows.Threading.Dispatcher _dispatcher;
-		public DataServices.NPTDataService NPTDataService { get { return Parent.NPTDataService; } }
-		public DataServices.TaskDataService TaskDataService { get { return Parent.TaskDataService; } }
-		public DataServices.JobDataService JobDataService { get { return Parent.JobDataService; } }
+		public DataServices.NPTDataService NPTDataService { get { return PPTable.NPTDataService; } }
+		public DataServices.BlockDataService BlockDataService { get { return PPTable.BlockDataService; } }
+		public DataServices.JobDataService JobDataService { get { return PPTable.JobDataService; } }
 		System.Threading.Thread _thread;
 		Object _threadLock;
 
-		public TaskCollection(PPTableVm parent)
+		public PPItemCollection(PPTableVm parent)
 		{
-			Parent = parent;
-			ViewMode = PPTaskViewMode.Simple;
+			PPTable = parent;
+			ViewMode = PPViewMode.Simple;
 			_dispatcher = parent.Dispatcher;
 			_thread = new System.Threading.Thread(addRangeThreadFunc);
 			_threadLock = new Object();
@@ -45,19 +45,26 @@ namespace Soheil.Core.PP
 
 
 		//Ease of use
-		public ObservableCollection<PPTaskVm> this[Model.Task model]
+		/// <summary>
+		/// Returns the row of blocks which contains the provided model
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public ObservableCollection<BlockVm> GetRowContaining(Model.Block model)
 		{
-			get { return this[model.StateStation.Station.Index].Tasks; }
+			return this[model.StateStation.Station.Index].Blocks;
 		}
-		public ObservableCollection<NPTVm> this[Model.NonProductiveTask model]
+		/// <summary>
+		/// Returns the row of npts which contains the provided model
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public ObservableCollection<NPTVm> GetRowContaining(Model.NonProductiveTask model)
 		{
-			get
-			{
-				if (model is Model.Setup)
-					return this[(model as Model.Setup).Warmup.Station.Index].NPTs;
-				else
-					throw new NotImplementedException();//???
-			}
+			if (model is Model.Setup)
+				return this[(model as Model.Setup).Warmup.Station.Index].NPTs;
+			else
+				throw new NotImplementedException();//???
 		}
 
 		#region Task Operations
@@ -66,52 +73,52 @@ namespace Soheil.Core.PP
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public PPTaskVm FindTaskById(int id)
+		public BlockVm FindBlockById(int id)
 		{
 			foreach (var row in this)
 			{
-				var task = row.Tasks.FirstOrDefault(y => y.Id == id);
-				if (task != null) return task;
+				var block = row.Blocks.FirstOrDefault(y => y.Id == id);
+				if (block != null) return block;
 			}
 			return null;
 		}
-		public void AddTask(Model.Task model)
+		public void AddItem(Model.Block model)
 		{
 			try
 			{
-				var container = this[model];
+				var container = GetRowContaining(model);
 				var currentVm = container.FirstOrDefault(x => x.Id == model.Id);
 				if (currentVm != null) container.Remove(currentVm);
-				container.Add(new PPTaskVm(model, this, model.StateStation.Station.Index));
+				container.Add(new BlockVm(model, PPTable, model.StateStation.Station.Index));
 			}
 			catch { }
 		}
-		public void RemoveTask(Model.Task model)
+		public void RemoveItem(Model.Block model)
 		{
 			try
 			{
-				if (Parent.SelectedTask != null && model != null)
-					if (Parent.SelectedTask.Id == model.Id)
-						Parent.SelectedTask = null;
-				this[model].RemoveWhere(x => x.Id == model.Id);
+				if (PPTable.SelectedBlock != null && model != null)
+					if (PPTable.SelectedBlock.Id == model.Id)
+						PPTable.SelectedBlock = null;
+				GetRowContaining(model).RemoveWhere(x => x.Id == model.Id);
 			}
 			catch { }
 		}
-		public void RemoveTask(PPTaskVm vm)
+		public void RemoveItem(BlockVm vm)
 		{
 			try
 			{
-				if (Parent.SelectedTask == vm)
-					Parent.SelectedTask = null;
-				this[vm.RowIndex].Tasks.RemoveWhere(x => x.Id == vm.Id);
+				if (PPTable.SelectedBlock == vm)
+					PPTable.SelectedBlock = null;
+				this[vm.RowIndex].Blocks.RemoveWhere(x => x.Id == vm.Id);
 			}
 			catch { }
 		}
-		public PPTaskVm FindTask(Model.Task model)
+		public BlockVm FindItem(Model.Block model)
 		{
 			try
 			{
-				return this[model].FirstOrDefault(x => x.Id == model.Id);
+				return GetRowContaining(model).FirstOrDefault(x => x.Id == model.Id);
 			}
 			catch { return null; }
 		} 
@@ -156,9 +163,9 @@ namespace Soheil.Core.PP
 		{
 			try
 			{
-				if (Parent.SelectedNPT != null && model != null)
-					if (Parent.SelectedNPT.Id == model.Id) 
-						Parent.SelectedNPT = null;
+				if (PPTable.SelectedNPT != null && model != null)
+					if (PPTable.SelectedNPT.Id == model.Id) 
+						PPTable.SelectedNPT = null;
 				if (model is Model.Setup)
 				{
 					var setupModel = model as Model.Setup;
@@ -172,7 +179,7 @@ namespace Soheil.Core.PP
 		{
 			try
 			{
-				if (Parent.SelectedNPT == vm) Parent.SelectedNPT = null;
+				if (PPTable.SelectedNPT == vm) PPTable.SelectedNPT = null;
 				this[vm.RowIndex].NPTs.RemoveWhere(x => x.Id == vm.Id);
 			}
 			catch { }
@@ -195,20 +202,18 @@ namespace Soheil.Core.PP
 		{
 			try
 			{
-				using (var context = new Dal.SoheilEdmContext())
-				{
 					var rangeStart = _rangeStart.AddHours(-1);
 					var rangeEnd = _rangeEnd.AddHours(3);
-					var taskModels = TaskDataService.GetInRange(rangeStart, rangeEnd, context).ToList();
-					var nptModels = NPTDataService.GetInRange(rangeStart, rangeEnd, context).ToList();
+					var blockModels = BlockDataService.GetInRange(rangeStart, rangeEnd).ToList();
+					var nptModels = NPTDataService.GetInRange(rangeStart, rangeEnd).ToList();
 
-					//add inside-the-box tasks
-					foreach (var model in taskModels)
+					//add inside-the-window blocks
+					foreach (var model in blockModels)
 					{
 						//if (!this[model].Any(x => x.Id == model.Id))
-							_dispatcher.InvokeInBackground(() => AddTask(model));
+							_dispatcher.InvokeInBackground(() => AddItem(model));
 					}
-					//add inside-the-box npts
+					//add inside-the-window npts
 					foreach (var model in nptModels)
 					{
 						//if (!this[model].Any(x => x.Id == model.Id))
@@ -220,7 +225,7 @@ namespace Soheil.Core.PP
 					{
 						_dispatcher.BeginInBackground((I, paramRangeStart, paramRangeEnd) =>
 						{
-							//remove outside-the-box npts
+							//remove outside-the-window npts
 							var removeNptList = this[I].NPTs.Where(x =>
 								x.StartDateTime.AddSeconds(x.DurationSeconds) < paramRangeStart ||
 								x.StartDateTime > paramRangeEnd).ToArray();
@@ -228,23 +233,22 @@ namespace Soheil.Core.PP
 							{
 								this[I].NPTs.Remove(npt);
 							}
-							//remove outside-the-box tasks
-							var removeList = this[I].Tasks.Where(x =>
+							//remove outside-the-window blocks
+							var removeList = this[I].Blocks.Where(x =>
 								x.StartDateTime.AddSeconds(x.DurationSeconds) < paramRangeStart ||
 								x.StartDateTime > paramRangeEnd).ToArray();
-							foreach (var task in removeList)
+							foreach (var block in removeList)
 							{
-								this[I].Tasks.Remove(task);
+								this[I].Blocks.Remove(block);
 							}
 						}, i, rangeStart, rangeEnd);
 					}
-				}
 			}
 			catch { }
 		}
 
-		private PPTaskViewMode _viewMode;
-		public PPTaskViewMode ViewMode
+		private PPViewMode _viewMode;
+		public PPViewMode ViewMode
 		{
 			get { return _viewMode; }
 			set
@@ -252,9 +256,9 @@ namespace Soheil.Core.PP
 				_viewMode = value;
 				foreach (var station in this)
 				{
-					foreach (var task in station.Tasks)
+					foreach (var block in station.Blocks)
 					{
-						task.ViewMode = value;
+						block.ViewMode = value;
 					}
 				}
 			}

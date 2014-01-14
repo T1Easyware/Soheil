@@ -19,8 +19,8 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty TextProperty =
 			DependencyProperty.Register("Text", typeof(string), typeof(PPStationVm), new UIPropertyMetadata(""));
 		//Tasks Observable Collection
-		private ObservableCollection<PPTaskVm> _tasks = new ObservableCollection<PPTaskVm>();
-		public ObservableCollection<PPTaskVm> Tasks { get { return _tasks; } }
+		private ObservableCollection<BlockVm> _blocks = new ObservableCollection<BlockVm>();
+		public ObservableCollection<BlockVm> Blocks { get { return _blocks; } }
 		//NPTs Observable Collection
 		private ObservableCollection<NPTVm> _npts = new ObservableCollection<NPTVm>();
 		public ObservableCollection<NPTVm> NPTs { get { return _npts; } }

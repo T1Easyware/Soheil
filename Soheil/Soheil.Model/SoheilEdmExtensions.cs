@@ -151,7 +151,7 @@ namespace Soheil.Model
 		}
 	}
 
-	public partial class GeneralSkill
+	public partial class PersonalSkill
 	{
 	}
 
@@ -177,18 +177,21 @@ namespace Soheil.Model
 		//}
 	}
 
-	public partial class OperatorActivity
+	public partial class GeneralActivitySkill
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
-		//public ILUO Iluo
-		//{
-		//    get { return (ILUO) IluoNr; }
-		//    set { IluoNr = (byte) value; }
-		//}
+		public ILUO Iluo
+		{
+			get { return (ILUO)IluoNr; }
+			set { IluoNr = (byte)value; }
+		}
+	}
+	public partial class UniqueActivitySkill
+	{
+		public ILUO Iluo
+		{
+			get { return (ILUO)IluoNr; }
+			set { IluoNr = (byte)value; }
+		}
 	}
 
 	public partial class Operator_DefectionReport
@@ -267,6 +270,8 @@ namespace Soheil.Model
 		/// Gets the only ProductRework of this Product with Rework = null
 		/// </summary>
 		public ProductRework MainProductRework { get { return ProductReworks.First(x => x.Rework == null); } }
+
+		public FPC DefaultFpc { get { return FPCs.First(x => x.IsDefault); } }
 	}
 
 	public partial class ProductDefection
@@ -300,7 +305,7 @@ namespace Soheil.Model
 		//}
 	}
 
-	public partial class SpecialSkill
+	public partial class GeneralActivitySkill
 	{
 	}
 
@@ -361,8 +366,7 @@ namespace Soheil.Model
 		{
 			get
 			{
-				if (Job != null) return Job.ProductRework.Rework != null;
-				return false;
+				return Block.StateStation.State.OnProductRework.Rework != null;
 			}
 		}
 	}

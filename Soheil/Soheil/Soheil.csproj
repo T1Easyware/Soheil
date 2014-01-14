@@ -292,6 +292,11 @@
     <Content Include="Images\openhand.cur">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\PP\Job.png" />
+    <Resource Include="Images\PP\Operator.png" />
+    <Resource Include="Images\PP\ReportWarning15.png" />
+    <Resource Include="Images\PP\Targetpoint.png" />
+    <Resource Include="Images\PP\ProducedG1.png" />
     <Resource Include="Images\PP\Now.png" />
     <Resource Include="Images\PP\Setup.png" />
     <Resource Include="Images\PP\SetupAdd.png" />

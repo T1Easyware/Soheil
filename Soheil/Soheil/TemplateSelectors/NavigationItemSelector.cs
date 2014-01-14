@@ -13,7 +13,7 @@ namespace Soheil.TemplateSelectors
         public DataTemplate ProductReworkTemplate { get; set; }
         public DataTemplate ReworkProductTemplate { get; set; }
         public DataTemplate ActivityOperatorTemplate { get; set; }
-        public DataTemplate OperatorActivityTemplate { get; set; }
+        public DataTemplate GeneralActivitySkillTemplate { get; set; }
         public DataTemplate UserPositionTemplate { get; set; }
         public DataTemplate PositionUserTemplate { get; set; }
         public DataTemplate UserAccessRuleTemplate { get; set; }
@@ -48,7 +48,7 @@ namespace Soheil.TemplateSelectors
                 {
                     return ActivityOperatorTemplate;
                 }
-                return OperatorActivityTemplate;
+                return GeneralActivitySkillTemplate;
             }
             if (item is UserPositionVM)
             {

@@ -37,11 +37,6 @@ namespace Soheil.Views.PP
 		#endregion
 
 
-		private void AddToJobs_Click(object sender, RoutedEventArgs e)
-		{
-			VM.JobList.Add(new PPEditorJob(sender.GetDataContext<ProductVm>()));
-			//e.Handled = false;
-		}
 		private void pgTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			if (e.NewValue is ProductGroupVm)

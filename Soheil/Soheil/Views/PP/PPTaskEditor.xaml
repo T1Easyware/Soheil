@@ -40,25 +40,25 @@
 			</Grid>
 		</DataTemplate>
 
-		<DataTemplate x:Key="ppStateListItemTemplate" DataType="{x:Type ppevm:PPEditorState}">
-			<DockPanel MouseDown="PPStateListItem_MouseDown">
+        <DataTemplate x:Key="blockItemTemplate" DataType="{x:Type ppevm:PPEditorBlock}">
+			<DockPanel MouseDown="blockListItem_MouseDown">
 				<Border Margin="2" Width="15" DockPanel.Dock="Left" VerticalAlignment="Stretch">
 					<Border.Background>
-						<SolidColorBrush Color="{Binding Product.Color}"/>
+                        <SolidColorBrush Color="{Binding State.ProductRework.Product.Color}"/>
 					</Border.Background>
 					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="*" 
 							   Visibility="{Binding HasUnsavedChanges, Converter={StaticResource booleanToVisibilityConverter}}">
 						<TextBlock.Foreground>
-							<SolidColorBrush Color="{Binding Product.Color, Converter={StaticResource highContrastForecolor}}"/>
+                            <SolidColorBrush Color="{Binding State.ProductRework.Product.Color, Converter={StaticResource highContrastForecolor}}"/>
 						</TextBlock.Foreground>
 					</TextBlock>
 				</Border>
-				<Button Name="deleteButton" DockPanel.Dock="Right" VerticalAlignment="Bottom" Opacity="0" Click="deletePPStateButton_Click">
+				<Button Name="deleteButton" Command="{Binding DeleteBlockFromList}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext}" DockPanel.Dock="Right" VerticalAlignment="Bottom" Opacity="0">
 					<Image Style="{StaticResource deleteImage}"/>
 				</Button>
-				<TextBlock Text="{Binding Product.Name}" DockPanel.Dock="Top"/>
-				<TextBlock Text="{Binding Name}" DockPanel.Dock="Left"/>
-				<TextBlock Text="{Binding Code}" Foreground="Gray" Margin="5,0,0,0"/>
+                <TextBlock Text="{Binding State.ProductRework.Product.Name}" DockPanel.Dock="Top"/>
+                <TextBlock Text="{Binding State.Name}" DockPanel.Dock="Left"/>
+                <TextBlock Text="{Binding State.Code}" Foreground="Gray" Margin="5,0,0,0"/>
 				<DockPanel.Triggers>
 					<EventTrigger RoutedEvent="Mouse.MouseEnter">
 						<BeginStoryboard>
@@ -77,7 +77,7 @@
 				</DockPanel.Triggers>
 			</DockPanel>
 		</DataTemplate>
-		<Style x:Key="ppStateListContainerStyle"  TargetType="ListBoxItem">
+        <Style x:Key="blockListContainerStyle"  TargetType="ListBoxItem">
 			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 			<Style.Triggers>
 				<Trigger Property="IsSelected" Value="False">
@@ -86,9 +86,13 @@
 				</Trigger>
 			</Style.Triggers>
 		</Style>
-		
-		
-		<!-- TaskEditor Panel -->
+
+
+        <!--..................-->
+        <!-- TaskEditor Panel -->
+        <!--..................-->
+        
+        <!-- general operator -->
 		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="allOperatorsTemplate">
 			<Button Height="25" Name="btn" HorizontalAlignment="Stretch" Click="SelectOperator"
 					IsEnabled="{Binding IsSelected, Converter={StaticResource inverter}}">
@@ -133,7 +137,7 @@
 				</Trigger>
 			</DataTemplate.Triggers>
 		</DataTemplate>
-
+        <!-- selected operator -->
 		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="selectedOperatorsTemplate">
 			<StackPanel Name="root">
 				<Button Height="25" Name="btn_deselect" HorizontalAlignment="Stretch" Click="DeselectOperator"
@@ -203,7 +207,8 @@
 			</DataTemplate.Triggers>
 		</DataTemplate>
 
-		<DataTemplate DataType="{x:Type ppevm:PPEditorActivity}" x:Key="activityTabHeaderTemplate">
+        <!-- activity hdr -->
+        <DataTemplate DataType="{x:Type ppevm:PPEditorActivity}" x:Key="activityTabHeaderTemplate">
 			<WrapPanel x:Name="root">
 				<TextBlock Text="{Binding Name}"/>
 				<TextBlock 
@@ -220,8 +225,8 @@
 				</DataTrigger>
 			</DataTemplate.Triggers>
 		</DataTemplate>
-
-		<DataTemplate DataType="{x:Type ppevm:PPEditorActivity}" x:Key="activityTabTemplate">
+        <!-- activity -->
+        <DataTemplate DataType="{x:Type ppevm:PPEditorActivity}" x:Key="activityTabTemplate">
 			<Border Background="{StaticResource activityBackBrush}">
 				<DockPanel MinHeight="150">
 					<WrapPanel DockPanel.Dock="Top">
@@ -300,7 +305,8 @@
 		</DataTemplate>
 
 
-		<DataTemplate DataType="{x:Type ppevm:PPEditorStation}" x:Key="stationTabHeaderTemplate">
+        <!-- task hdr -->
+        <DataTemplate DataType="{x:Type ppevm:PPEditorTask}" x:Key="stationTabHeaderTemplate">
 			<WrapPanel x:Name="station">
 				<TextBlock Text="ایستگاه "/>
 				<TextBlock Text="{Binding Name}"/>
@@ -318,9 +324,10 @@
 			</DataTemplate.Triggers>
 		</DataTemplate>
 
-        <DataTemplate DataType="{x:Type ppevm:PPEditorStation}" x:Key="stationTabTemplate">
-            <!-- 1 Station Expander -->
-            <DockPanel Background="Silver" x:Name="station">
+        <!-- task -->
+        <DataTemplate DataType="{x:Type ppevm:PPEditorTask}" x:Key="taskTabTemplate">
+            <!-- 1 Task (Portion of a block) -->
+            <DockPanel Background="Silver" x:Name="root">
                 <DockPanel.Effect>
                     <DropShadowEffect ShadowDepth="0"/>
                 </DockPanel.Effect>
@@ -393,7 +400,7 @@
                     <!-- Activities TP -->
                     <DockPanel>
                         <Border DockPanel.Dock="Left" BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffHeaderBackground}" BorderThickness="1" CornerRadius="5,0,0,5" Height="{Binding ElementName=durationContents, Path=ActualHeight}" Margin="2,2,0,2">
-                            <TextBlock Text="مقدار فعالیتها" TextAlignment="Center" Margin="2">
+                            <TextBlock Text="تعداد هدف فعالیتها" TextAlignment="Center" Margin="2">
                                 <TextBlock.LayoutTransform>
                                     <RotateTransform Angle="90"/>
                                 </TextBlock.LayoutTransform>
@@ -403,13 +410,13 @@
                             <StackPanel>
                                 <RadioButton Margin="1" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
                                     <WrapPanel>
-                                        <TextBlock Text="تعداد تولید برای همه فعالیتها" VerticalAlignment="Center"/>
+                                        <TextBlock Text="مساوی برای همه فعالیتها" VerticalAlignment="Center"/>
                                         <TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="30"/>
                                     </WrapPanel>
                                 </RadioButton>
                                 <RadioButton Margin="1" IsChecked="{Binding IsDeferToActivitiesSelected}">
                                     <WrapPanel Height="20">
-                                        <TextBlock Text="برای هر فعالیت، جداگانه وارد شود" VerticalAlignment="Center"/>
+                                        <TextBlock Text="جداگانه برای هر فعالیت" VerticalAlignment="Center"/>
                                     </WrapPanel>
                                 </RadioButton>
                             </StackPanel>
@@ -429,7 +436,7 @@
             </DockPanel>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding HasUnsavedChanges}" Value="True">
-                    <Setter TargetName="station" Property="Background">
+                    <Setter TargetName="root" Property="Background">
                         <Setter.Value>
                             <SolidColorBrush Color="Yellow"/>
                         </Setter.Value>
@@ -442,18 +449,12 @@
 	
 	<DockPanel>
 		<DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Height="30">
-			<Button DockPanel.Dock="Left" Content="ذخیره برنامه انتخاب شده" 
-					IsEnabled="{Binding SelectedState, Converter={StaticResource isNotNull}}"
-					Click="btnSave_Click"/>
-			<Button DockPanel.Dock="Left" Content="پاک کردن همه مراحل" 
-					Click="btnClearAll_Click"/>
-			<Button DockPanel.Dock="Right" Content="انصراف و خروج"
-					Click="btnExit_Click"/>
-			<Button DockPanel.Dock="Right" Content="ذخیره همه برنامه ها و خروج"
-					Click="btnSaveAll_Click"/>
-			<Button DockPanel.Dock="Right" Content="پاک کردن ایستگاه انتخاب شده"
-					Click="btnClearStation_Click"/>
-		</DockPanel>
+            <Button DockPanel.Dock="Left" Content="ذخیره برنامه انتخاب شده" Command="{Binding SaveCommand}" IsEnabled="{Binding SelectedState, Converter={StaticResource isNotNull}}"/>
+            <Button DockPanel.Dock="Left" Content="پاک کردن همه مراحل" Command="{Binding ClearAllCommand}"/>
+            <Button DockPanel.Dock="Right" Content="انصراف و خروج" Command="{Binding ExitCommand}"/>
+            <Button DockPanel.Dock="Right" Content="ذخیره همه برنامه ها و خروج" Command="{Binding SaveAllCommand}"/>
+            <Button DockPanel.Dock="Right" Content="پاک کردن" Command="{Binding ResetCurrentBlockCommand}"/>
+        </DockPanel>
 		<Border DockPanel.Dock="Left" Margin="5,5,0,5" BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1" CornerRadius="1">
 			<DockPanel>
 				<TextBlock Text="محصول را انتخاب کنید" DockPanel.Dock="Top" Foreground="Silver"/>
@@ -463,9 +464,9 @@
 						  Background="{StaticResource HeaderBackground}"
 						  SelectedItemChanged="Product_SelectionChanged"/>
 				<TextBlock Text="مرحله تولید را انتخاب کنید" DockPanel.Dock="Top" Foreground="Silver"/>
-				<ListBox ItemsSource="{Binding PPStateList}" 
-						 ItemTemplate="{StaticResource ppStateListItemTemplate}" 
-						 ItemContainerStyle="{StaticResource ppStateListContainerStyle}"
+				<ListBox ItemsSource="{Binding BlockList}" 
+						 ItemTemplate="{StaticResource blockItemTemplate}" 
+						 ItemContainerStyle="{StaticResource blockListContainerStyle}"
 						 Background="{StaticResource HeaderBackground}"
 						 SelectedItem="{Binding SelectedState}"
 						 MinHeight="100"/>
@@ -487,10 +488,10 @@
 		<Border BorderBrush="{StaticResource HeaderBorderBrush}" Background="{StaticResource HeaderBackground}"
 				BorderThickness="1" CornerRadius="1" Padding="1" Margin="5,0,5,5">
 			<Grid>
-				<Grid Visibility="{Binding ShowFpc, Converter={StaticResource booleanToVisibilityConverter}}">
-					<fpcView:FpcStateView DataContext="{Binding FpcViewer}"/>
-				</Grid>
-				<TabControl Margin="8" Visibility="{Binding ShowFpc, Converter={StaticResource booleanToInvisibilityConverter}}"
+                <Grid Visibility="{Binding ShowFpc, Converter={StaticResource booleanToVisibilityConverter}}">
+                    <fpcView:FpcStateView DataContext="{Binding FpcViewer}"/>
+                </Grid>
+                <TabControl Margin="8" Visibility="{Binding ShowFpc, Converter={StaticResource booleanToInvisibilityConverter}}"
 							ItemsSource="{Binding SelectedState.StationList}"
 							SelectedIndex="{Binding SelectedState.FocusedStationTabIndex}">
 					<TabControl.ItemContainerStyle>

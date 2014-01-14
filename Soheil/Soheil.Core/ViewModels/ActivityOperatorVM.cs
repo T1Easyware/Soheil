@@ -8,7 +8,7 @@ namespace Soheil.Core.ViewModels
 {
     public class ActivityOperatorVM : ItemRelationDetailViewModel
     {
-        private readonly OperatorActivity _model;
+        private readonly GeneralActivitySkill _model;
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductGroupVM"/> class initialized with default values.
         /// </summary>
@@ -24,7 +24,7 @@ namespace Soheil.Core.ViewModels
         /// <param name="access"></param>
         /// <param name="dataService"></param>
         /// <param name="presentationType"></param>
-        public ActivityOperatorVM(OperatorActivity entity, AccessType access, ActivityOperatorDataService dataService, RelationDirection presentationType)
+        public ActivityOperatorVM(GeneralActivitySkill entity, AccessType access, ActivityOperatorDataService dataService, RelationDirection presentationType)
             : base(access, presentationType)
         {
             InitializeData(dataService);

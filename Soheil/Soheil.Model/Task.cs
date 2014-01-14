@@ -25,18 +25,6 @@ namespace Soheil.Model
             set;
         }
     
-        private byte PPFlagsNr
-        {
-            get;
-            set;
-        }
-    
-        public virtual int ModifiedBy
-        {
-            get;
-            set;
-        }
-    
         public virtual int DurationSeconds
         {
             get;
@@ -44,12 +32,6 @@ namespace Soheil.Model
         }
     
         public virtual System.DateTime StartDateTime
-        {
-            get;
-            set;
-        }
-    
-        public virtual string Code
         {
             get;
             set;
@@ -66,25 +48,16 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual int ModifiedBy
+        {
+            get;
+            set;
+        }
 
         #endregion
 
         #region Navigation Properties
-    
-        public virtual StateStation StateStation
-        {
-            get { return _stateStation; }
-            set
-            {
-                if (!ReferenceEquals(_stateStation, value))
-                {
-                    var previousValue = _stateStation;
-                    _stateStation = value;
-                    FixupStateStation(previousValue);
-                }
-            }
-        }
-        private StateStation _stateStation;
     
         public virtual ICollection<Process> Processes
         {
@@ -150,85 +123,37 @@ namespace Soheil.Model
         }
         private ICollection<TaskReport> _taskReports;
     
-        public virtual ICollection<Education> Educations
+        public virtual Block Block
         {
-            get
-            {
-                if (_educations == null)
-                {
-                    var newCollection = new FixupCollection<Education>();
-                    newCollection.CollectionChanged += FixupEducations;
-                    _educations = newCollection;
-                }
-                return _educations;
-            }
+            get { return _block; }
             set
             {
-                if (!ReferenceEquals(_educations, value))
+                if (!ReferenceEquals(_block, value))
                 {
-                    var previousValue = _educations as FixupCollection<Education>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupEducations;
-                    }
-                    _educations = value;
-                    var newValue = value as FixupCollection<Education>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupEducations;
-                    }
+                    var previousValue = _block;
+                    _block = value;
+                    FixupBlock(previousValue);
                 }
             }
         }
-        private ICollection<Education> _educations;
-    
-        public virtual Job Job
-        {
-            get { return _job; }
-            set
-            {
-                if (!ReferenceEquals(_job, value))
-                {
-                    var previousValue = _job;
-                    _job = value;
-                    FixupJob(previousValue);
-                }
-            }
-        }
-        private Job _job;
+        private Block _block;
 
         #endregion
 
         #region Association Fixup
     
-        private void FixupStateStation(StateStation previousValue)
+        private void FixupBlock(Block previousValue)
         {
             if (previousValue != null && previousValue.Tasks.Contains(this))
             {
                 previousValue.Tasks.Remove(this);
             }
     
-            if (StateStation != null)
+            if (Block != null)
             {
-                if (!StateStation.Tasks.Contains(this))
+                if (!Block.Tasks.Contains(this))
                 {
-                    StateStation.Tasks.Add(this);
-                }
-            }
-        }
-    
-        private void FixupJob(Job previousValue)
-        {
-            if (previousValue != null && previousValue.Tasks.Contains(this))
-            {
-                previousValue.Tasks.Remove(this);
-            }
-    
-            if (Job != null)
-            {
-                if (!Job.Tasks.Contains(this))
-                {
-                    Job.Tasks.Add(this);
+                    Block.Tasks.Add(this);
                 }
             }
         }
@@ -268,28 +193,6 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (TaskReport item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Task, this))
-                    {
-                        item.Task = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupEducations(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (Education item in e.NewItems)
-                {
-                    item.Task = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (Education item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Task, this))
                     {
