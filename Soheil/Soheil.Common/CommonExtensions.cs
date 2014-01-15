@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Windows.Threading;
 using System.Windows;
+using System.Collections.Generic;
 
 namespace Soheil.Common
 {
@@ -123,11 +124,15 @@ namespace Soheil.Common
 			foreach (var item in list)
 				collection.Remove(item);
 		}
-		public static void RemoveWhere<T>(this System.Collections.Generic.IList<T> collection, Func<T, bool> where)
+		public static void RemoveWhere<T>(this IList<T> collection, Func<T, bool> where)
 		{
 			var list = collection.Where(where).ToList();
 			foreach (var item in list)
 				collection.Remove(item);
+		}
+		public static List<T> DistinctBy<T, TKey>(this IList<T> collection, Func<T, TKey> selector)
+		{
+			return collection.GroupBy(selector).Select(grp => grp.First()).ToList();
 		}
 		#endregion
 

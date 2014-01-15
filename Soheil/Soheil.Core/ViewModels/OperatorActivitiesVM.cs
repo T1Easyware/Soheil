@@ -22,9 +22,9 @@ namespace Soheil.Core.ViewModels
             ActivityGroupDataService = new ActivityGroupDataService();
 
             var selectedVms = new ObservableCollection<ActivityOperatorVM>();
-            foreach (var operatorActivity in OperatorDataService.GetActivities(opr.Id))
+            foreach (var generalActivitySkill in OperatorDataService.GetActivities(opr.Id))
             {
-                selectedVms.Add(new ActivityOperatorVM(operatorActivity, Access, ActivityOperatorDataService, RelationDirection.Reverse));
+                selectedVms.Add(new ActivityOperatorVM(generalActivitySkill, Access, ActivityOperatorDataService, RelationDirection.Reverse));
             }
             SelectedItems = new ListCollectionView(selectedVms);
 
@@ -86,7 +86,7 @@ namespace Soheil.Core.ViewModels
             }
         }
 
-        private void OnActivityAdded(object sender, ModelAddedEventArgs<OperatorActivity> e)
+        private void OnActivityAdded(object sender, ModelAddedEventArgs<GeneralActivitySkill> e)
         {
             var activityOperatorVm = new ActivityOperatorVM(e.NewModel, Access, ActivityOperatorDataService, RelationDirection.Reverse);
             SelectedItems.AddNewItem(activityOperatorVm);

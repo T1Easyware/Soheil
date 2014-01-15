@@ -11,10 +11,6 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class ProductVm : DependencyObject
 	{
-		public ProductVm()
-		{
-			Id = -1;
-		}
 		/// <summary>
 		/// Must be called from within a Context (or have its productReworks filled beforehand)
 		/// </summary>
@@ -32,15 +28,12 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				ProductReworks.Add(new ProductReworkVm(pr_model, this));
 			}
-		}
-
-		public ProductVm(Fpc.ProductVm productVm)
-		{
-			Id = productVm.Id;
-			Name = productVm.Name;
-			Code = productVm.Code;
-			Color = productVm.Color;
-			//???
+			CreateNewJob = new Commands.Command
+				(vm =>
+					((Soheil.Core.ViewModels.PP.Editor.PPJobEditorVm)vm).JobList.Add(
+						Soheil.Core.ViewModels.PP.Editor.PPEditorJob.CreateForProduct(model)
+					)
+				);
 		}
 
 		public int Id { get; protected set; }
@@ -68,6 +61,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty ColorProperty =
 			DependencyProperty.Register("Color", typeof(Color), typeof(ProductVm), new UIPropertyMetadata(Colors.White));
+		
 		//Group Dependency Property
 		public ProductGroupVm Group
 		{
@@ -76,8 +70,18 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty GroupProperty =
 			DependencyProperty.Register("Group", typeof(ProductGroupVm), typeof(ProductVm), new UIPropertyMetadata(null));
+		
 		//ProductReworks Observable Collection
-		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
 		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } }
+		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
+
+		//CreateNewJob Dependency Property
+		public Commands.Command CreateNewJob
+		{
+			get { return (Commands.Command)GetValue(CreateNewJobProperty); }
+			set { SetValue(CreateNewJobProperty, value); }
+		}
+		public static readonly DependencyProperty CreateNewJobProperty = 
+			DependencyProperty.Register("CreateNewJob", typeof(Commands.Command), typeof(ProductVm), new UIPropertyMetadata(null));
 	}
 }

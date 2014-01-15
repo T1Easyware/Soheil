@@ -71,38 +71,6 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual ICollection<Cost> Costs
-        {
-            get
-            {
-                if (_costs == null)
-                {
-                    var newCollection = new FixupCollection<Cost>();
-                    newCollection.CollectionChanged += FixupCosts;
-                    _costs = newCollection;
-                }
-                return _costs;
-            }
-            set
-            {
-                if (!ReferenceEquals(_costs, value))
-                {
-                    var previousValue = _costs as FixupCollection<Cost>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupCosts;
-                    }
-                    _costs = value;
-                    var newValue = value as FixupCollection<Cost>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupCosts;
-                    }
-                }
-            }
-        }
-        private ICollection<Cost> _costs;
-    
         public virtual ICollection<Changeover> Changeovers
         {
             get
@@ -167,38 +135,6 @@ namespace Soheil.Model
         }
         private ICollection<Warmup> _warmups;
     
-        public virtual ICollection<Test> Tests
-        {
-            get
-            {
-                if (_tests == null)
-                {
-                    var newCollection = new FixupCollection<Test>();
-                    newCollection.CollectionChanged += FixupTests;
-                    _tests = newCollection;
-                }
-                return _tests;
-            }
-            set
-            {
-                if (!ReferenceEquals(_tests, value))
-                {
-                    var previousValue = _tests as FixupCollection<Test>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupTests;
-                    }
-                    _tests = value;
-                    var newValue = value as FixupCollection<Test>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupTests;
-                    }
-                }
-            }
-        }
-        private ICollection<Test> _tests;
-    
         public virtual ICollection<StationMachine> StationMachines
         {
             get
@@ -230,6 +166,70 @@ namespace Soheil.Model
             }
         }
         private ICollection<StationMachine> _stationMachines;
+    
+        public virtual ICollection<Cost> Costs
+        {
+            get
+            {
+                if (_costs == null)
+                {
+                    var newCollection = new FixupCollection<Cost>();
+                    newCollection.CollectionChanged += FixupCosts;
+                    _costs = newCollection;
+                }
+                return _costs;
+            }
+            set
+            {
+                if (!ReferenceEquals(_costs, value))
+                {
+                    var previousValue = _costs as FixupCollection<Cost>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupCosts;
+                    }
+                    _costs = value;
+                    var newValue = value as FixupCollection<Cost>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupCosts;
+                    }
+                }
+            }
+        }
+        private ICollection<Cost> _costs;
+    
+        public virtual ICollection<Test> Tests
+        {
+            get
+            {
+                if (_tests == null)
+                {
+                    var newCollection = new FixupCollection<Test>();
+                    newCollection.CollectionChanged += FixupTests;
+                    _tests = newCollection;
+                }
+                return _tests;
+            }
+            set
+            {
+                if (!ReferenceEquals(_tests, value))
+                {
+                    var previousValue = _tests as FixupCollection<Test>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupTests;
+                    }
+                    _tests = value;
+                    var newValue = value as FixupCollection<Test>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupTests;
+                    }
+                }
+            }
+        }
+        private ICollection<Test> _tests;
     
         public virtual ICollection<StateStation> StateStations
         {
@@ -266,28 +266,6 @@ namespace Soheil.Model
         #endregion
 
         #region Association Fixup
-    
-        private void FixupCosts(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (Cost item in e.NewItems)
-                {
-                    item.Station = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (Cost item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Station, this))
-                    {
-                        item.Station = null;
-                    }
-                }
-            }
-        }
     
         private void FixupChangeovers(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -333,28 +311,6 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupTests(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (Test item in e.NewItems)
-                {
-                    item.Station = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (Test item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Station, this))
-                    {
-                        item.Station = null;
-                    }
-                }
-            }
-        }
-    
         private void FixupStationMachines(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -368,6 +324,50 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (StationMachine item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Station, this))
+                    {
+                        item.Station = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupCosts(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Cost item in e.NewItems)
+                {
+                    item.Station = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Cost item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Station, this))
+                    {
+                        item.Station = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupTests(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Test item in e.NewItems)
+                {
+                    item.Station = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Test item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Station, this))
                     {

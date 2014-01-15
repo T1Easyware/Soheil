@@ -10,18 +10,22 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public abstract class NPTVm : PPItemVm
 	{
-		public NPTVm(TaskCollection parent)
+		Model.NonProductiveTask _model;
+		public override int Id { get { return _model.Id; } }
+
+		public NPTVm(Model.NonProductiveTask model, PPItemCollection parent)
 		{
+			_model = model;
 			Parent = parent;
 		}
 		//Parent Dependency Property
-		public Core.PP.TaskCollection Parent
+		public Core.PP.PPItemCollection Parent
 		{
-			get { return (Core.PP.TaskCollection)GetValue(ParentProperty); }
+			get { return (Core.PP.PPItemCollection)GetValue(ParentProperty); }
 			set { SetValue(ParentProperty, value); }
 		}
 		public static readonly DependencyProperty ParentProperty =
-			DependencyProperty.Register("Parent", typeof(Core.PP.TaskCollection), typeof(NPTVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Parent", typeof(Core.PP.PPItemCollection), typeof(NPTVm), new UIPropertyMetadata(null));
 
 		//IsEditMode Dependency Property
 		public bool IsEditMode

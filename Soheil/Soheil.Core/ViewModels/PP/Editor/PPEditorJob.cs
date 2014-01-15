@@ -10,20 +10,21 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class PPEditorJob : DependencyObject
 	{
-		DataServices.JobDataService _jobDS;
-		public PPEditorJob(ProductVm product)
+		public static PPEditorJob CreateForProduct(Model.Product productModel)
 		{
-			Replications.Add(new Model.Job());
-			_jobDS = new DataServices.JobDataService();
-			FpcId = _jobDS.GetFpcIdForProductId(product.Id);
-			Product = product;
-			//var mainP = new DataServices.ProductDataService().GetReworks(product.Id).FirstOrDefault(x => x.Rework.Id == -1);
-			ProductRework = product.ProductReworks.FirstOrDefault(x => x.Rework.Id == -1);
+			return new PPEditorJob(new Model.Job
+			{
+				Code = productModel.Code,
+				Deadline = DateTime.Now.AddMonths(1),
+				FPC = productModel.DefaultFpc,
+				ProductRework = productModel.MainProductRework,
+				Quantity = 0,
+				ReleaseTime = DateTime.Now,
+				Weight = 1,
+			});
 		}
-		public PPEditorJob(int jobId)
+		public PPEditorJob(Model.Job model)
 		{
-			_jobDS = new DataServices.JobDataService();
-			var model = _jobDS.GetSingle(jobId);
 			Replications.Add(model);
 
 			Deadline = model.Deadline;

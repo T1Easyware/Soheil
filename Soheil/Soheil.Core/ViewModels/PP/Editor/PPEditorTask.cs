@@ -8,78 +8,63 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
-	public class PPEditorStation : DependencyObject
+	public class PPEditorTask : DependencyObject
 	{
 		#region Ctor
 		/// <summary>
-		/// Must be called within an EdmContext
+		/// Must be called with an open connection
 		/// </summary>
 		/// <param name="model"></param>
-		internal PPEditorStation(PPEditorState parent, Model.Task model)
+		internal PPEditorTask(Model.Task model, PPEditorBlock editorParent)
 		{
 			_model = model;
-			_parent = parent;
-			StationId = model.StateStation.Station.Id;
-			StationIndex = model.StateStation.Station.Index;
+			Block = editorParent;
 			TaskId = model.Id;
-			StateStationId = model.StateStation.Id;
 			StartDate = model.StartDateTime.Date;
 			StartTime = model.StartDateTime.TimeOfDay;
-			Name = model.StateStation.Station.Name;
 			foreach (var processModel in model.Processes)
 			{
 				ActivityList.Add(new PPEditorActivity(this, processModel));
 			}
 			IsDeferToActivitiesSelected = true;
 		}
-		internal PPEditorStation(PPEditorState parent, Fpc.StateStationVm ss)
-		{
-			_parent = parent;
-			StationId = ss.Containment.Id;
-			StationIndex = ss.Containment.Id;//???
-			StateId = ss.Container.Id;
-			StateStationId = ss.Id;
-			TaskId = -1;
-			Name = ss.Name;
-			foreach (Fpc.StateStationActivityVm ssa in ss.ContentsList)
-			{
-				ActivityList.Add(new PPEditorActivity(this, ssa));
-			}
-			IsDeferToActivitiesSelected = true;
-		}
+		/// <summary>
+		/// resets all activities within this task
+		/// </summary>
 		public void Reset()
 		{
 			foreach (var act in ActivityList)
 			{
 				act.Reset();
 			}
-			HasUnsavedChanges = false;
 		}
 		#endregion
 
-		PPEditorState _parent;
 		Model.Task _model;
-		public int StationId { get; set; }
-		public int StationIndex { get; set; }
-		public int StateId { get; set; }
-		public int StateStationId { get; set; }
 		public int TaskId { get; set; }
 
-
-
-		#region Name And ActivityList
-		//Name Dependency Property
-		public string Name
+		//Block Dependency Property
+		public PPEditorBlock Block
 		{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
+			get { return (PPEditorBlock)GetValue(BlockProperty); }
+			set { SetValue(BlockProperty, value); }
 		}
-		public static readonly DependencyProperty NameProperty =
-			DependencyProperty.Register("Name", typeof(string), typeof(PPEditorStation), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty BlockProperty =
+			DependencyProperty.Register("Block", typeof(PPEditorBlock), typeof(PPEditorTask), new UIPropertyMetadata(null));
 
+		#region Activity
 		//ActivityList Observable Collection
 		private ObservableCollection<PPEditorActivity> _activityList = new ObservableCollection<PPEditorActivity>();
 		public ObservableCollection<PPEditorActivity> ActivityList { get { return _activityList; } }
+
+		//SelectedActivity Dependency Property
+		public PPEditorActivity SelectedActivity
+		{
+			get { return (PPEditorActivity)GetValue(SelectedActivityProperty); }
+			set { SetValue(SelectedActivityProperty, value); }
+		}
+		public static readonly DependencyProperty SelectedActivityProperty =
+			DependencyProperty.Register("SelectedActivity", typeof(PPEditorActivity), typeof(PPEditorTask), new UIPropertyMetadata(null));
 		#endregion
 
 		#region StartTime Issues
@@ -90,7 +75,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(StartDateProperty, new Arash.PersianDate(value)); }
 		}
 		public static readonly DependencyProperty StartDateProperty =
-			DependencyProperty.Register("StartDate", typeof(Arash.PersianDate), typeof(PPEditorStation), new PropertyMetadata(Arash.PersianDate.Today));
+			DependencyProperty.Register("StartDate", typeof(Arash.PersianDate), typeof(PPEditorTask), new PropertyMetadata(Arash.PersianDate.Today));
 		//StartTime Dependency Property
 		public TimeSpan StartTime
 		{
@@ -98,7 +83,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(StartTimeProperty, value); }
 		}
 		public static readonly DependencyProperty StartTimeProperty =
-			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(PPEditorStation), new UIPropertyMetadata(DateTime.Now.TimeOfDay));
+			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(PPEditorTask), new UIPropertyMetadata(DateTime.Now.TimeOfDay));
 		//IsAutoStart Dependency Property
 		public bool IsAutoStart
 		{
@@ -106,7 +91,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsAutoStartProperty, value); }
 		}
 		public static readonly DependencyProperty IsAutoStartProperty =
-			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorStation), new PropertyMetadata(false));
+			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorTask), new PropertyMetadata(false));
 
 		public void SetToToday()
 		{
@@ -131,7 +116,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(TaskTargetPointProperty, value); }
 		}
 		public static readonly DependencyProperty TaskTargetPointProperty =
-			DependencyProperty.Register("TaskTargetPoint", typeof(int), typeof(PPEditorStation), new PropertyMetadata(0));
+			DependencyProperty.Register("TaskTargetPoint", typeof(int), typeof(PPEditorTask), new PropertyMetadata(0));
 
 		//IsSameTimeForActivitiesSelected Dependency Property
 		public bool IsSameTimeForActivitiesSelected
@@ -140,10 +125,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsSameTimeForActivitiesSelectedProperty, value); }
 		}
 		public static readonly DependencyProperty IsSameTimeForActivitiesSelectedProperty =
-			DependencyProperty.Register("IsSameTimeForActivitiesSelected", typeof(bool), typeof(PPEditorStation),
+			DependencyProperty.Register("IsSameTimeForActivitiesSelected", typeof(bool), typeof(PPEditorTask),
 			new UIPropertyMetadata(false, (d, e) =>
 			{
-				var vm = (PPEditorStation)d;
+				var vm = (PPEditorTask)d;
 				if ((bool)e.NewValue)
 				{
 					vm.IsSameQtyForActivitiesSelected = false;
@@ -161,10 +146,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsSameQtyForActivitiesSelectedProperty, value); }
 		}
 		public static readonly DependencyProperty IsSameQtyForActivitiesSelectedProperty =
-			DependencyProperty.Register("IsSameQtyForActivitiesSelected", typeof(bool), typeof(PPEditorStation),
+			DependencyProperty.Register("IsSameQtyForActivitiesSelected", typeof(bool), typeof(PPEditorTask),
 			new UIPropertyMetadata(false, (d, e) =>
 			{
-				var vm = (PPEditorStation)d;
+				var vm = (PPEditorTask)d;
 				if ((bool)e.NewValue)
 				{
 					vm.IsSameTimeForActivitiesSelected = false;
@@ -183,10 +168,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsDeferToActivitiesSelectedProperty, value); }
 		}
 		public static readonly DependencyProperty IsDeferToActivitiesSelectedProperty =
-			DependencyProperty.Register("IsDeferToActivitiesSelected", typeof(bool), typeof(PPEditorStation),
+			DependencyProperty.Register("IsDeferToActivitiesSelected", typeof(bool), typeof(PPEditorTask),
 			new UIPropertyMetadata(false, (d, e) =>
 			{
-				var vm = ((PPEditorStation)d);
+				var vm = ((PPEditorTask)d);
 				if ((bool)e.NewValue)
 				{
 					vm.IsSameTimeForActivitiesSelected = false;
@@ -204,10 +189,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SameTimeForActivitiesProperty, value); }
 		}
 		public static readonly DependencyProperty SameTimeForActivitiesProperty =
-			DependencyProperty.Register("SameTimeForActivities", typeof(TimeSpan), typeof(PPEditorStation),
+			DependencyProperty.Register("SameTimeForActivities", typeof(TimeSpan), typeof(PPEditorTask),
 			new UIPropertyMetadata(new TimeSpan(1, 0, 0), (d, e) =>
 			{
-				var vm = (PPEditorStation)d;
+				var vm = (PPEditorTask)d;
 				foreach (var act in vm.ActivityList)
 				{
 					act.TargetPoint = (int)(((TimeSpan)e.NewValue).TotalSeconds / act.CycleTime);
@@ -220,29 +205,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SameQtyForActivitiesProperty, value); }
 		}
 		public static readonly DependencyProperty SameQtyForActivitiesProperty =
-			DependencyProperty.Register("SameQtyForActivities", typeof(int), typeof(PPEditorStation),
+			DependencyProperty.Register("SameQtyForActivities", typeof(int), typeof(PPEditorTask),
 			new UIPropertyMetadata(0, (d, e) =>
 			{
-				var vm = (PPEditorStation)d;
+				var vm = (PPEditorTask)d;
 				foreach (var act in vm.ActivityList)
 				{
 					act.TargetPoint = (int)e.NewValue;
 				}
 			}));
 		#endregion
-
-		//HasUnsavedChanges Dependency Property
-		public bool HasUnsavedChanges
-		{
-			get { return (bool)GetValue(HasUnsavedChangesProperty); }
-			set { SetValue(HasUnsavedChangesProperty, value); }
-		}
-		public static readonly DependencyProperty HasUnsavedChangesProperty =
-			DependencyProperty.Register("HasUnsavedChanges", typeof(bool), typeof(PPEditorStation),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				if ((bool)e.NewValue)
-					((PPEditorStation)d)._parent.HasUnsavedChanges = true;
-			}));
 	}
 }

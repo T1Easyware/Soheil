@@ -73,38 +73,6 @@ namespace Soheil.Model
         }
         private ICollection<ProcessOperator> _processOperators;
     
-        public virtual ICollection<ProcessReport> ProcessReports
-        {
-            get
-            {
-                if (_processReports == null)
-                {
-                    var newCollection = new FixupCollection<ProcessReport>();
-                    newCollection.CollectionChanged += FixupProcessReports;
-                    _processReports = newCollection;
-                }
-                return _processReports;
-            }
-            set
-            {
-                if (!ReferenceEquals(_processReports, value))
-                {
-                    var previousValue = _processReports as FixupCollection<ProcessReport>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupProcessReports;
-                    }
-                    _processReports = value;
-                    var newValue = value as FixupCollection<ProcessReport>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupProcessReports;
-                    }
-                }
-            }
-        }
-        private ICollection<ProcessReport> _processReports;
-    
         public virtual ICollection<SelectedMachine> SelectedMachines
         {
             get
@@ -166,6 +134,38 @@ namespace Soheil.Model
             }
         }
         private StateStationActivity _stateStationActivity;
+    
+        public virtual ICollection<ProcessReport> ProcessReports
+        {
+            get
+            {
+                if (_processReports == null)
+                {
+                    var newCollection = new FixupCollection<ProcessReport>();
+                    newCollection.CollectionChanged += FixupProcessReports;
+                    _processReports = newCollection;
+                }
+                return _processReports;
+            }
+            set
+            {
+                if (!ReferenceEquals(_processReports, value))
+                {
+                    var previousValue = _processReports as FixupCollection<ProcessReport>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupProcessReports;
+                    }
+                    _processReports = value;
+                    var newValue = value as FixupCollection<ProcessReport>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupProcessReports;
+                    }
+                }
+            }
+        }
+        private ICollection<ProcessReport> _processReports;
 
         #endregion
 
@@ -225,28 +225,6 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupProcessReports(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (ProcessReport item in e.NewItems)
-                {
-                    item.Process = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (ProcessReport item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Process, this))
-                    {
-                        item.Process = null;
-                    }
-                }
-            }
-        }
-    
         private void FixupSelectedMachines(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -260,6 +238,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (SelectedMachine item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Process, this))
+                    {
+                        item.Process = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupProcessReports(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ProcessReport item in e.NewItems)
+                {
+                    item.Process = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (ProcessReport item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Process, this))
                     {

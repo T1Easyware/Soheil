@@ -8,30 +8,13 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class TaskReportBaseVm : DependencyObject
 	{
-		protected TaskReportBaseVm(PPTaskVm parent, int index)
-		{
-			Task = parent;
-			Index = index;
-		}
-
 		public DataServices.TaskReportDataService TaskReportDataService { get { return Task.TaskReportDataService; } }
 
-		//CanUserEditTaskTPAndG1 Dependency Property
-		public bool CanUserEditTaskTPAndG1
+		protected TaskReportBaseVm(PPTaskVm parent)
 		{
-			get { return (bool)GetValue(CanUserEditTaskTPAndG1Property); }
-			set { SetValue(CanUserEditTaskTPAndG1Property, value); }
+			Task = parent;
 		}
-		public static readonly DependencyProperty CanUserEditTaskTPAndG1Property =
-			DependencyProperty.Register("CanUserEditTaskTPAndG1", typeof(bool), typeof(TaskReportBaseVm), new UIPropertyMetadata(true));
-		//Index Dependency Property
-		public int Index
-		{
-			get { return (int)GetValue(IndexProperty); }
-			set { SetValue(IndexProperty, value); }
-		}
-		public static readonly DependencyProperty IndexProperty =
-			DependencyProperty.Register("Index", typeof(int), typeof(TaskReportBaseVm), new UIPropertyMetadata(0));
+
 		//Task Dependency Property
 		public PPTaskVm Task
 		{
@@ -40,6 +23,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty TaskProperty =
 			DependencyProperty.Register("Task", typeof(PPTaskVm), typeof(TaskReportBaseVm), new PropertyMetadata(null));
+		
 		//TargetPoint Dependency Property
 		public int TargetPoint
 		{
@@ -54,7 +38,23 @@ namespace Soheil.Core.ViewModels.PP
 				if (vm != null) vm.SaveTargetPoint((int)e.NewValue);
 			}));
 
-	
+		//OpenCommand Dependency Property
+		public Commands.Command OpenCommand
+		{
+			get { return (Commands.Command)GetValue(OpenCommandProperty); }
+			set { SetValue(OpenCommandProperty, value); }
+		}
+		public static readonly DependencyProperty OpenCommandProperty =
+			DependencyProperty.Register("OpenCommand", typeof(Commands.Command), typeof(TaskReportBaseVm), new UIPropertyMetadata(null));
+		//CanUserEditTaskTPAndG1 Dependency Property
+		public bool CanUserEditTaskTPAndG1
+		{
+			get { return (bool)GetValue(CanUserEditTaskTPAndG1Property); }
+			set { SetValue(CanUserEditTaskTPAndG1Property, value); }
+		}
+		public static readonly DependencyProperty CanUserEditTaskTPAndG1Property =
+			DependencyProperty.Register("CanUserEditTaskTPAndG1", typeof(bool), typeof(TaskReportBaseVm), new UIPropertyMetadata(true));
+
 		#region Start/End/Duration
 		//DurationSeconds Dependency Property
 		public int DurationSeconds

@@ -52,18 +52,14 @@ namespace Soheil.Views.PP
 				VM.ShowFpc = true;
 			}
 		}
-		private void PPStateListItem_MouseDown(object sender, MouseButtonEventArgs e)
+		private void blockListItem_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			var task = (sender as FrameworkElement).DataContext as PPEditorState;
-			if (VM.SelectedState == task)
+			var block = (sender as FrameworkElement).DataContext as PPEditorBlock;
+			if (VM.SelectedBlock == block)
 			{
 				VM.ShowFpc = false;
 			}
 		}
-		private void deletePPStateButton_Click(object sender, RoutedEventArgs e)
-		{
-			VM.FpcViewer_RemovePPState((sender as FrameworkElement).DataContext as PPEditorState);
-		} 
 		#endregion
 
 
@@ -82,62 +78,21 @@ namespace Soheil.Views.PP
 
 		private void SelectTodayButton_Click(object sender, RoutedEventArgs e)
 		{
-			var vm = sender.GetDataContext<PPEditorStation>();
+			var vm = sender.GetDataContext<PPEditorTask>();
 			vm.SetToToday();
 		}
 
 		private void SelectTomorrowButton_Click(object sender, RoutedEventArgs e)
 		{
-			var vm = sender.GetDataContext<PPEditorStation>();
+			var vm = sender.GetDataContext<PPEditorTask>();
 			vm.SetToTomorrow();
 		}
 
 		private void SelectNextHourButton_Click(object sender, RoutedEventArgs e)
 		{
-			var vm = sender.GetDataContext<PPEditorStation>();
+			var vm = sender.GetDataContext<PPEditorTask>();
 			vm.SetToNextHour();
 		}
-		#endregion
-
-
-		#region Button Events
-		private void btnClearAll_Click(object sender, RoutedEventArgs e)
-		{
-			VM.Reset();
-		}
-		private void btnSaveAll_Click(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				VM.SaveAllAsTasks();
-				VM.Reset();
-				VM.IsVisible = false;
-			}
-			catch (Exception exp)
-			{
-				MessageBox.Show(exp.Message);
-			}
-		}
-		private void btnClearStation_Click(object sender, RoutedEventArgs e)
-		{
-			VM.SelectedState.ResetCurrentStation();
-		}
-		private void btnSave_Click(object sender, RoutedEventArgs e)
-		{
-			if (VM.SelectedState == null) return;
-			try
-			{
-				VM.SaveSelectedStateStationAsTask();
-			}
-			catch (Exception exp)
-			{
-				MessageBox.Show(exp.Message);
-			}
-		}
-		private void btnExit_Click(object sender, RoutedEventArgs e)
-		{
-			VM.IsVisible = false;
-		} 
 		#endregion
 	}
 }

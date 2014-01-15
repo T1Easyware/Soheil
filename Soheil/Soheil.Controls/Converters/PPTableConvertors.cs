@@ -162,15 +162,15 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var match = (PPTableViewMode)parameter;
-			var target = (PPTableViewMode)value;
+			var match = (PPViewMode)parameter;
+			var target = (PPViewMode)value;
 			return (target == match);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if ((bool)value)
-				return (PPTableViewMode)parameter;
+				return (PPViewMode)parameter;
 			return null;
 		}
 	}
@@ -178,8 +178,8 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var match = (PPTableViewMode)parameter;
-			var target = (PPTableViewMode)value;
+			var match = (PPViewMode)parameter;
+			var target = (PPViewMode)value;
 			return (target == match) ? Visibility.Collapsed : Visibility.Visible;
 		}
 
@@ -192,8 +192,8 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var match = (PPTableViewMode)parameter;
-			var target = (PPTableViewMode)value;
+			var match = (PPViewMode)parameter;
+			var target = (PPViewMode)value;
 			return (target == match) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
@@ -370,7 +370,7 @@ namespace Soheil.Controls.Converters.PP
 			var offset = (Point)values[4];
 			return new Thickness(
 				(rh.StartDateTime.Subtract(rh.StartDateTime.GetNorooz()).TotalHours - (hoursPassed + daysFromStartOfYear * 24)) * hourZoom + offset.X,
-				(rh.Parent.Index + 1) * 52 + offset.Y, 0, 0);
+				(rh.ParentRow.Index + 1) * 52 + offset.Y, 0, 0);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -393,7 +393,7 @@ namespace Soheil.Controls.Converters.PP
 			var offset = (Point)values[4];
 			return new Thickness(
 				(rh.StartDateTime.Subtract(rh.StartDateTime.GetNorooz()).TotalHours - (hoursPassed + daysFromStartOfYear * 24)) * hourZoom + offset.X,
-				(rh.Parent.Index + 1) * 52 + offset.Y, 0, 0);
+				(rh.ParentRow.Index + 1) * 52 + offset.Y, 0, 0);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace Soheil.Model
 {
-    public partial class GeneralSkill
+    public partial class PersonalSkill
     {
         #region Primitive Properties
     
@@ -31,25 +31,25 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual string PhysicalState
+        public virtual int Experience
         {
             get;
             set;
         }
     
-        public virtual string Reserve1
+        public virtual string ReserveText1
         {
             get;
             set;
         }
     
-        public virtual string Reserve2
+        public virtual string ReserveText2
         {
             get;
             set;
         }
     
-        public virtual string Reserve3
+        public virtual int ReserveInteger1
         {
             get;
             set;
@@ -86,14 +86,14 @@ namespace Soheil.Model
     
         private void FixupOperator(Operator previousValue)
         {
-            if (previousValue != null && ReferenceEquals(previousValue.GeneralSkills, this))
+            if (previousValue != null && ReferenceEquals(previousValue.PersonalSkill, this))
             {
-                previousValue.GeneralSkills = null;
+                previousValue.PersonalSkill = null;
             }
     
             if (Operator != null)
             {
-                Operator.GeneralSkills = this;
+                Operator.PersonalSkill = this;
             }
         }
 

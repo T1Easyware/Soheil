@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace Soheil.Model
 {
-    public partial class OperatorActivity
+    public partial class GeneralActivitySkill
     {
         #region Primitive Properties
     
@@ -32,12 +32,23 @@ namespace Soheil.Model
         }
         private byte _iluoNr = 0;
     
-        private byte Status
+        public virtual System.DateTime CreatedDate
         {
-            get { return _status; }
-            set { _status = value; }
+            get;
+            set;
         }
-        private byte _status = 1;
+    
+        public virtual System.DateTime ModifiedDate
+        {
+            get;
+            set;
+        }
+    
+        public virtual int ModifiedBy
+        {
+            get;
+            set;
+        }
 
         #endregion
 
@@ -57,21 +68,6 @@ namespace Soheil.Model
             }
         }
         private Operator _operator;
-    
-        public virtual SpecialSkill SpecialSkill
-        {
-            get { return _specialSkill; }
-            set
-            {
-                if (!ReferenceEquals(_specialSkill, value))
-                {
-                    var previousValue = _specialSkill;
-                    _specialSkill = value;
-                    FixupSpecialSkill(previousValue);
-                }
-            }
-        }
-        private SpecialSkill _specialSkill;
     
         public virtual Activity Activity
         {
@@ -104,22 +100,6 @@ namespace Soheil.Model
                 if (!Operator.OperatorActivities.Contains(this))
                 {
                     Operator.OperatorActivities.Add(this);
-                }
-            }
-        }
-    
-        private void FixupSpecialSkill(SpecialSkill previousValue)
-        {
-            if (previousValue != null && previousValue.OperatorActivities.Contains(this))
-            {
-                previousValue.OperatorActivities.Remove(this);
-            }
-    
-            if (SpecialSkill != null)
-            {
-                if (!SpecialSkill.OperatorActivities.Contains(this))
-                {
-                    SpecialSkill.OperatorActivities.Add(this);
                 }
             }
         }

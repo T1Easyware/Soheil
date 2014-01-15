@@ -15,7 +15,7 @@ namespace Soheil.Core.ViewModels.PP
 			Parent = parent;
 			ProductDefection = FilterBoxVm.CreateForProductDefections(
 				model == null ? -1 : (model.ProductDefection == null ? -1 : model.ProductDefection.Id), 
-				parent.Parent.Parent.Process.Task.ProductId);
+				parent.Parent.ParentColumn.Task.Block.ProductId);
 			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(
 				model == null ? null : model.OperatorDefectionReports.Select(x=>x.Operator.Id));
 			if (model != null)
@@ -97,7 +97,7 @@ namespace Soheil.Core.ViewModels.PP
 			}));
 		private void updateEquivalents(int secs, int counts)
 		{
-			float ct = Parent.Parent.Parent.Process.StateStationActivity.CycleTime;
+			float ct = Parent.Parent.ParentRow.StateStationActivity.CycleTime;
 			TimeEquivalent = (int)(secs + counts * ct);
 			QuantityEquivalent = (int)(counts + secs / ct);
 		}

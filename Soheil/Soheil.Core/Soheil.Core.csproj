@@ -71,6 +71,7 @@
     <Compile Include="DataServices\CostCenter\ActualCostReportDataService.cs" />
     <Compile Include="DataServices\OrganizationCalendar\HolidayDataService.cs" />
     <Compile Include="DataServices\OrganizationCalendar\WorkProfilePlanDataService.cs" />
+    <Compile Include="DataServices\PP\BlockDataService.cs" />
     <Compile Include="DataServices\SetupTime\SetupDataService.cs" />
     <Compile Include="DataServices\CostCenter\CostReportDataService.cs" />
     <Compile Include="DataServices\SetupTime\ChangeoverDataService.cs" />
@@ -115,29 +116,33 @@
     <Compile Include="ViewModels\OrganizationCalendar\WorkShiftVm.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs" />
     <Compile Include="ViewModels\HolidaysVM.cs" />
+    <Compile Include="ViewModels\PP\Editor\PPEditorBlock.cs" />
+    <Compile Include="ViewModels\PP\PPBlockVm.cs" />
+    <Compile Include="ViewModels\PP\Report\BlockReportVm.cs" />
+    <Compile Include="ViewModels\PP\StateVm.cs" />
     <Compile Include="ViewModels\WorkProfilePlansVM.cs" />
     <Compile Include="ViewModels\WorkProfilesVM.cs" />
     <Compile Include="ViewModels\InfoViewModels\ActivityInfoVM.cs" />
     <Compile Include="ViewModels\PP\CauseVm.cs" />
-    <Compile Include="ViewModels\PP\NPTReportVm.cs" />
-    <Compile Include="ViewModels\PP\DefectionReportCollection.cs" />
-    <Compile Include="ViewModels\PP\DefectionReportVm.cs" />
-    <Compile Include="ViewModels\PP\DefectionStoppageCollectionBase.cs" />
+    <Compile Include="ViewModels\PP\Report\NPTReportVm.cs" />
+    <Compile Include="ViewModels\PP\Report\DefectionReportCollection.cs" />
+    <Compile Include="ViewModels\PP\Report\DefectionReportVm.cs" />
+    <Compile Include="ViewModels\PP\Report\DefectionStoppageCollectionBase.cs" />
     <Compile Include="ViewModels\PP\DefectionVm.cs" />
     <Compile Include="ViewModels\PP\FilterableItemVm.cs" />
     <Compile Include="ViewModels\PP\FilterBoxVm.cs" />
     <Compile Include="ViewModels\PP\FilterBoxVmCollection.cs" />
     <Compile Include="ViewModels\PP\NPTVm.cs" />
     <Compile Include="ViewModels\PP\PPItemVm.cs" />
-    <Compile Include="ViewModels\PP\ProcessReportCellTaskReportHolder.cs" />
-    <Compile Include="ViewModels\PP\ProcessReportCellVm.cs" />
-    <Compile Include="ViewModels\PP\ProcessReportRowVm.cs" />
+    <Compile Include="ViewModels\PP\Report\ProcessReportCellTaskReportHolder.cs" />
+    <Compile Include="ViewModels\PP\Report\ProcessReportCellVm.cs" />
+    <Compile Include="ViewModels\PP\Report\ProcessReportRowVm.cs" />
     <Compile Include="ViewModels\PP\SetupVm.cs" />
-    <Compile Include="ViewModels\PP\StoppageReportCollection.cs" />
-    <Compile Include="ViewModels\PP\StoppageReportVm.cs" />
-    <Compile Include="ViewModels\PP\TaskReportBaseVm.cs" />
-    <Compile Include="ViewModels\PP\TaskReportHolderVm.cs" />
-    <Compile Include="ViewModels\PP\TaskReportVm.cs" />
+    <Compile Include="ViewModels\PP\Report\StoppageReportCollection.cs" />
+    <Compile Include="ViewModels\PP\Report\StoppageReportVm.cs" />
+    <Compile Include="ViewModels\PP\Report\TaskReportBaseVm.cs" />
+    <Compile Include="ViewModels\PP\Report\TaskReportHolderVm.cs" />
+    <Compile Include="ViewModels\PP\Report\TaskReportVm.cs" />
     <Compile Include="ViewModels\Reports\ActualCostReportsVm.cs" />
     <Compile Include="ViewModels\Reports\CostBarSlideItemVm.cs" />
     <Compile Include="ViewModels\Reports\CostBarVm.cs" />
@@ -146,7 +151,7 @@
     <Compile Include="Virtualizing\IItemsProvider.cs" />
     <Compile Include="Index\IndexBarSlideProvider.cs" />
     <Compile Include="Index\IndexBarProvider.cs" />
-    <Compile Include="PP\TaskCollection.cs" />
+    <Compile Include="PP\PPItemCollection.cs" />
     <Compile Include="Virtualizing\VirtualizingCollection.cs" />
     <Compile Include="Interfaces\ISingularList.cs" />
     <Compile Include="PP\ShiftManager.cs" />
@@ -192,8 +197,7 @@
     <Compile Include="ViewModels\PP\Editor\PPEditorActivity.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorMachine.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorOperator.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorState.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorStation.cs" />
+    <Compile Include="ViewModels\PP\Editor\PPEditorTask.cs" />
     <Compile Include="ViewModels\PP\HourSlideItemVm.cs" />
     <Compile Include="ViewModels\PP\MachineVm.cs" />
     <Compile Include="ViewModels\PP\MonthSlideItemVm.cs" />
@@ -383,8 +387,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
-    <None Include="DataServices\_ClassDiagram.cd" />
     <None Include="Interfaces\BaseAndInterfaceDiagram.cd" />
   </ItemGroup>
   <ItemGroup />

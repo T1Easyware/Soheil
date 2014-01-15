@@ -18,25 +18,37 @@ namespace Soheil.Core.ViewModels.PP
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 		public AccessType Access { get; private set; }
 
+		public DataServices.BlockDataService BlockDataService { get; private set; }
 		public DataServices.NPTDataService NPTDataService { get; private set; }
 		public DataServices.TaskDataService TaskDataService { get; private set; }
 		public DataServices.JobDataService JobDataService { get; private set; }
 		public DataServices.TaskReportDataService TaskReportDataService { get; private set; }
+		public DataServices.ProcessReportDataService ProcessReportDataService { get; private set; }
 
 		#region Ctor, Init and Load
 		public PPTableVm(AccessType access)
 		{
-			
-
 			Access = access;
-			NPTDataService = new DataServices.NPTDataService();
-			TaskDataService = new DataServices.TaskDataService();
-			JobDataService = new DataServices.JobDataService();
-			TaskReportDataService = new DataServices.TaskReportDataService();
 
-			TaskEditor = new PPTaskEditorVm(PPEditor_TasksSaved);
+			initializeCommands();
+			initializeDataServices();
+
+			TaskEditor = new PPTaskEditorVm(PPEditor_BlocksSaved);
 			JobEditor = new PPJobEditorVm(PPEditor_JobsSaved);
+		}
 
+		void initializeDataServices()
+		{
+			var uow = new Dal.SoheilEdmContext();
+			BlockDataService = new DataServices.BlockDataService(uow);
+			NPTDataService = new DataServices.NPTDataService(uow);
+			TaskDataService = new DataServices.TaskDataService(uow);
+			JobDataService = new DataServices.JobDataService(uow);
+			TaskReportDataService = new DataServices.TaskReportDataService(uow);
+			ProcessReportDataService = new DataServices.ProcessReportDataService(uow);
+		}
+		void initializeCommands()
+		{
 			//command
 			AddTaskCommand = new Commands.Command(o =>
 			{
@@ -70,27 +82,28 @@ namespace Soheil.Core.ViewModels.PP
 				UpdateRange(true);
 			});
 		}
+
 		public void InitializeViewModel()
 		{
 			//Add event handlers
-			TaskDataService.TaskAdded += (s, e) =>
+			BlockDataService.BlockAdded += (s, e) =>
 			{
-				Stations.AddTask(e.NewModel);
+				PPItems.AddItem(e.NewModel);
 			};
-			TaskDataService.TaskUpdated += (s, e) =>
+			BlockDataService.BlockUpdated += (s, e) =>
 			{
-				Stations.RemoveTask(e.OldModel);
-				Stations.AddTask(e.NewModel);
+				PPItems.RemoveItem(e.OldModel);
+				PPItems.AddItem(e.NewModel);
 			};
 			//useless???
 			JobDataService.JobAdded += (s, e) =>
 			{
 				var jobVm = new PPJobVm(e.NewModel);
-				foreach (var task in e.NewModel.Tasks)
+				foreach (var block in e.NewModel.Blocks)
 				{
-					var taskVm = Stations.FindTask(task);
-					if (taskVm != null) taskVm.Job = jobVm;
-					else Stations.AddTask(task);
+					var blockVm = PPItems.FindItem(block);
+					if (blockVm != null) blockVm.Job = jobVm;
+					else PPItems.AddItem(block);
 				}
 			};
 		}
@@ -110,13 +123,13 @@ namespace Soheil.Core.ViewModels.PP
 					Days = new DayCollection();
 					Months = new MonthCollection(startDate, Days, this);
 					Hours = new HourCollection();
-					Stations = new TaskCollection(this);
+					PPItems = new PPItemCollection(this);
 					//Add stations
 					var stationModels = new DataServices.StationDataService().GetActives().OrderBy(x => x.Index);
 					NumberOfStations = stationModels.Count();
 					foreach (var stationModel in stationModels)
 					{
-						Stations.Add(new PPStationVm { Text = stationModel.Name });
+						PPItems.Add(new PPStationVm { Text = stationModel.Name });
 					}
 
 					SelectedMonth = Months[(int)currentDate.GetPersianMonth() - 1];
@@ -159,7 +172,7 @@ namespace Soheil.Core.ViewModels.PP
 						{
 							try
 							{
-								vm.Dispatcher.Invoke(() => { vm.Stations.Reload(); });
+								vm.Dispatcher.Invoke(() => { vm.PPItems.Reload(); });
 							}
 							catch { }
 						});
@@ -188,8 +201,8 @@ namespace Soheil.Core.ViewModels.PP
 			var end = start.AddHours(GridWidth / HourZoom);
 			Hours.FetchRange(start, end);
 			updateShiftsAndBreaks(start, end);
-			if ((loadItemsAsWell || AlwaysLoadTasks) && (ViewMode == PPTableViewMode.Task || ViewMode == PPTableViewMode.TaskReport))
-				Stations.FetchRange(start, end);
+			if ((loadItemsAsWell || AlwaysLoadTasks) && (ViewMode == PPViewMode.Simple))
+				PPItems.FetchRange(start, end);
 		}
 		/// <summary>
 		/// updates all shifts and breaks within specified range
@@ -212,7 +225,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		#endregion
 
-		#region Task
+		#region Task&Block
 		//TaskEditor Dependency Property
 		public PPTaskEditorVm TaskEditor
 		{
@@ -245,35 +258,32 @@ namespace Soheil.Core.ViewModels.PP
 			TaskEditor.Reset();
 		}
 		//Opens the PPEditor for existing Tasks
-		public void ResetTaskEditor(PPTaskVm taskToEdit)
+		public void ResetTaskEditor(Model.Block blockToEdit)
 		{
 			TaskEditor.Reset();
-			var stateList = TaskDataService.GetEditorStateList(new List<int> { taskToEdit.Id });
-			foreach (var ppeState in stateList)
-			{
-				TaskEditor.PPStateList.Add(ppeState);
-			}
-			TaskEditor.SelectedState = stateList.LastOrDefault();
+			TaskEditor.BlockList.Add(new PPEditorBlock(blockToEdit));
+			TaskEditor.SelectedBlock = TaskEditor.BlockList.Last();
 		}
 		//Add existing Tasks to the PPEditor
-		public void AppendToTaskEditor(PPTaskVm taskToAppend)
+		public void AppendToTaskEditor(Model.Block blockToAppend)
 		{
-			var stateList = TaskDataService.GetEditorStateList(new List<int> { taskToAppend.Id });
-			foreach (var ppeState in stateList)
-			{
-				TaskEditor.PPStateList.Add(ppeState);
-			}
-			var last = stateList.LastOrDefault();
-			if (last != null) TaskEditor.SelectedState = last;
+			if (blockToAppend == null) return;
+			TaskEditor.BlockList.Add(new PPEditorBlock(blockToAppend));
+			TaskEditor.SelectedBlock = TaskEditor.BlockList.Last();
 		}
 
-		void PPEditor_TasksSaved(IList<PPEditorStation> tasks)
+		void PPEditor_BlocksSaved(IList<PPEditorBlock> blocks)
 		{
-			foreach (var task in tasks)
+			foreach (var block in blocks)
 			{
-				if (task == null) continue;
-				TaskDataService.AttachModelFromVm(task);
+				if (block == null) continue;
+				BlockDataService.SaveBlock(block);
 			}
+		}
+
+		public void RemoveBlock(BlockVm block)
+		{
+			
 		}
 		#endregion
 
@@ -309,27 +319,43 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			JobEditor.Reset();
 		}
-		//Opens the PPEditor for existing Jobs
-		public void ResetJobEditor(PPJobVm jobToEdit)
-		{
-			JobEditor.Reset();
-			JobEditor.JobList.Add(new PPEditorJob(jobToEdit.Id));
-		}
 		//Add existing Tasks to the PPEditor
-		public void AppendToJobEditor(PPJobVm jobToAppend)
+		public void AppendToJobEditor(Model.Job jobToAppend)
 		{
-			JobEditor.JobList.Add(new PPEditorJob(jobToAppend.Id));
+			JobEditor.JobList.Add(new PPEditorJob(jobToAppend));
 		}
 		void PPEditor_JobsSaved(IList<PPEditorJob> jobs)
 		{
 			JobDataService.SaveAndGenerateTasks(jobs);
 			UpdateRange(true);
 		}
-		public void RemoveTasks(PPJobVm job)
+		public void RemoveBlocks(PPJobVm job)
 		{
-			foreach (var station in Stations.ToList())
+			foreach (var station in PPItems.ToList())
 			{
-				station.Tasks.RemoveWhere(x => x.Job != null && x.Job.Id == job.Id);
+				foreach (var block in station.Blocks.ToArray())
+				{
+					try
+					{
+						BlockDataService.DeleteModelById(block.Id);
+						station.Blocks.Remove(block);
+					}
+					catch(Soheil.Common.SoheilException.RoutedException exp)
+					{
+						if (exp.Target is Model.Task)
+						{
+							block.TaskList.First(x => x.Id == ((Task)exp.Target).Id).Message.AddEmbeddedException(exp.Message);
+						}
+						else// if (exp.Target is Model.Block)
+						{
+							block.Message.AddEmbeddedException(exp.Message);
+						}
+					}
+					catch(Exception exp)
+					{
+						block.Message.AddEmbeddedException(exp.Message);
+					}
+				}
 			}
 		}
 		#endregion
@@ -464,14 +490,14 @@ namespace Soheil.Core.ViewModels.PP
 		private double _hoursPassedBackup = 0;
 		private double _hourZoomBackup = 36;
 		private double _verticalScreenOffset = 0;
-		public void ZoomToTask(PPTaskVm taskVm)
+		public void ZoomToBlock(BlockVm blockVm)
 		{
 			BackupZoom();
 
-			var start = taskVm.StartDateTime;
+			var start = blockVm.StartDateTime;
 			HoursPassed = start.GetPersianDayOfMonth() * 24 + start.Hour + start.Minute / 60d + start.Second / 3600d - 24;
 
-			var tmp = (GridWidth * 3600) / taskVm.DurationSeconds;
+			var tmp = (GridWidth * 3600) / blockVm.DurationSeconds;
 			if (tmp < 20) HourZoom = 0;
 			else if (tmp > 2000) HourZoom = 2000;
 			else HourZoom = tmp;
@@ -490,7 +516,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		#endregion
 
-		#region Stations
+		#region Stations and their items
 		//NumberOfStations Dependency Property
 		public int NumberOfStations
 		{
@@ -500,24 +526,24 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty NumberOfStationsProperty =
 			DependencyProperty.Register("NumberOfStations", typeof(int), typeof(PPTableVm), new UIPropertyMetadata(0));
 		//Stations Dependency Property
-		public TaskCollection Stations
+		public PPItemCollection PPItems
 		{
-			get { return (TaskCollection)GetValue(StationsProperty); }
-			set { SetValue(StationsProperty, value); }
+			get { return (PPItemCollection)GetValue(PPItemsProperty); }
+			set { SetValue(PPItemsProperty, value); }
 		}
-		public static readonly DependencyProperty StationsProperty =
-			DependencyProperty.Register("Stations", typeof(TaskCollection), typeof(PPTableVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty PPItemsProperty =
+			DependencyProperty.Register("PPItems", typeof(PPItemCollection), typeof(PPTableVm), new UIPropertyMetadata(null));
 		#endregion
 
 		#region Report and Selected items
-		//SelectedTask Dependency Property
-		public PPTaskVm SelectedTask
+		//SelectedBlock Dependency Property
+		public BlockVm SelectedBlock
 		{
-			get { return (PPTaskVm)GetValue(SelectedTaskProperty); }
-			set { SetValue(SelectedTaskProperty, value); }
+			get { return (BlockVm)GetValue(SelectedBlockProperty); }
+			set { SetValue(SelectedBlockProperty, value); }
 		}
-		public static readonly DependencyProperty SelectedTaskProperty =
-			DependencyProperty.Register("SelectedTask", typeof(PPTaskVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty SelectedBlockProperty =
+			DependencyProperty.Register("SelectedBlock", typeof(BlockVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 		//SelectedNPT Dependency Property
 		public NPTVm SelectedNPT
 		{
@@ -528,35 +554,32 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("SelectedNPT", typeof(NPTVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		//ViewMode Dependency Property
-		public PPTableViewMode ViewMode
+		public PPViewMode ViewMode
 		{
-			get { return (PPTableViewMode)GetValue(ViewModeProperty); }
+			get { return (PPViewMode)GetValue(ViewModeProperty); }
 			set { SetValue(ViewModeProperty, value); }
 		}
 		public static readonly DependencyProperty ViewModeProperty =
-			DependencyProperty.Register("ViewMode", typeof(PPTableViewMode), typeof(PPTableVm),
-			new UIPropertyMetadata(PPTableViewMode.Task, (d, e) =>
+			DependencyProperty.Register("ViewMode", typeof(PPViewMode), typeof(PPTableVm),
+			new UIPropertyMetadata(PPViewMode.Simple, (d, e) =>
 			{
 				var vm = (PPTableVm)d;
-				if ((PPTableViewMode)e.NewValue == (PPTableViewMode)e.OldValue) return;
+				if ((PPViewMode)e.NewValue == (PPViewMode)e.OldValue) return;
 				//exiting ProcessReport mode
-				if ((PPTableViewMode)e.OldValue == PPTableViewMode.ProcessReport)
+				if ((PPViewMode)e.OldValue == PPViewMode.Report)
 				{
 					vm.RestoreZoom();
 				}
 				//entering new mode
-				switch ((PPTableViewMode)e.NewValue)
+				switch ((PPViewMode)e.NewValue)
 				{
-					case PPTableViewMode.Task:
-						vm.Stations.ViewMode = PPTaskViewMode.Simple;
+					case PPViewMode.Simple:
+						vm.PPItems.ViewMode = PPViewMode.Simple;
 						break;
-					case PPTableViewMode.TaskReport:
-						vm.Stations.ViewMode = PPTaskViewMode.ReportSimple;
-						break;
-					case PPTableViewMode.ProcessReport:
-						if (vm.SelectedTask != null)
+					case PPViewMode.Report:
+						if (vm.SelectedBlock != null)
 						{
-							vm.ZoomToTask(vm.SelectedTask);
+							vm.ZoomToBlock(vm.SelectedBlock);
 						}
 						vm.VerticalScreenOffset = 0;
 						break;
@@ -566,8 +589,8 @@ namespace Soheil.Core.ViewModels.PP
 			}, (d, v) =>
 			{
 				var vm = (PPTableVm)d;
-				if ((PPTableViewMode)v == PPTableViewMode.ProcessReport && vm.SelectedTask == null) return PPTableViewMode.TaskReport;
-				return (PPTableViewMode)v;
+				if ((PPViewMode)v == PPViewMode.Report && vm.SelectedBlock == null) return PPViewMode.Simple;
+				return (PPViewMode)v;
 			}));
 
 		//CurrentTaskReportBuilder Dependency Property
@@ -651,5 +674,6 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty CurrentProcessReportBuilderProperty =
 			DependencyProperty.Register("CurrentProcessReportBuilder", typeof(ProcessReportCellVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 		#endregion
+
 	}
 }

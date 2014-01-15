@@ -13,46 +13,20 @@ namespace Soheil.Core.ViewModels.PP
 	public class SetupVm : NPTVm
 	{
 		public DataServices.NPTDataService NPTDataService { get { return Parent.NPTDataService; } }
+		public int ChangeoverId { get; set; }
+		public int WarmupId { get; set; }
 
-		#region Ctor
-		public SetupVm(Model.Setup model, TaskCollection parent) : base(parent)
+		#region Ctor, thread, load
+		public SetupVm(Model.Setup model, PPItemCollection parent) 
+			: base(model, parent)
 		{
 			_threadLock = new Object();
 
-			Id = model.Id;
 			StartDateTime = model.StartDateTime;
 			DurationSeconds = model.DurationSeconds;
 			RowIndex = model.Warmup.Station.Index;
 
-			EditItemCommand = new Commands.Command(o =>
-			{
-				Parent.Parent.SelectedNPT = this;
-				IsEditMode = true;
-			}); 
-			DeleteItemCommand = new Commands.Command(o =>
-			{
-				try
-				{
-					NPTDataService.DeleteModel(Id);
-					Parent.RemoveNPT(this);
-				}
-				catch (Exception exp)
-				{
-					AddEmbeddedException(exp.Message);
-				}
-			});
-			EditReportCommand = new Commands.Command(o =>
-			{
-				try
-				{
-					Parent.Parent.SelectedNPT = this;
-					IsEditMode = false;
-				}
-				catch (Exception exp)
-				{
-					AddEmbeddedException(exp.Message);
-				}
-			});
+			initializeCommands();
 		}
 		//Thread Functions
 		protected override void acqusitionThreadStart()
@@ -80,8 +54,7 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Members
-		public int ChangeoverId { get; set; }
-		public int WarmupId { get; set; }
+
 		//ChangeoverSeconds Dependency Property
 		public int ChangeoverSeconds
 		{
@@ -116,5 +89,39 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("ToProduct", typeof(ProductReworkVm), typeof(SetupVm), new UIPropertyMetadata(null)); 
 		#endregion
 
+		#region Commands
+		void initializeCommands()
+		{
+			EditItemCommand = new Commands.Command(o =>
+			{
+				Parent.PPTable.SelectedNPT = this;
+				IsEditMode = true;
+			});
+			DeleteItemCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					NPTDataService.DeleteModel(Id);
+					Parent.RemoveNPT(this);
+				}
+				catch (Exception exp)
+				{
+					Message.AddEmbeddedException(exp.Message);
+				}
+			});
+			EditReportCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					Parent.PPTable.SelectedNPT = this;
+					IsEditMode = false;
+				}
+				catch (Exception exp)
+				{
+					Message.AddEmbeddedException(exp.Message);
+				}
+			});
+		}
+		#endregion
 	}
 }

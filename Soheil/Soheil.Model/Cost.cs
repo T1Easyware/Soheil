@@ -67,21 +67,6 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual Station Station
-        {
-            get { return _station; }
-            set
-            {
-                if (!ReferenceEquals(_station, value))
-                {
-                    var previousValue = _station;
-                    _station = value;
-                    FixupStation(previousValue);
-                }
-            }
-        }
-        private Station _station;
-    
         public virtual Machine Machine
         {
             get { return _machine; }
@@ -96,21 +81,6 @@ namespace Soheil.Model
             }
         }
         private Machine _machine;
-    
-        public virtual Operator Operator
-        {
-            get { return _operator; }
-            set
-            {
-                if (!ReferenceEquals(_operator, value))
-                {
-                    var previousValue = _operator;
-                    _operator = value;
-                    FixupOperator(previousValue);
-                }
-            }
-        }
-        private Operator _operator;
     
         public virtual CostCenter CostCenter
         {
@@ -156,26 +126,40 @@ namespace Soheil.Model
             }
         }
         private Activity _activity;
+    
+        public virtual Operator Operator
+        {
+            get { return _operator; }
+            set
+            {
+                if (!ReferenceEquals(_operator, value))
+                {
+                    var previousValue = _operator;
+                    _operator = value;
+                    FixupOperator(previousValue);
+                }
+            }
+        }
+        private Operator _operator;
+    
+        public virtual Station Station
+        {
+            get { return _station; }
+            set
+            {
+                if (!ReferenceEquals(_station, value))
+                {
+                    var previousValue = _station;
+                    _station = value;
+                    FixupStation(previousValue);
+                }
+            }
+        }
+        private Station _station;
 
         #endregion
 
         #region Association Fixup
-    
-        private void FixupStation(Station previousValue)
-        {
-            if (previousValue != null && previousValue.Costs.Contains(this))
-            {
-                previousValue.Costs.Remove(this);
-            }
-    
-            if (Station != null)
-            {
-                if (!Station.Costs.Contains(this))
-                {
-                    Station.Costs.Add(this);
-                }
-            }
-        }
     
         private void FixupMachine(Machine previousValue)
         {
@@ -189,22 +173,6 @@ namespace Soheil.Model
                 if (!Machine.Costs.Contains(this))
                 {
                     Machine.Costs.Add(this);
-                }
-            }
-        }
-    
-        private void FixupOperator(Operator previousValue)
-        {
-            if (previousValue != null && previousValue.Costs.Contains(this))
-            {
-                previousValue.Costs.Remove(this);
-            }
-    
-            if (Operator != null)
-            {
-                if (!Operator.Costs.Contains(this))
-                {
-                    Operator.Costs.Add(this);
                 }
             }
         }
@@ -250,6 +218,38 @@ namespace Soheil.Model
                 if (!Activity.Costs.Contains(this))
                 {
                     Activity.Costs.Add(this);
+                }
+            }
+        }
+    
+        private void FixupOperator(Operator previousValue)
+        {
+            if (previousValue != null && previousValue.Costs.Contains(this))
+            {
+                previousValue.Costs.Remove(this);
+            }
+    
+            if (Operator != null)
+            {
+                if (!Operator.Costs.Contains(this))
+                {
+                    Operator.Costs.Add(this);
+                }
+            }
+        }
+    
+        private void FixupStation(Station previousValue)
+        {
+            if (previousValue != null && previousValue.Costs.Contains(this))
+            {
+                previousValue.Costs.Remove(this);
+            }
+    
+            if (Station != null)
+            {
+                if (!Station.Costs.Contains(this))
+                {
+                    Station.Costs.Add(this);
                 }
             }
         }

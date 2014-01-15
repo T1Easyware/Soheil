@@ -19,7 +19,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// Must be called within an EdmContext
 		/// </summary>
 		/// <param name="model"></param>
-		public PPEditorActivity(PPEditorStation parent, Model.Process processModel)
+		public PPEditorActivity(PPEditorTask parent, Model.Process processModel)
 			: this(processModel)
 		{
 			_parent = parent;
@@ -48,7 +48,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				MachineList.Add(machineVm);
 			}
 		}
-		public PPEditorActivity(PPEditorStation parent, Fpc.StateStationActivityVm ssa)
+		public PPEditorActivity(PPEditorTask parent, Fpc.StateStationActivityVm ssa)
 		{
 			_parent = parent;
 			ActivityId = ssa.Containment.Id;
@@ -79,7 +79,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		#endregion
 
-		PPEditorStation _parent;
+		PPEditorTask _parent;
 		Model.Process _model;
 		public int ActivityId { get; set; }
 		public int StateStationActivityId { get; set; }
@@ -118,7 +118,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty TargetPointProperty =
 			DependencyProperty.Register("TargetPoint", typeof(int), typeof(PPEditorActivity),
-			new UIPropertyMetadata(0, (d, e) =>
+			new UIPropertyMetadata(0/*, (d, e) =>
 			{
 				var val = (int)e.NewValue;
 				var vm = (PPEditorActivity)d;
@@ -127,7 +127,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					vm.HasUnsavedChanges = (val > 0);
 				}
 				else vm.HasUnsavedChanges = (val != vm._model.TargetCount);
-			}));
+			}*/));
 		//MachineList Observable Collection
 		private ObservableCollection<PPEditorMachine> _machineList = new ObservableCollection<PPEditorMachine>();
 		public ObservableCollection<PPEditorMachine> MachineList { get { return _machineList; } }
@@ -150,19 +150,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty DoesParentDeferToActivitiesProperty =
 			DependencyProperty.Register("DoesParentDeferToActivities", typeof(bool), typeof(PPEditorActivity), new UIPropertyMetadata(true));
-		//HasUnsavedChanges Dependency Property
-		public bool HasUnsavedChanges
-		{
-			get { return (bool)GetValue(HasUnsavedChangesProperty); }
-			set { SetValue(HasUnsavedChangesProperty, value); }
-		}
-		public static readonly DependencyProperty HasUnsavedChangesProperty =
-			DependencyProperty.Register("HasUnsavedChanges", typeof(bool), typeof(PPEditorActivity),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				if ((bool)e.NewValue)
-					((PPEditorActivity)d)._parent.HasUnsavedChanges = true;
-			}));
 		#endregion
 	}
 }

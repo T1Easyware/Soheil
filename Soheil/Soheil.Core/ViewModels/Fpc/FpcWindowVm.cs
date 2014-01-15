@@ -464,8 +464,8 @@ namespace Soheil.Core.ViewModels.Fpc
 			//new state is dragging
 			if (state == _newDraggingStateVm)
 			{
+				state.PlaceInFpc();
 				_newDraggingStateVm = null;
-				state.Opacity = 1;
 				ToolSelection = true;
 			}
 			else

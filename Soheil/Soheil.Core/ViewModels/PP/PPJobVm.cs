@@ -9,22 +9,19 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class PPJobVm : DependencyObject
 	{
-		protected PPJobVm() { }
-		public PPJobVm(Model.Job job)
+		public PPJobVm(Model.Job model)
 		{
-			if (job == null)
-			{
-				Id = -1;
-				return;
-			}
-			Id = job.Id;
-			Code = job.Code;
-			Deadline = job.Deadline;
-			Quantity = job.Quantity;
-			Description = job.Description;
+			_model = model;
+			Code = model.Code;
+			Deadline = model.Deadline;
+			ReleaseDT = model.ReleaseTime;
+			Quantity = model.Quantity;
+			Description = model.Description;
 		}
 
-		public int Id { get; set; }
+		Model.Job _model;
+		public int Id { get { return _model.Id; } }
+		public int FpcId { get { return _model.FPC.Id; } }
 		//Code Dependency Property
 		public string Code
 		{
@@ -65,5 +62,10 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DescriptionProperty =
 			DependencyProperty.Register("Description", typeof(string), typeof(PPJobVm), new UIPropertyMetadata(null));
+
+		internal void AppendToJobEditor(PPTableVm root)
+		{
+			root.AppendToJobEditor(_model);
+		}
 	}
 }

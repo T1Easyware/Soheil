@@ -61,6 +61,9 @@
     <Compile Include="ActivityGroup.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Block.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Cause.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
@@ -97,7 +100,7 @@
     <Compile Include="FPC.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
-    <Compile Include="GeneralSkill.cs">
+    <Compile Include="GeneralActivitySkill.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="Holiday.cs">
@@ -124,10 +127,10 @@
     <Compile Include="Operator.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
-    <Compile Include="OperatorActivity.cs">
+    <Compile Include="OperatorDefectionReport.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
-    <Compile Include="OperatorDefectionReport.cs">
+    <Compile Include="OperatorProcessReport.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="OperatorStoppageReport.cs">
@@ -143,6 +146,9 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="PartWarehouseGroup.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PersonalSkill.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="PM.cs">
@@ -195,9 +201,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="SpecialSkill.cs">
-      <DependentUpon>SoheilPOCO.tt</DependentUpon>
-    </Compile>
     <Compile Include="State.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
@@ -226,6 +229,9 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="Test.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UniqueActivitySkill.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="User.cs">

@@ -17,99 +17,84 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		protected DataServices.FPCDataService _fpcDs;
 		protected DataServices.OperatorDataService _operatorDs;
 
-		public PPTaskEditorVm(Action<IList<PPEditorStation>> tasksSaved)
+		public PPTaskEditorVm(Action<IList<PPEditorBlock>> blocksSaved)
 		{
-			TasksSaved = tasksSaved;
-			_productGroupDs = new DataServices.ProductGroupDataService();
-			_fpcDs = new DataServices.FPCDataService();
+			BlocksSaved = blocksSaved;
+			FpcViewer = new Fpc.FpcWindowVm();
+			FpcViewer.SelectState += FpcViewer_AddNewBlock;
+		}
+
+		void initializeDataServices()
+		{
+			var uow = new Dal.SoheilEdmContext();
+			_productGroupDs = new DataServices.ProductGroupDataService(uow);
+			_fpcDs = new DataServices.FPCDataService(uow);
+			_operatorDs = new DataServices.OperatorDataService(uow);
+
 			var pgList = _productGroupDs.GetActivesRecursive();
 			foreach (var pg in pgList)
 			{
 				AllProductGroups.Add(new ProductGroupVm(pg));
 			}
-			_operatorDs = new DataServices.OperatorDataService();
-
-			FpcViewer = new Fpc.FpcWindowVm();
-			FpcViewer.SelectState += FpcViewer_AddNewTask;
+			
 		}
+
+		//FpcViewer Dependency Property
+		public Fpc.FpcWindowVm FpcViewer
+		{
+			get { return (Fpc.FpcWindowVm)GetValue(FpcViewerProperty); }
+			private set { SetValue(FpcViewerProperty, value); }
+		}
+		public static readonly DependencyProperty FpcViewerProperty =
+			DependencyProperty.Register("FpcViewer", typeof(Fpc.FpcWindowVm), typeof(PPTaskEditorVm),
+			new UIPropertyMetadata(null));
 
 		#region Interactions
 		//Add
-		void FpcViewer_AddNewTask(Fpc.StateVm fpcState)
+		void FpcViewer_AddNewBlock(Fpc.StateVm fpcState)
 		{
-			var ppStateListItem = PPStateList.FirstOrDefault(x => x.StateId == fpcState.Id);
-			if (ppStateListItem == null)
+			var block = BlockList.FirstOrDefault(x => x.StateId == fpcState.Id);
+			if (block == null)
 			{
-				ppStateListItem = new PPEditorState(fpcState);
-				PPStateList.Add(ppStateListItem);
+				block = new PPEditorBlock(fpcState.Model);
+				BlockList.Add(block);
 			}
 		}
 		//Remove
-		public void FpcViewer_RemovePPState(PPEditorState ppState)
+		public void FpcViewer_RemoveBlock(PPEditorBlock block)
 		{
-			if (SelectedState != null && SelectedState.StateId == ppState.StateId) SelectedState = null;
-			PPStateList.Remove(ppState);
+			if (SelectedBlock != null && SelectedBlock.StateId == block.StateId)
+			{
+				SelectedBlock = null;
+			}
+			BlockList.Remove(block);
 		}
 		//Save
-		internal Action<IList<PPEditorStation>> TasksSaved;//PPTableVm handles this event
-		protected void SaveTasks(List<PPEditorStation> tasks)//View calls this function
+		internal Action<IList<PPEditorBlock>> BlocksSaved;//PPTableVm handles this event
+		protected void SaveBlocks(List<PPEditorBlock> blocks)//View calls this function
 		{
-			if (TasksSaved != null) TasksSaved(tasks);
-		}
-		public void SaveSelectedStateStationAsTask()
-		{
-			var tasks = new List<PPEditorStation>();
-			tasks.Add(SelectedState.StationList[SelectedState.FocusedStationTabIndex]);
-			SaveTasks(tasks);
-		}
-		public void SaveAllAsTasks()
-		{
-			var tasks = new List<PPEditorStation>();
-			foreach (var state in PPStateList.Where(x => x.HasUnsavedChanges))
-			{
-				foreach (var station in state.StationList.Where(x => x.HasUnsavedChanges))
-				{
-					tasks.Add(station);
-				}
-			}
-			SaveTasks(tasks);
-		}
-		//Clear
-		public void Reset()
-		{
-			SelectedState = null;
-			SelectedProduct = null;
-			PPStateList.Clear();
-			ShowFpc = true;
+			if (BlocksSaved != null) BlocksSaved(blocks);
 		}
 		#endregion
 
-		#region State etc
-		//PPStateList Observable Collection
-		private ObservableCollection<PPEditorState> _ppStateList = new ObservableCollection<PPEditorState>();
-		public ObservableCollection<PPEditorState> PPStateList { get { return _ppStateList; } }
-		//SelectedState Dependency Property
-		public PPEditorState SelectedState
+		#region Blocks
+		//BlockList Observable Collection
+		private ObservableCollection<PPEditorBlock> _blockList = new ObservableCollection<PPEditorBlock>();
+		public ObservableCollection<PPEditorBlock> BlockList { get { return _blockList; } }
+		//SelectedBlock Dependency Property
+		public PPEditorBlock SelectedBlock
 		{
-			get { return (PPEditorState)GetValue(SelectedStateProperty); }
-			set { SetValue(SelectedStateProperty, value); }
+			get { return (PPEditorBlock)GetValue(SelectedBlockProperty); }
+			set { SetValue(SelectedBlockProperty, value); }
 		}
-		public static readonly DependencyProperty SelectedStateProperty =
-			DependencyProperty.Register("SelectedState", typeof(PPEditorState), typeof(PPTaskEditorVm),
+		public static readonly DependencyProperty SelectedBlockProperty =
+			DependencyProperty.Register("SelectedBlock", typeof(PPEditorBlock), typeof(PPTaskEditorVm),
 			new UIPropertyMetadata(null, (d, e) =>
 			{
 				var vm = (PPTaskEditorVm)d;
 				if (e.NewValue != null)
 					vm.ShowFpc = false;
 			}));
-		//ShowFpc Dependency Property
-		public bool ShowFpc
-		{
-			get { return (bool)GetValue(ShowFpcProperty); }
-			set { SetValue(ShowFpcProperty, value); }
-		}
-		public static readonly DependencyProperty ShowFpcProperty =
-			DependencyProperty.Register("ShowFpc", typeof(bool), typeof(PPTaskEditorVm), new UIPropertyMetadata(true));
 		#endregion
 
 		#region Product etc
@@ -150,6 +135,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}));
 		#endregion
 
+		#region Visual
+		//Show FpcViewer/TaskEditor
+		public bool ShowFpc
+		{
+			get { return (bool)GetValue(ShowFpcProperty); }
+			set { SetValue(ShowFpcProperty, value); }
+		}
+		public static readonly DependencyProperty ShowFpcProperty =
+			DependencyProperty.Register("ShowFpc", typeof(bool), typeof(PPTaskEditorVm), new UIPropertyMetadata(true));
+
 		//IsVisible Dependency Property
 		public bool IsVisible
 		{
@@ -157,15 +152,105 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsVisibleProperty, value); }
 		}
 		public static readonly DependencyProperty IsVisibleProperty =
-			DependencyProperty.Register("IsVisible", typeof(bool), typeof(PPTaskEditorVm), new UIPropertyMetadata(false));
-		//FpcViewer Dependency Property
-		public Fpc.FpcWindowVm FpcViewer
+			DependencyProperty.Register("IsVisible", typeof(bool), typeof(PPTaskEditorVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = (PPTaskEditorVm)d;
+				var val = (bool)e.NewValue;
+				if (val) {/* asd;*/ }
+			}));
+		#endregion
+
+		#region Commands
+		public void Reset()
 		{
-			get { return (Fpc.FpcWindowVm)GetValue(FpcViewerProperty); }
-			private set { SetValue(FpcViewerProperty, value); }
+			SelectedBlock = null;
+			SelectedProduct = null;
+			BlockList.Clear();
+			ShowFpc = true;
 		}
-		public static readonly DependencyProperty FpcViewerProperty =
-			DependencyProperty.Register("FpcViewer", typeof(Fpc.FpcWindowVm), typeof(PPTaskEditorVm),
-			new UIPropertyMetadata(null));
+
+		void initializeCommands()
+		{
+			SaveCommand = new Commands.Command(o =>
+			{
+				if (SelectedBlock == null) return;
+				try
+				{
+					SaveBlocks(new List<PPEditorBlock> { SelectedBlock });
+				}
+				catch (Exception exp)
+				{
+					MessageBox.Show(exp.Message);
+				}
+
+			});
+			ClearAllCommand = new Commands.Command(o =>
+			{
+				Reset();
+			});
+			ExitCommand = new Commands.Command(o =>
+			{
+				IsVisible = false;
+			});
+			SaveAllCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					SaveBlocks(BlockList.ToList());
+					Reset();
+					IsVisible = false;
+				}
+				catch (Exception exp)
+				{
+					MessageBox.Show(exp.Message);
+				}
+			});
+			ResetCurrentBlockCommand = new Commands.Command(o =>
+			{
+				SelectedBlock.Reset();
+			});
+		}
+		//SaveCommand Dependency Property
+		public Commands.Command SaveCommand
+		{
+			get { return (Commands.Command)GetValue(SaveCommandProperty); }
+			set { SetValue(SaveCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SaveCommandProperty =
+			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+		//ClearAllCommand Dependency Property
+		public Commands.Command ClearAllCommand
+		{
+			get { return (Commands.Command)GetValue(ClearAllCommandProperty); }
+			set { SetValue(ClearAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ClearAllCommandProperty =
+			DependencyProperty.Register("ClearAllCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+		//ExitCommand Dependency Property
+		public Commands.Command ExitCommand
+		{
+			get { return (Commands.Command)GetValue(ExitCommandProperty); }
+			set { SetValue(ExitCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ExitCommandProperty =
+			DependencyProperty.Register("ExitCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+		//SaveAllCommand Dependency Property
+		public Commands.Command SaveAllCommand
+		{
+			get { return (Commands.Command)GetValue(SaveAllCommandProperty); }
+			set { SetValue(SaveAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SaveAllCommandProperty =
+			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+		//ResetCurrentBlockCommand Dependency Property
+		public Commands.Command ResetCurrentBlockCommand
+		{
+			get { return (Commands.Command)GetValue(ResetCurrentBlockCommandProperty); }
+			set { SetValue(ResetCurrentBlockCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ResetCurrentBlockCommandProperty =
+			DependencyProperty.Register("ResetCurrentBlockCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+		#endregion
 	}
 }

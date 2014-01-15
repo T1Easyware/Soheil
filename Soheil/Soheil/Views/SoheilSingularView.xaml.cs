@@ -490,7 +490,7 @@ namespace Soheil.Views
 		}
 		private void ZoomStarted(object sender, MouseButtonEventArgs e)
 		{
-			if (PPTableVm.ViewMode == PPTableViewMode.Task || PPTableVm.ViewMode == PPTableViewMode.TaskReport)
+			if (PPTableVm.ViewMode == PPViewMode.Simple)
 				PPTableVm.BackupZoom();
 		}
 		#endregion

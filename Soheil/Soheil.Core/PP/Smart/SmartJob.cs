@@ -155,14 +155,14 @@ namespace Soheil.Core.PP.Smart
 		}
 		#endregion
 
-		internal Task MakeTaskFrom(SmartStep step, Job jobModel)
+		internal Block MakeBlockFrom(SmartStep step, Job jobModel)
 		{
 			if (!step.HasStateStation)
 				throw new Exception("FPC is incomplete. Some states do not have stations.");//???
 
 			int durationSeconds = (int)Math.Ceiling(step.BestStateStation.StateStationActivities
 					.Max(x => x.CycleTime * Quantity));
-			var task = new Task
+			var block = new Block
 			{
 				Job = jobModel,
 				Code = jobModel.Code + step.State.Code,
@@ -170,14 +170,22 @@ namespace Soheil.Core.PP.Smart
 				StateStation = step.BestStateStation,
 				DurationSeconds = durationSeconds,
 				EndDateTime = step.ActualReleaseTime.AddSeconds(durationSeconds),
-				TaskTargetPoint = jobModel.Quantity
+				BlockTargetPoint = jobModel.Quantity
+			};
+			var task = new Task
+			{
+				Block = block,
+				DurationSeconds = block.DurationSeconds,
+				EndDateTime = block.EndDateTime,
+				StartDateTime = block.StartDateTime,
+				TaskTargetPoint = block.BlockTargetPoint,
 			};
 			foreach (var ssa in step.BestStateStation.StateStationActivities)
 			{
 				var process = new Process
 				{
 					Task = task,
-					Code = task.Code + ssa.Activity.Code,
+					Code = block.Code + ssa.Activity.Code,
 					TargetCount = Quantity,
 					StateStationActivity = ssa,
 				};
@@ -192,7 +200,7 @@ namespace Soheil.Core.PP.Smart
 				}
 				task.Processes.Add(process);
 			}
-			return task;
+			return block;
 		}
 
 		private DataServices.FPCDataService _fpcDs;

@@ -9,39 +9,39 @@ using Soheil.Model;
 
 namespace Soheil.Core.DataServices
 {
-    public class SpecialSkillDataService : DataServiceBase, IDataService<SpecialSkill>
+    public class SpecialSkillDataService : DataServiceBase, IDataService<GeneralActivitySkill>
     {
         #region IDataService<SpecialSkill> Members
 
-        public SpecialSkill GetSingle(int id)
+        public GeneralActivitySkill GetSingle(int id)
         {
-            SpecialSkill entity;
+            GeneralActivitySkill entity;
             using (var context = new SoheilEdmContext())
             {
-                var specialSkillRepository = new Repository<SpecialSkill>(context);
+                var specialSkillRepository = new Repository<GeneralActivitySkill>(context);
                 entity = specialSkillRepository.Single(specialSkill => specialSkill.Id == id);
             }
             return entity;
         }
 
-        public ObservableCollection<SpecialSkill> GetAll()
+        public ObservableCollection<GeneralActivitySkill> GetAll()
         {
-            ObservableCollection<SpecialSkill> models;
+            ObservableCollection<GeneralActivitySkill> models;
             using (var context = new SoheilEdmContext())
             {
-                var repository = new Repository<SpecialSkill>(context);
-                IEnumerable<SpecialSkill> entityList = repository.GetAll();
-                models = new ObservableCollection<SpecialSkill>(entityList);
+                var repository = new Repository<GeneralActivitySkill>(context);
+                IEnumerable<GeneralActivitySkill> entityList = repository.GetAll();
+                models = new ObservableCollection<GeneralActivitySkill>(entityList);
             }
             return models;
         }
 
-        public ObservableCollection<SpecialSkill> GetActives()
+        public ObservableCollection<GeneralActivitySkill> GetActives()
         {
             return GetAll();
         }
 
-        public int AddModel(SpecialSkill model)
+        public int AddModel(GeneralActivitySkill model)
         {
             //int id;
             //using (var context = new SoheilEdmContext())
@@ -57,30 +57,30 @@ namespace Soheil.Core.DataServices
             return -1;
         }
 
-        public void UpdateModel(SpecialSkill model)
+        public void UpdateModel(GeneralActivitySkill model)
         {
             using (var context = new SoheilEdmContext())
             {
-                var specialSkillRepository = new Repository<SpecialSkill>(context);
-                SpecialSkill entity = specialSkillRepository.Single(specialSkill => specialSkill.Id == model.Id);
+                var specialSkillRepository = new Repository<GeneralActivitySkill>(context);
+                GeneralActivitySkill entity = specialSkillRepository.Single(specialSkill => specialSkill.Id == model.Id);
 
-                entity.Reserve1 = model.Reserve1;
-                entity.Reserve2 = model.Reserve2;
-                entity.Reserve3 = model.Reserve3;
+               // entity.Reserve1 = model.Reserve1;
+            //    entity.Reserve2 = model.Reserve2;
+              //  entity.Reserve3 = model.Reserve3;
                 entity.ModifiedBy = LoginInfo.Id;
                 context.Commit();
             }
         }
 
-        public void DeleteModel(SpecialSkill model)
+        public void DeleteModel(GeneralActivitySkill model)
         {
         }
 
-        public void AttachModel(SpecialSkill model)
+        public void AttachModel(GeneralActivitySkill model)
         {
             using (var context = new SoheilEdmContext())
             {
-                var repository = new Repository<SpecialSkill>(context);
+                var repository = new Repository<GeneralActivitySkill>(context);
                 if (repository.Exists(specialSkill => specialSkill.Id == model.Id))
                 {
                     UpdateModel(model);
@@ -94,6 +94,6 @@ namespace Soheil.Core.DataServices
 
         #endregion
 
-        public event EventHandler<ModelAddedEventArgs<SpecialSkill>> SpecialSkillAdded;
+        public event EventHandler<ModelAddedEventArgs<GeneralActivitySkill>> SpecialSkillAdded;
     }
 }

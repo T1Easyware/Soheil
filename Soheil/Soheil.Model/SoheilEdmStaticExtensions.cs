@@ -8,6 +8,10 @@ using Soheil.Common;
 
 namespace Soheil.Model
 {
+	public partial class Rework
+	{
+	}
+
 	public partial class WorkProfile
 	{
 		public static WorkProfile CreateDefault()

@@ -76,7 +76,7 @@ namespace Soheil.Core.ViewModels
             }
         }
 
-        private void OnGeneralSkillAdded(object sender, ModelAddedEventArgs<GeneralSkill> e)
+        private void OnGeneralSkillAdded(object sender, ModelAddedEventArgs<PersonalSkill> e)
         {
             var newGeneralSkillVm = new GeneralSkillVM(e.NewModel, Access, GeneralSkillDataService);
             Items.AddNewItem(newGeneralSkillVm);

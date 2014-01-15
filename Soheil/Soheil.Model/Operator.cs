@@ -67,33 +67,32 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual bool Sex
+        {
+            get { return _sex; }
+            set { _sex = value; }
+        }
+        private bool _sex = true;
+    
+        public virtual int Age
+        {
+            get { return _age; }
+            set { _age = value; }
+        }
+        private int _age = 1;
 
         #endregion
 
         #region Navigation Properties
     
-        public virtual GeneralSkill GeneralSkills
-        {
-            get { return _generalSkills; }
-            set
-            {
-                if (!ReferenceEquals(_generalSkills, value))
-                {
-                    var previousValue = _generalSkills;
-                    _generalSkills = value;
-                    FixupGeneralSkills(previousValue);
-                }
-            }
-        }
-        private GeneralSkill _generalSkills;
-    
-        public virtual ICollection<OperatorActivity> OperatorActivities
+        public virtual ICollection<GeneralActivitySkill> OperatorActivities
         {
             get
             {
                 if (_operatorActivities == null)
                 {
-                    var newCollection = new FixupCollection<OperatorActivity>();
+                    var newCollection = new FixupCollection<GeneralActivitySkill>();
                     newCollection.CollectionChanged += FixupOperatorActivities;
                     _operatorActivities = newCollection;
                 }
@@ -103,13 +102,13 @@ namespace Soheil.Model
             {
                 if (!ReferenceEquals(_operatorActivities, value))
                 {
-                    var previousValue = _operatorActivities as FixupCollection<OperatorActivity>;
+                    var previousValue = _operatorActivities as FixupCollection<GeneralActivitySkill>;
                     if (previousValue != null)
                     {
                         previousValue.CollectionChanged -= FixupOperatorActivities;
                     }
                     _operatorActivities = value;
-                    var newValue = value as FixupCollection<OperatorActivity>;
+                    var newValue = value as FixupCollection<GeneralActivitySkill>;
                     if (newValue != null)
                     {
                         newValue.CollectionChanged += FixupOperatorActivities;
@@ -117,7 +116,7 @@ namespace Soheil.Model
                 }
             }
         }
-        private ICollection<OperatorActivity> _operatorActivities;
+        private ICollection<GeneralActivitySkill> _operatorActivities;
     
         public virtual ICollection<ProcessOperator> ProcessOperators
         {
@@ -183,37 +182,37 @@ namespace Soheil.Model
         }
         private ICollection<OperatorStoppageReport> _operatorStoppageReports;
     
-        public virtual ICollection<OperatorDefectionReport> OperatorDefectionReports
+        public virtual ICollection<EducatingOperator> EducatingOperators
         {
             get
             {
-                if (_operatorDefectionReports == null)
+                if (_educatingOperators == null)
                 {
-                    var newCollection = new FixupCollection<OperatorDefectionReport>();
-                    newCollection.CollectionChanged += FixupOperatorDefectionReports;
-                    _operatorDefectionReports = newCollection;
+                    var newCollection = new FixupCollection<EducatingOperator>();
+                    newCollection.CollectionChanged += FixupEducatingOperators;
+                    _educatingOperators = newCollection;
                 }
-                return _operatorDefectionReports;
+                return _educatingOperators;
             }
             set
             {
-                if (!ReferenceEquals(_operatorDefectionReports, value))
+                if (!ReferenceEquals(_educatingOperators, value))
                 {
-                    var previousValue = _operatorDefectionReports as FixupCollection<OperatorDefectionReport>;
+                    var previousValue = _educatingOperators as FixupCollection<EducatingOperator>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupOperatorDefectionReports;
+                        previousValue.CollectionChanged -= FixupEducatingOperators;
                     }
-                    _operatorDefectionReports = value;
-                    var newValue = value as FixupCollection<OperatorDefectionReport>;
+                    _educatingOperators = value;
+                    var newValue = value as FixupCollection<EducatingOperator>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupOperatorDefectionReports;
+                        newValue.CollectionChanged += FixupEducatingOperators;
                     }
                 }
             }
         }
-        private ICollection<OperatorDefectionReport> _operatorDefectionReports;
+        private ICollection<EducatingOperator> _educatingOperators;
     
         public virtual ICollection<Cost> Costs
         {
@@ -247,52 +246,131 @@ namespace Soheil.Model
         }
         private ICollection<Cost> _costs;
     
-        public virtual ICollection<EducatingOperator> EducatingOperators
+        public virtual ICollection<OperatorProcessReport> OperatorProcessReports
         {
             get
             {
-                if (_educatingOperators == null)
+                if (_operatorProcessReports == null)
                 {
-                    var newCollection = new FixupCollection<EducatingOperator>();
-                    newCollection.CollectionChanged += FixupEducatingOperators;
-                    _educatingOperators = newCollection;
+                    var newCollection = new FixupCollection<OperatorProcessReport>();
+                    newCollection.CollectionChanged += FixupOperatorProcessReports;
+                    _operatorProcessReports = newCollection;
                 }
-                return _educatingOperators;
+                return _operatorProcessReports;
             }
             set
             {
-                if (!ReferenceEquals(_educatingOperators, value))
+                if (!ReferenceEquals(_operatorProcessReports, value))
                 {
-                    var previousValue = _educatingOperators as FixupCollection<EducatingOperator>;
+                    var previousValue = _operatorProcessReports as FixupCollection<OperatorProcessReport>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupEducatingOperators;
+                        previousValue.CollectionChanged -= FixupOperatorProcessReports;
                     }
-                    _educatingOperators = value;
-                    var newValue = value as FixupCollection<EducatingOperator>;
+                    _operatorProcessReports = value;
+                    var newValue = value as FixupCollection<OperatorProcessReport>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupEducatingOperators;
+                        newValue.CollectionChanged += FixupOperatorProcessReports;
                     }
                 }
             }
         }
-        private ICollection<EducatingOperator> _educatingOperators;
+        private ICollection<OperatorProcessReport> _operatorProcessReports;
+    
+        public virtual PersonalSkill PersonalSkill
+        {
+            get { return _personalSkill; }
+            set
+            {
+                if (!ReferenceEquals(_personalSkill, value))
+                {
+                    var previousValue = _personalSkill;
+                    _personalSkill = value;
+                    FixupPersonalSkill(previousValue);
+                }
+            }
+        }
+        private PersonalSkill _personalSkill;
+    
+        public virtual ICollection<UniqueActivitySkill> UniqueActivitySkills
+        {
+            get
+            {
+                if (_uniqueActivitySkills == null)
+                {
+                    var newCollection = new FixupCollection<UniqueActivitySkill>();
+                    newCollection.CollectionChanged += FixupUniqueActivitySkills;
+                    _uniqueActivitySkills = newCollection;
+                }
+                return _uniqueActivitySkills;
+            }
+            set
+            {
+                if (!ReferenceEquals(_uniqueActivitySkills, value))
+                {
+                    var previousValue = _uniqueActivitySkills as FixupCollection<UniqueActivitySkill>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupUniqueActivitySkills;
+                    }
+                    _uniqueActivitySkills = value;
+                    var newValue = value as FixupCollection<UniqueActivitySkill>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupUniqueActivitySkills;
+                    }
+                }
+            }
+        }
+        private ICollection<UniqueActivitySkill> _uniqueActivitySkills;
+    
+        public virtual ICollection<OperatorDefectionReport> OperatorDefectionReports
+        {
+            get
+            {
+                if (_operatorDefectionReports == null)
+                {
+                    var newCollection = new FixupCollection<OperatorDefectionReport>();
+                    newCollection.CollectionChanged += FixupOperatorDefectionReports;
+                    _operatorDefectionReports = newCollection;
+                }
+                return _operatorDefectionReports;
+            }
+            set
+            {
+                if (!ReferenceEquals(_operatorDefectionReports, value))
+                {
+                    var previousValue = _operatorDefectionReports as FixupCollection<OperatorDefectionReport>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupOperatorDefectionReports;
+                    }
+                    _operatorDefectionReports = value;
+                    var newValue = value as FixupCollection<OperatorDefectionReport>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupOperatorDefectionReports;
+                    }
+                }
+            }
+        }
+        private ICollection<OperatorDefectionReport> _operatorDefectionReports;
 
         #endregion
 
         #region Association Fixup
     
-        private void FixupGeneralSkills(GeneralSkill previousValue)
+        private void FixupPersonalSkill(PersonalSkill previousValue)
         {
             if (previousValue != null && ReferenceEquals(previousValue.Operator, this))
             {
                 previousValue.Operator = null;
             }
     
-            if (GeneralSkills != null)
+            if (PersonalSkill != null)
             {
-                GeneralSkills.Operator = this;
+                PersonalSkill.Operator = this;
             }
         }
     
@@ -300,7 +378,7 @@ namespace Soheil.Model
         {
             if (e.NewItems != null)
             {
-                foreach (OperatorActivity item in e.NewItems)
+                foreach (GeneralActivitySkill item in e.NewItems)
                 {
                     item.Operator = this;
                 }
@@ -308,7 +386,7 @@ namespace Soheil.Model
     
             if (e.OldItems != null)
             {
-                foreach (OperatorActivity item in e.OldItems)
+                foreach (GeneralActivitySkill item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Operator, this))
                     {
@@ -362,11 +440,11 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupOperatorDefectionReports(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupEducatingOperators(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (OperatorDefectionReport item in e.NewItems)
+                foreach (EducatingOperator item in e.NewItems)
                 {
                     item.Operator = this;
                 }
@@ -374,7 +452,7 @@ namespace Soheil.Model
     
             if (e.OldItems != null)
             {
-                foreach (OperatorDefectionReport item in e.OldItems)
+                foreach (EducatingOperator item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Operator, this))
                     {
@@ -406,11 +484,11 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupEducatingOperators(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupOperatorProcessReports(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (EducatingOperator item in e.NewItems)
+                foreach (OperatorProcessReport item in e.NewItems)
                 {
                     item.Operator = this;
                 }
@@ -418,7 +496,51 @@ namespace Soheil.Model
     
             if (e.OldItems != null)
             {
-                foreach (EducatingOperator item in e.OldItems)
+                foreach (OperatorProcessReport item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Operator, this))
+                    {
+                        item.Operator = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupUniqueActivitySkills(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (UniqueActivitySkill item in e.NewItems)
+                {
+                    item.Operator = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (UniqueActivitySkill item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Operator, this))
+                    {
+                        item.Operator = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupOperatorDefectionReports(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (OperatorDefectionReport item in e.NewItems)
+                {
+                    item.Operator = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (OperatorDefectionReport item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Operator, this))
                     {

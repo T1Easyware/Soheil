@@ -7,22 +7,35 @@ using System.Threading.Tasks;
 using System.Windows;
 using Soheil.Common;
 using Soheil.Common.SoheilException;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.PP
 {
-	public class PPItemVm : EmbeddedException
+	public abstract class PPItemVm : ViewModelBase
 	{
-		protected PPItemVm() { }
+		protected PPItemVm() { Message = new EmbeddedException(); }
+
+		//Message Dependency Property
+		public EmbeddedException Message
+		{
+			get { return (EmbeddedException)GetValue(MessageProperty); }
+			set { SetValue(MessageProperty, value); }
+		}
+		public static readonly DependencyProperty MessageProperty =
+			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(PPItemVm), new UIPropertyMetadata(null));
 
 		#region Members
 		/// <summary>
-		/// index of station or other
+		/// Vertical Index of Item within its container 
+		/// <para>Could be station or SSA...</para>
+		/// <para>does not apply for task</para>
 		/// </summary>
 		public int RowIndex { get; protected set; }
 		/// <summary>
-		/// TaskId or NPTId
+		/// Id of Model associated with this VM (This field must be overriden)
+		/// <para>Could be TaskId, NPTId, ProcessReportId...</para>
 		/// </summary>
-		public int Id { get; protected set; }
+		public abstract int Id { get; }
 
 		//StartDateTime Dependency Property
 		public DateTime StartDateTime
@@ -44,13 +57,13 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(PPItemVm),
 			new UIPropertyMetadata(0, (d, e) => d.SetValue(DurationProperty, new TimeSpan((int)e.NewValue * TimeSpan.TicksPerSecond))));
 		//ViewMode Dependency Property
-		public PPTaskViewMode ViewMode
+		public PPViewMode ViewMode
 		{
-			get { return (PPTaskViewMode)GetValue(ViewModeProperty); }
+			get { return (PPViewMode)GetValue(ViewModeProperty); }
 			set { SetValue(ViewModeProperty, value); }
 		}
 		public static readonly DependencyProperty ViewModeProperty =
-			DependencyProperty.Register("ViewMode", typeof(PPTaskViewMode), typeof(PPItemVm), new UIPropertyMetadata(PPTaskViewMode.Acquiring)); 
+			DependencyProperty.Register("ViewMode", typeof(PPViewMode), typeof(PPItemVm), new UIPropertyMetadata(PPViewMode.Acquiring)); 
 		#endregion
 
 		#region Commands
@@ -89,11 +102,14 @@ namespace Soheil.Core.ViewModels.PP
 		protected Object _threadLock;
 
 		//Main Functions
+		/// <summary>
+		/// When Items are loaded their event calls this method
+		/// </summary>
 		public void BeginAcquisition()
 		{
 			try
 			{
-				ViewMode = PPTaskViewMode.Acquiring;
+				ViewMode = PPViewMode.Acquiring;
 				_delayAcquisitor = new Timer((s) =>
 				{
 					try
@@ -111,9 +127,12 @@ namespace Soheil.Core.ViewModels.PP
 			}
 			catch { }
 		}
+		/// <summary>
+		/// When Items are unloaded their event calls this method
+		/// </summary>
 		public void UnloadData()
 		{
-			ViewMode = PPTaskViewMode.Simple;
+			ViewMode = PPViewMode.Simple;
 			_acqusitionThread.ForceQuit();
 			if (_delayAcquisitor != null) _delayAcquisitor.Dispose();
 		}

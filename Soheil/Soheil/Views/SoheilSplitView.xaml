@@ -323,7 +323,7 @@
                 </Button>
             </WrapPanel>
         </DataTemplate>
-        <DataTemplate x:Key="OperatorActivityTemplate">
+        <DataTemplate x:Key="GeneralActivitySkillTemplate">
             <WrapPanel>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
@@ -450,7 +450,7 @@
                                                   ProductReworkTemplate="{StaticResource ProductReworkTemplate}"
                                                   ReworkProductTemplate="{StaticResource ReworkProductTemplate}"
                                                   ActivityOperatorTemplate="{StaticResource ActivityOperatorTemplate}"
-                                                  OperatorActivityTemplate="{StaticResource OperatorActivityTemplate}"
+                                                  GeneralActivitySkillTemplate="{StaticResource GeneralActivitySkillTemplate}"
                                                   UserPositionTemplate="{StaticResource UserPositionTemplate}"
                                                   PositionUserTemplate="{StaticResource PositionUserTemplate}"
                                                   UserAccessRuleTemplate="{StaticResource UserAccessRuleTemplate}"

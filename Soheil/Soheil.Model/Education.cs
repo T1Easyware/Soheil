@@ -29,21 +29,6 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual Task Task
-        {
-            get { return _task; }
-            set
-            {
-                if (!ReferenceEquals(_task, value))
-                {
-                    var previousValue = _task;
-                    _task = value;
-                    FixupTask(previousValue);
-                }
-            }
-        }
-        private Task _task;
-    
         public virtual ICollection<EducatingOperator> EducatingOperators
         {
             get
@@ -75,26 +60,42 @@ namespace Soheil.Model
             }
         }
         private ICollection<EducatingOperator> _educatingOperators;
+    
+        public virtual ICollection<Block> Blocks
+        {
+            get
+            {
+                if (_blocks == null)
+                {
+                    var newCollection = new FixupCollection<Block>();
+                    newCollection.CollectionChanged += FixupBlocks;
+                    _blocks = newCollection;
+                }
+                return _blocks;
+            }
+            set
+            {
+                if (!ReferenceEquals(_blocks, value))
+                {
+                    var previousValue = _blocks as FixupCollection<Block>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupBlocks;
+                    }
+                    _blocks = value;
+                    var newValue = value as FixupCollection<Block>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupBlocks;
+                    }
+                }
+            }
+        }
+        private ICollection<Block> _blocks;
 
         #endregion
 
         #region Association Fixup
-    
-        private void FixupTask(Task previousValue)
-        {
-            if (previousValue != null && previousValue.Educations.Contains(this))
-            {
-                previousValue.Educations.Remove(this);
-            }
-    
-            if (Task != null)
-            {
-                if (!Task.Educations.Contains(this))
-                {
-                    Task.Educations.Add(this);
-                }
-            }
-        }
     
         private void FixupEducatingOperators(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -109,6 +110,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (EducatingOperator item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Education, this))
+                    {
+                        item.Education = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupBlocks(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Block item in e.NewItems)
+                {
+                    item.Education = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Block item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Education, this))
                     {

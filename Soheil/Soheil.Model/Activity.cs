@@ -81,13 +81,13 @@ namespace Soheil.Model
         }
         private ActivityGroup _activityGroup;
     
-        public virtual ICollection<OperatorActivity> OperatorActivities
+        public virtual ICollection<GeneralActivitySkill> OperatorActivities
         {
             get
             {
                 if (_operatorActivities == null)
                 {
-                    var newCollection = new FixupCollection<OperatorActivity>();
+                    var newCollection = new FixupCollection<GeneralActivitySkill>();
                     newCollection.CollectionChanged += FixupOperatorActivities;
                     _operatorActivities = newCollection;
                 }
@@ -97,13 +97,13 @@ namespace Soheil.Model
             {
                 if (!ReferenceEquals(_operatorActivities, value))
                 {
-                    var previousValue = _operatorActivities as FixupCollection<OperatorActivity>;
+                    var previousValue = _operatorActivities as FixupCollection<GeneralActivitySkill>;
                     if (previousValue != null)
                     {
                         previousValue.CollectionChanged -= FixupOperatorActivities;
                     }
                     _operatorActivities = value;
-                    var newValue = value as FixupCollection<OperatorActivity>;
+                    var newValue = value as FixupCollection<GeneralActivitySkill>;
                     if (newValue != null)
                     {
                         newValue.CollectionChanged += FixupOperatorActivities;
@@ -111,39 +111,7 @@ namespace Soheil.Model
                 }
             }
         }
-        private ICollection<OperatorActivity> _operatorActivities;
-    
-        public virtual ICollection<StateStationActivity> StateStationActivities
-        {
-            get
-            {
-                if (_stateStationActivities == null)
-                {
-                    var newCollection = new FixupCollection<StateStationActivity>();
-                    newCollection.CollectionChanged += FixupStateStationActivities;
-                    _stateStationActivities = newCollection;
-                }
-                return _stateStationActivities;
-            }
-            set
-            {
-                if (!ReferenceEquals(_stateStationActivities, value))
-                {
-                    var previousValue = _stateStationActivities as FixupCollection<StateStationActivity>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupStateStationActivities;
-                    }
-                    _stateStationActivities = value;
-                    var newValue = value as FixupCollection<StateStationActivity>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupStateStationActivities;
-                    }
-                }
-            }
-        }
-        private ICollection<StateStationActivity> _stateStationActivities;
+        private ICollection<GeneralActivitySkill> _operatorActivities;
     
         public virtual ICollection<Cost> Costs
         {
@@ -176,6 +144,38 @@ namespace Soheil.Model
             }
         }
         private ICollection<Cost> _costs;
+    
+        public virtual ICollection<StateStationActivity> StateStationActivities
+        {
+            get
+            {
+                if (_stateStationActivities == null)
+                {
+                    var newCollection = new FixupCollection<StateStationActivity>();
+                    newCollection.CollectionChanged += FixupStateStationActivities;
+                    _stateStationActivities = newCollection;
+                }
+                return _stateStationActivities;
+            }
+            set
+            {
+                if (!ReferenceEquals(_stateStationActivities, value))
+                {
+                    var previousValue = _stateStationActivities as FixupCollection<StateStationActivity>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupStateStationActivities;
+                    }
+                    _stateStationActivities = value;
+                    var newValue = value as FixupCollection<StateStationActivity>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupStateStationActivities;
+                    }
+                }
+            }
+        }
+        private ICollection<StateStationActivity> _stateStationActivities;
 
         #endregion
 
@@ -201,7 +201,7 @@ namespace Soheil.Model
         {
             if (e.NewItems != null)
             {
-                foreach (OperatorActivity item in e.NewItems)
+                foreach (GeneralActivitySkill item in e.NewItems)
                 {
                     item.Activity = this;
                 }
@@ -209,29 +209,7 @@ namespace Soheil.Model
     
             if (e.OldItems != null)
             {
-                foreach (OperatorActivity item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Activity, this))
-                    {
-                        item.Activity = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupStateStationActivities(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (StateStationActivity item in e.NewItems)
-                {
-                    item.Activity = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (StateStationActivity item in e.OldItems)
+                foreach (GeneralActivitySkill item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Activity, this))
                     {
@@ -254,6 +232,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (Cost item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Activity, this))
+                    {
+                        item.Activity = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupStateStationActivities(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (StateStationActivity item in e.NewItems)
+                {
+                    item.Activity = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (StateStationActivity item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Activity, this))
                     {

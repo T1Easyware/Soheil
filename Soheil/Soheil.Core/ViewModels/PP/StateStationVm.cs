@@ -8,16 +8,23 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class StateStationVm : DependencyObject
 	{
-		public StateStationVm() { }
+		public StateStationVm(Model.StateStation model)
+		{
+			StateStationId = model.Id;
+			StationId = model.Station.Id;
+			Name = model.Station.Name;
+			Code = model.Station.Code;
+		}
 		public StateStationVm(Model.Station model)
 		{
-			Id = model.Id;
+			StationId = model.Id;
 			Name = model.Name;
 			Code = model.Code;
 		}
 
-		public int Id { get; set; }
-		//Name Dependency Property
+		public int StationId { get; protected set; }
+		public int StateStationId { get; protected set; }
+		//Name of Station
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
@@ -25,7 +32,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty NameProperty =
 			DependencyProperty.Register("Name", typeof(string), typeof(ValidStationVm), new UIPropertyMetadata(""));
-		//Code Dependency Property
+		//Code of Station
 		public string Code
 		{
 			get { return (string)GetValue(CodeProperty); }
