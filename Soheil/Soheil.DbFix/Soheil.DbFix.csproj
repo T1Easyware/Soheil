@@ -33,13 +33,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Soheil.Common">
-      <HintPath>..\..\..\..\GitHub\Soheil2\Soheil\Soheil.Dal\bin\Debug\Soheil.Common.dll</HintPath>
+      <HintPath>..\Soheil.Common\bin\Debug\Soheil.Common.dll</HintPath>
     </Reference>
     <Reference Include="Soheil.Dal">
-      <HintPath>..\..\..\..\GitHub\Soheil2\Soheil\Soheil.Dal\bin\Debug\Soheil.Dal.dll</HintPath>
+      <HintPath>..\Soheil.Dal\bin\Debug\Soheil.Dal.dll</HintPath>
     </Reference>
     <Reference Include="Soheil.Model">
-      <HintPath>..\..\..\..\GitHub\Soheil2\Soheil\Soheil.Dal\bin\Debug\Soheil.Model.dll</HintPath>
+      <HintPath>..\Soheil.Model\bin\Debug\Soheil.Model.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
