@@ -50,12 +50,12 @@ namespace Soheil.Core.ViewModels.PP
 		void initializeCommands()
 		{
 			//command
-			AddTaskCommand = new Commands.Command(o =>
+			AddBlockCommand = new Commands.Command(o =>
 			{
 				TaskEditor.IsVisible = true;
 				JobEditor.IsVisible = false;
 			});
-			CleanAddTaskCommand = new Commands.Command(o =>
+			CleanAddBlockCommand = new Commands.Command(o =>
 			{
 				TaskEditor.IsVisible = true;
 				JobEditor.IsVisible = false;
@@ -235,22 +235,22 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty TaskEditorProperty =
 			DependencyProperty.Register("TaskEditor", typeof(PPTaskEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
-		//AddTaskCommand Dependency Property
-		public Commands.Command AddTaskCommand
+		//AddBlockCommand Dependency Property
+		public Commands.Command AddBlockCommand
 		{
-			get { return (Commands.Command)GetValue(AddTaskCommandProperty); }
-			set { SetValue(AddTaskCommandProperty, value); }
+			get { return (Commands.Command)GetValue(AddBlockCommandProperty); }
+			set { SetValue(AddBlockCommandProperty, value); }
 		}
-		public static readonly DependencyProperty AddTaskCommandProperty =
-			DependencyProperty.Register("AddTaskCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//CleanAddTaskCommand Dependency Property
-		public Commands.Command CleanAddTaskCommand
+		public static readonly DependencyProperty AddBlockCommandProperty =
+			DependencyProperty.Register("AddBlockCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
+		//CleanAddBlockCommand Dependency Property
+		public Commands.Command CleanAddBlockCommand
 		{
-			get { return (Commands.Command)GetValue(CleanAddTaskCommandProperty); }
-			set { SetValue(CleanAddTaskCommandProperty, value); }
+			get { return (Commands.Command)GetValue(CleanAddBlockCommandProperty); }
+			set { SetValue(CleanAddBlockCommandProperty, value); }
 		}
-		public static readonly DependencyProperty CleanAddTaskCommandProperty =
-			DependencyProperty.Register("CleanAddTaskCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty CleanAddBlockCommandProperty =
+			DependencyProperty.Register("CleanAddBlockCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		//Opens the PPEditor for a new Task
 		public void ResetTaskEditor()

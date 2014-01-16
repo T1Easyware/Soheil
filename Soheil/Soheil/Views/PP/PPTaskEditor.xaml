@@ -208,7 +208,7 @@
 		</DataTemplate>
 
         <!-- activity hdr -->
-        <DataTemplate DataType="{x:Type ppevm:PPEditorActivity}" x:Key="activityTabHeaderTemplate">
+        <DataTemplate DataType="{x:Type ppevm:PPEditorProcess}" x:Key="activityTabHeaderTemplate">
 			<WrapPanel x:Name="root">
 				<TextBlock Text="{Binding Name}"/>
 				<TextBlock 
@@ -226,7 +226,7 @@
 			</DataTemplate.Triggers>
 		</DataTemplate>
         <!-- activity -->
-        <DataTemplate DataType="{x:Type ppevm:PPEditorActivity}" x:Key="activityTabTemplate">
+        <DataTemplate DataType="{x:Type ppevm:PPEditorProcess}" x:Key="activityTabTemplate">
 			<Border Background="{StaticResource activityBackBrush}">
 				<DockPanel MinHeight="150">
 					<WrapPanel DockPanel.Dock="Top">
@@ -310,18 +310,7 @@
 			<WrapPanel x:Name="station">
 				<TextBlock Text="ایستگاه "/>
 				<TextBlock Text="{Binding Name}"/>
-				<TextBlock VerticalAlignment="Center" Text="*" Foreground="OrangeRed"
-						   Visibility="{Binding HasUnsavedChanges, Converter={StaticResource booleanToVisibilityConverter}}"/>
 			</WrapPanel>
-			<DataTemplate.Triggers>
-				<DataTrigger Binding="{Binding HasUnsavedChanges}" Value="True">
-					<Setter TargetName="station" Property="Background">
-						<Setter.Value>
-							<SolidColorBrush Color="Yellow"/>
-						</Setter.Value>
-					</Setter>
-				</DataTrigger>
-			</DataTemplate.Triggers>
 		</DataTemplate>
 
         <!-- task -->
@@ -333,46 +322,6 @@
                 </DockPanel.Effect>
                 <!-- Top parts -->
                 <WrapPanel DockPanel.Dock="Top">
-                    <!-- Start of Task -->
-                    <DockPanel>
-                        <Border DockPanel.Dock="Left" BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffHeaderBackground}" BorderThickness="1" CornerRadius="5,0,0,5" Height="{Binding ElementName=startDateContents, Path=ActualHeight}" Margin="4,2,0,2">
-                            <TextBlock Text="زمان شروع" TextAlignment="Center" Margin="2">
-                                <TextBlock.LayoutTransform>
-                                    <RotateTransform Angle="90"/>
-                                </TextBlock.LayoutTransform>
-                            </TextBlock>
-                        </Border>
-                        <Border BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffInsideBackground}" CornerRadius="0,5,5,0" BorderThickness="1" Margin="0,2,2,2" x:Name="startDateContents">
-                            <StackPanel>
-                                <CheckBox Margin="3" Content="اولین زمان خالی" IsChecked="{Binding IsAutoStart}"/>
-                                <Grid Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-                                    <WrapPanel VerticalAlignment="Center">
-                                        <TextBlock Margin="3" Text="تاریخ" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-                                        <cal:PersianDatePicker IsEnabled="{Binding IsCustomDateSelected}" SelectedDate="{Binding StartDate}"/>
-                                    </WrapPanel>
-                                    <WrapPanel Grid.Row="1" VerticalAlignment="Center">
-                                        <TextBlock Margin="3" Text="ساعت" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-                                        <TextBox IsEnabled="{Binding IsNextFreeTimeSelected}" Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </WrapPanel>
-                                    <WrapPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <Button Margin="3" Content="امروز" Click="SelectTodayButton_Click"/>
-                                        <Button Margin="3" Content="فردا" Click="SelectTomorrowButton_Click"/>
-                                    </WrapPanel>
-                                    <WrapPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
-                                        <Button Margin="3" Content="ابتدای ساعت بعد" Click="SelectNextHourButton_Click"/>
-                                    </WrapPanel>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                    </DockPanel>
                     <!-- Task TP -->
                     <DockPanel>
                         <Border DockPanel.Dock="Left" BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffHeaderBackground}" BorderThickness="1" CornerRadius="5,0,0,5" Height="{Binding ElementName=taskTPContents, Path=ActualHeight}" Margin="2,2,0,2">
@@ -491,6 +440,79 @@
                 <Grid Visibility="{Binding ShowFpc, Converter={StaticResource booleanToVisibilityConverter}}">
                     <fpcView:FpcStateView DataContext="{Binding FpcViewer}"/>
                 </Grid>
+                <!-- Block editor -->
+                <DockPanel DataContext="{Binding SelectedBlock}">
+                    <!-- station -->
+                    <WrapPanel DockPanel.Dock="Top">
+                        <TextBlock Text="ایستگاه"/>
+                        <ComboBox ItemsSource="{Binding State.StateStationList}"
+                                  DisplayMemberPath="Name"
+                                  SelectedItem="{Binding StateStation}"/>
+                    </WrapPanel>
+                    <!-- task ranges -->
+                    <ItemsControl ItemsSource="{Binding TaskList}">
+                        <ItemsControl.Resources>
+                            
+                        </ItemsControl.Resources>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="1"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <!-- Start of Block -->
+                    <DockPanel DockPanel.Dock="Left">
+                        <Border DockPanel.Dock="Left" BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffHeaderBackground}" BorderThickness="1" CornerRadius="5,0,0,5" Height="{Binding ElementName=startDateContents, Path=ActualHeight}" Margin="4,2,0,2">
+                            <TextBlock Text="زمان شروع" TextAlignment="Center" Margin="2">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90"/>
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </Border>
+                        <Border BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffInsideBackground}" CornerRadius="0,5,5,0" BorderThickness="1" Margin="0,2,2,2" x:Name="startDateContents">
+                            <StackPanel>
+                                <CheckBox Margin="3" Content="اولین زمان خالی" IsChecked="{Binding IsAutoStart}"/>
+                                <Grid Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <WrapPanel VerticalAlignment="Center">
+                                        <TextBlock Margin="3" Text="تاریخ" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+                                        <cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+                                    </WrapPanel>
+                                    <WrapPanel Grid.Row="1" VerticalAlignment="Center">
+                                        <TextBlock Margin="3" Text="ساعت" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+                                        <TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </WrapPanel>
+                                    <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <Button Margin="3" Content="امروز" Command="{Binding SelectTodayCommand}"/>
+                                        <Button Margin="3" Content="فردا" Command="{Binding SelectTomorrowCommand}"/>
+                                    </WrapPanel>
+                                    <WrapPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+                                        <Button Margin="3" Content="ابتدای ساعت بعد" Command="{Binding SelectNextHourCommand}"/>
+                                    </WrapPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </DockPanel>
+                    <!-- additional readonly info -->
+                    <WrapPanel>
+                        <TextBlock Text="زمان خاتمه"/>
+                        <TextBlock Text="{Binding EndDate, Converter={StaticResource dateToPersianDateConverter}}" Background="#4FFF"/>
+                        <TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" Background="#4FFF"/>
+                        <Separator/>
+                        <TextBlock Text="مدت"/>
+                        <TextBlock Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" Background="#4FFF"/>
+                        <Separator/>
+                        <TextBlock Text="کل هدف"/>
+                        <TextBlock Text="{Binding BlockTargetPoint}" Background="#4FFF"/>
+                    </WrapPanel>
+                </DockPanel>
                 <TabControl Margin="8" Visibility="{Binding ShowFpc, Converter={StaticResource booleanToInvisibilityConverter}}"
 							ItemsSource="{Binding SelectedState.StationList}"
 							SelectedIndex="{Binding SelectedState.FocusedStationTabIndex}">

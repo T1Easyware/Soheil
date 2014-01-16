@@ -116,6 +116,7 @@
     <Compile Include="ViewModels\OrganizationCalendar\WorkShiftVm.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs" />
     <Compile Include="ViewModels\HolidaysVM.cs" />
+    <Compile Include="ViewModels\PP\Editor\PPEditorActivityChoice.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorBlock.cs" />
     <Compile Include="ViewModels\PP\PPBlockVm.cs" />
     <Compile Include="ViewModels\PP\Report\BlockReportVm.cs" />
@@ -194,7 +195,7 @@
     <Compile Include="ViewModels\PP\DaySlideItemVm.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorJob.cs" />
     <Compile Include="ViewModels\PP\Editor\PPJobEditorVm.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorActivity.cs" />
+    <Compile Include="ViewModels\PP\Editor\PPEditorProcess.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorMachine.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorOperator.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorTask.cs" />
@@ -213,7 +214,6 @@
     <Compile Include="ViewModels\PP\ReworkVm.cs" />
     <Compile Include="ViewModels\PP\StateStationActivityVm.cs" />
     <Compile Include="ViewModels\PP\StateStationVm.cs" />
-    <Compile Include="ViewModels\PP\ValidStationVm.cs" />
     <Compile Include="ViewModels\SetupTime\Cell.cs" />
     <Compile Include="ViewModels\SetupTime\CellType.cs" />
     <Compile Include="ViewModels\SetupTime\CheckboxCell.cs" />

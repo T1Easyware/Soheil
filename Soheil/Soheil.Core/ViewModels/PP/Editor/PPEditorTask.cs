@@ -10,6 +10,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class PPEditorTask : DependencyObject
 	{
+		Model.Task _model;
+		public int TaskId { get; set; }
+		
 		#region Ctor
 		/// <summary>
 		/// Must be called with an open connection
@@ -24,7 +27,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			StartTime = model.StartDateTime.TimeOfDay;
 			foreach (var processModel in model.Processes)
 			{
-				ActivityList.Add(new PPEditorActivity(this, processModel));
+				ActivityList.Add(new PPEditorProcess(this, processModel));
 			}
 			IsDeferToActivitiesSelected = true;
 		}
@@ -40,9 +43,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		#endregion
 
-		Model.Task _model;
-		public int TaskId { get; set; }
-
 		//Block Dependency Property
 		public PPEditorBlock Block
 		{
@@ -54,17 +54,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		#region Activity
 		//ActivityList Observable Collection
-		private ObservableCollection<PPEditorActivity> _activityList = new ObservableCollection<PPEditorActivity>();
-		public ObservableCollection<PPEditorActivity> ActivityList { get { return _activityList; } }
-
-		//SelectedActivity Dependency Property
-		public PPEditorActivity SelectedActivity
-		{
-			get { return (PPEditorActivity)GetValue(SelectedActivityProperty); }
-			set { SetValue(SelectedActivityProperty, value); }
-		}
-		public static readonly DependencyProperty SelectedActivityProperty =
-			DependencyProperty.Register("SelectedActivity", typeof(PPEditorActivity), typeof(PPEditorTask), new UIPropertyMetadata(null));
+		private ObservableCollection<PPEditorProcess> _activityList = new ObservableCollection<PPEditorProcess>();
+		public ObservableCollection<PPEditorProcess> ActivityList { get { return _activityList; } }
 		#endregion
 
 		#region StartTime Issues
@@ -84,28 +75,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(PPEditorTask), new UIPropertyMetadata(DateTime.Now.TimeOfDay));
-		//IsAutoStart Dependency Property
-		public bool IsAutoStart
-		{
-			get { return (bool)GetValue(IsAutoStartProperty); }
-			set { SetValue(IsAutoStartProperty, value); }
-		}
-		public static readonly DependencyProperty IsAutoStartProperty =
-			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorTask), new PropertyMetadata(false));
-
-		public void SetToToday()
-		{
-			StartDate = DateTime.Now.Date;
-		}
-		public void SetToTomorrow()
-		{
-			StartDate = DateTime.Now.AddDays(1).Date;
-		}
-		public void SetToNextHour()
-		{
-			StartTime = new TimeSpan(DateTime.Now.Hour + 1, 0, 0);
-		}
-
 		#endregion
 
 		#region Qty Issues
@@ -135,7 +104,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					vm.IsDeferToActivitiesSelected = false;
 					foreach (var act in vm.ActivityList)
 					{
-						act.TargetPoint = (int)(vm.SameTimeForActivities.TotalSeconds / act.CycleTime);
+						act.TargetPoint = act.SelectedChoice == null ? 0 :
+							(int)(vm.SameTimeForActivities.TotalSeconds / act.SelectedChoice.CycleTime);
 					}
 				}
 			}));
@@ -195,7 +165,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = (PPEditorTask)d;
 				foreach (var act in vm.ActivityList)
 				{
-					act.TargetPoint = (int)(((TimeSpan)e.NewValue).TotalSeconds / act.CycleTime);
+					act.TargetPoint = act.SelectedChoice == null ? 0 :
+						 (int)(((TimeSpan)e.NewValue).TotalSeconds / act.SelectedChoice.CycleTime);
 				}
 			}));
 		//SameQtyForActivities Dependency Property

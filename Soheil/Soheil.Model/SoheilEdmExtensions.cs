@@ -337,6 +337,14 @@ namespace Soheil.Model
 		}
 	}
 
+	public partial class StateStationActivity
+	{
+		public IEnumerable<StateStationActivity> GetIdenticals()
+		{
+			return StateStation.StateStationActivities.Where(x => x.Activity.Id == Activity.Id).OrderBy(x => x.ManHour);
+		}
+	}
+
 	public partial class Station
 	{
 		//public Status RecordStatus

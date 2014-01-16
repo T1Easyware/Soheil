@@ -74,25 +74,6 @@ namespace Soheil.Views.PP
 			var vm = sender.GetDataContext<PPEditorOperator>();
 			vm.IsSelected = false;
 		}
-
-
-		private void SelectTodayButton_Click(object sender, RoutedEventArgs e)
-		{
-			var vm = sender.GetDataContext<PPEditorTask>();
-			vm.SetToToday();
-		}
-
-		private void SelectTomorrowButton_Click(object sender, RoutedEventArgs e)
-		{
-			var vm = sender.GetDataContext<PPEditorTask>();
-			vm.SetToTomorrow();
-		}
-
-		private void SelectNextHourButton_Click(object sender, RoutedEventArgs e)
-		{
-			var vm = sender.GetDataContext<PPEditorTask>();
-			vm.SetToNextHour();
-		}
 		#endregion
 	}
 }

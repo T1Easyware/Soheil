@@ -813,7 +813,7 @@
 
 				<ToolBarTray Background="Transparent" Grid.ColumnSpan="2" FlowDirection="RightToLeft">
 					<ToolBar Background="Transparent">
-						<Button Margin="2" Command="{Binding CleanAddTaskCommand}">
+						<Button Margin="2" Command="{Binding CleanAddBlockCommand}">
 							<Image Source="/Images/PP/NewTask.png" Width="16"/>
 							<Button.ToolTip>
 								<StackPanel>
@@ -822,7 +822,7 @@
 								</StackPanel>
 							</Button.ToolTip>
 						</Button>
-						<Button Margin="2" Command="{Binding AddTaskCommand}">
+						<Button Margin="2" Command="{Binding AddBlockCommand}">
 							<Image Source="/Images/PP/EditTask.png" Width="16"/>
 							<Button.ToolTip>
 								<StackPanel>
