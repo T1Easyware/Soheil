@@ -714,7 +714,12 @@ namespace Soheil.Controls.Converters.PP
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value == DependencyProperty.UnsetValue) return 0f;
-			return (System.Convert.ToSingle(value) * System.Convert.ToSingle(parameter));
+			float val1;
+			float val2;
+			if (!(float.TryParse(value.ToString(), out val1))
+				&& !(float.TryParse(parameter.ToString(), out val2)))
+				return (val1 * val2);
+			else return 0f;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

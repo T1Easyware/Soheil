@@ -75,5 +75,21 @@ namespace Soheil.Views.PP
 			vm.IsSelected = false;
 		}
 		#endregion
+
+		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.Source is TabControl)
+			{
+				if(e.AddedItems.Count == 1) 
+				{
+					var holder = e.AddedItems[0] as PPEditorTaskHolder;
+					if (holder != null)
+					{
+						holder.CreateNewTaskCommand.Execute(null);
+						((TabControl)sender).SelectedIndex--;
+					}
+				}
+			}
+		}
 	}
 }

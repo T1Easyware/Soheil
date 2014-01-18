@@ -71,21 +71,6 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual StateStation StateStation
-        {
-            get { return _stateStation; }
-            set
-            {
-                if (!ReferenceEquals(_stateStation, value))
-                {
-                    var previousValue = _stateStation;
-                    _stateStation = value;
-                    FixupStateStation(previousValue);
-                }
-            }
-        }
-        private StateStation _stateStation;
-    
         public virtual ICollection<Task> Tasks
         {
             get
@@ -147,26 +132,25 @@ namespace Soheil.Model
             }
         }
         private Education _education;
+    
+        public virtual StateStation StateStation
+        {
+            get { return _stateStation; }
+            set
+            {
+                if (!ReferenceEquals(_stateStation, value))
+                {
+                    var previousValue = _stateStation;
+                    _stateStation = value;
+                    FixupStateStation(previousValue);
+                }
+            }
+        }
+        private StateStation _stateStation;
 
         #endregion
 
         #region Association Fixup
-    
-        private void FixupStateStation(StateStation previousValue)
-        {
-            if (previousValue != null && previousValue.Blocks.Contains(this))
-            {
-                previousValue.Blocks.Remove(this);
-            }
-    
-            if (StateStation != null)
-            {
-                if (!StateStation.Blocks.Contains(this))
-                {
-                    StateStation.Blocks.Add(this);
-                }
-            }
-        }
     
         private void FixupJob(Job previousValue)
         {
@@ -196,6 +180,22 @@ namespace Soheil.Model
                 if (!Education.Blocks.Contains(this))
                 {
                     Education.Blocks.Add(this);
+                }
+            }
+        }
+    
+        private void FixupStateStation(StateStation previousValue)
+        {
+            if (previousValue != null && previousValue.Blocks.Contains(this))
+            {
+                previousValue.Blocks.Remove(this);
+            }
+    
+            if (StateStation != null)
+            {
+                if (!StateStation.Blocks.Contains(this))
+                {
+                    StateStation.Blocks.Add(this);
                 }
             }
         }

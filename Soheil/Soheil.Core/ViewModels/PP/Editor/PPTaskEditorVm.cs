@@ -22,6 +22,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			BlocksSaved = blocksSaved;
 			FpcViewer = new Fpc.FpcWindowVm();
 			FpcViewer.SelectState += FpcViewer_AddNewBlock;
+
+			initializeDataServices();
+			initializeCommands();
 		}
 
 		void initializeDataServices()

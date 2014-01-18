@@ -8,6 +8,21 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
+	public class PPEditorTaskHolder : DependencyObject
+	{
+		public PPEditorTaskHolder(PPEditorBlock parent)
+		{
+			CreateNewTaskCommand = new Commands.Command(o => parent.InsertTask());
+		}
+		//CreateNewTaskCommand Dependency Property
+		public Commands.Command CreateNewTaskCommand
+		{
+			get { return (Commands.Command)GetValue(CreateNewTaskCommandProperty); }
+			set { SetValue(CreateNewTaskCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CreateNewTaskCommandProperty =
+			DependencyProperty.Register("CreateNewTaskCommand", typeof(Commands.Command), typeof(PPEditorTaskHolder), new UIPropertyMetadata(null));
+	}
 	public class PPEditorTask : DependencyObject
 	{
 		Model.Task _model;
@@ -60,7 +75,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public ObservableCollection<PPEditorProcess> ActivityList { get { return _activityList; } }
 		#endregion
 
-		#region StartTime Issues
+		#region Time
 		//StartDate Dependency Property
 		public DateTime StartDate
 		{
@@ -77,6 +92,19 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(PPEditorTask), new UIPropertyMetadata(DateTime.Now.TimeOfDay));
+		//duration
+		public int DurationSeconds
+		{
+			get { return (int)GetValue(DurationSecondsProperty); }
+			set { SetValue(DurationSecondsProperty, value); }
+		}
+		public static readonly DependencyProperty DurationSecondsProperty =
+			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(PPItemVm),
+			new UIPropertyMetadata(0, (d, e) => d.SetValue(DurationProperty, new TimeSpan((int)e.NewValue * TimeSpan.TicksPerSecond))));
+		public static readonly DependencyProperty DurationProperty =
+			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPItemVm), new UIPropertyMetadata(TimeSpan.Zero));
+
+		public DateTime EndDateTime { get { return StartDate.Add(StartTime).AddSeconds(DurationSeconds); } }
 		#endregion
 
 		#region Qty Issues
