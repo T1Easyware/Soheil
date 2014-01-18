@@ -419,10 +419,6 @@
       <End Role="ProcessReport" EntitySet="ProcessReports" />
       <End Role="OperatorProcessReport" EntitySet="OperatorProcessReports" />
     </AssociationSet>
-    <AssociationSet Name="StateStationBlock" Association="SoheilEdm.Store.StateStationBlock">
-      <End Role="StateStation" EntitySet="StateStations" />
-      <End Role="Block" EntitySet="Blocks" />
-    </AssociationSet>
     <AssociationSet Name="BlockTask" Association="SoheilEdm.Store.BlockTask">
       <End Role="Block" EntitySet="Blocks" />
       <End Role="Task" EntitySet="Tasks" />
@@ -454,6 +450,10 @@
     <AssociationSet Name="StateStationActivityUniqueActivitySkill" Association="SoheilEdm.Store.StateStationActivityUniqueActivitySkill">
       <End Role="StateStationActivity" EntitySet="StateStationActivities" />
       <End Role="UniqueActivitySkill" EntitySet="UniqueActivitySkills" />
+    </AssociationSet>
+    <AssociationSet Name="StateStationBlock" Association="SoheilEdm.Store.StateStationBlock">
+      <End Role="StateStation" EntitySet="StateStations" />
+      <End Role="Block" EntitySet="Blocks" />
     </AssociationSet>
     <AssociationSet Name="FK_PM_inherits_NonProductiveTask" Association="SoheilEdm.Store.FK_PM_inherits_NonProductiveTask">
       <End Role="NonProductiveTask" EntitySet="NonProductiveTasks" />
@@ -583,6 +583,7 @@
     <Property Name="TaskTargetPoint" Type="int" Nullable="false" />
     <Property Name="EndDateTime" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="Code" Type="nvarchar(max)" Nullable="true" />
     <Property Name="Block_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Activities">
@@ -1216,9 +1217,9 @@
     <Property Name="EndDateTime" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="PPFlagsNr" Type="tinyint" Nullable="false" />
-    <Property Name="StateStation_Id" Type="int" Nullable="false" />
     <Property Name="Job_Id" Type="int" Nullable="true" />
     <Property Name="Education_Id" Type="int" Nullable="false" />
+    <Property Name="StateStation_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="NonProductiveTasks_PM">
     <Key>
@@ -2281,18 +2282,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="StateStationBlock">
-    <End Role="StateStation" Type="SoheilEdm.Store.StateStations" Multiplicity="1" />
-    <End Role="Block" Type="SoheilEdm.Store.Blocks" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="StateStation">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Block">
-        <PropertyRef Name="StateStation_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="BlockTask">
     <End Role="Block" Type="SoheilEdm.Store.Blocks" Multiplicity="1" />
     <End Role="Task" Type="SoheilEdm.Store.Tasks" Multiplicity="*" />
@@ -2386,6 +2375,18 @@
       </Principal>
       <Dependent Role="UniqueActivitySkill">
         <PropertyRef Name="StateStationActivity_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StateStationBlock">
+    <End Role="StateStation" Type="SoheilEdm.Store.StateStations" Multiplicity="1" />
+    <End Role="Block" Type="SoheilEdm.Store.Blocks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateStation">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Block">
+        <PropertyRef Name="StateStation_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2859,10 +2860,6 @@
             <End Role="OperatorProcessReport" EntitySet="OperatorProcessReports" />
           </AssociationSet>
           <EntitySet Name="Blocks" EntityType="SoheilEdm.Block" />
-          <AssociationSet Name="StateStationBlock" Association="SoheilEdm.StateStationBlock">
-            <End EntitySet="StateStations" Role="StateStation" />
-            <End EntitySet="Blocks" Role="Block" />
-          </AssociationSet>
           <AssociationSet Name="BlockTask" Association="SoheilEdm.BlockTask">
             <End Role="Block" EntitySet="Blocks" />
             <End Role="Task" EntitySet="Tasks" />
@@ -2894,6 +2891,10 @@
           <AssociationSet Name="StateStationActivityUniqueActivitySkill" Association="SoheilEdm.StateStationActivityUniqueActivitySkill">
             <End Role="StateStationActivity" EntitySet="StateStationActivities" />
             <End Role="UniqueActivitySkill" EntitySet="UniqueActivitySkills" />
+          </AssociationSet>
+          <AssociationSet Name="StateStationBlock" Association="SoheilEdm.StateStationBlock">
+            <End Role="StateStation" EntitySet="StateStations" />
+            <End Role="Block" EntitySet="Blocks" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Product">
@@ -3047,6 +3048,7 @@
           </Property>
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Block" Relationship="SoheilEdm.BlockTask" FromRole="Task" ToRole="Block" />
+          <Property Name="Code" Type="String" />
         </EntityType>
         <EntityType Name="Activity">
           <Key>
@@ -3180,8 +3182,8 @@
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="State" Relationship="SoheilEdm.StateStateStation" FromRole="State_Station" ToRole="State" />
           <NavigationProperty Name="StateStationActivities" Relationship="SoheilEdm.StateStationStateStationActivity" FromRole="StateStation" ToRole="StateStationActivity" />
-          <NavigationProperty Name="Blocks" Relationship="SoheilEdm.StateStationBlock" FromRole="StateStation" ToRole="Block" />
           <NavigationProperty Name="Station" Relationship="SoheilEdm.StationStateStation" FromRole="StateStation" ToRole="Station" />
+          <NavigationProperty Name="Blocks" Relationship="SoheilEdm.StateStationBlock" FromRole="StateStation" ToRole="Block" />
         </EntityType>
         <EntityType Name="Process">
           <Key>
@@ -4095,7 +4097,6 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <NavigationProperty Name="StateStation" Relationship="SoheilEdm.StateStationBlock" FromRole="Block" ToRole="StateStation" />
           <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
           <Property Name="StartDateTime" Type="DateTime" Nullable="false" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Code" Type="String" />
@@ -4106,11 +4107,8 @@
           <NavigationProperty Name="Tasks" Relationship="SoheilEdm.BlockTask" FromRole="Block" ToRole="Task" />
           <NavigationProperty Name="Job" Relationship="SoheilEdm.JobBlock" FromRole="Block" ToRole="Job" />
           <NavigationProperty Name="Education" Relationship="SoheilEdm.EducationBlock" FromRole="Block" ToRole="Education" />
+          <NavigationProperty Name="StateStation" Relationship="SoheilEdm.StateStationBlock" FromRole="Block" ToRole="StateStation" />
         </EntityType>
-        <Association Name="StateStationBlock">
-          <End Type="SoheilEdm.StateStation" Multiplicity="1" Role="StateStation" />
-          <End Type="SoheilEdm.Block" Multiplicity="*" Role="Block" />
-        </Association>
         <Association Name="BlockTask">
           <End Type="SoheilEdm.Block" Role="Block" Multiplicity="1" />
           <End Type="SoheilEdm.Task" Role="Task" Multiplicity="*" />
@@ -4142,6 +4140,10 @@
         <Association Name="StateStationActivityUniqueActivitySkill">
           <End Type="SoheilEdm.StateStationActivity" Role="StateStationActivity" Multiplicity="1" />
           <End Type="SoheilEdm.UniqueActivitySkill" Role="UniqueActivitySkill" Multiplicity="*" />
+        </Association>
+        <Association Name="StateStationBlock">
+          <End Type="SoheilEdm.StateStation" Role="StateStation" Multiplicity="1" />
+          <End Type="SoheilEdm.Block" Role="Block" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -4256,6 +4258,7 @@
           <ScalarProperty Name="TaskTargetPoint" ColumnName="TaskTargetPoint" />
           <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5595,14 +5598,6 @@
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
-    <AssociationSetMapping Name="StateStationBlock" TypeName="SoheilEdm.StateStationBlock" StoreEntitySet="Blocks">
-      <EndProperty Name="StateStation">
-        <ScalarProperty Name="Id" ColumnName="StateStation_Id" />
-      </EndProperty>
-      <EndProperty Name="Block">
-        <ScalarProperty Name="Id" ColumnName="Id" />
-      </EndProperty>
-    </AssociationSetMapping>
     <AssociationSetMapping Name="BlockTask" TypeName="SoheilEdm.BlockTask" StoreEntitySet="Tasks">
       <EndProperty Name="Block">
         <ScalarProperty Name="Id" ColumnName="Block_Id" />
@@ -5666,6 +5661,14 @@
         <ScalarProperty Name="Id" ColumnName="StateStationActivity_Id" />
       </EndProperty>
       <EndProperty Name="UniqueActivitySkill">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StateStationBlock" TypeName="SoheilEdm.StateStationBlock" StoreEntitySet="Blocks">
+      <EndProperty Name="StateStation">
+        <ScalarProperty Name="Id" ColumnName="StateStation_Id" />
+      </EndProperty>
+      <EndProperty Name="Block">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
@@ -5932,7 +5935,6 @@
         <AssociationConnector Association="SoheilEdm.FPCJob" />
         <AssociationConnector Association="SoheilEdm.ProcessReportOperatorProcessReport" />
         <EntityTypeShape EntityType="SoheilEdm.Block" Width="2.25" PointX="20.875" PointY="23.125" FillColor="64, 64, 64" />
-        <AssociationConnector Association="SoheilEdm.StateStationBlock" />
         <AssociationConnector Association="SoheilEdm.BlockTask" />
         <AssociationConnector Association="SoheilEdm.JobBlock" />
         <AssociationConnector Association="SoheilEdm.StationCost" />
@@ -5941,6 +5943,7 @@
         <AssociationConnector Association="SoheilEdm.StationStateStation" />
         <AssociationConnector Association="SoheilEdm.EducationBlock" />
         <AssociationConnector Association="SoheilEdm.StateStationActivityUniqueActivitySkill" />
+        <AssociationConnector Association="SoheilEdm.StateStationBlock" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -377,6 +377,29 @@ namespace Soheil.Model
 				return Block.StateStation.State.OnProductRework.Rework != null;
 			}
 		}
+
+		/// <summary>
+		/// Creates processes for this task (according to StateStation) which has unique Activities
+		/// <para>for those activities that have more than 1 StateStationActivity for this StateStation</para>
+		/// <para>the one with the minimum ManHour is being selected</para>
+		/// </summary>
+		public void CreateBasicProcesses()
+		{
+			Processes.Clear();
+			foreach (var ssaGroup in this.Block.StateStation.StateStationActivities.GroupBy(x => x.Activity.Id))
+			{
+				var ssa = ssaGroup.First();
+				var process = new Process
+				{
+					StateStationActivity = ssa,
+					Code = string.Format("{0}{1}", Code, ssa.Activity.Code),
+					Task = this,
+					TargetCount = 0,
+				};
+				//??? machines
+				Processes.Add(process);
+			}
+		}
 	}
 	public partial class TaskReport
 	{

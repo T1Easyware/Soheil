@@ -76,6 +76,21 @@ namespace Soheil.Model
         }
         private ICollection<StateStationActivity> _stateStationActivities;
     
+        public virtual Station Station
+        {
+            get { return _station; }
+            set
+            {
+                if (!ReferenceEquals(_station, value))
+                {
+                    var previousValue = _station;
+                    _station = value;
+                    FixupStation(previousValue);
+                }
+            }
+        }
+        private Station _station;
+    
         public virtual ICollection<Block> Blocks
         {
             get
@@ -107,21 +122,6 @@ namespace Soheil.Model
             }
         }
         private ICollection<Block> _blocks;
-    
-        public virtual Station Station
-        {
-            get { return _station; }
-            set
-            {
-                if (!ReferenceEquals(_station, value))
-                {
-                    var previousValue = _station;
-                    _station = value;
-                    FixupStation(previousValue);
-                }
-            }
-        }
-        private Station _station;
 
         #endregion
 

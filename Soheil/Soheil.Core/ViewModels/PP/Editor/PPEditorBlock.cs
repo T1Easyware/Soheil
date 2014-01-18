@@ -50,7 +50,29 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			StartDate = _model.StartDateTime.Date;
 			StartTime = _model.StartDateTime.TimeOfDay;
 		}
-
+		internal void InsertTask()
+		{
+			var last = TaskList.OfType<PPEditorTask>().LastOrDefault();
+			var startDt = (last == null) ? _model.StartDateTime : last.EndDateTime;
+			var model = new Model.Task
+			{
+				Block = _model,
+				Code = string.Format("{0}{1:D2}", _model.Code, TaskList.Count),
+				DurationSeconds = 3600,
+				StartDateTime = startDt,
+				EndDateTime = startDt.AddHours(1),
+				TaskTargetPoint = 0,
+			};
+			model.CreateBasicProcesses();
+			TaskList.Insert(TaskList.Count - 1, new PPEditorTask(model, this));
+		}
+		internal void Reset()
+		{
+			foreach (var task in TaskList.OfType<PPEditorTask>())
+			{
+				task.Reset();
+			}
+		}
 		/*public bool ValidateTimeRange(Model.Task taskModel)
 		{
 			var tasks = _model.Tasks.ToList();
@@ -169,8 +191,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		#endregion
 		
 		//TaskList Observable Collection
-		public ObservableCollection<PPEditorTask> TaskList { get { return _taskList; } }
-		private ObservableCollection<PPEditorTask> _taskList = new ObservableCollection<PPEditorTask>();
+		public ObservableCollection<DependencyObject> TaskList { get { return _taskList; } }
+		private ObservableCollection<DependencyObject> _taskList = new ObservableCollection<DependencyObject>();
 
 		#region Commands
 		void initializeCommands()
@@ -183,6 +205,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			SelectTomorrowCommand = new Commands.Command(o => StartDate = DateTime.Now.AddDays(1).Date);
 			SelectNextHourCommand = new Commands.Command(o => { SelectTodayCommand.Execute(o); StartTime = new TimeSpan(DateTime.Now.Hour + 1, 0, 0); });
 		}
+
+
 		//DeleteBlockFromList Dependency Property
 		public Commands.Command DeleteBlockFromList
 		{
@@ -216,14 +240,5 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty SelectNextHourCommandProperty =
 			DependencyProperty.Register("SelectNextHourCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
 		#endregion
-
-
-		internal void Reset()
-		{
-			foreach (var task in TaskList)
-			{
-				task.Reset();
-			}
-		}
 	}
 }

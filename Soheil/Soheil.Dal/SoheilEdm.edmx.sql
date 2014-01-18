@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/14/2014 18:21:47
+-- Date Created: 01/18/2014 13:26:55
 -- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -640,6 +640,7 @@ CREATE TABLE [dbo].[Tasks] (
     [TaskTargetPoint] int  NOT NULL,
     [EndDateTime] datetime  NOT NULL,
     [ModifiedBy] int  NOT NULL,
+    [Code] nvarchar(max)  NULL,
     [Block_Id] int  NOT NULL
 );
 GO
@@ -1273,9 +1274,9 @@ CREATE TABLE [dbo].[Blocks] (
     [EndDateTime] datetime  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [PPFlagsNr] tinyint  NOT NULL,
-    [StateStation_Id] int  NOT NULL,
     [Job_Id] int  NULL,
-    [Education_Id] int  NOT NULL
+    [Education_Id] int  NOT NULL,
+    [StateStation_Id] int  NOT NULL
 );
 GO
 
@@ -2934,20 +2935,6 @@ ON [dbo].[OperatorProcessReports]
     ([ProcessReport_Id]);
 GO
 
--- Creating foreign key on [StateStation_Id] in table 'Blocks'
-ALTER TABLE [dbo].[Blocks]
-ADD CONSTRAINT [FK_StateStationBlock]
-    FOREIGN KEY ([StateStation_Id])
-    REFERENCES [dbo].[StateStations]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_StateStationBlock'
-CREATE INDEX [IX_FK_StateStationBlock]
-ON [dbo].[Blocks]
-    ([StateStation_Id]);
-GO
-
 -- Creating foreign key on [Block_Id] in table 'Tasks'
 ALTER TABLE [dbo].[Tasks]
 ADD CONSTRAINT [FK_BlockTask]
@@ -3058,6 +3045,20 @@ ADD CONSTRAINT [FK_StateStationActivityUniqueActivitySkill]
 CREATE INDEX [IX_FK_StateStationActivityUniqueActivitySkill]
 ON [dbo].[UniqueActivitySkills]
     ([StateStationActivity_Id]);
+GO
+
+-- Creating foreign key on [StateStation_Id] in table 'Blocks'
+ALTER TABLE [dbo].[Blocks]
+ADD CONSTRAINT [FK_StateStationBlock]
+    FOREIGN KEY ([StateStation_Id])
+    REFERENCES [dbo].[StateStations]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_StateStationBlock'
+CREATE INDEX [IX_FK_StateStationBlock]
+ON [dbo].[Blocks]
+    ([StateStation_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'
