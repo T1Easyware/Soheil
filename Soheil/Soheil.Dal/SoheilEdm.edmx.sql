@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/14/2014 18:21:47
--- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 01/17/2014 20:24:55
+-- Generated from EDMX file: D:\Work\git\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -640,6 +640,7 @@ CREATE TABLE [dbo].[Tasks] (
     [TaskTargetPoint] int  NOT NULL,
     [EndDateTime] datetime  NOT NULL,
     [ModifiedBy] int  NOT NULL,
+    [Code] nvarchar(max)  NULL,
     [Block_Id] int  NOT NULL
 );
 GO

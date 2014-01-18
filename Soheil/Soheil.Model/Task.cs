@@ -54,6 +54,12 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual string Code
+        {
+            get;
+            set;
+        }
 
         #endregion
 

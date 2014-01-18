@@ -595,4 +595,11 @@
     <value>More Info...</value>
     <comment>On SplitContentLower Expander's Header</comment>
   </data>
+  <data name="txtColor" xml:space="preserve">
+    <value>Color :</value>
+    <comment> </comment>
+  </data>
+  <data name="txtRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
 </root>

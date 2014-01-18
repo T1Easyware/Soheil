@@ -3636,6 +3636,7 @@
                                                     <ItemsPresenter />
                                                     <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView},
                                                                               Path=ViewModel.AddCommand}"
+                                                            
                                                             Content="+">
                                                         <Button.CommandParameter>
                                                             <Binding RelativeSource="{RelativeSource AncestorType=GroupItem}">
@@ -3757,15 +3758,24 @@
                                     <DockPanel>
                                         <WrapPanel DockPanel.Dock="Left" VerticalAlignment="Center">
                                             <Button Margin="2" Command="{Binding RelativeSource={RelativeSource
-                                                AncestorType=Views:SoheilSplitView}, Path=ViewModel.AddGroupCommand}" Content="+" />
+                                                AncestorType=Views:SoheilSplitView}, Path=ViewModel.AddGroupCommand}"
+                                                    ToolTip="{Loc txtNew}">
+                                                <Image Source="/Soheil.Controls;component/Images/add.png"/>
+                                            </Button>
                                             <Button Margin="2" Command="{Binding RelativeSource={RelativeSource
-                                                AncestorType=Views:SoheilSplitView}, Path=ViewModel.RefreshCommand}" Content="R" />
-                                            <Button Margin="2" Content="..." />
+                                                AncestorType=Views:SoheilSplitView}, Path=ViewModel.RefreshCommand}" 
+                                                    ToolTip="{Loc txtRefresh}">
+                                                <Image Source="/Soheil.Controls;component/Images/reload.png"/>
+                                            </Button>
+                                            <!--<Button Margin="2" Content="..." />-->
                                         </WrapPanel>
                                         <WrapPanel DockPanel.Dock="Right">
-                                            <TextBlock Margin="2" VerticalAlignment="Center" Text="{Loc txtSearch}" Style="{StaticResource  
-                                                EntryBoxHeader}"/>
-                                            <TextBox Margin="2" Width="75" Text="{Binding SearchBox, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <!--<TextBlock Margin="2" VerticalAlignment="Center" Text="{Loc txtSearch}" Style="{StaticResource  
+                                                EntryBoxHeader}"/>-->
+                                            <Border BorderThickness="1" BorderBrush="{StaticResource ThemeDarkBrush}" Width="18" Height="18" Margin="0" VerticalAlignment="Center">
+                                                <Image Source="/Soheil.Controls;component/Images/search.png"/>
+                                            </Border>
+                                            <TextBox Margin="2" Width="75" Text="{Binding SearchBox, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Loc txtSearch}"/>
                                         </WrapPanel>
                                         <Canvas/>
                                     </DockPanel>

@@ -600,4 +600,10 @@
     <value>اطلاعات بیشتر...</value>
     <comment>On SplitContentLower Expander's Header</comment>
   </data>
+  <data name="txtColor" xml:space="preserve">
+    <value>رنگ :</value>
+  </data>
+  <data name="txtRefresh" xml:space="preserve">
+    <value>بازیابی</value>
+  </data>
 </root>

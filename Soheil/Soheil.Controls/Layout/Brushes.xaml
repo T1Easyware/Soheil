@@ -11,8 +11,8 @@
     <SolidColorBrush x:Key="ThemeDarkBrush" Color="{StaticResource ThemeDarkColor}" />
     <SolidColorBrush x:Key="ThemeMediumBrush" Color="{StaticResource ThemeMediumColor}" />
 	<SolidColorBrush x:Key="ThemeLightBrush" Color="{StaticResource ThemeLightColor}" />
-	<SolidColorBrush x:Key="LightBrush" Color="{StaticResource ThemeLightColor}" />
-
+    <SolidColorBrush x:Key="LightBrush" Color="{StaticResource ThemeLightColor}" />
+    
     <LinearGradientBrush x:Key="ThemeGradientBrush" StartPoint="0,0.5" EndPoint="1,0.5">
         <GradientStop Offset="0.0" Color="{DynamicResource ThemeMediumColor}" />
         <GradientStop Offset="1.0" Color="{DynamicResource ThemeLightColor}" />
@@ -87,7 +87,12 @@
             </TransformGroup>
         </RadialGradientBrush.RelativeTransform>
     </RadialGradientBrush>
-    
+
+    <LinearGradientBrush x:Key="ButtonHowerBrush"  StartPoint="0.5,0.039" EndPoint="0.5,0.976">
+        <GradientStop Offset="0" Color="#7F595959" />
+        <GradientStop Offset="1" Color="#19FFFFFF" />
+    </LinearGradientBrush>
+
     <!--  TabControl Header  -->
     <SolidColorBrush x:Key="DarkBackGroundBrush" Color="{StaticResource BackGroundDarkColor}" />
     <SolidColorBrush x:Key="LightBackGroundBrush" Color="{StaticResource BackGroundContentColor}" />

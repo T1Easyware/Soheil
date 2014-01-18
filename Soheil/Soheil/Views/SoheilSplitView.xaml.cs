@@ -376,7 +376,7 @@ namespace Soheil.Views
         {
             var grid = (DataGrid)sender;
             _currentContent = (ISplitItemContent)grid.CurrentItem;
-            if (e.Key == Key.Space)
+            if (e.Key == Key.F2)
             {
                 if (_cellEditingMode)
                 {
@@ -629,9 +629,6 @@ namespace Soheil.Views
 
 		#endregion
 
-		private void asldkjalsdkj(object sender, MouseEventArgs e)
-		{
 
-		}
 	}
 }

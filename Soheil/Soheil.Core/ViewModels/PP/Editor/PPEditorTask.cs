@@ -27,7 +27,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			StartTime = model.StartDateTime.TimeOfDay;
 			foreach (var processModel in model.Processes)
 			{
-				ActivityList.Add(new PPEditorProcess(this, processModel));
+                //!!!
+                //ActivityList.Add(new PPEditorProcess(this, processModel));
 			}
 			IsDeferToActivitiesSelected = true;
 		}
@@ -38,7 +39,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			foreach (var act in ActivityList)
 			{
-				act.Reset();
+                //!!!
+                //act.Reset();
 			}
 		}
 		#endregion
@@ -104,8 +106,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					vm.IsDeferToActivitiesSelected = false;
 					foreach (var act in vm.ActivityList)
 					{
-						act.TargetPoint = act.SelectedChoice == null ? 0 :
-							(int)(vm.SameTimeForActivities.TotalSeconds / act.SelectedChoice.CycleTime);
+                        //!!!
+                        //act.TargetPoint = act.SelectedChoice == null ? 0 :
+                        //    (int)(vm.SameTimeForActivities.TotalSeconds / act.SelectedChoice.CycleTime);
 					}
 				}
 			}));
@@ -127,7 +130,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					vm.SameQtyForActivities = vm.TaskTargetPoint;
 					foreach (var act in vm.ActivityList)
 					{
-						act.TargetPoint = vm.SameQtyForActivities;
+                        //!!!
+                        //act.TargetPoint = vm.SameQtyForActivities;
 					}
 				}
 			}));
@@ -149,7 +153,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				}
 				foreach (var act in vm.ActivityList)
 				{
-					act.DoesParentDeferToActivities = (bool)e.NewValue;
+                    //!!!
+                    //act.DoesParentDeferToActivities = (bool)e.NewValue;
 				}
 			}));
 		//SameTimeForActivities Dependency Property
@@ -165,8 +170,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = (PPEditorTask)d;
 				foreach (var act in vm.ActivityList)
 				{
-					act.TargetPoint = act.SelectedChoice == null ? 0 :
-						 (int)(((TimeSpan)e.NewValue).TotalSeconds / act.SelectedChoice.CycleTime);
+                    //!!!
+                    //act.TargetPoint = act.SelectedChoice == null ? 0 :
+                    //     (int)(((TimeSpan)e.NewValue).TotalSeconds / act.SelectedChoice.CycleTime);
 				}
 			}));
 		//SameQtyForActivities Dependency Property
@@ -182,7 +188,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = (PPEditorTask)d;
 				foreach (var act in vm.ActivityList)
 				{
-					act.TargetPoint = (int)e.NewValue;
+                    //!!!
+                    //act.TargetPoint = (int)e.NewValue;
 				}
 			}));
 		#endregion

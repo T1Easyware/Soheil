@@ -583,6 +583,7 @@
     <Property Name="TaskTargetPoint" Type="int" Nullable="false" />
     <Property Name="EndDateTime" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="Code" Type="nvarchar(max)" Nullable="true" />
     <Property Name="Block_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Activities">
@@ -3047,6 +3048,7 @@
           </Property>
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Block" Relationship="SoheilEdm.BlockTask" FromRole="Task" ToRole="Block" />
+          <Property Name="Code" Type="String" />
         </EntityType>
         <EntityType Name="Activity">
           <Key>
@@ -4256,6 +4258,7 @@
           <ScalarProperty Name="TaskTargetPoint" ColumnName="TaskTargetPoint" />
           <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
