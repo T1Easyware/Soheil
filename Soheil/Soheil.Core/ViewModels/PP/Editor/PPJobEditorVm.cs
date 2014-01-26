@@ -13,19 +13,40 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	/// </summary>
 	public class PPJobEditorVm : DependencyObject
 	{
-		protected DataServices.ProductGroupDataService _productGroupDs;
-		protected DataServices.FPCDataService _fpcDs;
+		DataServices.ProductGroupDataService _productGroupDs;
+		DataServices.FPCDataService _fpcDs;
+		DataServices.JobDataService _jobDs;
+		Dal.SoheilEdmContext _uow;
 
-		public PPJobEditorVm(Action<IList<PPEditorJob>> jobsSaved)
+		public PPJobEditorVm()
 		{
-			JobsSaved = jobsSaved;
-			_productGroupDs = new DataServices.ProductGroupDataService();
-			_fpcDs = new DataServices.FPCDataService();
+			initializeDataServices();
+			initializeCommands();
+
+			//load products
 			var pgList = _productGroupDs.GetActivesRecursive();
 			foreach (var pg in pgList)
 			{
 				AllProductGroups.Add(new ProductGroupVm(pg));
 			}
+
+			//event handler for DeleteJobCommand
+			JobList.CollectionChanged += (s, e) =>
+			{
+				if(e.NewItems != null)
+					foreach (var item in e.NewItems.OfType<PPEditorJob>())
+					{
+						item.JobDeleted += job => JobList.Remove(job);
+					}
+			};
+		}
+
+		void initializeDataServices()
+		{
+			_uow = new Dal.SoheilEdmContext();
+			_productGroupDs = new DataServices.ProductGroupDataService(_uow);
+			_fpcDs = new DataServices.FPCDataService(_uow);
+			_jobDs = new DataServices.JobDataService(_uow);
 		}
 
 		#region Interactions
@@ -45,25 +66,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (SelectedState != null && SelectedState.StateId == ppState.StateId) SelectedState = null;
 			PPStateList.Remove(ppState);
 		}*/
-		//Save
-		internal Action<IList<PPEditorJob>> JobsSaved;//PPTableVm handles this event
-		public void SaveJob(PPEditorJob job)//View calls this function
-		{
-			if (JobsSaved != null) JobsSaved(new List<PPEditorJob> { job });
-		}
-		public void SaveAllJobs()//View calls this function
-		{
-			if (JobsSaved != null) JobsSaved(JobList.Where(x => x.Quantity > 0).ToList());
-		}
 		//Clear
 		public void Reset()
 		{
 			JobList.Clear();
-		}
-		public void DeleteJob(PPEditorJob job)
-		{
-			JobList.Remove(job);
-			//???
 		}
 		#endregion
 
@@ -84,5 +90,47 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty IsVisibleProperty =
 			DependencyProperty.Register("IsVisible", typeof(bool), typeof(PPJobEditorVm), new UIPropertyMetadata(false));
+
+		#region Commands
+		void initializeCommands()
+		{
+			SaveAllCommand = new Commands.Command(o =>
+			{
+				foreach (var job in JobList.Where(x => x.Quantity > 0))
+				{
+					job.SaveCommand.Execute(o);
+				}
+				Reset();
+				IsVisible = false;
+			});
+			ClearAllCommand = new Commands.Command(o => Reset());
+			ExitCommand = new Commands.Command(o => IsVisible = false);
+		}
+
+		//SaveAllCommand Dependency Property
+		public Commands.Command SaveAllCommand
+		{
+			get { return (Commands.Command)GetValue(SaveAllCommandProperty); }
+			set { SetValue(SaveAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SaveAllCommandProperty =
+			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(PPJobEditorVm), new UIPropertyMetadata(null));
+		//ClearAllCommand Dependency Property
+		public Commands.Command ClearAllCommand
+		{
+			get { return (Commands.Command)GetValue(ClearAllCommandProperty); }
+			set { SetValue(ClearAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ClearAllCommandProperty =
+			DependencyProperty.Register("ClearAllCommand", typeof(Commands.Command), typeof(PPJobEditorVm), new UIPropertyMetadata(null));
+		//ExitCommand Dependency Property
+		public Commands.Command ExitCommand
+		{
+			get { return (Commands.Command)GetValue(ExitCommandProperty); }
+			set { SetValue(ExitCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ExitCommandProperty =
+			DependencyProperty.Register("ExitCommand", typeof(Commands.Command), typeof(PPJobEditorVm), new UIPropertyMetadata(null)); 
+		#endregion
 	}
 }

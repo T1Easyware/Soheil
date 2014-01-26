@@ -13,9 +13,16 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class FpcWindowVm : FpcVm
 	{
+		Dal.SoheilEdmContext _uow;
+
 		#region Ctor, ChangeFPC & Reset
 		public FpcWindowVm()
 		{
+			initCommands();
+		}
+		public FpcWindowVm(Dal.SoheilEdmContext uow)
+		{
+			_uow = uow;
 			initCommands();
 		}
 
@@ -79,7 +86,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			_lock = false;
 			Message = new DependencyMessageBox();
-			fpcDataService = new FPCDataService();
+			if(_uow == null)
+				fpcDataService = new FPCDataService();
+			else
+				fpcDataService = new FPCDataService(_uow);
 
 			//Stations
 			Stations.Clear();

@@ -8,12 +8,28 @@ using System.Collections.ObjectModel;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
+	/// <summary>
+	/// Does not have duration (it should be automatically calculated from tp*ct)
+	/// </summary>
 	public class PPEditorProcess : DependencyObject
 	{
 		PPEditorTask _parent;
-		Model.Process _model;
+		IEnumerable<Model.StateStationActivity> _ssaGroup;
+		//Model.Process _model;
 		bool _isInitializing = true;
-		public int ProcessId { get { return _model.Id; } }
+		//public int ProcessId { get { return _model.Id; } }
+		//public int ActivityId { get { return _model.StateStationActivity.Activity.Id; } }
+
+		/// <summary>
+		/// Use this event to notify Task about changes to ActivityChoice of this Process
+		/// <para>first arg is oldValue, seconds arg is NewValue</para>
+		/// </summary>
+		public event Action<PPEditorActivityChoice, PPEditorActivityChoice> ActivityChoiceChanged;
+		/// <summary>
+		/// Use this event to notify Task about changes to TargetPoint of this Process
+		/// <para>first arg is oldValue, seconds arg is NewValue</para>
+		/// </summary>
+		public event Action<int, int> ProcessTargetPointChanged;
 
 		#region Ctor
 		/// <summary>
@@ -21,60 +37,38 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <para>within the given PPEditorTask</para>
 		/// </summary>
 		/// <param name="model"></param>
-		public PPEditorProcess(PPEditorTask parent, Model.Process processModel)
+		public PPEditorProcess(PPEditorTask parent, IEnumerable<Model.StateStationActivity> ssaGroup)
 		{
-			_model = processModel;
+			//_model = processModel;
+			_ssaGroup = ssaGroup;
 			_parent = parent;
 			
 			//choices
-			foreach (var choice in processModel.StateStationActivity.GetIdenticals())
+			foreach (var choice in ssaGroup)
 			{
-				Choices.Add(new PPEditorActivityChoice(choice));
+				Choices.Add(new PPEditorActivityChoice(choice, this));
 			}
-			SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == processModel.ProcessOperators.Count);
+			SelectedChoice = Choices.FirstOrDefault();
 
-			Name = processModel.StateStationActivity.Activity.Name;
-			TargetPoint = processModel.TargetCount;
+			Name = ssaGroup.First().Activity.Name;
 
 			//operators
 			var allOperatorModels = new DataServices.OperatorDataService().GetActives();
 			foreach (var operatorModel in allOperatorModels)
 			{
-				var processOperatorModel = processModel.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operatorModel.Id);
-				var operatorVm = (processOperatorModel == null) ?
-					new PPEditorOperator(operatorModel) :
-					new PPEditorOperator(processOperatorModel);
+				var operatorVm = new PPEditorOperator(operatorModel);
+				operatorVm.SelectedOperatorsChanged += () =>
+				{
+					SelectedOperatorsCount = OperatorList.Count(x => x.IsSelected);
+					if (!_isInitializing)
+						SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == SelectedOperatorsCount);
+				};
 				OperatorList.Add(operatorVm);
-			}
-			OperatorList.CollectionChanged += (s, e) =>
-			{
-				if (!_isInitializing)
-					SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == OperatorList.Count);
-			};
-
-			//machines
-			foreach (var ssamModel in processModel.StateStationActivity.StateStationActivityMachines)
-			{
-				var selectedMachineModel = processModel.SelectedMachines.FirstOrDefault(x => x.StateStationActivityMachine.Id == ssamModel.Id);
-				var machineVm = (selectedMachineModel == null) ?
-					new PPEditorMachine(ssamModel) :
-					new PPEditorMachine(selectedMachineModel);
-				MachineList.Add(machineVm);//aya bayad hameye machine ha add shavand?
 			}
 
 			_isInitializing = false;
 		}
-		public void Reset()
-		{
-			if (_model == null)
-			{
-				TargetPoint = 0;
-			}
-			else
-			{
-				TargetPoint = _model.TargetCount;
-			}
-		}
+
 		#endregion
 
 		#region DpProps
@@ -94,21 +88,40 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty TargetPointProperty =
 			DependencyProperty.Register("TargetPoint", typeof(int), typeof(PPEditorProcess),
-			new UIPropertyMetadata(0));
+			new UIPropertyMetadata(0, (d, e) =>
+			{
+				var vm = (PPEditorProcess)d;
+				var val = (int)e.NewValue;
+				vm.TargetPoint = val;
+				vm.DurationSeconds = vm.SelectedChoice == null ? 0 :
+					(int)Math.Floor(val * vm.SelectedChoice.CycleTime);
+				if (vm.ProcessTargetPointChanged != null)
+					vm.ProcessTargetPointChanged((int)e.OldValue, val);
+			}));
+		//DurationSeconds Dependency Property
+		public int DurationSeconds
+		{
+			get { return (int)GetValue(DurationSecondsProperty); }
+			set { SetValue(DurationSecondsProperty, value); }
+		}
+		public static readonly DependencyProperty DurationSecondsProperty =
+			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(PPEditorProcess),
+			new UIPropertyMetadata(0, (d, e) => ((PPEditorProcess)d).DurationSeconds = (int)e.NewValue));
+
+
 		//MachineList Observable Collection
 		private ObservableCollection<PPEditorMachine> _machineList = new ObservableCollection<PPEditorMachine>();
 		public ObservableCollection<PPEditorMachine> MachineList { get { return _machineList; } }
 		//OperatorList Observable Collection
 		private ObservableCollection<PPEditorOperator> _operatorList = new ObservableCollection<PPEditorOperator>();
 		public ObservableCollection<PPEditorOperator> OperatorList { get { return _operatorList; } }
-		//SelectedOperators Dependency Property
-		public int SelectedOperators
+		public int SelectedOperatorsCount
 		{
-			get { return (int)GetValue(SelectedOperatorsProperty); }
-			set { SetValue(SelectedOperatorsProperty, value); }
+			get { return (int)GetValue(SelectedOperatorsCountProperty); }
+			set { SetValue(SelectedOperatorsCountProperty, value); }
 		}
-		public static readonly DependencyProperty SelectedOperatorsProperty =
-			DependencyProperty.Register("SelectedOperators", typeof(int), typeof(PPEditorProcess), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty SelectedOperatorsCountProperty =
+			DependencyProperty.Register("SelectedOperatorsCount", typeof(int), typeof(PPEditorProcess), new UIPropertyMetadata(0));
 		//DoesParentDeferToActivities Dependency Property
 		public bool DoesParentDeferToActivities
 		{
@@ -133,8 +146,34 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(null, (d, e) =>
 			{
 				var vm = d as PPEditorProcess;
-				var val = e.NewValue as PPEditorActivityChoice;
-				if (val == null) return;
+				var newVal = e.NewValue as PPEditorActivityChoice;
+				var oldVal = e.OldValue as PPEditorActivityChoice;
+				if (newVal == null)
+				{
+					vm.DurationSeconds = 0;
+				}
+				else
+				{
+					vm.DurationSeconds = (int)Math.Floor(newVal.CycleTime * vm.TargetPoint);
+
+					//machines
+					vm.MachineList.Clear();
+					foreach (var ssa in vm._ssaGroup)
+					{
+						foreach (var ssam in ssa.StateStationActivityMachines)
+						{
+							//var selectedMachineModel = processModel.SelectedMachines.FirstOrDefault(x => x.StateStationActivityMachine.Id == ssam.Id);
+							//	var machineVm = (selectedMachineModel == null) ?
+							//new PPEditorMachine(ssam) :
+							//	new PPEditorMachine(selectedMachineModel);
+							var machineVm = new PPEditorMachine(ssam);
+							//i.e. add from model if exists or else do this:
+							vm.MachineList.Add(machineVm);//aya bayad hameye machine ha add shavand?
+						}
+					}
+				}
+				if (vm.ActivityChoiceChanged != null)
+					vm.ActivityChoiceChanged(oldVal, newVal);
 			}));
 	}
 }

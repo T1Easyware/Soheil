@@ -99,8 +99,8 @@
 						SizeChanged="State_SizeChanged" 
 						Tag="{Binding}"
 						BorderThickness="2" 
-						Background="#AAE0F0FF" 
-						CornerRadius="5">
+						Background="#8444" 
+						CornerRadius="2">
 					<Border.BorderBrush>
 						<MultiBinding Converter="{StaticResource focusedStateBorderBrushConverter}">
 							<Binding Path="."/>
@@ -137,23 +137,29 @@
 											ContentTemplate="{DynamicResource treeItemTemplate}"/>
 						</ScrollViewer>
 						<!-- config.buttons -->
-						<DockPanel
-							Background="#88CCFF"
-							Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=ShowDetails}">
-							<Canvas Height="2"/>
-							<Button DockPanel.Dock="Left" ToolTip="حذف مرحله" Command="{Binding DeleteCommand}">
-								<Image Style="{StaticResource deleteImage}"/>
-							</Button>
-							<Button DockPanel.Dock="Right" ToolTip="ذخیره مرحله" Command="{Binding SaveCommand}">
-								<Image Style="{StaticResource saveImage}"/>
-							</Button>
-							<Button DockPanel.Dock="Right" ToolTip="ریست کردن مرحله" Command="{Binding ResetCommand}">
-								<Image Style="{StaticResource resetImage}"/>
-							</Button>
-							<Canvas/>
-						</DockPanel>
-					</StackPanel>
-				</Border>
+                        <Border>
+                            <Border.Background>
+                                <MultiBinding Converter="{StaticResource focusedStateBorderBrushConverter}">
+                                    <Binding Path="."/>
+                                    <Binding Path="ParentWindowVm.FocusedState"/>
+                                </MultiBinding>
+                            </Border.Background>
+                            <DockPanel Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=ShowDetails}" Background="#B555">
+                                <Canvas Height="2"/>
+							    <Button DockPanel.Dock="Left" ToolTip="حذف مرحله" Command="{Binding DeleteCommand}">
+								    <Image Style="{StaticResource deleteImage}"/>
+							    </Button>
+							    <Button DockPanel.Dock="Right" ToolTip="ذخیره مرحله" Command="{Binding SaveCommand}">
+								    <Image Style="{StaticResource saveImage}"/>
+							    </Button>
+							    <Button DockPanel.Dock="Right" ToolTip="ریست کردن مرحله" Command="{Binding ResetCommand}">
+								    <Image Style="{StaticResource resetImage}"/>
+							    </Button>
+							    <Canvas/>
+						    </DockPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
 			</AdornerDecorator>
 		</Canvas>
 	</DataTemplate>
@@ -199,7 +205,7 @@
 						SizeChanged="State_SizeChanged" 
 						Tag="{Binding}"
 						BorderThickness="2" 
-						CornerRadius="5">
+						CornerRadius="2">
 					<Border.BorderBrush>
 						<MultiBinding Converter="{StaticResource focusedStateBorderBrushConverter}">
 							<Binding Path="."/>
@@ -291,10 +297,10 @@
 				<AdornerDecorator.BitmapEffect>
 					<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
 				</AdornerDecorator.BitmapEffect>
-				<Grid Height="38" 
+				<Grid Height="34" 
 					  SizeChanged="State_SizeChanged" 
 					  Tag="{Binding}">
-					<Ellipse 
+					<Rectangle RadiusX="10" RadiusY="30"
 						StrokeThickness="2" 
 						Stroke="#AAB1B300" 
 						Fill="#AAFFE088"/>
@@ -302,13 +308,13 @@
 						<TextBlock 
 							Text="{Binding Name}" 
 							MinWidth="40" 
-							Margin="14,0,14,0" 
+							Margin="14,2,14,0" 
 							HorizontalAlignment="Center" 
 							VerticalAlignment="Center"/>
 						<TextBlock 
 							Text="{Binding ProductRework.ReworkName}" 
 							FontSize="10"
-							Foreground="Gray"
+							Foreground="#666600"
 							MinWidth="40" 
 							Margin="14,0,14,0" 
 							HorizontalAlignment="Center" 

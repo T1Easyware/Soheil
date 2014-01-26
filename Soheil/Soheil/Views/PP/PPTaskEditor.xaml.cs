@@ -76,20 +76,12 @@ namespace Soheil.Views.PP
 		}
 		#endregion
 
-		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void newTaskFromHolderClicked(object sender, MouseButtonEventArgs e)
 		{
-			if (e.Source is TabControl)
-			{
-				if(e.AddedItems.Count == 1) 
-				{
-					var holder = e.AddedItems[0] as PPEditorTaskHolder;
-					if (holder != null)
-					{
-						holder.CreateNewTaskCommand.Execute(null);
-						((TabControl)sender).SelectedIndex--;
-					}
-				}
-			}
+		//	holder.CreateNewTaskCommand.Execute(null);
+			//((TabControl)sender).SelectedIndex--;
 		}
+
+
 	}
 }

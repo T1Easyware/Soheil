@@ -702,7 +702,15 @@ insert into dbo.StateStationActivities (Id, CycleTime, ManHour, StateStation_Id,
 (76,60,1,67,1),
 (77,60,1,68,1),
 (78,60,2,69,3),
-(79,85,1.33,69,4);
+(79,85,1.33,69,4),
+(80,45,3,1,1),
+(81,30,4,1,1),
+(82,60,2,1,2),
+(83,40,3,1,2),
+(84,44,3,2,1),
+(85,22,4,2,1),
+(86,99,1,2,1),
+(87,75,1,1,1);
 SET IDENTITY_INSERT dbo.StateStationActivities OFF
 
 SET IDENTITY_INSERT dbo.StateStationActivityMachines ON

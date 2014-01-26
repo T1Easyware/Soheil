@@ -90,7 +90,7 @@ namespace Soheil.Core.Fpc
 			var selState = values[1] as StateVm;
 			return thisState == selState ?
 				new SolidColorBrush(Color.FromRgb(255, 170, 0)) { Opacity = 1 } :
-				new SolidColorBrush(Color.FromRgb(0, 170, 255)) { Opacity = 0.7 };
+				new SolidColorBrush(Color.FromRgb(0, 200, 200)) { Opacity = 0.7 };
 		}
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
 		{

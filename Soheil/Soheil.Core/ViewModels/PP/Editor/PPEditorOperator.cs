@@ -18,35 +18,27 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public PPEditorOperator(Model.Operator model)
 		{
 			OperatorId = model.Id;
-			ProcessOperatorId = -1;
 			Name = model.Name;
 			Code = model.Code;
 		}
+
 		/// <summary>
 		/// Must be called within an EdmContext
 		/// </summary>
 		/// <param name="model"></param>
 		public PPEditorOperator(Model.ProcessOperator model)
+			:this(model.Operator)
 		{
-			OperatorId = model.Operator.Id;
 			ProcessOperatorId = model.Id;
-			Name = model.Operator.Name;
-			Code = model.Operator.Code;
 			Role = model.Role;
 			IsSelected = true;
 		}
-		public PPEditorOperator(PPEditorOperator sample)
-		{
-			OperatorId = sample.OperatorId;
-			ProcessOperatorId = sample.ProcessOperatorId;
-			Name = sample.Name;
-			Code = sample.Code;
-			IsSelected = sample.IsSelected;
-		} 
+
 		#endregion
 
 		public int OperatorId { get; protected set; }
 		public int ProcessOperatorId { get; set; }
+		public event Action SelectedOperatorsChanged;
 
 		#region DpProps
 		//Name Dependency Property
@@ -74,8 +66,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty IsSelectedProperty =
 			DependencyProperty.Register("IsSelected", typeof(bool), typeof(PPEditorOperator),
-			new UIPropertyMetadata(false/*, (d, e) => { if (((PPEditorOperator)d).IsSelectedChanged != null) ((PPEditorOperator)d).IsSelectedChanged(); }*/));
-		/*		public Action IsSelectedChanged;*/
+			new UIPropertyMetadata(false, (d, e) => { if (((PPEditorOperator)d).SelectedOperatorsChanged != null) ((PPEditorOperator)d).SelectedOperatorsChanged(); }));
 
 		//Role Dependency Property
 		public OperatorRole Role

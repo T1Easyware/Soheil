@@ -188,7 +188,7 @@ namespace Soheil.Core.DataServices
 			using (var context = new SoheilEdmContext())
 			{
 				var processReportRepository = new Repository<ProcessReport>(context);
-				var processReportDataService = new ProcessReportDataService();
+				var processReportDataService = new ProcessReportDataService(context);
 				var defectionReportRepository = new Repository<DefectionReport>(context);
 				var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
 				var stoppageReportRepository = new Repository<StoppageReport>(context);

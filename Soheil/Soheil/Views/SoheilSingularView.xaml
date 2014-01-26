@@ -894,7 +894,7 @@
                             </ToggleButton>
                             <Separator/>
                             <ToggleButton IsChecked="{Binding ViewMode, 
-							    Converter={StaticResource ppTableViewModeMatcher}, 
+							    Converter={StaticResource isEqual}, 
 							    ConverterParameter={x:Static Common:PPViewMode.Simple}}">
                                 <Image Source="/Images/PP/TaskSimpleView.png" Height="16"/>
                                 <ToggleButton.ToolTip>
@@ -902,7 +902,7 @@
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
                             <!--<ToggleButton IsChecked="{Binding ViewMode, 
-							    Converter={StaticResource ppTableViewModeMatcher}, 
+							    Converter={StaticResource isEqual}, 
 							    ConverterParameter={x:Static Common:PPViewMode.TaskReport}}">
 							    <Image Source="/Images/PP/Report.png" Height="16"/>
 							    <ToggleButton.ToolTip>
@@ -910,7 +910,7 @@
 							    </ToggleButton.ToolTip>
 						    </ToggleButton>-->
                             <ToggleButton IsChecked="{Binding ViewMode, 
-							    Converter={StaticResource ppTableViewModeMatcher}, 
+							    Converter={StaticResource isEqual}, 
 							    ConverterParameter={x:Static Common:PPViewMode.Report}}">
                                 <Image Source="/Images/PP/ProcessReport.png" Height="16"/>
                                 <ToggleButton.ToolTip>
@@ -1143,7 +1143,7 @@
                     <!--Stations-->
                     <ItemsControl Grid.Row="5" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" Name="ic_stations" IsHitTestVisible="False" 
 							      Visibility="{Binding ViewMode, 
-								    Converter={StaticResource ppTableViewModeToInvisibilityConverter}, 
+								    Converter={StaticResource isEqualToInvisibilityConverter}, 
 								    ConverterParameter={x:Static Common:PPViewMode.Report}}">
 
                         <!--PPTable ItemTemplate-->
@@ -1185,7 +1185,7 @@
                     <!--RowsOfItems(Blocks,NPTs) ItemsControl-->
                     <ItemsControl Grid.Row="5" Grid.Column="1" ItemsSource="{Binding PPItems}"
 							      Visibility="{Binding ViewMode, 
-								    Converter={StaticResource ppTableViewModeToInvisibilityConverter}, 
+								    Converter={StaticResource isEqualToInvisibilityConverter}, 
 								    ConverterParameter={x:Static Common:PPViewMode.Report}}">
 
                         <!-- ==================================== OneRow Of Item(Blocks,NPTs) ========================================= -->
@@ -1945,7 +1945,7 @@
                     <!--RowsOfItems(Tasks,NPTs) ExceptionTooltips-->
                     <ItemsControl Grid.Row="5" Grid.Column="1" ItemsSource="{Binding PPItems}" ClipToBounds="False"
 							      Visibility="{Binding ViewMode, 
-								    Converter={StaticResource ppTableViewModeToInvisibilityConverter}, 
+								    Converter={StaticResource isEqualToInvisibilityConverter}, 
 								    ConverterParameter={x:Static Common:PPViewMode.Report}}">
 
                         <!-- ==================================== OneRow Of Item(Tasks,NPTs) ========================================= -->
@@ -2000,7 +2000,7 @@
                     <!--Activities (first column of process report) -->
                     <DockPanel Grid.Row="5" Grid.ColumnSpan="2" 
 						       Visibility="{Binding ViewMode, 
-								    Converter={StaticResource ppTableViewModeToVisibilityConverter}, 
+								    Converter={StaticResource isEqualToVisibilityConverter}, 
 								    ConverterParameter={x:Static Common:PPViewMode.Report}}">
                         <Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
                             <TextBlock Text="مدت زمان" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -2061,7 +2061,7 @@
                     <!--RowsOfActivity ItemsControl & Durations, TP, G1 (other columns of process report) -->
                     <DockPanel Grid.Row="5" Grid.Column="1" 
 						       Visibility="{Binding ViewMode, 
-								    Converter={StaticResource ppTableViewModeToVisibilityConverter}, 
+								    Converter={StaticResource isEqualToVisibilityConverter}, 
 								    ConverterParameter={x:Static Common:PPViewMode.Report}}">
 
                         <!-- & Durations, TPs, G1s -->

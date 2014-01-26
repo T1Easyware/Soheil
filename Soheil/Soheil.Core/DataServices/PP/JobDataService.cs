@@ -88,7 +88,7 @@ namespace Soheil.Core.DataServices
 		internal void SaveAndGenerateTasks(IList<ViewModels.PP.Editor.PPEditorJob> jobVms)
 		{
 			//var lkvJobModels = new List<KeyValuePair<Job, Job>>();
-			var taskDs = new TaskDataService();
+			var taskDs = new TaskDataService(context);
 
 			//for each replication happens the following:
 			//	create (or update) jobs

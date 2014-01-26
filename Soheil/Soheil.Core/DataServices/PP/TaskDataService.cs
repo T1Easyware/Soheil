@@ -100,7 +100,14 @@ namespace Soheil.Core.DataServices
 		/// <param name="context"></param>
 		public void DeleteModel(Task model)
 		{
-			var entity = _taskRepository.First(x => x.Id == model.Id);
+			var entity = _taskRepository.FirstOrDefault(x => x.Id == model.Id);
+			if(entity == null)
+			{
+				//not saved at all (just remove it from its parent)
+				model.Block.Tasks.Remove(model);
+				return;
+			}
+
 			if (_taskReportRepository.Exists(x => x.Task.Id == model.Id))
 				throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
 

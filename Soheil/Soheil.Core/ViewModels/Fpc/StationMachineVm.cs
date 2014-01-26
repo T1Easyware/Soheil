@@ -14,11 +14,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			Model = model;
 			Station = station;
-			var machineDs = new MachineDataService();
-			var machineFamilyDs = new MachineFamilyDataService();
-			var machineModel = machineDs.GetSingleWithFamily(model.Machine.Id);
-			var machineFamilyModel = machineFamilyDs.GetSingle(machineModel.MachineFamily.Id);
-			Machine = new MachineVm(machineModel, new MachineFamilyVm(machineFamilyModel));
+			Machine = new MachineVm(model.Machine, new MachineFamilyVm(model.Machine.MachineFamily));
 		}
 
 		public Model.StationMachine Model { get; protected set; }

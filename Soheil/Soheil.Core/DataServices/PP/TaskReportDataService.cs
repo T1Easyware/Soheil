@@ -64,7 +64,7 @@ namespace Soheil.Core.DataServices
 		/// <param name="context"></param>
 		public void DeleteModel(TaskReport model)
 		{
-			var processReportDataService = new ProcessReportDataService();
+			var processReportDataService = new ProcessReportDataService(context);
 			var defectionReportRepository = new Repository<DefectionReport>(context);
 			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
 			var stoppageReportRepository = new Repository<StoppageReport>(context);

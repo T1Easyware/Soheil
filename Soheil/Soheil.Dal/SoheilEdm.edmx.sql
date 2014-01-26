@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/18/2014 13:26:55
+-- Date Created: 01/26/2014 15:37:54
 -- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -275,9 +275,6 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_ProcessReportOperatorProcessReport]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[OperatorProcessReports] DROP CONSTRAINT [FK_ProcessReportOperatorProcessReport];
 GO
-IF OBJECT_ID(N'[dbo].[FK_StateStationBlock]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_StateStationBlock];
-GO
 IF OBJECT_ID(N'[dbo].[FK_BlockTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_BlockTask];
 GO
@@ -301,6 +298,9 @@ IF OBJECT_ID(N'[dbo].[FK_EducationBlock]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_StateStationActivityUniqueActivitySkill]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UniqueActivitySkills] DROP CONSTRAINT [FK_StateStationActivityUniqueActivitySkill];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StateStationBlock]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_StateStationBlock];
 GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
@@ -1275,7 +1275,7 @@ CREATE TABLE [dbo].[Blocks] (
     [ModifiedBy] int  NOT NULL,
     [PPFlagsNr] tinyint  NOT NULL,
     [Job_Id] int  NULL,
-    [Education_Id] int  NOT NULL,
+    [Education_Id] int  NULL,
     [StateStation_Id] int  NOT NULL
 );
 GO

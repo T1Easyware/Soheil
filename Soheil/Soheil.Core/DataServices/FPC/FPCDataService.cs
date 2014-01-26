@@ -96,9 +96,10 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(FPC model, int groupId)
 		{
-			model.Product = new Repository<Product>(context).Single(group => group.Id == groupId);
+			var product = new Repository<Product>(context).Single(group => group.Id == groupId);
+			product.FPCs.Add(model);
+			model.Product = product;
 			model.CreatedDate = DateTime.Now;
-			//product.FPCs.Add(model);
 			context.Commit();
 
 			if (FpcAdded != null)

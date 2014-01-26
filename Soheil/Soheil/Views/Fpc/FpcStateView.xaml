@@ -7,7 +7,7 @@
              mc:Ignorable="d"
 			 MouseMove="Area_MouseMove" MouseUp="Area_MouseUp">
 	<Grid Background="{StaticResource fpcBackBrush}">
-		<Border BorderBrush="WhiteSmoke" BorderThickness="1" CornerRadius="0,0,3,3" ClipToBounds="True">
+		<Border BorderBrush="WhiteSmoke" BorderThickness="1" CornerRadius="0,0,1,1" ClipToBounds="True">
 			<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea"
 					HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown">
 				<Canvas.Style>

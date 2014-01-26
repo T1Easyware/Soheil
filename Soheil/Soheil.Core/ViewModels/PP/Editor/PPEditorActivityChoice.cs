@@ -13,12 +13,22 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public int ActivityId { get { return _model.Activity.Id; } }
 		public int StateStationActivityId { get { return _model.Id; } }
 
-		public PPEditorActivityChoice(Model.StateStationActivity model)
+		public PPEditorActivityChoice(Model.StateStationActivity model, PPEditorProcess parent)
 		{
 			_model = model;
+			Parent = parent;
 			CycleTime = _model.CycleTime;
 			ManHour = _model.ManHour;
 		}
+
+		//Parent Dependency Property
+		public PPEditorProcess Parent
+		{
+			get { return (PPEditorProcess)GetValue(ParentProperty); }
+			set { SetValue(ParentProperty, value); }
+		}
+		public static readonly DependencyProperty ParentProperty =
+			DependencyProperty.Register("Parent", typeof(PPEditorProcess), typeof(PPEditorActivityChoice), new UIPropertyMetadata(null));
 
 		//CycleTime Dependency Property
 		public float CycleTime

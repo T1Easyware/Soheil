@@ -9,8 +9,7 @@
 	<Style x:Key="toolboxBorderStyle" TargetType="{x:Type Border}">
 		<Setter Property="BorderBrush" Value="#88FFFFFF"/>
 		<Setter Property="BorderThickness" Value="2"/>
-		<Setter Property="CornerRadius" Value="5"/>
-		<Setter Property="Background" Value="#88000000"/>
+		<Setter Property="CornerRadius" Value="2"/>
 		<Setter Property="Margin" Value="4"/>
 		<Setter Property="Padding" Value="2"/>
 	</Style>
@@ -37,17 +36,7 @@
 		<Setter Property="BorderBrush" Value="#14AAFFE0"/>
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="Opacity" Value="0.5"/>
-		<Setter Property="CornerRadius" Value="5"/>
-		<Setter Property="Background">
-			<Setter.Value>
-				<LinearGradientBrush StartPoint="0,0" EndPoint="0.5,1">
-					<GradientStop Color="#886699EE" Offset="0"/>
-					<GradientStop Color="#303388FF" Offset="0.3"/>
-					<GradientStop Color="#300088FF" Offset="0.8"/>
-					<GradientStop Color="#886699EE" Offset="1"/>
-				</LinearGradientBrush>
-			</Setter.Value>
-		</Setter>
+		<Setter Property="CornerRadius" Value="2"/>
 		<Setter Property="Margin" Value="2"/>
 		<Setter Property="Padding" Value="2"/>
 	</Style>
@@ -74,8 +63,8 @@
 		<Setter Property="Opacity" Value="1"/>
 		<Setter Property="BorderBrush" Value="#44FFFFFF"/>
 		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="CornerRadius" Value="5"/>
-		<Setter Property="Background" Value="#44224466"/>
+		<Setter Property="CornerRadius" Value="1"/>
+		<Setter Property="Background" Value="#4455"/>
 		<Setter Property="Margin" Value="2"/>
 		<Setter Property="Padding" Value="2"/>
 	</Style>
@@ -137,8 +126,8 @@
 
 	<!--toolbox groups-->
 	<DataTemplate x:Key="activityGroupToolboxItemTemplate" DataType="{x:Type vm:ActivityGroupVm}">
-		<Border Style="{StaticResource toolboxGroupBorderStyle}">
-			<Expander>
+        <Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8443">
+            <Expander>
 				<Expander.Header>
 					<TextBlock Text="{Binding Name}" Foreground="White"/>
 				</Expander.Header>
@@ -149,8 +138,8 @@
 	</DataTemplate>
 
 	<DataTemplate x:Key="machineFamilyToolboxItemTemplate" DataType="{x:Type vm:MachineFamilyVm}">
-		<Border Style="{StaticResource toolboxGroupBorderStyle}">
-			<Expander>
+        <Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8345">
+            <Expander>
 				<Expander.Header>
 					<TextBlock Text="{Binding Name}" Foreground="White"/>
 				</Expander.Header>
@@ -163,7 +152,7 @@
 	<!--toolbox area-->
 	<DataTemplate x:Key="toolboxArea" DataType="{x:Type vm:FpcWindowVm}">
 		<WrapPanel Orientation="Vertical">
-			<Border Style="{StaticResource toolboxBorderStyle}">
+			<Border Style="{StaticResource toolboxBorderStyle}" Background="#8777">
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<TextBlock Text="ایستگاه ها"/>
@@ -171,16 +160,16 @@
 							<Expander.Header>
 								<TextBlock Text="همه ایستگاه ها" Foreground="White"/>
 							</Expander.Header>
-							<Border Style="{StaticResource toolboxGroupBorderStyle}">
-								<ItemsControl ItemsSource="{Binding Stations}"
+                            <Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8333">
+                                <ItemsControl ItemsSource="{Binding Stations}"
 											  ItemTemplate="{StaticResource stationToolboxItemTemplate}"/>
 							</Border>
 						</Expander>
 					</StackPanel>
 				</ScrollViewer>
 			</Border>
-			<Border Style="{StaticResource toolboxBorderStyle}">
-				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <Border Style="{StaticResource toolboxBorderStyle}" Background="#8998">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<TextBlock Text="فعالیت ها"/>
 						<ItemsControl ItemsSource="{Binding ActivityGroups}"
@@ -188,8 +177,8 @@
 					</StackPanel>
 				</ScrollViewer>
 			</Border>
-			<Border Style="{StaticResource toolboxBorderStyle}">
-				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <Border Style="{StaticResource toolboxBorderStyle}" Background="#88AB">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<TextBlock Text=" ماشین ها"/>
 						<ItemsControl ItemsSource="{Binding MachineFamilies}"

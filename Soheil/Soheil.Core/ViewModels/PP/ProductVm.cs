@@ -12,7 +12,7 @@ namespace Soheil.Core.ViewModels.PP
 	public class ProductVm : DependencyObject
 	{
 		/// <summary>
-		/// Must be called from within a Context (or have its productReworks filled beforehand)
+		/// can also be used in JobEditor
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="parentVm"></param>

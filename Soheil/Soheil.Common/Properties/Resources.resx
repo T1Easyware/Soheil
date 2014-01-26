@@ -606,4 +606,76 @@
   <data name="txtRefresh" xml:space="preserve">
     <value>بازیابی</value>
   </data>
+  <data name="txtManHour" xml:space="preserve">
+    <value>نفرساعت</value>
+  </data>
+  <data name="txtManHours" xml:space="preserve">
+    <value>نفرساعتهای مجاز</value>
+  </data>
+  <data name="txtCycleTime" xml:space="preserve">
+    <value>زمان سیکل</value>
+  </data>
+  <data name="txtCycleTimeSec" xml:space="preserve">
+    <value>زمان سیکل (ثانیه)</value>
+  </data>
+  <data name="txtDuration" xml:space="preserve">
+    <value>مدت</value>
+  </data>
+  <data name="txtTargetPoint" xml:space="preserve">
+    <value>مقدار هدف</value>
+  </data>
+  <data name="msgDeleteTask" xml:space="preserve">
+    <value>آیا این برنامه حذف شود؟</value>
+  </data>
+  <data name="PPE_DeferToActivites" xml:space="preserve">
+    <value>مقادیر مستقل برای هر فعالیت</value>
+  </data>
+  <data name="PPE_DurationOrTP" xml:space="preserve">
+    <value>زمان یا مقدار هدف</value>
+  </data>
+  <data name="PPE_FirstEmptySpace" xml:space="preserve">
+    <value>اولین زمان خالی</value>
+  </data>
+  <data name="PPE_InvalidDuration" xml:space="preserve">
+    <value>مدت نامعتبر</value>
+  </data>
+  <data name="PPE_NextHour" xml:space="preserve">
+    <value>ساعت +1</value>
+  </data>
+  <data name="PPE_SameQtyForActivites" xml:space="preserve">
+    <value>مقدار هدف مساوی برای فعالیتها</value>
+  </data>
+  <data name="PPE_SameTimeForActivites" xml:space="preserve">
+    <value>مدت تولید مساوی برای فعالیتها</value>
+  </data>
+  <data name="PPE_StartOfNextHour" xml:space="preserve">
+    <value>ابتدای ساعت بعد</value>
+  </data>
+  <data name="PPE_StartOfNextHourTooltip" xml:space="preserve">
+    <value>ساعت بعد از الان (زمان وارد شده مد نظر نمی باشد)</value>
+  </data>
+  <data name="PPE_SumOfTP" xml:space="preserve">
+    <value>مجموع کل هدف</value>
+  </data>
+  <data name="PPE_TaskDuration" xml:space="preserve">
+    <value>زمان تولید ایستگاه</value>
+  </data>
+  <data name="PPE_TaskTP" xml:space="preserve">
+    <value>مقدار هدف ایستگاه</value>
+  </data>
+  <data name="txtDate" xml:space="preserve">
+    <value>تاریخ</value>
+  </data>
+  <data name="txtEndTime" xml:space="preserve">
+    <value>زمان خاتمه</value>
+  </data>
+  <data name="txtTime" xml:space="preserve">
+    <value>زمان</value>
+  </data>
+  <data name="txtToday" xml:space="preserve">
+    <value>امروز</value>
+  </data>
+  <data name="txtTomorrow" xml:space="preserve">
+    <value>فردا</value>
+  </data>
 </root>

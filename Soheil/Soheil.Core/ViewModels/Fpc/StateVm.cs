@@ -301,6 +301,17 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			Model.X = (float)this.Location.X;
 			Model.Y = (float)this.Location.Y;
+			//check for manhour duplication for ssa's with same activity defined in a stateStation
+			if (Config.ContentsList.Any(ss => 
+				ss.ContentsList.GroupBy(ssa => ssa.Containment.Id)
+				.Any(ssaWithSameActivity => 
+					ssaWithSameActivity.GroupBy(x=>((StateStationActivityVm)x).ManHour)
+					.Any(ssaWSA_grpByMH => 
+					ssaWSA_grpByMH.Count() > 1))))
+				throw new Soheil.Common.SoheilException.SoheilExceptionBase(
+					"بعضی از فعالیتهای همسان نفرساعت یکسان دارند", 
+					Common.SoheilException.ExceptionLevel.Error,
+					"ذخیره نشد");
 		}
 
 		//SaveCommand

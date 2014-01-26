@@ -1218,7 +1218,7 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="PPFlagsNr" Type="tinyint" Nullable="false" />
     <Property Name="Job_Id" Type="int" Nullable="true" />
-    <Property Name="Education_Id" Type="int" Nullable="false" />
+    <Property Name="Education_Id" Type="int" Nullable="true" />
     <Property Name="StateStation_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="NonProductiveTasks_PM">
@@ -1232,7 +1232,7 @@
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="StartOffset" Type="datetimeoffset" Nullable="false" />
+    <Property Name="StartOffset" Type="datetimeoffset" Nullable="false" Precision="7" />
     <Property Name="Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="NonProductiveTasks_Setup">
@@ -2355,7 +2355,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="EducationBlock">
-    <End Role="Education" Type="SoheilEdm.Store.NonProductiveTasks_Education" Multiplicity="1" />
+    <End Role="Education" Type="SoheilEdm.Store.NonProductiveTasks_Education" Multiplicity="0..1" />
     <End Role="Block" Type="SoheilEdm.Store.Blocks" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Education">
@@ -3039,16 +3039,16 @@
           <Property Type="Int32" Name="DurationSeconds" Nullable="false" />
           <NavigationProperty Name="Processes" Relationship="SoheilEdm.TaskProcess" FromRole="Task" ToRole="Process" />
           <NavigationProperty Name="TaskReports" Relationship="SoheilEdm.TaskTaskReport" FromRole="Task" ToRole="TaskReport" />
-          <Property Type="DateTime" Name="StartDateTime" Nullable="false" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="DateTime" Name="StartDateTime" Nullable="false" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" Precision="3" />
           <Property Type="Int32" Name="TaskTargetPoint" Nullable="false" />
-          <Property Type="DateTime" Name="EndDateTime" Nullable="false" >
+          <Property Type="DateTime" Name="EndDateTime" Nullable="false" Precision="3" >
             <Documentation>
               <Summary>Duplicate</Summary>
             </Documentation>
           </Property>
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Block" Relationship="SoheilEdm.BlockTask" FromRole="Task" ToRole="Block" />
-          <Property Name="Code" Type="String" />
+          <Property Name="Code" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="Activity">
           <Key>
@@ -3231,14 +3231,14 @@
           <Property Type="String" Name="Code" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Type="Byte" Name="Status" Nullable="false" cg:SetterAccess="Public" cg:GetterAccess="Public" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Type="Int32" Name="ModifiedBy" Nullable="false" />
-          <Property Type="DateTime" Name="ModifiedDate" Nullable="false" />
-          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="DateTime" Name="ModifiedDate" Nullable="false" Precision="3" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" Precision="3" />
           <NavigationProperty Name="Task" Relationship="SoheilEdm.TaskTaskReport" FromRole="TaskReport" ToRole="Task" />
           <NavigationProperty Name="ProcessReports" Relationship="SoheilEdm.TaskReportProcessReport" FromRole="TaskReport" ToRole="ProcessReport" />
-          <Property Type="DateTime" Name="ReportStartDateTime" Nullable="false" />
+          <Property Type="DateTime" Name="ReportStartDateTime" Nullable="false" Precision="3" />
           <Property Type="Int32" Name="ReportDurationSeconds" Nullable="false" />
           <Property Type="Int32" Name="TaskProducedG1" Nullable="false" />
-          <Property Type="DateTime" Name="ReportEndDateTime" Nullable="false" />
+          <Property Type="DateTime" Name="ReportEndDateTime" Nullable="false" Precision="3" />
           <Property Type="Int32" Name="TaskReportTargetPoint" Nullable="false" />
         </EntityType>
         <EntityType Name="StoppageReport">
@@ -3822,14 +3822,14 @@
           <NavigationProperty Name="NonProductiveTaskReport" Relationship="SoheilEdm.NonProductiveTaskReportNonProductiveTask" FromRole="NonProductiveTask" ToRole="NonProductiveTaskReport" />
           <Property Type="DateTime" Name="StartDateTime" Nullable="false" Precision="3" />
           <Property Type="DateTime" Name="EndDateTime" Nullable="false" Precision="3" />
-          <Property Type="String" Name="Description" />
+          <Property Type="String" Name="Description" MaxLength="Max" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="PM" BaseType="SoheilEdm.NonProductiveTask">
           <NavigationProperty Name="StationMachine" Relationship="SoheilEdm.StationMachinePM" FromRole="PM" ToRole="StationMachine" />
         </EntityType>
         <EntityType Name="Education" BaseType="SoheilEdm.NonProductiveTask">
           <NavigationProperty Name="EducatingOperators" Relationship="SoheilEdm.EducationEducatingOperator" FromRole="Education" ToRole="EducatingOperator" />
-          <Property Type="DateTimeOffset" Name="StartOffset" Nullable="false" />
+          <Property Type="DateTimeOffset" Name="StartOffset" Nullable="false" Precision="7" />
           <NavigationProperty Name="Blocks" Relationship="SoheilEdm.EducationBlock" FromRole="Education" ToRole="Block" />
         </EntityType>
         <Association Name="StationMachinePM">
@@ -3874,7 +3874,7 @@
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ReportDurationSeconds" Nullable="false" />
           <NavigationProperty Name="NonProductiveTasks" Relationship="SoheilEdm.NonProductiveTaskReportNonProductiveTask" FromRole="NonProductiveTaskReport" ToRole="NonProductiveTask" />
-          <Property Type="String" Name="Description" />
+          <Property Type="String" Name="Description" MaxLength="Max" Unicode="true" FixedLength="false" />
         </EntityType>
         <Association Name="NonProductiveTaskReportNonProductiveTask">
           <End Type="SoheilEdm.NonProductiveTaskReport" Role="NonProductiveTaskReport" Multiplicity="0..1" />
@@ -3886,12 +3886,12 @@
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="ProductRework" Relationship="SoheilEdm.ProductReworkJob" FromRole="Job" ToRole="ProductRework" />
-          <Property Type="DateTime" Name="Deadline" Nullable="false" />
+          <Property Type="DateTime" Name="Deadline" Nullable="false" Precision="3" />
           <Property Type="Single" Name="Weight" Nullable="false" />
           <Property Type="Int32" Name="Quantity" Nullable="false" />
-          <Property Type="String" Name="Description" />
-          <Property Type="String" Name="Code" />
-          <Property Type="DateTime" Name="ReleaseTime" Nullable="false" />
+          <Property Type="String" Name="Description" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Type="String" Name="Code" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Type="DateTime" Name="ReleaseTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="FPC" Relationship="SoheilEdm.FPCJob" FromRole="Job" ToRole="FPC" />
           <NavigationProperty Name="Blocks" Relationship="SoheilEdm.JobBlock" FromRole="Job" ToRole="Block" />
         </EntityType>
@@ -3904,8 +3904,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="Weight" Nullable="false" />
-          <Property Type="String" Name="Name" Nullable="false" />
+          <Property Type="String" Name="Weight" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
         </EntityType>
         <Association Name="ProductFPC">
           <End Type="SoheilEdm.Product" Role="Product" Multiplicity="1" />
@@ -3932,7 +3932,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="Name" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Type="Byte" Name="WeekStartNr" Nullable="false" DefaultValue="0" />
           <Property Type="Byte" Name="SaturdayBusinessStateNr" Nullable="false" DefaultValue="0" />
           <Property Type="Byte" Name="SundayBusinessStateNr" Nullable="false" DefaultValue="0" />
@@ -3953,7 +3953,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="Name" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Type="Int32" Name="ColorNr" Nullable="false" DefaultValue="0" />
           <Property Type="Byte" Name="BusinessStateNr" Nullable="false" DefaultValue="0" />
           <NavigationProperty Name="WorkShifts" Relationship="SoheilEdm.WorkDayWorkShift" FromRole="WorkDay" ToRole="WorkShift" />
@@ -3997,9 +3997,9 @@
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="WorkProfile" Relationship="SoheilEdm.WorkProfileWorkProfilePlan" FromRole="WorkProfilePlan" ToRole="WorkProfile" />
-          <Property Type="String" Name="Name" Nullable="false" />
-          <Property Type="DateTime" Name="StartDate" Nullable="false" />
-          <Property Type="DateTime" Name="EndDate" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" Precision="3" />
+          <Property Type="DateTime" Name="EndDate" Nullable="false" Precision="3" />
           <Property Type="Byte" Name="MergingStrategyNr" Nullable="false" DefaultValue="0" />
           <Property Type="DateTime" Name="ModifiedDate" Nullable="false" Precision="3" />
           <Property Type="DateTime" Name="CreatedDate" Nullable="false" Precision="3" />
@@ -4014,8 +4014,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="Name" Nullable="false" />
-          <Property Type="DateTime" Name="Date" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Type="DateTime" Name="Date" Nullable="false" Precision="3" />
           <Property Type="Byte" Name="BusinessStateNr" Nullable="false" DefaultValue="0" />
           <Property Type="Boolean" Name="IsRecurrent" Nullable="false" DefaultValue="True" />
         </EntityType>
@@ -4024,7 +4024,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="Name" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Type="Int32" Name="ColorNr" Nullable="false" DefaultValue="0" />
           <NavigationProperty Name="WorkProfile" Relationship="SoheilEdm.WorkProfileWorkShiftPrototype" FromRole="WorkShiftPrototype" ToRole="WorkProfile" />
           <NavigationProperty Name="WorkShifts" Relationship="SoheilEdm.WorkShiftPrototypeWorkShift" FromRole="WorkShiftPrototype" ToRole="WorkShift" />
@@ -4098,10 +4098,10 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
-          <Property Name="StartDateTime" Type="DateTime" Nullable="false" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Name="Code" Type="String" />
+          <Property Name="StartDateTime" Type="DateTime" Nullable="false" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" Precision="3" />
+          <Property Name="Code" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="BlockTargetPoint" Type="Int32" Nullable="false" />
-          <Property Name="EndDateTime" Type="DateTime" Nullable="false" />
+          <Property Name="EndDateTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="PPFlagsNr" Type="Byte" Nullable="false" cg:GetterAccess="Private" cg:SetterAccess="Private" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <NavigationProperty Name="Tasks" Relationship="SoheilEdm.BlockTask" FromRole="Block" ToRole="Task" />
@@ -4134,7 +4134,7 @@
           <End Type="SoheilEdm.StateStation" Multiplicity="*" Role="StateStation" />
         </Association>
         <Association Name="EducationBlock">
-          <End Type="SoheilEdm.Education" Role="Education" Multiplicity="1" />
+          <End Type="SoheilEdm.Education" Role="Education" Multiplicity="0..1" />
           <End Type="SoheilEdm.Block" Role="Block" Multiplicity="*" />
         </Association>
         <Association Name="StateStationActivityUniqueActivitySkill">
@@ -5655,6 +5655,7 @@
       <EndProperty Name="Block">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
+      <Condition ColumnName="Education_Id" IsNull="false" />
     </AssociationSetMapping>
     <AssociationSetMapping Name="StateStationActivityUniqueActivitySkill" TypeName="SoheilEdm.StateStationActivityUniqueActivitySkill" StoreEntitySet="UniqueActivitySkills">
       <EndProperty Name="StateStationActivity">

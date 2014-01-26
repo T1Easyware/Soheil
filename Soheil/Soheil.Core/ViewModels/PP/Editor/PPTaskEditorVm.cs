@@ -16,30 +16,40 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		protected DataServices.ProductGroupDataService _productGroupDs;
 		protected DataServices.FPCDataService _fpcDs;
 		protected DataServices.OperatorDataService _operatorDs;
-
-		public PPTaskEditorVm(Action<IList<PPEditorBlock>> blocksSaved)
+		protected DataServices.TaskDataService _taskDs;
+		protected DataServices.BlockDataService _blockDs;
+		public Dal.SoheilEdmContext UOW { get; private set; }
+		public PPTaskEditorVm()
 		{
-			BlocksSaved = blocksSaved;
-			FpcViewer = new Fpc.FpcWindowVm();
+			UOW = new Dal.SoheilEdmContext();
+			Reset();
+		}
+		public void Reset()
+		{
+			FpcViewer = new Fpc.FpcWindowVm(UOW);
 			FpcViewer.SelectState += FpcViewer_AddNewBlock;
-
 			initializeDataServices();
 			initializeCommands();
+			SelectedBlock = null;
+			SelectedProduct = null;
+			BlockList.Clear();
+			ShowFpc = true;
 		}
 
 		void initializeDataServices()
 		{
-			var uow = new Dal.SoheilEdmContext();
-			_productGroupDs = new DataServices.ProductGroupDataService(uow);
-			_fpcDs = new DataServices.FPCDataService(uow);
-			_operatorDs = new DataServices.OperatorDataService(uow);
+			_productGroupDs = new DataServices.ProductGroupDataService(UOW);
+			_fpcDs = new DataServices.FPCDataService(UOW);
+			_operatorDs = new DataServices.OperatorDataService(UOW);
+			_taskDs = new DataServices.TaskDataService(UOW);
+			_blockDs = new DataServices.BlockDataService(UOW);
 
+			AllProductGroups.Clear();
 			var pgList = _productGroupDs.GetActivesRecursive();
 			foreach (var pg in pgList)
 			{
 				AllProductGroups.Add(new ProductGroupVm(pg));
 			}
-			
 		}
 
 		//FpcViewer Dependency Property
@@ -59,7 +69,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var block = BlockList.FirstOrDefault(x => x.StateId == fpcState.Id);
 			if (block == null)
 			{
-				block = new PPEditorBlock(fpcState.Model);
+				block = new PPEditorBlock(fpcState.Model, UOW);
 				BlockList.Add(block);
 			}
 		}
@@ -71,12 +81,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				SelectedBlock = null;
 			}
 			BlockList.Remove(block);
-		}
-		//Save
-		internal Action<IList<PPEditorBlock>> BlocksSaved;//PPTableVm handles this event
-		protected void SaveBlocks(List<PPEditorBlock> blocks)//View calls this function
-		{
-			if (BlocksSaved != null) BlocksSaved(blocks);
 		}
 		#endregion
 
@@ -155,38 +159,25 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsVisibleProperty, value); }
 		}
 		public static readonly DependencyProperty IsVisibleProperty =
-			DependencyProperty.Register("IsVisible", typeof(bool), typeof(PPTaskEditorVm),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				var vm = (PPTaskEditorVm)d;
-				var val = (bool)e.NewValue;
-				if (val) {/* asd;*/ }
-			}));
+			DependencyProperty.Register("IsVisible", typeof(bool), typeof(PPTaskEditorVm), new UIPropertyMetadata(false));
 		#endregion
 
 		#region Commands
-		public void Reset()
-		{
-			SelectedBlock = null;
-			SelectedProduct = null;
-			BlockList.Clear();
-			ShowFpc = true;
-		}
-
 		void initializeCommands()
 		{
 			SaveCommand = new Commands.Command(o =>
-			{
+			{/*
 				if (SelectedBlock == null) return;
 				try
 				{
-					SaveBlocks(new List<PPEditorBlock> { SelectedBlock });
+					_blockDs.SaveBlock(SelectedBlock.Model);
 				}
 				catch (Exception exp)
 				{
 					MessageBox.Show(exp.Message);
 				}
-
+				*/
+				throw new Exception("not meant to be run yet. reason of disability: possible loss of data due to shared UOW throughout the taskEditor");
 			});
 			ClearAllCommand = new Commands.Command(o =>
 			{
@@ -200,7 +191,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				try
 				{
-					SaveBlocks(BlockList.ToList());
+					foreach (var block in BlockList)
+					{
+						block.CorrectProcesses();
+						_blockDs.SaveBlock(block.Model);
+					}
 					Reset();
 					IsVisible = false;
 				}

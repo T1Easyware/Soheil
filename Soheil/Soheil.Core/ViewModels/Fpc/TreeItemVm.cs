@@ -133,11 +133,11 @@ namespace Soheil.Core.ViewModels.Fpc
 			switch (level)
 			{
 				case 0:
-					return new SolidColorBrush(Color.FromRgb(190, 175, 210)) { Opacity = 0.5 };
+					return new SolidColorBrush(Color.FromRgb(150, 150, 150)) { Opacity = 0.5 };
 				case 1:
-					return new SolidColorBrush(Color.FromRgb(150, 180, 220)) { Opacity = 0.5 };
+					return new SolidColorBrush(Color.FromRgb(220, 220, 180)) { Opacity = 0.5 };
 				case 2:
-					return new SolidColorBrush(Color.FromRgb(160, 200, 180)) { Opacity = 0.5 };
+					return new SolidColorBrush(Color.FromRgb(150, 210, 220)) { Opacity = 0.5 };
 				default:
 					return new SolidColorBrush(Colors.Red);
 			}

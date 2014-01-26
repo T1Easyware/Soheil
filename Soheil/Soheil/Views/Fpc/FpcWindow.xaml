@@ -56,22 +56,20 @@
 				</ToggleButton>
 			</ToolBar>
 			<!--WorkArea-->
-			<Border BorderBrush="#5FFF" BorderThickness="2,0,2,2" CornerRadius="0,0,5,5">
+			<Border BorderBrush="#5FFF" BorderThickness="2,0,2,2" CornerRadius="0,0,2,2">
 				<DockPanel>
-					<ContentPresenter DockPanel.Dock="Left" Panel.ZIndex="5" Content="{Binding}"
-										ContentTemplate="{StaticResource toolboxArea}"/>
-					<Canvas TextBlock.Foreground="Black" Background="#01000000" Name="DrawingArea"
-							HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
-						<ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-							ItemsSource="{Binding Connectors}"
-							ItemTemplate="{StaticResource connectorTemplate}"/>
-						<ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-							ItemsSource="{Binding States}"
-							ItemTemplateSelector="{StaticResource stateTemplateSelector}"/>
-						<ContentPresenter
-							Content="{Binding SelectedToolboxItem}"
-							ContentTemplate="{StaticResource dragToolboxItemTemplate}"/>
-					</Canvas>
+					<ContentPresenter DockPanel.Dock="Left" Panel.ZIndex="5" Content="{Binding}" ContentTemplate="{StaticResource toolboxArea}"/>
+					<Canvas TextBlock.Foreground="Black" Background="#01000000" Name="DrawingArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
+                        <Canvas Width="0" Height="0">
+                            <ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Connectors}" ItemTemplate="{StaticResource connectorTemplate}"/>
+                        </Canvas>
+                        <Canvas Width="0" Height="0">
+                            <ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding States}" ItemTemplateSelector="{StaticResource stateTemplateSelector}"/>
+                        </Canvas>
+                        <Canvas Width="0" Height="0">
+                            <ContentPresenter Content="{Binding SelectedToolboxItem}" ContentTemplate="{StaticResource dragToolboxItemTemplate}"/>
+                        </Canvas>
+                    </Canvas>
 				</DockPanel>
 			</Border>
 		</DockPanel>

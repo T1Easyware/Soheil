@@ -11,6 +11,20 @@ using Soheil.Common;
 namespace Soheil.Controls.Converters.PP
 {
 	#region Colors and Visual
+
+	public class IsEqualToBrushConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == values[1]) return ((Brush[])parameter)[0];
+			else return ((Brush[])parameter)[1];
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
 	public class TimeRollItemBackgroundConverter : IValueConverter
 	{
 		readonly Color HEADER = Color.FromArgb(255, 0, 180, 230);
@@ -134,6 +148,20 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class HasErrorToShadowColor : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (bool)value ? Colors.Red : Colors.Black;
+		}
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+	#endregion
+
+	#region Visibility
 	public class BooleanToInvisibilityConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -146,65 +174,92 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
-	public class HasErrorToShadowColor : IValueConverter
+	public class IsEqualToInvisibilityConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (bool)value ? Colors.Red : Colors.Black;
+			return (parameter == value) ? Visibility.Collapsed : Visibility.Visible;
 		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+	public class IsEqualToVisibilityConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (parameter == value) ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+
+	public class IsEqualToInvisibilityConverter2 : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (values[0] == values[1]) ? Visibility.Collapsed : Visibility.Visible;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+	public class IsEqualToVisibilityConverter2 : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (values[0] == values[1]) ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+
+	public class IsNotNullToVisibility : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (value != null) ? Visibility.Visible : Visibility.Collapsed;
+		}
+
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}
 	}
-
-	public class PPTableViewModeMatcher : IValueConverter
+	public class IsNullToVisibility : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var match = (PPViewMode)parameter;
-			var target = (PPViewMode)value;
-			return (target == match);
+			return (value == null) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if ((bool)value)
-				return (PPViewMode)parameter;
-			return null;
+			throw new NotImplementedException();
 		}
 	}
-	public class PPTableViewModeToInvisibilityConverter : IValueConverter
+	public class LogicalAndToVisibility : IMultiValueConverter
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			var match = (PPViewMode)parameter;
-			var target = (PPViewMode)value;
-			return (target == match) ? Visibility.Collapsed : Visibility.Visible;
+			return values.All(x => (bool)x) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
 		{
-			return null;
+			throw new NotImplementedException();
 		}
 	}
-	public class PPTableViewModeToVisibilityConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			var match = (PPViewMode)parameter;
-			var target = (PPViewMode)value;
-			return (target == match) ? Visibility.Visible : Visibility.Collapsed;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return null;
-		}
-	}
-	
-
-
 	#endregion
 
 	#region PP coordinations
@@ -533,23 +588,32 @@ namespace Soheil.Controls.Converters.PP
 	#endregion
 
 	#region General
-	/*public class IndexToHeightConverter : IMultiValueConverter
+	public class IsEqual : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (parameter == value);
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if ((bool)value)
+				return parameter;
+			return null;
+		}
+	}
+	public class IsEqual2 : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) 
-				return new GridLength(42);
-			var list = (Core.ViewModels.PP.AdvancedRowDefinitionCollection)values[0];
-			var index = (int)values[1];
-			return list[index].ActualHeight;
+			return values[0] == values[1];
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
-	}*/
-
+	}
 	public class Inverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -590,12 +654,11 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
-
-	public class IsNotNullToVisibility : IValueConverter
+	public class IsNull : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (value != null) ? Visibility.Visible : Visibility.Collapsed;
+			return (value == null);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -603,18 +666,7 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
-	public class IsNullToVisibility : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return (value == null) ? Visibility.Visible : Visibility.Collapsed;
-		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
 
 	public class LogicalAnd : IMultiValueConverter
 	{
@@ -628,19 +680,6 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
-	public class LogicalAndToVisibility : IMultiValueConverter
-	{
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-		{
-			return values.All(x => (bool)x) ? Visibility.Visible : Visibility.Collapsed;
-		}
-
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
 	#endregion
 	
 	#region Math
@@ -788,7 +827,7 @@ namespace Soheil.Controls.Converters.PP
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
-			var ts = new TimeSpan(0, 0, (int)value);
+			var ts = new TimeSpan(0, 0, System.Convert.ToInt32(value));
 			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss");
 		}
 

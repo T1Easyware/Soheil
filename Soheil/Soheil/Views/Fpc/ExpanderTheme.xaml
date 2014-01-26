@@ -113,7 +113,7 @@
 	<ControlTemplate x:Key="ExpanderToggleButton" TargetType="ToggleButton">
 		<Border
 			Name="Border" 
-			CornerRadius="2,0,0,0"
+			CornerRadius="1,0,0,0"
 			Background="Transparent"
 			BorderBrush="{StaticResource NormalBorderBrush}"
 			BorderThickness="0,0,1,0">
@@ -145,7 +145,7 @@
 	<ControlTemplate x:Key="ExpanderDeleteButton" TargetType="Button">
 		<Border
 			Name="Border" 
-			CornerRadius="0,2,0,0"
+			CornerRadius="0,1,0,0"
 			Background="Transparent"
 			BorderBrush="{StaticResource NormalBorderBrush}"
 			BorderThickness="1,0,0,0">
@@ -172,7 +172,7 @@
 				Grid.Row="0" 
 				BorderBrush="{StaticResource NormalBorderBrush}"
 				BorderThickness="1" 
-				CornerRadius="2,2,0,0">
+				CornerRadius="1,1,0,0">
 				<Border.Background>
 					<LinearGradientBrush 
 						StartPoint="0,0" EndPoint="0,1" 
@@ -203,7 +203,7 @@
 						Background="{StaticResource NormalBrush}"/>
 					<ContentPresenter 
 						Grid.Column="1"
-						Margin="4" 
+						Margin="2" 
 						ContentSource="Header" 
 						RecognizesAccessKey="True"/>
 					<Button 
@@ -218,8 +218,8 @@
 				Name="Content" 
 				Grid.Row="1" 
 				BorderThickness="1,0,1,1" 
-				CornerRadius="0,0,2,2">
-				<ContentPresenter Margin="4" />
+				CornerRadius="0,0,1,1">
+				<ContentPresenter Margin="2" />
 			</Border>
 		</Grid>
 		<ControlTemplate.Triggers>
@@ -245,7 +245,7 @@
 				Grid.Row="0" 
 				BorderBrush="{StaticResource NormalBorderBrush}"
 				BorderThickness="1" 
-				CornerRadius="2,2,0,0">
+				CornerRadius="1,1,0,0">
 				<Border.Background>
 					<LinearGradientBrush 
 						StartPoint="0,0" EndPoint="0,1" 
@@ -275,7 +275,7 @@
 						Background="{StaticResource NormalBrush}"/>
 					<ContentPresenter 
 						Grid.Column="1"
-						Margin="4" 
+						Margin="2" 
 						ContentSource="Header" 
 						RecognizesAccessKey="True"/>
 				</Grid>
@@ -284,8 +284,8 @@
 				Name="Content" 
 				Grid.Row="1" 
 				BorderThickness="1,0,1,1" 
-				CornerRadius="0,0,2,2">
-				<ContentPresenter Margin="4" />
+				CornerRadius="0,0,1,1">
+				<ContentPresenter Margin="2" />
 			</Border>
 		</Grid>
 		<ControlTemplate.Triggers>

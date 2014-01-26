@@ -10,6 +10,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class PPEditorJob : DependencyObject
 	{
+		internal event Action<PPEditorJob> JobDeleted;
+		public int FpcId { get; set; }
+
 		public static PPEditorJob CreateForProduct(Model.Product productModel)
 		{
 			return new PPEditorJob(new Model.Job
@@ -36,8 +39,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			FpcId = model.FPC.Id;
 			Product = new ProductVm(model.ProductRework.Product, null);
 			ProductRework = new ProductReworkVm(model.ProductRework, Product);
+
+			initializeCommands();
 		}
-		public int FpcId { get; set; }
 
 		#region Basic DpProps
 		//Code Dependency Property
@@ -178,17 +182,62 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}));
 		#endregion
 
+		#region Replication observ
 		//Replications         important: only allowed to use Id
-		private ObservableCollection<Model.Job> _replications = new ObservableCollection<Model.Job>();
 		public ObservableCollection<Model.Job> Replications { get { return _replications; } }
-		public void AddReplication()
+		private ObservableCollection<Model.Job> _replications = new ObservableCollection<Model.Job>(); 
+		#endregion
+
+		#region Commands
+		void initializeCommands()
 		{
-			Replications.Add(new Model.Job());
+			SaveCommand = new Commands.Command(o =>
+			{
+				throw new Exception("PPEJ");
+			});
+			DeleteJobCommand = new Commands.Command(o =>
+			{
+				if (JobDeleted != null) JobDeleted(this);
+			});
+			AddReplicationCommand = new Commands.Command(o => Replications.Add(new Model.Job()));
+			RemoveReplicationCommand = new Commands.Command(o =>
+			{
+				if (Replications.Count > 1)
+					Replications.Remove(Replications.Last());
+			});
 		}
-		public void RemoveReplication()
+		//SaveCommand Dependency Property
+		public Commands.Command SaveCommand
 		{
-			if (Replications.Count > 1)
-				Replications.Remove(Replications.Last());
+			get { return (Commands.Command)GetValue(SaveCommandProperty); }
+			set { SetValue(SaveCommandProperty, value); }
 		}
+		public static readonly DependencyProperty SaveCommandProperty =
+			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(PPEditorJob), new UIPropertyMetadata(null));
+		//DeleteJobCommand Dependency Property
+		public Commands.Command DeleteJobCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteJobCommandProperty); }
+			set { SetValue(DeleteJobCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteJobCommandProperty =
+			DependencyProperty.Register("DeleteJobCommand", typeof(Commands.Command), typeof(PPEditorJob), new UIPropertyMetadata(null));
+		//AddReplicationCommand Dependency Property
+		public Commands.Command AddReplicationCommand
+		{
+			get { return (Commands.Command)GetValue(AddReplicationCommandProperty); }
+			set { SetValue(AddReplicationCommandProperty, value); }
+		}
+		public static readonly DependencyProperty AddReplicationCommandProperty =
+			DependencyProperty.Register("AddReplicationCommand", typeof(Commands.Command), typeof(PPEditorJob), new UIPropertyMetadata(null));
+		//RemoveReplicationCommand Dependency Property
+		public Commands.Command RemoveReplicationCommand
+		{
+			get { return (Commands.Command)GetValue(RemoveReplicationCommandProperty); }
+			set { SetValue(RemoveReplicationCommandProperty, value); }
+		}
+		public static readonly DependencyProperty RemoveReplicationCommandProperty =
+			DependencyProperty.Register("RemoveReplicationCommand", typeof(Commands.Command), typeof(PPEditorJob), new UIPropertyMetadata(null)); 
+		#endregion
 	}
 }

@@ -151,9 +151,30 @@ namespace Soheil.Core.DataServices
 			return new int[] { g1, 100*taskTp / reportedTaskTp };
 		}
 
-		internal void SaveBlock(ViewModels.PP.Editor.PPEditorBlock block)
+		internal void SaveBlock(Block block)
 		{
-			throw new NotImplementedException();
+			if (!_blockRepository.Exists(x => x.Id == block.Id))
+				_blockRepository.Add(block);
+			block.Code = string.Format("{0:D3}{1:D2}{2}.",
+				(int)block.StartDateTime.GetPersianDayOfYear(),
+				block.StartDateTime.Hour,
+				block.StateStation.Station.Code);
+			foreach (var task in block.Tasks)
+			{
+				var emptyProcesses = task.Processes.Where(x => x.TargetCount == 0).ToArray();
+				foreach (var emptyProcess in emptyProcesses)
+				{
+					task.Processes.Remove(emptyProcess);
+				}
+
+				var invalidProcessGroup = task.Processes.GroupBy(p => p.StateStationActivity.Activity.Id).FirstOrDefault(ag => ag.Count() > 1);
+				if (invalidProcessGroup != null)
+					throw new Soheil.Common.SoheilException.RoutedException(
+						"یک فعالیت نمی تواند بیش از یک بار استفاده شود",
+						Common.SoheilException.ExceptionLevel.Error,
+						invalidProcessGroup.First());
+			}
+			context.Commit();
 		}
 
 /*		internal void AttachModelFromVm(PPEditorTask vm)
@@ -745,6 +766,5 @@ namespace Soheil.Core.DataServices
 		}
 
 		#endregion
-
 	}
 }

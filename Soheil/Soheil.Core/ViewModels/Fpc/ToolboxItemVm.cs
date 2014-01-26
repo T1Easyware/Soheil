@@ -21,7 +21,9 @@ namespace Soheil.Core.ViewModels.Fpc
 			var states = _parentWindowVm.States.Where(x => x.ShowDetails && x.Config != null);
 			foreach (var state in states)
 			{
-				if (state.Config.ContentsList.Any(x => x.Containment.Id == ContentData.Id && !x.IsDropIndicator)) continue;
+				if (state.Config.ContentsList.Any(s => 
+					s.Containment.Id == ContentData.Id && 
+					!s.IsDropIndicator)) continue;
 				Rect r = new Rect(state.Location.X, state.Location.Y, state.Width, state.Height);
 				if (r.Contains(mouse.X, mouse.Y))
 					return state.Config;
@@ -35,7 +37,9 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				var station = state.Config.ContentsList.SingleOrDefault(x => x.IsExpanded) as StateStationVm;
 				if (station == null) continue;
-				if (station.ContentsList.Any(x => x.Containment.Id == ContentData.Id && !x.IsDropIndicator)) continue;
+				/*if (station.ContentsList.Any(ss =>
+					ss.Containment.Id == ContentData.Id && 
+					!ss.IsDropIndicator)) continue;*/
 				Rect r = new Rect(state.Location.X, state.Location.Y, state.Width, state.Height);
 				if (r.Contains(mouse.X, mouse.Y))
 					return station;
@@ -52,7 +56,9 @@ namespace Soheil.Core.ViewModels.Fpc
 				if (station == null) continue;
 				var activity = station.ContentsList.SingleOrDefault(x => x.IsExpanded) as StateStationActivityVm;
 				if (activity == null) continue;
-				if (activity.ContentsList.Any(x => x.Containment.Id == ContentData.Id && !x.IsDropIndicator)) continue;
+				if (activity.ContentsList.Any(ssa => 
+					ssa.Containment.Id == ContentData.Id 
+					&& !ssa.IsDropIndicator)) continue;
 				Rect r = new Rect(state.Location.X, state.Location.Y, state.Width, state.Height);
 				if (r.Contains(mouse.X, mouse.Y))
 					return activity;

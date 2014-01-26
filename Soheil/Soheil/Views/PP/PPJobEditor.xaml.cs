@@ -52,39 +52,5 @@ namespace Soheil.Views.PP
 			if (product != null)
 				VM.JobList.Add(new PPEditorJob(product));*/
 		}
-		#region Button Events
-		private void btnDeleteJob_Click(object sender, RoutedEventArgs e)
-		{
-			VM.DeleteJob(sender.GetDataContext<PPEditorJob>());
-		}
-		private void btnClearAll_Click(object sender, RoutedEventArgs e)
-		{
-			VM.Reset();
-		}
-		private void btnSaveAll_Click(object sender, RoutedEventArgs e)
-		{
-			VM.SaveAllJobs();
-			VM.Reset();
-			VM.IsVisible = false;
-
-		}
-		private void btnSave_Click(object sender, RoutedEventArgs e)
-		{
-			var job = sender.GetDataContext<PPEditorJob>();
-			VM.SaveJob(job);
-		}
-		private void btnExit_Click(object sender, RoutedEventArgs e)
-		{
-			VM.IsVisible = false;
-		}
-		private void AddReplicationButton_Click(object sender, RoutedEventArgs e)
-		{
-			sender.GetDataContext<PPEditorJob>().AddReplication();
-		}
-		private void RemoveReplicationButton_Click(object sender, RoutedEventArgs e)
-		{
-			sender.GetDataContext<PPEditorJob>().RemoveReplication();
-		}
-		#endregion
 	}
 }

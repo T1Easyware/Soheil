@@ -24,6 +24,7 @@ namespace Soheil.Core.ViewModels.PP
 		public DataServices.JobDataService JobDataService { get; private set; }
 		public DataServices.TaskReportDataService TaskReportDataService { get; private set; }
 		public DataServices.ProcessReportDataService ProcessReportDataService { get; private set; }
+		public Dal.SoheilEdmContext UOW { get; private set; }
 
 		#region Ctor, Init and Load
 		public PPTableVm(AccessType access)
@@ -33,19 +34,19 @@ namespace Soheil.Core.ViewModels.PP
 			initializeCommands();
 			initializeDataServices();
 
-			TaskEditor = new PPTaskEditorVm(PPEditor_BlocksSaved);
-			JobEditor = new PPJobEditorVm(PPEditor_JobsSaved);
+			TaskEditor = new PPTaskEditorVm();
+			JobEditor = new PPJobEditorVm();
 		}
 
 		void initializeDataServices()
 		{
-			var uow = new Dal.SoheilEdmContext();
-			BlockDataService = new DataServices.BlockDataService(uow);
-			NPTDataService = new DataServices.NPTDataService(uow);
-			TaskDataService = new DataServices.TaskDataService(uow);
-			JobDataService = new DataServices.JobDataService(uow);
-			TaskReportDataService = new DataServices.TaskReportDataService(uow);
-			ProcessReportDataService = new DataServices.ProcessReportDataService(uow);
+			UOW = new Dal.SoheilEdmContext();
+			BlockDataService = new DataServices.BlockDataService(UOW);
+			NPTDataService = new DataServices.NPTDataService(UOW);
+			TaskDataService = new DataServices.TaskDataService(UOW);
+			JobDataService = new DataServices.JobDataService(UOW);
+			TaskReportDataService = new DataServices.TaskReportDataService(UOW);
+			ProcessReportDataService = new DataServices.ProcessReportDataService(UOW);
 		}
 		void initializeCommands()
 		{
@@ -125,7 +126,7 @@ namespace Soheil.Core.ViewModels.PP
 					Hours = new HourCollection();
 					PPItems = new PPItemCollection(this);
 					//Add stations
-					var stationModels = new DataServices.StationDataService().GetActives().OrderBy(x => x.Index);
+					var stationModels = new DataServices.StationDataService(UOW).GetActives().OrderBy(x => x.Index);
 					NumberOfStations = stationModels.Count();
 					foreach (var stationModel in stationModels)
 					{
@@ -261,24 +262,15 @@ namespace Soheil.Core.ViewModels.PP
 		public void ResetTaskEditor(Model.Block blockToEdit)
 		{
 			TaskEditor.Reset();
-			TaskEditor.BlockList.Add(new PPEditorBlock(blockToEdit));
+			TaskEditor.BlockList.Add(new PPEditorBlock(blockToEdit, UOW));
 			TaskEditor.SelectedBlock = TaskEditor.BlockList.Last();
 		}
 		//Add existing Tasks to the PPEditor
 		public void AppendToTaskEditor(Model.Block blockToAppend)
 		{
 			if (blockToAppend == null) return;
-			TaskEditor.BlockList.Add(new PPEditorBlock(blockToAppend));
+			TaskEditor.BlockList.Add(new PPEditorBlock(blockToAppend, UOW));
 			TaskEditor.SelectedBlock = TaskEditor.BlockList.Last();
-		}
-
-		void PPEditor_BlocksSaved(IList<PPEditorBlock> blocks)
-		{
-			foreach (var block in blocks)
-			{
-				if (block == null) continue;
-				BlockDataService.SaveBlock(block);
-			}
 		}
 
 		public void RemoveBlock(BlockVm block)
@@ -323,11 +315,6 @@ namespace Soheil.Core.ViewModels.PP
 		public void AppendToJobEditor(Model.Job jobToAppend)
 		{
 			JobEditor.JobList.Add(new PPEditorJob(jobToAppend));
-		}
-		void PPEditor_JobsSaved(IList<PPEditorJob> jobs)
-		{
-			JobDataService.SaveAndGenerateTasks(jobs);
-			UpdateRange(true);
 		}
 		public void RemoveBlocks(PPJobVm job)
 		{

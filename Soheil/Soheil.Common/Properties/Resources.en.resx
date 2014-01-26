@@ -562,10 +562,10 @@
     <value>Search :</value>
   </data>
   <data name="txtWorkProfiles" xml:space="preserve">
-    <value>Working Hours</value>
+    <value>Working hours</value>
   </data>
   <data name="txtWorkProfilePlan" xml:space="preserve">
-    <value>Working Time Plan</value>
+    <value>Working time Plan</value>
   </data>
   <data name="txtHolidays" xml:space="preserve">
     <value>Holidays</value>
@@ -589,7 +589,7 @@
     <value>Days of week</value>
   </data>
   <data name="txtWeekStart" xml:space="preserve">
-    <value>Week Start</value>
+    <value>Week start</value>
   </data>
   <data name="splitContentMoreInfo" xml:space="preserve">
     <value>More Info...</value>
@@ -597,9 +597,80 @@
   </data>
   <data name="txtColor" xml:space="preserve">
     <value>Color :</value>
-    <comment> </comment>
   </data>
   <data name="txtRefresh" xml:space="preserve">
     <value>Refresh</value>
+  </data>
+  <data name="txtManHour" xml:space="preserve">
+    <value>Man-Hour</value>
+  </data>
+  <data name="txtManHours" xml:space="preserve">
+    <value>Valid Man-Hours</value>
+  </data>
+  <data name="txtCycleTime" xml:space="preserve">
+    <value>Cycle Time</value>
+  </data>
+  <data name="txtCycleTimeSec" xml:space="preserve">
+    <value>Cycle Time (sec)</value>
+  </data>
+  <data name="txtDuration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="txtTargetPoint" xml:space="preserve">
+    <value>Target Point</value>
+  </data>
+  <data name="msgDeleteTask" xml:space="preserve">
+    <value>Confirm to delete this Task?</value>
+  </data>
+  <data name="PPE_DeferToActivites" xml:space="preserve">
+    <value>Dependent Activity values</value>
+  </data>
+  <data name="PPE_DurationOrTP" xml:space="preserve">
+    <value>Duration or Target point</value>
+  </data>
+  <data name="PPE_FirstEmptySpace" xml:space="preserve">
+    <value>First empty space</value>
+  </data>
+  <data name="PPE_InvalidDuration" xml:space="preserve">
+    <value>Invalid Duration</value>
+  </data>
+  <data name="PPE_NextHour" xml:space="preserve">
+    <value>Hour +1</value>
+  </data>
+  <data name="PPE_SameQtyForActivites" xml:space="preserve">
+    <value>Same Target point for all Activities</value>
+  </data>
+  <data name="PPE_SameTimeForActivites" xml:space="preserve">
+    <value>Same Duration for all Activities</value>
+  </data>
+  <data name="PPE_StartOfNextHour" xml:space="preserve">
+    <value>Beginning of next hour</value>
+  </data>
+  <data name="PPE_StartOfNextHourTooltip" xml:space="preserve">
+    <value>Next hour from now (not the entered time)</value>
+  </data>
+  <data name="PPE_SumOfTP" xml:space="preserve">
+    <value>Sum of all Target points</value>
+  </data>
+  <data name="PPE_TaskDuration" xml:space="preserve">
+    <value>Station Production time</value>
+  </data>
+  <data name="PPE_TaskTP" xml:space="preserve">
+    <value>Station Target point</value>
+  </data>
+  <data name="txtDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="txtEndTime" xml:space="preserve">
+    <value>Ending Time</value>
+  </data>
+  <data name="txtTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="txtToday" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="txtTomorrow" xml:space="preserve">
+    <value>Tomorrow</value>
   </data>
 </root>

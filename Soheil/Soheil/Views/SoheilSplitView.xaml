@@ -3615,15 +3615,15 @@
                                                 <Expander.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView},
-                                                                                  Path=ViewModel.ViewCommand}"
-                                                                Content="O">
+                                                                                  Path=ViewModel.ViewCommand}">
+                                                            <Image Source="/Soheil.Controls;component/Images/selectGroup.png" Width="16"/>
                                                             <Button.CommandParameter>
                                                                 <Binding RelativeSource="{RelativeSource AncestorType=GroupItem}">
                                                                     <Binding.Path>Content.Items[0].SelectedGroupVM</Binding.Path>
                                                                 </Binding>
                                                             </Button.CommandParameter>
                                                         </Button>
-                                                        <TextBlock>
+                                                        <TextBlock VerticalAlignment="Center">
                                                             <TextBlock.Text>
                                                                 <Binding RelativeSource="{RelativeSource AncestorType=GroupItem}">
                                                                     <Binding.Path>Content.Items[0].SelectedGroupVM.Name</Binding.Path>

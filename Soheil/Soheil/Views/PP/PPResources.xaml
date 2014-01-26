@@ -5,6 +5,7 @@
 	
 	<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
     <ppconv:BooleanToInvisibilityConverter x:Key="booleanToInvisibilityConverter"/>
+    <ppconv:IsNull x:Key="isNull"/>
     <ppconv:IsNotNull x:Key="isNotNull"/>
     <ppconv:IsNotNullToVisibility x:Key="isNotNullToVisibility"/>
     <ppconv:IsNullToVisibility x:Key="isNullToVisibility"/>
@@ -12,6 +13,12 @@
     <ppconv:GridColumnToMargin x:Key="gridColumnToMargin"/>
     <ppconv:LogicalAnd x:Key="logicalAnd"/>
     <ppconv:LogicalAndToVisibility x:Key="logicalAndToVisibility"/>
+    <ppconv:IsEqual x:Key="isEqual"/>
+    <ppconv:IsEqualToInvisibilityConverter x:Key="isEqualToInvisibilityConverter"/>
+    <ppconv:IsEqualToVisibilityConverter x:Key="isEqualToVisibilityConverter"/>
+    <ppconv:IsEqual2 x:Key="isEqual2"/>
+    <ppconv:IsEqualToInvisibilityConverter2 x:Key="isEqualToInvisibilityConverter2"/>
+    <ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
 
     <ppconv:FloatMultiplier x:Key="floatMultiplier"/>
     <ppconv:DoubleMultiplier x:Key="doubleMultiplier"/>
@@ -30,6 +37,7 @@
     <ppconv:TaskReportBuilderInProcessMarginConverter x:Key="taskReportBuilderInProcessMarginConverter"/>
     <ppconv:ProcessReportBuilderMarginConverter x:Key="processReportBuilderMarginConverter"/>
 
+    <ppconv:IsEqualToBrushConverter x:Key="isEqualToBrushConverter"/>
     <ppconv:ColorFixer x:Key="colorFixer"/>
     <ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>
     <ppconv:TimeRollItemBackgroundConverter x:Key="timeRollItemBackgroundConverter"/>
@@ -37,10 +45,7 @@
     <ppconv:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>
     <ppconv:OpaqueIfPositiveInt x:Key="opaqueIfPositiveInt"/>
     <ppconv:HasErrorToShadowColor x:Key="hasErrorToShadowColor"/>
-    <ppconv:PPTableViewModeMatcher x:Key="ppTableViewModeMatcher"/>
-    <ppconv:PPTableViewModeToInvisibilityConverter x:Key="ppTableViewModeToInvisibilityConverter"/>
-    <ppconv:PPTableViewModeToVisibilityConverter x:Key="ppTableViewModeToVisibilityConverter"/>
-
+    
     <ppconv:ZoomMathDayLittleWindowWidth x:Key="zoomMathDayLittleWindowWidth"/>
     <ppconv:ZoomMathDayLittleWindowMargin x:Key="zoomMathDayLittleWindowMargin"/>
     <ppconv:HoursPanelMarginConverter x:Key="hoursPanelMarginConverter"/>

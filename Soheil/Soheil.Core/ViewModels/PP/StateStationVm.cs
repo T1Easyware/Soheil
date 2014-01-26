@@ -14,8 +14,24 @@ namespace Soheil.Core.ViewModels.PP
 		public StateStationVm(Model.StateStation model)
 		{
 			Model = model;
+			Name = model.Station.Name;
+			Code = model.Station.Code;
 		}
-		public string Name { get { return Model.Station.Name; } }
-		public string Code { get { return Model.Station.Code; } }
+		//Name Dependency Property
+		public string Name
+		{
+			get { return (string)GetValue(NameProperty); }
+			set { SetValue(NameProperty, value); }
+		}
+		public static readonly DependencyProperty NameProperty =
+			DependencyProperty.Register("Name", typeof(string), typeof(StateStationVm), new UIPropertyMetadata(null));
+		//Code Dependency Property
+		public string Code
+		{
+			get { return (string)GetValue(CodeProperty); }
+			set { SetValue(CodeProperty, value); }
+		}
+		public static readonly DependencyProperty CodeProperty =
+			DependencyProperty.Register("Code", typeof(string), typeof(StateStationVm), new UIPropertyMetadata(null));
 	}
 }

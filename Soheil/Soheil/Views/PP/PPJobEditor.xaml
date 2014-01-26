@@ -8,7 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" FlowDirection="RightToLeft">
+             d:DesignHeight="300" d:DesignWidth="600" FlowDirection="RightToLeft">
 	<UserControl.Resources>
 
 		<HierarchicalDataTemplate ItemsSource="{Binding Products}" DataType="{x:Type vm:ProductGroupVm}">
@@ -48,7 +48,7 @@
 						<DoubleAnimation Storyboard.TargetName="header"
 										 Storyboard.TargetProperty="Height"
 										 DecelerationRatio="1"
-										 To="22" Duration="0:0:0.1"/>
+										 To="32" Duration="0:0:0.1"/>
 					</Storyboard>
 					<Storyboard Duration="0:0:0.2" x:Key="wipeCloseHeader">
 						<DoubleAnimation Storyboard.TargetName="header"
@@ -70,21 +70,24 @@
 					</Storyboard-->
 				</DockPanel.Resources>
 				<DockPanel DockPanel.Dock="Top">
-					<Canvas Height="22" DockPanel.Dock="Left" Width="0"/>
+					<Canvas Height="32" DockPanel.Dock="Left" Width="0"/>
 					<Border x:Name="header" VerticalAlignment="Bottom" Height="0">
 						<Border.Background>
 							<SolidColorBrush Color="{Binding Product.Color}"/>
 						</Border.Background>
-						<WrapPanel Margin="2">
-							<Button Content="X" HorizontalAlignment="Left" Click="btnDeleteJob_Click">
+						<WrapPanel Margin="2,0">
+							<Button HorizontalAlignment="Left" Command="{Binding DeleteJobCommand}" ToolTip="حذف این Job">
+                                <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
 								<!--Button.Triggers>
 									<EventTrigger RoutedEvent="ButtonBase.Click">
 										<BeginStoryboard Storyboard="{StaticResource wipeClose}"/>
 									</EventTrigger>
 								</Button.Triggers-->
 							</Button>
-							<Button Content="ذ" HorizontalAlignment="Left" IsEnabled="{Binding IsSaved}" Click="btnSave_Click"/>
-						</WrapPanel>
+                            <Button HorizontalAlignment="Left" IsEnabled="{Binding IsSaved}" Command="{Binding SaveCommand}" ToolTip="ذخیره این Job">
+                                <Image Source="/Images/Fpc/Save16.png" Width="16"/>
+                            </Button>
+                        </WrapPanel>
 					</Border>
 				</DockPanel>
 				<Border BorderThickness="1,1,1,3" x:Name="border" Background="Gainsboro">
@@ -137,9 +140,9 @@
 								<RowDefinition/>
 								<RowDefinition/>
 							</Grid.RowDefinitions>
-							<TextBlock Foreground="Gray" VerticalAlignment="Center" Text="زودترین زمان شروع"/>
-							<cal:PersianDatePicker Grid.Column="1" Margin="3" SelectedDate="{Binding ReleaseDate, Mode=TwoWay, Converter={StaticResource dateToPersianDateConverter}}"/>
-							<TextBox Grid.Column="2" Text="{Binding ReleaseTime, Converter={StaticResource timeSpanToStringConverter}}" MinWidth="30"/>
+							<TextBlock Foreground="Gray" VerticalAlignment="Center" Text="شروع" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
+                            <cal:PersianDatePicker Grid.Column="1" Margin="3" SelectedDate="{Binding ReleaseDate, Mode=TwoWay, Converter={StaticResource dateToPersianDateConverter}}" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
+                            <TextBox Grid.Column="2" Text="{Binding ReleaseTime, Converter={StaticResource timeSpanToStringConverter}}" MinWidth="30" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
 							<TextBlock Grid.Row="1" Foreground="Gray" VerticalAlignment="Center" Text="مهلت"/>
 							<cal:PersianDatePicker Grid.Row="1" Grid.Column="1" Margin="3" SelectedDate="{Binding DeadlineDate, Mode=TwoWay, Converter={StaticResource dateToPersianDateConverter}}"/>
 							<TextBox Grid.Row="1" Grid.Column="2" Text="{Binding DeadlineTime, Converter={StaticResource timeSpanToStringConverter}}" MinWidth="30"/>
@@ -167,8 +170,8 @@
 							<Border Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="3" BorderBrush="Silver" BorderThickness="1" Background="#4000"/>
 							<TextBlock Grid.Column="2" Grid.Row="1" Margin="6,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Center" FontSize="17" Text="{Binding Replications.Count}" Foreground="{StaticResource GlyphBrush}"/>
 							<TextBlock Grid.Column="3" Grid.RowSpan="3" Margin="3" Text="X" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="{StaticResource GlyphBrush}"/>
-							<Button Grid.Column="2" Grid.Row="0" Margin="6,6,0,0" Content="↑" Click="AddReplicationButton_Click"/>
-							<Button Grid.Column="2" Grid.Row="2" Margin="6,0,0,6" Content="↓" Click="RemoveReplicationButton_Click"/>
+							<Button Grid.Column="2" Grid.Row="0" Margin="6,6,0,0" Content="↑" Command="{Binding AddReplicationCommand}"/>
+                            <Button Grid.Column="2" Grid.Row="2" Margin="6,0,0,6" Content="↓" Command="{Binding RemoveReplicationCommand}"/>
 						</Grid>
 					</DockPanel>
 				</Border>
@@ -189,14 +192,11 @@
 
 
 	<DockPanel>
-		<DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Height="30">
-			<Button DockPanel.Dock="Left" Content="پاک کردن همه Jobها" 
-					Click="btnClearAll_Click"/>
-			<Button DockPanel.Dock="Right" Content="انصراف و خروج"
-					Click="btnExit_Click"/>
-			<Button DockPanel.Dock="Right" Content="ذخیره همه Jobها و خروج"
-					Click="btnSaveAll_Click"/>
-		</DockPanel>
+		<DockPanel DockPanel.Dock="Top" LastChildFill="False" Height="30">
+            <Button DockPanel.Dock="Left" Content="پاک کردن همه Jobها" Command="{Binding ClearAllCommand}"/>
+            <Button DockPanel.Dock="Right" Content="انصراف و خروج" Command="{Binding ExitCommand}"/>
+            <Button DockPanel.Dock="Right" Content="ذخیره همه Jobها و خروج" Command="{Binding SaveAllCommand}"/>
+        </DockPanel>
 		<Border DockPanel.Dock="Left" Margin="5,5,0,5" BorderThickness="1" CornerRadius="1" 
 				BorderBrush="{StaticResource HeaderBorderBrush}" Background="{StaticResource HeaderBackground}">
 			<DockPanel>
