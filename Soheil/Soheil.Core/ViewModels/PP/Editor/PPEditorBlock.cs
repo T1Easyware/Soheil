@@ -8,6 +8,9 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
+	/// <summary>
+	/// Has its own UnitOfWork
+	/// </summary>
 	public class PPEditorBlock : DependencyObject
 	{
 		public Model.Block Model { get; protected set; }
@@ -15,38 +18,48 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public int StationId { get { return StateStation == null ? 0 : StateStation.StationId; } }
 		public int StateStationId { get { return StateStation == null ? 0 : StateStation.StateStationId; } }
 
-		internal Action<PPEditorBlock> BlockSaved;//PPTableVm handles this event
 		public DataServices.TaskDataService TaskDataService { get; private set; }
 		public DataServices.BlockDataService BlockDataService { get; private set; }
+
+		Dal.SoheilEdmContext _uow;
 
 		#region Ctor and methods
 		/// <summary>
 		/// Creates an instance of PPEditorState viewModel for an existing block model
 		/// </summary>
 		/// <param name="blockModel">block containing some (or no) tasks to edit</param>
-		public PPEditorBlock(Model.Block blockModel, Dal.SoheilEdmContext uow)
+		public PPEditorBlock(Model.Block blockModel)
 		{
-			Model = blockModel;
-			State = new StateVm(blockModel.StateStation.State);
-			StateStation = State.StateStationList.First(x => x.StateStationId == blockModel.StateStation.Id);
+			_uow = new Dal.SoheilEdmContext();
+
+			initMembers();
+			initializeCommands();
+			
+			//change context graph
+			Model = BlockDataService.GetSingle(blockModel.Id);
+			State = new StateVm(Model.StateStation.State);
+			StateStation = State.StateStationList.First(x => x.StateStationId == Model.StateStation.Id);
 			StartDate = Model.StartDateTime.Date;
 			StartTime = Model.StartDateTime.TimeOfDay;
 
-			initMembers(uow);
-			initializeCommands();
-
 			//Tasks
-			foreach (var task in blockModel.Tasks)
-				TaskList.Add(new PPEditorTask(task, this));
+			foreach (var task in Model.Tasks)
+				TaskList.Add(new PPEditorTask(task, this, _uow));
 			TaskList.Add(new PPEditorTaskHolder(this));
 		}
 		/// <summary>
 		/// Creates an instance of PPEditorState viewModel for an existing fpcState model
 		/// </summary>
 		/// <param name="stateModel">state model to create a block</param>
-		public PPEditorBlock(Model.State stateModel, Dal.SoheilEdmContext uow)
+		public PPEditorBlock(Model.State stateModel)
 		{
-			State = new StateVm(stateModel);
+			_uow = new Dal.SoheilEdmContext();
+
+			initMembers();
+			initializeCommands();
+
+			var stateEntity = new Soheil.Core.DataServices.StateDataService(_uow).GetSingle(stateModel.Id);
+			State = new StateVm(stateEntity);
 			SelectedStateStation = State.StateStationList.FirstOrDefault();
 			Model = new Model.Block
 			{
@@ -54,18 +67,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				StartDateTime = DateTime.Now,
 			};
 
-			initMembers(uow);
-			initializeCommands();
-
 			//Tasks
-			InsertTask();
+			//InsertTask();
 			TaskList.Add(new PPEditorTaskHolder(this));
 		}
-		void initMembers(Dal.SoheilEdmContext uow)
+		void initMembers()
 		{
 			//DS
-			TaskDataService = new DataServices.TaskDataService(uow);
-			BlockDataService = new DataServices.BlockDataService(uow);
+			TaskDataService = new DataServices.TaskDataService(_uow);
+			BlockDataService = new DataServices.BlockDataService(_uow);
 			//TaskList
 			TaskList.CollectionChanged += (s, e) =>
 			{
@@ -88,6 +98,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			var last = TaskList.OfType<PPEditorTask>().LastOrDefault();
 			var startDt = (last == null) ? Model.StartDateTime : last.EndDateTime;
+
+			//task
 			var taskModel = new Model.Task
 			{
 				Block = Model,
@@ -98,10 +110,18 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				TaskTargetPoint = 0,
 			};
 			Model.Tasks.Add(taskModel);
+
+			//ss
 			if (SelectedStateStation == null)
-				throw new Soheil.Common.SoheilException.SoheilExceptionBase("ایستگاه انتخاب نشده است", Common.SoheilException.ExceptionLevel.Warning);
-			taskModel.CreateBasicProcesses();
-			TaskList.Insert(TaskList.Any()? TaskList.Count - 1 : 0, new PPEditorTask(taskModel, this));
+				throw new Soheil.Common.SoheilException.SoheilExceptionBase(
+					"ایستگاه انتخاب نشده است", 
+					Common.SoheilException.ExceptionLevel.Warning);
+
+			//processes
+			//taskModel.CreateBasicProcesses();
+
+			//add the VM and select it
+			TaskList.Insert(TaskList.Any()? TaskList.Count - 1 : 0, new PPEditorTask(taskModel, this, _uow));
 			last = TaskList.OfType<PPEditorTask>().LastOrDefault();
 			if(last!=null) last.IsSelected = true;
 		}
@@ -115,6 +135,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				task.Reset();
 			}
+			if (!TaskList.OfType<PPEditorTask>().Any())
+				InsertTask();
 		}
 		/*public bool ValidateTimeRange(Model.Task taskModel)
 		{
@@ -350,15 +372,113 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("AddOneHourCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
 		#endregion
 
-		internal void CorrectProcesses()
+		void correctBlock()
 		{
-			foreach (var task in TaskList.OfType<PPEditorTask>())
+			foreach (var taskVm in TaskList.OfType<PPEditorTask>())
 			{
-				foreach (var process in task.ProcessList)
+				taskVm.ForceCalculateDuration();
+
+				//processes don't follow the JIT model attachment strategy
+				//so we need to manually attach their models prior to Save.
+
+				//first remove those existing process models that there isn't any VM with the same Activity
+				var tmp = taskVm.Model.Processes.Where(m=>
+					!taskVm.ProcessList.Any(vm => 
+						vm.SelectedChoice != null && vm.SelectedChoice.ActivityId == m.StateStationActivity.Activity.Id)
+					).ToArray();
+				foreach (var processModel in tmp)
 				{
-					
+					TaskDataService.DeleteModel(processModel);
+				}
+				//then add new process Models (or attach if a process with the same Activity already exists)
+				foreach (var processVm in taskVm.ProcessList)
+				{
+					//check for existance
+					var procModel = taskVm.Model.Processes.FirstOrDefault(x => 
+						x.StateStationActivity.Activity.Id == processVm.SelectedChoice.ActivityId);
+					//create new Model
+					if (procModel == null)
+					{
+						procModel = new Model.Process();
+						new Soheil.Dal.Repository<Model.Process>(_uow).Add(procModel);
+						//and add to parent model
+						taskVm.Model.Processes.Add(procModel);
+					}
+					//update common info (create/attach)
+					procModel.Task = taskVm.Model;
+					procModel.StateStationActivity = processVm.SelectedChoice.Model;
+					procModel.TargetCount = processVm.TargetPoint;
+
+					//...
+					//do the same for machines
+					//...
+					var tmp1 = procModel.SelectedMachines.Where(m =>
+						!processVm.MachineList.Any(vm => 
+							vm.MachineId == m.StateStationActivityMachine.Machine.Id)
+						).ToArray();
+					foreach (var smModel in tmp1)
+					{
+						TaskDataService.DeleteModel(smModel);
+					}
+					foreach (var smVm in processVm.MachineList.Where(x => x.IsUsed))
+					{
+						//check for existance
+						var smModel = procModel.SelectedMachines.FirstOrDefault(x => 
+							x.StateStationActivityMachine.Machine.Id == smVm.MachineId);
+						//create new Model
+						if (smModel == null)
+						{
+							smModel = new Model.SelectedMachine();
+							new Soheil.Dal.Repository<Model.SelectedMachine>(_uow).Add(smModel);
+							//and add to parent model
+							procModel.SelectedMachines.Add(smModel);
+						}
+						//update common info (create/attach)
+						smModel.Process = procModel;
+						smModel.StateStationActivityMachine = smVm.StateStationActivityMachineModel;
+					}
+
+					//...
+					//do the same for operators
+					//...
+					var tmp2 = procModel.ProcessOperators.Where(m =>
+						!processVm.OperatorList.Any(vm => 
+							vm.OperatorId == m.Operator.Id)
+						).ToArray();
+					foreach (var poModel in tmp2)
+					{
+						TaskDataService.DeleteModel(poModel);
+					}
+					foreach (var poVm in processVm.OperatorList.Where(x => x.IsSelected))
+					{
+						//check for existance
+						var poModel = procModel.ProcessOperators.FirstOrDefault(x =>
+							x.Operator.Id == poVm.OperatorId);
+						//create new Model
+						if (poModel == null)
+						{
+							poModel = new Model.ProcessOperator();
+							new Soheil.Dal.Repository<Model.ProcessOperator>(_uow).Add(poModel);
+							//and add to parent model
+							poModel.Process = procModel;
+							poModel.Operator = poVm.OperatorModel;
+							procModel.ProcessOperators.Add(poModel);
+						}
+						//update common info (create/attach)
+						poModel.Role = poVm.Role;
+					}
 				}
 			}
+
+			Model.DurationSeconds = TaskList.OfType<PPEditorTask>().Sum(t => t.DurationSeconds);
+			Model.EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);
 		}
+
+		internal void Save()
+		{
+			correctBlock();
+			BlockDataService.SaveBlock(Model);
+		}
+
 	}
 }

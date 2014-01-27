@@ -10,6 +10,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class PPEditorOperator : DependencyObject
 	{
+		internal Model.ProcessOperator Model { get; private set; }
+		internal Model.Operator OperatorModel { get; private set; }
+		public int OperatorId { get { return Model != null ? Model.Operator.Id : OperatorModel.Id; } }
+		public int ProcessOperatorId { get { return Model != null ? Model.Id : 0; } }
+
+		public event Action SelectedOperatorsChanged;
+		
 		#region Ctor
 		/// <summary>
 		/// Must be called within an EdmContext
@@ -17,7 +24,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <param name="model"></param>
 		public PPEditorOperator(Model.Operator model)
 		{
-			OperatorId = model.Id;
+			OperatorModel = model;
 			Name = model.Name;
 			Code = model.Code;
 		}
@@ -29,16 +36,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public PPEditorOperator(Model.ProcessOperator model)
 			:this(model.Operator)
 		{
-			ProcessOperatorId = model.Id;
+			Model = model;
 			Role = model.Role;
 			IsSelected = true;
 		}
 
 		#endregion
 
-		public int OperatorId { get; protected set; }
-		public int ProcessOperatorId { get; set; }
-		public event Action SelectedOperatorsChanged;
+
 
 		#region DpProps
 		//Name Dependency Property

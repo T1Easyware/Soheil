@@ -9,16 +9,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class PPEditorActivityChoice : DependencyObject
 	{
-		Model.StateStationActivity _model;
-		public int ActivityId { get { return _model.Activity.Id; } }
-		public int StateStationActivityId { get { return _model.Id; } }
+		public Model.StateStationActivity Model { get; private set; }
+		public int ActivityId { get { return Model.Activity.Id; } }
+		public int StateStationActivityId { get { return Model.Id; } }
 
 		public PPEditorActivityChoice(Model.StateStationActivity model, PPEditorProcess parent)
 		{
-			_model = model;
+			Model = model;
 			Parent = parent;
-			CycleTime = _model.CycleTime;
-			ManHour = _model.ManHour;
+			CycleTime = Model.CycleTime;
+			ManHour = Model.ManHour;
 		}
 
 		//Parent Dependency Property

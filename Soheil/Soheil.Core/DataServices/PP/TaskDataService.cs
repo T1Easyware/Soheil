@@ -18,6 +18,10 @@ namespace Soheil.Core.DataServices
 		Repository<Task> _taskRepository;
 		Repository<TaskReport> _taskReportRepository;
 		Repository<NonProductiveTask> _nptRepository;
+		Repository<Process> _processRepository;
+		Repository<ProcessOperator> _processOperatorRepository;
+		Repository<SelectedMachine> _selectedMachineRepository;
+
 		public event EventHandler<ModelAddedEventArgs<Task>> TaskAdded;
 		public event EventHandler<ModelUpdatedEventArgs<Task>> TaskUpdated;
 		public event EventHandler<ModelAddedEventArgs<TaskReport>> TaskReportAdded;
@@ -29,9 +33,13 @@ namespace Soheil.Core.DataServices
 		}
 		public TaskDataService(SoheilEdmContext context)
 		{
+			this.context = context;
 			_taskRepository = new Repository<Task>(context);
 			_taskReportRepository = new Repository<TaskReport>(context);
 			_nptRepository = new Repository<NonProductiveTask>(context);
+			_processRepository = new Repository<Process>(context);
+			_processOperatorRepository = new Repository<ProcessOperator>(context);
+			_selectedMachineRepository = new Repository<SelectedMachine>(context);
 		}
 
 
@@ -60,7 +68,7 @@ namespace Soheil.Core.DataServices
 				TaskAdded(this, new ModelAddedEventArgs<Task>(model));
 			return model.Id;
 		}
-		public int AddModelAndCreateProcesses(Task model)
+		/*public int AddModelAndCreateProcesses(Task model)
 		{
 			foreach (var ssa in model.Block.StateStation.StateStationActivities)
 			{
@@ -80,7 +88,7 @@ namespace Soheil.Core.DataServices
 			if (TaskAdded != null)
 				TaskAdded(this, new ModelAddedEventArgs<Task>(model));
 			return model.Id;
-		}
+		}*/
 
 		public void UpdateModel(Task model)
 		{
@@ -100,8 +108,7 @@ namespace Soheil.Core.DataServices
 		/// <param name="context"></param>
 		public void DeleteModel(Task model)
 		{
-			var entity = _taskRepository.FirstOrDefault(x => x.Id == model.Id);
-			if(entity == null)
+			if(!_taskRepository.Exists(x => x.Id == model.Id))
 			{
 				//not saved at all (just remove it from its parent)
 				model.Block.Tasks.Remove(model);
@@ -112,23 +119,36 @@ namespace Soheil.Core.DataServices
 				throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
 
 			var taskReportDs = new TaskReportDataService(context);
-			foreach (var taskReportEnt in entity.TaskReports)
+			foreach (var taskReportEnt in model.TaskReports)
 			{
 				taskReportDs.DeleteModel(taskReportEnt);
 			}
-			foreach (var process in entity.Processes.ToList())
+			foreach (var process in model.Processes.ToList())
 			{
-				foreach (var po in process.ProcessOperators.ToList())
-				{
-					new Repository<ProcessOperator>(context).Delete(po);
-				}
-				foreach (var sm in process.SelectedMachines.ToList())
-				{
-					new Repository<SelectedMachine>(context).Delete(sm);
-				}
-				new Repository<Process>(context).Delete(process);
+				DeleteModel(process);
 			}
-			_taskRepository.Delete(entity);
+			_taskRepository.Delete(model);
+		}
+		//Recursive (sm & po)
+		internal void DeleteModel(Process process)
+		{
+			foreach (var po in process.ProcessOperators.ToList())
+			{
+				DeleteModel(po);
+			}
+			foreach (var sm in process.SelectedMachines.ToList())
+			{
+				DeleteModel(sm);
+			}
+			_processRepository.Delete(process);
+		}
+		internal void DeleteModel(SelectedMachine sm)
+		{
+			_selectedMachineRepository.Delete(sm);
+		}
+		internal void DeleteModel(ProcessOperator po)
+		{
+			_processOperatorRepository.Delete(po);
 		}
 
 		public void AttachModel(Task model)
@@ -206,5 +226,17 @@ namespace Soheil.Core.DataServices
 			}
 			return true;//else: both start at the same time so collide
 		}
+
+		public StateStationActivity GetStateStationActivity(int ssaId)
+		{
+			return new Repository<StateStationActivity>(context).Single(x => x.Id == ssaId);
+		}
+
+		public StateStationActivityMachine GetStateStationActivityMachine(int ssamId)
+		{
+			return new Repository<StateStationActivityMachine>(context).Single(x => x.Id == ssamId);
+		}
+
+
 	}
 }

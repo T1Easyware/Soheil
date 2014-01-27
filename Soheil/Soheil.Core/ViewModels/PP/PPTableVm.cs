@@ -36,6 +36,12 @@ namespace Soheil.Core.ViewModels.PP
 
 			TaskEditor = new PPTaskEditorVm();
 			JobEditor = new PPJobEditorVm();
+
+			AddBlockCommand.Execute(null);
+			TaskEditor.SelectedProduct = TaskEditor.AllProductGroups.First().Products.First();
+			var block = new PPEditorBlock(TaskEditor.FpcViewer.States.First(x=>x.StateType == StateType.Mid).Model);
+			TaskEditor.BlockList.Add(block);
+			TaskEditor.SelectedBlock = TaskEditor.BlockList.First();
 		}
 
 		void initializeDataServices()
@@ -262,14 +268,14 @@ namespace Soheil.Core.ViewModels.PP
 		public void ResetTaskEditor(Model.Block blockToEdit)
 		{
 			TaskEditor.Reset();
-			TaskEditor.BlockList.Add(new PPEditorBlock(blockToEdit, UOW));
+			TaskEditor.BlockList.Add(new PPEditorBlock(blockToEdit));
 			TaskEditor.SelectedBlock = TaskEditor.BlockList.Last();
 		}
 		//Add existing Tasks to the PPEditor
 		public void AppendToTaskEditor(Model.Block blockToAppend)
 		{
 			if (blockToAppend == null) return;
-			TaskEditor.BlockList.Add(new PPEditorBlock(blockToAppend, UOW));
+			TaskEditor.BlockList.Add(new PPEditorBlock(blockToAppend));
 			TaskEditor.SelectedBlock = TaskEditor.BlockList.Last();
 		}
 

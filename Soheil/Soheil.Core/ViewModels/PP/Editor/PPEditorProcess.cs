@@ -37,7 +37,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <para>within the given PPEditorTask</para>
 		/// </summary>
 		/// <param name="model"></param>
-		public PPEditorProcess(PPEditorTask parent, IEnumerable<Model.StateStationActivity> ssaGroup)
+		public PPEditorProcess(PPEditorTask parent, IEnumerable<Model.StateStationActivity> ssaGroup, Dal.SoheilEdmContext uow)
 		{
 			//_model = processModel;
 			_ssaGroup = ssaGroup;
@@ -48,12 +48,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				Choices.Add(new PPEditorActivityChoice(choice, this));
 			}
-			SelectedChoice = Choices.FirstOrDefault();
+			//SelectedChoice = Choices.FirstOrDefault();
 
 			Name = ssaGroup.First().Activity.Name;
 
 			//operators
-			var allOperatorModels = new DataServices.OperatorDataService().GetActives();
+			var allOperatorModels = new DataServices.OperatorDataService(uow).GetActives();
 			foreach (var operatorModel in allOperatorModels)
 			{
 				var operatorVm = new PPEditorOperator(operatorModel);

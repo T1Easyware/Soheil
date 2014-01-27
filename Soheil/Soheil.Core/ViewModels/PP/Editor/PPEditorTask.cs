@@ -11,8 +11,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class PPEditorTask : DependencyObject
 	{
-		Model.Task _model;
-		public int TaskId { get { return _model.Id; } }
+		internal Model.Task Model { get; private set; }
+		public int TaskId { get { return Model.Id; } }
+		Dal.SoheilEdmContext _uow;
 
 		/// <summary>
 		/// Use this event to notify Block about changes to Duration of this Task
@@ -31,9 +32,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// Must be called with an open connection
 		/// </summary>
 		/// <param name="model"></param>
-		internal PPEditorTask(Model.Task model, PPEditorBlock editorParent)
+		internal PPEditorTask(Model.Task model, PPEditorBlock editorParent, Dal.SoheilEdmContext uow)
 		{
-			_model = model;
+			Model = model;
+			_uow = uow;
 			Block = editorParent;
 			StartDate = model.StartDateTime.Date;
 			StartTime = model.StartDateTime.TimeOfDay;
@@ -44,11 +46,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		void initProcesses()
 		{
 			ProcessList.Clear();
-			_model.Processes.Clear();
+			Model.Processes.Clear();
 			//?
 
 			//convert and add each activity (ssaGroup) within current StateStation to ProcessList
-			foreach (var ssaGroup in _model.Block.StateStation.StateStationActivities.GroupBy(ssa => ssa.Activity.Id))
+			foreach (var ssaGroup in Model.Block.StateStation.StateStationActivities.GroupBy(ssa => ssa.Activity.Id))
 			{
 				PPEditorProcess processVm = null;
 				//processModel: existing process which its ssa is in ssaGroup
@@ -82,7 +84,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 							Task = _model,
 							Code = _model.Code + ssaGroup.First().Activity.Code,
 						});*/
-				processVm = new PPEditorProcess(this, ssaGroup);
+				processVm = new PPEditorProcess(this, ssaGroup, _uow);
 					//}
 				//}
 				//finally add it to ProcessList
@@ -126,7 +128,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		public void Reset()
 		{
-			_model.Block = Block.Model;
+			Model.Block = Block.Model;
 			initProcesses();
 		}
 		#endregion
@@ -175,6 +177,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var newVal = e.NewValue == DependencyProperty.UnsetValue ? TimeSpan.Zero : (TimeSpan)e.NewValue;
 			if (TaskDurationChanged != null)
 				TaskDurationChanged(oldVal, newVal);
+			Model.DurationSeconds = (int)newVal.TotalSeconds;
+			Model.EndDateTime = Model.StartDateTime.AddSeconds((int)newVal.TotalSeconds);
 		}
 		void taskTargetPointChanged(DependencyPropertyChangedEventArgs e)
 		{
@@ -189,6 +193,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					process.TargetPoint = newVal;
 				}
 			}
+			Model.TaskTargetPoint = newVal;
 		}
 		void isSameTimeForActivitiesSelectedChanged(bool newVal)
 		{
@@ -253,7 +258,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(StartDateProperty, value); }
 		}
 		public static readonly DependencyProperty StartDateProperty =
-			DependencyProperty.Register("StartDate", typeof(DateTime), typeof(PPEditorTask), new PropertyMetadata(DateTime.Now.Date));
+			DependencyProperty.Register("StartDate", typeof(DateTime), typeof(PPEditorTask),
+			new PropertyMetadata(DateTime.Now.Date, (d, e) =>
+			{
+				var vm = (PPEditorTask)d;
+				var val = (DateTime)e.NewValue;
+				vm.Model.StartDateTime = val.Add(vm.StartTime);
+				vm.Model.EndDateTime = vm.Model.StartDateTime.AddSeconds(vm.DurationSeconds);
+			}));
 		//StartTime Dependency Property
 		public TimeSpan StartTime
 		{
@@ -261,7 +273,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(StartTimeProperty, value); }
 		}
 		public static readonly DependencyProperty StartTimeProperty =
-			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(PPEditorTask), new UIPropertyMetadata(DateTime.Now.TimeOfDay));
+			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(PPEditorTask), 
+			new PropertyMetadata(DateTime.Now.TimeOfDay, (d, e) =>
+			{
+				var vm = (PPEditorTask)d;
+				var val = (TimeSpan)e.NewValue;
+				vm.Model.StartDateTime = vm.StartDate.Add(val);
+				vm.Model.EndDateTime = vm.Model.StartDateTime.AddSeconds(vm.DurationSeconds);
+			}));
 		//durations
 		public int DurationSeconds
 		{
@@ -345,7 +364,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				try
 				{
-					Block.TaskDataService.DeleteModel(_model);
+					Block.TaskDataService.DeleteModel(Model);
 					Block.TaskList.Remove(this);
 				}
 				catch (Exception ex)

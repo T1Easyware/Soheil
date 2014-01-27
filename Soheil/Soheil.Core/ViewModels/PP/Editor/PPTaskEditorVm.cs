@@ -69,7 +69,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var block = BlockList.FirstOrDefault(x => x.StateId == fpcState.Id);
 			if (block == null)
 			{
-				block = new PPEditorBlock(fpcState.Model, UOW);
+				block = new PPEditorBlock(fpcState.Model);
 				BlockList.Add(block);
 			}
 		}
@@ -86,8 +86,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		#region Blocks
 		//BlockList Observable Collection
-		private ObservableCollection<PPEditorBlock> _blockList = new ObservableCollection<PPEditorBlock>();
 		public ObservableCollection<PPEditorBlock> BlockList { get { return _blockList; } }
+		private ObservableCollection<PPEditorBlock> _blockList = new ObservableCollection<PPEditorBlock>();
 		//SelectedBlock Dependency Property
 		public PPEditorBlock SelectedBlock
 		{
@@ -189,19 +189,18 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			});
 			SaveAllCommand = new Commands.Command(o =>
 			{
-				try
+				//try
 				{
 					foreach (var block in BlockList)
 					{
-						block.CorrectProcesses();
-						_blockDs.SaveBlock(block.Model);
+						block.Save();
 					}
 					Reset();
 					IsVisible = false;
 				}
-				catch (Exception exp)
+				//catch (Exception exp)
 				{
-					MessageBox.Show(exp.Message);
+				//	MessageBox.Show(exp.Message);
 				}
 			});
 			ResetCurrentBlockCommand = new Commands.Command(o =>

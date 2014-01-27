@@ -379,7 +379,7 @@ namespace Soheil.Model
 		}
 
 		/// <summary>
-		/// Creates processes for this task (according to StateStation) which has unique Activities
+		/// Removes all processes and then Creates processes for this task (according to StateStation) which has unique Activities
 		/// <para>for those activities that have more than 1 StateStationActivity for this StateStation</para>
 		/// <para>the one with the minimum ManHour is being selected</para>
 		/// </summary>

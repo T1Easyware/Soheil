@@ -10,47 +10,46 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class PPEditorMachine : DependencyObject
 	{
+		public Model.StateStationActivityMachine StateStationActivityMachineModel { get; private set; }
+		public int MachineId { get { return StateStationActivityMachineModel.Machine.Id; } }
+		public int SelectedMachineId { get; set; }
+		public int StateStationActivityMachineId { get { return StateStationActivityMachineModel.Id; } }
+
 		#region Ctor
 		/// <summary>
-		/// Must be called within an EdmContext
+		/// 
 		/// </summary>
 		/// <param name="model"></param>
 		public PPEditorMachine(Model.SelectedMachine model)
 		{
-			MachineId = model.StateStationActivityMachine.Machine.Id;
+			StateStationActivityMachineModel = model.StateStationActivityMachine;
 			SelectedMachineId = model.Id;
-			StateStationActivityMachineId = model.StateStationActivityMachine.Id;
 			Name = model.StateStationActivityMachine.Machine.Name;
 			Code = model.StateStationActivityMachine.Machine.Code;
 			IsUsed = model.StateStationActivityMachine.IsFixed;
 		}
 		/// <summary>
-		/// Must be called within an EdmContext
+		/// 
 		/// </summary>
 		/// <param name="model"></param>
 		public PPEditorMachine(Model.StateStationActivityMachine ssamModel)
 		{
-			MachineId = ssamModel.Machine.Id;
+			StateStationActivityMachineModel = ssamModel;
 			SelectedMachineId = ssamModel.Id;
-			StateStationActivityMachineId = ssamModel.Id;
 			Name = ssamModel.Machine.Name;
 			Code = ssamModel.Machine.Code;
 			IsUsed = ssamModel.IsFixed;
 		}
 		public PPEditorMachine(Fpc.StateStationActivityMachineVm ssam)
 		{
-			MachineId = ssam.Containment.Id;
+			StateStationActivityMachineModel = ssam.Model;
 			SelectedMachineId = -1;
-			StateStationActivityMachineId = ssam.Id;
 			Name = ssam.Name;
 			Code = ((Fpc.MachineVm)ssam.Containment).Code;
 			IsUsed = ssam.IsDefault;
 		} 
 		#endregion
 
-		public int MachineId { get; set; }
-		public int SelectedMachineId { get; set; }
-		public int StateStationActivityMachineId { get; set; }
 
 		#region DpProps
 		//Name Dependency Property
