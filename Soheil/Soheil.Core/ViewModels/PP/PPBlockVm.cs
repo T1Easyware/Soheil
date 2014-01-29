@@ -23,47 +23,63 @@ namespace Soheil.Core.ViewModels.PP
 			_model = model;
 			_ppTable = ppTable;
 			RowIndex = stationIndex;
+			StartDateTime = model.StartDateTime;
+			DurationSeconds = model.DurationSeconds;
 			initializeCommands();
 		}
 		//Thread Functions
 		protected override void acqusitionThreadStart()
 		{
+
 			try
 			{
-				_model = BlockDataService.GetSingle(Id);
-				int[] reportData = BlockDataService.GetProductionReportData(Id);
-				Dispatcher.Invoke(new Action(() =>
+				lock (_threadLock)
 				{
-					if (_model == null)
+					_model = BlockDataService.GetSingle(Id);
+					int[] reportData = BlockDataService.GetProductionReportData(Id);
+					Dispatcher.Invoke(new Action(() =>
 					{
-						_ppTable.RemoveBlock(this);
-					}
-					else
-					{
-						//fill the vm from _model
-						//Product and State
-						ProductId = _model.StateStation.State.FPC.Product.Id;
-						ProductCode = _model.StateStation.State.FPC.Product.Code;
-						ProductName = _model.StateStation.State.FPC.Product.Name;
-						ProductColor = _model.StateStation.State.FPC.Product.Color;
-						StateCode = _model.StateStation.State.Code;
-						IsRework = _model.StateStation.State.IsReworkState == Bool3.True;
-						//Block background texts
-						BlockTargetPoint = _model.BlockTargetPoint;
-						BlockProducedG1 = reportData[0];
-						ReportFillPercent = string.Format("{0:D2}%", reportData[1]);
-						IsReportFilled = (reportData[1] >= 100);
-						//Navigation
-						if (_model.Job != null) Job = new PPJobVm(_model.Job);
-						foreach (var task in _model.Tasks)
+						if (_model == null)
 						{
-							TaskList.Add(new PPTaskVm(task, this));
+							_ppTable.RemoveBlock(this);
 						}
-						Dispatcher.Invoke(acqusitionThreadEnd);
-					}
-				}));
+						else
+						{
+							//fill the vm from _model
+							//Product and State
+							ProductId = _model.StateStation.State.FPC.Product.Id;
+							ProductCode = _model.StateStation.State.FPC.Product.Code;
+							ProductName = _model.StateStation.State.FPC.Product.Name;
+							ProductColor = _model.StateStation.State.FPC.Product.Color;
+							StateCode = _model.StateStation.State.Code;
+							IsRework = _model.StateStation.State.IsReworkState == Bool3.True;
+							//Block background texts
+							BlockTargetPoint = _model.BlockTargetPoint;
+							BlockProducedG1 = reportData[0];
+							ReportFillPercent = string.Format("{0:D2}%", reportData[1]);
+							IsReportFilled = (reportData[1] >= 100);
+							//Navigation
+							if (_model.Job != null) Job = new PPJobVm(_model.Job);
+							foreach (var task in _model.Tasks)
+							{
+								TaskList.Add(new PPTaskVm(task, this));
+							}
+							Dispatcher.Invoke(acqusitionThreadEnd);
+						}
+					}));
+					_tries = _MAX_TRIES;
+				}
 			}
-			catch { }
+			catch
+			{
+				if (--_tries < 0)
+				{
+					_tries = _MAX_TRIES;
+					System.Threading.Thread.Sleep(4000);
+				}
+				else 
+					BeginAcquisition();
+			}
 		}
 		protected override void acqusitionThreadEnd()
 		{
@@ -176,7 +192,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(ParentProperty, value); }
 		}
 		public static readonly DependencyProperty ParentProperty =
-			DependencyProperty.Register("Parent", typeof(Core.PP.PPItemCollection), typeof(PPTaskVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Parent", typeof(Core.PP.PPItemCollection), typeof(BlockVm), new UIPropertyMetadata(null));
 
 		public ObservableCollection<PPTaskVm> TaskList { get { return _taskList; } }
 		private ObservableCollection<PPTaskVm> _taskList = new ObservableCollection<PPTaskVm>();
@@ -215,6 +231,7 @@ namespace Soheil.Core.ViewModels.PP
 
 		void initializeCommands()
 		{
+			ReloadBlockCommand = new Commands.Command(o => BeginAcquisition());
 			AddTaskToEditorCommand = new Commands.Command(o =>
 			{
 				try
@@ -344,6 +361,14 @@ namespace Soheil.Core.ViewModels.PP
 				}
 			});
 		}
+		//ReloadBlockCommand Dependency Property
+		public Commands.Command ReloadBlockCommand
+		{
+			get { return (Commands.Command)GetValue(ReloadBlockCommandProperty); }
+			set { SetValue(ReloadBlockCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ReloadBlockCommandProperty =
+			DependencyProperty.Register("ReloadBlockCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		//AddTaskToEditorCommand Dependency Property
 		public Commands.Command AddTaskToEditorCommand
 		{
@@ -351,7 +376,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(AddTaskToEditorCommandProperty, value); }
 		}
 		public static readonly DependencyProperty AddTaskToEditorCommandProperty =
-			DependencyProperty.Register("AddTaskToEditorCommand", typeof(Commands.Command), typeof(PPTaskVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("AddTaskToEditorCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		//AddJobToEditorCommand Dependency Property
 		public Commands.Command AddJobToEditorCommand
 		{
@@ -359,7 +384,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(AddJobToEditorCommandProperty, value); }
 		}
 		public static readonly DependencyProperty AddJobToEditorCommandProperty =
-			DependencyProperty.Register("AddJobToEditorCommand", typeof(Commands.Command), typeof(PPTaskVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("AddJobToEditorCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		//EditJobCommand Dependency Property
 		public Commands.Command EditJobCommand
 		{
@@ -367,7 +392,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(EditJobCommandProperty, value); }
 		}
 		public static readonly DependencyProperty EditJobCommandProperty =
-			DependencyProperty.Register("EditJobCommand", typeof(Commands.Command), typeof(PPTaskVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("EditJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		//DeleteJobCommand Dependency Property
 		public Commands.Command DeleteJobCommand
 		{
@@ -375,7 +400,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(DeleteJobCommandProperty, value); }
 		}
 		public static readonly DependencyProperty DeleteJobCommandProperty =
-			DependencyProperty.Register("DeleteJobCommand", typeof(Commands.Command), typeof(PPTaskVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("DeleteJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		//InsertSetupBefore Dependency Property
 		public Commands.Command InsertSetupBefore
 		{
@@ -383,7 +408,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(InsertSetupBeforeProperty, value); }
 		}
 		public static readonly DependencyProperty InsertSetupBeforeProperty =
-			DependencyProperty.Register("InsertSetupBefore", typeof(Commands.Command), typeof(PPTaskVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("InsertSetupBefore", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

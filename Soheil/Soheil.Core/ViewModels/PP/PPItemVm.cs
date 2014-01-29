@@ -13,7 +13,7 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public abstract class PPItemVm : ViewModelBase
 	{
-		protected PPItemVm() { Message = new EmbeddedException(); }
+		protected PPItemVm() { Message = new EmbeddedException(); _threadLock = new object(); }
 
 		//Message Dependency Property
 		public EmbeddedException Message
@@ -100,6 +100,8 @@ namespace Soheil.Core.ViewModels.PP
 		protected static int _acquisitionStartDelay = 100;
 		protected static int _acquisitionPeriodicDelay = System.Threading.Timeout.Infinite;//5000???
 		protected Object _threadLock;
+		protected int _tries;
+		protected static int _MAX_TRIES = 10;
 
 		//Main Functions
 		/// <summary>

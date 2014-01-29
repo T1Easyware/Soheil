@@ -73,4 +73,6 @@
 	<SolidColorBrush x:Key="HeaderBackground" Color="#A012" />
 	<SolidColorBrush x:Key="HeaderBorderBrush" Color="#6044" />
 	<SolidColorBrush x:Key="GlyphBrush" Color="#444" />
+    
+    
 </ResourceDictionary>

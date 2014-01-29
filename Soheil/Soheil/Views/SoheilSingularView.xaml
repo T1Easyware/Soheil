@@ -814,42 +814,101 @@
 
                     <ToolBarTray Background="Transparent" Grid.ColumnSpan="2" FlowDirection="RightToLeft">
                         <ToolBar Background="Transparent">
-                            <Button Margin="2" Command="{Binding CleanAddBlockCommand}">
-                                <Image Source="/Images/PP/NewTask.png" Width="16"/>
-                                <Button.ToolTip>
-                                    <StackPanel>
-                                        <TextBlock Text="افزودن Task جدید"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات قبلی ویرایشگر Task حذف خواهد شد"/>
-                                    </StackPanel>
-                                </Button.ToolTip>
-                            </Button>
-                            <Button Margin="2" Command="{Binding AddBlockCommand}">
-                                <Image Source="/Images/PP/EditTask.png" Width="16"/>
+                            <Button Margin="1" Command="{Binding ToggleTaskEditorCommand}">
+                                <Image Source="/Images/PP/Task.png" Width="16"/>
                                 <Button.ToolTip>
                                     <StackPanel>
                                         <TextBlock Text="ویرایشگر Task"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات قبلی ویرایشگر Task نمایش داده می شود"/>
+                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Task با محتویات اخیر نمایش داده می شود"/>
                                     </StackPanel>
                                 </Button.ToolTip>
                             </Button>
-                            <Button Margin="2" Command="{Binding CleanAddJobCommand}">
-                                <Image Source="/Images/PP/NewJob.png" Width="16"/>
-                                <Button.ToolTip>
-                                    <StackPanel>
-                                        <TextBlock Text="افزودن Job جدید"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات قبلی ویرایشگر Job حذف خواهد شد"/>
-                                    </StackPanel>
-                                </Button.ToolTip>
-                            </Button>
-                            <Button Margin="2" Command="{Binding AddJobCommand}">
-                                <Image Source="/Images/PP/EditJob.png" Width="16"/>
+                            <UniformGrid Rows="1" Background="#80FF" x:Name="taskEditorToolbarButtons" Width="0">
+                                <Button Margin="1" Command="{Binding TaskEditor.ResetCurrentBlockCommand}">
+                                    <Image Source="/Images/Fpc/Undo16.png" Width="16"/>
+                                    <Button.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="خالی کردن برنامه"/>
+                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="تمام اطلاعات مربوط به برنامه فعلی از صفحه پاک می شود"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                                <Button Margin="1" Command="{Binding TaskEditor.ClearAllCommand}">
+                                    <Image Source="/Images/PP/TaskNew.png" Width="16"/>
+                                    <Button.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="خالی کردن صفحه"/>
+                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات موجود در ویرایشگر Task حذف خواهد شد"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                                <!--Button Margin="1" Command="{Binding TaskEditor.SaveCommand}">
+                                    <Image Source="/Images/Fpc/Save16.png" Width="16"/>
+                                    <Button.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="ذخیره برنامه"/>
+                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="برنامه فعلی در ویرایشگر Task ذخیره می شود"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button-->
+                                <Button Margin="1" Command="{Binding TaskEditor.ExitCommand}">
+                                    <Image Source="/Images/PP/closeup.png" Width="16"/>
+                                    <Button.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="بستن ویرایشگر"/>
+                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Task بسته می شود و آخرین اطلاعات آن نگه داشته می شود"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                                <Button Margin="1" Command="{Binding TaskEditor.SaveAllCommand}">
+                                    <Image Source="/Images/PP/saveup.png" Width="16"/>
+                                    <Button.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="ذخیره همه و خروج"/>
+                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="تمام برنامه های ویرایشگر Task ذخیره و ویرایشگر بسته می شود"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </UniformGrid>
+                            <Separator/>
+                            <Button Margin="1" Command="{Binding ToggleJobEditorCommand}">
+                                <Image Source="/Images/PP/Job.png" Width="16"/>
                                 <Button.ToolTip>
                                     <StackPanel>
                                         <TextBlock Text="ویرایشگر Job"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات قبلی ویرایشگر Job نمایش داده می شود"/>
+                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Job با محتویات اخیر نمایش داده می شود"/>
                                     </StackPanel>
                                 </Button.ToolTip>
                             </Button>
+                            <UniformGrid Rows="1" Background="#80FF" x:Name="jobEditorToolbarButtons" Width="0">
+                                <Button Margin="1" Command="{Binding JobEditor.ClearAllCommand}">
+                                    <Image Source="/Images/PP/JobNew.png" Width="16"/>
+                                    <Button.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="خالی کردن صفحه"/>
+                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات موجود در ویرایشگر Job حذف خواهد شد"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                                <Button Margin="1" Command="{Binding JobEditor.SaveAllCommand}">
+                                    <Image Source="/Images/PP/saveup.png" Width="16"/>
+                                    <Button.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="ذخیره همه و خروج"/>
+                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="تمام برنامه های ویرایشگر Job ذخیره و ویرایشگر بسته می شود"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                                <Button Margin="1" Command="{Binding JobEditor.ExitCommand}">
+                                    <Image Source="/Images/PP/closeup.png" Width="16"/>
+                                    <Button.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="بستن ویرایشگر"/>
+                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Job بسته می شود و آخرین اطلاعات آن نگه داشته می شود"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </UniformGrid>
                             <Separator/>
                             <ToggleButton Margin="2" IsChecked="{Binding ShowInsertSetupButton}">
                                 <Image Source="/Images/PP/SetupAdd.png" Width="16"/>
@@ -860,15 +919,16 @@
                                     </StackPanel>
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
+
                             <!--ToggleButton Margin="2" Content="لیست Job ها" Name="showJobList"/-->
                         </ToolBar>
                         <ToolBar Background="Transparent">
                             <Button Command="{Binding GoToNow}" ToolTip="برو به الان">
                                 <Image Source="/Images/PP/Now.png" Width="16"/>
                             </Button>
-                            <WrapPanel>
-                                <Image Source="/Images/PP/Zoom.png" Height="16"/>
-                                <Slider Margin="2" Maximum="2000" Minimum="20" Value="{Binding HourZoom}" Width="140" PreviewMouseDown="ZoomStarted"/>
+                            <WrapPanel VerticalAlignment="Center">
+                                <Image Source="/Images/PP/Zoom.png" Height="16" VerticalAlignment="Center"/>
+                                <Slider Margin="2" Maximum="2000" Minimum="20" Value="{Binding HourZoom}" Width="140" PreviewMouseDown="ZoomStarted" VerticalAlignment="Center"/>
                                 <WrapPanel.ToolTip>
                                     <ToolTip>بزرگنمایی زمان</ToolTip>
                                 </WrapPanel.ToolTip>
@@ -896,7 +956,7 @@
                             <ToggleButton IsChecked="{Binding ViewMode, 
 							    Converter={StaticResource isEqual}, 
 							    ConverterParameter={x:Static Common:PPViewMode.Simple}}">
-                                <Image Source="/Images/PP/TaskSimpleView.png" Height="16"/>
+                                <Image Source="/Images/PP/Task.png" Height="16"/>
                                 <ToggleButton.ToolTip>
                                     <ToolTip>برنامه تولید</ToolTip>
                                 </ToggleButton.ToolTip>
@@ -1186,7 +1246,7 @@
                     <ItemsControl Grid.Row="5" Grid.Column="1" ItemsSource="{Binding PPItems}"
 							      Visibility="{Binding ViewMode, 
 								    Converter={StaticResource isEqualToInvisibilityConverter}, 
-								    ConverterParameter={x:Static Common:PPViewMode.Report}}">
+								    ConverterParameter={x:Static Common:PPViewMode.Simple}}">
 
                         <!-- ==================================== OneRow Of Item(Blocks,NPTs) ========================================= -->
                         <ItemsControl.ItemTemplate>
@@ -1216,6 +1276,8 @@
                                                         </Border.Width>
                                                         <Border.ContextMenu>
                                                             <ContextMenu FlowDirection="RightToLeft">
+                                                                <MenuItem Header="بارگذاری مجدد" Command="{Binding ReloadBlockCommand}"/>
+                                                                <Separator/>
                                                                 <MenuItem Header="ویرایش Task" Command="{Binding EditBlockCommand}"/>
                                                                 <MenuItem Header="افزودن Task به ویرایشگر" Command="{Binding AddBlockToEditorCommand}"/>
                                                                 <MenuItem Header="حذف Task" Command="{Binding DeleteBlockCommand}"/>
@@ -1481,177 +1543,8 @@
                                                         </Setter>
                                                     </DataTrigger>
 
-                                                    <!-- PPTask Report Simple View -->
-                                                    <DataTrigger Binding="{Binding ViewMode}" Value="ReportSimple">
-                                                        <Setter TargetName="border" Property="Background">
-                                                            <Setter.Value>
-                                                                <SolidColorBrush Color="{Binding ProductColor}"/>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Setter TargetName="innerControl" Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="{x:Type Control}">
-                                                                    <Grid>
-                                                                        <!-- TaskReports within Task -->
-                                                                        <ItemsControl ItemsSource="{Binding TaskReports}" x:Name="taskReportsPanel" Loaded="TaskReports_Loaded" Unloaded="TaskReports_Unloaded">
-                                                                            <ItemsControl.ItemTemplateSelector>
-                                                                                <TemplateSelectors:TaskReportSimpleViewSelector>
-
-                                                                                    <!-- TaskReport Holder -->
-                                                                                    <TemplateSelectors:TaskReportSimpleViewSelector.TaskReportHolderTemplate>
-                                                                                        <DataTemplate DataType="{x:Type vm:TaskReportHolderVm}">
-                                                                                            <Button x:Name="addReportButton" Command="{Binding AddCommand}" Opacity="0.7" Margin="0"
-																							    Height="{Binding ElementName=taskReportsPanel, Path=ActualHeight}">
-                                                                                                <Image Source="/Images/PP/ReportAdd.png" Height="16"/>
-                                                                                                <Button.Triggers>
-                                                                                                    <EventTrigger RoutedEvent="MouseEnter">
-                                                                                                        <BeginStoryboard>
-                                                                                                            <Storyboard Duration="0:0:0.2">
-                                                                                                                <DoubleAnimation
-																											    Storyboard.TargetProperty="Opacity"
-																											    Duration="0:0:0.2"
-																											    To="0.8"/>
-                                                                                                            </Storyboard>
-                                                                                                        </BeginStoryboard>
-                                                                                                    </EventTrigger>
-                                                                                                    <EventTrigger RoutedEvent="MouseLeave">
-                                                                                                        <BeginStoryboard>
-                                                                                                            <Storyboard Duration="0:0:0.7">
-                                                                                                                <DoubleAnimation
-																											    Storyboard.TargetProperty="Opacity"
-																											    Duration="0:0:0.7"
-																											    To="0.7"/>
-                                                                                                            </Storyboard>
-                                                                                                        </BeginStoryboard>
-                                                                                                    </EventTrigger>
-                                                                                                </Button.Triggers>
-                                                                                            </Button>
-                                                                                            <DataTemplate.Triggers>
-                                                                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                                                                    <Setter TargetName="addReportButton" Property="Opacity" Value="1"/>
-                                                                                                    <Setter TargetName="addReportButton" Property="Effect">
-                                                                                                        <Setter.Value>
-                                                                                                            <DropShadowEffect BlurRadius="16" Opacity="1" ShadowDepth="0" Color="Yellow"/>
-                                                                                                        </Setter.Value>
-                                                                                                    </Setter>
-                                                                                                </DataTrigger>
-                                                                                            </DataTemplate.Triggers>
-                                                                                        </DataTemplate>
-                                                                                    </TemplateSelectors:TaskReportSimpleViewSelector.TaskReportHolderTemplate>
-
-                                                                                    <!-- Empty (new) TaskReport -->
-                                                                                    <TemplateSelectors:TaskReportSimpleViewSelector.EmptyTaskReportTemplate>
-                                                                                        <DataTemplate DataType="{x:Type vm:TaskReportVm}">
-                                                                                            <DockPanel Height="{Binding ElementName=taskReportsPanel, Path=ActualHeight}"
-																								    ClipToBounds="True" LastChildFill="False">
-                                                                                                <TextBlock DockPanel.Dock="Top" Text="{Binding TargetPoint}" FontWeight="Bold" 
-																							    TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                                                                <TextBlock DockPanel.Dock="Bottom" Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" FontWeight="Bold" 
-																							    TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                                                            </DockPanel>
-                                                                                        </DataTemplate>
-                                                                                    </TemplateSelectors:TaskReportSimpleViewSelector.EmptyTaskReportTemplate>
-
-                                                                                    <!-- Actual TaskReport -->
-                                                                                    <TemplateSelectors:TaskReportSimpleViewSelector.TaskReportTemplate>
-                                                                                        <DataTemplate DataType="{x:Type vm:TaskReportVm}">
-                                                                                            <DockPanel Height="{Binding ElementName=taskReportsPanel, Path=ActualHeight}" ClipToBounds="True">
-                                                                                                <Rectangle Width="1" Fill="#4000" DockPanel.Dock="Right" ClipToBounds="True"/>
-                                                                                                <TextBlock DockPanel.Dock="Top" Text="{Binding TargetPoint}" FontWeight="Bold" 
-																									       Margin="0,-2" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                                                                <TextBlock DockPanel.Dock="Bottom" FlowDirection="LeftToRight"
-																									       Margin="0,-1" Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FontWeight="Bold" 
-																									       TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                                                                <Grid Margin="0,-1" Panel.ZIndex="-1">
-                                                                                                    <Grid.ColumnDefinitions>
-                                                                                                        <ColumnDefinition Width="{Binding ProducedG1, Converter={StaticResource portionToStarConverter}}"/>
-                                                                                                        <ColumnDefinition Width="{Binding SumOfDefectionCount, Converter={StaticResource portionToStarConverter}}"/>
-                                                                                                        <ColumnDefinition Width="{Binding SumOfStoppageCount, Converter={StaticResource portionToStarConverter}}"/>
-                                                                                                    </Grid.ColumnDefinitions>
-                                                                                                    <Border Background="#4AF" BorderBrush="Black" BorderThickness="1">
-                                                                                                        <TextBlock Text="{Binding ProducedG1}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-                                                                                                    </Border>
-                                                                                                    <Border Background="#F55" BorderBrush="Black" BorderThickness="1" Grid.Column="1">
-                                                                                                        <TextBlock Text="{Binding SumOfDefectionCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-                                                                                                    </Border>
-                                                                                                    <Border Background="#FD5" BorderBrush="Black" BorderThickness="1" Grid.Column="2">
-                                                                                                        <TextBlock Text="{Binding SumOfStoppageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-                                                                                                    </Border>
-                                                                                                </Grid>
-                                                                                            </DockPanel>
-                                                                                        </DataTemplate>
-                                                                                    </TemplateSelectors:TaskReportSimpleViewSelector.TaskReportTemplate>
-
-                                                                                </TemplateSelectors:TaskReportSimpleViewSelector>
-                                                                            </ItemsControl.ItemTemplateSelector>
-                                                                            <ItemsControl.ItemsPanel>
-                                                                                <ItemsPanelTemplate>
-                                                                                    <Canvas/>
-                                                                                </ItemsPanelTemplate>
-                                                                            </ItemsControl.ItemsPanel>
-                                                                            <ItemsControl.ItemContainerStyle>
-                                                                                <Style TargetType="ContentPresenter">
-                                                                                    <Setter Property="Margin">
-                                                                                        <Setter.Value>
-                                                                                            <MultiBinding Converter="{StaticResource taskReportMargin}">
-                                                                                                <Binding Path="StartDateTime"/>
-                                                                                                <Binding Path="Task.StartDateTime"/>
-                                                                                                <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-                                                                                            </MultiBinding>
-                                                                                        </Setter.Value>
-                                                                                    </Setter>
-                                                                                    <Setter Property="Width">
-                                                                                        <Setter.Value>
-                                                                                            <MultiBinding Converter="{StaticResource taskReportWidth}">
-                                                                                                <Binding Path="DurationSeconds"/>
-                                                                                                <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-                                                                                            </MultiBinding>
-                                                                                        </Setter.Value>
-                                                                                    </Setter>
-                                                                                </Style>
-                                                                            </ItemsControl.ItemContainerStyle>
-                                                                        </ItemsControl>
-                                                                        <!-- Overlay button -->
-                                                                        <Button x:Name="button" Opacity="0" HorizontalAlignment="Left" Margin="0" ToolTip="مشاهده/ویرایش گزارش"
-																			    Command="{Binding EditReportCommand}">
-                                                                            <Image Source="/Images/PP/ReportView.png" Height="16"/>
-                                                                            <Button.Width>
-                                                                                <MultiBinding Converter="{StaticResource doubleMultiplier2}">
-                                                                                    <Binding Path="SumOfReportedHours"/>
-                                                                                    <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-                                                                                </MultiBinding>
-                                                                            </Button.Width>
-                                                                        </Button>
-                                                                        <Grid.Triggers>
-                                                                            <EventTrigger RoutedEvent="MouseEnter">
-                                                                                <BeginStoryboard>
-                                                                                    <Storyboard Duration="0:0:0.2">
-                                                                                        <DoubleAnimation Storyboard.TargetName="button"
-																						    Storyboard.TargetProperty="Opacity"
-																						    Duration="0:0:0.2"
-																						    To="0.8"/>
-                                                                                    </Storyboard>
-                                                                                </BeginStoryboard>
-                                                                            </EventTrigger>
-                                                                            <EventTrigger RoutedEvent="MouseLeave">
-                                                                                <BeginStoryboard>
-                                                                                    <Storyboard Duration="0:0:0.7">
-                                                                                        <DoubleAnimation Storyboard.TargetName="button"
-																						    Storyboard.TargetProperty="Opacity"
-																						    Duration="0:0:0.7"
-																						    To="0"/>
-                                                                                    </Storyboard>
-                                                                                </BeginStoryboard>
-                                                                            </EventTrigger>
-                                                                        </Grid.Triggers>
-                                                                    </Grid>
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </DataTrigger>
-
                                                     <!-- PPTask Report Detailed View -->
-                                                    <DataTrigger Binding="{Binding ViewMode}" Value="ReportDetailed">
+                                                    <DataTrigger Binding="{Binding ViewMode}" Value="Report">
                                                         <Setter TargetName="border" Property="Background">
                                                             <Setter.Value>
                                                                 <SolidColorBrush Color="{Binding ProductColor}"/>
@@ -3055,18 +2948,20 @@
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="taskEditorPanel"
-                                                 Storyboard.TargetProperty="Height"
-                                                 Duration="0:0:0.3" To="600"/>
+                                <ParallelTimeline>
+                                    <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
+                                    <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="128"/>
+                                </ParallelTimeline>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="taskEditorPanel"
-                                                 Storyboard.TargetProperty="Height"
-                                                 Duration="0:0:0.2" To="0"/>
+                                <ParallelTimeline>
+                                    <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
+                                    <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
+                                </ParallelTimeline>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
@@ -3075,18 +2970,16 @@
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="jobEditorPanel"
-                                                 Storyboard.TargetProperty="Height"
-                                                 Duration="0:0:0.3" To="600"/>
+                                <DoubleAnimation Storyboard.TargetName="jobEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
+                                <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="92"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="jobEditorPanel"
-                                                 Storyboard.TargetProperty="Height"
-                                                 Duration="0:0:0.2" To="0"/>
+                                <DoubleAnimation Storyboard.TargetName="jobEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
+                                <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>

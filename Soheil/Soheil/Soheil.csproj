@@ -224,7 +224,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="App.config">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -275,10 +276,13 @@
     <Resource Include="Images\Fpc\Save.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\PP\Job.png" />
+    <Resource Include="Images\PP\JobNew.png" />
     <Resource Include="Images\PP\LeftOperatorCounter.png" />
     <Resource Include="Images\PP\OperatorCounter.png" />
     <Resource Include="Images\PP\Rework.png" />
     <Resource Include="Images\PP\RightOperatorCounter.png" />
+    <Resource Include="Images\PP\Task.png" />
     <Resource Include="Images\PP\TaskState_Blue.png" />
     <Resource Include="Images\PP\TaskState_Green.png" />
     <Resource Include="Images\PP\TaskState_Grey.png" />
@@ -292,7 +296,10 @@
     <Content Include="Images\openhand.cur">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Images\PP\Job.png" />
+    <Resource Include="Images\PP\TaskNew.png" />
+    <Resource Include="Images\PP\saveup.png" />
+    <Resource Include="Images\PP\closeup.png" />
+    <Resource Include="Images\warning.png" />
     <Resource Include="Images\PP\Operator.png" />
     <Resource Include="Images\PP\ReportWarning15.png" />
     <Resource Include="Images\PP\Targetpoint.png" />
@@ -306,7 +313,6 @@
     <Resource Include="Images\PP\NewTask.png" />
     <Resource Include="Images\PP\ShowCode.png" />
     <Resource Include="Images\PP\ProcessReport.png" />
-    <Resource Include="Images\PP\TaskSimpleView.png" />
     <Resource Include="Images\PP\DropDown.png" />
     <Resource Include="Images\PP\ZoomUndo.png" />
     <Resource Include="Images\PP\Zoom.png" />

@@ -52,10 +52,10 @@ namespace Soheil.Core.DataServices
 				"StateStation.State.FPC",
 				"StateStation.State.FPC.Product",
 				"StateStation.Station",
-				"StateStation.StateStationActivity",
-				"StateStation.StateStationActivity.Activity",
-				"StateStation.StateStationActivity.StateStationActivityMachine",
-				"StateStation.StateStationActivity.StateStationActivityMachine.Machine",
+				"StateStation.StateStationActivities",
+				"StateStation.StateStationActivities.Activity",
+				"StateStation.StateStationActivities.StateStationActivityMachines",
+				"StateStation.StateStationActivities.StateStationActivityMachines.Machine",
 				"Tasks",
 				"Tasks.Processes",
 				"Tasks.Processes.ProcessReports",
@@ -63,8 +63,8 @@ namespace Soheil.Core.DataServices
 				"Tasks.Processes.SelectedMachines.StateStationActivityMachine",
 				"Tasks.TaskReports",
 				"Tasks.TaskReports.ProcessReports",
-				"Tasks.TaskReports.ProcessReports.OperatorProcessReport",
-				"Tasks.TaskReports.ProcessReports.OperatorProcessReport.Operator",
+				"Tasks.TaskReports.ProcessReports.OperatorProcessReports",
+				"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
 				"Tasks.TaskReports.ProcessReports.DefectionReports",
 				"Tasks.Processes.ProcessReports.StoppageReports"
 				);
@@ -132,7 +132,8 @@ namespace Soheil.Core.DataServices
 		}
 
 		/// <summary>
-		/// Get the sum of TaskProducedG1's of all taskReports associated with the given block
+		/// Get infos of all taskReports associated with the given block
+		/// <para>The info includes: the sum of TaskProducedG1's, % of reported targetpoints</para>
 		/// </summary>
 		/// <param name="blockId"></param>
 		/// <returns></returns>
@@ -148,7 +149,7 @@ namespace Soheil.Core.DataServices
 				taskTp += task.TaskTargetPoint;
 				reportedTaskTp += task.TaskReports.Sum(x => x.Task.TaskTargetPoint);
 			}
-			return new int[] { g1, 100*taskTp / reportedTaskTp };
+			return new int[] { g1, taskTp == 0 ? 0 : 100 * reportedTaskTp / taskTp };
 		}
 
 		internal void SaveBlock(Block block)

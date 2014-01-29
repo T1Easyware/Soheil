@@ -335,42 +335,45 @@
                             <DataGridTemplateColumn Header="{Loc txtManHours}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ItemsControl ItemsSource="{Binding Choices}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="2" Margin="1">
-                                                        <Border.Background>
-                                                            <MultiBinding Converter="{StaticResource isEqualToBrushConverter}">
-                                                                <Binding Path="Parent.SelectedChoice"/>
-                                                                <Binding Path="."/>
-                                                                <MultiBinding.ConverterParameter>
-                                                                    <x:Array Type="Brush">
-                                                                        <SolidColorBrush Color="#088" />
-                                                                        <SolidColorBrush Color="Silver"/>
-                                                                    </x:Array>
-                                                                </MultiBinding.ConverterParameter>
-                                                            </MultiBinding>
-                                                        </Border.Background>
-                                                        <TextBlock Text="{Binding ManHour}"/>
-                                                        <Border.ToolTip>
-                                                            <!--loc farsi intended layout:-->
-                                                            <!--نفرساعت       |         2-->
-                                                            <UniformGrid Rows="2" Columns="2">
-                                                                <TextBlock Text="{Loc txtManHour}" Foreground="Gray"/>
-                                                                <TextBlock Text="{Binding ManHour}" FlowDirection="LeftToRight"/>
-                                                                <TextBlock Text="{Loc txtCycleTimeSec}" Foreground="Gray"/>
-                                                                <TextBlock Text="{Binding CycleTime}" FlowDirection="LeftToRight"/>
-                                                            </UniformGrid>
-                                                        </Border.ToolTip>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <UniformGrid Rows="1"/>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                        </ItemsControl>
+                                        <DockPanel>
+                                            <Image Source="/Images/warning.png" Width="16" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" ToolTip="{Binding Message.FullExceptionText}"/>
+                                            <ItemsControl ItemsSource="{Binding Choices}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="2" Margin="1">
+                                                            <Border.Background>
+                                                                <MultiBinding Converter="{StaticResource isEqualToBrushConverter}">
+                                                                    <Binding Path="Parent.SelectedChoice"/>
+                                                                    <Binding Path="."/>
+                                                                    <MultiBinding.ConverterParameter>
+                                                                        <x:Array Type="Brush">
+                                                                            <SolidColorBrush Color="#088" />
+                                                                            <SolidColorBrush Color="Silver"/>
+                                                                        </x:Array>
+                                                                    </MultiBinding.ConverterParameter>
+                                                                </MultiBinding>
+                                                            </Border.Background>
+                                                            <TextBlock Text="{Binding ManHour}"/>
+                                                            <Border.ToolTip>
+                                                                <!--loc farsi intended layout:-->
+                                                                <!--نفرساعت       |         2-->
+                                                                <UniformGrid Rows="2" Columns="2">
+                                                                    <TextBlock Text="{Loc txtManHour}" Foreground="Gray"/>
+                                                                    <TextBlock Text="{Binding ManHour}" FlowDirection="LeftToRight"/>
+                                                                    <TextBlock Text="{Loc txtCycleTimeSec}" Foreground="Gray"/>
+                                                                    <TextBlock Text="{Binding CycleTime}" FlowDirection="LeftToRight"/>
+                                                                </UniformGrid>
+                                                            </Border.ToolTip>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Rows="1"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </DockPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -432,10 +435,10 @@
 				Background="{StaticResource HeaderBackground}" BorderBrush="{StaticResource HeaderBorderBrush}">
 			<DockPanel>
                 <!-- buttons -->
-                <Button DockPanel.Dock="Left" Content="پاک کردن این مرحله" Command="{Binding ResetCurrentBlockCommand}"/>
+                <!--Button DockPanel.Dock="Left" Content="پاک کردن این مرحله" Command="{Binding ResetCurrentBlockCommand}"/>
                 <Button DockPanel.Dock="Left" Content="پاک کردن همه مراحل" Command="{Binding ClearAllCommand}"/>
                 <Button DockPanel.Dock="Right" Content="انصراف و خروج" Command="{Binding ExitCommand}"/>
-                <Button DockPanel.Dock="Right" Content="ذخیره همه برنامه ها و خروج" Command="{Binding SaveAllCommand}"/>
+                <Button DockPanel.Dock="Right" Content="ذخیره همه برنامه ها و خروج" Command="{Binding SaveAllCommand}"/-->
                 <!--Button DockPanel.Dock="Right" Content="ذخیره برنامه انتخاب شده" Command="{Binding SaveCommand}" IsEnabled="{Binding SelectedState, Converter={StaticResource isNull}}"/-->
 
                 <!-- indicator -->

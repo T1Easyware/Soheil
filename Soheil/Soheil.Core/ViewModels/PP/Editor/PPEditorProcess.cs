@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Collections.ObjectModel;
+using Soheil.Common.SoheilException;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
@@ -42,6 +43,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			//_model = processModel;
 			_ssaGroup = ssaGroup;
 			_parent = parent;
+			Message = new Common.SoheilException.EmbeddedException();
 			
 			//choices
 			foreach (var choice in ssaGroup)
@@ -132,6 +134,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("DoesParentDeferToActivities", typeof(bool), typeof(PPEditorProcess), new UIPropertyMetadata(true));
 		#endregion
 
+		//Message Dependency Property
+		public EmbeddedException Message
+		{
+			get { return (EmbeddedException)GetValue(MessageProperty); }
+			set { SetValue(MessageProperty, value); }
+		}
+		public static readonly DependencyProperty MessageProperty =
+			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(PPEditorProcess), new UIPropertyMetadata(null));
+
 		//Choices Observable Collection
 		public ObservableCollection<PPEditorActivityChoice> Choices { get { return _choices; } }
 		private ObservableCollection<PPEditorActivityChoice> _choices = new ObservableCollection<PPEditorActivityChoice>();
@@ -151,10 +162,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				if (newVal == null)
 				{
 					vm.DurationSeconds = 0;
+					vm.Message.AddEmbeddedException("نفرساعت مورد استفاده این فعالیت نامعتبر است");
 				}
 				else
 				{
 					vm.DurationSeconds = (int)Math.Floor(newVal.CycleTime * vm.TargetPoint);
+					vm.Message.ResetEmbeddedException();
 
 					//machines
 					vm.MachineList.Clear();
@@ -175,5 +188,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				if (vm.ActivityChoiceChanged != null)
 					vm.ActivityChoiceChanged(oldVal, newVal);
 			}));
+
 	}
 }

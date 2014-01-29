@@ -166,7 +166,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		void initializeCommands()
 		{
 			SaveCommand = new Commands.Command(o =>
-			{/*
+			{
 				if (SelectedBlock == null) return;
 				try
 				{
@@ -176,8 +176,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					MessageBox.Show(exp.Message);
 				}
-				*/
-				throw new Exception("not meant to be run yet. reason of disability: possible loss of data due to shared UOW throughout the taskEditor");
+				
+				//throw new Exception("not meant to be run yet. reason of disability: possible loss of data due to shared UOW throughout the taskEditor");
 			});
 			ClearAllCommand = new Commands.Command(o =>
 			{

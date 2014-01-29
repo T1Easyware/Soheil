@@ -27,6 +27,7 @@ namespace Soheil.Core.ViewModels.PP
 		public PPTaskVm(Model.Task taskModel, BlockVm parentBlock)
 		{
 			Block = parentBlock;
+			_model = taskModel;
 			StartDateTime = taskModel.StartDateTime;
 			DurationSeconds = taskModel.DurationSeconds;
 			TaskTargetPoint = taskModel.TaskTargetPoint;

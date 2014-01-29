@@ -192,11 +192,11 @@
 
 
 	<DockPanel>
-		<DockPanel DockPanel.Dock="Top" LastChildFill="False" Height="30">
+		<!--DockPanel DockPanel.Dock="Top" LastChildFill="False" Height="30">
             <Button DockPanel.Dock="Left" Content="پاک کردن همه Jobها" Command="{Binding ClearAllCommand}"/>
             <Button DockPanel.Dock="Right" Content="انصراف و خروج" Command="{Binding ExitCommand}"/>
             <Button DockPanel.Dock="Right" Content="ذخیره همه Jobها و خروج" Command="{Binding SaveAllCommand}"/>
-        </DockPanel>
+        </-->
 		<Border DockPanel.Dock="Left" Margin="5,5,0,5" BorderThickness="1" CornerRadius="1" 
 				BorderBrush="{StaticResource HeaderBorderBrush}" Background="{StaticResource HeaderBackground}">
 			<DockPanel>

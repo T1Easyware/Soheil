@@ -390,8 +390,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					TaskDataService.DeleteModel(processModel);
 				}
+
 				//then add new process Models (or attach if a process with the same Activity already exists)
-				foreach (var processVm in taskVm.ProcessList)
+				foreach (var processVm in taskVm.ProcessList.Where(x => x.SelectedChoice != null))
 				{
 					//check for existance
 					var procModel = taskVm.Model.Processes.FirstOrDefault(x => 

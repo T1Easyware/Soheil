@@ -37,7 +37,7 @@ namespace Soheil.Core.ViewModels.PP
 			TaskEditor = new PPTaskEditorVm();
 			JobEditor = new PPJobEditorVm();
 
-			AddBlockCommand.Execute(null);
+			ToggleTaskEditorCommand.Execute(null);
 			TaskEditor.SelectedProduct = TaskEditor.AllProductGroups.First().Products.First();
 			var block = new PPEditorBlock(TaskEditor.FpcViewer.States.First(x=>x.StateType == StateType.Mid).Model);
 			TaskEditor.BlockList.Add(block);
@@ -57,10 +57,10 @@ namespace Soheil.Core.ViewModels.PP
 		void initializeCommands()
 		{
 			//command
-			AddBlockCommand = new Commands.Command(o =>
+			ToggleTaskEditorCommand = new Commands.Command(o =>
 			{
-				TaskEditor.IsVisible = true;
 				JobEditor.IsVisible = false;
+				TaskEditor.IsVisible = !TaskEditor.IsVisible;
 			});
 			CleanAddBlockCommand = new Commands.Command(o =>
 			{
@@ -68,10 +68,10 @@ namespace Soheil.Core.ViewModels.PP
 				JobEditor.IsVisible = false;
 				TaskEditor.Reset();
 			});
-			AddJobCommand = new Commands.Command(o =>
+			ToggleJobEditorCommand = new Commands.Command(o =>
 			{
-				JobEditor.IsVisible = true;
 				TaskEditor.IsVisible = false;
+				JobEditor.IsVisible = !JobEditor.IsVisible;
 			});
 			CleanAddJobCommand = new Commands.Command(o =>
 			{
@@ -208,6 +208,7 @@ namespace Soheil.Core.ViewModels.PP
 			var end = start.AddHours(GridWidth / HourZoom);
 			Hours.FetchRange(start, end);
 			updateShiftsAndBreaks(start, end);
+
 			if ((loadItemsAsWell || AlwaysLoadTasks) && (ViewMode == PPViewMode.Simple))
 				PPItems.FetchRange(start, end);
 		}
@@ -242,14 +243,14 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty TaskEditorProperty =
 			DependencyProperty.Register("TaskEditor", typeof(PPTaskEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
-		//AddBlockCommand Dependency Property
-		public Commands.Command AddBlockCommand
+		//ToggleTaskEditorCommand Dependency Property
+		public Commands.Command ToggleTaskEditorCommand
 		{
-			get { return (Commands.Command)GetValue(AddBlockCommandProperty); }
-			set { SetValue(AddBlockCommandProperty, value); }
+			get { return (Commands.Command)GetValue(ToggleTaskEditorCommandProperty); }
+			set { SetValue(ToggleTaskEditorCommandProperty, value); }
 		}
-		public static readonly DependencyProperty AddBlockCommandProperty =
-			DependencyProperty.Register("AddBlockCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ToggleTaskEditorCommandProperty =
+			DependencyProperty.Register("ToggleTaskEditorCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
 		//CleanAddBlockCommand Dependency Property
 		public Commands.Command CleanAddBlockCommand
 		{
@@ -295,14 +296,14 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty JobEditorProperty =
 			DependencyProperty.Register("JobEditor", typeof(PPJobEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
-		//AddJobCommand Dependency Property
-		public Commands.Command AddJobCommand
+		//ToggleJobEditorCommand Dependency Property
+		public Commands.Command ToggleJobEditorCommand
 		{
-			get { return (Commands.Command)GetValue(AddJobCommandProperty); }
-			set { SetValue(AddJobCommandProperty, value); }
+			get { return (Commands.Command)GetValue(ToggleJobEditorCommandProperty); }
+			set { SetValue(ToggleJobEditorCommandProperty, value); }
 		}
-		public static readonly DependencyProperty AddJobCommandProperty =
-			DependencyProperty.Register("AddJobCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ToggleJobEditorCommandProperty =
+			DependencyProperty.Register("ToggleJobEditorCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
 		//CleanAddJobCommand Dependency Property
 		public Commands.Command CleanAddJobCommand
 		{
