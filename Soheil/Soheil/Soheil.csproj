@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{54403744-119E-42A5-A19D-71BC2FC848B2}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Soheil</RootNamespace>
+    <AssemblyName>Soheil</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External Assemblies\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="PersianDate">
+      <HintPath>..\External Assemblies\PersianDate.dll</HintPath>
+    </Reference>
+    <Reference Include="PersianDateControls">
+      <HintPath>..\External Assemblies\PersianDateControls.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External Assemblies\PresentationUI.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External Assemblies\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Presentation" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Enums\RegisterMode.cs" />
+    <Compile Include="Enums\SoheilCategories.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TemplateSelectors\NPTViewSelector.cs" />
+    <Compile Include="TemplateSelectors\SingularViewListSelector.cs" />
+    <Compile Include="TemplateSelectors\SplitViewLinkSelector.cs" />
+    <Compile Include="TemplateSelectors\NavigationItemSelector.cs" />
+    <Compile Include="TemplateSelectors\SplitViewListSelector.cs" />
+    <Compile Include="TemplateSelectors\SplitViewSubContentSelector.cs" />
+    <Compile Include="TemplateSelectors\TaskReportSimpleViewSelector.cs" />
+    <Compile Include="Views\AboutSoheil.xaml.cs">
+      <DependentUpon>AboutSoheil.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Fpc\Connector.xaml.cs">
+      <DependentUpon>Connector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Fpc\ExpanderTheme.xaml.cs">
+      <DependentUpon>ExpanderTheme.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Fpc\FpcStateView.xaml.cs">
+      <DependentUpon>FpcStateView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Fpc\FpcWindow.xaml.cs">
+      <DependentUpon>FpcWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Fpc\MidStateConfig.xaml.cs">
+      <DependentUpon>MidStateConfig.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Fpc\States.xaml.cs">
+      <DependentUpon>States.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Fpc\Toolbox.xaml.cs">
+      <DependentUpon>Toolbox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\GridHelper.cs" />
+    <Compile Include="Views\PP\PPJobEditor.xaml.cs">
+      <DependentUpon>PPJobEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\PPTaskEditor.xaml.cs">
+      <DependentUpon>PPTaskEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupTime\Converters.cs" />
+    <Compile Include="Views\SetupTime\GridHelper.cs" />
+    <Compile Include="Views\SoheilSingularView.xaml.cs">
+      <DependentUpon>SoheilSingularView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SoheilSplitView.xaml.cs">
+      <DependentUpon>SoheilSplitView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="VisualTreeHelper.cs" />
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AboutSoheil.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Fpc\Connector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Fpc\ExpanderTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Fpc\FpcResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Fpc\FpcStateView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Fpc\FpcWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Fpc\MidStateConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Fpc\States.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Fpc\Toolbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\PPJobEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\PPTaskEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\PPResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SoheilSingularView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SoheilSplitView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="App.config">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\highlightedMaximize.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\highlightedMinimize.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\normalMaximize.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\normalMinimize.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\Add16.png" />
+    <Resource Include="Images\Fpc\Collapse16.png" />
+    <Resource Include="Images\Fpc\default.png" />
+    <Resource Include="Images\Fpc\Delete16.png" />
+    <Resource Include="Images\Fpc\Expand16.png" />
+    <Resource Include="Images\Fpc\New16.png" />
+    <Resource Include="Images\Fpc\notdefault.png" />
+    <Resource Include="Images\Fpc\Save16.png" />
+    <Resource Include="Images\Fpc\SelectTool.png" />
+    <Resource Include="Images\Fpc\TilesBlue.jpg" />
+    <Resource Include="Images\Fpc\Undo16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Soheil.Common\Soheil.Common.csproj">
+      <Project>{75ad5f1e-719c-4b8a-b573-dfe6fc05e2c9}</Project>
+      <Name>Soheil.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Soheil.Controls\Soheil.Controls.csproj">
+      <Project>{10f42fd7-ed4d-4ebd-bcc2-ff0aabaa4b56}</Project>
+      <Name>Soheil.Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Soheil.Core\Soheil.Core.csproj">
+      <Project>{52709bb8-fdb0-472d-8419-7c0ddbd397b3}</Project>
+      <Name>Soheil.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\Save.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Job.png" />
+    <Resource Include="Images\PP\JobNew.png" />
+    <Resource Include="Images\PP\LeftOperatorCounter.png" />
+    <Resource Include="Images\PP\OperatorCounter.png" />
+    <Resource Include="Images\PP\Rework.png" />
+    <Resource Include="Images\PP\RightOperatorCounter.png" />
+    <Resource Include="Images\PP\Task.png" />
+    <Resource Include="Images\PP\TaskState_Blue.png" />
+    <Resource Include="Images\PP\TaskState_Green.png" />
+    <Resource Include="Images\PP\TaskState_Grey.png" />
+    <Resource Include="Images\PP\TaskState_Red.png" />
+    <Resource Include="Images\PP\TaskState_Yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\closehand.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\openhand.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Images\PP\TaskNew.png" />
+    <Resource Include="Images\PP\saveup.png" />
+    <Resource Include="Images\PP\closeup.png" />
+    <Resource Include="Images\warning.png" />
+    <Resource Include="Images\PP\Operator.png" />
+    <Resource Include="Images\PP\ReportWarning15.png" />
+    <Resource Include="Images\PP\Targetpoint.png" />
+    <Resource Include="Images\PP\ProducedG1.png" />
+    <Resource Include="Images\PP\Now.png" />
+    <Resource Include="Images\PP\Setup.png" />
+    <Resource Include="Images\PP\SetupAdd.png" />
+    <Resource Include="Images\PP\NewJob.png" />
+    <Resource Include="Images\PP\EditJob.png" />
+    <Resource Include="Images\PP\EditTask.png" />
+    <Resource Include="Images\PP\NewTask.png" />
+    <Resource Include="Images\PP\ShowCode.png" />
+    <Resource Include="Images\PP\ProcessReport.png" />
+    <Resource Include="Images\PP\DropDown.png" />
+    <Resource Include="Images\PP\ZoomUndo.png" />
+    <Resource Include="Images\PP\Zoom.png" />
+    <Resource Include="Images\PP\TaskAutoLoad.png" />
+    <Resource Include="Images\PP\Report.png" />
+    <Resource Include="Images\PP\ReportAdd.png" />
+    <Resource Include="Images\PP\ReportEdit.png" />
+    <Resource Include="Images\PP\ReportView.png" />
+    <Resource Include="Images\PP\ManHour.png" />
+    <Resource Include="Images\PP\CycleTime.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

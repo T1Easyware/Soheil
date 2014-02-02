@@ -1,0 +1,203 @@
+﻿using System;
+using System.Linq;
+using System.Globalization;
+using System.Collections.ObjectModel;
+using System.Linq.Expressions;
+using System.Windows.Threading;
+using System.Windows;
+using System.Collections.Generic;
+
+namespace Soheil.Common
+{
+	public static class CommonExtensions
+	{
+		#region Persian DateTime
+		private static readonly PersianCalendar _persianCalendar = new PersianCalendar();
+		public static PersianCalendar PersianCalendar { get { return _persianCalendar; } }
+		public static string ToPersianDateTimeString(this DateTime dateTime)
+		{
+			return _persianCalendar.GetYear(dateTime).ToString("0000") + "/"
+				+ _persianCalendar.GetMonth(dateTime).ToString("00") + "/"
+				+ _persianCalendar.GetDayOfMonth(dateTime).ToString("00") + "  "
+				+ dateTime.ToShortTimeString();
+		}
+		public static string ToPersianDateString(this DateTime dateTime)
+		{
+			return _persianCalendar.GetYear(dateTime).ToString("0000") + "/"
+				+ _persianCalendar.GetMonth(dateTime).ToString("00") + "/"
+				+ _persianCalendar.GetDayOfMonth(dateTime).ToString("00");
+		}
+		public static DateTime ToPersianDate(this string dtString)
+		{
+			return DateTime.Now;//???
+		}
+		public static int GetPersianYear(this DateTime dateTime)
+		{
+			return _persianCalendar.GetYear(dateTime);
+		}
+		public static PersianMonth GetPersianMonth(this DateTime dateTime)
+		{
+			return (PersianMonth)_persianCalendar.GetMonth(dateTime);
+		}
+		public static PersianShortMonth GetPersianShortMonth(this DateTime dateTime)
+		{
+			return (PersianShortMonth)_persianCalendar.GetMonth(dateTime);
+		}
+		public static int GetPersianDayOfMonth(this DateTime dateTime)
+		{
+			return _persianCalendar.GetDayOfMonth(dateTime);
+		}
+		public static PersianDayOfWeek GetPersianDayOfWeek(this DateTime dateTime)
+		{
+			return (PersianDayOfWeek)(((int)dateTime.DayOfWeek + 1) % 7);
+		}
+		public static int GetPersianDayOfYear(this DateTime dateTime)
+		{
+			return _persianCalendar.GetDayOfYear(dateTime);
+		}
+		public static int GetPersianYearDays(this DateTime dateTime)
+		{
+			return (_persianCalendar.GetYear(dateTime) % 4 == 3) ? 366 : 365;
+		}
+		public static int GetPersianMonthDays(this DateTime dateTime)
+		{
+			return _persianCalendar.GetDaysInMonth(_persianCalendar.GetYear(dateTime), _persianCalendar.GetMonth(dateTime));
+		}
+		public static DateTime GetNorooz(this DateTime dateTime)
+		{
+			return _persianCalendar.ToDateTime(_persianCalendar.GetYear(dateTime),1,1,0,0,0,0);
+		}
+		public static int GetPersianWeekOfYear(this DateTime dateTime)
+		{
+			int x = (int)dateTime.GetNorooz().GetPersianDayOfWeek();
+			if (x > 0) x = 7 - x;
+			return (dateTime.DayOfYear - x) / 7;
+		} 
+		#endregion
+
+		#region Color, Point
+		public static bool IsDark(this System.Windows.Media.Color color)
+		{
+			return (Math.Max(Math.Max(color.R, color.G), color.B) + Math.Min(Math.Min(color.R, color.G), color.B) < 220);
+		}
+		public static Point SubtractPoint(this Point first, Point second) { return new Point(first.X - second.X, first.Y - second.Y); }
+		#endregion
+
+		#region Thread & Dispatcher
+		public static void ForceQuit(this System.Threading.Thread thread)
+		{
+			if (thread != null)
+			{
+				if (thread.IsAlive)
+					thread.Abort();
+				else if (thread.ThreadState == System.Threading.ThreadState.WaitSleepJoin)
+					thread.Abort();
+			}
+		}
+
+		public static void InvokeInBackground(this Dispatcher dispatcher, Action action)
+		{
+			dispatcher.Invoke(action, DispatcherPriority.Background);
+		}
+		public static void InvokeInBackground<T>(this Dispatcher dispatcher, Action<T> action, T param1)
+		{
+			dispatcher.Invoke(action, DispatcherPriority.Background, param1);
+		}
+		public static DispatcherOperation BeginInBackground(this Dispatcher dispatcher, Action action)
+		{
+			return dispatcher.BeginInvoke(action, DispatcherPriority.Background, null);
+		}
+		public static DispatcherOperation BeginInBackground(this Dispatcher dispatcher, Action<int> action, int param1)
+		{
+			return dispatcher.BeginInvoke(action, DispatcherPriority.Background, param1);
+		}
+		public static DispatcherOperation BeginInBackground(this Dispatcher dispatcher, Action<int, DateTime, DateTime> action, int param1, DateTime param2, DateTime param3)
+		{
+			return dispatcher.BeginInvoke(action, DispatcherPriority.Background, param1, param2, param3);
+		}
+		#endregion
+
+		#region Collection
+		public static void RemoveWhere<T>(this Collection<T> collection, Func<T, bool> where)
+		{
+			var list = collection.Where(where).ToList();
+			foreach (var item in list)
+				collection.Remove(item);
+		}
+		public static void RemoveWhere<T>(this IList<T> collection, Func<T, bool> where)
+		{
+			var list = collection.Where(where).ToList();
+			foreach (var item in list)
+				collection.Remove(item);
+		}
+		public static List<T> DistinctBy<T, TKey>(this IList<T> collection, Func<T, TKey> selector)
+		{
+			return collection.GroupBy(selector).Select(grp => grp.First()).ToList();
+		}
+		#endregion
+
+		#region DataContext & EntityObject
+		public static T GetDataContext<T>(this object sender)
+		{
+			var dc = ((System.Windows.FrameworkElement)sender).DataContext;
+			if (dc is T)
+				return (T)dc;
+			else return default(T);
+		}
+		#endregion
+
+		#region Visual Tree
+		public static System.Windows.FrameworkElement FindChild(this System.Windows.FrameworkElement root, Type childType)
+		{
+			System.Windows.FrameworkElement target = null;
+			int c = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+			for (int i = 0; i < c; i++)
+			{
+				var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i) as System.Windows.FrameworkElement;
+				if (child == null) continue;
+				if (child.GetType() == childType)
+					return child;
+				target = FindChild(child, childType);
+			}
+			return target;
+		}
+		public static System.Windows.FrameworkElement FindChild(this System.Windows.FrameworkElement root, string childName)
+		{
+			System.Windows.FrameworkElement target = null;
+			int c = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+			for (int i = 0; i < c; i++)
+			{
+				var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i) as System.Windows.FrameworkElement;
+				if (child == null) continue;
+				if (child.Name == childName)
+					return child;
+				target = FindChild(child, childName);
+				if (target != null) break;
+			}
+			return target;
+		}
+		public static System.Windows.FrameworkElement FindParent(this System.Windows.FrameworkElement root, Type parentType)
+		{
+			System.Windows.FrameworkElement target = root;
+			while (target != null)
+			{
+				target = System.Windows.Media.VisualTreeHelper.GetParent(target) as System.Windows.FrameworkElement;
+				if (target == null) return null;
+				if (target.GetType() == parentType) return target;
+			}
+			return null;
+		}
+		public static System.Windows.FrameworkElement FindParent(this System.Windows.FrameworkElement root, string parentName)
+		{
+			System.Windows.FrameworkElement target = root;
+			while (target != null)
+			{
+				target = System.Windows.Media.VisualTreeHelper.GetParent(target) as System.Windows.FrameworkElement;
+				if (target == null) return null;
+				if (target.Name == parentName) return target;
+			}
+			return null;
+		} 
+		#endregion
+	}
+}
