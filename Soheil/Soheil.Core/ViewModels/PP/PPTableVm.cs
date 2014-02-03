@@ -37,11 +37,16 @@ namespace Soheil.Core.ViewModels.PP
 			TaskEditor = new PPTaskEditorVm();
 			JobEditor = new PPJobEditorVm();
 
-			ToggleTaskEditorCommand.Execute(null);
-			TaskEditor.SelectedProduct = TaskEditor.AllProductGroups.First().Products.First();
-			var block = new PPEditorBlock(TaskEditor.FpcViewer.States.First(x=>x.StateType == StateType.Mid).Model);
-			TaskEditor.BlockList.Add(block);
-			TaskEditor.SelectedBlock = TaskEditor.BlockList.First();
+
+
+			if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl))
+			{
+				ToggleTaskEditorCommand.Execute(null);
+				TaskEditor.SelectedProduct = TaskEditor.AllProductGroups.First().Products.First();
+				var block = new PPEditorBlock(TaskEditor.FpcViewer.States.First(x => x.StateType == StateType.Mid).Model);
+				TaskEditor.BlockList.Add(block);
+				TaskEditor.SelectedBlock = TaskEditor.BlockList.First();
+			}
 		}
 
 		void initializeDataServices()
@@ -209,7 +214,7 @@ namespace Soheil.Core.ViewModels.PP
 			Hours.FetchRange(start, end);
 			updateShiftsAndBreaks(start, end);
 
-			if ((loadItemsAsWell || AlwaysLoadTasks) && (ViewMode == PPViewMode.Simple))
+			if (loadItemsAsWell || AlwaysLoadTasks)
 				PPItems.FetchRange(start, end);
 		}
 		/// <summary>
@@ -504,7 +509,26 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(SelectedBlockProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedBlockProperty =
-			DependencyProperty.Register("SelectedBlock", typeof(BlockVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("SelectedBlock", typeof(BlockVm), typeof(PPTableVm),
+			new UIPropertyMetadata(null, (d, e) =>
+			{
+				var vm = (PPTableVm)d;
+				
+				var old = (BlockVm)e.OldValue;
+				if (old != null) old.ViewMode = PPViewMode.Simple;
+				
+				var val = (BlockVm)e.NewValue;
+				if (val == null)
+				{
+					vm.RestoreZoom();
+				}
+				else
+				{
+					val.ViewMode = PPViewMode.Report;
+					vm.ZoomToBlock(val);
+					vm.VerticalScreenOffset = 0;
+				}
+			}));
 		//SelectedNPT Dependency Property
 		public NPTVm SelectedNPT
 		{
@@ -513,46 +537,6 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty SelectedNPTProperty =
 			DependencyProperty.Register("SelectedNPT", typeof(NPTVm), typeof(PPTableVm), new UIPropertyMetadata(null));
-
-		//ViewMode Dependency Property
-		public PPViewMode ViewMode
-		{
-			get { return (PPViewMode)GetValue(ViewModeProperty); }
-			set { SetValue(ViewModeProperty, value); }
-		}
-		public static readonly DependencyProperty ViewModeProperty =
-			DependencyProperty.Register("ViewMode", typeof(PPViewMode), typeof(PPTableVm),
-			new UIPropertyMetadata(PPViewMode.Simple, (d, e) =>
-			{
-				var vm = (PPTableVm)d;
-				if ((PPViewMode)e.NewValue == (PPViewMode)e.OldValue) return;
-				//exiting ProcessReport mode
-				if ((PPViewMode)e.OldValue == PPViewMode.Report)
-				{
-					vm.RestoreZoom();
-				}
-				//entering new mode
-				switch ((PPViewMode)e.NewValue)
-				{
-					case PPViewMode.Simple:
-						vm.PPItems.ViewMode = PPViewMode.Simple;
-						break;
-					case PPViewMode.Report:
-						if (vm.SelectedBlock != null)
-						{
-							vm.ZoomToBlock(vm.SelectedBlock);
-						}
-						vm.VerticalScreenOffset = 0;
-						break;
-					default:
-						break;
-				}
-			}, (d, v) =>
-			{
-				var vm = (PPTableVm)d;
-				if ((PPViewMode)v == PPViewMode.Report && vm.SelectedBlock == null) return PPViewMode.Simple;
-				return (PPViewMode)v;
-			}));
 
 		//CurrentTaskReportBuilder Dependency Property
 		public TaskReportHolderVm CurrentTaskReportBuilder

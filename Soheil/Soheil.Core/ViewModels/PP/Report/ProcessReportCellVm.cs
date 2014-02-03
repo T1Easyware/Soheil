@@ -39,9 +39,8 @@ namespace Soheil.Core.ViewModels.PP
 
 			if (model == null)
 			{
-				ProcessReportTargetPoint =
-					model.ProcessReportTargetPoint
-					- processReportRow.ProcessReportCells.Where(y => y.Id > 0).Sum(x => x.ProcessReportTargetPoint);
+				ProcessReportTargetPoint = 0;
+					//- processReportRow.ProcessReportCells.Where(y => y.Id > 0).Sum(x => x.ProcessReportTargetPoint);
 			}
 			else
 			{

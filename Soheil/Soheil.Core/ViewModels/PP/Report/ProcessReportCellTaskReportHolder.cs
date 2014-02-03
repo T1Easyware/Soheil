@@ -22,7 +22,7 @@ namespace Soheil.Core.ViewModels.PP
 				model.ReportStartDateTime = TaskReportHolder.StartDateTime;
 				model.ReportEndDateTime = TaskReportHolder.EndDateTime;
 				model.TaskReportTargetPoint = TaskReportHolder.TargetPoint;
-				if (TaskReportHolder.TaskReportDataService.AddReportToTask(model, TaskReportHolder.Task.Id) == null)
+				if (TaskReportHolder.TaskReportDataService.AddReportToTask(model, TaskReportHolder.Task.Model) == null)
 				{
 					TaskReportHolder.DurationSeconds = model.ReportDurationSeconds;
 					TaskReportHolder.StartDateTime = model.ReportStartDateTime;

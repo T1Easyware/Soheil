@@ -314,27 +314,6 @@ namespace Soheil.Views
 			_mouseIsUp = false;
 		}
 		Point _dragStartPoint;
-		private void TaskReportBuilderMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			_sliderType = SliderType.taskReportBuilder;
-			_currentSlider = sender as FrameworkElement;
-			_dragStartPoint = e.GetPosition(this).SubtractPoint(PPTableVm.CurrentTaskReportBuilder.Offset);
-			_mouseIsUp = false;
-		}
-		private void TaskReportBuilderInProcessMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			_sliderType = SliderType.taskReportBuilderInProcess;
-			_currentSlider = sender as FrameworkElement;
-			_dragStartPoint = e.GetPosition(this).SubtractPoint(PPTableVm.CurrentTaskReportBuilderInProcess.Offset);
-			_mouseIsUp = false;
-		}
-		private void ProcessReportBuilderMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			_sliderType = SliderType.processReportBuilder;
-			_currentSlider = sender as FrameworkElement;
-			_dragStartPoint = e.GetPosition(this).SubtractPoint(PPTableVm.CurrentProcessReportBuilder.Offset);
-			_mouseIsUp = false;
-		}
 		#endregion
 
 		#region Mouse Move/Up
@@ -490,7 +469,7 @@ namespace Soheil.Views
 		}
 		private void ZoomStarted(object sender, MouseButtonEventArgs e)
 		{
-			if (PPTableVm.ViewMode == PPViewMode.Simple)
+			if (PPTableVm.SelectedBlock == null)//no block is in report state
 				PPTableVm.BackupZoom();
 		}
 		#endregion
@@ -550,6 +529,7 @@ namespace Soheil.Views
 			if (vm != null) vm.ResetEmbeddedException();
 		}
 		#endregion
+
 
 		#endregion
 

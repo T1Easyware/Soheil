@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,8 +15,8 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class PPTaskVm : PPItemVm
 	{
-		Model.Task _model;
-		public override int Id { get { return _model.Id; } }
+		public Model.Task Model { get; private set; }
+		public override int Id { get { return Model.Id; } }
 		public BlockVm Block { get; private set; }
 
 		public DataServices.TaskDataService TaskDataService { get { return Block.Parent.PPTable.TaskDataService; } }
@@ -27,7 +27,7 @@ namespace Soheil.Core.ViewModels.PP
 		public PPTaskVm(Model.Task taskModel, BlockVm parentBlock)
 		{
 			Block = parentBlock;
-			_model = taskModel;
+			Model = taskModel;
 			StartDateTime = taskModel.StartDateTime;
 			DurationSeconds = taskModel.DurationSeconds;
 			TaskTargetPoint = taskModel.TaskTargetPoint;
@@ -47,20 +47,20 @@ namespace Soheil.Core.ViewModels.PP
 		#region Members
 		public int TaskTargetPoint
 		{
-			get { return _model.TaskTargetPoint; }
-			set { _model.TaskTargetPoint = value; OnPropertyChanged("TaskTargetPoint"); }
+			get { return Model.TaskTargetPoint; }
+			set { Model.TaskTargetPoint = value; OnPropertyChanged("TaskTargetPoint"); }
 		}
 		public new DateTime StartDateTime
 		{
-			get { return _model.StartDateTime; }
-			set { _model.StartDateTime = value; OnPropertyChanged("StartDateTime"); }
+			get { return Model.StartDateTime; }
+			set { Model.StartDateTime = value; OnPropertyChanged("StartDateTime"); }
 		}
 		public new int DurationSeconds
 		{
-			get { return _model.DurationSeconds; }
+			get { return Model.DurationSeconds; }
 			set
 			{
-				_model.DurationSeconds = value;
+				Model.DurationSeconds = value;
 				SetValue(DurationProperty, new TimeSpan(value * TimeSpan.TicksPerSecond));
 				OnPropertyChanged("DurationSeconds");
 			}

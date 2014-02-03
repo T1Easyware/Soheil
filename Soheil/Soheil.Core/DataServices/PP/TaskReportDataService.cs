@@ -91,16 +91,14 @@ namespace Soheil.Core.DataServices
 		}
 		#endregion
 
-		public TaskReport AddReportToTask(Model.TaskReport report, int taskId)
+		public TaskReport AddReportToTask(Model.TaskReport report, Model.Task task)
 		{
-			TaskReport taskReport = null;
-			var task = _taskRepository.Single(x => x.Id == taskId);
 			if (report.ReportEndDateTime > task.EndDateTime) return null;
 			if (report.ReportStartDateTime < task.StartDateTime) return null;
 			if (report.ReportDurationSeconds > task.DurationSeconds) return null;
 			if (report.TaskReportTargetPoint > task.TaskTargetPoint) return null;
 
-			taskReport = new TaskReport
+			var taskReport = new TaskReport
 			{
 				ModifiedDate = DateTime.Now,
 				CreatedDate = DateTime.Now,

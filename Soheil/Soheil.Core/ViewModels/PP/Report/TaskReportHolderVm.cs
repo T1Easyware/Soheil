@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -91,7 +91,7 @@ namespace Soheil.Core.ViewModels.PP
 				model.ReportStartDateTime = StartDateTime;
 				model.ReportEndDateTime = EndDateTime;
 				model.TaskReportTargetPoint = TargetPoint;
-				if (TaskReportDataService.AddReportToTask(model, Task.Id) == null)
+				if (TaskReportDataService.AddReportToTask(model, Task.Model) == null)
 				{
 					AutoFillCommand.Execute(o);
 				}

@@ -15,6 +15,7 @@ namespace Soheil.Core.ViewModels.PP
 		public DataServices.TaskDataService TaskDataService { get { return Block.Parent.PPTable.TaskDataService; } }
 		public BlockReportVm(BlockVm block)
 		{
+			Block = block;
 		}
 		//Block Dependency Property
 		public BlockVm Block
@@ -77,7 +78,7 @@ namespace Soheil.Core.ViewModels.PP
 				List<ProcessReportCellVm> processReports = new List<ProcessReportCellVm>();
 				if (taskReport is TaskReportVm)
 				{
-					var processReportModels = ProcessReportDataService.GetProcessReports((taskReport as TaskReportVm).Id);
+					var processReportModels = ProcessReportDataService.GetProcessReports((taskReport as TaskReportVm).Task.Id);
 					foreach (var processReportModel in processReportModels)
 					{
 						processReports.Add(new ProcessReportCellVm(
@@ -92,7 +93,7 @@ namespace Soheil.Core.ViewModels.PP
 					foreach (var processModel in processModels)
 					{
 						processReports.Add(new ProcessReportCellVm(
-							null, 
+							null,
 							taskReport,
 							ProcessReportRows.First(x => x.StateStationActivity.Id == processModel.StateStationActivity.Id)));
 					}

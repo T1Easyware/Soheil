@@ -44,7 +44,7 @@ namespace Soheil.Core.DataServices
 		{
 			return _blockRepository.Single(x => x.Id == id,
 				"Job", "Job.FPC",
-				"Education",
+		//		"Education",
 				"StateStation",
 				"StateStation.State",
 				"StateStation.State.OnProductRework",
@@ -66,7 +66,7 @@ namespace Soheil.Core.DataServices
 				"Tasks.TaskReports.ProcessReports.OperatorProcessReports",
 				"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
 				"Tasks.TaskReports.ProcessReports.DefectionReports",
-				"Tasks.Processes.ProcessReports.StoppageReports"
+				"Tasks.TaskReports.ProcessReports.StoppageReports"
 				);
 		}
 

@@ -95,18 +95,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		protected override void acqusitionThreadEnd()
 		{
-			switch (_ppTable.ViewMode)
-			{
-				case PPViewMode.Simple:
-					ViewMode = PPViewMode.Simple;
-					break;
-				case PPViewMode.Report:
-					ViewMode = PPViewMode.Report;
-					break;
-				default:
-					break;
-			}
-		} 
+			if (_ppTable.SelectedBlock == null) ViewMode = PPViewMode.Simple;
+			else ViewMode = (_ppTable.SelectedBlock.Id == Id) ? PPViewMode.Report : PPViewMode.Simple;
+		}
 
 		#endregion
 
@@ -218,7 +209,6 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("BlockReport", typeof(BlockReportVm), typeof(BlockVm), new UIPropertyMetadata(null)); 
 		#endregion
 
-		#region Other
 		//CanAddSetupBefore Dependency Property
 		public bool CanAddSetupBefore
 		{
@@ -227,7 +217,6 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty CanAddSetupBeforeProperty =
 			DependencyProperty.Register("CanAddSetupBefore", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false)); 
-		#endregion
 
 		#region Commands
 
@@ -287,16 +276,15 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			EditReportCommand = new Commands.Command(o =>
 			{
-				try
+				//try
 				{
 					_ppTable.SelectedBlock = this;
-					_ppTable.ViewMode = PPViewMode.Report;
-
+					BlockReport = new BlockReportVm(this);
 					BlockReport.ReloadProcessReportRows();
 				}
-				catch (Exception exp)
+				//catch (Exception exp)
 				{
-					Message.AddEmbeddedException(exp.Message);
+				//	Message.AddEmbeddedException(exp.Message);
 				}
 			});
 			DeleteItemCommand = new Commands.Command(o =>

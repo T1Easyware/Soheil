@@ -33,9 +33,6 @@
     <ppconv:PPTaskBorderWidthConverter x:Key="ppTaskBorderWidthConverter"/>
     <ppconv:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
     <ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
-    <ppconv:TaskReportBuilderMarginConverter x:Key="taskReportBuilderMarginConverter"/>
-    <ppconv:TaskReportBuilderInProcessMarginConverter x:Key="taskReportBuilderInProcessMarginConverter"/>
-    <ppconv:ProcessReportBuilderMarginConverter x:Key="processReportBuilderMarginConverter"/>
 
     <ppconv:IsEqualToBrushConverter x:Key="isEqualToBrushConverter"/>
     <ppconv:ColorFixer x:Key="colorFixer"/>
