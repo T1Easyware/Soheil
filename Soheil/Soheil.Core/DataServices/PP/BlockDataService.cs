@@ -42,32 +42,39 @@ namespace Soheil.Core.DataServices
 		/// <returns></returns>
 		public Block GetSingle(int id)
 		{
-			return _blockRepository.Single(x => x.Id == id,
-				"Job", "Job.FPC",
-		//		"Education",
-				"StateStation",
-				"StateStation.State",
-				"StateStation.State.OnProductRework",
-				"StateStation.State.OnProductRework.Rework",
-				"StateStation.State.FPC",
-				"StateStation.State.FPC.Product",
-				"StateStation.Station",
-				"StateStation.StateStationActivities",
-				"StateStation.StateStationActivities.Activity",
-				"StateStation.StateStationActivities.StateStationActivityMachines",
-				"StateStation.StateStationActivities.StateStationActivityMachines.Machine",
-				"Tasks",
-				"Tasks.Processes",
-				"Tasks.Processes.ProcessReports",
-				"Tasks.Processes.SelectedMachines",
-				"Tasks.Processes.SelectedMachines.StateStationActivityMachine",
-				"Tasks.TaskReports",
-				"Tasks.TaskReports.ProcessReports",
-				"Tasks.TaskReports.ProcessReports.OperatorProcessReports",
-				"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
-				"Tasks.TaskReports.ProcessReports.DefectionReports",
-				"Tasks.TaskReports.ProcessReports.StoppageReports"
-				);
+			return _blockRepository.Single(x => x.Id == id);
+		}
+		public Block GetSingleFull(int id, bool loadAll)
+		{
+			if (loadAll)
+				return _blockRepository.Single(x => x.Id == id,
+					"Job", "Job.FPC",
+					//		"Education",
+					"StateStation",
+					"StateStation.State",
+					"StateStation.State.OnProductRework",
+					"StateStation.State.OnProductRework.Rework",
+					"StateStation.State.FPC",
+					"StateStation.State.FPC.Product",
+					"StateStation.Station",
+					"StateStation.StateStationActivities",
+					"StateStation.StateStationActivities.Activity",
+					"StateStation.StateStationActivities.StateStationActivityMachines",
+					"StateStation.StateStationActivities.StateStationActivityMachines.Machine",
+					"Tasks",
+					"Tasks.Processes",
+					"Tasks.Processes.ProcessReports",
+					"Tasks.Processes.SelectedMachines",
+					"Tasks.Processes.SelectedMachines.StateStationActivityMachine",
+					"Tasks.TaskReports",
+					"Tasks.TaskReports.ProcessReports",
+					"Tasks.TaskReports.ProcessReports.OperatorProcessReports",
+					"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
+					"Tasks.TaskReports.ProcessReports.DefectionReports",
+					"Tasks.TaskReports.ProcessReports.StoppageReports"
+					);
+			else
+				return _blockRepository.Single(x => x.Id == id);
 		}
 
 		public System.Collections.ObjectModel.ObservableCollection<Block> GetAll()
@@ -135,15 +142,14 @@ namespace Soheil.Core.DataServices
 		/// Get infos of all taskReports associated with the given block
 		/// <para>The info includes: the sum of TaskProducedG1's, % of reported targetpoints</para>
 		/// </summary>
-		/// <param name="blockId"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
-		internal int[] GetProductionReportData(int blockId)
+		internal int[] GetProductionReportData(Block model)
 		{
 			int g1 = 0;
 			int taskTp = 0;
 			int reportedTaskTp = 0;
-			var tasks = _blockRepository.Single(x => x.Id == blockId).Tasks;
-			foreach (var task in tasks)
+			foreach (var task in model.Tasks)
 			{
 				g1 += task.TaskReports.Sum(x => x.TaskProducedG1);
 				taskTp += task.TaskTargetPoint;
@@ -160,8 +166,17 @@ namespace Soheil.Core.DataServices
 				(int)block.StartDateTime.GetPersianDayOfYear(),
 				block.StartDateTime.Hour,
 				block.StateStation.Station.Code);
+
+			//fix tasks
+			var time = block.StartDateTime;
 			foreach (var task in block.Tasks)
 			{
+				//fix time
+				task.StartDateTime = time;
+				time = time.AddSeconds(task.DurationSeconds);
+				task.EndDateTime = time;
+
+				//fix processes
 				var emptyProcesses = task.Processes.Where(x => x.TargetCount == 0).ToArray();
 				foreach (var emptyProcess in emptyProcesses)
 				{

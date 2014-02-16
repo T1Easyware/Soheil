@@ -1005,7 +1005,7 @@
 
                     <!-- TaskReportBuilder -->
                     <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskReportBuilderPanel" Height="0">
-                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" Background="Silver" Width="330" Height="152">
+                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" Background="Silver" Width="400" Height="152">
                             <ContentPresenter ContentSource="{Binding CurrentTaskReportBuilder}">
                                 <ContentPresenter.ContentTemplate>
                                     <DataTemplate DataType="{x:Type vm:TaskReportHolderVm}">
@@ -1105,63 +1105,13 @@
                             </ContentPresenter>
                         </Border>
                     </Grid>
-                    <!-- TaskReportBuilderInProcess -->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskReportBuilderInProcessPanel" Height="0">
-                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" Background="Silver" Width="330" Height="152">
-                            <ContentPresenter ContentSource="{Binding CurrentTaskReportBuilderInProcess}">
-                                <ContentPresenter.ContentTemplate>
-                                    <DataTemplate DataType="{x:Type vm:ProcessReportCellTaskReportHolder}">
-                                        <Grid FlowDirection="RightToLeft" DataContext="{Binding CurrentTaskReportBuilderInProcess}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Text="زمان شروع گزارش" VerticalAlignment="Center" Margin="25,0,5,0"/>
-                                            <cal:PersianDatePicker SelectedDate="{Binding TaskReportHolder.StartDate}" Grid.Column="1"/>
-                                            <TextBox Text="{Binding TaskReportHolder.StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight" Grid.Column="2"/>
-
-                                            <CheckBox Content="زمان خاتمه گزارش" IsChecked="{Binding TaskReportHolder.ByEndDate}" VerticalAlignment="Center" Grid.Row="1" Margin="5,0" Foreground="Black"/>
-                                            <cal:PersianDatePicker SelectedDate="{Binding TaskReportHolder.EndDate}" IsEnabled="{Binding TaskReportHolder.ByEndDate}" Grid.Column="1" Grid.Row="1"/>
-                                            <TextBox Text="{Binding TaskReportHolder.EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"
-												     IsEnabled="{Binding TaskReportHolder.ByEndDate}" Grid.Column="2" Grid.Row="1"/>
-
-                                            <CheckBox Content="مدت زمان گزارش" IsChecked="{Binding TaskReportHolder.ByEndDate, Converter={StaticResource inverter}}" VerticalAlignment="Center" Grid.Row="2" Margin="5,0" Foreground="Black"/>
-                                            <TextBox Text="{Binding TaskReportHolder.DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Grid.ColumnSpan="2"
-												     IsEnabled="{Binding TaskReportHolder.ByEndDate, Converter={StaticResource inverter}}" Grid.Column="1" Grid.Row="2"/>
-
-                                            <TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Margin="5,0" Foreground="Black"/>
-                                            <TextBox Text="{Binding TaskReportHolder.TargetPoint}" FlowDirection="LeftToRight"
-												     Grid.Column="1" Grid.Row="3"/>
-                                            <Button Content="محاسبه خودکار" FlowDirection="LeftToRight"
-												    Command="{Binding TaskReportHolder.AutoFindTargetPoint}" Grid.Column="2" Grid.Row="3"/>
-
-                                            <UniformGrid Grid.Row="4" Grid.ColumnSpan="3" Rows="1" Columns="4">
-                                                <Button Grid.Column="0" Content="کل زمان باقیمانده" Command="{Binding TaskReportHolder.AutoFillCommand}"/>
-                                                <Button Grid.Column="1" Content="انصراف" Command="{Binding CancelCommand}"/>
-                                                <Button Grid.Column="2" Content="تأیید" Command="{Binding AddCommand}"/>
-                                            </UniformGrid>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ContentPresenter.ContentTemplate>
-                            </ContentPresenter>
-                        </Border>
-                    </Grid>
                     <!-- ProcessReportBuilder -->
                     <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="processReportBuilderPanel" Height="0">
-                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" Background="#444" MinWidth="330" MinHeight="125" TextBlock.Foreground="Silver" Padding="4">
+                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" TextBlock.Foreground="Silver" Padding="4">
                             <Border.Effect>
                                 <DropShadowEffect ShadowDepth="0" BlurRadius="6"/>
                             </Border.Effect>
-                            <ScrollViewer MaxHeight="400" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                                 <Grid FlowDirection="RightToLeft" DataContext="{Binding CurrentProcessReportBuilder}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -1196,11 +1146,11 @@
                                     </DockPanel>
 
                                     <!-- Defections -->
-                                    <Border Grid.Row="2" BorderBrush="OrangeRed" Background="OrangeRed"
-										    BorderThickness="1,1,1,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2">
+                                    <Border Grid.Row="2" BorderBrush="#088" Background="#6AA"
+										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
                                         <TextBlock Text="گزارش کیفی (ضایعات)" Foreground="Black" Margin="2,2,2,0"/>
                                     </Border>
-                                    <Border Grid.Row="3" BorderBrush="OrangeRed" Background="#444" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+                                    <Border Grid.Row="3" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
                                         <DockPanel>
                                             <Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
                                                 <Grid.ColumnDefinitions>
@@ -1242,7 +1192,7 @@
                                                     <TextBlock Text="اپراتورهای مقصر" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
                                                 </ContentControl>
                                             </Grid>
-                                            <Grid DockPanel.Dock="Bottom" Background="#444" TextBlock.Foreground="Silver">
+                                            <Grid DockPanel.Dock="Bottom" TextBlock.Foreground="Silver">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="180"/>
                                                     <ColumnDefinition Width="40"/>
@@ -1343,7 +1293,7 @@
                                                                         </ItemsControl.ItemTemplate>
                                                                         <ItemsControl.ItemsPanel>
                                                                             <ItemsPanelTemplate>
-                                                                                <WrapPanel MaxWidth="400"/>
+                                                                                <WrapPanel/>
                                                                             </ItemsPanelTemplate>
                                                                         </ItemsControl.ItemsPanel>
                                                                     </ItemsControl>
@@ -1384,11 +1334,11 @@
                                     </Border>
 
                                     <!-- Stoppage -->
-                                    <Border Grid.Row="4" BorderBrush="Orange" Background="Orange"
-										    BorderThickness="1,1,1,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2">
+                                    <Border Grid.Row="4" BorderBrush="#088" Background="#6AA"
+										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
                                         <TextBlock Text="گزارش توقفات" Foreground="Black" Margin="2,2,2,0"/>
                                     </Border>
-                                    <Border Grid.Row="5" BorderBrush="Orange" Background="#444" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+                                    <Border Grid.Row="5" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
                                         <DockPanel>
                                             <Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
                                                 <Grid.ColumnDefinitions>
@@ -1460,7 +1410,7 @@
                                             <ItemsControl ItemsSource="{Binding StoppageReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Grid Background="#444" TextBlock.Foreground="Silver">
+                                                        <Grid Background="#222" TextBlock.Foreground="Silver">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="30"/>
                                                                 <ColumnDefinition Width="160"/>
@@ -1540,7 +1490,7 @@
                                                                         </ItemsControl.ItemTemplate>
                                                                         <ItemsControl.ItemsPanel>
                                                                             <ItemsPanelTemplate>
-                                                                                <WrapPanel MaxWidth="400"/>
+                                                                                <WrapPanel/>
                                                                             </ItemsPanelTemplate>
                                                                         </ItemsControl.ItemsPanel>
                                                                     </ItemsControl>
@@ -1953,7 +1903,7 @@
                                                 <DataTemplate DataType="{x:Type vm:ProcessReportCellVm}">
                                                     <Canvas>
                                                         <Canvas.Margin>
-                                                            <MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}" ConverterParameter="test">
+                                                            <MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
                                                                 <Binding Path="StartDateTime"/>
                                                                 <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                             </MultiBinding>
@@ -1961,7 +1911,7 @@
                                                         <Border x:Name="border" Loaded="PRC_Loaded" Unloaded="PRC_Unloaded" BorderBrush="Black"
 														    BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="50" Margin="0,1">
                                                             <Border.Width>
-                                                                <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}" ConverterParameter="test">
+                                                                <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
                                                                     <Binding Path="Duration"/>
                                                                     <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                                 </MultiBinding>
@@ -2077,16 +2027,17 @@
                                                                             <DockPanel ClipToBounds="True" Height="50">
                                                                                 <TextBlock DockPanel.Dock="Top" Text="{Binding ProcessReportTargetPoint}" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                                                 <TextBlock DockPanel.Dock="Bottom" Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                                                <Border Background="#2FB2A3" BorderBrush="Black" BorderThickness="1">
+                                                                                <Border Background="#088" BorderBrush="Black" BorderThickness="1">
                                                                                     <TextBlock Text="فاقد گزارش"/>
                                                                                 </Border>
                                                                             </DockPanel>
-                                                                            <Button x:Name="button" Opacity="0" Command="{Binding OpenCommand}">
+                                                                            <Border Background="#5555"/>
+                                                                            <!--Button x:Name="button" Opacity="0" Command="{Binding OpenCommand}">
                                                                                 <Image Source="/Images/PP/ReportAdd.png" Width="16"/>
                                                                                 <Button.ToolTip>
                                                                                     <ToolTip>ایجاد بازه برای گزارش ایستگاه جدید</ToolTip>
                                                                                 </Button.ToolTip>
-                                                                            </Button>
+                                                                            </-->
                                                                             <Grid.Triggers>
                                                                                 <EventTrigger RoutedEvent="MouseEnter">
                                                                                     <BeginStoryboard>
@@ -2266,7 +2217,7 @@
                                                                 <MenuItem Header="گزارش" Command="{Binding EditReportCommand}"/>
                                                                 <MenuItem Header="بارگذاری مجدد" Command="{Binding ReloadBlockCommand}"/>
                                                                 <Separator/>
-                                                                <MenuItem Header="ویرایش Task" Command="{Binding EditBlockCommand}"/>
+                                                                <MenuItem Header="ویرایش Task" Command="{Binding EditItemCommand}"/>
                                                                 <MenuItem Header="افزودن Task به ویرایشگر" Command="{Binding AddBlockToEditorCommand}"/>
                                                                 <MenuItem Header="حذف Task" Command="{Binding DeleteBlockCommand}"/>
                                                                 <Separator/>
@@ -2434,7 +2385,7 @@
                                                                                                     <ItemsControl.Resources>
                                                                                                         <!-- taskReport holder -->
                                                                                                         <DataTemplate DataType="{x:Type vm:TaskReportHolderVm}">
-                                                                                                            <Button Command="{Binding FocusCommand}" x:Name="reportButton">
+                                                                                                            <Button Command="{Binding FocusCommand}">
                                                                                                                 <Button.Width>
                                                                                                                     <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
                                                                                                                         <Binding Path="Duration"/>
@@ -2456,12 +2407,8 @@
                                                                                                                         <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                                                                                     </MultiBinding>
                                                                                                                 </Grid.Width>
-                                                                                                                <Button Command="{Binding OpenCommand}" x:Name="reportButton">
-                                                                                                                    <StackPanel>
-                                                                                                                        <Image Source="/Images/PP/Report.png" Width="16" x:Name="reportImage" HorizontalAlignment="Left"/>
-                                                                                                                        <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left"/>
-                                                                                                                    </StackPanel>
-                                                                                                                    <Button.ToolTip>
+                                                                                                                <Border BorderThickness="1,0" BorderBrush="Silver">
+                                                                                                                    <Border.ToolTip>
                                                                                                                         <StackPanel>
                                                                                                                             <TextBlock Text="گزارش تولید"/>
                                                                                                                             <Image Source="/Images/PP/Report.png" Width="16"/>
@@ -2488,8 +2435,14 @@
                                                                                                                                 <TextBlock Text="{Binding ProducedG1}"/>
                                                                                                                             </WrapPanel>
                                                                                                                         </StackPanel>
-                                                                                                                    </Button.ToolTip>
-                                                                                                                </Button>
+                                                                                                                    </Border.ToolTip>
+                                                                                                                    <StackPanel>
+                                                                                                                        <Image Source="/Images/PP/Report.png" Width="16" x:Name="reportImage" HorizontalAlignment="Left"/>
+                                                                                                                        <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left"/>
+                                                                                                                    </StackPanel>
+                                                                                                                </Border>
+                                                                                                                <!--Button Command="{Binding OpenCommand}">
+                                                                                                                </-->
                                                                                                                 <Button Height="20" Width="20" Command="{Binding DeleteCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
                                                                                                                     <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
                                                                                                                 </Button>
@@ -2579,7 +2532,7 @@
                                                                                                     <ItemsControl.Resources>
                                                                                                         <!-- taskReport holder -->
                                                                                                         <DataTemplate DataType="{x:Type vm:TaskReportHolderVm}">
-                                                                                                            <Button Command="{Binding FocusCommand}" x:Name="reportButton">
+                                                                                                            <Button Command="{Binding FocusCommand}">
                                                                                                                 <Button.Width>
                                                                                                                     <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
                                                                                                                         <Binding Path="Duration"/>
@@ -2601,12 +2554,8 @@
                                                                                                                         <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                                                                                     </MultiBinding>
                                                                                                                 </Grid.Width>
-                                                                                                                <Button Command="{Binding OpenCommand}" x:Name="reportButton">
-                                                                                                                    <StackPanel>
-                                                                                                                        <Image Source="/Images/PP/Report.png" Width="16" x:Name="reportImage" HorizontalAlignment="Left"/>
-                                                                                                                        <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left"/>
-                                                                                                                    </StackPanel>
-                                                                                                                    <Button.ToolTip>
+                                                                                                                <Border BorderThickness="1,0" BorderBrush="Silver">
+                                                                                                                    <Border.ToolTip>
                                                                                                                         <StackPanel>
                                                                                                                             <TextBlock Text="گزارش تولید"/>
                                                                                                                             <Image Source="/Images/PP/Report.png" Width="16"/>
@@ -2633,8 +2582,14 @@
                                                                                                                                 <TextBlock Text="{Binding ProducedG1}"/>
                                                                                                                             </WrapPanel>
                                                                                                                         </StackPanel>
-                                                                                                                    </Button.ToolTip>
-                                                                                                                </Button>
+                                                                                                                    </Border.ToolTip>
+                                                                                                                    <StackPanel>
+                                                                                                                        <Image Source="/Images/PP/Report.png" Width="16" x:Name="reportImage" HorizontalAlignment="Left"/>
+                                                                                                                        <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left" Background="#AAA"/>
+                                                                                                                    </StackPanel>
+                                                                                                                </Border>
+                                                                                                                <!--Button Command="{Binding OpenCommand}">
+                                                                                                                </-->
                                                                                                                 <Button Height="20" Width="20" Command="{Binding DeleteCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
                                                                                                                     <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
                                                                                                                 </Button>
@@ -3088,7 +3043,7 @@
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding CurrentProcessReportBuilder}" Value="True">
+                <DataTrigger Binding="{Binding CurrentProcessReportBuilder.IsSelected}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
@@ -3100,22 +3055,6 @@
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="processReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.ExitActions>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding CurrentTaskReportBuilderInProcess}" Value="True">
-                    <DataTrigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="taskReportBuilderInProcessPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="200"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.EnterActions>
-                    <DataTrigger.ExitActions>
-                        <BeginStoryboard>
-                            <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="taskReportBuilderInProcessPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>

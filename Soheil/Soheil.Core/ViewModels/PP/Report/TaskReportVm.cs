@@ -99,6 +99,10 @@ namespace Soheil.Core.ViewModels.PP
 		#region Commands
 		void initializeCommands()
 		{
+			OpenCommand = new Commands.Command(o =>
+			{
+				//Task.Block.Parent.PPTable.CurrentTaskReportBuilder = new TaskReportHolderVm(Task,blah,blah)
+			});
 			DeleteCommand = new Commands.Command(o =>
 			{
 				TaskReportDataService.DeleteById(Id);

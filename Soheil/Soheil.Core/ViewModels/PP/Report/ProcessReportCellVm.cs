@@ -49,7 +49,13 @@ namespace Soheil.Core.ViewModels.PP
 			}
 
 			StartDateTime = taskReport.StartDateTime;
-			DurationSeconds = (int)(ProcessReportTargetPoint * processReportRow.StateStationActivity.CycleTime);
+
+			var tmp = (int)(ProcessReportTargetPoint * processReportRow.StateStationActivity.CycleTime);
+			if (tmp == 0 || tmp > taskReport.DurationSeconds)
+				DurationSeconds = taskReport.DurationSeconds;
+			else
+				DurationSeconds = tmp;
+	
 			DefectionReports = new DefectionReportCollection(this);
 			StoppageReports = new StoppageReportCollection(this);
 
@@ -65,7 +71,7 @@ namespace Soheil.Core.ViewModels.PP
 		//Thread Functions
 		protected override void acqusitionThreadStart()
 		{
-			//try
+			try
 			{
 				var model = _processReportDataService.GetSingleFull(Id);
 				Dispatcher.Invoke(new Action(() =>
@@ -73,7 +79,7 @@ namespace Soheil.Core.ViewModels.PP
 					Dispatcher.InvokeInBackground(acqusitionThreadEnd);
 				}));
 			}
-			//catch { }
+			catch { Dispatcher.Invoke(acqusitionThreadRestart); }
 		}
 		protected override void acqusitionThreadEnd()
 		{
@@ -166,10 +172,10 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessReportCellVm), new UIPropertyMetadata(TimeSpan.Zero));
-		public new DateTime StartDateTime
+		public override DateTime StartDateTime
 		{
 			get { return StartDate.Add(StartTime); }
-			set { StartDate = value.Date; StartTime = value.TimeOfDay; }
+			set { StartDate = value.Date; StartTime = value.TimeOfDay; SetValue(StartDateTimeProperty, value); }
 		}
 		#endregion
 
@@ -193,14 +199,6 @@ namespace Soheil.Core.ViewModels.PP
 				else
 					vm.ParentRow.Parent.CurrentProcessReportBuilder = null;
 			}));
-		//Offset Dependency Property
-		public Point Offset
-		{
-			get { return (Point)GetValue(OffsetProperty); }
-			set { SetValue(OffsetProperty, value); }
-		}
-		public static readonly DependencyProperty OffsetProperty =
-			DependencyProperty.Register("Offset", typeof(Point), typeof(ProcessReportCellVm), new UIPropertyMetadata(new Point()));
 		//DefectionReports Dependency Property
 		public DefectionReportCollection DefectionReports
 		{
@@ -226,15 +224,9 @@ namespace Soheil.Core.ViewModels.PP
 			OpenCommand = new Commands.Command(o =>
 			{
 				if (ViewMode == PPViewMode.Simple) IsSelected = true;
-				else if (ViewMode == PPViewMode.Empty)
+				else if(ViewMode == PPViewMode.Empty)
 				{
-					ParentRow.Parent.CurrentTaskReportBuilderInProcess = new ProcessReportCellTaskReportHolder(
-						this,
-						new TaskReportHolderVm(
-							ParentColumn.Task,
-							ParentRow.ProcessReportCells.Where(x => x.ViewMode == PPViewMode.Simple).Sum(x => x.DurationSeconds),
-							ParentRow.ProcessReportCells.Where(x => x.ViewMode == PPViewMode.Simple).Sum(x => x.ProcessReportTargetPoint)));
-					ParentRow.Parent.CurrentTaskReportBuilderInProcess.RequestForChangeOfCurrentTaskReportBuilderInProcess += vm => ParentRow.Parent.CurrentTaskReportBuilderInProcess = vm;
+					//create task report column???
 				}
 			});
 			CloseCommand = new Commands.Command(o => { IsSelected = false; });

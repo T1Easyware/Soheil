@@ -227,7 +227,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsAutoStartProperty, value); }
 		}
 		public static readonly DependencyProperty IsAutoStartProperty =
-			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorBlock), new PropertyMetadata(true));
+			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorBlock), new PropertyMetadata(false));
 		#endregion
 
 		#region Additional Readonly info

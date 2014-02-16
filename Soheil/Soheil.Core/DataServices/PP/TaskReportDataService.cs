@@ -128,7 +128,7 @@ namespace Soheil.Core.DataServices
 		internal void DeleteById(int Id)
 		{
 			var model = _taskReportRepository.Single(x => x.Id == Id);
-			DeleteModel(model);
+			DeleteModel(model);//???
 			context.SaveChanges();
 		}
 

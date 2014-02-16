@@ -42,13 +42,17 @@ namespace Soheil.Core.ViewModels.PP
 		//Thread Functions
 		protected override void acqusitionThreadStart()
 		{
-
+			bool succeed = false;
+			_tries = _MAX_TRIES;
 			try
 			{
 				lock (_threadLock)
 				{
 					_model = BlockDataService.GetSingle(Id);
-					int[] reportData = BlockDataService.GetProductionReportData(Id);
+					var state = _model.StateStation.State;
+					var product = _model.StateStation.State.FPC.Product;
+					int[] reportData = BlockDataService.GetProductionReportData(_model);
+
 					Dispatcher.Invoke(new Action(() =>
 					{
 						if (_model == null)
@@ -59,12 +63,12 @@ namespace Soheil.Core.ViewModels.PP
 						{
 							//fill the vm from _model
 							//Product and State
-							ProductId = _model.StateStation.State.FPC.Product.Id;
-							ProductCode = _model.StateStation.State.FPC.Product.Code;
-							ProductName = _model.StateStation.State.FPC.Product.Name;
-							ProductColor = _model.StateStation.State.FPC.Product.Color;
-							StateCode = _model.StateStation.State.Code;
-							IsRework = _model.StateStation.State.IsReworkState == Bool3.True;
+							ProductId = product.Id;
+							ProductCode = product.Code;
+							ProductName = product.Name;
+							ProductColor = product.Color;
+							StateCode = state.Code;
+							IsRework = state.IsReworkState == Bool3.True;
 							//Block background texts
 							BlockTargetPoint = _model.BlockTargetPoint;
 							BlockProducedG1 = reportData[0];
@@ -79,19 +83,19 @@ namespace Soheil.Core.ViewModels.PP
 							Dispatcher.Invoke(acqusitionThreadEnd);
 						}
 					}));
-					_tries = _MAX_TRIES;
 				}
+				succeed = true;
 			}
 			catch
 			{
 				if (--_tries < 0)
 				{
 					_tries = _MAX_TRIES;
-					System.Threading.Thread.Sleep(400);
+					System.Threading.Thread.Sleep(1000);
 				}
-				else 
-					BeginAcquisition();
 			}
+			if(!succeed)
+				Dispatcher.Invoke(acqusitionThreadRestart);
 		}
 		protected override void acqusitionThreadEnd()
 		{
@@ -237,9 +241,9 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
+					_ppTable.TaskEditor.Reset();
 					_ppTable.TaskEditor.IsVisible = true;
 					_ppTable.JobEditor.IsVisible = false;
-                    _ppTable.TaskEditor.Reset();
                     _ppTable.TaskEditor.BlockList.Add(new Soheil.Core.ViewModels.PP.Editor.PPEditorBlock(_model));
                     _ppTable.TaskEditor.SelectedBlock = _ppTable.TaskEditor.BlockList.Last();
 				}

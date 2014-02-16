@@ -45,7 +45,7 @@ namespace Soheil.Core.ViewModels.PP
 					}
 				}));
 			}
-			catch { }
+			catch {Dispatcher.Invoke(acqusitionThreadRestart); }
 		}
 		protected override void acqusitionThreadEnd()
 		{

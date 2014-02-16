@@ -195,9 +195,6 @@ namespace Soheil.Views
 			hoursBar,
 			monthsLittleWindow,
 			daysLittleWindow,
-			taskReportBuilder,
-			taskReportBuilderInProcess,
-			processReportBuilder
 		}
 	
 		#region Members
@@ -356,15 +353,6 @@ namespace Soheil.Views
 					_prevX = newX;
 					PPTableVm.HoursPassed += (dx * 24 / PPTableVm.DayZoom);
 					break;
-				case SliderType.taskReportBuilder:
-					PPTableVm.CurrentTaskReportBuilder.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-					break;
-				case SliderType.taskReportBuilderInProcess:
-					PPTableVm.CurrentTaskReportBuilderInProcess.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-					break;
-				case SliderType.processReportBuilder:
-					PPTableVm.CurrentProcessReportBuilder.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-					break;
 				default:
 					break;
 			}
@@ -436,15 +424,6 @@ namespace Soheil.Views
 								PPTableVm.HoursPassed = 0;
 						}
 						_currentSlider.Cursor = _openCursor;
-						break;
-					case SliderType.taskReportBuilder:
-						PPTableVm.CurrentTaskReportBuilder.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-						break;
-					case SliderType.taskReportBuilderInProcess:
-						PPTableVm.CurrentTaskReportBuilderInProcess.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-						break;
-					case SliderType.processReportBuilder:
-						PPTableVm.CurrentProcessReportBuilder.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
 						break;
 					default:
 						break;

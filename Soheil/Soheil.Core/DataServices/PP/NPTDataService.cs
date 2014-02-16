@@ -21,6 +21,7 @@ namespace Soheil.Core.DataServices
 		}
 		public NPTDataService(SoheilEdmContext context)
 		{
+			this.context = context;
 			_nptRepository = new Repository<NonProductiveTask>(context);
 		}
 

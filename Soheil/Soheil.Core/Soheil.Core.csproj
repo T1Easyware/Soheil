@@ -136,7 +136,6 @@
     <Compile Include="ViewModels\PP\FilterBoxVmCollection.cs" />
     <Compile Include="ViewModels\PP\NPTVm.cs" />
     <Compile Include="ViewModels\PP\PPItemVm.cs" />
-    <Compile Include="ViewModels\PP\Report\ProcessReportCellTaskReportHolder.cs" />
     <Compile Include="ViewModels\PP\Report\ProcessReportCellVm.cs" />
     <Compile Include="ViewModels\PP\Report\ProcessReportRowVm.cs" />
     <Compile Include="ViewModels\PP\SetupVm.cs" />

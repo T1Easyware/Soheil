@@ -17,10 +17,13 @@ namespace Soheil.Core.DataServices
         public event EventHandler<ModelAddedEventArgs<WorkProfilePlan>> WorkProfilePlanAdded;
         Repository<WorkProfilePlan> workProfilePlanRepository;
 
-        public WorkProfilePlanDataService()
+		public WorkProfilePlanDataService() : this(new SoheilEdmContext())
 		{
-			context = new SoheilEdmContext();
-            workProfilePlanRepository = new Repository<WorkProfilePlan>(context);
+		}
+		public WorkProfilePlanDataService(SoheilEdmContext context)
+		{
+			this.context = context;
+			workProfilePlanRepository = new Repository<WorkProfilePlan>(context);
 		}
 
         public WorkProfilePlan GetSingle(int id)

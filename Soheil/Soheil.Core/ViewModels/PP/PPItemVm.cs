@@ -38,7 +38,7 @@ namespace Soheil.Core.ViewModels.PP
 		public abstract int Id { get; }
 
 		//StartDateTime Dependency Property
-		public DateTime StartDateTime
+		public virtual DateTime StartDateTime
 		{
 			get { return (DateTime)GetValue(StartDateTimeProperty); }
 			set { SetValue(StartDateTimeProperty, value); }
@@ -48,7 +48,7 @@ namespace Soheil.Core.ViewModels.PP
 		//DurationSeconds Dependency Property
 		public static readonly DependencyProperty DurationProperty =
 			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPItemVm), new UIPropertyMetadata(TimeSpan.Zero));
-		public int DurationSeconds
+		public virtual int DurationSeconds
 		{
 			get { return (int)GetValue(DurationSecondsProperty); }
 			set { SetValue(DurationSecondsProperty, value); }
@@ -141,6 +141,11 @@ namespace Soheil.Core.ViewModels.PP
 
 		protected virtual void acqusitionThreadStart() { }
 		protected virtual void acqusitionThreadEnd() { }
+		protected virtual void acqusitionThreadRestart()
+		{
+			_acqusitionThread.ForceQuit();
+			BeginAcquisition();
+		}
 		#endregion
 	}
 }

@@ -28,7 +28,6 @@ namespace Soheil.Core.ViewModels.PP
 			initializeCommands();
 		}
 
-		#region Other PropDp
 		//ByEndDate Dependency Property
 		public bool ByEndDate
 		{
@@ -71,19 +70,11 @@ namespace Soheil.Core.ViewModels.PP
 						vm.RequestForChangeOfCurrentTaskReportBuilder(null);
 				}
 			}));
-		//Offset Dependency Property
-		public Point Offset
-		{
-			get { return (Point)GetValue(OffsetProperty); }
-			set { SetValue(OffsetProperty, value); }
-		}
-		public static readonly DependencyProperty OffsetProperty =
-			DependencyProperty.Register("Offset", typeof(Point), typeof(TaskReportHolderVm), new UIPropertyMetadata(new Point()));
-		#endregion
 
 		#region Commands
 		void initializeCommands()
 		{
+			//AddAndOpenCommand
 			OpenCommand = new Commands.Command(o =>
 			{
 				var model = new Model.TaskReport();
@@ -93,11 +84,13 @@ namespace Soheil.Core.ViewModels.PP
 				model.TaskReportTargetPoint = TargetPoint;
 				if (TaskReportDataService.AddReportToTask(model, Task.Model) == null)
 				{
+					//user should correct times
 					AutoFillCommand.Execute(o);
 				}
 				else
 				{
 					Task.ReloadTaskReports();
+					Task.ReloadAllProcessReports();
 					IsSelected = false;
 				}
 			});

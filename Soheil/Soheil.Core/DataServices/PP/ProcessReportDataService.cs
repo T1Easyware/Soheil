@@ -20,6 +20,7 @@ namespace Soheil.Core.DataServices
 		}
 		public ProcessReportDataService(SoheilEdmContext context)
 		{
+			this.context = context;
 			_processReportRepository = new Repository<ProcessReport>(context);
 		}
 
@@ -60,6 +61,7 @@ namespace Soheil.Core.DataServices
 
 		public ProcessReport GetSingleFull(int id)
 		{
+			if (id < 1) return null;
 			return _processReportRepository.FirstOrDefault(x => x.Id == id,
 					"Process",
 					"Process.StateStationActivity",

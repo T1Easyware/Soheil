@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
@@ -43,9 +44,30 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			StartTime = model.StartDateTime.TimeOfDay;
 
             //subValues
-			IsDeferToActivitiesSelected = true;
-            TaskTargetPoint = model.TaskTargetPoint;
-            DurationSeconds = model.DurationSeconds;
+			TaskTargetPoint = model.TaskTargetPoint;
+			DurationSeconds = model.DurationSeconds;
+
+			if (!model.Processes.Any())
+			{
+				IsDeferToActivitiesSelected = true;
+			}
+			else if (model.Processes.AreAllEqual(x => x.TargetCount))
+			{
+				var tmp = model.Processes.FirstOrDefault();
+				if (tmp != null) SameQtyForActivities = tmp.TargetCount;
+				IsSameQtyForActivitiesSelected = true;
+			}
+			else if (model.Processes.AreAllEqual(x => x.TargetCount * x.StateStationActivity.CycleTime))
+			{
+				var tmp = model.Processes.FirstOrDefault();
+				if (tmp != null) SameTimeForActivities = TimeSpan.FromSeconds(tmp.TargetCount * tmp.StateStationActivity.CycleTime);
+				IsSameTimeForActivitiesSelected = true;
+			}
+			else
+			{
+				IsDeferToActivitiesSelected = true;
+			}
+
 			initProcesses();
 		}
 		void initProcesses()
@@ -218,8 +240,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			if (newVal)
 			{
-				IsSameQtyForActivitiesSelected = false;
-				IsDeferToActivitiesSelected = false;
+				//IsSameQtyForActivitiesSelected = false;
+				//IsDeferToActivitiesSelected = false;
 				foreach (var process in ProcessList)
 				{
 					process.DurationSeconds = (int)SameTimeForActivities.TotalSeconds;
@@ -230,8 +252,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			if (newVal)
 			{
-				IsSameTimeForActivitiesSelected = false;
-				IsDeferToActivitiesSelected = false;
+				//IsSameTimeForActivitiesSelected = false;
+				//IsDeferToActivitiesSelected = false;
 				SameQtyForActivities = TaskTargetPoint;
 				foreach (var process in ProcessList)
 				{
@@ -243,8 +265,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			if (newVal)
 			{
-				IsSameTimeForActivitiesSelected = false;
-				IsSameQtyForActivitiesSelected = false;
+				//IsSameTimeForActivitiesSelected = false;
+				//IsSameQtyForActivitiesSelected = false;
 			}
 			foreach (var process in ProcessList)
 			{

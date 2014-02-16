@@ -134,6 +134,25 @@ namespace Soheil.Common
 		{
 			return collection.GroupBy(selector).Select(grp => grp.First()).ToList();
 		}
+
+		/// <summary>
+		/// Returns true if no elements in collection, else return true if all specified values are equal
+		/// </summary>
+		/// <typeparam name="T">Type of collection items</typeparam>
+		/// <typeparam name="TKey">Type of item's selector value</typeparam>
+		/// <param name="collection">The collection to search</param>
+		/// <param name="selector">which value to select</param>
+		/// <returns></returns>
+		public static bool AreAllEqual<T, TKey>(this ICollection<T> collection, Func<T, TKey> selector)
+		{
+			if(collection.Count == null) return true;
+			TKey val = selector(collection.First());
+			foreach (var item in collection)
+			{
+				if (!selector(item).Equals(val)) return false;
+			}
+			return true;
+		}
 		#endregion
 
 		#region DataContext & EntityObject

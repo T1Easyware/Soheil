@@ -548,8 +548,6 @@ namespace Soheil.Core.ViewModels.PP
 				{
 					if (CurrentProcessReportBuilder != null)
 						CurrentProcessReportBuilder.IsSelected = false;
-					if (CurrentTaskReportBuilderInProcess != null)
-						CurrentTaskReportBuilderInProcess.IsSelected = false;
 					if (CurrentNPTReportBuilder != null)
 						CurrentNPTReportBuilder.IsSelected = false;
 				}
@@ -568,8 +566,6 @@ namespace Soheil.Core.ViewModels.PP
 				{
 					if (CurrentProcessReportBuilder != null)
 						CurrentProcessReportBuilder.IsSelected = false;
-					if (CurrentTaskReportBuilderInProcess != null)
-						CurrentTaskReportBuilderInProcess.IsSelected = false;
 					if (CurrentTaskReportBuilder != null)
 						CurrentTaskReportBuilder.IsSelected = false;
 				}
@@ -578,26 +574,6 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty CurrentNPTReportBuilderProperty =
 			DependencyProperty.Register("CurrentNPTReportBuilder", typeof(NPTReportVm), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//CurrentTaskReportBuilderInProcess Dependency Property
-		public ProcessReportCellTaskReportHolder CurrentTaskReportBuilderInProcess
-		{
-			get { return (ProcessReportCellTaskReportHolder)GetValue(CurrentTaskReportBuilderInProcessProperty); }
-			set
-			{
-				if (value != null)
-				{
-					if (CurrentProcessReportBuilder != null)
-						CurrentProcessReportBuilder.IsSelected = false;
-					if (CurrentNPTReportBuilder != null)
-						CurrentNPTReportBuilder.IsSelected = false;
-					if (CurrentTaskReportBuilder != null)
-						CurrentTaskReportBuilder.IsSelected = false;
-				}
-				SetValue(CurrentTaskReportBuilderInProcessProperty, value);
-			}
-		}
-		public static readonly DependencyProperty CurrentTaskReportBuilderInProcessProperty =
-			DependencyProperty.Register("CurrentTaskReportBuilderInProcess", typeof(ProcessReportCellTaskReportHolder), typeof(PPTableVm), new UIPropertyMetadata(null));
 		//CurrentProcessReportBuilder Dependency Property
 		public ProcessReportCellVm CurrentProcessReportBuilder
 		{
@@ -606,8 +582,6 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				if (value != null)
 				{
-					if (CurrentTaskReportBuilderInProcess != null)
-						CurrentTaskReportBuilderInProcess.IsSelected = false;
 					if (CurrentNPTReportBuilder != null)
 						CurrentNPTReportBuilder.IsSelected = false;
 					if (CurrentTaskReportBuilder != null)

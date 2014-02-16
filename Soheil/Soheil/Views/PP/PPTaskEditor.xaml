@@ -305,19 +305,19 @@
                                     <TextBlock Text="{Loc PPE_TaskTP}" VerticalAlignment="Center"/>
                                     <TextBox Text="{Binding TaskTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="30"/>
                                 </WrapPanel>
-                                <RadioButton Margin="1" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
+                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
                                     <WrapPanel>
                                         <TextBlock Text="{Loc PPE_SameTimeForActivites}" VerticalAlignment="Center"/>
                                         <TextBox IsEnabled="{Binding IsSameTimeForActivitiesSelected}" Text="{Binding SameTimeForActivities, Converter={StaticResource timeSpanToStringConverter}, UpdateSourceTrigger=PropertyChanged}" MinWidth="30" FlowDirection="LeftToRight"/>
                                     </WrapPanel>
                                 </RadioButton>
-                                <RadioButton Margin="1" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
+                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
                                     <WrapPanel>
                                         <TextBlock Text="{Loc PPE_SameQtyForActivites}" VerticalAlignment="Center"/>
                                         <TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="30"/>
                                     </WrapPanel>
                                 </RadioButton>
-                                <RadioButton Margin="1" IsChecked="{Binding IsDeferToActivitiesSelected}">
+                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsDeferToActivitiesSelected}">
                                     <WrapPanel Height="20">
                                         <TextBlock Text="{Loc PPE_DeferToActivites}" VerticalAlignment="Center"/>
                                     </WrapPanel>

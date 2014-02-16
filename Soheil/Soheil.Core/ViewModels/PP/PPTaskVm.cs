@@ -50,12 +50,12 @@ namespace Soheil.Core.ViewModels.PP
 			get { return Model.TaskTargetPoint; }
 			set { Model.TaskTargetPoint = value; OnPropertyChanged("TaskTargetPoint"); }
 		}
-		public new DateTime StartDateTime
+		public override DateTime StartDateTime
 		{
 			get { return Model.StartDateTime; }
 			set { Model.StartDateTime = value; OnPropertyChanged("StartDateTime"); }
 		}
-		public new int DurationSeconds
+		public override int DurationSeconds
 		{
 			get { return Model.DurationSeconds; }
 			set
@@ -65,10 +65,6 @@ namespace Soheil.Core.ViewModels.PP
 				OnPropertyChanged("DurationSeconds");
 			}
 		}
-		//DurationSeconds Dependency Property
-		public static readonly DependencyProperty DurationProperty =
-			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPTaskVm), new UIPropertyMetadata(TimeSpan.Zero));
-		
 		//TaskProducedG1 Dependency Property
 		public int TaskProducedG1
 		{
@@ -118,6 +114,16 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			TaskReports.Clear();
 		}
+		/// <summary>
+		/// Reloads all process reports in all tasks in the parent block of this task
+		/// </summary>
+		internal void ReloadAllProcessReports()
+		{
+			if (Block.BlockReport == null)
+				Block.BlockReport = new BlockReportVm(Block);
+			Block.BlockReport.ReloadProcessReportRows();
+		}
+
 		//TaskReports Observable Collection
 		public ObservableCollection<TaskReportBaseVm> TaskReports { get { return _taskReports; } }
 		private ObservableCollection<TaskReportBaseVm> _taskReports = new ObservableCollection<TaskReportBaseVm>();
@@ -131,5 +137,7 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty SumOfReportedHoursProperty =
 			DependencyProperty.Register("SumOfReportedHours", typeof(double), typeof(PPTaskVm), new UIPropertyMetadata(0d));
 		#endregion
+
+
 	}
 }
