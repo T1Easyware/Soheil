@@ -16,7 +16,7 @@ namespace Soheil.Core.ViewModels.PP
 		DataServices.ProcessReportDataService _processReportDataService;
 		DataServices.TaskReportDataService _taskReportDataService;
 		Model.ProcessReport _model;
-		public override int Id { get { return _model.Id; } }
+		public override int Id { get { return _model == null ? 0 : _model.Id; } }
 		public int ProcessId { get { return _model.Process.Id; } }
 		public ProcessReportRowVm ParentRow { get; private set; }
 		public TaskReportBaseVm ParentColumn { get; private set; }
@@ -39,8 +39,8 @@ namespace Soheil.Core.ViewModels.PP
 
 			if (model == null)
 			{
-				ProcessReportTargetPoint = 0;
-					//- processReportRow.ProcessReportCells.Where(y => y.Id > 0).Sum(x => x.ProcessReportTargetPoint);
+                ProcessReportTargetPoint = 0;
+                    //- processReportRow.ProcessReportCells.Where(y => y.Id > 0).Sum(x => x.ProcessReportTargetPoint);
 			}
 			else
 			{

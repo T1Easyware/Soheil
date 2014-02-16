@@ -345,11 +345,11 @@ namespace Soheil.Controls.Converters.PP
 	public class PPTaskBorderWidthConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-		{
+        {
 			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return 0d;
 			var duration = (TimeSpan)values[0];
 			var oneHourWidth = (double)values[1];
-			return duration.TotalHours * oneHourWidth;
+            return duration.TotalHours * oneHourWidth;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -372,15 +372,27 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+    public class testConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 	public class PPTaskBorderMarginConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return new Thickness(0,2,0,2);
+            if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return new Thickness(0, 2, 0, 2);
 			var startDt = (DateTime)values[0];
 			var oneHourWidth = (double)values[1];
-			return new Thickness(startDt.Subtract(startDt.GetNorooz()).TotalHours * oneHourWidth, 2, 0, 2);
+            return new Thickness(startDt.Subtract(startDt.GetNorooz()).TotalHours * oneHourWidth, 2, 0, 2);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

@@ -1953,7 +1953,7 @@
                                                 <DataTemplate DataType="{x:Type vm:ProcessReportCellVm}">
                                                     <Canvas>
                                                         <Canvas.Margin>
-                                                            <MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
+                                                            <MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}" ConverterParameter="test">
                                                                 <Binding Path="StartDateTime"/>
                                                                 <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                             </MultiBinding>
@@ -1961,7 +1961,7 @@
                                                         <Border x:Name="border" Loaded="PRC_Loaded" Unloaded="PRC_Unloaded" BorderBrush="Black"
 														    BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="50" Margin="0,1">
                                                             <Border.Width>
-                                                                <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
+                                                                <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}" ConverterParameter="test">
                                                                     <Binding Path="Duration"/>
                                                                     <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                                 </MultiBinding>
@@ -2108,6 +2108,7 @@
                                                                 </Setter.Value>
                                                             </Setter>
                                                         </DataTrigger>
+                                                        <!-- When is Selected -->
                                                         <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                                             <Setter TargetName="innerControl" Property="Panel.ZIndex" Value="999"/>
                                                             <Setter TargetName="innerControl" Property="Effect">
@@ -2120,7 +2121,7 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
 
-                                            <!-- Tasks ItemsPanel -->
+                                            <!-- cells ItemsPanel -->
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <Canvas/>
@@ -2331,29 +2332,21 @@
                                                                                 <EventTrigger RoutedEvent="MouseEnter">
                                                                                     <BeginStoryboard>
                                                                                         <Storyboard Duration="0:0:0.2">
-                                                                                            <DoubleAnimation Storyboard.TargetName="grid"
-		    Storyboard.TargetProperty="Opacity"
-		    Duration="0:0:0.2"
-		    To="1"/>
+                                                                                            <DoubleAnimation Storyboard.TargetName="grid" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="1"/>
                                                                                         </Storyboard>
                                                                                     </BeginStoryboard>
                                                                                 </EventTrigger>
                                                                                 <EventTrigger RoutedEvent="MouseLeave">
                                                                                     <BeginStoryboard>
                                                                                         <Storyboard Duration="0:0:0.3">
-                                                                                            <DoubleAnimation Storyboard.TargetName="grid"
-		    Storyboard.TargetProperty="Opacity"
-		    Duration="0:0:0.3"
-		    To="0.5"/>
+                                                                                            <DoubleAnimation Storyboard.TargetName="grid" Storyboard.TargetProperty="Opacity" Duration="0:0:0.3" To="0.5"/>
                                                                                         </Storyboard>
                                                                                     </BeginStoryboard>
                                                                                 </EventTrigger>
                                                                                 <EventTrigger RoutedEvent="MouseDown">
                                                                                     <BeginStoryboard>
                                                                                         <Storyboard>
-                                                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" 
-																										    Storyboard.TargetName="ellipse"
-																										    From="1" To="0" Duration="0:0:0.5"/>
+                                                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ellipse" From="1" To="0" Duration="0:0:0.5"/>
                                                                                         </Storyboard>
                                                                                     </BeginStoryboard>
                                                                                 </EventTrigger>

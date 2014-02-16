@@ -33,7 +33,8 @@
     <ppconv:PPTaskBorderWidthConverter x:Key="ppTaskBorderWidthConverter"/>
     <ppconv:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
     <ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
-
+    <ppconv:testConverter x:Key="testConverter"/>
+    
     <ppconv:IsEqualToBrushConverter x:Key="isEqualToBrushConverter"/>
     <ppconv:ColorFixer x:Key="colorFixer"/>
     <ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>

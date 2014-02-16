@@ -87,7 +87,7 @@ namespace Soheil.Core.ViewModels.PP
 				if (--_tries < 0)
 				{
 					_tries = _MAX_TRIES;
-					System.Threading.Thread.Sleep(4000);
+					System.Threading.Thread.Sleep(400);
 				}
 				else 
 					BeginAcquisition();
@@ -278,10 +278,10 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				//try
 				{
-					_ppTable.SelectedBlock = this;
 					BlockReport = new BlockReportVm(this);
 					BlockReport.ReloadProcessReportRows();
-				}
+                    _ppTable.SelectedBlock = this;
+                }
 				//catch (Exception exp)
 				{
 				//	Message.AddEmbeddedException(exp.Message);
