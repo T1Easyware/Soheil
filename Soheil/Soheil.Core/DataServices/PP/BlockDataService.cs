@@ -89,7 +89,8 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(Block model)
 		{
-			throw new NotImplementedException();
+			_blockRepository.Add(model);
+			return model.Id;
 		}
 
 		public void UpdateModel(Block model)
@@ -100,7 +101,7 @@ namespace Soheil.Core.DataServices
 		public void DeleteModel(Block model)
 		{
 			var taskDataService = new TaskDataService(context);
-			foreach (var task in model.Tasks)
+			foreach (var task in model.Tasks.ToArray())
 			{
 				taskDataService.DeleteModel(task);
 			}
@@ -445,32 +446,31 @@ namespace Soheil.Core.DataServices
 
 		#region NPT
 		/// <summary>
-		/// <para>Returns previousTask and previousSetup which start before (or at the) start</para>
-		/// <para>if previousSetup is before previousTask it is considered as null</para>
+		/// <para>Returns previousBlock and previousSetup which start before start</para>
+		/// <para>if previousSetup is before previousBlock it is considered as null</para>
 		/// <para>This method is for auto setup-time add</para>
 		/// </summary>
 		/// <param name="stationId"></param>
 		/// <param name="start"></param>
 		/// <returns></returns>
-		public Pair<Block, Setup> FindPreviousTask(int stationId, DateTime start)
+		public Pair<Block, Setup> FindPreviousBlock(int stationId, DateTime start)
 		{
 			return findPreviousPPItem(stationId, start);
 		}
 		/// <summary>
-		/// <para>Returns nextTask and nextSetup which start after (or at the) end</para>
-		/// <para>if nextSetup is after nextTask it is considered as null</para>
+		/// <para>Returns nextBlock and nextSetup which start after (or at the) end</para>
+		/// <para>if nextSetup is after nextBlock it is considered as null</para>
 		/// <para>This method is for auto setup-time add</para>
 		/// </summary>
 		/// <param name="stationId"></param>
-		/// <param name="productReworkId"></param>
 		/// <param name="end"></param>
 		/// <returns></returns>
-		public Pair<Block, Setup> FindNextTask(int stationId, int productReworkId, DateTime end)
+		public Pair<Block, Setup> FindNextBlock(int stationId, DateTime end)
 		{
 			return findNextPPItem(stationId, end);
 		}
 		/// <summary>
-		/// See FindPreviousTask
+		/// See FindPreviousBlock
 		/// </summary>
 		/// <param name="taskRepository"></param>
 		/// <param name="nptRepository"></param>
@@ -481,7 +481,7 @@ namespace Soheil.Core.DataServices
 		{
 			var previousTask = _blockRepository.LastOrDefault(x =>
 				x.StateStation.Station.Id == stationId
-				&& x.StartDateTime <= start,
+				&& x.StartDateTime < start,
 				dt => dt.StartDateTime,
 				"StateStation", "StateStation.Station", "StateStation.State", "StateStation.State.OnProductRework");
 
@@ -490,7 +490,7 @@ namespace Soheil.Core.DataServices
 				.OrderByDescending(x => x.StartDateTime)
 				.FirstOrDefault(x =>
 					x.Warmup.Station.Id == stationId
-					&& x.StartDateTime <= start);
+					&& x.StartDateTime < start);
 
 			if (previousSetup == null || previousTask == null)
 				return new Pair<Block, Setup>(previousTask, previousSetup);

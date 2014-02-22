@@ -678,4 +678,7 @@
   <data name="txtTomorrow" xml:space="preserve">
     <value>فردا</value>
   </data>
+  <data name="PPE_LastEmptySpace" xml:space="preserve">
+    <value>آخرین زمان خالی</value>
+  </data>
 </root>

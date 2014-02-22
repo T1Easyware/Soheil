@@ -98,6 +98,7 @@ namespace Soheil.Core.DataServices
 		public void DeleteModel(int taskId)
 		{
 			var model = _taskRepository.FirstOrDefault(x => x.Id == taskId);
+			if (model == null) throw new Exception("Already deleted.");
 			DeleteModel(model);
 			context.Commit();
 		}
@@ -115,8 +116,12 @@ namespace Soheil.Core.DataServices
 				return;
 			}
 
-			if (_taskReportRepository.Exists(x => x.Task.Id == model.Id))
-				throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
+			if (_taskReportRepository.Find(x => x.Task.Id == model.Id).Any(x=>x.ProcessReports.Count > 0))
+			{
+				var xx = _taskReportRepository.Find(x => x.Task.Id == model.Id);
+				var xxx = xx.First(x=>x.ProcessReports.Count > 0);
+				 throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
+			}
 
 			var taskReportDs = new TaskReportDataService(context);
 			foreach (var taskReportEnt in model.TaskReports)

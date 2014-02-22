@@ -377,8 +377,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			foreach (var taskVm in TaskList.OfType<PPEditorTask>())
 			{
-				taskVm.ForceCalculateDuration();
-
 				//processes don't follow the JIT model attachment strategy
 				//so we need to manually attach their models prior to Save.
 
@@ -470,6 +468,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						poModel.Role = poVm.Role;
 					}
 				}
+				taskVm.ForceCalculateDuration();
 			}
 
 			Model.DurationSeconds = TaskList.OfType<PPEditorTask>().Sum(t => t.DurationSeconds);

@@ -11,7 +11,7 @@
              d:DesignHeight="300" d:DesignWidth="600" FlowDirection="RightToLeft">
 	<UserControl.Resources>
 
-		<HierarchicalDataTemplate ItemsSource="{Binding Products}" DataType="{x:Type vm:ProductGroupVm}">
+		<HierarchicalDataTemplate ItemsSource="{Binding Products}" DataType="{x:Type vm:JobProductGroupVm}">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
@@ -22,7 +22,7 @@
 				<TextBlock Text="{Binding Code}" Grid.Column="2" Foreground="Gray"/>
 			</Grid>
 		</HierarchicalDataTemplate>
-		<DataTemplate DataType="{x:Type vm:ProductVm}">
+		<DataTemplate DataType="{x:Type vm:JobProductVm}">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="15"/>

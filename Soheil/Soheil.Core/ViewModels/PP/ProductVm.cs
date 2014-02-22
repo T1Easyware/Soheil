@@ -12,7 +12,7 @@ namespace Soheil.Core.ViewModels.PP
 	public class ProductVm : DependencyObject
 	{
 		/// <summary>
-		/// can also be used in JobEditor
+		/// cannot be used in JobEditor (in jobEditor use JobProductVm)
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="parentVm"></param>
@@ -28,12 +28,6 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				ProductReworks.Add(new ProductReworkVm(pr_model, this));
 			}
-			CreateNewJob = new Commands.Command
-				(vm =>
-					((Soheil.Core.ViewModels.PP.Editor.PPJobEditorVm)vm).JobList.Add(
-						Soheil.Core.ViewModels.PP.Editor.PPEditorJob.CreateForProduct(model)
-					)
-				);
 		}
 
 		public int Id { get; protected set; }
@@ -74,14 +68,5 @@ namespace Soheil.Core.ViewModels.PP
 		//ProductReworks Observable Collection
 		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } }
 		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
-
-		//CreateNewJob Dependency Property
-		public Commands.Command CreateNewJob
-		{
-			get { return (Commands.Command)GetValue(CreateNewJobProperty); }
-			set { SetValue(CreateNewJobProperty, value); }
-		}
-		public static readonly DependencyProperty CreateNewJobProperty = 
-			DependencyProperty.Register("CreateNewJob", typeof(Commands.Command), typeof(ProductVm), new UIPropertyMetadata(null));
 	}
 }

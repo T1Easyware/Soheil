@@ -277,6 +277,21 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty JobEditorProperty =
 			DependencyProperty.Register("JobEditor", typeof(PPJobEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+		//ShowJobList Dependency Property
+		public bool ShowJobList
+		{
+			get { return (bool)GetValue(ShowJobListProperty); }
+			set { SetValue(ShowJobListProperty, value); }
+		}
+		public static readonly DependencyProperty ShowJobListProperty =
+			DependencyProperty.Register("ShowJobList", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = d as PPTableVm;
+				if((bool)e.NewValue)
+				{
+					//reload joblist
+				}
+			}));
 
 		//ToggleJobEditorCommand Dependency Property
 		public Commands.Command ToggleJobEditorCommand

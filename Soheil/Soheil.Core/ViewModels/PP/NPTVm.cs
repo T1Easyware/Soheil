@@ -10,14 +10,59 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public abstract class NPTVm : PPItemVm
 	{
-		Model.NonProductiveTask _model;
+		protected Model.NonProductiveTask _model;
 		public override int Id { get { return _model.Id; } }
 
 		public NPTVm(Model.NonProductiveTask model, PPItemCollection parent)
 		{
 			_model = model;
 			Parent = parent;
+			initializeCommands();
 		}
+
+		public override DateTime StartDateTime
+		{
+			get
+			{
+				return base.StartDateTime;
+			}
+			set
+			{
+				StartDate = value.Date;
+				StartTime = value.TimeOfDay;
+				base.StartDateTime = value;
+			}
+		}
+
+		//StartDate Dependency Property
+		public DateTime StartDate
+		{
+			get { return (DateTime)GetValue(StartDateProperty); }
+			set { SetValue(StartDateProperty, value); }
+		}
+		public static readonly DependencyProperty StartDateProperty =
+			DependencyProperty.Register("StartDate", typeof(DateTime), typeof(NPTVm),
+			new UIPropertyMetadata(DateTime.Now, (d, e) =>
+			{
+				var vm = d as NPTVm;
+				var val = (DateTime)e.NewValue;
+				vm.StartDateTime = val.Add(vm.StartTime);
+			}));
+		//StartTime Dependency Property
+		public TimeSpan StartTime
+		{
+			get { return (TimeSpan)GetValue(StartTimeProperty); }
+			set { SetValue(StartTimeProperty, value); }
+		}
+		public static readonly DependencyProperty StartTimeProperty =
+			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(NPTVm), 
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
+			{
+				var vm = d as NPTVm;
+				var val = (TimeSpan)e.NewValue;
+				vm.StartDateTime = vm.StartDate.Add(val);
+			}));
+
 		//Parent Dependency Property
 		public Core.PP.PPItemCollection Parent
 		{
@@ -35,5 +80,20 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty IsEditModeProperty =
 			DependencyProperty.Register("IsEditMode", typeof(bool), typeof(NPTVm), new UIPropertyMetadata(false));
+
+		#region Commands
+		protected virtual void initializeCommands()
+		{
+		}
+
+		//SaveCommand Dependency Property
+		public Commands.Command SaveCommand
+		{
+			get { return (Commands.Command)GetValue(SaveCommandProperty); }
+			set { SetValue(SaveCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SaveCommandProperty =
+			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(NPTVm), new UIPropertyMetadata(null)); 
+		#endregion
 	}
 }

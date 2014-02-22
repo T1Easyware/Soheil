@@ -80,6 +80,15 @@ namespace Soheil.Core.ViewModels.PP
 							{
 								TaskList.Add(new PPTaskVm(task, this));
 							}
+
+							//check if can-add-setup-before
+							var previousBlock = BlockDataService.FindPreviousBlock(_model.StateStation.Station.Id, StartDateTime);
+							if (previousBlock.Value2 == null)
+							{
+								if (previousBlock.Value1 == null) CanAddSetupBefore = true;
+								else CanAddSetupBefore = (previousBlock.Value1.StateStation.Id != _model.StateStation.Id);
+							}
+							else CanAddSetupBefore = false;
 							Dispatcher.Invoke(acqusitionThreadEnd);
 						}
 					}));
@@ -220,7 +229,15 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(CanAddSetupBeforeProperty, value); }
 		}
 		public static readonly DependencyProperty CanAddSetupBeforeProperty =
-			DependencyProperty.Register("CanAddSetupBefore", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false)); 
+			DependencyProperty.Register("CanAddSetupBefore", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(true));
+		//IsEditMode Dependency Property
+		public bool IsEditMode
+		{
+			get { return (bool)GetValue(IsEditModeProperty); }
+			set { SetValue(IsEditModeProperty, value); }
+		}
+		public static readonly DependencyProperty IsEditModeProperty =
+			DependencyProperty.Register("IsEditMode", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false));
 
 		#region Commands
 
@@ -253,7 +270,7 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
-					Job.AppendToJobEditor(_ppTable);
+					_ppTable.JobEditor.Append(Job);
 				}
 				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
 			}, () =>
@@ -269,7 +286,7 @@ namespace Soheil.Core.ViewModels.PP
 					_ppTable.TaskEditor.IsVisible = false;
 					_ppTable.JobEditor.IsVisible = true;
 					_ppTable.JobEditor.Reset();
-					Job.AppendToJobEditor(_ppTable);
+					_ppTable.JobEditor.Append(Job);
 				}
 				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
 			}, () =>
@@ -295,7 +312,7 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
-					_ppTable.TaskDataService.DeleteModel(Id);
+					_ppTable.BlockDataService.DeleteModelById(Id);
 					Parent.RemoveItem(this);
 				}
 				catch (Exception exp)

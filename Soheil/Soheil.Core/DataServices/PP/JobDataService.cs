@@ -80,7 +80,14 @@ namespace Soheil.Core.DataServices
 		#endregion
 
 		public event EventHandler<ModelAddedEventArgs<Job>> JobAdded;
-
+		/// <summary>
+		/// Given a job, creates tasks for it and does the other stuff too
+		/// </summary>
+		/// <param name="jobVms"></param>
+		internal void SaveAndGenerateTasks(ViewModels.PP.Editor.PPEditorJob job)
+		{
+			SaveAndGenerateTasks(new List<ViewModels.PP.Editor.PPEditorJob> { job });
+		}
 		/// <summary>
 		/// Given a list of jobs, creates tasks for all of them and does the other stuff too
 		/// </summary>
@@ -195,7 +202,11 @@ namespace Soheil.Core.DataServices
 			{
 				kvJM.Key.Id = kvJM.Value.Id;
 				if (JobAdded != null) JobAdded(this, new ModelAddedEventArgs<Job>(kvJM.Value));
-			}*/
+			}
+
+			if (JobAdded != null)
+				foreach (var job in jobVms)
+					JobAdded(this, new ModelAddedEventArgs<Job>(job.mo));*/
 		}
 
 

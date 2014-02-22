@@ -296,6 +296,7 @@
     <Content Include="Images\openhand.cur">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\PP\JobList.png" />
     <Resource Include="Images\PP\TaskNew.png" />
     <Resource Include="Images\PP\saveup.png" />
     <Resource Include="Images\PP\closeup.png" />

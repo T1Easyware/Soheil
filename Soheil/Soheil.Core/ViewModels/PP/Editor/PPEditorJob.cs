@@ -11,9 +11,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	public class PPEditorJob : DependencyObject
 	{
 		internal event Action<PPEditorJob> JobDeleted;
+		internal event Action RefreshPPTable;
+		DataServices.JobDataService _jobDataService;
 		public int FpcId { get; set; }
 
-		public static PPEditorJob CreateForProduct(Model.Product productModel)
+		public static PPEditorJob CreateForProduct(Model.Product productModel, DataServices.JobDataService jobDataService)
 		{
 			return new PPEditorJob(new Model.Job
 			{
@@ -24,10 +26,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				Quantity = 0,
 				ReleaseTime = DateTime.Now,
 				Weight = 1,
-			});
+			}, jobDataService);
 		}
-		public PPEditorJob(Model.Job model)
+		public PPEditorJob(Model.Job model, DataServices.JobDataService jobDataService)
 		{
+			_jobDataService = jobDataService;
 			Replications.Add(model);
 
 			Deadline = model.Deadline;
@@ -193,7 +196,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			SaveCommand = new Commands.Command(o =>
 			{
-				throw new Exception("PPEJ");
+				_jobDataService.SaveAndGenerateTasks(this);
+				bool refresh = true;
+				if (o != null) if (o.GetType() == typeof(bool)) refresh = (bool)o;
+				if (refresh && RefreshPPTable != null)
+					RefreshPPTable();
 			});
 			DeleteJobCommand = new Commands.Command(o =>
 			{

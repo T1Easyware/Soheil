@@ -540,25 +540,25 @@
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
 				<DataTemplate x:Key="balloonTemplate">
-					<Canvas DataContext="{Binding Message}">
+					<Canvas>
 						<Canvas.Margin>
 							<MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
 								<Binding Path="StartDateTime"/>
 								<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
 							</MultiBinding>
 						</Canvas.Margin>
-						<Canvas Width="0" Height="0" Margin="-20,-150,0,0" ClipToBounds="False" MouseDown="balloonClicked"
+						<Canvas DataContext="{Binding Message}" Width="0" Height="0" Margin="-20,-150,0,0" ClipToBounds="False" MouseDown="balloonClicked"
 							Visibility="{Binding HasException, Converter={StaticResource booleanToVisibilityConverter}}">
-							<Path x:Name="balloon" Width="183.667" Height="90.7315" Canvas.Left="1.49997" Canvas.Top="1.8334" Stretch="Fill" 
+                            <Path x:Name="balloon" Width="183.667" Height="90.7315" Canvas.Left="1.49997" Canvas.Top="1.8334" Stretch="Fill"  MouseDown="balloonClicked"
 								Stroke="#4000" Fill="#FFB" Opacity="0.75" ClipToBounds="False"
 								Data="F1 M 6.99997,2.3334L 179.667,2.3334C 182.428,2.3334 184.667,4.57199 184.667,7.3334L 184.667,64.6667C 184.667,67.4282 182.428,69.6667 179.667,69.6667L 36.6112,69.6669L 44.5225,92.0649L 17.6166,69.6668L 6.99997,69.6667C 4.23854,69.6667 1.99997,67.4282 1.99997,64.6667L 1.99997,7.3334C 1.99997,4.57199 4.23854,2.3334 6.99997,2.3334 Z ">
 								<Path.Effect>
 									<DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.6" Direction="315"/>
 								</Path.Effect>
 							</Path>
-							<ScrollViewer Width="177" Height="70"
+                            <ScrollViewer Width="177" Height="70" MouseDown="balloonClicked"
 										  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-								<TextBlock Text="{Binding MainExceptionText}" TextWrapping="Wrap" Margin="2,0,0,0" FlowDirection="RightToLeft"/>
+                                <TextBlock Text="{Binding MainExceptionText}" TextWrapping="Wrap" Margin="2" FlowDirection="RightToLeft" MouseDown="balloonClicked"/>
 							</ScrollViewer>
                             <Canvas.ToolTip>
                                 <TextBlock TextWrapping="Wrap" Text="{Binding FullExceptionText}"/>
@@ -921,7 +921,15 @@
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
 
-                            <!--ToggleButton Margin="2" Content="لیست Job ها" Name="showJobList"/-->
+                            <ToggleButton Margin="2" IsChecked="{Binding ShowJobList}">
+                                <Image Source="/Images/PP/JobList.png" Width="16"/>
+                                <ToggleButton.ToolTip>
+                                    <StackPanel>
+                                        <TextBlock Text="نمایش لیست Job ها"/>
+                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="Job های بازه قابل مشاهده در صفحه لیست می شوند"/>
+                                    </StackPanel>
+                                </ToggleButton.ToolTip>
+                            </ToggleButton>
                         </ToolBar>
                         <ToolBar Background="Transparent">
                             <Button Command="{Binding GoToNow}" ToolTip="برو به الان">
@@ -1002,7 +1010,27 @@
 							    Width="{Binding ElementName=taskEditorPanel, Path=ActualWidth}"/>
                         </Border>
                     </Grid>
-
+                    <!-- NPT Editor-->
+                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptEditorPanel" Height="0">
+                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
+                            <WrapPanel>
+                                <TextBlock Text="{Loc txtDate}"/>
+                                <cal:PersianDatePicker SelectedDate="{Binding SelectedNPT.StartDate}"/>
+                                <TextBlock Text="{Loc txtTime}"/>
+                                <TextBox Text="{Binding SelectedNPT.StartTime, Converter={StaticResource timeSpanToStringConverter}}"/>
+                                <Button Content="{Loc PPE_FirstEmptySpace}" Command="{Binding SelectedNPT.SetToEarliestTimeCommand}"/>
+                                <Button Content="{Loc PPE_LastEmptySpace}" Command="{Binding SelectedNPT.SetToLatestTimeCommand}"/>
+                                <Button Content="{Loc txtCancel}" Command="{Binding SelectedNPT.CancelCommand}"/>
+                                <Button Content="{Loc txtSave}" Command="{Binding SelectedNPT.SaveCommand}"/>
+                            </WrapPanel>
+                        </Border>
+                    </Grid>
+                    <!-- JobList -->
+                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobListPanel" Height="0">
+                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
+                        </Border>
+                    </Grid>
+                    
                     <!-- TaskReportBuilder -->
                     <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskReportBuilderPanel" Height="0">
                         <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" Background="Silver" Width="400" Height="152">
@@ -2219,7 +2247,7 @@
                                                                 <Separator/>
                                                                 <MenuItem Header="ویرایش Task" Command="{Binding EditItemCommand}"/>
                                                                 <MenuItem Header="افزودن Task به ویرایشگر" Command="{Binding AddBlockToEditorCommand}"/>
-                                                                <MenuItem Header="حذف Task" Command="{Binding DeleteBlockCommand}"/>
+                                                                <MenuItem Header="حذف Task" Command="{Binding DeleteItemCommand}"/>
                                                                 <Separator/>
                                                                 <MenuItem Header="ویرایش Job" Command="{Binding EditJobCommand}"/>
                                                                 <MenuItem Header="افزودن Job به ویرایشگر" Command="{Binding AddJobToEditorCommand}"/>
@@ -2468,6 +2496,14 @@
                                                                         </ItemsControl>
                                                                     </Grid>
                                                                 </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                                        <Setter TargetName="border" Property="BorderBrush">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="Yellow"/>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </DataTrigger>
@@ -2795,6 +2831,14 @@
                                                             </Setter.Value>
                                                         </Setter>
                                                     </DataTrigger>
+                                                    
+                                                    <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                                        <Setter TargetName="border" Property="BorderBrush">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="Yellow"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
 
                                                     <!-- NPT Report Simple View -->
                                                     <DataTrigger Binding="{Binding ViewMode}" Value="ReportSimple">
@@ -2934,15 +2978,14 @@
                         </ItemsControl.Template>
 
                     </ItemsControl>
-                    <!--RowsOfItems(Tasks,NPTs) ExceptionTooltips-->
+                    <!--ExceptionTooltips for Tasks,NPTs-->
                     <ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}" ClipToBounds="False">
                         <!-- ==================================== OneRow Of Item(Tasks,NPTs) ========================================= -->
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:PPStationVm}">
                                 <Canvas>
-
                                     <!-- Tasks ItemsControl -->
-                                    <ItemsControl ItemsSource="{Binding Tasks}" Height="42" ClipToBounds="False" ItemTemplate="{StaticResource balloonTemplate}">
+                                    <ItemsControl ItemsSource="{Binding Blocks}" Height="42" ClipToBounds="False" ItemTemplate="{StaticResource balloonTemplate}">
                                         <!-- Tasks ItemsPanel -->
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -2967,7 +3010,6 @@
                         <!--RowsOfTasks Template-->
                         <ItemsControl.Template>
                             <ControlTemplate>
-                                <DockPanel>
                                     <ItemsPresenter ClipToBounds="False">
                                         <ItemsPresenter.Margin>
                                             <MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
@@ -2978,7 +3020,6 @@
                                             </MultiBinding>
                                         </ItemsPresenter.Margin>
                                     </ItemsPresenter>
-                                </DockPanel>
                             </ControlTemplate>
                         </ItemsControl.Template>
 
@@ -3023,6 +3064,38 @@
                             <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="jobEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
                                 <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding SelectedNPT.IsEditMode}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
+                                <DoubleAnimation Storyboard.TargetName="nptEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="100"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
+                                <DoubleAnimation Storyboard.TargetName="nptEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ShowJobList}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
+                                <DoubleAnimation Storyboard.TargetName="jobListPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="400"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
+                                <DoubleAnimation Storyboard.TargetName="jobListPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>

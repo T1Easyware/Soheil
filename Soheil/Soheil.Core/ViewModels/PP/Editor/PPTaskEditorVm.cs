@@ -99,8 +99,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(null, (d, e) =>
 			{
 				var vm = (PPTaskEditorVm)d;
+				/*if (e.OldValue != null)
+					(e.OldValue as PPEditorBlock).IsEditMode = false;*/
 				if (e.NewValue != null)
+				{
 					vm.ShowFpc = false;
+					//(e.NewValue as PPEditorBlock).IsEditMode = true;
+				}
 			}));
 		#endregion
 
