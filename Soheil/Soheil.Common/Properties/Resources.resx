@@ -681,4 +681,25 @@
   <data name="PPE_LastEmptySpace" xml:space="preserve">
     <value>آخرین زمان خالی</value>
   </data>
+  <data name="ttJobListByDefinition" xml:space="preserve">
+    <value>جستجو بر اساس شروع و مهلت Jobها</value>
+  </data>
+  <data name="ttJobListByTasks" xml:space="preserve">
+    <value>جستجو بر اساس شروع و خاتمه Taskهای هر Job</value>
+  </data>
+  <data name="txtDeadline" xml:space="preserve">
+    <value>مهلت</value>
+  </data>
+  <data name="txtEndDate" xml:space="preserve">
+    <value>تاریخ خاتمه</value>
+  </data>
+  <data name="txtReleaseTime" xml:space="preserve">
+    <value>Release time</value>
+  </data>
+  <data name="txtStartDate" xml:space="preserve">
+    <value>تاریخ شروع</value>
+  </data>
+  <data name="txtStartTime" xml:space="preserve">
+    <value>زمان شروع</value>
+  </data>
 </root>

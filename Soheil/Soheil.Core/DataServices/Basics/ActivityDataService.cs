@@ -68,7 +68,7 @@ namespace Soheil.Core.DataServices
             return id;
         }
 
-        public void UpdateModel(Activity model)
+		public void UpdateModel(Activity model)
         {
 			model.ModifiedBy = LoginInfo.Id;
 			model.ModifiedDate = DateTime.Now;

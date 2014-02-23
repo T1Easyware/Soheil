@@ -734,7 +734,7 @@ namespace Soheil.Controls.Converters.PP
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = (TimeSpan)value;
-			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss");
+			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -772,7 +772,7 @@ namespace Soheil.Controls.Converters.PP
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = new TimeSpan(0, 0, System.Convert.ToInt32(value));
-			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss");
+			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -801,8 +801,8 @@ namespace Soheil.Controls.Converters.PP
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = new TimeSpan(0, 0, (int)((float)value));
-			if (ts.Hours == 0) return ts.ToString("mm\\ \\:\\ ss");
-			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss");
+			if (ts.Hours == 0) return ts.ToString("mm\\ \\:\\ ss", culture);
+			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -841,6 +841,22 @@ namespace Soheil.Controls.Converters.PP
 			return ((string)value).ToPersianDate();
 		}
 	}
+
+	public class DateToTimeStringConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (value == DependencyProperty.UnsetValue) return "";
+			var dt = (DateTime)value;
+			return dt.ToShortTimeString();
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+
 
 	[ValueConversion(typeof(DateTime), typeof(Arash.PersianDate))]
 	public class DateToPersianDateConverter : IValueConverter

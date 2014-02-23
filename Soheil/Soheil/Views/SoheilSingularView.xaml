@@ -921,12 +921,12 @@
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
 
-                            <ToggleButton Margin="2" IsChecked="{Binding ShowJobList}">
+                            <ToggleButton Margin="2" IsChecked="{Binding JobList.IsVisible}">
                                 <Image Source="/Images/PP/JobList.png" Width="16"/>
                                 <ToggleButton.ToolTip>
                                     <StackPanel>
                                         <TextBlock Text="نمایش لیست Job ها"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="Job های بازه قابل مشاهده در صفحه لیست می شوند"/>
+                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="Job های بازه زمانی مشخص شده لیست می شوند"/>
                                     </StackPanel>
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
@@ -989,7 +989,95 @@
                         </ToolBar>
                     </ToolBarTray>
 
-
+                    <!-- JobList -->
+                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobListPanel" Height="0" DataContext="{Binding JobList}">
+                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
+                            <DockPanel FlowDirection="RightToLeft">
+                                <StackPanel DockPanel.Dock="Left">
+                                    <UniformGrid Rows="3" Columns="2">
+                                        <TextBlock Text="{Loc txtStartDate}" Foreground="Silver" VerticalAlignment="Center" Margin="3"/>
+                                        <cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+                                        <TextBlock Text="{Loc txtEndDate}" Foreground="Silver" VerticalAlignment="Center" Margin="3"/>
+                                        <cal:PersianDatePicker SelectedDate="{Binding EndDate}"/>
+                                        <ToggleButton IsChecked="{Binding ByDefinition}" ToolTip="{Loc ttJobListByDefinition}">
+                                            <Image Source="/Images/PP/JobListByDefinition.png" Height="28"/>
+                                        </ToggleButton>
+                                        <ToggleButton IsChecked="{Binding ByDefinition, Converter={StaticResource inverter}}" ToolTip="{Loc ttJobListByTasks}">
+                                            <Image Source="/Images/PP/JobListByTasks.png" Height="28"/>
+                                        </ToggleButton>
+                                    </UniformGrid>
+                                    <Button Content="{Loc txtSearch}" Command="{Binding SearchCommand}"/>
+                                </StackPanel>
+                                <DataGrid ItemsSource="{Binding Jobs}" VerticalAlignment="Top" HorizontalAlignment="Stretch" AutoGenerateColumns="False" CellEditEnding="PPTableJobListDataGrid_CellEditEnding" SelectedItem="{Binding SelectedJob}">
+                                    <DataGrid.Columns>
+                                        <DataGridTemplateColumn Header="{Loc txtProduct}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <DockPanel>
+                                                        <Grid DockPanel.Dock="Left" Margin="1">
+                                                            <Rectangle Fill="{Binding ProductRework.Product.Color, Converter={StaticResource colorFixer}}" Width="15" Height="24"/>
+                                                            <Image Source="/Images/PP/Rework.png" Width="15" Margin="0,2" Visibility="{Binding ProductRework.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+                                                        </Grid>
+                                                        <WrapPanel DockPanel.Dock="Top">
+                                                            <TextBlock Text="{Binding ProductRework.Product.Code}"/>
+                                                            <TextBlock Text="{Binding ProductRework.Product.Name}" Foreground="DarkGray" FontSize="10"/>
+                                                        </WrapPanel>
+                                                        <WrapPanel>
+                                                            <TextBlock Text="{Binding ProductRework.Rework.Code}"/>
+                                                            <TextBlock Text="{Binding ProductRework.Rework.Name}" Foreground="DarkGray" FontSize="10"/>
+                                                        </WrapPanel>
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding Code}" Header="{Loc txtCode}"/>
+                                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding Quantity}" Header="{Loc txtQuantity}"/>
+                                        <DataGridTemplateColumn Header="{Loc txtReleaseTime}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding ReleaseDT, Converter={StaticResource dateToLocalStringConverter}}"/>
+                                                        <TextBlock Text="{Binding ReleaseDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="{Loc txtDeadline}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Deadline, Converter={StaticResource dateToLocalStringConverter}}"/>
+                                                        <TextBlock Text="{Binding Deadline, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="{Loc txtStartTime}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding StartDT, Converter={StaticResource dateToLocalStringConverter}}"/>
+                                                        <TextBlock Text="{Binding StartDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="{Loc txtEndTime}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding EndDT, Converter={StaticResource dateToLocalStringConverter}}"/>
+                                                        <TextBlock Text="{Binding EndDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Binding="{Binding Description}" Header="{Loc txtDescription}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
                     <!--Job Editor-->
                     <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobEditorPanel" Height="0">
                         <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
@@ -1012,22 +1100,17 @@
                     </Grid>
                     <!-- NPT Editor-->
                     <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptEditorPanel" Height="0">
-                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
+                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2" FlowDirection="RightToLeft">
                             <WrapPanel>
-                                <TextBlock Text="{Loc txtDate}"/>
+                                <TextBlock Text="{Loc txtStartDate}" Foreground="Silver"/>
                                 <cal:PersianDatePicker SelectedDate="{Binding SelectedNPT.StartDate}"/>
-                                <TextBlock Text="{Loc txtTime}"/>
+                                <TextBlock Text="{Loc txtStartTime}" Foreground="Silver"/>
                                 <TextBox Text="{Binding SelectedNPT.StartTime, Converter={StaticResource timeSpanToStringConverter}}"/>
                                 <Button Content="{Loc PPE_FirstEmptySpace}" Command="{Binding SelectedNPT.SetToEarliestTimeCommand}"/>
                                 <Button Content="{Loc PPE_LastEmptySpace}" Command="{Binding SelectedNPT.SetToLatestTimeCommand}"/>
                                 <Button Content="{Loc txtCancel}" Command="{Binding SelectedNPT.CancelCommand}"/>
                                 <Button Content="{Loc txtSave}" Command="{Binding SelectedNPT.SaveCommand}"/>
                             </WrapPanel>
-                        </Border>
-                    </Grid>
-                    <!-- JobList -->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobListPanel" Height="0">
-                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
                         </Border>
                     </Grid>
                     
@@ -3024,9 +3107,10 @@
                         </ItemsControl.Template>
 
                     </ItemsControl>
-                    <!--RowsOfNPTHolders ItemsControl-->
                 </Grid>
             </ScrollViewer>
+            
+            
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding TaskEditor.IsVisible}" Value="True">
                     <DataTrigger.EnterActions>
@@ -3084,11 +3168,11 @@
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding ShowJobList}" Value="True">
+                <DataTrigger Binding="{Binding JobList.IsVisible}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="jobListPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="400"/>
+                                <DoubleAnimation Storyboard.TargetName="jobListPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="250"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>

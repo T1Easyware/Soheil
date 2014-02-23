@@ -33,9 +33,9 @@ namespace Soheil.Core.ViewModels.PP
 		//Thread Functions
 		protected override void acqusitionThreadStart()
 		{
-			try
+			Dispatcher.Invoke(new Action(() =>
 			{
-				Dispatcher.Invoke(new Action(() =>
+				try
 				{
 					if (!NPTDataService.UpdateViewModel(this))
 					{
@@ -45,9 +45,9 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						Dispatcher.Invoke(acqusitionThreadEnd);
 					}
-				}));
-			}
-			catch {Dispatcher.Invoke(acqusitionThreadRestart); }
+				}
+				catch { Dispatcher.Invoke(acqusitionThreadRestart); }
+			}));
 		}
 		protected override void acqusitionThreadEnd()
 		{

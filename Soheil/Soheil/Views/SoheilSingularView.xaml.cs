@@ -507,10 +507,21 @@ namespace Soheil.Views
 			var vm = sender.GetDataContext<EmbeddedException>();
 			if (vm != null) vm.ResetEmbeddedException();
 		}
+
+		private void PPTableJobListDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+		{
+			try
+			{
+				if (e.EditAction == DataGridEditAction.Commit && e.Column is DataGridTextColumn)
+				{
+					var item = e.Row.Item as JobListItemVm;
+					var val = (e.EditingElement as TextBox).Text;
+					item.UpdateDescription(val);
+				}
+			}
+			catch { }
+		}
 		#endregion
-
-
 		#endregion
-
 	}
 }

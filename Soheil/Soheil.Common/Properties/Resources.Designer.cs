@@ -601,6 +601,24 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to جستجو بر اساس شروع و مهلت Jobها.
+        /// </summary>
+        public static string ttJobListByDefinition {
+            get {
+                return ResourceManager.GetString("ttJobListByDefinition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to جستجو بر اساس شروع و خاتمه Taskهای هر Job.
+        /// </summary>
+        public static string ttJobListByTasks {
+            get {
+                return ResourceManager.GetString("ttJobListByTasks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to درباره ی سهیل.
         /// </summary>
         public static string txtAbout {
@@ -862,6 +880,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to مهلت.
+        /// </summary>
+        public static string txtDeadline {
+            get {
+                return ResourceManager.GetString("txtDeadline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to عیب.
         /// </summary>
         public static string txtDefection {
@@ -939,6 +966,15 @@ namespace Soheil.Common.Properties {
         public static string txtEducation {
             get {
                 return ResourceManager.GetString("txtEducation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to تاریخ خاتمه.
+        /// </summary>
+        public static string txtEndDate {
+            get {
+                return ResourceManager.GetString("txtEndDate", resourceCulture);
             }
         }
         
@@ -1393,6 +1429,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Release time.
+        /// </summary>
+        public static string txtReleaseTime {
+            get {
+                return ResourceManager.GetString("txtReleaseTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to گزارشات.
         /// </summary>
         public static string txtReports {
@@ -1564,11 +1609,29 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to تاریخ شروع.
+        /// </summary>
+        public static string txtStartDate {
+            get {
+                return ResourceManager.GetString("txtStartDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to شروع.
         /// </summary>
         public static string txtStartPage {
             get {
                 return ResourceManager.GetString("txtStartPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to زمان شروع.
+        /// </summary>
+        public static string txtStartTime {
+            get {
+                return ResourceManager.GetString("txtStartTime", resourceCulture);
             }
         }
         

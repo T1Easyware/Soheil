@@ -57,6 +57,7 @@
     <ppconv:SecondsToStringConverter x:Key="secondsToStringConverter"/>
     <ppconv:CycleTimeToStringConverter x:Key="cycleTimeToStringConverter"/>
     <ppconv:DateToLocalStringConverter x:Key="dateToLocalStringConverter"/>
+    <ppconv:DateToTimeStringConverter x:Key="dateToTimeStringConverter"/>
     <ppconv:DateToPersianDateConverter x:Key="dateToPersianDateConverter"/>
 	
 	<SolidColorBrush x:Key="stationBorderBrush" Color="Silver"/>

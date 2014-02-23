@@ -120,6 +120,8 @@
     <Compile Include="ViewModels\PP\Editor\PPEditorBlock.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorTaskHolder.cs" />
     <Compile Include="ViewModels\PP\BlockVm.cs" />
+    <Compile Include="ViewModels\PP\JobListItemVm.cs" />
+    <Compile Include="ViewModels\PP\JobListVm.cs" />
     <Compile Include="ViewModels\PP\JobProductVm.cs" />
     <Compile Include="ViewModels\PP\JobProductGroupVm.cs" />
     <Compile Include="ViewModels\PP\Report\BlockReportVm.cs" />

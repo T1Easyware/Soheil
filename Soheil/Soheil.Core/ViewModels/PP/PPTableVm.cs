@@ -36,17 +36,21 @@ namespace Soheil.Core.ViewModels.PP
 
 			TaskEditor = new PPTaskEditorVm();
 			JobEditor = new PPJobEditorVm();
-
-
-
-			if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl))
+			JobList = new JobListVm(JobDataService);
+			JobList.JobSelected += id =>
 			{
-				ToggleTaskEditorCommand.Execute(null);
-				TaskEditor.SelectedProduct = TaskEditor.AllProductGroups.First().Products.First();
-				var block = new PPEditorBlock(TaskEditor.FpcViewer.States.First(x => x.StateType == StateType.Mid).Model);
-				TaskEditor.BlockList.Add(block);
-				TaskEditor.SelectedBlock = TaskEditor.BlockList.First();
-			}
+				//JobDataService.GetInRange()
+			};
+
+
+			//if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl))
+			//{
+			//	ToggleTaskEditorCommand.Execute(null);
+			//	TaskEditor.SelectedProduct = TaskEditor.AllProductGroups.First().Products.First();
+			//	var block = new PPEditorBlock(TaskEditor.FpcViewer.States.First(x => x.StateType == StateType.Mid).Model);
+			//	TaskEditor.BlockList.Add(block);
+			//	TaskEditor.SelectedBlock = TaskEditor.BlockList.First();
+			//}
 		}
 
 		void initializeDataServices()
@@ -277,21 +281,15 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty JobEditorProperty =
 			DependencyProperty.Register("JobEditor", typeof(PPJobEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//ShowJobList Dependency Property
-		public bool ShowJobList
+
+		//JobList Dependency Property
+		public JobListVm JobList
 		{
-			get { return (bool)GetValue(ShowJobListProperty); }
-			set { SetValue(ShowJobListProperty, value); }
+			get { return (JobListVm)GetValue(JobListProperty); }
+			set { SetValue(JobListProperty, value); }
 		}
-		public static readonly DependencyProperty ShowJobListProperty =
-			DependencyProperty.Register("ShowJobList", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(false, (d, e) =>
-			{
-				var vm = d as PPTableVm;
-				if((bool)e.NewValue)
-				{
-					//reload joblist
-				}
-			}));
+		public static readonly DependencyProperty JobListProperty =
+			DependencyProperty.Register("JobList", typeof(JobListVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		//ToggleJobEditorCommand Dependency Property
 		public Commands.Command ToggleJobEditorCommand

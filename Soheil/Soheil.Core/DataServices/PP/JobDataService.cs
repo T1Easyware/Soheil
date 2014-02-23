@@ -52,6 +52,12 @@ namespace Soheil.Core.DataServices
 		{
 			throw new NotImplementedException();
 		}
+		public void UpdateDescriptionOnly(Job model)
+		{
+			var entity = _jobRepository.Single(x => x.Id == model.Id);
+			entity.Description = model.Description;
+			context.Commit();
+		}
 
 		public void DeleteModel(Job model)
 		{
@@ -216,6 +222,22 @@ namespace Soheil.Core.DataServices
 			var fpc = new Repository<FPC>(context).FirstOrDefault(x => x.Product.Id == productId && x.IsDefault);
 			if (fpc == null) return -1;
 			return fpc.Id;
+		}
+
+		/// <summary>
+		/// Returns all jobs which somehow fit in (or around) the specified range
+		/// </summary>
+		/// <param name="StartDate"></param>
+		/// <param name="EndDate"></param>
+		/// <param name="byDefinition">[default = true] if set to false, change the criteria to the
+		/// <para>time range of "any block in the job" in the specified range</para></param>
+		/// <returns></returns>
+		internal IEnumerable<Job> GetInRange(DateTime StartDate, DateTime EndDate, bool byDefinition = true)
+		{
+			if (byDefinition)
+				return _jobRepository.Find(job => job.ReleaseTime < EndDate && job.Deadline > StartDate);
+			else
+				return _jobRepository.Find(job => job.Blocks.Any(b => b.StartDateTime < EndDate && b.EndDateTime > StartDate));
 		}
 	}
 }
