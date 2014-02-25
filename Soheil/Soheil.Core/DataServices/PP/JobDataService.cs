@@ -225,7 +225,8 @@ namespace Soheil.Core.DataServices
 		}
 
 		/// <summary>
-		/// Returns all jobs which somehow fit in (or around) the specified range
+		/// Returns all jobs which are completely or partially inside the given range
+		/// <para>jobs touching the range from outside are not counted</para>
 		/// </summary>
 		/// <param name="StartDate"></param>
 		/// <param name="EndDate"></param>
@@ -235,9 +236,21 @@ namespace Soheil.Core.DataServices
 		internal IEnumerable<Job> GetInRange(DateTime StartDate, DateTime EndDate, bool byDefinition = true)
 		{
 			if (byDefinition)
-				return _jobRepository.Find(job => job.ReleaseTime < EndDate && job.Deadline > StartDate);
+				return _jobRepository.Find(job =>
+					(job.ReleaseTime < EndDate && job.ReleaseTime >= StartDate)
+					||
+					(job.Deadline <= EndDate && job.Deadline > StartDate)
+					||
+					(job.ReleaseTime <= StartDate && job.Deadline >= EndDate)
+					);
 			else
-				return _jobRepository.Find(job => job.Blocks.Any(b => b.StartDateTime < EndDate && b.EndDateTime > StartDate));
+				return _jobRepository.Find(job => job.Blocks.Any(b =>
+					(b.StartDateTime < EndDate && b.StartDateTime >= StartDate)
+					||
+					(b.EndDateTime <= EndDate && b.EndDateTime > StartDate)
+					||
+					(b.StartDateTime <= StartDate && b.EndDateTime >= EndDate)
+					));
 		}
 	}
 }

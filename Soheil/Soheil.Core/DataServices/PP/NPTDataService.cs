@@ -28,11 +28,8 @@ namespace Soheil.Core.DataServices
 		#region IDataService
 		public NonProductiveTask GetSingle(int id)
 		{
-			using (var context = new SoheilEdmContext())
-			{
 				var repository = new Repository<NonProductiveTask>(context);
 				return repository.FirstOrDefault(x => x.Id == id);
-			}
 		}
 
 		public System.Collections.ObjectModel.ObservableCollection<NonProductiveTask> GetAll()
@@ -47,46 +44,34 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(NonProductiveTask model)
 		{
-			using (var context = new SoheilEdmContext())
-			{
 				var repository = new Repository<NonProductiveTask>(context);
 				repository.Add(model);
 				context.SaveChanges();
-			}
 			return 1;
 		}
 
 		public void UpdateModel(NonProductiveTask model)
 		{
-			using (var context = new SoheilEdmContext())
-			{
 				var repository = new Repository<NonProductiveTask>(context);
 				var entity = repository.FirstOrDefault(x => x.Id == model.Id);
 				if (entity == null) AddModel(model);
 				else repository.Add(model);
 				context.SaveChanges();
-			}
 		}
 
 		public void DeleteModel(NonProductiveTask model)
 		{
-			using (var context = new SoheilEdmContext())
-			{
 				var repository = new Repository<NonProductiveTask>(context);
 				var entity = repository.FirstOrDefault(x => x.Id == model.Id);
 				if (entity != null) repository.Delete(entity);
 				context.SaveChanges();
-			}
 		}
 		public void DeleteModel(int id)
 		{
-			using (var context = new SoheilEdmContext())
-			{
 				var repository = new Repository<NonProductiveTask>(context);
 				var entity = repository.FirstOrDefault(x => x.Id == id);
 				if (entity != null) repository.Delete(entity);
 				context.SaveChanges();
-			}
 		}
 
 		public void AttachModel(NonProductiveTask model)
@@ -95,12 +80,24 @@ namespace Soheil.Core.DataServices
 		}
 		#endregion
 
+		/// <summary>
+		/// Returns all NonProductiveTask which are completely or partially inside the given range
+		/// <para>NonProductiveTask touching the range from outside are not counted</para>
+		/// </summary>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
 		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, DateTime endDate)
 		{
-			var entityList = new List<NonProductiveTask>();
-			entityList.AddRange(_nptRepository.Find(x => x.StartDateTime < endDate && x.EndDateTime >= startDate, y => y.StartDateTime));
-			return entityList;
+			return _nptRepository.Find(x =>
+				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+				||
+				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
+				||
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate),
+				y => y.StartDateTime);
 		}
+
 		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, int stationId)
 		{
 			var entityList = new List<NonProductiveTask>();
@@ -141,5 +138,22 @@ namespace Soheil.Core.DataServices
 			vm.ToProduct = new ViewModels.PP.ProductReworkVm(model.Changeover.ToProductRework);
 		}
 
+
+		internal int AddModel(PP.Smart.SmartRange setup)
+		{
+			try
+			{
+				return AddModel(new Setup
+				{
+					Changeover = new Repository<Changeover>(context).FirstOrDefault(x => x.Id == setup.ChangeoverId),
+					Warmup = new Repository<Warmup>(context).FirstOrDefault(x => x.Id == setup.WarmupId),
+					StartDateTime = setup.StartDT,
+					DurationSeconds = setup.DurationSeconds,
+					EndDateTime = setup.EndDT,
+					Description = "[Auto Insert]",
+				});
+			}
+			catch { return -1; }
+		}
 	}
 }

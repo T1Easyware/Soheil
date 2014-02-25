@@ -12,7 +12,9 @@ namespace Soheil.Core.PP.Smart
 		public RangeType Type { get; protected set; }
 
 		public DateTime StartDT { get; protected set; }
-		public DateTime EndDT { get; protected set; }
+
+		public DateTime EndDT { get { return StartDT.AddSeconds(DurationSeconds); } }
+
 		public int DurationSeconds { get; protected set; }
 		public int StationId { get; protected set; }
 		/// <summary>
@@ -33,7 +35,7 @@ namespace Soheil.Core.PP.Smart
 			return new SmartRange
 			{
 				StartDT = start,
-				EndDT = start,
+				DurationSeconds = 0,
 				Type = RangeType.Empty,
 			};
 		}
@@ -43,7 +45,6 @@ namespace Soheil.Core.PP.Smart
 			return new SmartRange
 			{
 				StartDT = model.StartDateTime,
-				EndDT = model.EndDateTime,
 				DurationSeconds = model.DurationSeconds,
 				StationId = model.StateStation.Station.Id,
 				ProductReworkId = model.StateStation.State.OnProductRework.Id,
@@ -57,7 +58,6 @@ namespace Soheil.Core.PP.Smart
 			var sr = new SmartRange
 			{
 				StartDT = model.StartDateTime,
-				EndDT = model.EndDateTime,
 				DurationSeconds = model.DurationSeconds,
 				Type = RangeType.Setup,
 				SetupId = model.Id,
@@ -75,7 +75,6 @@ namespace Soheil.Core.PP.Smart
 			return new SmartRange
 			{
 				StartDT = start,
-				EndDT = start.AddSeconds(totalSeconds),
 				DurationSeconds = totalSeconds,
 				StationId = stationId,
 				WarmupId = warmup.Id,
@@ -92,7 +91,6 @@ namespace Soheil.Core.PP.Smart
 				SetupId = sr.SetupId,
 				StartDT = sr.StartDT,
 				StationId = sr.StationId,
-				EndDT = sr.EndDT,
 				DurationSeconds = sr.DurationSeconds,
 			};
 		}
@@ -103,7 +101,6 @@ namespace Soheil.Core.PP.Smart
 				StartDT = start,
 				StationId = stationId,
 				ProductReworkId = productReworkId,
-				EndDT = start.AddSeconds(durationSeconds),
 				DurationSeconds = durationSeconds,
 				Type = RangeType.NewTask,
 			};
@@ -120,7 +117,6 @@ namespace Soheil.Core.PP.Smart
 				Type = RangeType.Task,
 				StartDT = startTime,
 				DurationSeconds = durationSeconds,
-				EndDT = startTime.AddSeconds(durationSeconds),
 				StationId = stateStation.Station.Id,
 				ProductReworkId = stateStation.State.OnProductRework.Id,
 			};
@@ -130,7 +126,6 @@ namespace Soheil.Core.PP.Smart
 			return new SmartRange
 			{
 				StartDT = startTime,
-				EndDT = startTime.AddSeconds(durationSeconds),
 				DurationSeconds = durationSeconds,
 				WarmupId = warmupId,
 				ChangeoverId = changeoverId,

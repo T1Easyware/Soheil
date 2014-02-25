@@ -18,6 +18,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		protected DataServices.OperatorDataService _operatorDs;
 		protected DataServices.TaskDataService _taskDs;
 		protected DataServices.BlockDataService _blockDs;
+
+		internal event Action RefreshPPItems;
+
 		public Dal.SoheilEdmContext UOW { get; private set; }
 		public PPTaskEditorVm()
 		{
@@ -172,17 +175,18 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			SaveCommand = new Commands.Command(o =>
 			{
-				if (SelectedBlock == null) return;
+				throw new Exception("not meant to be run yet. reason of disability: possible loss of data due to shared UOW throughout the taskEditor");
+				/*if (SelectedBlock == null) return;
 				try
 				{
+					if (SelectedBlock.IsAutoStart)
+						SelectedBlock.SetStartToAuto();
 					_blockDs.SaveBlock(SelectedBlock.Model);
 				}
 				catch (Exception exp)
 				{
 					MessageBox.Show(exp.Message);
-				}
-				
-				//throw new Exception("not meant to be run yet. reason of disability: possible loss of data due to shared UOW throughout the taskEditor");
+				}*/
 			});
 			ClearAllCommand = new Commands.Command(o =>
 			{
@@ -199,6 +203,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					foreach (var block in BlockList)
 					{
 						block.Save();
+						if (RefreshPPItems != null)
+							RefreshPPItems();
 					}
 					Reset();
 					IsVisible = false;

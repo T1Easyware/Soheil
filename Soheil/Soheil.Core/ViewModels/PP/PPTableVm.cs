@@ -35,11 +35,37 @@ namespace Soheil.Core.ViewModels.PP
 			initializeDataServices();
 
 			TaskEditor = new PPTaskEditorVm();
+			TaskEditor.RefreshPPItems += () => UpdateRange(true);
 			JobEditor = new PPJobEditorVm();
 			JobList = new JobListVm(JobDataService);
-			JobList.JobSelected += id =>
+			JobList.JobSelected += job =>
 			{
-				//JobDataService.GetInRange()
+				//deselect all
+				try
+				{
+					foreach (var item in PPItems)
+					{
+						foreach (var block in item.Blocks)
+						{
+							block.IsJobSelected = false;
+						}
+					}
+				}
+				catch { }
+
+				//prepare to focus new job
+				if (job != null)
+				{
+					if (job.BlocksCount > 0)
+					{
+						SelectedJobId = job.Id;//form now on any newly created block will check its jobId with this
+						ZoomToRange(job.StartDT, job.EndDT);
+					}
+					else
+						ZoomToRange(job.ReleaseDT, job.Deadline);
+				}
+				else
+					SelectedJobId = -10;
 			};
 
 
@@ -481,6 +507,17 @@ namespace Soheil.Core.ViewModels.PP
 			else if (tmp > 2000) HourZoom = 2000;
 			else HourZoom = tmp;
 		}
+		public void ZoomToRange(DateTime start, DateTime end)
+		{
+			BackupZoom();
+
+			HoursPassed = start.GetPersianDayOfMonth() * 24 + start.Hour + start.Minute / 60d + start.Second / 3600d - 24;
+
+			var tmp = (GridWidth * 3600) / end.Subtract(start).TotalSeconds;
+			if (tmp < 20) HourZoom = 0;
+			else if (tmp > 2000) HourZoom = 2000;
+			else HourZoom = tmp;
+		}
 		public void BackupZoom()
 		{
 			_hoursPassedBackup = HoursPassed;
@@ -515,6 +552,8 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Report and Selected items
+		public int SelectedJobId { get; set; }
+
 		//SelectedBlock Dependency Property
 		public BlockVm SelectedBlock
 		{

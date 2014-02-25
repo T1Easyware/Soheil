@@ -478,8 +478,33 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		internal void Save()
 		{
 			correctBlock();
+
+			var nptDs = new DataServices.NPTDataService(_uow);
+
+			//check if it fits
+			if(!IsAutoStart)
+			{
+				var inRangeBlocks = BlockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime);
+				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime);
+
+				if (inRangeBlocks.Any() || inRangeNPTs.Any()) IsAutoStart = true;
+			}
+
+			//check if should use auto start
+			if (IsAutoStart)
+			{
+				// Updates the start datetime of this block to fit the first empty space
+				Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(BlockDataService, nptDs);
+				var seq = sman.FindNextFreeSpace(StationId, State.ProductRework.Id, DateTime.Now, (int)Duration.TotalSeconds);
+				var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
+				StartDate = block.StartDT.Date;
+				StartTime = block.StartDT.TimeOfDay;
+			
+				if (!sman.SaveSetups(seq))
+					Message.AddEmbeddedException("Some setups could not be added. check setup times table.");
+			}
+
 			BlockDataService.SaveBlock(Model);
 		}
-
 	}
 }

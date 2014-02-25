@@ -44,67 +44,96 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			bool succeed = false;
 			_tries = _MAX_TRIES;
-			try
+			Model.Product product;
+			Model.State state;
+			int[] reportData;
+
+			//start of lock
+			lock (_threadLock)
 			{
-				lock (_threadLock)
+				try
 				{
-					_model = BlockDataService.GetSingle(Id);
-					var state = _model.StateStation.State;
-					var product = _model.StateStation.State.FPC.Product;
-					int[] reportData = BlockDataService.GetProductionReportData(_model);
+					//load data
+					_model = BlockDataService.GetSingleFull(Id);
+					state = _model.StateStation.State;
+					product = _model.StateStation.State.FPC.Product;
+					reportData = BlockDataService.GetProductionReportData(_model);
 
 					Dispatcher.Invoke(new Action(() =>
 					{
+						//start of dispatcher code
 						if (_model == null)
 						{
 							_ppTable.RemoveBlock(this);
 						}
 						else
 						{
-							//fill the vm from _model
-							//Product and State
-							ProductId = product.Id;
-							ProductCode = product.Code;
-							ProductName = product.Name;
-							ProductColor = product.Color;
-							StateCode = state.Code;
-							IsRework = state.IsReworkState == Bool3.True;
-							//Block background texts
-							BlockTargetPoint = _model.BlockTargetPoint;
-							BlockProducedG1 = reportData[0];
-							ReportFillPercent = string.Format("{0:D2}%", reportData[1]);
-							IsReportFilled = (reportData[1] >= 100);
-							//Navigation
-							if (_model.Job != null) Job = new PPJobVm(_model.Job);
-							foreach (var task in _model.Tasks)
+							try
 							{
-								TaskList.Add(new PPTaskVm(task, this));
-							}
+								//fill the vm from _model
+								//Product and State
+								ProductId = product.Id;
+								ProductCode = product.Code;
+								ProductName = product.Name;
+								ProductColor = product.Color;
+								StateCode = state.Code;
+								IsRework = state.IsReworkState == Bool3.True;
+								//Block background texts
+								BlockTargetPoint = _model.BlockTargetPoint;
+								BlockProducedG1 = reportData[0];
+								ReportFillPercent = string.Format("{0:D2}%", reportData[1]);
+								IsReportFilled = (reportData[1] >= 100);
+								//Navigation
+								//job
+								if (_model.Job != null)
+								{
+									Job = new PPJobVm(_model.Job);
+									if (Parent.PPTable.SelectedJobId == Job.Id)
+										IsJobSelected = true;
+								}
+								//tasks
+								foreach (var task in _model.Tasks)
+								{
+									TaskList.Add(new PPTaskVm(task, this));
+								}
 
-							//check if can-add-setup-before
-							var previousBlock = BlockDataService.FindPreviousBlock(_model.StateStation.Station.Id, StartDateTime);
-							if (previousBlock.Value2 == null)
-							{
-								if (previousBlock.Value1 == null) CanAddSetupBefore = true;
-								else CanAddSetupBefore = (previousBlock.Value1.StateStation.Id != _model.StateStation.Id);
+								//check if can-add-setup-before
+								var previousBlock = BlockDataService.FindPreviousBlock(_model.StateStation.Station.Id, StartDateTime);
+								if (previousBlock.Value2 == null)
+								{
+									if (previousBlock.Value1 == null) CanAddSetupBefore = true;
+									else CanAddSetupBefore = (previousBlock.Value1.StateStation.Id != _model.StateStation.Id);
+								}
+								else CanAddSetupBefore = false;
+								Dispatcher.Invoke(acqusitionThreadEnd);
+								succeed = true;
 							}
-							else CanAddSetupBefore = false;
-							Dispatcher.Invoke(acqusitionThreadEnd);
+							catch
+							{
+								//dispatcher code throws
+							}
 						}
-					}));
+						//end of dispatcher code
+					}
+					));
 				}
-				succeed = true;
+				catch
+				{
+					//thread code throws
+				}
 			}
-			catch
+			//end of lock
+
+			//restart the thread if needed
+			if (!succeed)
 			{
 				if (--_tries < 0)
 				{
 					_tries = _MAX_TRIES;
 					System.Threading.Thread.Sleep(1000);
 				}
-			}
-			if(!succeed)
 				Dispatcher.Invoke(acqusitionThreadRestart);
+			}
 		}
 		protected override void acqusitionThreadEnd()
 		{
@@ -238,6 +267,15 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty IsEditModeProperty =
 			DependencyProperty.Register("IsEditMode", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false));
+		//IsJobSelected Dependency Property
+		public bool IsJobSelected
+		{
+			get { return (bool)GetValue(IsJobSelectedProperty); }
+			set { SetValue(IsJobSelectedProperty, value); }
+		}
+		public static readonly DependencyProperty IsJobSelectedProperty =
+			DependencyProperty.Register("IsJobSelected", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false));
+
 
 		#region Commands
 

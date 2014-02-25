@@ -44,37 +44,28 @@ namespace Soheil.Core.DataServices
 		{
 			return _blockRepository.Single(x => x.Id == id);
 		}
-		public Block GetSingleFull(int id, bool loadAll)
+/*		public Block GetSingleFull(int id)
 		{
-			if (loadAll)
-				return _blockRepository.Single(x => x.Id == id,
-					"Job", "Job.FPC",
-					//		"Education",
-					"StateStation",
-					"StateStation.State",
-					"StateStation.State.OnProductRework",
-					"StateStation.State.OnProductRework.Rework",
-					"StateStation.State.FPC",
-					"StateStation.State.FPC.Product",
-					"StateStation.Station",
-					"StateStation.StateStationActivities",
-					"StateStation.StateStationActivities.Activity",
-					"StateStation.StateStationActivities.StateStationActivityMachines",
-					"StateStation.StateStationActivities.StateStationActivityMachines.Machine",
-					"Tasks",
-					"Tasks.Processes",
-					"Tasks.Processes.ProcessReports",
-					"Tasks.Processes.SelectedMachines",
-					"Tasks.Processes.SelectedMachines.StateStationActivityMachine",
-					"Tasks.TaskReports",
-					"Tasks.TaskReports.ProcessReports",
-					"Tasks.TaskReports.ProcessReports.OperatorProcessReports",
-					"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
-					"Tasks.TaskReports.ProcessReports.DefectionReports",
-					"Tasks.TaskReports.ProcessReports.StoppageReports"
-					);
-			else
-				return _blockRepository.Single(x => x.Id == id);
+			string qstr = 
+@"SELECT VALUE block FROM AdventureWorksEntities.Blocks
+WHERE block.Id = @id";
+			var query = context.CreateQuery<Block>(qstr, new System.Data.Objects.ObjectParameter("id", id));
+			return query.FirstOrDefault();
+		}*/
+		public Block GetSingleFull(int id)
+		{
+			return _blockRepository.Single(x => x.Id == id,
+				"StateStation.State.OnProductRework.Rework",
+				"StateStation.State.FPC.Product",
+				"StateStation.StateStationActivities.StateStationActivityMachines.Machine",
+				"StateStation.Station",
+				"Job",
+				"Tasks.Processes.ProcessReports",
+				"Tasks.Processes.SelectedMachines",
+				"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
+				"Tasks.TaskReports.ProcessReports.DefectionReports",
+				"Tasks.TaskReports.ProcessReports.StoppageReports"
+				);
 		}
 
 		public System.Collections.ObjectModel.ObservableCollection<Block> GetAll()
@@ -114,9 +105,23 @@ namespace Soheil.Core.DataServices
 		} 
 		#endregion
 
+		/// <summary>
+		/// Returns all blocks which are completely or partially inside the given range
+		/// <para>blocks touching the range from outside are not counted</para>
+		/// </summary>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
 		public IEnumerable<Block> GetInRange(DateTime startDate, DateTime endDate)
 		{
-			return _blockRepository.Find(x => x.StartDateTime < endDate && x.EndDateTime >= startDate, y => y.StartDateTime);
+			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
+			return _blockRepository.Find(x =>
+				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+				||
+				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
+				||
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate), 
+				y => y.StartDateTime);
 		}
 
 		//blocks in specified station, after (or partially after) startDate

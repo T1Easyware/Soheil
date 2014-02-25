@@ -16,7 +16,7 @@ namespace Soheil.Core.ViewModels.PP
 		public int ChangeoverId { get; set; }
 		public int WarmupId { get; set; }
 
-		internal Model.Setup _setupModel { get { return _model as Model.Setup; } }
+		internal Model.Setup SetupModel { get { return _model as Model.Setup; } }
 
 		#region Ctor, thread, load
 		public SetupVm(Model.Setup model, PPItemCollection parent) 
@@ -94,13 +94,13 @@ namespace Soheil.Core.ViewModels.PP
 		#region Commands
 		DateTime? earliestTime()
 		{
-			var prev = Parent.PPTable.BlockDataService.FindPreviousBlock(_setupModel.Warmup.Station.Id, StartDateTime);
+			var prev = Parent.PPTable.BlockDataService.FindPreviousBlock(SetupModel.Warmup.Station.Id, StartDateTime);
 			if (prev.Value1 != null) return prev.Value1.EndDateTime;
 			return null;
 		}
 		DateTime? lastestTime()
 		{
-			var next = Parent.PPTable.BlockDataService.FindNextBlock(_setupModel.Warmup.Station.Id, StartDateTime.AddSeconds(1));
+			var next = Parent.PPTable.BlockDataService.FindNextBlock(SetupModel.Warmup.Station.Id, StartDateTime.AddSeconds(1));
 			if (next.Value1 != null) return next.Value1.StartDateTime.AddSeconds(-DurationSeconds);
 			return null;
 		}
@@ -124,11 +124,11 @@ namespace Soheil.Core.ViewModels.PP
 				}
 				else
 				{
-					_setupModel.StartDateTime = StartDateTime;
+					SetupModel.StartDateTime = StartDateTime;
 					NPTDataService.UpdateViewModel(this);
 				}
 			});
-			CancelCommand = new Commands.Command(o => { StartDateTime = _setupModel.StartDateTime; IsEditMode = false; });
+			CancelCommand = new Commands.Command(o => { StartDateTime = SetupModel.StartDateTime; IsEditMode = false; });
 			SetToEarliestTimeCommand = new Commands.Command(o =>
 			{
 				var dt = earliestTime();

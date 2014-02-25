@@ -2436,6 +2436,26 @@
                                                 <!-- [task] -->
                                                 <DataTemplate.Triggers>
                                                     <!-- [task] -->
+                                                    <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                                        <Setter TargetName="border" Property="BorderBrush">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="Yellow"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding IsJobSelected}" Value="True">
+                                                        <Setter TargetName="border" Property="BorderBrush">
+                                                            <Setter.Value>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="Magenta" Offset="0.4"/>
+                                                                    <GradientStop Color="Cyan" Offset="0.6"/>
+                                                                </LinearGradientBrush>                     
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                                    </DataTrigger>
+
                                                     <!-- Block Simple View (shows tasks inside-->
                                                     <DataTrigger Binding="{Binding ViewMode}" Value="Simple">
                                                         <Setter TargetName="border" Property="Background">
@@ -2579,14 +2599,6 @@
                                                                         </ItemsControl>
                                                                     </Grid>
                                                                 </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </DataTrigger>
-
-                                                    <DataTrigger Binding="{Binding IsEditMode}" Value="True">
-                                                        <Setter TargetName="border" Property="BorderBrush">
-                                                            <Setter.Value>
-                                                                <SolidColorBrush Color="Yellow"/>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </DataTrigger>
