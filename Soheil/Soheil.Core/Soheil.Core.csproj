@@ -92,6 +92,7 @@
     <Compile Include="Fpc\StateTemplateSelector.cs" />
     <Compile Include="Interfaces\IBarChartViewer.cs" />
     <Compile Include="Interfaces\IReportBarVm.cs" />
+    <Compile Include="PP\BlockFullData.cs" />
     <Compile Include="PP\HourCollection.cs" />
     <Compile Include="PP\Smart\SmartSpot.cs" />
     <Compile Include="PP\TaskManager.cs" />

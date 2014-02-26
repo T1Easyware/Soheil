@@ -64,39 +64,6 @@ namespace Soheil.Core.ViewModels.PP
 
 		#endregion
 
-		#region Thread/Load/Save
-		public static int AcquisitionStartDelay = 100;
-		public static int AcquisitionPeriodicDelay = System.Threading.Timeout.Infinite;//5000???
-
-		//Thread Functions
-		protected override void acqusitionThreadStart()
-		{
-			try
-			{
-				var model = _processReportDataService.GetSingleFull(Id);
-				Dispatcher.Invoke(new Action(() =>
-				{
-					Dispatcher.InvokeInBackground(acqusitionThreadEnd);
-				}));
-			}
-			catch { Dispatcher.Invoke(acqusitionThreadRestart); }
-		}
-		protected override void acqusitionThreadEnd()
-		{
-			if (_model == null)
-			{
-				ViewMode = PPViewMode.Empty;
-			}
-			else
-			{
-				ProcessReportTargetPoint = _model.ProcessReportTargetPoint;
-				ProducedG1 = _model.ProducedG1;
-				DefectionCount = (int)_model.DefectionReports.Sum(x => x.CountEquivalence);
-				StoppageCount = (int)_model.StoppageReports.Sum(x => x.CountEquivalence);
-				ViewMode = PPViewMode.Simple;
-			}
-		}
-
 		public void LoadInnerData()
 		{
 			_model = _processReportDataService.GetSingleFull(Id);
@@ -115,7 +82,6 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			_processReportDataService.Save(this);
 		}
-		#endregion
 
 
 		#region Count

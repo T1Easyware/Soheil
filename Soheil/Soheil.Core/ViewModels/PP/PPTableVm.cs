@@ -25,6 +25,7 @@ namespace Soheil.Core.ViewModels.PP
 		public DataServices.TaskReportDataService TaskReportDataService { get; private set; }
 		public DataServices.ProcessReportDataService ProcessReportDataService { get; private set; }
 		public Dal.SoheilEdmContext UOW { get; private set; }
+		private static readonly object _LOCK = new object();
 
 		#region Ctor, Init and Load
 		public PPTableVm(AccessType access)
@@ -40,29 +41,19 @@ namespace Soheil.Core.ViewModels.PP
 			JobList = new JobListVm(JobDataService);
 			JobList.JobSelected += job =>
 			{
-				//deselect all
-				try
-				{
-					foreach (var item in PPItems)
-					{
-						foreach (var block in item.Blocks)
-						{
-							block.IsJobSelected = false;
-						}
-					}
-				}
-				catch { }
-
 				//prepare to focus new job
 				if (job != null)
 				{
 					if (job.BlocksCount > 0)
 					{
-						SelectedJobId = job.Id;//form now on any newly created block will check its jobId with this
-						ZoomToRange(job.StartDT, job.EndDT);
+						SelectedJobId = job.Id;
+						//form now on any newly created block will check its jobId with this
+						ZoomToRange(job.StartDT, job.StartDT.AddDays(1));
 					}
 					else
-						ZoomToRange(job.ReleaseDT, job.Deadline);
+						ZoomToRange(job.ReleaseDT, job.ReleaseDT.AddDays(1));
+					//when refresh completed, job will be selected automatically
+					UpdateRange(true);
 				}
 				else
 					SelectedJobId = -10;
@@ -239,13 +230,23 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="loadTasksAsWell">Load PP Items (setups, tasks, ...) while loading timeline</param>
 		public void UpdateRange(bool loadItemsAsWell)
 		{
-			var start = SelectedMonth.Data.AddHours(HoursPassed);
-			var end = start.AddHours(GridWidth / HourZoom);
-			Hours.FetchRange(start, end);
-			updateShiftsAndBreaks(start, end);
+			if (System.Threading.Monitor.TryEnter(_LOCK, 2000))
+			{
+				try
+				{
+					var start = SelectedMonth.Data.AddHours(HoursPassed);
+					var end = start.AddHours(GridWidth / HourZoom);
+					Hours.FetchRange(start, end);
+					updateShiftsAndBreaks(start, end);
 
-			if (loadItemsAsWell || AlwaysLoadTasks)
-				PPItems.FetchRange(start, end);
+					if (loadItemsAsWell || AlwaysLoadTasks)
+						PPItems.FetchRange(start, end);
+				}
+				finally
+				{
+					System.Threading.Monitor.Exit(_LOCK);
+				}
+			}
 		}
 		/// <summary>
 		/// updates all shifts and breaks within specified range

@@ -463,6 +463,23 @@ WHERE block.Id = @id";
 			return findPreviousPPItem(stationId, start);
 		}
 		/// <summary>
+		///Checks if a setup can be added before this block (due to its previous block's state)
+		///<para> free space is not considered, i.e. if there's not enough space before block it still may return true</para>
+		///<para> if previous item is a setup, returns false</para>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public bool CanAddSetupBeforeBlock(Model.Block model)
+		{
+			var previousBlock = FindPreviousBlock(model.StateStation.Station.Id, model.StartDateTime);
+			if (previousBlock.Value2 == null)
+			{
+				if (previousBlock.Value1 == null) return true;
+				return (previousBlock.Value1.StateStation.Id != model.StateStation.Id);
+			}
+			return false;
+		}
+		/// <summary>
 		/// <para>Returns nextBlock and nextSetup which start after (or at the) end</para>
 		/// <para>if nextSetup is after nextBlock it is considered as null</para>
 		/// <para>This method is for auto setup-time add</para>

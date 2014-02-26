@@ -18,41 +18,16 @@ namespace Soheil.Core.ViewModels.PP
 
 		internal Model.Setup SetupModel { get { return _model as Model.Setup; } }
 
-		#region Ctor, thread, load
+		#region Ctor
 		public SetupVm(Model.Setup model, PPItemCollection parent) 
 			: base(model, parent)
 		{
-			_threadLock = new Object();
-
 			StartDateTime = model.StartDateTime;
 			DurationSeconds = model.DurationSeconds;
 			RowIndex = model.Warmup.Station.Index;
 
 			initializeCommands();
 		}
-		//Thread Functions
-		protected override void acqusitionThreadStart()
-		{
-			Dispatcher.Invoke(new Action(() =>
-			{
-				try
-				{
-					if (!NPTDataService.UpdateViewModel(this))
-					{
-						Parent.RemoveNPT(this);
-					}
-					else
-					{
-						Dispatcher.Invoke(acqusitionThreadEnd);
-					}
-				}
-				catch { Dispatcher.Invoke(acqusitionThreadRestart); }
-			}));
-		}
-		protected override void acqusitionThreadEnd()
-		{
-			ViewMode = Parent.ViewMode;
-		} 
 		#endregion
 
 		#region prop dps

@@ -89,25 +89,29 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		public void ReloadTaskReports()
 		{
-			TaskReports.Clear();
-			var models = TaskReportDataService.GetAllForTask(Id);
-			int i = 0;
-			int sumOfTP = 0;
-			foreach (var model in models)
+			try
 			{
-				var vm = new TaskReportVm(this, model);
-				TaskReports.Add(vm);
-				sumOfTP += vm.TargetPoint;
-				i++;
+				TaskReports.Clear();
+				var models = TaskReportDataService.GetAllForTask(Id);
+				int i = 0;
+				int sumOfTP = 0;
+				foreach (var model in models)
+				{
+					var vm = new TaskReportVm(this, model);
+					TaskReports.Add(vm);
+					sumOfTP += vm.TargetPoint;
+					i++;
+				}
+				int sumOfDurations = models.Sum(x => x.ReportDurationSeconds);
+				if (sumOfDurations < this.DurationSeconds)
+				{
+					var taskReportHolder = new TaskReportHolderVm(this, sumOfDurations, sumOfTP);
+					taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
+					TaskReports.Add(taskReportHolder);
+				}
+				SumOfReportedHours = sumOfDurations / 3600d;
 			}
-			int sumOfDurations = models.Sum(x => x.ReportDurationSeconds);
-			if (sumOfDurations < this.DurationSeconds)
-			{
-				var taskReportHolder = new TaskReportHolderVm(this, sumOfDurations, sumOfTP);
-				taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
-				TaskReports.Add(taskReportHolder);
-			}
-			SumOfReportedHours = sumOfDurations / 3600d;
+			catch { }
 		}
 
 		public void ClearTaskReports()

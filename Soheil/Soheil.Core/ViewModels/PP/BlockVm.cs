@@ -28,7 +28,7 @@ namespace Soheil.Core.ViewModels.PP
         public static readonly DependencyProperty ParentProperty =
             DependencyProperty.Register("Parent", typeof(Core.PP.PPItemCollection), typeof(BlockVm), new UIPropertyMetadata(null));
 
-		#region Ctor, thread, load
+		#region Ctor, reload
         public BlockVm(Model.Block model, Core.PP.PPItemCollection parent, int stationIndex)
 		{
 			_model = model;
@@ -39,108 +39,54 @@ namespace Soheil.Core.ViewModels.PP
 			DurationSeconds = model.DurationSeconds;
 			initializeCommands();
 		}
-		//Thread Functions
-		protected override void acqusitionThreadStart()
+
+		/// <summary>
+		/// Reloads current blocks info from database (according to its id)
+		/// </summary>
+		public void Reload()
 		{
-			bool succeed = false;
-			_tries = _MAX_TRIES;
-			Model.Product product;
-			Model.State state;
-			int[] reportData;
-
-			//start of lock
-			lock (_threadLock)
-			{
-				try
-				{
-					//load data
-					_model = BlockDataService.GetSingleFull(Id);
-					state = _model.StateStation.State;
-					product = _model.StateStation.State.FPC.Product;
-					reportData = BlockDataService.GetProductionReportData(_model);
-
-					Dispatcher.Invoke(new Action(() =>
-					{
-						//start of dispatcher code
-						if (_model == null)
-						{
-							_ppTable.RemoveBlock(this);
-						}
-						else
-						{
-							try
-							{
-								//fill the vm from _model
-								//Product and State
-								ProductId = product.Id;
-								ProductCode = product.Code;
-								ProductName = product.Name;
-								ProductColor = product.Color;
-								StateCode = state.Code;
-								IsRework = state.IsReworkState == Bool3.True;
-								//Block background texts
-								BlockTargetPoint = _model.BlockTargetPoint;
-								BlockProducedG1 = reportData[0];
-								ReportFillPercent = string.Format("{0:D2}%", reportData[1]);
-								IsReportFilled = (reportData[1] >= 100);
-								//Navigation
-								//job
-								if (_model.Job != null)
-								{
-									Job = new PPJobVm(_model.Job);
-									if (Parent.PPTable.SelectedJobId == Job.Id)
-										IsJobSelected = true;
-								}
-								//tasks
-								foreach (var task in _model.Tasks)
-								{
-									TaskList.Add(new PPTaskVm(task, this));
-								}
-
-								//check if can-add-setup-before
-								var previousBlock = BlockDataService.FindPreviousBlock(_model.StateStation.Station.Id, StartDateTime);
-								if (previousBlock.Value2 == null)
-								{
-									if (previousBlock.Value1 == null) CanAddSetupBefore = true;
-									else CanAddSetupBefore = (previousBlock.Value1.StateStation.Id != _model.StateStation.Id);
-								}
-								else CanAddSetupBefore = false;
-								Dispatcher.Invoke(acqusitionThreadEnd);
-								succeed = true;
-							}
-							catch
-							{
-								//dispatcher code throws
-							}
-						}
-						//end of dispatcher code
-					}
-					));
-				}
-				catch
-				{
-					//thread code throws
-				}
-			}
-			//end of lock
-
-			//restart the thread if needed
-			if (!succeed)
-			{
-				if (--_tries < 0)
-				{
-					_tries = _MAX_TRIES;
-					System.Threading.Thread.Sleep(1000);
-				}
-				Dispatcher.Invoke(acqusitionThreadRestart);
-			}
+			var data = new Soheil.Core.PP.BlockFullData();
+			data.Model = BlockDataService.GetSingleFull(Id);
+			data.ReportData = BlockDataService.GetProductionReportData(data.Model);
+			data.CanAddSetupBefore = BlockDataService.CanAddSetupBeforeBlock(data.Model);
+			_model = data.Model;
+			Reload(data);
 		}
-		protected override void acqusitionThreadEnd()
+		/// <summary>
+		/// Reloads current blocks info from the given parameter
+		/// </summary>
+		/// <param name="data"></param>
+		public void Reload(Soheil.Core.PP.BlockFullData data)
 		{
-			if (_ppTable.SelectedBlock == null) ViewMode = PPViewMode.Simple;
-			else ViewMode = (_ppTable.SelectedBlock.Id == Id) ? PPViewMode.Report : PPViewMode.Simple;
+			//fill the vm from data.Model
+			//Product and State
+			ProductId = data.Model.StateStation.State.FPC.Product.Id;
+			ProductCode = data.Model.StateStation.State.FPC.Product.Code;
+			ProductName = data.Model.StateStation.State.FPC.Product.Name;
+			ProductColor = data.Model.StateStation.State.FPC.Product.Color;
+			StateCode = data.Model.StateStation.State.Code;
+			IsRework = data.Model.StateStation.State.IsReworkState == Bool3.True;
+			//Block background texts
+			BlockTargetPoint = data.Model.BlockTargetPoint;
+			BlockProducedG1 = data.ReportData[0];
+			ReportFillPercent = string.Format("{0:D2}%", data.ReportData[1]);
+			IsReportFilled = (data.ReportData[1] >= 100);
+			//Navigation
+			//job
+			if (data.Model.Job != null)
+			{
+				Job = new PPJobVm(data.Model.Job);
+				if (Parent.PPTable.SelectedJobId == Job.Id)
+					IsJobSelected = true;
+			}
+			//tasks
+			foreach (var task in data.Model.Tasks)
+			{
+				TaskList.Add(new PPTaskVm(task, this));
+			}
+			if (Parent.PPTable.SelectedBlock == null) ViewMode = PPViewMode.Simple;
+			else ViewMode = (Parent.PPTable.SelectedBlock.Id == Id) ? PPViewMode.Report : PPViewMode.Simple;
 		}
-
 		#endregion
 
 		#region Product and State
@@ -268,20 +214,24 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty IsEditModeProperty =
 			DependencyProperty.Register("IsEditMode", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false));
 		//IsJobSelected Dependency Property
+		/// <summary>
+		/// To use this you must set SelectedJobId on PPTable to this.Job.Id then reload this block
+		/// </summary>
 		public bool IsJobSelected
 		{
 			get { return (bool)GetValue(IsJobSelectedProperty); }
 			set { SetValue(IsJobSelectedProperty, value); }
 		}
 		public static readonly DependencyProperty IsJobSelectedProperty =
-			DependencyProperty.Register("IsJobSelected", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false));
+			DependencyProperty.Register("IsJobSelected", typeof(bool), typeof(BlockVm),
+			new UIPropertyMetadata(false));
 
 
 		#region Commands
 
 		void initializeCommands()
 		{
-			ReloadBlockCommand = new Commands.Command(o => BeginAcquisition());
+			ReloadBlockCommand = new Commands.Command(o => Reload());
             AddBlockToEditorCommand = new Commands.Command(o =>
 			{
 				try

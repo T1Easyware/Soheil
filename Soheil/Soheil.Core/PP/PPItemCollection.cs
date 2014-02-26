@@ -15,36 +15,180 @@ namespace Soheil.Core.PP
 		DateTime _rangeStart;
 		DateTime _rangeEnd;
 		public PPTableVm PPTable { get; private set; }
-		System.Windows.Threading.Dispatcher _dispatcher;
 		public DataServices.NPTDataService NPTDataService { get { return PPTable.NPTDataService; } }
 		public DataServices.BlockDataService BlockDataService { get { return PPTable.BlockDataService; } }
 		public DataServices.JobDataService JobDataService { get { return PPTable.JobDataService; } }
-		System.Threading.Thread _thread;
-		Object _threadLock;
+
+		System.ComponentModel.BackgroundWorker _backgroundWorker;
 
 		public PPItemCollection(PPTableVm parent)
 		{
 			PPTable = parent;
 			ViewMode = PPViewMode.Simple;
-			_dispatcher = parent.Dispatcher;
-			_thread = new System.Threading.Thread(addRangeThreadFunc);
-			_threadLock = new Object();
 		}
 
+		private PPViewMode _viewMode;
+		public PPViewMode ViewMode
+		{
+			get { return _viewMode; }
+			set
+			{
+				_viewMode = value;
+				foreach (var station in this)
+				{
+					foreach (var block in station.Blocks)
+					{
+						block.ViewMode = value;
+					}
+				}
+			}
+		}
 
+		#region Parallel loading
 		public void FetchRange(DateTime rangeStart, DateTime rangeEnd)
 		{
 			_rangeStart = rangeStart;
 			_rangeEnd = rangeEnd;
-			threadStarter();
+			Reload();
 		}
+		private static readonly object _LOCK = new object();
+		/// <summary>
+		/// Reloads all visible items by creating a background worker
+		/// </summary>
 		public void Reload()
 		{
-			threadStarter();
+			if(_backgroundWorker!=null)
+			{
+				_backgroundWorker.CancelAsync();
+				//return;timers? see _backgroundWorker_Disposed
+			}
+			_backgroundWorker = new System.ComponentModel.BackgroundWorker
+			{
+				WorkerReportsProgress = true,
+				WorkerSupportsCancellation = true,
+			};
+			_backgroundWorker.DoWork += _backgroundWorker_DoWork;
+			_backgroundWorker.ProgressChanged += _backgroundWorker_ProgressChanged;
+			_backgroundWorker.RunWorkerCompleted += _backgroundWorker_RunWorkerCompleted;
+			_backgroundWorker.Disposed += _backgroundWorker_Disposed;
+			_backgroundWorker.RunWorkerAsync();
 		}
 
+		private void _backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+		{
+			//cancel the worker if needed
+			System.ComponentModel.BackgroundWorker worker = sender as System.ComponentModel.BackgroundWorker;
+			if (worker.CancellationPending == true)
+			{
+				e.Cancel = true;
+				return;
+			}
+			//enter worker's critical segment
+			if (System.Threading.Monitor.TryEnter(_LOCK, 2000))
+			{
+				try
+				{
+					var rangeStart = _rangeStart.AddHours(-1);
+					var rangeEnd = _rangeEnd.AddHours(3);
+					var blockModels = BlockDataService.GetInRange(rangeStart, rangeEnd).ToArray();
+					foreach (var block in blockModels)
+					{
+						bool err = true;
+						while (err)
+							try
+							{
+								System.Threading.Thread.Sleep(50);
+								//load data
+								var data = new BlockFullData();
+								data.Model = BlockDataService.GetSingleFull(block.Id);
+								data.ReportData = BlockDataService.GetProductionReportData(data.Model);
+								data.CanAddSetupBefore = BlockDataService.CanAddSetupBeforeBlock(data.Model);
+								//load vm thru worker
+								worker.ReportProgress(1, data);
+								err = false;
+							}
+							catch { }
+					}
+					var nptModels = NPTDataService.GetInRange(rangeStart, rangeEnd).ToArray();
+					foreach (var npt in nptModels)
+					{
+						System.Threading.Thread.Sleep(50);
+						worker.ReportProgress(2, npt);
+					}
+				}
+				finally
+				{
+					System.Threading.Monitor.Exit(_LOCK);
+				}
+			}
+		}
+		private void _backgroundWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+		{
+			System.ComponentModel.BackgroundWorker worker = sender as System.ComponentModel.BackgroundWorker;
+			//try
+			{
+				//add inside-the-window blocks
+				if (e.ProgressPercentage == 1)
+				{
+					var data = e.UserState as BlockFullData;
+					if (BlockFullData.IsNull(data)) return;
 
-		//Ease of use
+					var vm = AddItem(data.Model);
+					vm.Reload(data);
+				}
+				//add inside-the-window npts
+				else if (e.ProgressPercentage == 2)
+				{
+					var npt = e.UserState as Model.NonProductiveTask;
+					var vm = AddNPT(npt);
+
+					//fill the vm from npt model
+					if (!NPTDataService.UpdateViewModel(vm))
+						RemoveNPT(vm);
+					else
+						vm.ViewMode = ViewMode;
+				}
+			}
+			//catch { }
+		}
+		void _backgroundWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+		{
+			System.ComponentModel.BackgroundWorker worker = sender as System.ComponentModel.BackgroundWorker;
+			//Remove outside-the-window items
+			if (!e.Cancelled)
+			{
+				int count = this.Count;
+				for (int i = 0; i < count; i++)
+				{
+					//remove outside-the-window npts
+					var removeNptList = this[i].NPTs.Where(x =>
+						x.StartDateTime.AddSeconds(x.DurationSeconds) < _rangeStart ||
+						x.StartDateTime > _rangeEnd).ToArray();
+					foreach (var npt in removeNptList)
+					{
+						this[i].NPTs.Remove(npt);
+					}
+					//remove outside-the-window blocks
+					var removeList = this[i].Blocks.Where(x =>
+						x.StartDateTime.AddSeconds(x.DurationSeconds) < _rangeStart ||
+						x.StartDateTime > _rangeEnd).ToArray();
+					foreach (var block in removeList)
+					{
+						this[i].Blocks.Remove(block);
+					}
+				}
+			}
+			worker.Dispose();
+		}
+
+		void _backgroundWorker_Disposed(object sender, EventArgs e)
+		{
+			_backgroundWorker = null;
+		}
+
+		#endregion
+
+		#region Ease of use
 		/// <summary>
 		/// Returns the row of blocks which contains the provided model
 		/// </summary>
@@ -65,7 +209,8 @@ namespace Soheil.Core.PP
 				return this[(model as Model.Setup).Warmup.Station.Index].NPTs;
 			else
 				throw new NotImplementedException();//???
-		}
+		} 
+		#endregion
 
 		#region Task Operations
 		/// <summary>
@@ -82,16 +227,39 @@ namespace Soheil.Core.PP
 			}
 			return null;
 		}
-		public void AddItem(Model.Block model)
+		/// <summary>
+		/// VERY Slow (not recommended)
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public IEnumerable<BlockVm> FindBlocksByJobId(int id)
+		{
+			List<BlockVm> blocks = new List<BlockVm>();
+			foreach (var row in this)
+			{
+				blocks.AddRange(row.Blocks.Where(y => y.Id == id));
+			}
+			return blocks;
+		}
+		/// <summary>
+		/// Finds the row of items which this model should be in,
+		/// <para>converts the model into VM and adds it to that row</para>
+		/// <para>returns the VM</para>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public BlockVm AddItem(Model.Block model)
 		{
 			try
 			{
 				var container = GetRowContaining(model);
 				var currentVm = container.FirstOrDefault(x => x.Id == model.Id);
 				if (currentVm != null) container.Remove(currentVm);
-				container.Add(new BlockVm(model, this, model.StateStation.Station.Index));
+				var vm = new BlockVm(model, this, model.StateStation.Station.Index);
+				container.Add(vm);
+				return vm;
 			}
-			catch { }
+			catch { return null; }
 		}
 		public void RemoveItem(Model.Block model)
 		{
@@ -143,7 +311,13 @@ namespace Soheil.Core.PP
 		{
 			return this[stationIndex].NPTs.FirstOrDefault(y => y.Id == id);
 		}
-		public void AddNPT(Model.NonProductiveTask model)
+		/// Finds the row of items which this model should be in,
+		/// <para>converts the model into VM and adds it to that row</para>
+		/// <para>returns the VM</para>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public NPTVm AddNPT(Model.NonProductiveTask model)
 		{
 			try
 			{
@@ -153,11 +327,13 @@ namespace Soheil.Core.PP
 					var container = this[setupModel.Warmup.Station.Index].NPTs;
 					var currentVm = container.FirstOrDefault(x => x.Id == model.Id);
 					if (currentVm != null) container.Remove(currentVm);
-					container.Add(new SetupVm(setupModel, this));
+					var vm = new SetupVm(setupModel, this);
+					container.Add(vm);
+					return vm;
 				}
 				else throw new NotImplementedException();//???
 			}
-			catch { }
+			catch { return null; }
 		}
 		public void RemoveNPT(Model.NonProductiveTask model)
 		{
@@ -185,83 +361,5 @@ namespace Soheil.Core.PP
 			catch { }
 		}
 		#endregion
-
-
-		void threadStarter()
-		{
-			lock (_threadLock)
-			{
-				if (_thread.IsAlive)
-					_thread.Abort();
-				while (_thread.IsAlive) ;
-				_thread = new System.Threading.Thread(addRangeThreadFunc);
-				_thread.Start();
-			}
-		}
-		void addRangeThreadFunc()
-		{
-			try
-			{
-					var rangeStart = _rangeStart.AddHours(-1);
-					var rangeEnd = _rangeEnd.AddHours(3);
-					var blockModels = BlockDataService.GetInRange(rangeStart, rangeEnd).ToList();
-					var nptModels = NPTDataService.GetInRange(rangeStart, rangeEnd).ToList();
-
-					//add inside-the-window blocks
-					foreach (var model in blockModels)
-					{
-						//if (!this[model].Any(x => x.Id == model.Id))
-							_dispatcher.InvokeInBackground(() => AddItem(model));
-					}
-					//add inside-the-window npts
-					foreach (var model in nptModels)
-					{
-						//if (!this[model].Any(x => x.Id == model.Id))
-							_dispatcher.InvokeInBackground(() => AddNPT(model));
-					}
-
-					int count = this.Count;
-					for (int i = 0; i < count; i++)
-					{
-						_dispatcher.BeginInBackground((I, paramRangeStart, paramRangeEnd) =>
-						{
-							//remove outside-the-window npts
-							var removeNptList = this[I].NPTs.Where(x =>
-								x.StartDateTime.AddSeconds(x.DurationSeconds) < paramRangeStart ||
-								x.StartDateTime > paramRangeEnd).ToArray();
-							foreach (var npt in removeNptList)
-							{
-								this[I].NPTs.Remove(npt);
-							}
-							//remove outside-the-window blocks
-							var removeList = this[I].Blocks.Where(x =>
-								x.StartDateTime.AddSeconds(x.DurationSeconds) < paramRangeStart ||
-								x.StartDateTime > paramRangeEnd).ToArray();
-							foreach (var block in removeList)
-							{
-								this[I].Blocks.Remove(block);
-							}
-						}, i, rangeStart, rangeEnd);
-					}
-			}
-			catch { }
-		}
-
-		private PPViewMode _viewMode;
-		public PPViewMode ViewMode
-		{
-			get { return _viewMode; }
-			set
-			{
-				_viewMode = value;
-				foreach (var station in this)
-				{
-					foreach (var block in station.Blocks)
-					{
-						block.ViewMode = value;
-					}
-				}
-			}
-		}
 	}
 }

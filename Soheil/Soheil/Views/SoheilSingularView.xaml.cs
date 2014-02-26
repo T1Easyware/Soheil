@@ -231,14 +231,16 @@ namespace Soheil.Views
 			var vm = (sender as FrameworkElement).DataContext as PPItemVm;
 			if (vm != null)
 			{
-				vm.BeginAcquisition();
+				//vm.BeginAcquisition();
 			}
 		}
 		private void PPItem_Unloaded(object sender, RoutedEventArgs e)
 		{
 			var vm = (sender as FrameworkElement).DataContext as PPItemVm;
 			if (vm != null)
-				vm.UnloadData();
+			{
+				//vm.UnloadData();
+			}
 		}
 		//TaskReports Load/Unload
 		private void TaskReports_Loaded(object sender, RoutedEventArgs e)
@@ -263,14 +265,16 @@ namespace Soheil.Views
 			var prc = (sender as FrameworkElement).DataContext as ProcessReportCellVm;
 			if (prc != null)
 			{
-				prc.BeginAcquisition();
+				//prc.BeginAcquisition();
 			}
 		}
 		private void PRC_Unloaded(object sender, RoutedEventArgs e)
 		{
 			var prc = (sender as FrameworkElement).DataContext as ProcessReportCellVm;
 			if (prc != null)
-				prc.UnloadData();
+			{
+				//prc.UnloadData();
+			}
 		} 
 		#endregion
 
@@ -522,6 +526,7 @@ namespace Soheil.Views
 			catch { }
 		}
 		#endregion
+
 		#endregion
 	}
 }

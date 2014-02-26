@@ -55,6 +55,7 @@ namespace Soheil.Core.PP.Smart
 		{
 			var setup = model as Model.Setup;
 			if (setup == null) return null;
+			if (setup.Warmup == null || setup.Changeover == null) return null;
 			var sr = new SmartRange
 			{
 				StartDT = model.StartDateTime,
@@ -72,6 +73,7 @@ namespace Soheil.Core.PP.Smart
 		public static SmartRange NewSetup(DateTime start, Model.Warmup warmup, Model.Changeover changeover, int stationId)
 		{
 			var totalSeconds = warmup.Seconds + changeover.Seconds;
+			if (warmup == null || changeover == null) return null;
 			return new SmartRange
 			{
 				StartDT = start,
