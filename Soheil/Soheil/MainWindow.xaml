@@ -180,7 +180,7 @@
                                       Tag="0" />
                         <ToggleButton x:Name="btnUsers"
                                       Checked="QuickAccessMenuChecked"
-                                      Content="{Loc txtUsers}"
+                                      Content="{Loc txtOrganization}"
                                       Tag="1" />
                         <ToggleButton x:Name="btnDefinitions"
                                       Checked="QuickAccessMenuChecked"
@@ -241,7 +241,7 @@
                                          PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Button},
                                                                    Path=.,
                                                                    Converter={StaticResource debugc}}">
-                                <MenuItem Header="{Loc txtUsers}">
+                                <MenuItem Header="{Loc txtOrganization}">
                                     <MenuItem Header="{Loc txtUsersAccess}">
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtUsers}" Tag="111" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtPositions}" Tag="112" />

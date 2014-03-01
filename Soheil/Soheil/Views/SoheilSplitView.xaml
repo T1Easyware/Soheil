@@ -1486,16 +1486,6 @@
 					<Behavior:ValidationExceptionBehavior />
 				</I:Interaction.Behaviors>
 				<DockPanel FlowDirection="{Loc enumDirection}">
-					<Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-						<WrapPanel Margin="10"
-                                   HorizontalAlignment="Right"
-                                   DockPanel.Dock="Bottom">
-							<Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
-                                    CommandParameter="0"
-                                    Content="{Loc txtWorkProfiles}">
-							</Button>
-						</WrapPanel>
-					</Border>
 					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
 					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
 					<Border Style="{StaticResource SoheilContentUpperBorder}">
@@ -1667,36 +1657,18 @@
 													<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 												</Border>
 												<Border BorderBrush="#2FFF" BorderThickness="0.5" Background="Transparent">
-													<!-- 1 min = 1 px (snap to 5 min or 5 px)-->
+													<!-- 1 min = 1 px (snap to 5 min or 5 px) so 1800 means 30 hours-->
 													<Grid Width="1800">
 														<!--ShiftLine-->
-														<!--                 ..       .       ..      .      .. -->
+														<!--       ..       .       ..      .      .. -->
                                                         <Canvas>
-                                                            <Rectangle 
-															StrokeDashArray=".2 14.8 .1 14.8 .2 14.8 .1 14.8 .2" 
-															Stroke="#8FFF" 
-															Width="1800"
-															Height="8"
-															StrokeThickness="4" 
-															Margin="0,20"/>
+                                                            <Rectangle StrokeDashArray=".2 14.8 .1 14.8 .2 14.8 .1 14.8 .2" Stroke="#8FFF" Width="1800" Height="10" StrokeThickness="4" Margin="0,19"/>
                                                         </Canvas>
 														<!--ShiftLine-->
-														<Thumb 
-															Tag="{Binding ElementName=timetip}" 
-															x:Name="shiftLine"
-															MouseMove="workShiftLineMouseMove"
-															DragStarted="shiftLineDragStart" 
-															DragDelta="shiftLineDragDelta" 
-															DragCompleted="shiftLineDragEnd">
+														<Thumb Tag="{Binding ElementName=timetip}" x:Name="shiftLine" MouseMove="workShiftLineMouseMove" DragStarted="shiftLineDragStart" DragDelta="shiftLineDragDelta" DragCompleted="shiftLineDragEnd">
 															<Thumb.Template>
 																<ControlTemplate>
-																	<Border 
-																		VerticalAlignment="Center" 
-																		HorizontalAlignment="Stretch"
-																		Background="#2FFF" 
-																		BorderBrush="#8FFF" 
-																		BorderThickness="0,1" 
-																		Height="4"/>
+																	<Border VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="#2FFF" BorderBrush="#8FFF" BorderThickness="0,1" Height="4"/>
 																</ControlTemplate>
 															</Thumb.Template>
 														</Thumb>
@@ -1744,7 +1716,7 @@
 																					<ControlTemplate>
 																						<Border BorderThickness="2,2,0,2" CornerRadius="3,0,0,3" BorderBrush="White" Width="20" Height="40">
 																							<Border.Background>
-																								<SolidColorBrush Color="{Binding Prototype.Color, Converter={StaticResource ColorToRgbBrush}}" Opacity="0" x:Name="brdr"/>
+                                                                                                <SolidColorBrush Color="{Binding Prototype.Color, Converter={StaticResource ColorToRgbBrush}}" Opacity="1" x:Name="brdr"/>
 																							</Border.Background>
 																							<TextBlock Text="{Binding Prototype.Name}" 
 																										HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -1757,14 +1729,14 @@
 																								<EventTrigger RoutedEvent="MouseEnter">
 																									<BeginStoryboard>
 																										<Storyboard Duration="0:0:0.1">
-																											<DoubleAnimation To="1" Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" Duration="0:0:0.1"/>
+                                                                                                            <DoubleAnimation Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
 																										</Storyboard>
 																									</BeginStoryboard>
 																								</EventTrigger>
 																								<EventTrigger RoutedEvent="MouseLeave">
 																									<BeginStoryboard>
 																										<Storyboard Duration="0:0:0.2">
-																											<DoubleAnimation To="0" Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
+                                                                                                            <DoubleAnimation Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" To="0.1" Duration="0:0:0.2"/>
 																										</Storyboard>
 																									</BeginStoryboard>
 																								</EventTrigger>

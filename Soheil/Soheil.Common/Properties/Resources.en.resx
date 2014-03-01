@@ -697,4 +697,7 @@
   <data name="txtStartTime" xml:space="preserve">
     <value>Start time</value>
   </data>
+  <data name="txtOrganization" xml:space="preserve">
+    <value>Organization</value>
+  </data>
 </root>

@@ -2035,32 +2035,12 @@
                                                             <Border.Effect>
                                                                 <DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
                                                             </Border.Effect>
-                                                            <Border.Background>
-                                                                <LinearGradientBrush x:Name="acquiringHash" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="10,10" MappingMode="Absolute">
-                                                                    <GradientStop Color="#999" Offset="0"/>
-                                                                    <GradientStop Color="#999" Offset="0.49"/>
-                                                                    <GradientStop Color="#CCC" Offset="0.5"/>
-                                                                    <GradientStop Color="#CCC" Offset="1"/>
-                                                                </LinearGradientBrush>
-                                                            </Border.Background>
                                                             <Border.ContextMenu>
                                                                 <ContextMenu FlowDirection="RightToLeft">
                                                                     <MenuItem Header="ریست نمودن گزارش فعالیت" Command="{Binding DeleteProcessReportCommand}"/>
                                                                     <MenuItem Header="حذف گزارش بازه (گزارش فعالیتهای این بازه)" Command="{Binding DeleteTaskReportCommand}"/>
                                                                 </ContextMenu>
                                                             </Border.ContextMenu>
-                                                            <Border.Triggers>
-                                                                <EventTrigger RoutedEvent="Loaded">
-                                                                    <BeginStoryboard>
-                                                                        <Storyboard Duration="0:0:0.4" RepeatBehavior="Forever">
-                                                                            <ParallelTimeline Duration="0:0:0.4">
-                                                                                <PointAnimation Storyboard.TargetName="acquiringHash"  Storyboard.TargetProperty="StartPoint" From="0,0" To="10,10" Duration="0:0:0.4"/>
-                                                                                <PointAnimation Storyboard.TargetName="acquiringHash"  Storyboard.TargetProperty="EndPoint" From="10,10" To="20,20" Duration="0:0:0.4"/>
-                                                                            </ParallelTimeline>
-                                                                        </Storyboard>
-                                                                    </BeginStoryboard>
-                                                                </EventTrigger>
-                                                            </Border.Triggers>
                                                         </Border>
                                                     </Canvas>
 
@@ -2340,32 +2320,6 @@
                                                         <Border.Effect>
                                                             <DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}"/>
                                                         </Border.Effect>
-                                                        <!-- loading effect bkg -->
-                                                        <Border.Background>
-                                                            <LinearGradientBrush x:Name="acquiringHash" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="10,10" MappingMode="Absolute">
-                                                                <GradientStop Color="#999" Offset="0"/>
-                                                                <GradientStop Color="#999" Offset="0.49"/>
-                                                                <GradientStop Color="#CCC" Offset="0.5"/>
-                                                                <GradientStop Color="#CCC" Offset="1"/>
-                                                            </LinearGradientBrush>
-                                                        </Border.Background>
-                                                        <!-- loading effect animation -->
-                                                        <Border.Triggers>
-                                                            <EventTrigger RoutedEvent="Loaded">
-                                                                <BeginStoryboard>
-                                                                    <Storyboard Duration="0:0:0.4" RepeatBehavior="Forever">
-                                                                        <ParallelTimeline Duration="0:0:0.4">
-                                                                            <PointAnimation Storyboard.TargetName="acquiringHash" 
-																		    Storyboard.TargetProperty="StartPoint"
-																		    From="0,0" To="10,10" Duration="0:0:0.4"/>
-                                                                            <PointAnimation Storyboard.TargetName="acquiringHash" 
-																		    Storyboard.TargetProperty="EndPoint"
-																		    From="10,10" To="20,20" Duration="0:0:0.4"/>
-                                                                        </ParallelTimeline>
-                                                                    </Storyboard>
-                                                                </BeginStoryboard>
-                                                            </EventTrigger>
-                                                        </Border.Triggers>
                                                         <Grid>
                                                             <Control Name="innerControl" ClipToBounds="True"/>
                                                             <Control Background="Transparent">
@@ -2469,7 +2423,7 @@
                                                                 <ControlTemplate TargetType="{x:Type Control}">
                                                                     <Grid TextBlock.Foreground="{Binding ForeColor}">
                                                                         <!-- block background texts -->
-                                                                        <WrapPanel VerticalAlignment="Bottom">
+                                                                        <WrapPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
                                                                             <DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}" Background="#4FA4">
                                                                                 <Image Source="/Images/PP/ReportWarning15.png" Height="15" DockPanel.Dock="Left"/>
                                                                                 <TextBlock Text="{Binding ReportFillPercent}" Height="15" DockPanel.Dock="Left"/>
@@ -2503,7 +2457,7 @@
                                                                                         <Border BorderBrush="WhiteSmoke" BorderThickness="0,0,1,0">
                                                                                             <Grid>
                                                                                                 <!-- taskBackgroundTexts (TP, ProducedG1, OperCount) -->
-                                                                                                <DockPanel VerticalAlignment="Top" x:Name="taskBackgroundTexts" ClipToBounds="True">
+                                                                                                <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" x:Name="taskBackgroundTexts" ClipToBounds="True">
                                                                                                     <Image Source="/Images/PP/TargetPoint.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                                     <TextBlock Text="{Binding TaskTargetPoint}" Height="15" DockPanel.Dock="Left"/>
                                                                                                     <Image Source="/Images/PP/ProducedG1.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
@@ -2876,30 +2830,6 @@
                                                         <Border.Effect>
                                                             <DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}"/>
                                                         </Border.Effect>
-                                                        <Border.Background>
-                                                            <LinearGradientBrush x:Name="acquiringHash" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="10,10" MappingMode="Absolute">
-                                                                <GradientStop Color="#999" Offset="0"/>
-                                                                <GradientStop Color="#999" Offset="0.49"/>
-                                                                <GradientStop Color="#CCC" Offset="0.5"/>
-                                                                <GradientStop Color="#CCC" Offset="1"/>
-                                                            </LinearGradientBrush>
-                                                        </Border.Background>
-                                                        <Border.Triggers>
-                                                            <EventTrigger RoutedEvent="Loaded">
-                                                                <BeginStoryboard>
-                                                                    <Storyboard Duration="0:0:0.4" RepeatBehavior="Forever">
-                                                                        <ParallelTimeline Duration="0:0:0.4">
-                                                                            <PointAnimation Storyboard.TargetName="acquiringHash" 
-																		    Storyboard.TargetProperty="StartPoint"
-																		    From="0,0" To="10,10" Duration="0:0:0.4"/>
-                                                                            <PointAnimation Storyboard.TargetName="acquiringHash" 
-																		    Storyboard.TargetProperty="EndPoint"
-																		    From="10,10" To="20,20" Duration="0:0:0.4"/>
-                                                                        </ParallelTimeline>
-                                                                    </Storyboard>
-                                                                </BeginStoryboard>
-                                                            </EventTrigger>
-                                                        </Border.Triggers>
                                                     </Border>
                                                 </Canvas>
 

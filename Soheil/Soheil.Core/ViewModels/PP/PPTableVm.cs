@@ -17,15 +17,17 @@ namespace Soheil.Core.ViewModels.PP
 	{
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 		public AccessType Access { get; private set; }
+		private static readonly object _LOCK = new object();
 
+		#region DataServices
 		public DataServices.BlockDataService BlockDataService { get; private set; }
 		public DataServices.NPTDataService NPTDataService { get; private set; }
 		public DataServices.TaskDataService TaskDataService { get; private set; }
 		public DataServices.JobDataService JobDataService { get; private set; }
 		public DataServices.TaskReportDataService TaskReportDataService { get; private set; }
 		public DataServices.ProcessReportDataService ProcessReportDataService { get; private set; }
-		public Dal.SoheilEdmContext UOW { get; private set; }
-		private static readonly object _LOCK = new object();
+		public Dal.SoheilEdmContext UOW { get; private set; } 
+		#endregion
 
 		#region Ctor, Init and Load
 		public PPTableVm(AccessType access)
@@ -227,6 +229,9 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Updates current TimeRange of items (hours, shifts, tasks...) which are visible in PPTable
 		/// </summary>
+		/// <remarks>
+		/// This function uses a Monitor to waits 2 secs if local lock is on
+		/// </remarks>
 		/// <param name="loadTasksAsWell">Load PP Items (setups, tasks, ...) while loading timeline</param>
 		public void UpdateRange(bool loadItemsAsWell)
 		{
@@ -416,7 +421,11 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty HoursPassedProperty =
 			DependencyProperty.Register("HoursPassed", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(0d));
-		//DayZoom Dependency Property
+		/// <summary>
+		/// A value indicating the Width of one month
+		/// <para>GridWidth divided by the Number of days in SelectedMonth</para>
+		/// <para>Default value = 40</para>
+		/// </summary>
 		public double DayZoom
 		{
 			get { return (double)GetValue(DayZoomProperty); }
@@ -424,7 +433,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DayZoomProperty =
 			DependencyProperty.Register("DayZoom", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(40d));
-		//HourZoom Dependency Property (Width of OneHour in HoursBar or in pptable)
+		/// <summary>
+		/// Width of OneHour in HoursBar or in pptable
+		/// </summary>
 		public double HourZoom
 		{
 			get { return (double)GetValue(HourZoomProperty); }
@@ -432,7 +443,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty HourZoomProperty =
 			DependencyProperty.Register("HourZoom", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(36d, (d, e) => { ((PPTableVm)d).UpdateRange(false); }));
-		//DaysInYear Dependency Property
+		/// <summary>
+		/// Number of days in currect active year
+		/// </summary>
 		public int DaysInYear
 		{
 			get { return (int)GetValue(DaysInYearProperty); }
@@ -440,6 +453,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DaysInYearProperty =
 			DependencyProperty.Register("DaysInYear", typeof(int), typeof(PPTableVm), new UIPropertyMetadata(365));
+		/// <summary>
+		/// Total number of hours in current active year
+		/// </summary>
 		public int HoursInYear
 		{
 			get { return (int)GetValue(HoursInYearProperty); }
@@ -447,7 +463,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty HoursInYearProperty =
 			DependencyProperty.Register("HoursInYear", typeof(int), typeof(PPTableVm), new UIPropertyMetadata(8760));
-		//SelectedMonth Dependency Property
+		/// <summary>
+		/// Selected month item presented as MonthSlideItemVm
+		/// </summary>
 		public MonthSlideItemVm SelectedMonth
 		{
 			get { return (MonthSlideItemVm)GetValue(SelectedMonthProperty); }
@@ -468,8 +486,13 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Zoom and Pan
-		//Width of screen
+		/// <summary>
+		/// Width of screen
+		/// </summary>
 		public double GridWidth { get; set; }
+		/// <summary>
+		/// Sets the DayZoom according to SelectedMonth
+		/// </summary>
 		public void UpdateWidths()
 		{
 			if (SelectedMonth != null)
@@ -496,6 +519,10 @@ namespace Soheil.Core.ViewModels.PP
 		private double _hoursPassedBackup = 0;
 		private double _hourZoomBackup = 36;
 		private double _verticalScreenOffset = 0;
+		/// <summary>
+		/// Zooms to fit the given block in screen
+		/// </summary>
+		/// <param name="blockVm"></param>
 		public void ZoomToBlock(BlockVm blockVm)
 		{
 			BackupZoom();

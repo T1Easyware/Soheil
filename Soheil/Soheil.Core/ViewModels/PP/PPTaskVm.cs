@@ -31,6 +31,7 @@ namespace Soheil.Core.ViewModels.PP
 			StartDateTime = taskModel.StartDateTime;
 			DurationSeconds = taskModel.DurationSeconds;
 			TaskTargetPoint = taskModel.TaskTargetPoint;
+			TaskProducedG1 = taskModel.TaskReports.Sum(x => x.TaskProducedG1);
 			Message = new EmbeddedException();
 
 			//TaskProducedG1 = 

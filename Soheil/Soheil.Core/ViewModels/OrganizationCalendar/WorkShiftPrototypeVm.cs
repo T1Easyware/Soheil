@@ -62,7 +62,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				if (val == null) return;
 				vm.Color = val.Color;
 			}));
-		//Index Dependency Property
+		/// <summary>
+		/// Zero-biased index of this shift prototype in its WorkProfile where it's being used
+		/// </summary>
 		public int Index
 		{
 			get { return (int)GetValue(IndexProperty); }

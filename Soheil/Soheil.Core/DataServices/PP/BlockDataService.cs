@@ -159,7 +159,7 @@ WHERE block.Id = @id";
 			{
 				g1 += task.TaskReports.Sum(x => x.TaskProducedG1);
 				taskTp += task.TaskTargetPoint;
-				reportedTaskTp += task.TaskReports.Sum(x => x.Task.TaskTargetPoint);
+				reportedTaskTp += task.TaskReports.Sum(x => x.TaskReportTargetPoint);
 			}
 			return new int[] { g1, taskTp == 0 ? 0 : 100 * reportedTaskTp / taskTp };
 		}

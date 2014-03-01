@@ -1267,6 +1267,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to سازمان.
+        /// </summary>
+        public static string txtOrganization {
+            get {
+                return ResourceManager.GetString("txtOrganization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to زمانهای کاری.
         /// </summary>
         public static string txtOrganizationCalendar {

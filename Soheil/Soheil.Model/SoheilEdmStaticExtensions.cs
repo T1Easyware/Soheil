@@ -20,13 +20,13 @@ namespace Soheil.Model
 			{
 				Name = "[New]",
 				WeekStartNr = 0,
-				SaturdayBusinessStateNr = 0,
-				SundayBusinessStateNr = 0,
-				MondayBusinessStateNr = 0,
-				TuesdayBusinessStateNr = 0,
-				WednesdayBusinessStateNr = 0,
-				ThursdayBusinessStateNr = 1,
-				FridayBusinessStateNr = 2,
+				SaturdayBusinessStateNr = 5,
+				SundayBusinessStateNr = 5,
+				MondayBusinessStateNr = 5,
+				TuesdayBusinessStateNr = 5,
+				WednesdayBusinessStateNr = 5,
+				ThursdayBusinessStateNr = 4,
+				FridayBusinessStateNr = 0,
 			};
 			var proto = WorkShiftPrototype.CreateDefault(workProfile);
 			workProfile.WorkShiftPrototypes.Add(proto);

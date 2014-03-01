@@ -17,10 +17,63 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 {
 	public class WorkProfileVm : ItemContentViewModel
 	{
-		#region Properties
+		public WorkProfileDataService WorkProfileDataService { get; set; }
 
         private Model.WorkProfile _model;
 
+		#region Ctor, init
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WorkProfileVm"/> class initialized with default values.
+		/// </summary>
+		public WorkProfileVm(AccessType access, WorkProfileDataService dataService)
+			: base(access)
+		{
+			_model = WorkProfile.CreateDefault();
+			InitializeData(dataService);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WorkProfileVm"/> class from the model.
+		/// </summary>
+		/// <param name="entity">The model.</param>
+		/// <param name="access"></param>
+		/// <param name="dataService"></param>
+		public WorkProfileVm(WorkProfile entity, AccessType access, WorkProfileDataService dataService)
+			: base(access)
+		{
+			_model = entity;
+			InitializeData(dataService);
+		}
+
+		/// <summary>
+		/// Initializes all commands and Shift colors and, at last, Loads data
+		/// </summary>
+		/// <param name="dataService"></param>
+		private void InitializeData(WorkProfileDataService dataService)
+		{
+			WorkProfileDataService = dataService;
+			SaveCommand = new Command(Save, CanSave);
+
+			AskForDecreaseNumberOfShifts = new Command(o => IsPrototypeChangeAskVisible = true);
+			DecreaseNumberOfShifts = new Command(o => { IsPrototypeChangeAskVisible = false; NumberOfShiftsModifier--; });
+			IncreaseNumberOfShifts = new Command(o => NumberOfShiftsModifier++);
+
+			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Day });
+			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Evening });
+			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Night });
+			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Reserve1 });
+			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Reserve2 });
+			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Reserve3 });
+
+			//fill vm with _model data
+			Load();
+		}
+		#endregion
+
+		//props
+
+		#region Common basic props (Name,Id,Search...)
 		public override int Id
 		{
 			get { return _model.Id; }
@@ -33,34 +86,47 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		{
 			get { return _model.Name; }
 			set { _model.Name = value; OnPropertyChanged("Name"); }
-		}
-
-		public int NumberOfShifts
-		{
-			get { return _model.WorkShiftPrototypes.Count; }
-		}
-
-		#region Create/Modify Properties
+		} 
 		public DateTime CreatedDate
 		{
 			get { return _model.CreatedDate; }
 			set { _model.CreatedDate = value; OnPropertyChanged("CreatedDate"); }
 		}
-
 		public DateTime ModifiedDate
 		{
 			get { return _model.ModifiedDate; }
 			set { _model.ModifiedDate = value; OnPropertyChanged("ModifiedDate"); }
 		}
-
 		public string ModifiedBy
 		{
 			get { return LoginInfo.GetUsername(_model.ModifiedBy); }
 		}
 		#endregion
 
-		#region Number of shifts
-		//NumberOfShiftsModifier Dependency Property
+		#region Shifts
+		/// <summary>
+		/// An observable collection of Shift prototypes to add or remove or modify
+		/// </summary>
+		private ObservableCollection<WorkShiftPrototypeVm> _shiftPrototypes = new ObservableCollection<WorkShiftPrototypeVm>();
+		public ObservableCollection<WorkShiftPrototypeVm> ShiftPrototypes { get { return _shiftPrototypes; } }
+
+		/// <summary>
+		/// An observable collection of Shift Colors for comboboxes
+		/// </summary>
+		private ObservableCollection<ShiftColorVm> _shiftColors = new ObservableCollection<ShiftColorVm>();
+		public ObservableCollection<ShiftColorVm> ShiftColors { get { return _shiftColors; } }
+
+		/// <summary>
+		/// Gets the number of shifts from a valid model
+		/// </summary>
+		public int NumberOfShifts
+		{
+			get { return _model.WorkShiftPrototypes.Count; }
+		}
+
+		/// <summary>
+		/// Gets or Sets the number of shifts and correct shifts afterwards
+		/// </summary>
 		public int NumberOfShiftsModifier
 		{
 			get { return (int)GetValue(NumberOfShiftsProperty); }
@@ -79,59 +145,77 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				if ((int)v > 5) return 5;
 				return v;
 			}));
-		private void correctShifts(int value)
+		/// <summary>
+		/// Corrects Shifts and Prototypes info to match the desired count
+		/// </summary>
+		/// <param name="desiredCount">Target number of shifts in this profile</param>
+		private void correctShifts(int desiredCount)
 		{
-			//recorrect indices
+			//changing ShiftPrototypes makes ShiftPrototype.Index akin to errors
+			//-> Correct Indices
 			var arr = ShiftPrototypes.OrderBy(x => x.Index).ToArray();
 			for (byte i = 0; i < arr.Length; i++)
 				arr[i].Index = i;
 
-			//add protos
-			while (value > _model.WorkShiftPrototypes.Count)
+			//add or remove shift prototypes to/from model and viewModel
+			//-> correct shiftPrototypes
+			while (desiredCount != _model.WorkShiftPrototypes.Count)
 			{
-				//add a new proto until the desired number of protos are reached
-				//each added item have its index and other props properly propped
-				var protoModel = WorkShiftPrototype.CreateDefault(_model);
-				_model.WorkShiftPrototypes.Add(protoModel);
-				ShiftPrototypes.Add(new WorkShiftPrototypeVm(protoModel, ShiftColors));
-			}
-
-			//correct WorkShifts
-			foreach (var day in _model.WorkDays)
-			{
-				var workDayVm = WorkDays.First(x => x.Id == day.Id);
-
-				//remove extra shifts
-				var workShiftVms = workDayVm.Shifts.OrderBy(x => x.Prototype.Index).ToArray();
-				for (int i = value; i < workShiftVms.Length; i++)
+				if (desiredCount > _model.WorkShiftPrototypes.Count)
 				{
-					var shift = day.WorkShifts.First(x => x.WorkShiftPrototype.Index == i);
-					day.WorkShifts.Remove(shift);
-					workDayVm.Shifts.Remove(workShiftVms[i]);
-				}
+					//add a new proto until the desired number of protos are reached
+					//each added item have its index and other props properly propped!
+					//-> add ShiftPrototype
+					var protoModel = WorkShiftPrototype.CreateDefault(_model);
+					var protoVm = new WorkShiftPrototypeVm(protoModel, ShiftColors);
+					_model.WorkShiftPrototypes.Add(protoModel);
+					ShiftPrototypes.Add(protoVm);
 
-				//add new shifts
-				var protoArray = _model.WorkShiftPrototypes.OrderBy(x => x.Index).ToArray();
-				for (int i = value; i < protoArray.Length; i++)
+					//After adding to shiftPrototypes, WorkShifts of each WorkDay have to be corrected too
+					//-> add WorkShifts
+					foreach (var day in _model.WorkDays)
+					{
+						//find workDayVm from day model
+						var workDayVm = WorkDays.First(x => x.Id == day.Id);
+
+						//add new shifts to workDay vm and workDay model
+						if (day.WorkShifts.Any(x => x.WorkShiftPrototype.Index == protoModel.Index)) continue;
+						var shift = WorkShift.CreateDefault(day, protoModel);
+						day.WorkShifts.Add(shift);
+						workDayVm.Shifts.Add(new WorkShiftVm(shift, protoVm));
+					}
+				}
+				else
 				{
-					if (day.WorkShifts.Any(x => x.WorkShiftPrototype.Index == i)) continue;
-					var shift = WorkShift.CreateDefault(day, protoArray[i]);
-					day.WorkShifts.Add(shift);
-					workDayVm.Shifts.Add(new WorkShiftVm(shift, ShiftPrototypes.First(x => x.Index == i)));
+					//remove extra shift prototypes from model and viewModel
+					//remove a new proto until the desired number of protos are reached
+					//-> remove ShiftPrototype
+					var protoModel = _model.WorkShiftPrototypes.OrderBy(x => x.Index).Last();
+					_model.WorkShiftPrototypes.Remove(protoModel);
+					ShiftPrototypes.RemoveWhere(x => x.Index == protoModel.Index);
+
+					//After correcting shiftPrototypes, WorkShifts of each WorkDay have to be corrected too
+					//-> remove WorkShifts
+					foreach (var day in _model.WorkDays)
+					{
+						//find workDayVm from day model
+						var workDayVm = WorkDays.First(x => x.Id == day.Id);
+
+						//remove extra shifts from workDay vm and workDay model
+						var shift = day.WorkShifts.First(x => x.WorkShiftPrototype.Index == protoModel.Index);
+						day.WorkShifts.Remove(shift);
+						workDayVm.Shifts.Remove(workDayVm.Shifts.OrderBy(x => x.Prototype.Index).Last());
+					}
 				}
 			}
 
-			//remove protos
-			while (value < _model.WorkShiftPrototypes.Count)
-			{
-				//add a new proto until the desired number of protos are reached
-				//each added item have its index and other props properly propped
-				var protoModel = _model.WorkShiftPrototypes.OrderBy(x => x.Index).Last();
-				_model.WorkShiftPrototypes.Remove(protoModel);
-				ShiftPrototypes.RemoveWhere(x => x.Index == protoModel.Index);
-			}
+	
+
 		}
-		//IsPrototypeChangeAskVisible Dependency Property
+		/// <summary>
+		/// Gets or Sets a value indicating an unconfirmed change in prototype (number of shifts)
+		/// <para>if a change occurs, user sees a message asking to confirm changes</para>
+		/// </summary>
 		public bool IsPrototypeChangeAskVisible
 		{
 			get { return (bool)GetValue(IsPrototypeChangeAskVisibleProperty); }
@@ -139,7 +223,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		}
 		public static readonly DependencyProperty IsPrototypeChangeAskVisibleProperty =
 			DependencyProperty.Register("IsPrototypeChangeAskVisible", typeof(bool), typeof(WorkProfileVm), new UIPropertyMetadata(false));
-		//AskForDecreaseNumberOfShifts Dependency Property
+		/// <summary>
+		/// Asks user to confirm reducing the number of shifts by 1
+		/// </summary>
 		public Command AskForDecreaseNumberOfShifts
 		{
 			get { return (Command)GetValue(AskForDecreaseNumberOfShiftsProperty); }
@@ -147,7 +233,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		}
 		public static readonly DependencyProperty AskForDecreaseNumberOfShiftsProperty =
 			DependencyProperty.Register("AskForDecreaseNumberOfShifts", typeof(Command), typeof(WorkProfileVm), new UIPropertyMetadata(null));
-		//DecreaseNumberOfShifts Dependency Property
+		/// <summary>
+		/// When user confirms the reduction in number of shifts, (removes all extra shifts by correcting shifts afterwards)
+		/// </summary>
 		public Command DecreaseNumberOfShifts
 		{
 			get { return (Command)GetValue(DecreaseNumberOfShiftsProperty); }
@@ -155,7 +243,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		}
 		public static readonly DependencyProperty DecreaseNumberOfShiftsProperty =
 			DependencyProperty.Register("DecreaseNumberOfShifts", typeof(Command), typeof(WorkProfileVm), new UIPropertyMetadata(null));
-		//IncreaseNumberOfShifts Dependency Property
+		/// <summary>
+		/// Instantly increases the number of shifts by 1 (adds 1 extra shift by correcting shifts afterwards)
+		/// </summary>
 		public Command IncreaseNumberOfShifts
 		{
 			get { return (Command)GetValue(IncreaseNumberOfShiftsProperty); }
@@ -164,14 +254,6 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		public static readonly DependencyProperty IncreaseNumberOfShiftsProperty =
 			DependencyProperty.Register("IncreaseNumberOfShifts", typeof(Command), typeof(WorkProfileVm), new UIPropertyMetadata(null)); 
 		#endregion
-
-		//ShiftPrototypes Observable Collection
-		private ObservableCollection<WorkShiftPrototypeVm> _shiftPrototypes = new ObservableCollection<WorkShiftPrototypeVm>();
-		public ObservableCollection<WorkShiftPrototypeVm> ShiftPrototypes { get { return _shiftPrototypes; } }
-
-		//ShiftColors Observable Collection
-		private ObservableCollection<ShiftColorVm> _shiftColors = new ObservableCollection<ShiftColorVm>();
-		public ObservableCollection<ShiftColorVm> ShiftColors { get { return _shiftColors; } }
 
 		#region Days
 		/// <summary>
@@ -211,83 +293,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		} 
 		#endregion
 
-        /// <summary>
-        /// Gets or sets the data service.
-        /// </summary>
-        /// <value>
-        /// The data service.
-        /// </value>
-        public WorkProfileDataService WorkProfileDataService { get; set; }
-        #endregion
+		//methods
 
-        #region Methods
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WorkProfileVm"/> class initialized with default values.
-        /// </summary>
-        public WorkProfileVm(AccessType access, WorkProfileDataService dataService)
-            : base(access)
-        {
-			_model = WorkProfile.CreateDefault();
-			InitializeData(dataService);
-        }
-
-	    /// <summary>
-        /// Initializes a new instance of the <see cref="WorkProfileVm"/> class from the model.
-	    /// </summary>
-	    /// <param name="entity">The model.</param>
-	    /// <param name="access"></param>
-	    /// <param name="dataService"></param>
-		public WorkProfileVm(WorkProfile entity, AccessType access, WorkProfileDataService dataService)
-            : base(access)
-        {
-			_model = entity;
-			InitializeData(dataService);
-        }
-
-		private void InitializeData(WorkProfileDataService dataService)
-        {
-			WorkProfileDataService = dataService;
-            SaveCommand = new Command(Save, CanSave);
-
-			AskForDecreaseNumberOfShifts = new Command(o => IsPrototypeChangeAskVisible = true);
-			DecreaseNumberOfShifts = new Command(o => { IsPrototypeChangeAskVisible = false; NumberOfShiftsModifier--; });
-			IncreaseNumberOfShifts = new Command(o => NumberOfShiftsModifier++);
-
-			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Day });
-			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Evening });
-			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Night });
-			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Reserve1 });
-			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Reserve2 });
-			ShiftColors.Add(new ShiftColorVm { Color = DefaultColors.Shift.Reserve3 });
-
-			//fill vm with _model data
-			Load();
-		}
-
-
-
-        public override void Save(object param)
-        {
-			WorkProfileDataService.UpdateModel(_model);
-			OnPropertyChanged("ModifiedBy");
-			OnPropertyChanged("ModifiedDate");
-			Mode = ModificationStatus.Saved;
-        }
-
-        public override bool CanSave()
-        {
-            return AllDataValid() && base.CanSave();
-        }
-        #endregion
-
-		#region Static Methods
-		public static WorkProfile CreateNew(WorkProfileDataService dataService)
-		{
-			int id = dataService.AddModel(WorkProfile.CreateDefault());
-			return dataService.GetSingle(id);
-		}
-		#endregion
+		#region Methods (Load,Save,Reset)
 
 		internal void Load()
 		{
@@ -316,5 +324,27 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		{
 			WorkProfileDataService.Postpone(_model);
 		}
+
+        public override void Save(object param)
+        {
+			WorkProfileDataService.UpdateModel(_model);
+			OnPropertyChanged("ModifiedBy");
+			OnPropertyChanged("ModifiedDate");
+			Mode = ModificationStatus.Saved;
+        }
+
+        public override bool CanSave()
+        {
+            return AllDataValid() && base.CanSave();
+        }
+        #endregion
+
+		#region Static Methods (Create New)
+		public static WorkProfile CreateNew(WorkProfileDataService dataService)
+		{
+			int id = dataService.AddModel(WorkProfile.CreateDefault());
+			return dataService.GetSingle(id);
+		}
+		#endregion
 	}
 }

@@ -39,13 +39,17 @@ namespace Soheil.Core.ViewModels.PP
 
 			if (model == null)
 			{
+				ViewMode = PPViewMode.Empty;
                 ProcessReportTargetPoint = 0;
                     //- processReportRow.ProcessReportCells.Where(y => y.Id > 0).Sum(x => x.ProcessReportTargetPoint);
 			}
 			else
 			{
+				ViewMode = PPViewMode.Simple;
 				ProducedG1 = model.ProducedG1;
 				ProcessReportTargetPoint = model.ProcessReportTargetPoint;
+				DefectionCount = (int)_model.DefectionReports.Sum(x => x.CountEquivalence);
+				StoppageCount = (int)_model.StoppageReports.Sum(x => x.CountEquivalence);
 			}
 
 			StartDateTime = taskReport.StartDateTime;

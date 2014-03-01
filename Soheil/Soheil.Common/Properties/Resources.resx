@@ -702,4 +702,7 @@
   <data name="txtStartTime" xml:space="preserve">
     <value>زمان شروع</value>
   </data>
+  <data name="txtOrganization" xml:space="preserve">
+    <value>سازمان</value>
+  </data>
 </root>
