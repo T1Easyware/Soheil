@@ -147,6 +147,9 @@
     </Compile>
     <Compile Include="Views\SetupTime\Converters.cs" />
     <Compile Include="Views\SetupTime\GridHelper.cs" />
+    <Compile Include="Views\SkillCenter\SkillCenter.xaml.cs">
+      <DependentUpon>SkillCenter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SoheilSingularView.xaml.cs">
       <DependentUpon>SoheilSingularView.xaml</DependentUpon>
     </Compile>
@@ -211,6 +214,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PP\PPResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SkillCenter\SkillCenter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

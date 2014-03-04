@@ -379,6 +379,13 @@
 			</Grid>
 		</DataTemplate>
 
+		<!-- 2.7. Skill Center -->
+		<DataTemplate x:Key="SkillCenterTemplate" DataType="{x:Type vm:SkillCenterVm}"
+             xmlns:sc="clr-namespace:Soheil.Views.SkillCenter"
+			 xmlns:vm="clr-namespace:Soheil.Core.ViewModels.SkillCenter;assembly=Soheil.Core">
+			<sc:SkillCenter/>
+		</DataTemplate>
+		
 		<!--................................................ 3.Control ...............................................-->
 
         <!-- 3.1. Product Plan (PP) -->
@@ -4075,6 +4082,7 @@
 													IndicesVmTemplate="{StaticResource IndexTemplate}"
 													PPTableVmTemplate="{StaticResource PPTableTemplate}"
 													SetupTimesVmTemplate="{StaticResource SetupTimesTemplate}"
+													SkillCenterVmTemplate="{StaticResource SkillCenterTemplate}"
 													CostReportsVmTemplate="{StaticResource CostReportTemplate}"
 													ActualCostReportsVmTemplate="{StaticResource ActualCostReportTemplate}"/>
 	</UserControl.Resources>

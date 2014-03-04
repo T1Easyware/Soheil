@@ -42,7 +42,7 @@ namespace Soheil.Common
 
     public enum ILUO
     {
-        Zero = 0,
+        N = 0,
         I = 1,
         L = 2,
         U = 3,
@@ -155,6 +155,9 @@ namespace Soheil.Common
         Costs = 251,
         Warehouses = 252,
 		SetupTimes = 26,
+		SkillCenter = 27,
+		SkillCenterForProducts = 271,
+		SkillCenterForOperators = 272,
         ControlMenu = 3,
         ProductPlanSubMenu = 31,
 		ProductPlanTable = 311,

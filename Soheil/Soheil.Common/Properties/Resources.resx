@@ -705,4 +705,13 @@
   <data name="txtOrganization" xml:space="preserve">
     <value>سازمان</value>
   </data>
+  <data name="txtSkillCenterForOperators" xml:space="preserve">
+    <value>مرکز مهارت اپراتورها</value>
+  </data>
+  <data name="txtSkillCenterForProducts" xml:space="preserve">
+    <value>مرکز مهارت محصولات</value>
+  </data>
+  <data name="txtSkillCenter" xml:space="preserve">
+    <value>مرکز مهارت</value>
+  </data>
 </root>

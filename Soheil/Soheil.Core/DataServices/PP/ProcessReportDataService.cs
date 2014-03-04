@@ -16,7 +16,6 @@ namespace Soheil.Core.DataServices
 		public ProcessReportDataService()
 			:this(new SoheilEdmContext())
 		{
-
 		}
 		public ProcessReportDataService(SoheilEdmContext context)
 		{

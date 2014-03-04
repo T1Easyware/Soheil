@@ -68,6 +68,9 @@
     <Compile Include="ActivityGroup.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="ActivitySkill.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Block.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
@@ -105,9 +108,6 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="FPC.cs">
-      <DependentUpon>SoheilPOCO.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GeneralActivitySkill.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="Holiday.cs">
@@ -179,6 +179,9 @@
     <Compile Include="Product.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProductActivitySkill.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="ProductDefection.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
@@ -236,9 +239,6 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="Test.cs">
-      <DependentUpon>SoheilPOCO.tt</DependentUpon>
-    </Compile>
-    <Compile Include="UniqueActivitySkill.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="User.cs">

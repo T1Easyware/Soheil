@@ -97,23 +97,6 @@ namespace Soheil.Model
             }
         }
         private ICollection<SelectedMachine> _selectedMachines;
-    
-        public virtual ICollection<UniqueActivitySkill> UniqueActivitySkills
-        {
-            get
-            {
-                if (_uniqueActivitySkills == null)
-                {
-                    _uniqueActivitySkills = new FixupCollection<UniqueActivitySkill>();
-                }
-                return _uniqueActivitySkills;
-            }
-            set
-            {
-                _uniqueActivitySkills = value;
-            }
-        }
-        private ICollection<UniqueActivitySkill> _uniqueActivitySkills;
 
         #endregion
 

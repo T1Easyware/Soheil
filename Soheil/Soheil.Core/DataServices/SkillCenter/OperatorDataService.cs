@@ -48,7 +48,7 @@ namespace Soheil.Core.DataServices
         {
             if (linkType == SoheilEntityType.Activities)
             {
-                    IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active && opr.OperatorActivities.Count == 0);
+                    IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active && opr.ActivitySkills.Count == 0);
                     return new ObservableCollection<Operator>(entityList);
             }
             return GetActives();
@@ -94,17 +94,17 @@ namespace Soheil.Core.DataServices
         #endregion
 
         public event EventHandler<ModelAddedEventArgs<Operator>> OperatorAdded;
-        public event EventHandler<ModelAddedEventArgs<GeneralActivitySkill>> ActivityAdded;
+		public event EventHandler<ModelAddedEventArgs<ActivitySkill>> ActivityAdded;
         public event EventHandler<ModelRemovedEventArgs> ActivityRemoved;
 
 
-		public ObservableCollection<GeneralActivitySkill> GetActivities(int oprId)
+		public ObservableCollection<ActivitySkill> GetActivities(int oprId)
 		{
 			Operator entity = _operatorRepository.FirstOrDefault(opr => opr.Id == oprId,
 				"OperatorActivities.Operator",
 				"OperatorActivities.Activity");
-			return new ObservableCollection<GeneralActivitySkill>(
-				entity.OperatorActivities.Where(item => item.Activity.Status == (decimal)Status.Active).ToList());
+			return new ObservableCollection<ActivitySkill>(
+				entity.ActivitySkills.Where(item => item.Activity.Status == (decimal)Status.Active).ToList());
 		}
 
         public void AddActivity(int oprId, int activityId)
@@ -112,22 +112,22 @@ namespace Soheil.Core.DataServices
                 var operatorRepository = new Repository<Activity>(context);
                 Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
                 Activity newActivity = operatorRepository.Single(opr => opr.Id == activityId);
-                if (currentOperator.OperatorActivities.Any(oprActivity => oprActivity.Operator.Id == oprId && oprActivity.Activity.Id == activityId))
+				if (currentOperator.ActivitySkills.Any(oprActivity => oprActivity.Operator.Id == oprId && oprActivity.Activity.Id == activityId))
                 {
                     return;
                 }
-                var newGeneralActivitySkill = new GeneralActivitySkill { Activity = newActivity, Operator = currentOperator };
-				currentOperator.OperatorActivities.Add(newGeneralActivitySkill);
+                var newGeneralActivitySkill = new ActivitySkill { Activity = newActivity, Operator = currentOperator };
+				currentOperator.ActivitySkills.Add(newGeneralActivitySkill);
                 context.Commit();
-                ActivityAdded(this, new ModelAddedEventArgs<GeneralActivitySkill>(newGeneralActivitySkill));
+                ActivityAdded(this, new ModelAddedEventArgs<ActivitySkill>(newGeneralActivitySkill));
         }
 
         public void RemoveActivity(int oprId, int activityId)
         {
-                var oprActivityRepository = new Repository<GeneralActivitySkill>(context);
+                var oprActivityRepository = new Repository<ActivitySkill>(context);
                 Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
-                GeneralActivitySkill currentGeneralActivitySkill =
-					currentOperator.OperatorActivities.First(
+                ActivitySkill currentGeneralActivitySkill =
+					currentOperator.ActivitySkills.First(
                         oprActivity =>
                         oprActivity.Operator.Id == oprId && oprActivity.Id == activityId);
                 int id = currentGeneralActivitySkill.Id;

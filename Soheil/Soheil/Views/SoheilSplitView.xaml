@@ -3390,26 +3390,26 @@
                 </DockPanel>
             </GroupBox>
         </DataTemplate>
-        <DataTemplate x:Key="PartWarehouseGroupTemplate" DataType="ViewModels:PartWarehouseGroupVM">
-            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+		<DataTemplate x:Key="PartWarehouseGroupTemplate" DataType="ViewModels:PartWarehouseGroupVM">
+			<GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
                       Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
-                <I:Interaction.Behaviors>
-                    <Behavior:ValidationExceptionBehavior />
-                </I:Interaction.Behaviors>
-                <DockPanel FlowDirection="{Loc enumDirection}">
-                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
-                    <DockPanel DockPanel.Dock="Top">
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
-                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
-                    </DockPanel>
-                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
-                    <Canvas DockPanel.Dock="Bottom" />
-                </DockPanel>
-            </GroupBox>
-        </DataTemplate>
+				<I:Interaction.Behaviors>
+					<Behavior:ValidationExceptionBehavior />
+				</I:Interaction.Behaviors>
+				<DockPanel FlowDirection="{Loc enumDirection}">
+					<Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
+					<DockPanel DockPanel.Dock="Top">
+						<ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
+						<ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+						<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+					</DockPanel>
+					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+					<Canvas DockPanel.Dock="Bottom" />
+				</DockPanel>
+			</GroupBox>
+		</DataTemplate>
 
-        <!--..........................................................................................................-->
+		<!--..........................................................................................................-->
 
         <!-- Template Selectors -->
         <TemplateSelectors:SplitViewSubContentSelector x:Key="SubContentTemplateSelector"

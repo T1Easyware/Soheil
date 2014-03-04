@@ -12,7 +12,9 @@ namespace Soheil.TemplateSelectors
         public DataTemplate ActualCostReportsVmTemplate { get; set; }
 		public DataTemplate PPTableVmTemplate { get; set; }
 		public DataTemplate SetupTimesVmTemplate { get; set; }
+		public DataTemplate SkillCenterVmTemplate { get; set; }
 
+		//!@#$
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             if (item is IndicesVm)
@@ -25,6 +27,8 @@ namespace Soheil.TemplateSelectors
 				return PPTableVmTemplate;
             if (item is Core.ViewModels.SetupTime.SetupTimeTableVm)
                 return SetupTimesVmTemplate;
+			if (item is Core.ViewModels.SkillCenter.SkillCenterVm)
+				return SkillCenterVmTemplate;
             return null;
         }
     }

@@ -177,7 +177,7 @@ namespace Soheil.Model
 		//}
 	}
 
-	public partial class GeneralActivitySkill
+	public partial class ActivitySkill
 	{
 		public ILUO Iluo
 		{
@@ -185,7 +185,7 @@ namespace Soheil.Model
 			set { IluoNr = (byte)value; }
 		}
 	}
-	public partial class UniqueActivitySkill
+	public partial class ProductActivitySkill
 	{
 		public ILUO Iluo
 		{
@@ -303,10 +303,6 @@ namespace Soheil.Model
 		//    get { return (Status)Common.Status; }
 		//    set { Common.Status = (byte)value; }
 		//}
-	}
-
-	public partial class GeneralActivitySkill
-	{
 	}
 
 	public partial class State

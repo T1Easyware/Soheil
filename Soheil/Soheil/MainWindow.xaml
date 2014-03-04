@@ -78,7 +78,14 @@
                         IsEnabled="{Binding Path=CanAddTab,
                                             ElementName=chrometabs}"
                         Tag="26" />
-			</WrapPanel>
+                <Button Background="Transparent"
+                        Style="{StaticResource SoheilMenuButton}"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtSkillCenter}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        Tag="27" />
+            </WrapPanel>
         </DataTemplate>
         <DataTemplate x:Key="controlsTemplate">
             <WrapPanel Grid.Column="2" FlowDirection="RightToLeft">
@@ -199,7 +206,7 @@
                                       Content="{Loc txtOptions}"
                                       Tag="5" />
                     </WrapPanel>
-                    <GridSplitter Grid.Column="5"
+                    <GridSplitter Grid.Column="4"
                                   Width="3"
                                   Height="25"
                                   Margin="0,-10,0,0"
@@ -257,23 +264,23 @@
 									</MenuItem>
 								</MenuItem>
                                 <MenuItem Header="{Loc txtDefinitions}">
-									<MenuItem Header="{Loc txtProducts}">
+                                    <MenuItem Header="{Loc txtProducts}">
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtProducts}" Tag="211" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtReworks}" Tag="212" />
                                     </MenuItem>
-									<MenuItem Header="{Loc txtDiagnosis}">
+                                    <MenuItem Header="{Loc txtDiagnosis}">
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtDefections}" Tag="221" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtRoots}" Tag="222" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtActionPlans}" Tag="223" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtCauses}" Tag="224" />
                                     </MenuItem>
-                                        <MenuItem Header="{Loc txtFPC}">
+                                    <MenuItem Header="{Loc txtFPC}">
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtFPC}" Tag="231" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtStations}" Tag="232" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtMachines}" Tag="233" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtActivities}" Tag="234" />
-									</MenuItem>
-                                        <MenuItem Header="{Loc txtOperators}">
+                                    </MenuItem>
+                                    <MenuItem Header="{Loc txtOperators}">
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtOperators}" Tag="241" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtGenSkills}" Tag="242" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSpeSkills}" Tag="243" />
@@ -282,9 +289,10 @@
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtCosts}" Tag="251" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtPartWarehouses}" Tag="252" />
                                     </MenuItem>
-									<MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSetupTimes}" Tag="26" />
+                                    <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSetupTimes}" Tag="26" />
+									<MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSkillCenter}" Tag="27" />
 								</MenuItem>
-								<MenuItem Header="{Loc txtProductControl}">
+                                <MenuItem Header="{Loc txtProductControl}">
 									<MenuItem Header="{Loc txtProductPlan}" Click="HandleAddTabAndSelect" Tag="311"/>
                                     <MenuItem Header="{Loc txtPerformance}" />
                                     <MenuItem Header="{Loc txtIndices}" Click="HandleAddTabAndSelect" Tag="33"/>

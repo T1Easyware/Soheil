@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace Soheil.Model
 {
-    public partial class UniqueActivitySkill
+    public partial class ProductActivitySkill
     {
         #region Primitive Properties
     
@@ -54,68 +54,68 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual Operator Operator
+        public virtual ProductRework ProductRework
         {
-            get { return _operator; }
+            get { return _productRework; }
             set
             {
-                if (!ReferenceEquals(_operator, value))
+                if (!ReferenceEquals(_productRework, value))
                 {
-                    var previousValue = _operator;
-                    _operator = value;
-                    FixupOperator(previousValue);
+                    var previousValue = _productRework;
+                    _productRework = value;
+                    FixupProductRework(previousValue);
                 }
             }
         }
-        private Operator _operator;
+        private ProductRework _productRework;
     
-        public virtual StateStationActivity StateStationActivity
+        public virtual ActivitySkill ActivitySkill
         {
-            get { return _stateStationActivity; }
+            get { return _activitySkill; }
             set
             {
-                if (!ReferenceEquals(_stateStationActivity, value))
+                if (!ReferenceEquals(_activitySkill, value))
                 {
-                    var previousValue = _stateStationActivity;
-                    _stateStationActivity = value;
-                    FixupStateStationActivity(previousValue);
+                    var previousValue = _activitySkill;
+                    _activitySkill = value;
+                    FixupActivitySkill(previousValue);
                 }
             }
         }
-        private StateStationActivity _stateStationActivity;
+        private ActivitySkill _activitySkill;
 
         #endregion
 
         #region Association Fixup
     
-        private void FixupOperator(Operator previousValue)
+        private void FixupProductRework(ProductRework previousValue)
         {
-            if (previousValue != null && previousValue.UniqueActivitySkills.Contains(this))
+            if (previousValue != null && previousValue.ProductActivitySkills.Contains(this))
             {
-                previousValue.UniqueActivitySkills.Remove(this);
+                previousValue.ProductActivitySkills.Remove(this);
             }
     
-            if (Operator != null)
+            if (ProductRework != null)
             {
-                if (!Operator.UniqueActivitySkills.Contains(this))
+                if (!ProductRework.ProductActivitySkills.Contains(this))
                 {
-                    Operator.UniqueActivitySkills.Add(this);
+                    ProductRework.ProductActivitySkills.Add(this);
                 }
             }
         }
     
-        private void FixupStateStationActivity(StateStationActivity previousValue)
+        private void FixupActivitySkill(ActivitySkill previousValue)
         {
-            if (previousValue != null && previousValue.UniqueActivitySkills.Contains(this))
+            if (previousValue != null && previousValue.ProductActivitySkills.Contains(this))
             {
-                previousValue.UniqueActivitySkills.Remove(this);
+                previousValue.ProductActivitySkills.Remove(this);
             }
     
-            if (StateStationActivity != null)
+            if (ActivitySkill != null)
             {
-                if (!StateStationActivity.UniqueActivitySkills.Contains(this))
+                if (!ActivitySkill.ProductActivitySkills.Contains(this))
                 {
-                    StateStationActivity.UniqueActivitySkills.Add(this);
+                    ActivitySkill.ProductActivitySkills.Add(this);
                 }
             }
         }

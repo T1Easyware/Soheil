@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace Soheil.Model
 {
-    public partial class GeneralActivitySkill
+    public partial class ActivitySkill
     {
         #region Primitive Properties
     
@@ -83,6 +83,38 @@ namespace Soheil.Model
             }
         }
         private Activity _activity;
+    
+        public virtual ICollection<ProductActivitySkill> ProductActivitySkills
+        {
+            get
+            {
+                if (_productActivitySkills == null)
+                {
+                    var newCollection = new FixupCollection<ProductActivitySkill>();
+                    newCollection.CollectionChanged += FixupProductActivitySkills;
+                    _productActivitySkills = newCollection;
+                }
+                return _productActivitySkills;
+            }
+            set
+            {
+                if (!ReferenceEquals(_productActivitySkills, value))
+                {
+                    var previousValue = _productActivitySkills as FixupCollection<ProductActivitySkill>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupProductActivitySkills;
+                    }
+                    _productActivitySkills = value;
+                    var newValue = value as FixupCollection<ProductActivitySkill>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupProductActivitySkills;
+                    }
+                }
+            }
+        }
+        private ICollection<ProductActivitySkill> _productActivitySkills;
 
         #endregion
 
@@ -90,32 +122,54 @@ namespace Soheil.Model
     
         private void FixupOperator(Operator previousValue)
         {
-            if (previousValue != null && previousValue.OperatorActivities.Contains(this))
+            if (previousValue != null && previousValue.ActivitySkills.Contains(this))
             {
-                previousValue.OperatorActivities.Remove(this);
+                previousValue.ActivitySkills.Remove(this);
             }
     
             if (Operator != null)
             {
-                if (!Operator.OperatorActivities.Contains(this))
+                if (!Operator.ActivitySkills.Contains(this))
                 {
-                    Operator.OperatorActivities.Add(this);
+                    Operator.ActivitySkills.Add(this);
                 }
             }
         }
     
         private void FixupActivity(Activity previousValue)
         {
-            if (previousValue != null && previousValue.OperatorActivities.Contains(this))
+            if (previousValue != null && previousValue.ActivitySkills.Contains(this))
             {
-                previousValue.OperatorActivities.Remove(this);
+                previousValue.ActivitySkills.Remove(this);
             }
     
             if (Activity != null)
             {
-                if (!Activity.OperatorActivities.Contains(this))
+                if (!Activity.ActivitySkills.Contains(this))
                 {
-                    Activity.OperatorActivities.Add(this);
+                    Activity.ActivitySkills.Add(this);
+                }
+            }
+        }
+    
+        private void FixupProductActivitySkills(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ProductActivitySkill item in e.NewItems)
+                {
+                    item.ActivitySkill = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (ProductActivitySkill item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.ActivitySkill, this))
+                    {
+                        item.ActivitySkill = null;
+                    }
                 }
             }
         }

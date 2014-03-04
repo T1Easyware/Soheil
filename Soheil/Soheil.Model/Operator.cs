@@ -86,38 +86,6 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual ICollection<GeneralActivitySkill> OperatorActivities
-        {
-            get
-            {
-                if (_operatorActivities == null)
-                {
-                    var newCollection = new FixupCollection<GeneralActivitySkill>();
-                    newCollection.CollectionChanged += FixupOperatorActivities;
-                    _operatorActivities = newCollection;
-                }
-                return _operatorActivities;
-            }
-            set
-            {
-                if (!ReferenceEquals(_operatorActivities, value))
-                {
-                    var previousValue = _operatorActivities as FixupCollection<GeneralActivitySkill>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupOperatorActivities;
-                    }
-                    _operatorActivities = value;
-                    var newValue = value as FixupCollection<GeneralActivitySkill>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupOperatorActivities;
-                    }
-                }
-            }
-        }
-        private ICollection<GeneralActivitySkill> _operatorActivities;
-    
         public virtual ICollection<ProcessOperator> ProcessOperators
         {
             get
@@ -293,38 +261,6 @@ namespace Soheil.Model
         }
         private PersonalSkill _personalSkill;
     
-        public virtual ICollection<UniqueActivitySkill> UniqueActivitySkills
-        {
-            get
-            {
-                if (_uniqueActivitySkills == null)
-                {
-                    var newCollection = new FixupCollection<UniqueActivitySkill>();
-                    newCollection.CollectionChanged += FixupUniqueActivitySkills;
-                    _uniqueActivitySkills = newCollection;
-                }
-                return _uniqueActivitySkills;
-            }
-            set
-            {
-                if (!ReferenceEquals(_uniqueActivitySkills, value))
-                {
-                    var previousValue = _uniqueActivitySkills as FixupCollection<UniqueActivitySkill>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupUniqueActivitySkills;
-                    }
-                    _uniqueActivitySkills = value;
-                    var newValue = value as FixupCollection<UniqueActivitySkill>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupUniqueActivitySkills;
-                    }
-                }
-            }
-        }
-        private ICollection<UniqueActivitySkill> _uniqueActivitySkills;
-    
         public virtual ICollection<OperatorDefectionReport> OperatorDefectionReports
         {
             get
@@ -356,6 +292,38 @@ namespace Soheil.Model
             }
         }
         private ICollection<OperatorDefectionReport> _operatorDefectionReports;
+    
+        public virtual ICollection<ActivitySkill> ActivitySkills
+        {
+            get
+            {
+                if (_activitySkills == null)
+                {
+                    var newCollection = new FixupCollection<ActivitySkill>();
+                    newCollection.CollectionChanged += FixupActivitySkills;
+                    _activitySkills = newCollection;
+                }
+                return _activitySkills;
+            }
+            set
+            {
+                if (!ReferenceEquals(_activitySkills, value))
+                {
+                    var previousValue = _activitySkills as FixupCollection<ActivitySkill>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupActivitySkills;
+                    }
+                    _activitySkills = value;
+                    var newValue = value as FixupCollection<ActivitySkill>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupActivitySkills;
+                    }
+                }
+            }
+        }
+        private ICollection<ActivitySkill> _activitySkills;
 
         #endregion
 
@@ -371,28 +339,6 @@ namespace Soheil.Model
             if (PersonalSkill != null)
             {
                 PersonalSkill.Operator = this;
-            }
-        }
-    
-        private void FixupOperatorActivities(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (GeneralActivitySkill item in e.NewItems)
-                {
-                    item.Operator = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (GeneralActivitySkill item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Operator, this))
-                    {
-                        item.Operator = null;
-                    }
-                }
             }
         }
     
@@ -506,28 +452,6 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupUniqueActivitySkills(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (UniqueActivitySkill item in e.NewItems)
-                {
-                    item.Operator = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (UniqueActivitySkill item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Operator, this))
-                    {
-                        item.Operator = null;
-                    }
-                }
-            }
-        }
-    
         private void FixupOperatorDefectionReports(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -541,6 +465,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (OperatorDefectionReport item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Operator, this))
+                    {
+                        item.Operator = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupActivitySkills(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ActivitySkill item in e.NewItems)
+                {
+                    item.Operator = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (ActivitySkill item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Operator, this))
                     {

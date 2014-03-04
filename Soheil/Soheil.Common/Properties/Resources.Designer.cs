@@ -1591,6 +1591,33 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to مرکز مهارت.
+        /// </summary>
+        public static string txtSkillCenter {
+            get {
+                return ResourceManager.GetString("txtSkillCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مرکز مهارت اپراتورها.
+        /// </summary>
+        public static string txtSkillCenterForOperators {
+            get {
+                return ResourceManager.GetString("txtSkillCenterForOperators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مرکز مهارت محصولات.
+        /// </summary>
+        public static string txtSkillCenterForProducts {
+            get {
+                return ResourceManager.GetString("txtSkillCenterForProducts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to سهیل.
         /// </summary>
         public static string txtSoheil {

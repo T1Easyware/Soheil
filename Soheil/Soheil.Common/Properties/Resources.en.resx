@@ -700,4 +700,13 @@
   <data name="txtOrganization" xml:space="preserve">
     <value>Organization</value>
   </data>
+  <data name="txtSkillCenterForOperators" xml:space="preserve">
+    <value>Operators Skill Center</value>
+  </data>
+  <data name="txtSkillCenterForProducts" xml:space="preserve">
+    <value>Products Skill Center</value>
+  </data>
+  <data name="txtSkillCenter" xml:space="preserve">
+    <value>Skill Center</value>
+  </data>
 </root>

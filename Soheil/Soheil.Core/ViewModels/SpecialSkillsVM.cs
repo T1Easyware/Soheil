@@ -35,7 +35,7 @@ namespace Soheil.Core.ViewModels
         /// <value>
         /// The data service.
         /// </value>
-        public SpecialSkillDataService SpecialSkillDataService { get; set; }
+        public ProductActivitySkillDataService SpecialSkillDataService { get; set; }
         #endregion
 
         #region Methods
@@ -50,7 +50,7 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            SpecialSkillDataService = new SpecialSkillDataService();
+            SpecialSkillDataService = new ProductActivitySkillDataService();
             SpecialSkillDataService.SpecialSkillAdded += OnSpecialSkillAdded;
 
             ColumnHeaders = new List<ColumnInfo> 
@@ -74,7 +74,7 @@ namespace Soheil.Core.ViewModels
             }
         }
 
-        private void OnSpecialSkillAdded(object sender, ModelAddedEventArgs<GeneralActivitySkill> e)
+		private void OnSpecialSkillAdded(object sender, ModelAddedEventArgs<ProductActivitySkill> e)
         {
             var newSpecialSkillVm = new SpecialSkillVM(e.NewModel, Access, SpecialSkillDataService);
             Items.AddNewItem(newSpecialSkillVm);
