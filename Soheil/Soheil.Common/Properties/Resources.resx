@@ -714,4 +714,10 @@
   <data name="txtSkillCenter" xml:space="preserve">
     <value>مرکز مهارت</value>
   </data>
+  <data name="txtActivityGroups" xml:space="preserve">
+    <value>گروههای فعالیت</value>
+  </data>
+  <data name="txtClose" xml:space="preserve">
+    <value>بستن</value>
+  </data>
 </root>

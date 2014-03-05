@@ -1,4 +1,5 @@
 ﻿using Soheil.Common;
+using Soheil.Common.SoheilException;
 using Soheil.Core.Base;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
@@ -43,12 +44,22 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		}
 		public static readonly DependencyProperty IsLoadingProperty =
 			DependencyProperty.Register("IsLoading", typeof(bool), typeof(SkillCenterVm), new UIPropertyMetadata(true));
+		//Message Dependency Property
+		public EmbeddedException Message
+		{
+			get { return (EmbeddedException)GetValue(MessageProperty); }
+			set { SetValue(MessageProperty, value); }
+		}
+		public static readonly DependencyProperty MessageProperty =
+			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(SkillCenterVm), new UIPropertyMetadata(null));
+
 		#endregion
 
 		#region Ctor Init Load
 		public SkillCenterVm(AccessType access)
 		{
 			Access = access;
+			Message = new EmbeddedException();
 			InitializeData();
 			initializeCommands();
 		}
@@ -85,6 +96,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 					Dispatcher.Invoke(() => 
 					{
 						Content = new SkillCenterContentVm(node);
+						Content.ErrorOccured += msg => Message.AddEmbeddedException(msg);
 						IsLoading = false;
 					});
 				}
@@ -97,6 +109,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		void initializeCommands()
 		{
 			RefreshAllCommand = new Commands.Command(o => { });
+			CloseMessageCommand = new Commands.Command(o => Message.ResetEmbeddedException());
 		}
 		//RefreshAllCommand Dependency Property
 		public Commands.Command RefreshAllCommand
@@ -106,6 +119,16 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		}
 		public static readonly DependencyProperty RefreshAllCommandProperty =
 			DependencyProperty.Register("RefreshAllCommand", typeof(Commands.Command), typeof(SkillCenterVm), new UIPropertyMetadata(null)); 
+
+				//CloseMessageCommand Dependency Property
+		public Commands.Command CloseMessageCommand
+		{
+			get { return (Commands.Command)GetValue(CloseMessageCommandProperty); }
+			set { SetValue(CloseMessageCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CloseMessageCommandProperty =
+			DependencyProperty.Register("CloseMessageCommand", typeof(Commands.Command), typeof(SkillCenterVm), new UIPropertyMetadata(null));
+
 		#endregion
 	}
 }

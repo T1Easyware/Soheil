@@ -709,4 +709,10 @@
   <data name="txtSkillCenter" xml:space="preserve">
     <value>Skill Center</value>
   </data>
+  <data name="txtActivityGroups" xml:space="preserve">
+    <value>Activity Groups</value>
+  </data>
+  <data name="txtClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
 </root>

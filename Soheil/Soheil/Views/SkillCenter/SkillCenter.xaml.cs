@@ -29,6 +29,31 @@ namespace Soheil.Views.SkillCenter
 		{
 			get { return DataContext as SkillCenterVm; }
 			set { DataContext = value; }
+		}
+
+
+		bool _suppressScroll = false;
+		private void VerticalScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			_suppressScroll = true;
+			scrollBar.ScrollToVerticalOffset(e.VerticalOffset);
+			_suppressScroll = false;
+		}
+
+		private void HorizontalScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			_suppressScroll = true;
+			scrollBar.ScrollToHorizontalOffset(e.HorizontalOffset);
+			_suppressScroll = false;
+		}
+
+		private void scrollBar_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			if(!_suppressScroll)
+			{
+				scrollBarV.ScrollToVerticalOffset(e.VerticalOffset);
+				scrollBarH.ScrollToHorizontalOffset(e.HorizontalOffset);
+			}
 		} 
 	}
 }

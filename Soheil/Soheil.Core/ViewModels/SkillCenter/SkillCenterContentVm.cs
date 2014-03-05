@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soheil.Common.SoheilException;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,8 +14,18 @@ namespace Soheil.Core.ViewModels.SkillCenter
 
 		TargetMode _targetMode;
 
+		public event Action<string> ErrorOccured;
+
 		//can be either productGroup, product, productRework or All(General)
-		public BaseTreeItemVm SelectedItem { get; protected set; }
+		//SelectedItem Dependency Property
+		public BaseTreeItemVm SelectedItem
+		{
+			get { return (BaseTreeItemVm)GetValue(SelectedItemProperty); }
+			set { SetValue(SelectedItemProperty, value); }
+		}
+		public static readonly DependencyProperty SelectedItemProperty =
+			DependencyProperty.Register("SelectedItem", typeof(BaseTreeItemVm), typeof(SkillCenterContentVm), new UIPropertyMetadata(null));
+
 
 		#region DataServices
 		DataServices.OperatorDataService _operatorDataService;
@@ -73,49 +84,98 @@ namespace Soheil.Core.ViewModels.SkillCenter
 
 			//Init Data
 
-			var rows = _operatorDataService.GetActives().Select(operatorModel => new OperatorRowVm(operatorModel));
-			var columns = _aDataService.GetActives().Select(activityModel => new ActivityColumnVm(activityModel));
+			//add column groups
 			var groups = _agDataService.GetActives().Select(activityGroupModel => new ActivityGroupColumnVm(activityGroupModel));
 			foreach (var grp in groups) Groups.Add(grp);
+			//add columns
+			var columns = _aDataService.GetActives().Select(activityModel => new ActivityColumnVm(activityModel));
 			foreach (var col in columns) Columns.Add(col);
-			foreach (var row in rows)
+			//add cells
+			var rows = _operatorDataService.GetActives().Select(operatorModel => new OperatorRowVm(operatorModel));
+			switch (_targetMode)
 			{
-				switch (_targetMode)
-				{
-					case TargetMode.General:
+				case TargetMode.General:
+					foreach (var row in rows)
+					{
+
 						foreach (var act in columns)
 						{
 							var activitySkill = _asDataService.FindOrAdd(row.Id, act.Id);
-							row.Cells.Add(new ActivitySkillVm(activitySkill));
+							var skill = new ActivitySkillVm(activitySkill);
+							skill.Saved += skill_Saved;
+							row.Cells.Add(skill);
 						}
-						break;
-					case TargetMode.ProductRework:
+						Rows.Add(row);
+					}
+					break;
+				case TargetMode.ProductRework:
+					foreach (var row in rows)
+					{
 						foreach (var act in columns)
 						{
 							var productActivitySkill = _pasDataService.FindOrAdd(SelectedItem.Id, row.Id, act.Id);
-							row.Cells.Add(new ProductReworkActivitySkillVm(productActivitySkill));
+							var skill = new ProductReworkActivitySkillVm(productActivitySkill);
+							skill.Saved += skill_Saved;
+							row.Cells.Add(skill);
 						}
-						break;
-					case TargetMode.Product:
+						Rows.Add(row);
+					}
+					break;
+				case TargetMode.Product:
+					foreach (var row in rows)
+					{
 						foreach (var act in columns)
 						{
 							//var productActivitySkill = _pasDataService.FindOrAdd(row.Id, act.Id);
-							row.Cells.Add(new ProductActivitySkillVm());
+							var skill = new ProductActivitySkillVm();
+							skill.Saved += skill_Saved;
+							row.Cells.Add(skill);
 						}
-						break;
-					case TargetMode.ProductGroup:
+						Rows.Add(row);
+					}
+					break;
+				case TargetMode.ProductGroup:
+					foreach (var row in rows)
+					{
 						foreach (var act in columns)
 						{
 							//var activitySkill = _asDataService.FindOrAdd(row.Id, act.Id);
-							row.Cells.Add(new ProductGroupActivitySkillVm());
+							var skill = new ProductGroupActivitySkillVm();
+							skill.Saved += skill_Saved;
+							row.Cells.Add(skill);
 						}
-						break;
-					default:
-						break;
-				}
-				Rows.Add(row);
+						Rows.Add(row);
+					}
+					break;
+				default:
+					break;
 			}
-		} 
+		}
+
+		void skill_Saved(BaseSkillVm skill)
+		{
+			if (skill == null)
+			{
+				if (ErrorOccured!= null)
+					ErrorOccured("Can't Save. refresh the page.");
+			}
+			else if (skill is ActivitySkillVm)
+			{
+				(skill as ActivitySkillVm).Model.Iluo = skill.Data;
+				_asDataService.UpdateModel((skill as ActivitySkillVm).Model);
+			}
+			else if (skill is ProductReworkActivitySkillVm)
+			{
+				(skill as ProductReworkActivitySkillVm).Model.Iluo = skill.Data;
+				_pasDataService.UpdateModel((skill as ProductReworkActivitySkillVm).Model);
+			}
+			else
+			{
+				if (ErrorOccured != null)
+					ErrorOccured("Can't Save in this mode.");
+			}
+		}
+
 		#endregion
 	}
 }

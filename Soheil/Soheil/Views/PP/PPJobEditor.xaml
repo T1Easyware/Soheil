@@ -107,7 +107,7 @@
 						<StackPanel DockPanel.Dock="Bottom">
 							<DockPanel>
 								<TextBlock Foreground="Gray" VerticalAlignment="Center" DockPanel.Dock="Left" Text="اهمیت"/>
-								<TextBlock VerticalAlignment="Center" Foreground="{StaticResource HoverBrush}" Text="مهم" FontWeight="Bold" DockPanel.Dock="Right" Opacity="{Binding Weight, Converter={StaticResource doubleMultiplier}, ConverterParameter=0.1}"/>
+								<TextBlock VerticalAlignment="Center" Foreground="{StaticResource HoverBrush}" Text="مهم" FontWeight="Bold" DockPanel.Dock="Right" Opacity="{Binding Weight, Converter={StaticResource floatMultiplier}, ConverterParameter=0.1}"/>
 								<Slider Margin="3" VerticalAlignment="Center" Minimum="0.1" Maximum="10" TickFrequency="2.5" TickPlacement="TopLeft" Value="{Binding Weight}"/>
 							</DockPanel>
 							<GroupBox Foreground="Gray" Header="تاخیر هر مرحله FPC" Margin="1,2">

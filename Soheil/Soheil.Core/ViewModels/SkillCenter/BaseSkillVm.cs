@@ -9,7 +9,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 {
 	public abstract class BaseSkillVm : DependencyObject
 	{
-		public event Action Saved;
+		public event Action<BaseSkillVm> Saved;
 
 		protected BaseSkillVm()
 		{
@@ -29,6 +29,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		{
 			ChangeCommand = new Commands.Command(value =>
 			{
+				var previousData = Data;
 				if (value == null) Data = ILUO.N;
 				if (value is ILUO) Data = (ILUO)value;
 				else if (value is string)
@@ -45,7 +46,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 						default: Data = ILUO.N; break;
 					}
 				}
-				if (Saved != null) Saved();
+				if (previousData != Data && Saved != null) Saved(this);
 			});
 		}
 		//ChangeCommand Dependency Property

@@ -673,6 +673,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to گروههای فعالیت.
+        /// </summary>
+        public static string txtActivityGroups {
+            get {
+                return ResourceManager.GetString("txtActivityGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to گزارش هزینه های تمام شده.
         /// </summary>
         public static string txtActualCostReports {
@@ -741,6 +750,15 @@ namespace Soheil.Common.Properties {
         public static string txtCDate {
             get {
                 return ResourceManager.GetString("txtCDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to بستن.
+        /// </summary>
+        public static string txtClose {
+            get {
+                return ResourceManager.GetString("txtClose", resourceCulture);
             }
         }
         

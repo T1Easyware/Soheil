@@ -648,7 +648,7 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
-	public class FloatMultiplier : IMultiValueConverter
+	public class FloatMultiplier2 : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
@@ -692,15 +692,15 @@ namespace Soheil.Controls.Converters.PP
 		}
 	}
 
-	public class DoubleMultiplier : IValueConverter
+	public class FloatMultiplier : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value == DependencyProperty.UnsetValue) return 0f;
 			float val1;
 			float val2;
-			if (!(float.TryParse(value.ToString(), out val1))
-				&& !(float.TryParse(parameter.ToString(), out val2)))
+			if ((float.TryParse(value.ToString(), out val1))
+				&& (float.TryParse(parameter.ToString(), out val2)))
 				return (val1 * val2);
 			else return 0f;
 		}

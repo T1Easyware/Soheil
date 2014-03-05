@@ -33,6 +33,7 @@ namespace Soheil.Common.SoheilException
 		}
 		public static readonly DependencyProperty FullExceptionTextProperty =
 			DependencyProperty.Register("FullExceptionText", typeof(string), typeof(EmbeddedException), new UIPropertyMetadata(null));
+
 		public void AddEmbeddedException(string text) {
 			HasException = true;
 			MainExceptionText = text;

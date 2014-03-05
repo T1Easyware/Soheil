@@ -20,9 +20,9 @@
     <ppconv:IsEqualToInvisibilityConverter2 x:Key="isEqualToInvisibilityConverter2"/>
     <ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
 
-    <ppconv:FloatMultiplier x:Key="floatMultiplier"/>
-    <ppconv:DoubleMultiplier x:Key="doubleMultiplier"/>
-    <ppconv:DoubleMultiplier2 x:Key="doubleMultiplier2"/>
+	<ppconv:FloatMultiplier x:Key="floatMultiplier"/>
+	<ppconv:FloatMultiplier x:Key="floatMultiplier2"/>
+	<ppconv:DoubleMultiplier2 x:Key="doubleMultiplier2"/>
     <ppconv:IntX7Converter x:Key="intX7Converter"/>
     <ppconv:DoubleMultiplierToThickness x:Key="doubleMultiplierToThickness"/>
     <ppconv:ACrossBDividebByC x:Key="aCrossBDividebByC"/>
