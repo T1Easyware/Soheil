@@ -1534,11 +1534,9 @@
 													<TextBlock Text="{Binding Name}" HorizontalAlignment="Center"/>
 													<ToggleButton Grid.Row="1" IsChecked="{Binding IsWeekStart}" Opacity="0" x:Name="isWeekStartButton"
 																HorizontalAlignment="Stretch" VerticalAlignment="Center">
-														<Image Source="/Images/Fpc/notdefault.png" x:Name="isWeekStartButtonImage" Opacity="0.8"
-															HorizontalAlignment="Center" VerticalAlignment="Center" Width="16"/>
+														<Image Style="{StaticResource NotDefaultImage}" x:Name="isWeekStartButtonImage" Opacity="0.8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 													</ToggleButton>
-													<Image Grid.Row="1" Source="/Images/Fpc/default.png" x:Name="isWeekStartImage" Opacity="0"
-														HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" IsHitTestVisible="False"/>
+													<Image Grid.Row="1" Style="{StaticResource DefaultImage}" Width="18" x:Name="isWeekStartImage" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
 													<ComboBox Grid.Row="2" VerticalAlignment="Center"
 																Background="{Binding SelectedDayStateVm.Color, Converter={StaticResource colorFixer}}"
 															ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.WorkDays}"
@@ -1598,7 +1596,7 @@
 									<Button Margin="2" Content="-" Command="{Binding CurrentContent.AskForDecreaseNumberOfShifts}"/>
 									<Button Margin="2" Command="{Binding CurrentContent.DecreaseNumberOfShifts}" Background="ForestGreen"
 											Visibility="{Binding CurrentContent.IsPrototypeChangeAskVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-										<Image Source="/Images/Fpc/Save16.png" Width="16"/>
+										<Image Style="{StaticResource Save16Image}"/>
 									</Button>
 								</Grid>
 								<Button Margin="2" Content="+" DockPanel.Dock="Right" Width="40" Command="{Binding CurrentContent.IncreaseNumberOfShifts}"/>

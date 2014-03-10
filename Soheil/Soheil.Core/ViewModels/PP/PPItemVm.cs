@@ -11,6 +11,12 @@ using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.PP
 {
+	/// <summary>
+	/// An abstract class suitable for any kind of Item that can (directly/indirectly) reside inside PPTable
+	/// <para>
+	/// <example>Example: BlockVm, PPTaskVm, NPTVm</example>
+	/// </para>
+	/// </summary>
 	public abstract class PPItemVm : ViewModelBase
 	{
 		protected PPItemVm() { Message = new EmbeddedException(); }

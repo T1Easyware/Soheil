@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="Soheil.Views.PP.JobList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"
+			xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="900">
+	<Grid>
+		<Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
+			<DockPanel>
+				<StackPanel DockPanel.Dock="Left">
+					<UniformGrid Rows="3" Columns="2">
+						<TextBlock Text="{Loc txtStartDate}" Foreground="Silver" VerticalAlignment="Center" Margin="3"/>
+						<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+						<TextBlock Text="{Loc txtEndDate}" Foreground="Silver" VerticalAlignment="Center" Margin="3"/>
+						<cal:PersianDatePicker SelectedDate="{Binding EndDate}"/>
+						<ToggleButton IsChecked="{Binding ByDefinition}" ToolTip="{Loc ttJobListByDefinition}">
+							<Image Style="{StaticResource JobListByDefinitionImage}"/>
+						</ToggleButton>
+						<ToggleButton IsChecked="{Binding ByDefinition, Converter={StaticResource inverter}}" ToolTip="{Loc ttJobListByTasks}">
+							<Image Style="{StaticResource JobListByTasksImage}"/>
+						</ToggleButton>
+					</UniformGrid>
+					<Button Content="{Loc txtSearch}" Command="{Binding SearchCommand}"/>
+				</StackPanel>
+				<DataGrid ItemsSource="{Binding Jobs}" VerticalAlignment="Top" HorizontalAlignment="Stretch" AutoGenerateColumns="False" CellEditEnding="PPTableJobListDataGrid_CellEditEnding" SelectedItem="{Binding SelectedJob}">
+					<DataGrid.Columns>
+						<DataGridTemplateColumn Header="{Loc txtProduct}">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<DockPanel>
+										<Grid DockPanel.Dock="Left" Margin="1">
+											<Rectangle Fill="{Binding ProductRework.Product.Color, Converter={StaticResource colorFixer}}" Width="20" Height="24"/>
+											<Image Style="{StaticResource ReworkImage}" Margin="0,2" Visibility="{Binding ProductRework.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+										</Grid>
+										<WrapPanel DockPanel.Dock="Top">
+											<TextBlock Text="{Binding ProductRework.Product.Code}"/>
+											<TextBlock Text="{Binding ProductRework.Product.Name}" Foreground="DarkGray" FontSize="10"/>
+										</WrapPanel>
+										<WrapPanel>
+											<TextBlock Text="{Binding ProductRework.Rework.Code}"/>
+											<TextBlock Text="{Binding ProductRework.Rework.Name}" Foreground="DarkGray" FontSize="10"/>
+										</WrapPanel>
+									</DockPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTextColumn IsReadOnly="True" Binding="{Binding Code}" Header="{Loc txtCode}"/>
+						<DataGridTextColumn IsReadOnly="True" Binding="{Binding Quantity}" Header="{Loc txtQuantity}"/>
+						<DataGridTemplateColumn Header="{Loc txtReleaseTime}">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel>
+										<TextBlock Text="{Binding ReleaseDT, Converter={StaticResource dateToLocalStringConverter}}"/>
+										<TextBlock Text="{Binding ReleaseDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTemplateColumn Header="{Loc txtDeadline}">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel>
+										<TextBlock Text="{Binding Deadline, Converter={StaticResource dateToLocalStringConverter}}"/>
+										<TextBlock Text="{Binding Deadline, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTemplateColumn Header="{Loc txtStartTime}">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel>
+										<TextBlock Text="{Binding StartDT, Converter={StaticResource dateToLocalStringConverter}}"/>
+										<TextBlock Text="{Binding StartDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTemplateColumn Header="{Loc txtEndTime}">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel>
+										<TextBlock Text="{Binding EndDT, Converter={StaticResource dateToLocalStringConverter}}"/>
+										<TextBlock Text="{Binding EndDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTextColumn Binding="{Binding Description}" Header="{Loc txtDescription}"/>
+					</DataGrid.Columns>
+				</DataGrid>
+			</DockPanel>
+		</Border>
+	</Grid>
+</UserControl>

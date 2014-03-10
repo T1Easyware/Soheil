@@ -8,9 +8,7 @@
              xmlns:common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
 			 xmlns:vm="clr-namespace:Soheil.Core.ViewModels.SkillCenter;assembly=Soheil.Core"
              mc:Ignorable="d" 
-			 
 			 FlowDirection="RightToLeft"
-			 
              d:DesignHeight="300" d:DesignWidth="300">
 	
     <UserControl.Resources>
@@ -61,8 +59,8 @@
 		<DataTemplate DataType="{x:Type vm:ProductReworkVm}">
 			<DockPanel>
 				<Grid DockPanel.Dock="Left">
-					<Image Source="/Images/Fpc/default.png" Width="16" VerticalAlignment="Center" Visibility="{Binding IsMainProduct, Converter={StaticResource booleanToVisibilityConverter}}"/>
-					<Image Source="/Images/Fpc/notdefault.png" Width="16" VerticalAlignment="Center" Visibility="{Binding IsMainProduct, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+					<!--Image Source="/Images/Fpc/default.png" Width="16" VerticalAlignment="Center" Visibility="{Binding IsMainProduct, Converter={StaticResource booleanToVisibilityConverter}}"/-->
+					<Image Style="{StaticResource ReworkImage}" VerticalAlignment="Center" Visibility="{Binding IsMainProduct, Converter={StaticResource booleanToInvisibilityConverter}}"/>
 				</Grid>
 				<TextBlock Text="{Binding Code}" Foreground="White" FontSize="11" DockPanel.Dock="Left" VerticalAlignment="Center"/>
 				<TextBlock Text="{Binding Name}" Foreground="DarkGray" FontSize="9" DockPanel.Dock="Left" VerticalAlignment="Center"/>

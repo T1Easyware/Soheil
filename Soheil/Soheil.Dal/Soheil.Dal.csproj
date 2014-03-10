@@ -74,7 +74,6 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>SoheilEdm.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SqlScripts\InitDatabaseforTest.sql" />

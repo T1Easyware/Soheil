@@ -271,7 +271,7 @@ namespace Soheil.Model
 		/// </summary>
 		public ProductRework MainProductRework { get { return ProductReworks.First(x => x.Rework == null); } }
 
-		public FPC DefaultFpc { get { return FPCs.First(x => x.IsDefault); } }
+		public FPC DefaultFpc { get { return FPCs.FirstOrDefault(x => x.IsDefault); } }
 	}
 
 	public partial class ProductDefection

@@ -100,7 +100,8 @@
     <Compile Include="Interfaces\IReportBarVm.cs" />
     <Compile Include="PP\BlockFullData.cs" />
     <Compile Include="PP\HourCollection.cs" />
-    <Compile Include="PP\Smart\SmartSpot.cs" />
+    <Compile Include="PP\Smart\SmartPlanner.cs" />
+    <Compile Include="PP\Smart\SmartSpace.cs" />
     <Compile Include="PP\TaskManager.cs" />
     <Compile Include="LoginInfo.cs" />
     <Compile Include="Reports\ActualCostBarProvider.cs" />
@@ -416,7 +417,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Interfaces\BaseAndInterfaceDiagram.cd" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

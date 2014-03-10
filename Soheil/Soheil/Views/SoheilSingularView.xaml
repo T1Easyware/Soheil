@@ -28,362 +28,15 @@
 		<!-- 2.6. SetupTime Table -->
 		<DataTemplate x:Key="SetupTimesTemplate" DataType="{x:Type vm:SetupTimeTableVm}"
 				xmlns:vm="clr-namespace:Soheil.Core.ViewModels.SetupTime;assembly=Soheil.Core"
-				xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
-				xmlns:localstt="clr-namespace:Soheil.Views.SetupTime">
-			<DataTemplate.Resources>
-				<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
-
-				<ControlTemplate x:Key="ScrollViewerHorizontalOnTopTemplate" TargetType="{x:Type ScrollViewer}">
-					<Grid x:Name="Grid" Background="{TemplateBinding Background}">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" MinHeight="17"/>
-							<RowDefinition Height="*"/>
-						</Grid.RowDefinitions>
-						<Rectangle x:Name="Corner" 
-                    Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" 
-                    Grid.Column="1" Grid.Row="0"/>
-						<ScrollContentPresenter x:Name="PART_ScrollContentPresenter" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Grid.Column="0" Grid.Row="1" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False"/>
-						<ScrollBar x:Name="PART_VerticalScrollBar" 
-                    Cursor="Arrow" 
-                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" 
-                    Grid.Column="1" Grid.Row="1" 
-                    AutomationProperties.AutomationId="VerticalScrollBar" 
-                    Maximum="{TemplateBinding ScrollableHeight}" 
-                    Minimum="0" 
-                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
-                    ViewportSize="{TemplateBinding ViewportHeight}"/>
-						<ScrollBar x:Name="PART_HorizontalScrollBar" 
-                    Cursor="Arrow" 
-                    Grid.Column="0" 
-                    AutomationProperties.AutomationId="HorizontalScrollBar" 
-                    Maximum="{TemplateBinding ScrollableWidth}" 
-                    Minimum="0" 
-                    Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
-                    Orientation="Horizontal" 
-                    ViewportSize="{TemplateBinding ViewportWidth}"/>
-					</Grid>
-				</ControlTemplate>
-
-				<!--DataTemplate x:Key="templateTextCell" DataType="{x:Type vm:TextCell}">
-					<Border Background="Silver">
-						<TextBlock Text="{Binding Text}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-					</Border>
-				</DataTemplate-->
-				
-				<DataTemplate x:Key="templateProductGroupColumnHeaderCell" DataType="{x:Type vm:ProductGroup}">
-					<ToggleButton IsChecked="{Binding IsExpanded}" Padding="0" Margin="0">
-						<TextBlock Text="{Binding Name}" Margin="-1">
-							<TextBlock.LayoutTransform>
-								<RotateTransform Angle="270"/>
-							</TextBlock.LayoutTransform>
-						</TextBlock>
-					</ToggleButton>
-				</DataTemplate>
-				<DataTemplate x:Key="templateProductGroupRowHeaderCell" DataType="{x:Type vm:ProductGroup}">
-					<ToggleButton IsChecked="{Binding IsExpanded}" Padding="0" Margin="0">
-						<TextBlock Text="{Binding Name}"/>
-					</ToggleButton>
-				</DataTemplate>
-
-				<DataTemplate x:Key="templateProductColumnHeaderCell" DataType="{x:Type vm:Rework}">
-					<ToggleButton IsChecked="{Binding Product.IsExpanded}">
-						<ToggleButton.ContextMenu>
-							<ContextMenu>
-								<MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-								<MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
-							</ContextMenu>
-						</ToggleButton.ContextMenu>
-						<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="WrapWithOverflow"/>
-					</ToggleButton>
-				</DataTemplate>
-				<DataTemplate x:Key="templateProductRowHeaderCell" DataType="{x:Type vm:Rework}">
-					<ToggleButton IsChecked="{Binding Product.IsExpanded}">
-						<ToggleButton.ContextMenu>
-							<ContextMenu>
-								<MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-								<MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
-							</ContextMenu>
-						</ToggleButton.ContextMenu>
-						<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-					</ToggleButton>
-				</DataTemplate>
-
-				<DataTemplate x:Key="templateReworkColumnHeaderCell" DataType="{x:Type vm:Rework}">
-					<Border Background="{Binding Product.Color}">
-						<Border.ContextMenu>
-							<ContextMenu>
-								<MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-								<MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
-							</ContextMenu>
-						</Border.ContextMenu>
-						<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="WrapWithOverflow"/>
-					</Border>
-				</DataTemplate>
-				<DataTemplate x:Key="templateReworkRowHeaderCell" DataType="{x:Type vm:Rework}">
-					<Border Background="{Binding Product.Color}">
-						<Border.ContextMenu>
-							<ContextMenu>
-								<MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-								<MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
-							</ContextMenu>
-						</Border.ContextMenu>
-						<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-					</Border>
-				</DataTemplate>
-
-				
-				<DataTemplate x:Key="templateCheckboxCell" DataType="{x:Type vm:CheckboxCell}">
-					<Border Background="{Binding Row.Product.Color}">
-						<CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-					</Border>
-				</DataTemplate>
-				<DataTemplate x:Key="templateWarmupCell" DataType="{x:Type vm:WarmupCell}">
-					<Border Background="{Binding Row.Product.Color}" MinWidth="60">
-						<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7"
-						 Visibility="{Binding Row.IsDurationsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
-							<TextBox.Triggers>
-								<EventTrigger RoutedEvent="MouseEnter">
-									<BeginStoryboard>
-										<Storyboard Duration="0:0:0.2">
-											<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<EventTrigger RoutedEvent="MouseLeave">
-									<BeginStoryboard>
-										<Storyboard Duration="0:0:0.4">
-											<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.4"/>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<EventTrigger RoutedEvent="GotFocus">
-									<BeginStoryboard>
-										<Storyboard Duration="0:0:0.2">
-											<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<EventTrigger RoutedEvent="LostFocus">
-									<BeginStoryboard>
-										<Storyboard Duration="0:0:0.4">
-											<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.4"/>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-							</TextBox.Triggers>
-						</TextBox>
-					</Border>
-				</DataTemplate>
-				<DataTemplate x:Key="templateChangeoverCell" DataType="{x:Type vm:ChangeoverCell}">
-					<Border>
-						<Grid>
-							<Border Background="{Binding CrossColors.HorColor}" Height="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-							<Border Background="{Binding CrossColors.VertColor}" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
-							<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7" x:Name="txt"
-								Visibility="{Binding Path=Row.IsDurationsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
-								<TextBox.Triggers>
-									<EventTrigger RoutedEvent="MouseEnter">
-										<BeginStoryboard>
-											<Storyboard Duration="0:0:0.2">
-												<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
-											</Storyboard>
-										</BeginStoryboard>
-									</EventTrigger>
-									<EventTrigger RoutedEvent="MouseLeave">
-										<BeginStoryboard>
-											<Storyboard Duration="0:0:0.4">
-												<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.4"/>
-											</Storyboard>
-										</BeginStoryboard>
-									</EventTrigger>
-									<EventTrigger RoutedEvent="GotFocus">
-										<BeginStoryboard>
-											<Storyboard Duration="0:0:0.2">
-												<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
-											</Storyboard>
-										</BeginStoryboard>
-									</EventTrigger>
-									<EventTrigger RoutedEvent="LostFocus">
-										<BeginStoryboard>
-											<Storyboard Duration="0:0:0.4">
-												<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.4"/>
-											</Storyboard>
-										</BeginStoryboard>
-									</EventTrigger>
-								</TextBox.Triggers>
-							</TextBox>
-						</Grid>
-					</Border>
-				</DataTemplate>
-				<DataTemplate x:Key="templateBlankCell" DataType="{x:Type vm:ChangeoverCell}">
-					<Border>
-						<Grid>
-							<Border Background="{Binding CrossColors.HorColor}" Height="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-							<Border Background="{Binding CrossColors.VertColor}" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
-						</Grid>
-					</Border>
-				</DataTemplate>
-			</DataTemplate.Resources>
-
-			<Grid
-				Background="{StaticResource SingularViewBackground}"
-				x:Name="setupTimeTableRoot"
-				Loaded="setupTimeTableRootLoaded">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="*"/>
-				</Grid.RowDefinitions>
-
-				<ToolBar Grid.ColumnSpan="3">
-					<Menu>
-						<MenuItem Command="{Binding RefreshAllCommand}">
-							<Image Source="/Images/Fpc/Undo16.png" Width="16"/>
-						</MenuItem>
-					</Menu>
-				</ToolBar>
-				
-				<!--Stations-->
-				<DockPanel Grid.RowSpan="2" Grid.Column="2" Grid.Row="1" FlowDirection="RightToLeft">
-					<TextBlock Text="ایستگاه را انتخاب کنید" DockPanel.Dock="Top" Foreground="Silver"/>
-					<ListBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}" 
-							 Focusable="False" DisplayMemberPath="Name"/>
-				</DockPanel>
-
-				<!--SelectedStation.ColumnHeaders-->
-				<DockPanel Grid.Column="1" Grid.Row="1">
-					<Border DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-						<TextBlock Text="زمانهای تعویض Changeover" DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Silver"/>
-					</Border>
-					<ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Background="Transparent"
-						  ScrollChanged="columnHeaderScrollViewer_ScrollChanged" Template="{StaticResource ScrollViewerHorizontalOnTopTemplate}">
-						<ItemsControl ItemsSource="{Binding SelectedStation.ColumnHeaders}">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<Grid localstt:GridHelper.AllColumns="{Binding SelectedStation.ColumnPGList}"
-								  cc:GridHelper.RowCount="1"/>
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemContainerStyle>
-								<Style TargetType="ContentPresenter">
-									<Setter Property="Grid.Row" Value="{Binding Path=RowIndex}"/>
-									<Setter Property="Grid.Column" Value="{Binding Path=ColumnIndex}"/>
-									<Style.Triggers>
-										<!--DataTrigger Binding="{Binding Path=CellType}" Value="TextCell">
-											<Setter Property="ContentTemplate" Value="{StaticResource templateTextCell}"/>
-											<Setter Property="Grid.ColumnSpan" Value="{Binding ElementName=setupTimeTableRoot, Path=DataContext.TotalVisualColumns}"/>
-										</DataTrigger-->
-										<DataTrigger Binding="{Binding Path=CellType}" Value="ProductGroupColumnHeaderCell">
-											<Setter Property="ContentTemplate" Value="{StaticResource templateProductGroupColumnHeaderCell}"/>
-										</DataTrigger>
-										<DataTrigger Binding="{Binding Path=CellType}" Value="ProductColumnHeaderCell">
-											<Setter Property="ContentTemplate" Value="{StaticResource templateProductColumnHeaderCell}"/>
-										</DataTrigger>
-										<DataTrigger Binding="{Binding Path=CellType}" Value="ReworkColumnHeaderCell">
-											<Setter Property="ContentTemplate" Value="{StaticResource templateReworkColumnHeaderCell}"/>
-										</DataTrigger>
-									</Style.Triggers>
-								</Style>
-							</ItemsControl.ItemContainerStyle>
-						</ItemsControl>
-					</ScrollViewer>
-				</DockPanel>
-
-				<!--SelectedStation.RowHeaders-->
-				<ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Grid.Row="2"
-					  ScrollChanged="rowHeaderScrollViewer_ScrollChanged" FlowDirection="RightToLeft" Background="Transparent">
-					<ItemsControl ItemsSource="{Binding SelectedStation.RowHeaders}" FlowDirection="LeftToRight">
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<Grid localstt:GridHelper.AllRows="{Binding SelectedStation.RowPGList}"
-							  cc:GridHelper.ColumnCount="3"/>
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
-						<ItemsControl.ItemContainerStyle>
-							<Style TargetType="ContentPresenter">
-								<Setter Property="Grid.Row" Value="{Binding Path=RowIndex}"/>
-								<Setter Property="Grid.Column" Value="{Binding Path=ColumnIndex}"/>
-								<Style.Triggers>
-									<DataTrigger Binding="{Binding Path=CellType}" Value="ProductGroupRowHeaderCell">
-										<Setter Property="ContentTemplate" Value="{StaticResource templateProductGroupRowHeaderCell}"/>
-										<Setter Property="Grid.ColumnSpan" Value="3"/>
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Path=CellType}" Value="ReworkRowHeaderCell">
-										<Setter Property="ContentTemplate" Value="{StaticResource templateReworkRowHeaderCell}"/>
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Path=CellType}" Value="ProductRowHeaderCell">
-										<Setter Property="ContentTemplate" Value="{StaticResource templateProductRowHeaderCell}"/>
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Path=CellType}" Value="CheckboxCell">
-										<Setter Property="ContentTemplate" Value="{StaticResource templateCheckboxCell}"/>
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Path=CellType}" Value="WarmupCell">
-										<Setter Property="ContentTemplate" Value="{StaticResource templateWarmupCell}"/>
-									</DataTrigger>
-								</Style.Triggers>
-							</Style>
-						</ItemsControl.ItemContainerStyle>
-					</ItemsControl>
-				</ScrollViewer>
-
-
-				<!--SelectedStation.ChangeoverCells-->
-				<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Grid.Row="2" Grid.Column="1" x:Name="changeoverScrollbar">
-					<ItemsControl ItemsSource="{Binding SelectedStation.ChangeoverCells}">
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<Grid 
-							localstt:GridHelper.AllColumns="{Binding SelectedStation.ColumnPGList}"
-							localstt:GridHelper.AllRows="{Binding SelectedStation.RowPGList}">
-								</Grid>
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
-						<ItemsControl.ItemContainerStyle>
-							<Style TargetType="ContentPresenter">
-								<Setter Property="Grid.Row" Value="{Binding Path=RowIndex}"/>
-								<Setter Property="Grid.Column" Value="{Binding Path=ColumnIndex}"/>
-								<Style.Triggers>
-									<DataTrigger Binding="{Binding Path=CellType}" Value="ChangeoverCell">
-										<Setter Property="ContentTemplate" Value="{StaticResource templateChangeoverCell}"/>
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Path=CellType}" Value="None">
-										<Setter Property="ContentTemplate" Value="{StaticResource templateBlankCell}"/>
-									</DataTrigger>
-								</Style.Triggers>
-							</Style>
-						</ItemsControl.ItemContainerStyle>
-					</ItemsControl>
-				</ScrollViewer>
-
-				<!--Texts-->
-				<DockPanel TextBlock.Foreground="Silver" Grid.Row="1">
-					<Border DockPanel.Dock="Right" Width="50">
-						<TextBlock Text="زمان آغاز به کار Warmup" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Bottom" TextAlignment="Center"/>
-					</Border>
-					<Border DockPanel.Dock="Right" Width="50">
-						<TextBlock Text="تولید اصلی لحاظ شود" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Bottom" TextAlignment="Center"/>
-					</Border>
-					<Border DockPanel.Dock="Left" Width="50">
-						<TextBlock Text="از محصول" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Bottom" TextAlignment="Center"/>
-					</Border>
-				</DockPanel>
-			</Grid>
+				xmlns:v="clr-namespace:Soheil.Views.SetupTime">
+			<v:SetupTimeTable Background="{StaticResource SingularViewBackground}"/>
 		</DataTemplate>
 
 		<!-- 2.7. Skill Center -->
 		<DataTemplate x:Key="SkillCenterTemplate" DataType="{x:Type vm:SkillCenterVm}"
-             xmlns:sc="clr-namespace:Soheil.Views.SkillCenter"
+             xmlns:v="clr-namespace:Soheil.Views.SkillCenter"
 			 xmlns:vm="clr-namespace:Soheil.Core.ViewModels.SkillCenter;assembly=Soheil.Core">
-			<sc:SkillCenter/>
+			<v:SkillCenter Background="{StaticResource SingularViewBackground}"/>
 		</DataTemplate>
 		
 		<!--................................................ 3.Control ...............................................-->
@@ -516,86 +169,6 @@
 					<Setter Property="Background" Value="Black"/>
 					<Setter Property="Template" Value="{StaticResource ButtonTemplate}"/>
 				</Style>
-				<ControlTemplate TargetType="ContentControl" x:Key="hoverStyle">
-					<Border BorderBrush="#4FFF" BorderThickness="0,1,1,0" Padding="0" Margin="0">
-						<Border.Background>
-							<SolidColorBrush Color="White" Opacity="0" x:Name="bkg"/>
-						</Border.Background>
-						<ContentPresenter Content="{TemplateBinding Content}" Margin="0" VerticalAlignment="Center"/>
-					</Border>
-					<ControlTemplate.Triggers>
-						<EventTrigger RoutedEvent="MouseEnter">
-							<BeginStoryboard>
-								<Storyboard Duration="0:0:0.2">
-									<DoubleAnimation Storyboard.TargetName="bkg"
-		Storyboard.TargetProperty="Opacity"
-		Duration="0:0:0.1"
-		To="0.1"/>
-								</Storyboard>
-							</BeginStoryboard>
-						</EventTrigger>
-						<EventTrigger RoutedEvent="MouseLeave">
-							<BeginStoryboard>
-								<Storyboard Duration="0:0:0.7">
-									<DoubleAnimation Storyboard.TargetName="bkg"
-		Storyboard.TargetProperty="Opacity"
-		Duration="0:0:0.4"
-		To="0"/>
-								</Storyboard>
-							</BeginStoryboard>
-						</EventTrigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-				<DataTemplate x:Key="balloonTemplate">
-					<Canvas>
-						<Canvas.Margin>
-							<MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
-								<Binding Path="StartDateTime"/>
-								<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-							</MultiBinding>
-						</Canvas.Margin>
-						<Canvas DataContext="{Binding Message}" Width="0" Height="0" Margin="-20,-150,0,0" ClipToBounds="False" MouseDown="balloonClicked"
-							Visibility="{Binding HasException, Converter={StaticResource booleanToVisibilityConverter}}">
-                            <Path x:Name="balloon" Width="183.667" Height="90.7315" Canvas.Left="1.49997" Canvas.Top="1.8334" Stretch="Fill"  MouseDown="balloonClicked"
-								Stroke="#4000" Fill="#FFB" Opacity="0.75" ClipToBounds="False"
-								Data="F1 M 6.99997,2.3334L 179.667,2.3334C 182.428,2.3334 184.667,4.57199 184.667,7.3334L 184.667,64.6667C 184.667,67.4282 182.428,69.6667 179.667,69.6667L 36.6112,69.6669L 44.5225,92.0649L 17.6166,69.6668L 6.99997,69.6667C 4.23854,69.6667 1.99997,67.4282 1.99997,64.6667L 1.99997,7.3334C 1.99997,4.57199 4.23854,2.3334 6.99997,2.3334 Z ">
-								<Path.Effect>
-									<DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.6" Direction="315"/>
-								</Path.Effect>
-							</Path>
-                            <ScrollViewer Width="177" Height="70" MouseDown="balloonClicked"
-										  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                                <TextBlock Text="{Binding MainExceptionText}" TextWrapping="Wrap" Margin="2" FlowDirection="RightToLeft" MouseDown="balloonClicked"/>
-							</ScrollViewer>
-                            <Canvas.ToolTip>
-                                <TextBlock TextWrapping="Wrap" Text="{Binding FullExceptionText}"/>
-                            </Canvas.ToolTip>
-						</Canvas>
-						<Canvas.Triggers>
-							<EventTrigger RoutedEvent="MouseEnter">
-								<BeginStoryboard>
-									<Storyboard Duration="0:0:0.2">
-										<DoubleAnimation Storyboard.TargetName="balloon"
-				Storyboard.TargetProperty="Opacity"
-				Duration="0:0:0.1"
-				To="1"/>
-									</Storyboard>
-								</BeginStoryboard>
-							</EventTrigger>
-							<EventTrigger RoutedEvent="MouseLeave">
-								<BeginStoryboard>
-									<Storyboard Duration="0:0:0.7">
-										<DoubleAnimation Storyboard.TargetName="balloon"
-				Storyboard.TargetProperty="Opacity"
-				Duration="0:0:0.4"
-				To="0.75"/>
-									</Storyboard>
-								</BeginStoryboard>
-							</EventTrigger>
-
-						</Canvas.Triggers>
-					</Canvas>
-				</DataTemplate>
 
 
 				<LinearGradientBrush x:Key="SlideWindowBackground" StartPoint="0,0" EndPoint="1,0.001">
@@ -823,7 +396,7 @@
                     <ToolBarTray Background="Transparent" Grid.ColumnSpan="2" FlowDirection="RightToLeft">
                         <ToolBar Background="Transparent">
                             <Button Margin="1" Command="{Binding ToggleTaskEditorCommand}">
-                                <Image Source="/Images/PP/Task.png" Width="16"/>
+								<Image Style="{StaticResource TaskImage}"/>
                                 <Button.ToolTip>
                                     <StackPanel>
                                         <TextBlock Text="ویرایشگر Task"/>
@@ -833,7 +406,7 @@
                             </Button>
                             <UniformGrid Rows="1" Background="#80FF" x:Name="taskEditorToolbarButtons" Width="0">
                                 <Button Margin="1" Command="{Binding TaskEditor.ResetCurrentBlockCommand}">
-                                    <Image Source="/Images/Fpc/Undo16.png" Width="16"/>
+									<Image Style="{StaticResource Undo16Image}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="خالی کردن برنامه"/>
@@ -842,7 +415,7 @@
                                     </Button.ToolTip>
                                 </Button>
                                 <Button Margin="1" Command="{Binding TaskEditor.ClearAllCommand}">
-                                    <Image Source="/Images/PP/TaskNew.png" Width="16"/>
+                                    <Image Style="{StaticResource NewTaskImage}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="خالی کردن صفحه"/>
@@ -851,7 +424,7 @@
                                     </Button.ToolTip>
                                 </Button>
                                 <!--Button Margin="1" Command="{Binding TaskEditor.SaveCommand}">
-                                    <Image Source="/Images/Fpc/Save16.png" Width="16"/>
+									<Image Style="{StaticResource Save16Image}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="ذخیره برنامه"/>
@@ -860,7 +433,7 @@
                                     </Button.ToolTip>
                                 </Button-->
                                 <Button Margin="1" Command="{Binding TaskEditor.ExitCommand}">
-                                    <Image Source="/Images/PP/closeup.png" Width="16"/>
+									<Image Style="{StaticResource CloseWipeUpImage}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="بستن ویرایشگر"/>
@@ -869,7 +442,7 @@
                                     </Button.ToolTip>
                                 </Button>
                                 <Button Margin="1" Command="{Binding TaskEditor.SaveAllCommand}">
-                                    <Image Source="/Images/PP/saveup.png" Width="16"/>
+									<Image Style="{StaticResource SaveWipeUpImage}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="ذخیره همه و خروج"/>
@@ -880,7 +453,7 @@
                             </UniformGrid>
                             <Separator/>
                             <Button Margin="1" Command="{Binding ToggleJobEditorCommand}">
-                                <Image Source="/Images/PP/Job.png" Width="16"/>
+                                <Image Style="{StaticResource JobImage}"/>
                                 <Button.ToolTip>
                                     <StackPanel>
                                         <TextBlock Text="ویرایشگر Job"/>
@@ -890,7 +463,7 @@
                             </Button>
                             <UniformGrid Rows="1" Background="#80FF" x:Name="jobEditorToolbarButtons" Width="0">
                                 <Button Margin="1" Command="{Binding JobEditor.ClearAllCommand}">
-                                    <Image Source="/Images/PP/JobNew.png" Width="16"/>
+                                    <Image Style="{StaticResource NewJobImage}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="خالی کردن صفحه"/>
@@ -899,7 +472,7 @@
                                     </Button.ToolTip>
                                 </Button>
                                 <Button Margin="1" Command="{Binding JobEditor.SaveAllCommand}">
-                                    <Image Source="/Images/PP/saveup.png" Width="16"/>
+                                    <Image Style="{StaticResource SaveWipeUpImage}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="ذخیره همه و خروج"/>
@@ -908,7 +481,7 @@
                                     </Button.ToolTip>
                                 </Button>
                                 <Button Margin="1" Command="{Binding JobEditor.ExitCommand}">
-                                    <Image Source="/Images/PP/closeup.png" Width="16"/>
+                                    <Image Style="{StaticResource CloseWipeUpImage}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="بستن ویرایشگر"/>
@@ -919,7 +492,7 @@
                             </UniformGrid>
                             <Separator/>
                             <ToggleButton Margin="2" IsChecked="{Binding ShowInsertSetupButton}">
-                                <Image Source="/Images/PP/SetupAdd.png" Width="16"/>
+                                <Image Style="{StaticResource AddSetupImage}"/>
                                 <ToggleButton.ToolTip>
                                     <StackPanel>
                                         <TextBlock Text="نمایش کلیدهای آماده سازی خودکار"/>
@@ -929,7 +502,7 @@
                             </ToggleButton>
 
                             <ToggleButton Margin="2" IsChecked="{Binding JobList.IsVisible}">
-                                <Image Source="/Images/PP/JobList.png" Width="16"/>
+								<Image Style="{StaticResource JobListImage}"/>
                                 <ToggleButton.ToolTip>
                                     <StackPanel>
                                         <TextBlock Text="نمایش لیست Job ها"/>
@@ -940,30 +513,30 @@
                         </ToolBar>
                         <ToolBar Background="Transparent">
                             <Button Command="{Binding GoToNow}" ToolTip="برو به الان">
-                                <Image Source="/Images/PP/Now.png" Width="16"/>
+                                <Image Style="{StaticResource NowImage}"/>
                             </Button>
                             <WrapPanel VerticalAlignment="Center">
-                                <Image Source="/Images/PP/Zoom.png" Height="16" VerticalAlignment="Center"/>
+                                <Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
                                 <Slider Margin="2" Maximum="2000" Minimum="20" Value="{Binding HourZoom}" Width="140" PreviewMouseDown="ZoomStarted" VerticalAlignment="Center"/>
                                 <WrapPanel.ToolTip>
                                     <ToolTip>بزرگنمایی زمان</ToolTip>
                                 </WrapPanel.ToolTip>
                             </WrapPanel>
                             <Button Click="UndoZoomClicked">
-                                <Image Source="/Images/PP/ZoomUndo.png" Height="16"/>
+								<Image Style="{StaticResource ZoomUndoImage}"/>
                                 <Button.ToolTip>
                                     <ToolTip>بزرگنمایی قبلی</ToolTip>
                                 </Button.ToolTip>
                             </Button>
                             <Separator/>
                             <ToggleButton IsChecked="{Binding AlwaysLoadTasks}">
-                                <Image Source="/Images/PP/TaskAutoLoad.png" Height="16"/>
+								<Image Style="{StaticResource AutoLoadTaskImage}"/>
                                 <ToggleButton.ToolTip>
                                     <ToolTip>لود اتوماتیک</ToolTip>
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
                             <ToggleButton IsChecked="{Binding ShowProductCodes}">
-                                <Image Source="/Images/PP/ShowCode.png" Height="16"/>
+								<Image Style="{StaticResource ToggleShowCodeImage}"/>
                                 <ToggleButton.ToolTip>
                                     <ToolTip>نمایش کد بجای نام محصولات</ToolTip>
                                 </ToggleButton.ToolTip>
@@ -972,23 +545,15 @@
                             <ToggleButton IsChecked="{Binding ViewMode, 
 							    Converter={StaticResource isEqual}, 
 							    ConverterParameter={x:Static Common:PPViewMode.Simple}}">
-                                <Image Source="/Images/PP/Task.png" Height="16"/>
+                                <Image Style="{StaticResource TaskImage}"/>
                                 <ToggleButton.ToolTip>
                                     <ToolTip>برنامه تولید</ToolTip>
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
-                            <!--<ToggleButton IsChecked="{Binding ViewMode, 
-							    Converter={StaticResource isEqual}, 
-							    ConverterParameter={x:Static Common:PPViewMode.TaskReport}}">
-							    <Image Source="/Images/PP/Report.png" Height="16"/>
-							    <ToggleButton.ToolTip>
-								    <ToolTip>گزارش ایستگاه</ToolTip>
-							    </ToggleButton.ToolTip>
-						    </ToggleButton>-->
                             <ToggleButton IsChecked="{Binding ViewMode, 
 							    Converter={StaticResource isEqual}, 
 							    ConverterParameter={x:Static Common:PPViewMode.Report}}">
-                                <Image Source="/Images/PP/ProcessReport.png" Height="16"/>
+								<Image Style="{StaticResource ProcessReportImage}"/>
                                 <ToggleButton.ToolTip>
                                     <ToolTip>گزارش</ToolTip>
                                 </ToggleButton.ToolTip>
@@ -997,669 +562,30 @@
                     </ToolBarTray>
 
                     <!-- JobList -->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobListPanel" Height="0" DataContext="{Binding JobList}">
-                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
-                            <DockPanel FlowDirection="RightToLeft">
-                                <StackPanel DockPanel.Dock="Left">
-                                    <UniformGrid Rows="3" Columns="2">
-                                        <TextBlock Text="{Loc txtStartDate}" Foreground="Silver" VerticalAlignment="Center" Margin="3"/>
-                                        <cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
-                                        <TextBlock Text="{Loc txtEndDate}" Foreground="Silver" VerticalAlignment="Center" Margin="3"/>
-                                        <cal:PersianDatePicker SelectedDate="{Binding EndDate}"/>
-                                        <ToggleButton IsChecked="{Binding ByDefinition}" ToolTip="{Loc ttJobListByDefinition}">
-                                            <Image Source="/Images/PP/JobListByDefinition.png" Height="28"/>
-                                        </ToggleButton>
-                                        <ToggleButton IsChecked="{Binding ByDefinition, Converter={StaticResource inverter}}" ToolTip="{Loc ttJobListByTasks}">
-                                            <Image Source="/Images/PP/JobListByTasks.png" Height="28"/>
-                                        </ToggleButton>
-                                    </UniformGrid>
-                                    <Button Content="{Loc txtSearch}" Command="{Binding SearchCommand}"/>
-                                </StackPanel>
-                                <DataGrid ItemsSource="{Binding Jobs}" VerticalAlignment="Top" HorizontalAlignment="Stretch" AutoGenerateColumns="False" CellEditEnding="PPTableJobListDataGrid_CellEditEnding" SelectedItem="{Binding SelectedJob}">
-                                    <DataGrid.Columns>
-                                        <DataGridTemplateColumn Header="{Loc txtProduct}">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <DockPanel>
-                                                        <Grid DockPanel.Dock="Left" Margin="1">
-                                                            <Rectangle Fill="{Binding ProductRework.Product.Color, Converter={StaticResource colorFixer}}" Width="15" Height="24"/>
-                                                            <Image Source="/Images/PP/Rework.png" Width="15" Margin="0,2" Visibility="{Binding ProductRework.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
-                                                        </Grid>
-                                                        <WrapPanel DockPanel.Dock="Top">
-                                                            <TextBlock Text="{Binding ProductRework.Product.Code}"/>
-                                                            <TextBlock Text="{Binding ProductRework.Product.Name}" Foreground="DarkGray" FontSize="10"/>
-                                                        </WrapPanel>
-                                                        <WrapPanel>
-                                                            <TextBlock Text="{Binding ProductRework.Rework.Code}"/>
-                                                            <TextBlock Text="{Binding ProductRework.Rework.Name}" Foreground="DarkGray" FontSize="10"/>
-                                                        </WrapPanel>
-                                                    </DockPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding Code}" Header="{Loc txtCode}"/>
-                                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding Quantity}" Header="{Loc txtQuantity}"/>
-                                        <DataGridTemplateColumn Header="{Loc txtReleaseTime}">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel>
-                                                        <TextBlock Text="{Binding ReleaseDT, Converter={StaticResource dateToLocalStringConverter}}"/>
-                                                        <TextBlock Text="{Binding ReleaseDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTemplateColumn Header="{Loc txtDeadline}">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel>
-                                                        <TextBlock Text="{Binding Deadline, Converter={StaticResource dateToLocalStringConverter}}"/>
-                                                        <TextBlock Text="{Binding Deadline, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTemplateColumn Header="{Loc txtStartTime}">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel>
-                                                        <TextBlock Text="{Binding StartDT, Converter={StaticResource dateToLocalStringConverter}}"/>
-                                                        <TextBlock Text="{Binding StartDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTemplateColumn Header="{Loc txtEndTime}">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel>
-                                                        <TextBlock Text="{Binding EndDT, Converter={StaticResource dateToLocalStringConverter}}"/>
-                                                        <TextBlock Text="{Binding EndDT, Converter={StaticResource dateToTimeStringConverter}}" Foreground="DarkGray"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTextColumn Binding="{Binding Description}" Header="{Loc txtDescription}"/>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </DockPanel>
-                        </Border>
-                    </Grid>
+					<local:JobList x:Name="jobListPanel" Grid.ColumnSpan="2" Grid.Row="1" Height="0" 
+								   DataContext="{Binding JobList}" FlowDirection="RightToLeft"/>
                     <!--Job Editor-->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobEditorPanel" Height="0">
-                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
-                            <local:PPJobEditor
-							    HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20"
-							    DataContext="{Binding JobEditor}"
-							    Height="{Binding ElementName=jobEditorPanel, Path=ActualHeight}"
-							    Width="{Binding ElementName=jobEditorPanel, Path=ActualWidth}"/>
-                        </Border>
-                    </Grid>
+					<local:PPJobEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobEditorPanel" Height="0"
+										HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20"
+										DataContext="{Binding JobEditor}"/>
                     <!--Task Editor-->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskEditorPanel" Height="0">
-                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2">
-                            <local:PPTaskEditor
-							    HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20"
-							    DataContext="{Binding TaskEditor}"
-							    Height="{Binding ElementName=taskEditorPanel, Path=ActualHeight}"
-							    Width="{Binding ElementName=taskEditorPanel, Path=ActualWidth}"/>
-                        </Border>
-                    </Grid>
+					<local:PPTaskEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskEditorPanel" Height="0"
+										HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20"
+										DataContext="{Binding TaskEditor}"/>
                     <!-- NPT Editor-->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptEditorPanel" Height="0">
-                        <Border BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="2" FlowDirection="RightToLeft">
-                            <WrapPanel>
-                                <TextBlock Text="{Loc txtStartDate}" Foreground="Silver"/>
-                                <cal:PersianDatePicker SelectedDate="{Binding SelectedNPT.StartDate}"/>
-                                <TextBlock Text="{Loc txtStartTime}" Foreground="Silver"/>
-                                <TextBox Text="{Binding SelectedNPT.StartTime, Converter={StaticResource timeSpanToStringConverter}}"/>
-                                <Button Content="{Loc PPE_FirstEmptySpace}" Command="{Binding SelectedNPT.SetToEarliestTimeCommand}"/>
-                                <Button Content="{Loc PPE_LastEmptySpace}" Command="{Binding SelectedNPT.SetToLatestTimeCommand}"/>
-                                <Button Content="{Loc txtCancel}" Command="{Binding SelectedNPT.CancelCommand}"/>
-                                <Button Content="{Loc txtSave}" Command="{Binding SelectedNPT.SaveCommand}"/>
-                            </WrapPanel>
-                        </Border>
-                    </Grid>
-                    
-                    <!-- TaskReportBuilder -->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskReportBuilderPanel" Height="0">
-                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" Background="Silver" Width="400" Height="152">
-                            <ContentPresenter ContentSource="{Binding CurrentTaskReportBuilder}">
-                                <ContentPresenter.ContentTemplate>
-                                    <DataTemplate DataType="{x:Type vm:TaskReportHolderVm}">
-                                        <Grid FlowDirection="RightToLeft" DataContext="{Binding CurrentTaskReportBuilder}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                            </Grid.RowDefinitions>
+					<local:NptEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptEditorPanel" Height="0"
+									 DataContext="{Binding SelectedNPT}" FlowDirection="RightToLeft"/>
+					<!-- TaskReportBuilder -->
+					<local:TaskReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskReportBuilderPanel" Height="0"
+											 DataContext="{Binding CurrentTaskReportBuilder}" FlowDirection="RightToLeft"/>
+					<!-- NPTReportBuilder -->
+					<local:NptReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptReportBuilderPanel" Height="0"
+											DataContext="{Binding CurrentNPTReportBuilder}" FlowDirection="RightToLeft"/>
+					<!-- ProcessReportBuilder -->
+					<local:ProcessReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="processReportBuilderPanel" Height="0"
+												DataContext="{Binding CurrentProcessReportBuilder}" FlowDirection="RightToLeft"/>
 
-                                            <TextBlock Text="زمان شروع گزارش" VerticalAlignment="Center" Margin="25,0,5,0"/>
-                                            <cal:PersianDatePicker SelectedDate="{Binding StartDate}" Grid.Column="1"/>
-                                            <TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight" Grid.Column="2"/>
-
-                                            <CheckBox Content="زمان خاتمه گزارش" IsChecked="{Binding ByEndDate}" VerticalAlignment="Center" Grid.Row="1" Margin="5,0" Foreground="Black"/>
-                                            <cal:PersianDatePicker SelectedDate="{Binding EndDate}" IsEnabled="{Binding ByEndDate}" Grid.Column="1" Grid.Row="1"/>
-                                            <TextBox Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"
-												     IsEnabled="{Binding ByEndDate}" Grid.Column="2" Grid.Row="1"/>
-
-                                            <CheckBox Content="مدت زمان گزارش" IsChecked="{Binding ByEndDate, Converter={StaticResource inverter}}" VerticalAlignment="Center" Grid.Row="2" Margin="5,0" Foreground="Black"/>
-                                            <TextBox Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Grid.ColumnSpan="2"
-												     IsEnabled="{Binding ByEndDate, Converter={StaticResource inverter}}" Grid.Column="1" Grid.Row="2"/>
-
-                                            <TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Margin="5,0" Foreground="Black"/>
-                                            <TextBox Text="{Binding TargetPoint}" FlowDirection="LeftToRight"
-												     Grid.Column="1" Grid.Row="3"/>
-
-                                            <Button Content="محاسبه خودکار" FlowDirection="LeftToRight"
-												    Command="{Binding AutoFindTargetPoint}" Grid.Column="2" Grid.Row="3"/>
-
-                                            <UniformGrid Grid.Row="4" Grid.ColumnSpan="3" Rows="1" Columns="3">
-                                                <Button Grid.Column="0" Content="کل زمان باقیمانده" Command="{Binding AutoFillCommand}"/>
-                                                <Button Grid.Column="1" Content="انصراف" Command="{Binding CancelCommand}"/>
-                                                <Button Grid.Column="2" Content="تأیید" Command="{Binding OpenCommand}"/>
-                                            </UniformGrid>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ContentPresenter.ContentTemplate>
-                            </ContentPresenter>
-                        </Border>
-                    </Grid>
-                    <!-- NPTReportBuilder -->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptReportBuilderPanel" Height="0">
-                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" Background="Silver" Width="330" Height="152">
-                            <ContentPresenter ContentSource="{Binding CurrentNPTReportBuilder}">
-                                <ContentPresenter.ContentTemplate>
-                                    <DataTemplate DataType="{x:Type vm:NPTReportVm}">
-                                        <Grid FlowDirection="RightToLeft" DataContext="{Binding CurrentNPTReportBuilder}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="30"/>
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Text="زمان شروع گزارش" VerticalAlignment="Center" Margin="25,0,5,0"/>
-                                            <cal:PersianDatePicker SelectedDate="{Binding StartDate}" Grid.Column="1"/>
-                                            <TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight" Grid.Column="2"/>
-
-                                            <CheckBox Content="زمان خاتمه گزارش" IsChecked="{Binding ByEndDate}" VerticalAlignment="Center" Grid.Row="1" Margin="5,0" Foreground="Black"/>
-                                            <cal:PersianDatePicker SelectedDate="{Binding EndDate}" IsEnabled="{Binding ByEndDate}" Grid.Column="1" Grid.Row="1"/>
-                                            <TextBox Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"
-												     IsEnabled="{Binding ByEndDate}" Grid.Column="2" Grid.Row="1"/>
-
-                                            <CheckBox Content="مدت زمان گزارش" IsChecked="{Binding ByEndDate, Converter={StaticResource inverter}}" VerticalAlignment="Center" Grid.Row="2" Margin="5,0" Foreground="Black"/>
-                                            <TextBox Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Grid.ColumnSpan="2"
-												     IsEnabled="{Binding ByEndDate, Converter={StaticResource inverter}}" Grid.Column="1" Grid.Row="2"/>
-
-                                            <TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Margin="5,0" Foreground="Black"/>
-                                            <TextBox Text="{Binding TargetPoint}" FlowDirection="LeftToRight"
-												     Grid.Column="1" Grid.Row="3"/>
-
-                                            <Button Content="محاسبه خودکار" FlowDirection="LeftToRight"
-												    Command="{Binding AutoFindTargetPoint}" Grid.Column="2" Grid.Row="3"/>
-
-                                            <UniformGrid Grid.Row="4" Grid.ColumnSpan="3" Rows="1" Columns="3">
-                                                <Button Grid.Column="0" Content="کل زمان باقیمانده" Command="{Binding AutoFillCommand}"/>
-                                                <Button Grid.Column="1" Content="انصراف" Command="{Binding CancelCommand}"/>
-                                                <Button Grid.Column="2" Content="تأیید" Command="{Binding AddCommand}"/>
-                                            </UniformGrid>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ContentPresenter.ContentTemplate>
-                            </ContentPresenter>
-                        </Border>
-                    </Grid>
-                    <!-- ProcessReportBuilder -->
-                    <Grid Grid.ColumnSpan="2" Grid.Row="1" x:Name="processReportBuilderPanel" Height="0">
-                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="0,0,2,2" TextBlock.Foreground="Silver" Padding="4">
-                            <Border.Effect>
-                                <DropShadowEffect ShadowDepth="0" BlurRadius="6"/>
-                            </Border.Effect>
-                            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                                <Grid FlowDirection="RightToLeft" DataContext="{Binding CurrentProcessReportBuilder}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <DockPanel>
-                                        <TextBlock DockPanel.Dock="Left" Text="نام محصول: "/>
-                                        <Rectangle Width="16" Height="16" DockPanel.Dock="Left" Margin="2">
-                                            <Rectangle.Fill>
-                                                <SolidColorBrush Color="{Binding Parent.Process.Task.ProductColor}"/>
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Parent.Process.Task.ProductName}"/>
-                                        <TextBlock DockPanel.Dock="Left" Text="     نام فعالیت: "/>
-                                        <TextBlock Text="{Binding Parent.Process.StateStationActivity.Activity.Name}"/>
-                                    </DockPanel>
-
-                                    <DockPanel Grid.Row="1" LastChildFill="False">
-                                        <TextBlock DockPanel.Dock="Left" Text="مقدار هدف فعالیت" VerticalAlignment="Center"/>
-                                        <TextBox DockPanel.Dock="Left" Text="{Binding ProcessReportTargetPoint}" VerticalAlignment="Center" MinWidth="60"/>
-                                        <TextBlock DockPanel.Dock="Left" Text="تولید سالم" VerticalAlignment="Center"/>
-                                        <TextBox DockPanel.Dock="Left" Text="{Binding ProducedG1}" VerticalAlignment="Center" MinWidth="60"/>
-                                        <TextBlock DockPanel.Dock="Left" Text="زمان شروع گزارش" VerticalAlignment="Center"/>
-                                        <cal:PersianDatePicker DockPanel.Dock="Left" SelectedDate="{Binding StartDate}" IsEnabled="False"/>
-                                        <TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" IsReadOnly="True" FlowDirection="LeftToRight"/>
-                                    </DockPanel>
-
-                                    <!-- Defections -->
-                                    <Border Grid.Row="2" BorderBrush="#088" Background="#6AA"
-										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
-                                        <TextBlock Text="گزارش کیفی (ضایعات)" Foreground="Black" Margin="2,2,2,0"/>
-                                    </Border>
-                                    <Border Grid.Row="3" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
-                                        <DockPanel>
-                                            <Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="30"/>
-                                                    <ColumnDefinition Width="40"/>
-                                                    <ColumnDefinition Width="150"/>
-                                                    <ColumnDefinition Width="75"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="75"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <ContentControl Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="R" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="خروجی" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="نوع مشکل" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="زمان از دست رفته" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="تعداد از دست رفته" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="موثر بر خروجی" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="مجموع به زمان" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="مجموع به تعداد" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="8" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="اپراتورهای مقصر" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                            </Grid>
-                                            <Grid DockPanel.Dock="Bottom" TextBlock.Foreground="Silver">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="180"/>
-                                                    <ColumnDefinition Width="40"/>
-                                                    <ColumnDefinition Width="75"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="75"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Button DockPanel.Dock="Bottom" Command="{Binding DefectionReports.AddCommand}" HorizontalAlignment="Left">
-                                                    <DockPanel>
-                                                        <Image DockPanel.Dock="Left" Source="/Images/Fpc/Add16.png" Width="16"/>
-                                                        <TextBlock VerticalAlignment="Center" Text="افزودن گزارش کیفی" Foreground="Black"/>
-                                                    </DockPanel>
-                                                </Button>
-                                                <TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
-                                                <TextBlock Margin="2" Grid.Column="2" Text="{Binding DefectionReports.SumOfLostTime, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Margin="2" Grid.Column="3" Text="{Binding DefectionReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Margin="2" Grid.Column="5" Text="{Binding DefectionReports.SumOfTimeEquivalent, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Margin="2" Grid.Column="6" Text="{Binding DefectionReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                            </Grid>
-                                            <!-- Defections List -->
-                                            <ItemsControl ItemsSource="{Binding DefectionReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid Background="#222" TextBlock.Foreground="Silver">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="30"/>
-                                                                <ColumnDefinition Width="40"/>
-                                                                <ColumnDefinition Width="150"/>
-                                                                <ColumnDefinition Width="75"/>
-                                                                <ColumnDefinition Width="50"/>
-                                                                <ColumnDefinition Width="50"/>
-                                                                <ColumnDefinition Width="75"/>
-                                                                <ColumnDefinition Width="50"/>
-                                                                <ColumnDefinition Width="*"/>
-                                                            </Grid.ColumnDefinitions>
-                                                            <ContentControl Template="{StaticResource hoverStyle}">
-                                                                <TextBlock Text="{Binding Index}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
-                                                                <TextBlock x:Name="OTT" Text="---" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <Canvas ClipToBounds="False">
-                                                                <Button Opacity="0" HorizontalAlignment="Left" 
-																    x:Name="deleteDefectionReportButton" ToolTip="حذف گزارش کیفی" Command="{Binding DeleteCommand}">
-                                                                    <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
-                                                                </Button>
-                                                            </Canvas>
-                                                            <ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
-                                                                <DockPanel>
-                                                                    <TextBlock DockPanel.Dock="Right" Foreground="Red" Text="!" Width="10"
-															    Visibility="{Binding ProductDefection.SelectedItem, Converter={StaticResource isNullToVisibility}}" 
-															    ToolTip="هیچ مشکل کیفی هنوز انتخاب نشده است"/>
-                                                                    <ComboBox ItemsSource="{Binding ProductDefection.FilteredList}"
-																    DisplayMemberPath="Text"
-																    SelectedItem="{Binding ProductDefection.SelectedItem}"
-																    IsTextSearchEnabled="True"
-																    IsEditable="True"/>
-                                                                </DockPanel>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-                                                                <TextBox Text="{Binding LostSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
-                                                                <TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
-                                                                <CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-                                                                <TextBlock Text="{Binding TimeEquivalent, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
-                                                                <TextBlock Text="{Binding QuantityEquivalent}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="8" Template="{StaticResource hoverStyle}">
-                                                                <WrapPanel HorizontalAlignment="Stretch">
-                                                                    <ItemsControl ItemsSource="{Binding GuiltyOperators.FilterBoxes}">
-                                                                        <ItemsControl.ItemTemplate>
-                                                                            <DataTemplate>
-                                                                                <DockPanel>
-                                                                                    <Button DockPanel.Dock="Right" Command="{Binding DeleteCommand}">
-                                                                                        <Image Source="/Images/Fpc/Delete16.png" Height="16"/>
-                                                                                    </Button>
-                                                                                    <TextBlock DockPanel.Dock="Right" Foreground="Red" Text="!" Width="10"
-																					    Visibility="{Binding SelectedItem, Converter={StaticResource isNullToVisibility}}" 
-																					    ToolTip="هیچ اپراتوری هنوز انتخاب نشده است"/>
-                                                                                    <ComboBox ItemsSource="{Binding FilteredList}" Grid.Column="2"
-																				    DisplayMemberPath="Text"
-																				    SelectedItem="{Binding SelectedItem}"
-																				    IsTextSearchEnabled="True"
-																				    IsEditable="True"
-																				    x:Name="cmb"/>
-                                                                                </DockPanel>
-                                                                            </DataTemplate>
-                                                                        </ItemsControl.ItemTemplate>
-                                                                        <ItemsControl.ItemsPanel>
-                                                                            <ItemsPanelTemplate>
-                                                                                <WrapPanel/>
-                                                                            </ItemsPanelTemplate>
-                                                                        </ItemsControl.ItemsPanel>
-                                                                    </ItemsControl>
-                                                                    <Button Command="{Binding GuiltyOperators.AddCommand}">
-                                                                        <Image Source="/Images/Fpc/Add16.png" Height="16"/>
-                                                                    </Button>
-                                                                </WrapPanel>
-                                                            </ContentControl>
-                                                            <Grid.Triggers>
-                                                                <EventTrigger RoutedEvent="MouseEnter">
-                                                                    <BeginStoryboard>
-                                                                        <Storyboard Duration="0:0:0.2">
-                                                                            <DoubleAnimation Storyboard.TargetName="deleteDefectionReportButton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.7"/>
-                                                                        </Storyboard>
-                                                                    </BeginStoryboard>
-                                                                </EventTrigger>
-                                                                <EventTrigger RoutedEvent="MouseLeave">
-                                                                    <BeginStoryboard>
-                                                                        <Storyboard Duration="0:0:0.7">
-                                                                            <DoubleAnimation Storyboard.TargetName="deleteDefectionReportButton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
-                                                                        </Storyboard>
-                                                                    </BeginStoryboard>
-                                                                </EventTrigger>
-                                                            </Grid.Triggers>
-                                                        </Grid>
-                                                        <DataTemplate.Triggers>
-                                                            <DataTrigger Binding="{Binding ProductDefection.SelectedItem.ViewModel.IsG2}" Value="True">
-                                                                <Setter TargetName="OTT" Property="Text" Value="درجه 2"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ProductDefection.SelectedItem.ViewModel.IsG2}" Value="False">
-                                                                <Setter TargetName="OTT" Property="Text" Value="ضایعات"/>
-                                                            </DataTrigger>
-                                                        </DataTemplate.Triggers>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </DockPanel>
-                                    </Border>
-
-                                    <!-- Stoppage -->
-                                    <Border Grid.Row="4" BorderBrush="#088" Background="#6AA"
-										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
-                                        <TextBlock Text="گزارش توقفات" Foreground="Black" Margin="2,2,2,0"/>
-                                    </Border>
-                                    <Border Grid.Row="5" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
-                                        <DockPanel>
-                                            <Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="30"/>
-                                                    <ColumnDefinition Width="160"/>
-                                                    <ColumnDefinition Width="30"/>
-                                                    <ColumnDefinition Width="75"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="75"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <ContentControl Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="R" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
-                                                    <StackPanel>
-                                                        <TextBlock Text="علت توقفات" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                        <TextBlock Text="سطح 1  -  سطح 2  -  سطح 3" TextAlignment="Right" HorizontalAlignment="Center"/>
-                                                    </StackPanel>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="کد" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="زمان از دست رفته" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="تعداد از دست رفته" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="موثر بر خروجی" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="مجموع به زمان" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="مجموع به تعداد" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                                <ContentControl Grid.Column="8" Template="{StaticResource hoverStyle}">
-                                                    <TextBlock Text="اپراتورهای مقصر" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                </ContentControl>
-                                            </Grid>
-                                            <Grid DockPanel.Dock="Bottom" Background="#222" TextBlock.Foreground="Silver">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="180"/>
-                                                    <ColumnDefinition Width="40"/>
-                                                    <ColumnDefinition Width="75"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="75"/>
-                                                    <ColumnDefinition Width="50"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Button Command="{Binding StoppageReports.AddCommand}" HorizontalAlignment="Left">
-                                                    <DockPanel>
-                                                        <Image DockPanel.Dock="Left" Source="/Images/Fpc/Add16.png" Width="16"/>
-                                                        <TextBlock VerticalAlignment="Center" Text="افزودن گزارش توقفات" Foreground="Black"/>
-                                                    </DockPanel>
-                                                </Button>
-                                                <TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
-                                                <TextBlock Margin="2" Grid.Column="2" Text="{Binding StoppageReports.SumOfLostTime, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Margin="2" Grid.Column="3" Text="{Binding StoppageReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Margin="2" Grid.Column="5" Text="{Binding StoppageReports.SumOfTimeEquivalent, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Margin="2" Grid.Column="6" Text="{Binding StoppageReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                            </Grid>
-                                            <!-- Stoppages List -->
-                                            <ItemsControl ItemsSource="{Binding StoppageReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid Background="#222" TextBlock.Foreground="Silver">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="30"/>
-                                                                <ColumnDefinition Width="160"/>
-                                                                <ColumnDefinition Width="30"/>
-                                                                <ColumnDefinition Width="75"/>
-                                                                <ColumnDefinition Width="50"/>
-                                                                <ColumnDefinition Width="50"/>
-                                                                <ColumnDefinition Width="75"/>
-                                                                <ColumnDefinition Width="50"/>
-                                                                <ColumnDefinition Width="*"/>
-                                                            </Grid.ColumnDefinitions>
-                                                            <ContentControl Template="{StaticResource hoverStyle}">
-                                                                <TextBlock Text="{Binding Index}" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <Canvas ClipToBounds="False">
-                                                                <Button Opacity="0" HorizontalAlignment="Left" 
-																    x:Name="deleteStoppageReportButton" ToolTip="حذف گزارش توقفات" Command="{Binding DeleteCommand}">
-                                                                    <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
-                                                                </Button>
-                                                            </Canvas>
-                                                            <ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
-                                                                <ItemsControl ItemsSource="{Binding StoppageLevels.FilterBoxes}">
-                                                                    <ItemsControl.ItemTemplate>
-                                                                        <DataTemplate>
-                                                                            <DockPanel>
-                                                                                <TextBlock DockPanel.Dock="Right" Foreground="Red" Text="!" Width="10"
-																				    Visibility="{Binding SelectedItem, Converter={StaticResource isNullToVisibility}}" 
-																				    ToolTip="هیچ علت توقفی در این سطح انتخاب نشده است"/>
-                                                                                <ComboBox ItemsSource="{Binding FilteredList}"
-																				    DisplayMemberPath="Text"
-																				    SelectedItem="{Binding SelectedItem}"
-																				    IsTextSearchEnabled="True"
-																				    IsEditable="True"/>
-                                                                            </DockPanel>
-                                                                        </DataTemplate>
-                                                                    </ItemsControl.ItemTemplate>
-                                                                </ItemsControl>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
-                                                                <TextBox Text="{Binding SelectedCode}" TextChanged="CausesSelectedCode_TextChanged" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="25"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-                                                                <TextBox Text="{Binding LostSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
-                                                                <TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
-                                                                <CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-                                                                <TextBlock Text="{Binding TimeEquivalent, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
-                                                                <TextBlock Text="{Binding QuantityEquivalent}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
-                                                            </ContentControl>
-                                                            <ContentControl Grid.Column="8" Template="{StaticResource hoverStyle}">
-                                                                <WrapPanel HorizontalAlignment="Stretch">
-                                                                    <ItemsControl ItemsSource="{Binding GuiltyOperators.FilterBoxes}">
-                                                                        <ItemsControl.ItemTemplate>
-                                                                            <DataTemplate>
-                                                                                <DockPanel>
-                                                                                    <Button DockPanel.Dock="Right" Command="{Binding DeleteCommand}">
-                                                                                        <Image Source="/Images/Fpc/Delete16.png" Height="16"/>
-                                                                                    </Button>
-                                                                                    <TextBlock DockPanel.Dock="Right" Foreground="Red" Text="!" Width="10"
-																					    Visibility="{Binding SelectedItem, Converter={StaticResource isNullToVisibility}}" 
-																					    ToolTip="هیچ اپراتوری هنوز انتخاب نشده است"/>
-                                                                                    <ComboBox ItemsSource="{Binding FilteredList}" Grid.Column="2"
-																				    DisplayMemberPath="Text"
-																				    SelectedItem="{Binding SelectedItem}"
-																				    IsTextSearchEnabled="True"
-																				    IsEditable="True"
-																				    x:Name="cmb"/>
-                                                                                </DockPanel>
-                                                                            </DataTemplate>
-                                                                        </ItemsControl.ItemTemplate>
-                                                                        <ItemsControl.ItemsPanel>
-                                                                            <ItemsPanelTemplate>
-                                                                                <WrapPanel/>
-                                                                            </ItemsPanelTemplate>
-                                                                        </ItemsControl.ItemsPanel>
-                                                                    </ItemsControl>
-                                                                    <Button Command="{Binding GuiltyOperators.AddCommand}">
-                                                                        <Image Source="/Images/Fpc/Add16.png" Height="16"/>
-                                                                    </Button>
-                                                                </WrapPanel>
-                                                            </ContentControl>
-                                                            <Grid.Triggers>
-                                                                <EventTrigger RoutedEvent="MouseEnter">
-                                                                    <BeginStoryboard>
-                                                                        <Storyboard Duration="0:0:0.2">
-                                                                            <DoubleAnimation Storyboard.TargetName="deleteStoppageReportButton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.7"/>
-                                                                        </Storyboard>
-                                                                    </BeginStoryboard>
-                                                                </EventTrigger>
-                                                                <EventTrigger RoutedEvent="MouseLeave">
-                                                                    <BeginStoryboard>
-                                                                        <Storyboard Duration="0:0:0.7">
-                                                                            <DoubleAnimation Storyboard.TargetName="deleteStoppageReportButton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
-                                                                        </Storyboard>
-                                                                    </BeginStoryboard>
-                                                                </EventTrigger>
-                                                            </Grid.Triggers>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </DockPanel>
-                                    </Border>
-
-                                    <DockPanel LastChildFill="False">
-                                        <Button DockPanel.Dock="Right" Command="{Binding SaveCommand}">
-                                            <DockPanel>
-                                                <Image DockPanel.Dock="Left" Source="/Images/Fpc/Save16.png" Height="16"/>
-                                                <TextBlock Text="ذخیره تغییرات و بستن" Foreground="Black"/>
-                                            </DockPanel>
-                                        </Button>
-                                        <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}">
-                                            <DockPanel>
-                                                <Image DockPanel.Dock="Left" Source="/Images/Fpc/Undo16.png" Height="16"/>
-                                                <TextBlock Text="بستن" Foreground="Black"/>
-                                            </DockPanel>
-                                        </Button>
-                                    </DockPanel>
-                                </Grid>
-                            </ScrollViewer>
-                        </Border>
-                    </Grid>
-
-                    <!-- Month-Day-Hour Sliders-->
+					<!-- Month-Day-Hour Sliders-->
                     <ItemsControl Grid.Row="2" Grid.Column="1" SizeChanged="Grid_SizeChanged" ItemsSource="{Binding Months}" Name="ic_months">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -1811,8 +737,7 @@
                         </ItemsControl.Template>
                     </ItemsControl>
                     <!-- Shifts and Break hours -->
-                    <ItemsControl Grid.Row="4" Grid.RowSpan="2" Grid.Column="1" ItemsSource="{Binding ShiftsAndBreaks}" 
-                          Name="ic_shiftsAndBreaks" ClipToBounds="True" IsHitTestVisible="False">
+                    <ItemsControl Grid.Row="4" Grid.RowSpan="2" Grid.Column="1" ItemsSource="{Binding ShiftsAndBreaks}" Name="ic_shiftsAndBreaks" ClipToBounds="True" IsHitTestVisible="False">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <Canvas ClipToBounds="True"/>
@@ -1822,14 +747,14 @@
                             <DataTemplate>
                                 <DockPanel ClipToBounds="True" SnapsToDevicePixels="True">
                                     <DockPanel.Width>
-                                        <MultiBinding Converter="{StaticResource shiftsAndBreaksWidth}">
+										<MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
                                             <Binding Path="StartSeconds"/>
                                             <Binding Path="EndSeconds"/>
                                             <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                         </MultiBinding>
                                     </DockPanel.Width>
                                     <DockPanel.Margin>
-                                        <MultiBinding Converter="{StaticResource shiftsAndBreaksMargin}">
+										<MultiBinding Converter="{StaticResource StartToMarginConverter}">
                                             <Binding Path="StartSeconds"/>
                                             <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                         </MultiBinding>
@@ -1880,11 +805,11 @@
                                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <TextBlock TextWrapping="NoWrap" Text="{Binding Activity.Name}"  Foreground="Silver" HorizontalAlignment="Center"/>
                                                 <WrapPanel HorizontalAlignment="Center">
-                                                    <Image Source="/Images/PP/CycleTime.png" Height="16"/>
+                                                    <Image Style="{StaticResource CycleTimeImage}"/>
                                                     <TextBlock TextWrapping="Wrap" Text="{Binding CycleTime, Converter={StaticResource cycleTimeToStringConverter}}" Foreground="Silver"/>
                                                 </WrapPanel>
                                                 <WrapPanel HorizontalAlignment="Center">
-                                                    <Image Source="/Images/PP/ManHour.png" Height="16"/>
+                                                    <Image Style="{StaticResource ManHourImage}"/>
                                                     <TextBlock TextWrapping="Wrap" Text="{Binding ManHour}" Foreground="Silver"/>
                                                 </WrapPanel>
                                             </StackPanel>
@@ -2026,7 +951,7 @@
                                                                 <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                             </MultiBinding>
                                                         </Canvas.Margin>
-                                                        <Border x:Name="border" Loaded="PRC_Loaded" Unloaded="PRC_Unloaded" BorderBrush="Black"
+                                                        <Border x:Name="border" BorderBrush="Black"
 														    BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="50" Margin="0,1">
                                                             <Border.Width>
                                                                 <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
@@ -2085,7 +1010,7 @@
                                                                                 </Grid>
                                                                             </DockPanel>
                                                                             <Button x:Name="button" Opacity="0" Command="{Binding OpenCommand}">
-                                                                                <Image Source="/Images/PP/ReportEdit.png" Width="16"/>
+																				<Image Style="{StaticResource EditReportImage}"/>
                                                                                 <Button.ToolTip>
                                                                                     <ToolTip>ویرایش گزارش</ToolTip>
                                                                                 </Button.ToolTip>
@@ -2130,12 +1055,6 @@
                                                                                 </Border>
                                                                             </DockPanel>
                                                                             <Border Background="#5555"/>
-                                                                            <!--Button x:Name="button" Opacity="0" Command="{Binding OpenCommand}">
-                                                                                <Image Source="/Images/PP/ReportAdd.png" Width="16"/>
-                                                                                <Button.ToolTip>
-                                                                                    <ToolTip>ایجاد بازه برای گزارش ایستگاه جدید</ToolTip>
-                                                                                </Button.ToolTip>
-                                                                            </-->
                                                                             <Grid.Triggers>
                                                                                 <EventTrigger RoutedEvent="MouseEnter">
                                                                                     <BeginStoryboard>
@@ -2301,8 +1220,7 @@
                                                             <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                         </MultiBinding>
                                                     </Canvas.Margin>
-                                                    <!-- each item's load and unload event is set here -->
-                                                    <Border x:Name="border" Loaded="PPItem_Loaded" Unloaded="PPItem_Unloaded" BorderBrush="Black"
+                                                    <Border x:Name="border" BorderBrush="Black"
 													    BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="40" Margin="0,1">
                                                         <Border.Width>
                                                             <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
@@ -2350,7 +1268,7 @@
                                                                         <Grid Opacity="0.5" x:Name="grid">
                                                                             <Ellipse Height="40" Width="40" Fill="#222" Stroke="#444"/>
                                                                             <Ellipse x:Name="ellipse" Height="40" Width="40" Fill="White" Opacity="0"/>
-                                                                            <Image Source="/Images/PP/SetupAdd.png" Width="16"/>
+																			<Image Style="{StaticResource AddSetupImage}"/>
                                                                             <Grid.Triggers>
                                                                                 <EventTrigger RoutedEvent="MouseEnter">
                                                                                     <BeginStoryboard>
@@ -2380,7 +1298,7 @@
                                                                 <Button.ToolTip>
                                                                     <StackPanel>
                                                                         <WrapPanel>
-                                                                            <Image Source="/Images/PP/SetupAdd.png" Width="16"/>
+                                                                            <Image Style="{StaticResource AddSetupImage}"/>
                                                                             <TextBlock Text="درج خودکار آماده سازی جدید در اینجا" VerticalAlignment="Bottom"/>
                                                                         </WrapPanel>
                                                                         <TextBlock Foreground="DarkGray" FontSize="10" Text="آیتمهایی که در این ایستگاه بعد از این آماده سازی قرار دارند، بطور خودکار در زمان جابجا می شوند"/>
@@ -2432,20 +1350,20 @@
                                                                         <!-- block background texts -->
                                                                         <WrapPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
                                                                             <DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}" Background="#4FA4">
-                                                                                <Image Source="/Images/PP/ReportWarning15.png" Height="15" DockPanel.Dock="Left"/>
+																				<Image Style="{StaticResource ReportWarningImage}" DockPanel.Dock="Left"/>
                                                                                 <TextBlock Text="{Binding ReportFillPercent}" Height="15" DockPanel.Dock="Left"/>
                                                                             </DockPanel>
-                                                                            <Image Source="/Images/PP/Job.png" Margin="2,0" Height="16" Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}"/>
+                                                                            <Image Style="{StaticResource JobImage}" Margin="2,0" Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}"/>
                                                                             <TextBlock Text="{Binding Code}" Height="16" Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}"/>
-                                                                            <Image Source="/Images/PP/Rework.png" Margin="2,0" Height="15" Visibility="{Binding IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
+                                                                            <Image Style="{StaticResource ReworkImage}" Margin="2,0" Visibility="{Binding IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
                                                                             <TextBlock Text="{Binding ProductCode}" TextWrapping="NoWrap" Height="15" Visibility="{Binding ElementName=ppTable, Path=DataContext.ShowProductCodes, Converter={StaticResource booleanToVisibilityConverter}}"/>
                                                                             <TextBlock Text="{Binding ProductName}" TextWrapping="NoWrap" Height="15" Visibility="{Binding ElementName=ppTable, Path=DataContext.ShowProductCodes, Converter={StaticResource booleanToInvisibilityConverter}}"/>
                                                                             <DockPanel VerticalAlignment="Top" Margin="2,0">
-                                                                                <Image Source="/Images/PP/TargetPoint.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                                                                <Image Style="{StaticResource TargetPointImage}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                 <TextBlock Text="{Binding BlockTargetPoint}" Height="15"/>
                                                                             </DockPanel>
                                                                             <DockPanel VerticalAlignment="Top" Margin="2,0">
-                                                                                <Image Source="/Images/PP/ProducedG1.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+																				<Image Style="{StaticResource ProducedG1Image}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                 <TextBlock Text="{Binding BlockProducedG1}" Height="15"/>
                                                                             </DockPanel>
                                                                         </WrapPanel>
@@ -2465,11 +1383,11 @@
                                                                                             <Grid>
                                                                                                 <!-- taskBackgroundTexts (TP, ProducedG1, OperCount) -->
                                                                                                 <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" x:Name="taskBackgroundTexts" ClipToBounds="True">
-                                                                                                    <Image Source="/Images/PP/TargetPoint.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+																									<Image Style="{StaticResource TargetPointImage}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                                     <TextBlock Text="{Binding TaskTargetPoint}" Height="15" DockPanel.Dock="Left"/>
-                                                                                                    <Image Source="/Images/PP/ProducedG1.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+																									<Image Style="{StaticResource ProducedG1Image}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                                     <TextBlock Text="{Binding TaskProducedG1}" Height="15" DockPanel.Dock="Left"/>
-                                                                                                    <Image Source="/Images/PP/Operator.png" Height="15" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                                                                                    <Image Style="{StaticResource OperatorImage}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                                     <TextBlock Text="{Binding TaskOperatorCount}" Height="15" DockPanel.Dock="Left"/>
                                                                                                 </DockPanel>
                                                                                                 <!-- taskReports (inside each task) -->
@@ -2485,7 +1403,7 @@
                                                                                                                     </MultiBinding>
                                                                                                                 </Button.Width>
                                                                                                                 <StackPanel>
-                                                                                                                    <Image Source="/Images/PP/Report.png" Width="16" x:Name="reportImage" HorizontalAlignment="Left"/>
+                                                                                                                    <Image Style="{StaticResource ReportImage}" x:Name="reportImage" HorizontalAlignment="Left"/>
                                                                                                                     <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left"/>
                                                                                                                 </StackPanel>
                                                                                                             </Button>
@@ -2503,7 +1421,7 @@
                                                                                                                     <Border.ToolTip>
                                                                                                                         <StackPanel>
                                                                                                                             <TextBlock Text="گزارش تولید"/>
-                                                                                                                            <Image Source="/Images/PP/Report.png" Width="16"/>
+																															<Image Style="{StaticResource ReportImage}"/>
                                                                                                                             <WrapPanel>
                                                                                                                                 <TextBlock Text="مدت"/>
                                                                                                                                 <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
@@ -2529,14 +1447,14 @@
                                                                                                                         </StackPanel>
                                                                                                                     </Border.ToolTip>
                                                                                                                     <StackPanel>
-                                                                                                                        <Image Source="/Images/PP/Report.png" Width="16" x:Name="reportImage" HorizontalAlignment="Left"/>
+																														<Image Style="{StaticResource ReportImage}" x:Name="reportImage" HorizontalAlignment="Left"/>
                                                                                                                         <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left"/>
                                                                                                                     </StackPanel>
                                                                                                                 </Border>
                                                                                                                 <!--Button Command="{Binding OpenCommand}">
                                                                                                                 </-->
                                                                                                                 <Button Height="20" Width="20" Command="{Binding DeleteCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                                                                                                    <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
+																													<Image Style="{StaticResource Delete16Image}"/>
                                                                                                                 </Button>
                                                                                                             </Grid>
                                                                                                         </DataTemplate>
@@ -2579,20 +1497,20 @@
                                                                         <!-- block background texts -->
                                                                         <WrapPanel VerticalAlignment="Bottom">
                                                                             <DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}" Background="#4FA4">
-                                                                                <Image Source="/Images/PP/ReportWarning15.png" Height="15" DockPanel.Dock="Left"/>
+                                                                                <Image Style="{StaticResource ReportWarningImage}" DockPanel.Dock="Left"/>
                                                                                 <TextBlock Text="{Binding ReportFillPercent}" Height="15" DockPanel.Dock="Left"/>
                                                                             </DockPanel>
-                                                                            <Image Source="/Images/PP/Job.png" Margin="2,0" Height="16" Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}"/>
+                                                                            <Image Style="{StaticResource JobImage}" Margin="2,0" Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}"/>
                                                                             <TextBlock Text="{Binding Code}" Height="16" Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}"/>
-                                                                            <Image Source="/Images/PP/Rework.png" Margin="2,0" Height="15" Visibility="{Binding IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
+                                                                            <Image Style="{StaticResource ReworkImage}" Margin="2,0" Visibility="{Binding IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
                                                                             <TextBlock Text="{Binding ProductCode}" TextWrapping="NoWrap" Height="15" Visibility="{Binding ElementName=ppTable, Path=DataContext.ShowProductCodes, Converter={StaticResource booleanToVisibilityConverter}}"/>
                                                                             <TextBlock Text="{Binding ProductName}" TextWrapping="NoWrap" Height="15" Visibility="{Binding ElementName=ppTable, Path=DataContext.ShowProductCodes, Converter={StaticResource booleanToInvisibilityConverter}}"/>
                                                                             <DockPanel VerticalAlignment="Top" Margin="2,0">
-                                                                                <Image Source="/Images/PP/TargetPoint.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                                                                <Image Style="{StaticResource TargetPointImage}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                 <TextBlock Text="{Binding BlockTargetPoint}" Height="15"/>
                                                                             </DockPanel>
                                                                             <DockPanel VerticalAlignment="Top" Margin="2,0">
-                                                                                <Image Source="/Images/PP/ProducedG1.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                                                                <Image Style="{StaticResource ProducedG1Image}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                 <TextBlock Text="{Binding BlockProducedG1}" Height="15"/>
                                                                             </DockPanel>
                                                                         </WrapPanel>
@@ -2612,11 +1530,11 @@
                                                                                             <Grid>
                                                                                                 <!-- taskBackgroundTexts (TP, ProducedG1, OperCount) -->
                                                                                                 <DockPanel VerticalAlignment="Top" x:Name="taskBackgroundTexts" ClipToBounds="True">
-                                                                                                    <Image Source="/Images/PP/TargetPoint.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                                                                                    <Image Style="{StaticResource TargetPointImage}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                                     <TextBlock Text="{Binding TaskTargetPoint}" Height="15" DockPanel.Dock="Left"/>
-                                                                                                    <Image Source="/Images/PP/ProducedG1.png" Height="11" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                                                                                    <Image Style="{StaticResource ProducedG1Image}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                                     <TextBlock Text="{Binding TaskProducedG1}" Height="15" DockPanel.Dock="Left"/>
-                                                                                                    <Image Source="/Images/PP/Operator.png" Height="15" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                                                                                    <Image Style="{StaticResource OperatorImage}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                                                                                                     <TextBlock Text="{Binding TaskOperatorCount}" Height="15" DockPanel.Dock="Left"/>
                                                                                                 </DockPanel>
                                                                                                 <!-- taskReports (inside each task) -->
@@ -2632,7 +1550,7 @@
                                                                                                                     </MultiBinding>
                                                                                                                 </Button.Width>
                                                                                                                 <StackPanel>
-                                                                                                                    <Image Source="/Images/PP/Report.png" Width="16" x:Name="reportImage" HorizontalAlignment="Left"/>
+                                                                                                                    <Image Style="{StaticResource ReportImage}" x:Name="reportImage" HorizontalAlignment="Left"/>
                                                                                                                     <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left"/>
                                                                                                                 </StackPanel>
                                                                                                             </Button>
@@ -2650,7 +1568,7 @@
                                                                                                                     <Border.ToolTip>
                                                                                                                         <StackPanel>
                                                                                                                             <TextBlock Text="گزارش تولید"/>
-                                                                                                                            <Image Source="/Images/PP/Report.png" Width="16"/>
+																															<Image Style="{StaticResource ReportImage}"/>
                                                                                                                             <WrapPanel>
                                                                                                                                 <TextBlock Text="مدت"/>
                                                                                                                                 <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
@@ -2676,14 +1594,14 @@
                                                                                                                         </StackPanel>
                                                                                                                     </Border.ToolTip>
                                                                                                                     <StackPanel>
-                                                                                                                        <Image Source="/Images/PP/Report.png" Width="16" x:Name="reportImage" HorizontalAlignment="Left"/>
+																														<Image Style="{StaticResource ReportImage}" x:Name="reportImage" HorizontalAlignment="Left"/>
                                                                                                                         <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left" Background="#AAA"/>
                                                                                                                     </StackPanel>
                                                                                                                 </Border>
                                                                                                                 <!--Button Command="{Binding OpenCommand}">
                                                                                                                 </-->
                                                                                                                 <Button Height="20" Width="20" Command="{Binding DeleteCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                                                                                                    <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
+                                                                                                                    <Image Style="{StaticResource Delete16Image}"/>
                                                                                                                 </Button>
                                                                                                             </Grid>
                                                                                                         </DataTemplate>
@@ -2768,7 +1686,7 @@
                                                             <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
                                                         </MultiBinding>
                                                     </Canvas.Margin>
-                                                    <Border x:Name="border" Loaded="PPItem_Loaded" Unloaded="PPItem_Unloaded" BorderBrush="Black" ClipToBounds="True"
+                                                    <Border x:Name="border" BorderBrush="Black" ClipToBounds="True"
 													    BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="40" Margin="0,1">
                                                         <Border.Width>
                                                             <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
@@ -2801,13 +1719,13 @@
                                                                                     <Separator/>
                                                                                     <WrapPanel>
                                                                                         <TextBlock Text="از محصول: " Foreground="DarkGray"/>
-                                                                                        <Image Source="/Images/PP/Rework.png" Width="15" Visibility="{Binding FromProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+                                                                                        <Image Style="{StaticResource ReworkImage}" Visibility="{Binding FromProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
                                                                                         <Rectangle Fill="{Binding FromProduct.Product.Color}" Width="15"/>
                                                                                         <TextBlock Text="{Binding FromProduct.Name}" TextWrapping="Wrap"/>
                                                                                     </WrapPanel>
                                                                                     <WrapPanel>
                                                                                         <TextBlock Text="به محصول: " Foreground="DarkGray"/>
-                                                                                        <Image Source="/Images/PP/Rework.png" Width="15" Visibility="{Binding ToProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+																						<Image Style="{StaticResource ReworkImage}" Visibility="{Binding ToProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
                                                                                         <Rectangle Fill="{Binding ToProduct.Product.Color}" Width="15"/>
                                                                                         <TextBlock Text="{Binding ToProduct.Name}" TextWrapping="Wrap"/>
                                                                                     </WrapPanel>
@@ -2858,7 +1776,7 @@
                                                         <Setter TargetName="innerControl" Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="{x:Type Control}">
-                                                                    <Image Source="/Images/PP/Setup.png" Height="16"/>
+																	<Image Style="{StaticResource SetupImage}"/>
                                                                 </ControlTemplate>
                                                             </Setter.Value>
                                                         </Setter>
@@ -2895,7 +1813,7 @@
 																			    Command="{Binding EditReportCommand}" 
 																			    Visibility="{Binding Report, Converter={StaticResource isNullToVisibility}}">
                                                                             <StackPanel>
-                                                                                <Image Source="/Images/PP/ReportAdd.png" Height="16"/>
+                                                                                <Image Style="{StaticResource AddReportImage}"/>
                                                                                 <Border Background="#4FFF" HorizontalAlignment="Stretch">
                                                                                     <TextBlock Text="فاقد گزارش"/>
                                                                                 </Border>
@@ -2912,7 +1830,7 @@
                                                                             <Button x:Name="editbutton" Opacity="0" HorizontalAlignment="Left" Margin="0" ToolTip="مشاهده/ویرایش گزارش"
 																				    Command="{Binding EditReportCommand}">
                                                                                 <StackPanel>
-                                                                                    <Image Source="/Images/PP/ReportView.png" Height="16"/>
+                                                                                    <Image Style="{StaticResource ViewReportImage}"/>
                                                                                     <Border Background="#4FFF" HorizontalAlignment="Stretch">
                                                                                         <TextBlock Text="{Binding Report.DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
                                                                                     </Border>
@@ -2929,40 +1847,28 @@
                                                                             <EventTrigger RoutedEvent="MouseEnter">
                                                                                 <BeginStoryboard>
                                                                                     <Storyboard Duration="0:0:0.2">
-                                                                                        <DoubleAnimation Storyboard.TargetName="addbutton"
-																						    Storyboard.TargetProperty="Opacity"
-																						    Duration="0:0:0.2"
-																						    To="0.8"/>
+                                                                                        <DoubleAnimation Storyboard.TargetName="addbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.8"/>
                                                                                     </Storyboard>
                                                                                 </BeginStoryboard>
                                                                             </EventTrigger>
                                                                             <EventTrigger RoutedEvent="MouseLeave">
                                                                                 <BeginStoryboard>
                                                                                     <Storyboard Duration="0:0:0.7">
-                                                                                        <DoubleAnimation Storyboard.TargetName="addbutton"
-																						    Storyboard.TargetProperty="Opacity"
-																						    Duration="0:0:0.7"
-																						    To="0"/>
+                                                                                        <DoubleAnimation Storyboard.TargetName="addbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
                                                                                     </Storyboard>
                                                                                 </BeginStoryboard>
                                                                             </EventTrigger>
                                                                             <EventTrigger RoutedEvent="MouseEnter">
                                                                                 <BeginStoryboard>
                                                                                     <Storyboard Duration="0:0:0.2">
-                                                                                        <DoubleAnimation Storyboard.TargetName="editbutton"
-																						    Storyboard.TargetProperty="Opacity"
-																						    Duration="0:0:0.2"
-																						    To="0.8"/>
+                                                                                        <DoubleAnimation Storyboard.TargetName="editbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.8"/>
                                                                                     </Storyboard>
                                                                                 </BeginStoryboard>
                                                                             </EventTrigger>
                                                                             <EventTrigger RoutedEvent="MouseLeave">
                                                                                 <BeginStoryboard>
                                                                                     <Storyboard Duration="0:0:0.7">
-                                                                                        <DoubleAnimation Storyboard.TargetName="editbutton"
-																						    Storyboard.TargetProperty="Opacity"
-																						    Duration="0:0:0.7"
-																						    To="0"/>
+                                                                                        <DoubleAnimation Storyboard.TargetName="editbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
                                                                                     </Storyboard>
                                                                                 </BeginStoryboard>
                                                                             </EventTrigger>
@@ -3061,35 +1967,34 @@
             
             
             <DataTemplate.Triggers>
+				<!-- TaskEditor -->
                 <DataTrigger Binding="{Binding TaskEditor.IsVisible}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
-                                <ParallelTimeline>
-                                    <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
-                                    <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="128"/>
-                                </ParallelTimeline>
+                                <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
+                                <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="128"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
-                                <ParallelTimeline>
-                                    <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
-                                    <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
-                                </ParallelTimeline>
+                                <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
+                                <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding JobEditor.IsVisible}" Value="True">
+
+				<!-- JobEditor -->
+				<DataTrigger Binding="{Binding JobEditor.IsVisible}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="jobEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
                                 <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="92"/>
-                            </Storyboard>
+							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
@@ -3101,13 +2006,15 @@
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding SelectedNPT.IsEditMode}" Value="True">
+
+				<!-- NPTEditor -->
+				<DataTrigger Binding="{Binding SelectedNPT.IsEditMode}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="nptEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="100"/>
-                            </Storyboard>
-                        </BeginStoryboard>
+							</Storyboard>
+						</BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
                         <BeginStoryboard>
@@ -3117,12 +2024,14 @@
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
+				
+				<!-- JobList -->
                 <DataTrigger Binding="{Binding JobList.IsVisible}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="jobListPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="250"/>
-                            </Storyboard>
+							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
@@ -3133,12 +2042,14 @@
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding CurrentTaskReportBuilder.IsSelected}" Value="True">
+
+				<!-- CurrentTaskReportBuilder -->
+				<DataTrigger Binding="{Binding CurrentTaskReportBuilder.IsSelected}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="taskReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="200"/>
-                            </Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="taskReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="230"/>
+							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
@@ -3149,12 +2060,14 @@
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding CurrentProcessReportBuilder.IsSelected}" Value="True">
+
+				<!-- CurrentProcessReportBuilder -->
+				<DataTrigger Binding="{Binding CurrentProcessReportBuilder.IsSelected}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="processReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
-                            </Storyboard>
+							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
@@ -3165,12 +2078,14 @@
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding CurrentNPTReportBuilder.IsSelected}" Value="True">
+
+				<!-- CurrentNPTReportBuilder -->
+				<DataTrigger Binding="{Binding CurrentNPTReportBuilder.IsSelected}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="nptReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="200"/>
-                            </Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="nptReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="220"/>
+							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
@@ -3248,23 +2163,8 @@
 				<!--Slider Template-->
 				<ControlTemplate x:Key="SliderTemplate" TargetType="{x:Type ScrollViewer}">
 					<Grid Background="{TemplateBinding Background}" Height="600" >
-						<ScrollContentPresenter 
-					x:Name="PART_ScrollContentPresenter" 
-					CanContentScroll="True"
-					CanHorizontallyScroll="True" 
-					ContentTemplate="{TemplateBinding ContentTemplate}"
-					Content="{TemplateBinding Content}"
-					Margin="{TemplateBinding Padding}"/>
-						<ScrollBar
-					x:Name="PART_HorizontalScrollBar" 
-                    VerticalAlignment="Bottom"
-					AutomationProperties.AutomationId="HorizontalScrollBar" 
-					Maximum="{TemplateBinding ScrollableWidth}" 
-					Minimum="0" 
-					Orientation="Horizontal"
-					Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" 
-					Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
-					ViewportSize="{TemplateBinding ViewportWidth}">
+						<ScrollContentPresenter  x:Name="PART_ScrollContentPresenter"  CanContentScroll="True" CanHorizontallyScroll="True"  ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
+						<ScrollBar x:Name="PART_HorizontalScrollBar"  VerticalAlignment="Bottom" AutomationProperties.AutomationId="HorizontalScrollBar"  Maximum="{TemplateBinding ScrollableWidth}"  Minimum="0"  Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"  Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}">
 							<ScrollBar.Template>
 								<ControlTemplate TargetType="ScrollBar">
 									<Grid>
@@ -3275,36 +2175,13 @@
 										</Grid.ColumnDefinitions>
 										<Border Grid.ColumnSpan="3" Background="#01000000" />
 										<!--Little Window-->
-										<Border
-									Grid.Column="1"
-									Cursor="ScrollWE"
-									Background="{StaticResource SlideWindowBackground}"
-									BorderBrush="{StaticResource SlideWindowBorder}"
-									BorderThickness="2"
-									CornerRadius="2"
-									HorizontalAlignment="Center"
-									Margin="0,-2"
-									Width="{Binding RelativeSource={RelativeSource AncestorType=Virtualizing:DateTimeScrollViewer}, Path=LittleWindowWidth}">
+										<Border Grid.Column="1" Cursor="ScrollWE" Background="{StaticResource SlideWindowBackground}" BorderBrush="{StaticResource SlideWindowBorder}" BorderThickness="2" CornerRadius="2" HorizontalAlignment="Center" Margin="0,-2" Width="{Binding RelativeSource={RelativeSource AncestorType=Virtualizing:DateTimeScrollViewer}, Path=LittleWindowWidth}">
 										</Border>
 										<!--Transparent Bar-->
-										<Rectangle
-									Grid.Column="1" 
-									Margin="-1"
-									Cursor="/Images/openhand.cur"
-									Fill="Transparent"
-									MouseMove="AreaMouseMove" MouseUp="AreaMouseUp"
-									MouseDown="RectangleMouseDown"/>
+										<Rectangle Grid.Column="1"  Margin="-1" Cursor="/Images/openhand.cur" Fill="Transparent" MouseMove="AreaMouseMove" MouseUp="AreaMouseUp" MouseDown="RectangleMouseDown"/>
 										<!-- << | >> -->
-										<RepeatButton
-									Grid.Column="0"
-									Cursor="ScrollW" 
-									Style="{StaticResource ScrollBarLineButton}"
-									Click="RepeatButtonLClick"/>
-										<RepeatButton
-									Grid.Column="3"
-									Cursor="ScrollE" 
-									Style="{StaticResource ScrollBarLineButton}"
-									Click="RepeatButtonRClick"/>
+										<RepeatButton Grid.Column="0" Cursor="ScrollW"  Style="{StaticResource ScrollBarLineButton}" Click="RepeatButtonLClick"/>
+										<RepeatButton Grid.Column="3" Cursor="ScrollE"  Style="{StaticResource ScrollBarLineButton}" Click="RepeatButtonRClick"/>
 									</Grid>
 								</ControlTemplate>
 							</ScrollBar.Template>
@@ -3344,8 +2221,7 @@
                             <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding Scales}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" 
-                                                   Height="100" Width="50" Text="{Binding}"/>
+                                        <TextBlock Style="{StaticResource EntryBoxHeader}"  Height="100" Width="50" Text="{Binding}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -3355,8 +2231,7 @@
                                 <Grid.Resources>
                                     <Common:BindingProxy x:Key="Proxy" Data="{Binding}" />
                                 </Grid.Resources>
-                                <ItemsControl x:Name="_ScaleLines"
-                                                    ItemsSource="{Binding ScaleLines}">
+                                <ItemsControl x:Name="_ScaleLines" ItemsSource="{Binding ScaleLines}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <UniformGrid Height="100" Rows="2" Columns="1">
@@ -3366,16 +2241,7 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                                    <ItemsControl x:Name="_slider"
-					                ItemsSource="{Binding Bars}"
-                                    MouseMove="AreaMouseMove" MouseUp="AreaMouseUp"
-                                    FlowDirection="LeftToRight"              
-                                    VerticalAlignment="Bottom"
-					                VirtualizingPanel.ScrollUnit="Pixel"
-					                VirtualizingPanel.IsVirtualizing="True"
-                                    VirtualizingPanel.VirtualizationMode="Recycling"
-                                    ScrollViewer.IsDeferredScrollingEnabled="True"
-					                ScrollViewer.CanContentScroll="True">
+                                    <ItemsControl x:Name="_slider" ItemsSource="{Binding Bars}" MouseMove="AreaMouseMove" MouseUp="AreaMouseUp" FlowDirection="LeftToRight"               VerticalAlignment="Bottom" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <VirtualizingStackPanel Orientation="Horizontal"/>

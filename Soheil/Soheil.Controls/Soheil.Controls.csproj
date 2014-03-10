@@ -142,6 +142,9 @@
       <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataGridTextSearch.cs" />
+    <Compile Include="Layout\PPStyles.xaml.cs">
+      <DependentUpon>PPStyles.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PasswordHelper.cs" />
     <Compile Include="CustomControls\GridHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -164,7 +167,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -172,6 +174,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Layout\Converters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomControls\OverlayMessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -191,6 +197,10 @@
     <Page Include="Layout\Fonts.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Layout\Images.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Layout\PPStyles.xaml">
       <SubType>Designer</SubType>
@@ -276,6 +286,165 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\all.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\CloseWipeUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\CycleTime.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\DropDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\EditJob.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\EditTask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Job.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\JobList.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\JobListByDefinition.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\JobListByTasks.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\JobNew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\LeftOperatorCounter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ManHour.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\NewJob.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\NewTask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Now.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Operator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\OperatorCounter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ProcessReport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ProducedG1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Report.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ReportAdd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ReportEdit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ReportView.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ReportWarning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Rework.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\RightOperatorCounter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\SaveWipeUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Setup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\SetupAdd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ShowCode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Targetpoint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Task.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\TaskAutoLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\TaskNew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\TaskState_Blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\TaskState_Green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\TaskState_Grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\TaskState_Red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\TaskState_Yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\Zoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ZoomUndo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Add16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\Collapse16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\Default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Delete16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\Expand16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\New16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\NotDefault.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\Save.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Save16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\SelectTool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Undo16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\warning.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

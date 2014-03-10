@@ -7,12 +7,11 @@
 	<Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/ExpressionDark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/WindowStyle.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/Styles.xaml" />
+				<ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/Converters.xaml"/>
+				<ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/Images.xaml"/>
 				<ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/PPStyles.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\FpcResources.xaml"/>
-				<ResourceDictionary Source="Views\PP\PPResources.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\ExpanderTheme.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\ToolBox.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\MidStateConfig.xaml"/>

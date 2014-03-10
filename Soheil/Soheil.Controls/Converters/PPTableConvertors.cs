@@ -400,6 +400,40 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+
+	public class StartEndToWidthConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return 0d;
+			var start = (DateTime)values[0];
+			var end = (DateTime)values[1];
+			var oneHourWidth = (double)values[2];
+			return end.Subtract(start).TotalSeconds * oneHourWidth / 3600;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+	public class StartToMarginConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return 0d;
+			var start = (DateTime)values[0];
+			var oneHourWidth = (double)values[1];
+			return (start.Ticks / TimeSpan.TicksPerSecond) * oneHourWidth / 3600;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+
 	#endregion
 
 	#region Operators

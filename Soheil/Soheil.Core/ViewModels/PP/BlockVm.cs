@@ -11,13 +11,23 @@ using Soheil.Common.SoheilException;
 
 namespace Soheil.Core.ViewModels.PP
 {
+	/// <summary>
+	/// A Block is a sequence of Tasks with the same Station and State with no space in between.
+	/// <para>Tasks of a Block can contain different number of Operators, thus can have different CycleTimes</para>
+	/// <para>Blocks can be added or removed directly from PPTable</para>
+	/// </summary>
 	public class BlockVm : PPItemVm
 	{
+		PPTableVm _ppTable;
 		Model.Block _model;
+		/// <summary>
+		/// Gets Id property of the model representing this ViewModel
+		/// </summary>
 		public override int Id { get { return _model.Id; } }
+		/// <summary>
+		/// Gets DataService for Block
+		/// </summary>
 		public DataServices.BlockDataService BlockDataService { get { return _ppTable.BlockDataService; } }
-
-        PPTableVm _ppTable;
 
         //Parent Dependency Property
         public Core.PP.PPItemCollection Parent

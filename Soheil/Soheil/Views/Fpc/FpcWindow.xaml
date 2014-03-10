@@ -12,7 +12,7 @@
 		<DockPanel TextBlock.Foreground="WhiteSmoke" Margin="0,0,0,5" Background="{StaticResource fpcBackBrush}">
 			<ToolBar DockPanel.Dock="Top" Panel.ZIndex="999">
 				<ToggleButton IsChecked="{Binding ToolSelection}">
-					<Image Source="/Images/Fpc/SelectTool.png" Height="16"/>
+					<Image Style="{StaticResource SelectToolImage}"/>
 				</ToggleButton>
 				<ToggleButton IsChecked="{Binding ToolState}">
 					<Grid>
@@ -41,7 +41,7 @@
 				<Separator/>
 				<Button Command="{Binding SaveAllCommand}">
 					<WrapPanel>
-						<Image Source="/Images/Fpc/Save.ico" Width="16"/>
+						<Image Style="{StaticResource SaveImage}"/>
 						<TextBlock Text="ذخیره تغییرات"/>
 					</WrapPanel>
 				</Button>
@@ -51,7 +51,7 @@
 				<ToggleButton IsChecked="{Binding IsDefault}">
 					<WrapPanel>
 						<TextBlock Text="FPC پیش فرض:" VerticalAlignment="Center"/>
-						<Image Style="{StaticResource isDefaultImageStyle}"/>
+						<Image Style="{StaticResource IsDefaultImageStyle}"/>
 					</WrapPanel>
 				</ToggleButton>
 			</ToolBar>

@@ -139,14 +139,32 @@
       <DependentUpon>Toolbox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\GridHelper.cs" />
+    <Compile Include="Views\PP\JobList.xaml.cs">
+      <DependentUpon>JobList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\NptEditor.xaml.cs">
+      <DependentUpon>NptEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\NptReportBuilder.xaml.cs">
+      <DependentUpon>NptReportBuilder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\PPJobEditor.xaml.cs">
       <DependentUpon>PPJobEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\PPTaskEditor.xaml.cs">
       <DependentUpon>PPTaskEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PP\ProcessReportBuilder.xaml.cs">
+      <DependentUpon>ProcessReportBuilder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\TaskReportBuilder.xaml.cs">
+      <DependentUpon>TaskReportBuilder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SetupTime\Converters.cs" />
     <Compile Include="Views\SetupTime\GridHelper.cs" />
+    <Compile Include="Views\SetupTime\SetupTimeTable.xaml.cs">
+      <DependentUpon>SetupTimeTable.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SkillCenter\SkillCenter.xaml.cs">
       <DependentUpon>SkillCenter.xaml</DependentUpon>
     </Compile>
@@ -205,6 +223,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PP\JobList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\NptEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\NptReportBuilder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PP\PPJobEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -213,7 +243,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PP\PPResources.xaml">
+    <Page Include="Views\PP\ProcessReportBuilder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\TaskReportBuilder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SetupTime\SetupTimeTable.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -252,37 +290,11 @@
       <SubType>
       </SubType>
     </None>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\highlightedMaximize.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\highlightedMinimize.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\normalMaximize.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\normalMinimize.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Fpc\Add16.png" />
-    <Resource Include="Images\Fpc\Collapse16.png" />
-    <Resource Include="Images\Fpc\default.png" />
-    <Resource Include="Images\Fpc\Delete16.png" />
-    <Resource Include="Images\Fpc\Expand16.png" />
-    <Resource Include="Images\Fpc\New16.png" />
-    <Resource Include="Images\Fpc\notdefault.png" />
-    <Resource Include="Images\Fpc\Save16.png" />
-    <Resource Include="Images\Fpc\SelectTool.png" />
-    <Resource Include="Images\Fpc\TilesBlue.jpg" />
-    <Resource Include="Images\Fpc\Undo16.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Soheil.Common\Soheil.Common.csproj">
@@ -299,59 +311,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Fpc\Save.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\PP\Job.png" />
-    <Resource Include="Images\PP\JobNew.png" />
-    <Resource Include="Images\PP\LeftOperatorCounter.png" />
-    <Resource Include="Images\PP\OperatorCounter.png" />
-    <Resource Include="Images\PP\Rework.png" />
-    <Resource Include="Images\PP\RightOperatorCounter.png" />
-    <Resource Include="Images\PP\Task.png" />
-    <Resource Include="Images\PP\TaskState_Blue.png" />
-    <Resource Include="Images\PP\TaskState_Green.png" />
-    <Resource Include="Images\PP\TaskState_Grey.png" />
-    <Resource Include="Images\PP\TaskState_Red.png" />
-    <Resource Include="Images\PP\TaskState_Yellow.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Images\closehand.cur">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\normalMinimize.bmp" />
+    <Resource Include="Images\highlightedMaximize.bmp" />
+    <Resource Include="Images\highlightedMinimize.bmp" />
+    <Resource Include="Images\normalMaximize.bmp" />
     <Content Include="Images\openhand.cur">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Images\PP\JobListByDefinition.png" />
-    <Resource Include="Images\PP\JobListByTasks.png" />
-    <Resource Include="Images\PP\JobList.png" />
-    <Resource Include="Images\PP\TaskNew.png" />
-    <Resource Include="Images\PP\saveup.png" />
-    <Resource Include="Images\PP\closeup.png" />
-    <Resource Include="Images\warning.png" />
-    <Resource Include="Images\PP\Operator.png" />
-    <Resource Include="Images\PP\ReportWarning15.png" />
-    <Resource Include="Images\PP\Targetpoint.png" />
-    <Resource Include="Images\PP\ProducedG1.png" />
-    <Resource Include="Images\PP\Now.png" />
-    <Resource Include="Images\PP\Setup.png" />
-    <Resource Include="Images\PP\SetupAdd.png" />
-    <Resource Include="Images\PP\NewJob.png" />
-    <Resource Include="Images\PP\EditJob.png" />
-    <Resource Include="Images\PP\EditTask.png" />
-    <Resource Include="Images\PP\NewTask.png" />
-    <Resource Include="Images\PP\ShowCode.png" />
-    <Resource Include="Images\PP\ProcessReport.png" />
-    <Resource Include="Images\PP\DropDown.png" />
-    <Resource Include="Images\PP\ZoomUndo.png" />
-    <Resource Include="Images\PP\Zoom.png" />
-    <Resource Include="Images\PP\TaskAutoLoad.png" />
-    <Resource Include="Images\PP\Report.png" />
-    <Resource Include="Images\PP\ReportAdd.png" />
-    <Resource Include="Images\PP\ReportEdit.png" />
-    <Resource Include="Images\PP\ReportView.png" />
-    <Resource Include="Images\PP\ManHour.png" />
-    <Resource Include="Images\PP\CycleTime.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

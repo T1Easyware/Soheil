@@ -149,7 +149,7 @@
 			Background="Transparent"
 			BorderBrush="{StaticResource NormalBorderBrush}"
 			BorderThickness="1,0,0,0">
-			<Image Style="{StaticResource deleteImage}"/>
+			<Image Style="{StaticResource Delete16Image}"/>
 		</Border>
 		<ControlTemplate.Triggers>
 			<Trigger Property="ToggleButton.IsMouseOver" Value="true">

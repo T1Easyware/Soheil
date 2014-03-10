@@ -24,7 +24,7 @@
 		<Grid>
 			<Rectangle Stroke="DimGray" StrokeDashArray="1,1" StrokeThickness="2" RadiusX="5" RadiusY="5" Fill="#1000"/>
 			<WrapPanel VerticalAlignment="Center">
-				<Image HorizontalAlignment="Left" Margin="5" Style="{StaticResource newImage}"/>
+				<Image HorizontalAlignment="Left" Margin="5" Style="{StaticResource New16Image}"/>
 				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Name}" Margin="1,5"/>
 			</WrapPanel>
 		</Grid>
@@ -106,7 +106,7 @@
 							   Text="{Binding Name}" Opacity="{Binding TextOpacity}"/>
 					<ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsDefault}" ToolTip="آیا این ماشین بطور پیش فرض استفاده می شود؟"
 						Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=3}">
-						<Image Style="{StaticResource isDefaultImageStyle}"/>
+						<Image Style="{StaticResource IsDefaultImageStyle}"/>
 					</ToggleButton>
 				</DockPanel>
 			</Expander.Header>
