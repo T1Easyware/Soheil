@@ -178,17 +178,16 @@ namespace Soheil.Views
 			monthsLittleWindow,
 			daysLittleWindow,
 		}
+		public PPTableVm PPTableVm { get { return ViewModel as PPTableVm; } }
 	
 		#region Members
 		SliderType _sliderType = SliderType.none;
 		private FrameworkElement ic_months;
 		private ScrollViewer _stationsScrollbar;
 		private ScrollViewer _activitiesScrollbar;
-
-		public PPTableVm PPTableVm { get { return ViewModel as PPTableVm; } }
 		#endregion
 
-		#region Load/Unload PPTable,Task,Job,NPT,PRC
+		#region Load/Unload PPTable/TaskReport
 		private void ppTable_Loaded_1(object sender, RoutedEventArgs e)
 		{
 			ic_months = (ItemsControl)(sender as FrameworkElement).FindChild("ic_months");
@@ -198,7 +197,6 @@ namespace Soheil.Views
 			ItemsControl ic_activities = (ItemsControl)(sender as FrameworkElement).FindChild("ic_activities");
 			_activitiesScrollbar = (ScrollViewer)ic_activities.Template.FindName("sv_activities", ic_activities);
 
-			PPTableVm.InitializeViewModel();
 			PPTableVm.UpdateWidths();
 			PPTableVm.ResetTimeLine();
 		}
@@ -206,7 +204,7 @@ namespace Soheil.Views
 		//TaskReports Load/Unload
 		private void TaskReports_Loaded(object sender, RoutedEventArgs e)
 		{
-			var task = (sender as FrameworkElement).DataContext as PPTaskVm;
+			var task = sender.GetDataContext<PPTaskVm>();
 			if (task != null)
 			{
 				task.ReloadTaskReports();
@@ -214,7 +212,7 @@ namespace Soheil.Views
 		}
 		private void TaskReports_Unloaded(object sender, RoutedEventArgs e)
 		{
-			var task = (sender as FrameworkElement).DataContext as PPTaskVm;
+			var task = sender.GetDataContext<PPTaskVm>();
 			if (task != null)
 			{
 				task.ClearTaskReports();
@@ -389,18 +387,6 @@ namespace Soheil.Views
 		}
 		#endregion
 
-		#region Zoom
-		private void UndoZoomClicked(object sender, RoutedEventArgs e)
-		{
-			PPTableVm.RestoreZoom();
-		}
-		private void ZoomStarted(object sender, MouseButtonEventArgs e)
-		{
-			if (PPTableVm.SelectedBlock == null)//no block is in report state
-				PPTableVm.BackupZoom();
-		}
-		#endregion
-
 		#region Misc
 		private void tasksScrolled(object sender, ScrollChangedEventArgs e)
 		{
@@ -422,10 +408,6 @@ namespace Soheil.Views
 		#endregion
 
         #endregion
-
-
-
-
 
 		#endregion
 	}

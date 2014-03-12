@@ -25,9 +25,11 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		public override int Id { get { return _model.Id; } }
 		/// <summary>
-		/// Gets DataService for Block
+		/// Gets DataService for Block (uses PPTable's)
 		/// </summary>
 		public DataServices.BlockDataService BlockDataService { get { return _ppTable.BlockDataService; } }
+
+		public event Action<PPJobVm> JobDeleted;
 
         //Parent Dependency Property
         public Core.PP.PPItemCollection Parent
@@ -323,6 +325,8 @@ namespace Soheil.Core.ViewModels.PP
 				try
 				{
 					_ppTable.JobDataService.DeleteModel(Job.Id);
+					/*if (JobDeleted != null)
+						JobDeleted(Job);*/
 					_ppTable.RemoveBlocks(Job);
 				}
 				catch (RoutedException exp)

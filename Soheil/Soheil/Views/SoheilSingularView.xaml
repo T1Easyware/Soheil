@@ -517,12 +517,18 @@
                             </Button>
                             <WrapPanel VerticalAlignment="Center">
                                 <Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
-                                <Slider Margin="2" Maximum="2000" Minimum="20" Value="{Binding HourZoom}" Width="140" PreviewMouseDown="ZoomStarted" VerticalAlignment="Center"/>
-                                <WrapPanel.ToolTip>
+								<Slider Margin="2" Maximum="2000" Minimum="20" Value="{Binding HourZoom}" Width="140" VerticalAlignment="Center">
+									<I:Interaction.Triggers>
+										<I:EventTrigger EventName="PreviewMouseDown">
+											<I:InvokeCommandAction Command="{Binding ZoomStartedCommand}"/>
+										</I:EventTrigger>
+									</I:Interaction.Triggers>
+								</Slider>
+								<WrapPanel.ToolTip>
                                     <ToolTip>بزرگنمایی زمان</ToolTip>
                                 </WrapPanel.ToolTip>
                             </WrapPanel>
-                            <Button Click="UndoZoomClicked">
+							<Button Command="{Binding UndoZoomCommand}">
 								<Image Style="{StaticResource ZoomUndoImage}"/>
                                 <Button.ToolTip>
                                     <ToolTip>بزرگنمایی قبلی</ToolTip>
@@ -542,17 +548,7 @@
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
                             <Separator/>
-                            <ToggleButton IsChecked="{Binding ViewMode, 
-							    Converter={StaticResource isEqual}, 
-							    ConverterParameter={x:Static Common:PPViewMode.Simple}}">
-                                <Image Style="{StaticResource TaskImage}"/>
-                                <ToggleButton.ToolTip>
-                                    <ToolTip>برنامه تولید</ToolTip>
-                                </ToggleButton.ToolTip>
-                            </ToggleButton>
-                            <ToggleButton IsChecked="{Binding ViewMode, 
-							    Converter={StaticResource isEqual}, 
-							    ConverterParameter={x:Static Common:PPViewMode.Report}}">
+                            <ToggleButton IsChecked="{Binding ShowBlockReport}">
 								<Image Style="{StaticResource ProcessReportImage}"/>
                                 <ToggleButton.ToolTip>
                                     <ToolTip>گزارش</ToolTip>
@@ -1695,54 +1691,50 @@
                                                             </MultiBinding>
                                                         </Border.Width>
                                                         <Border.ToolTip>
-                                                            <ContentPresenter>
-                                                                <ContentPresenter.ContentTemplateSelector>
-                                                                    <TemplateSelectors:NPTViewSelector>
-                                                                        <!--Setup tooltip-->
-                                                                        <TemplateSelectors:NPTViewSelector.SetupTemplate>
-                                                                            <DataTemplate>
-                                                                                <StackPanel>
-                                                                                    <TextBlock Text="آماده سازی"/>
-                                                                                    <Separator/>
-                                                                                    <WrapPanel>
-                                                                                        <TextBlock Text="زمان شروع: " Foreground="DarkGray"/>
-                                                                                        <TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateToLocalStringConverter}}"/>
-                                                                                    </WrapPanel>
-                                                                                    <WrapPanel>
-                                                                                        <TextBlock Text="زمان خاتمه: " Foreground="DarkGray"/>
-                                                                                        <TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateToLocalStringConverter}}"/>
-                                                                                    </WrapPanel>
-                                                                                    <WrapPanel>
-                                                                                        <TextBlock Text="مدت آماده سازی: " Foreground="DarkGray"/>
-                                                                                        <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
-                                                                                    </WrapPanel>
-                                                                                    <Separator/>
-                                                                                    <WrapPanel>
-                                                                                        <TextBlock Text="از محصول: " Foreground="DarkGray"/>
-                                                                                        <Image Style="{StaticResource ReworkImage}" Visibility="{Binding FromProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
-                                                                                        <Rectangle Fill="{Binding FromProduct.Product.Color}" Width="15"/>
-                                                                                        <TextBlock Text="{Binding FromProduct.Name}" TextWrapping="Wrap"/>
-                                                                                    </WrapPanel>
-                                                                                    <WrapPanel>
-                                                                                        <TextBlock Text="به محصول: " Foreground="DarkGray"/>
-																						<Image Style="{StaticResource ReworkImage}" Visibility="{Binding ToProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
-                                                                                        <Rectangle Fill="{Binding ToProduct.Product.Color}" Width="15"/>
-                                                                                        <TextBlock Text="{Binding ToProduct.Name}" TextWrapping="Wrap"/>
-                                                                                    </WrapPanel>
-                                                                                    <Separator/>
-                                                                                    <WrapPanel>
-                                                                                        <TextBlock Text="مدت آغاز به کار: " Foreground="DarkGray"/>
-                                                                                        <TextBlock Text="{Binding WarmupSeconds, Converter={StaticResource secondsToStringConverter}}"/>
-                                                                                    </WrapPanel>
-                                                                                    <WrapPanel>
-                                                                                        <TextBlock Text="مدت تعویض: " Foreground="DarkGray"/>
-                                                                                        <TextBlock Text="{Binding ChangeoverSeconds, Converter={StaticResource secondsToStringConverter}}"/>
-                                                                                    </WrapPanel>
-                                                                                </StackPanel>
-                                                                            </DataTemplate>
-                                                                        </TemplateSelectors:NPTViewSelector.SetupTemplate>
-                                                                    </TemplateSelectors:NPTViewSelector>
-                                                                </ContentPresenter.ContentTemplateSelector>
+                                                            <ContentPresenter Content="{Binding}">
+																<ContentPresenter.Resources>
+																	<!--Setup tooltip-->
+																	<DataTemplate DataType="{x:Type vm:SetupVm}">
+																		<StackPanel>
+																			<TextBlock Text="آماده سازی"/>
+																			<Separator/>
+																			<WrapPanel>
+																				<TextBlock Text="زمان شروع: " Foreground="DarkGray"/>
+																				<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateToLocalStringConverter}}"/>
+																			</WrapPanel>
+																			<WrapPanel>
+																				<TextBlock Text="زمان خاتمه: " Foreground="DarkGray"/>
+																				<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateToLocalStringConverter}}"/>
+																			</WrapPanel>
+																			<WrapPanel>
+																				<TextBlock Text="مدت آماده سازی: " Foreground="DarkGray"/>
+																				<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+																			</WrapPanel>
+																			<Separator/>
+																			<WrapPanel>
+																				<TextBlock Text="از محصول: " Foreground="DarkGray"/>
+																				<Image Style="{StaticResource ReworkImage}" Visibility="{Binding FromProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+																				<Rectangle Fill="{Binding FromProduct.Product.Color}" Width="15"/>
+																				<TextBlock Text="{Binding FromProduct.Name}" TextWrapping="Wrap"/>
+																			</WrapPanel>
+																			<WrapPanel>
+																				<TextBlock Text="به محصول: " Foreground="DarkGray"/>
+																				<Image Style="{StaticResource ReworkImage}" Visibility="{Binding ToProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+																				<Rectangle Fill="{Binding ToProduct.Product.Color}" Width="15"/>
+																				<TextBlock Text="{Binding ToProduct.Name}" TextWrapping="Wrap"/>
+																			</WrapPanel>
+																			<Separator/>
+																			<WrapPanel>
+																				<TextBlock Text="مدت آغاز به کار: " Foreground="DarkGray"/>
+																				<TextBlock Text="{Binding WarmupSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+																			</WrapPanel>
+																			<WrapPanel>
+																				<TextBlock Text="مدت تعویض: " Foreground="DarkGray"/>
+																				<TextBlock Text="{Binding ChangeoverSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+																			</WrapPanel>
+																		</StackPanel>
+																	</DataTemplate>
+																</ContentPresenter.Resources>
                                                             </ContentPresenter>
                                                         </Border.ToolTip>
                                                         <Border.ContextMenu>
