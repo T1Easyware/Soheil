@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ActivityColumnVm">
+    <Position X="11" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ActivityColumnVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ActivityGroupColumnVm">
+    <Position X="8.75" Y="3.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIEAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ActivityGroupColumnVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ActivitySkillVm">
+    <Position X="0.5" Y="9.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ActivitySkillVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.BaseSkillVm">
+    <Position X="5.5" Y="6" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>gIAAAAAAAAAAAAAAAAAAAAAAgAAAABAAAABAAAAgAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\BaseSkillVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.BaseTreeItemVm">
+    <Position X="13.75" Y="3.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAQgAAAAAAAEAAAAAAEBAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>ViewModels\SkillCenter\BaseTreeItemVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.BaseVm">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAgAAAAAAAAAAAAgAAQAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\BaseVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.GeneralVm">
+    <Position X="10.75" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\GeneralVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.OperatorRowVm">
+    <Position X="5.75" Y="3.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\OperatorRowVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ProductActivitySkillVm">
+    <Position X="6" Y="9.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ProductActivitySkillVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ProductGroupActivitySkillVm">
+    <Position X="3.25" Y="9.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ProductGroupActivitySkillVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ProductGroupVm">
+    <Position X="13" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ProductGroupVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ProductReworkActivitySkillVm">
+    <Position X="8.75" Y="9.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ProductReworkActivitySkillVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ProductReworkVm">
+    <Position X="17.5" Y="7.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ProductReworkVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.ProductVm">
+    <Position X="15.25" Y="7.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\ProductVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.SkillCenterContentVm">
+    <Position X="3" Y="0.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Soheil.Core.ViewModels.SkillCenter.SkillCenterContentVm.TargetMode">
+        <TypeIdentifier>
+          <NewMemberFileName>ViewModels\SkillCenter\SkillCenterContentVm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAIAUAAAAIAAECAAABAAIAABAAASAgAABAIAAgAAAA=</HashCode>
+      <FileName>ViewModels\SkillCenter\SkillCenterContentVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.SkillCenter.SkillCenterVm">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAwAAAAImCAAEABAAACAAAAgAAAAAAAAAiIIACQEQI=</HashCode>
+      <FileName>ViewModels\SkillCenter\SkillCenterVm.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
