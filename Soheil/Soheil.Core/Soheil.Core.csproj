@@ -417,6 +417,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Interfaces\BaseAndInterfaceDiagram.cd" />
+    <None Include="ViewModels\PP\_PPClassDiagram.cd" />
+    <None Include="ViewModels\SkillCenter\_SkillCenterClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

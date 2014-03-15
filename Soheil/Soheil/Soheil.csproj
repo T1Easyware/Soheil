@@ -141,9 +141,6 @@
     <Compile Include="Views\PP\JobList.xaml.cs">
       <DependentUpon>JobList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PP\Npt.xaml.cs">
-      <DependentUpon>Npt.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PP\NptEditor.xaml.cs">
       <DependentUpon>NptEditor.xaml</DependentUpon>
     </Compile>
@@ -226,10 +223,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PP\JobList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PP\Npt.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -87,7 +87,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// For usage in StoppageReport (Cause LevelX)
 		/// </summary>
-		public event FilterBoxSelectedItemChangedEventHandler FilterBoxSelectedItemChanged;
+		public event Action<FilterBoxVm, FilterableItemVm> FilterBoxSelectedItemChanged;
 
 		//FilteredList Observable Collection
 		private ObservableCollection<FilterableItemVm> _filteredList = new ObservableCollection<FilterableItemVm>();
@@ -109,5 +109,4 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty DeleteCommandProperty =
 			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(FilterBoxVm), new UIPropertyMetadata(null));
 	}
-	public delegate void FilterBoxSelectedItemChangedEventHandler(FilterBoxVm sender, FilterableItemVm newValue);
 }
