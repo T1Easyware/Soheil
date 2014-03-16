@@ -8,7 +8,20 @@ namespace Soheil.Core.PP
 {
 	public class BlockFullData
 	{
-		public static bool IsNull(BlockFullData instance) { if (instance == null)return true; return (instance.Model == null); }
+		private DataServices.BlockDataService BlockDataService;
+		public BlockFullData(DataServices.BlockDataService blockDataService, int blockId)
+		{
+			this.BlockDataService = blockDataService;
+			Model = BlockDataService.GetSingleFull(blockId);
+			ReportData = BlockDataService.GetProductionReportData(Model);
+			CanAddSetupBefore = BlockDataService.CanAddSetupBeforeBlock(Model);
+		}
+
+		public static bool IsNull(BlockFullData instance)
+		{
+			if (instance == null) return true;
+			return (instance.Model == null);
+		}
 		public Model.Block Model;
 		public int[] ReportData;
 		public bool CanAddSetupBefore;

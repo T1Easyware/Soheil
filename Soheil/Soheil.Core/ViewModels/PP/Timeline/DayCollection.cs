@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Soheil.Common;
-using Soheil.Core.ViewModels.PP;
 
-namespace Soheil.Core.PP
+namespace Soheil.Core.ViewModels.PP.Timeline
 {
+	/// <summary>
+	/// An observable collection of <see cref="DaySlideItemVm"/>s used to populate timeline
+	/// </summary>
     public class DayCollection : ObservableCollection<DaySlideItemVm>
     {
-		public DayCollection()
-		{
-
-		}
+		/// <summary>
+		/// Loads one month worth of <see cref="DaySlideItemVm"/>s
+		/// </summary>
+		/// <param name="startDate">DateTime to start from</param>
 		public void Reload(DateTime startDate)
 		{
 			Clear();

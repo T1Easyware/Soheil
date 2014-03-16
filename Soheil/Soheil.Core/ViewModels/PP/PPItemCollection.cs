@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using Soheil.Core.ViewModels.PP;
-using Soheil.Common;
 using System.Data;
 using System.Data.Entity;
+using System.Threading.Tasks;
+using Soheil.Core.ViewModels.PP.Timeline;
+using Soheil.Common;
+using Soheil.Core.PP;
 
-namespace Soheil.Core.PP
+namespace Soheil.Core.ViewModels.PP
 {
 	public class PPItemCollection : ObservableCollection<PPStationVm>
 	{
@@ -99,10 +101,7 @@ namespace Soheil.Core.PP
 							{
 								System.Threading.Thread.Sleep(50);
 								//load data
-								var data = new BlockFullData();
-								data.Model = BlockDataService.GetSingleFull(block.Id);
-								data.ReportData = BlockDataService.GetProductionReportData(data.Model);
-								data.CanAddSetupBefore = BlockDataService.CanAddSetupBeforeBlock(data.Model);
+								var data = new BlockFullData(BlockDataService, block.Id);
 								//load vm thru worker
 								worker.ReportProgress(1, data);
 								err = false;
@@ -256,6 +255,49 @@ namespace Soheil.Core.PP
 				var currentVm = container.FirstOrDefault(x => x.Id == model.Id);
 				if (currentVm != null) container.Remove(currentVm);
 				var vm = new BlockVm(model, this, model.StateStation.Station.Index);
+				vm.AddBlockToEditorStarted += editorBlockVm =>
+				{
+					PPTable.TaskEditor.BlockList.Add(editorBlockVm);
+					PPTable.TaskEditor.SelectedBlock = PPTable.TaskEditor.BlockList.Last();
+				};
+				vm.EditBlockStarted += editorBlockVm =>
+				{
+					PPTable.TaskEditor.Reset();
+					PPTable.TaskEditor.IsVisible = true;
+					PPTable.JobEditor.IsVisible = false;
+					PPTable.TaskEditor.BlockList.Add(editorBlockVm);
+					PPTable.TaskEditor.SelectedBlock = PPTable.TaskEditor.BlockList.Last();
+				};
+				vm.AddJobToEditorStarted += jobVm =>
+				{
+					PPTable.JobEditor.Append(jobVm);
+				};
+				vm.EditJobStarted += jobVm =>
+				{
+					PPTable.TaskEditor.IsVisible = false;
+					PPTable.JobEditor.IsVisible = true;
+					PPTable.JobEditor.Reset();
+					PPTable.JobEditor.Append(jobVm);
+				};
+				vm.EditReportStarted += blockVm =>
+				{
+					blockVm.BlockReport = new BlockReportVm(blockVm);
+					PPTable.SelectedBlock = blockVm;
+				};
+				vm.DeleteBlockStarted += blockVm =>
+				{
+					PPTable.BlockDataService.DeleteModelById(blockVm.Id);
+					RemoveItem(blockVm);
+				};
+				vm.DeleteJobStarted += jobVm =>
+				{
+					PPTable.JobDataService.DeleteModel(jobVm.Id);
+					PPTable.RemoveBlocks(jobVm);
+				};
+				//vm.InsertSetupStarted += async (blockVm, callback) =>
+				//{
+
+				//};
 				container.Add(vm);
 				return vm;
 			}

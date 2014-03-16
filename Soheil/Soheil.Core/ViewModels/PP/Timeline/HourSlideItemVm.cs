@@ -2,7 +2,7 @@
 using System.Windows;
 using Soheil.Common;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Timeline
 {
     public class HourSlideItemVm : DependencyObject
     {

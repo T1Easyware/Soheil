@@ -4,15 +4,19 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Soheil.Core.ViewModels.PP;
 
-namespace Soheil.Core.PP
+namespace Soheil.Core.ViewModels.PP.Timeline
 {
+	/// <summary>
+	/// An observable collection of <see cref="HourSlideItemVm"/>s used to populate timeline
+	/// </summary>
 	public class HourCollection : ObservableCollection<HourSlideItemVm>
 	{
-		public HourCollection()
-		{
-		}
+		/// <summary>
+		/// Loads a range of hours
+		/// </summary>
+		/// <param name="rangeStart">inclusive Starting hour (minute and seconds are set to zero)</param>
+		/// <param name="rangeEnd">inclusive Ending hour (minute and seconds are set to zero)</param>
 		public void FetchRange(DateTime rangeStart, DateTime rangeEnd)
 		{
 			rangeStart = new DateTime(rangeStart.Year, rangeStart.Month, rangeStart.Day, rangeStart.Hour, 0, 0);

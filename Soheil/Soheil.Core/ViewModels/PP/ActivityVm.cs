@@ -9,7 +9,7 @@ using System.Windows;
 namespace Soheil.Core.ViewModels.PP
 {
 	/// <summary>
-	/// The simplest implementation of a ViewModel for Activity 
+	/// A Simple Vm of Activity to be used in PPTable
 	/// </summary>
 	public class ActivityVm : ViewModelBase
 	{

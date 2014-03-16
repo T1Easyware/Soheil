@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Soheil.Common;
 using Soheil.Core.Interfaces;
-using Soheil.Core.PP;
+using Soheil.Core.ViewModels.PP.Timeline;
 using Soheil.Core.ViewModels.PP.Editor;
 
 namespace Soheil.Core.ViewModels.PP
@@ -163,7 +163,8 @@ namespace Soheil.Core.ViewModels.PP
 
 					//initialize Timeline components
 					Days = new DayCollection();
-					Months = new MonthCollection(startDate, Days, this);
+					Months = new MonthCollection(startDate);
+					Months.SelectedMonthChanged += month => SelectedMonth = month;
 					Hours = new HourCollection();
 
 					//initialize PPItems
@@ -462,7 +463,11 @@ namespace Soheil.Core.ViewModels.PP
 				var vm = (PPTableVm)d;
 				var val = (MonthSlideItemVm)e.NewValue;
 				if (val == null) return;
-				val.IsSelected = true;
+				if(!val.IsSelected) val.IsSelected = true;
+
+				//reloads the days collection according to DateTime of selected month
+				vm.Days.Reload(val.Data);
+
 				//changes the DayZoom to match the number of days in the current month
 				vm.DayZoom = vm.GridWidth / val.NumOfDays;
 				vm.UpdateRange(true);

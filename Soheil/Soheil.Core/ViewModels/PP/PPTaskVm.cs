@@ -131,7 +131,8 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			if (Block.BlockReport == null)
 				Block.BlockReport = new BlockReportVm(Block);
-			Block.BlockReport.ReloadProcessReportRows();
+			else
+				Block.BlockReport.ReloadProcessReportRows();
 		}
 
 		//TaskReports Observable Collection

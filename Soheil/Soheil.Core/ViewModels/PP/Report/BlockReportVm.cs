@@ -16,6 +16,7 @@ namespace Soheil.Core.ViewModels.PP
 		public BlockReportVm(BlockVm block)
 		{
 			Block = block;
+			ReloadProcessReportRows();
 		}
 		//Block Dependency Property
 		public BlockVm Block

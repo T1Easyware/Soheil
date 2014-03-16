@@ -64,13 +64,13 @@ namespace Soheil.Core.ViewModels.PP
 			}));
 
 		//Parent Dependency Property
-		public Core.PP.PPItemCollection Parent
+		public PPItemCollection Parent
 		{
-			get { return (Core.PP.PPItemCollection)GetValue(ParentProperty); }
+			get { return (PPItemCollection)GetValue(ParentProperty); }
 			set { SetValue(ParentProperty, value); }
 		}
 		public static readonly DependencyProperty ParentProperty =
-			DependencyProperty.Register("Parent", typeof(Core.PP.PPItemCollection), typeof(NPTVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Parent", typeof(PPItemCollection), typeof(NPTVm), new UIPropertyMetadata(null));
 
 		//IsEditMode Dependency Property
 		public bool IsEditMode

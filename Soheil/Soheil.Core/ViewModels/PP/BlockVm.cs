@@ -18,33 +18,59 @@ namespace Soheil.Core.ViewModels.PP
 	/// </summary>
 	public class BlockVm : PPItemVm
 	{
-		PPTableVm _ppTable;
 		Model.Block _model;
 		/// <summary>
 		/// Gets Id property of the model representing this ViewModel
 		/// </summary>
 		public override int Id { get { return _model.Id; } }
 		/// <summary>
-		/// Gets DataService for Block (uses PPTable's)
+		/// Gets the BlockDataService with PPTable's UOW
 		/// </summary>
-		public DataServices.BlockDataService BlockDataService { get { return _ppTable.BlockDataService; } }
+		public DataServices.BlockDataService BlockDataService { get; private set; }
 
-		public event Action<PPJobVm> JobDeleted;
-
-        //Parent Dependency Property
-        public Core.PP.PPItemCollection Parent
-        {
-            get { return (Core.PP.PPItemCollection)GetValue(ParentProperty); }
-            set { SetValue(ParentProperty, value); }
-        }
-        public static readonly DependencyProperty ParentProperty =
-            DependencyProperty.Register("Parent", typeof(Core.PP.PPItemCollection), typeof(BlockVm), new UIPropertyMetadata(null));
+		#region Events
+		/// <summary>
+		/// Occurs when TaskEditor is supposed to open with the value of this Block
+		/// </summary>
+		public event Action<Editor.PPEditorBlock> EditBlockStarted;
+		/// <summary>
+		/// Occurs when this Block is supposed to be added to TaskEditor
+		/// </summary>
+		public event Action<Editor.PPEditorBlock> AddBlockToEditorStarted;
+		/// <summary>
+		/// Occurs when Job associated with this Block is supposed to be added to JobEditor
+		/// </summary>
+		public event Action<PPJobVm> AddJobToEditorStarted;
+		/// <summary>
+		/// Occurs when JobEditor is supposed to open with the value of Job associated with this Block
+		/// </summary>
+		public event Action<PPJobVm> EditJobStarted;
+		/// <summary>
+		/// Occurs when Report of this Block is supposed to be opened with ReportEditor
+		/// </summary>
+		public event Action<BlockVm> EditReportStarted;
+		/// <summary>
+		/// Occurs when this Block is supposed to be removed
+		/// </summary>
+		public event Action<BlockVm> DeleteBlockStarted;
+		/// <summary>
+		/// Occurs when the Job associated with this Block is supposed to be removed
+		/// </summary>
+		public event Action<PPJobVm> DeleteJobStarted;
+		//public event Action<BlockVm, Action<DataServices.BlockDataService.InsertSetupBeforeBlockErrors>> InsertSetupStarted;
+		#endregion
 
 		#region Ctor, reload
-        public BlockVm(Model.Block model, Core.PP.PPItemCollection parent, int stationIndex)
+		/// <summary>
+		/// Creates an instance of BlockVm with the given model, parent and station index
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="parent"></param>
+		/// <param name="stationIndex"></param>
+        public BlockVm(Model.Block model, PPItemCollection parent, int stationIndex)
 		{
 			_model = model;
-            _ppTable = parent.PPTable;
+			BlockDataService = parent.BlockDataService;
             Parent = parent;
 			RowIndex = stationIndex;
 			StartDateTime = model.StartDateTime;
@@ -53,24 +79,21 @@ namespace Soheil.Core.ViewModels.PP
 		}
 
 		/// <summary>
-		/// Reloads current blocks info from database (according to its id)
+		/// Reloads current block full data from database (according to its id)
+		/// <para></para>
 		/// </summary>
 		public void Reload()
 		{
-			var data = new Soheil.Core.PP.BlockFullData();
-			data.Model = BlockDataService.GetSingleFull(Id);
-			data.ReportData = BlockDataService.GetProductionReportData(data.Model);
-			data.CanAddSetupBefore = BlockDataService.CanAddSetupBeforeBlock(data.Model);
+			var data = new Soheil.Core.PP.BlockFullData(BlockDataService, Id);
 			_model = data.Model;
 			Reload(data);
 		}
 		/// <summary>
-		/// Reloads current blocks info from the given parameter
+		/// Reloads current blocks full data with the given <see cref="Soheil.Core.PP.BlockFullData"/>
 		/// </summary>
-		/// <param name="data"></param>
+		/// <param name="data">An instance of <see cref="Soheil.Core.PP.BlockFullData"/> filled with required data</param>
 		public void Reload(Soheil.Core.PP.BlockFullData data)
 		{
-			//fill the vm from data.Model
 			//Product and State
 			ProductId = data.Model.StateStation.State.FPC.Product.Id;
 			ProductCode = data.Model.StateStation.State.FPC.Product.Code;
@@ -78,119 +101,162 @@ namespace Soheil.Core.ViewModels.PP
 			ProductColor = data.Model.StateStation.State.FPC.Product.Color;
 			StateCode = data.Model.StateStation.State.Code;
 			IsRework = data.Model.StateStation.State.IsReworkState == Bool3.True;
+			
 			//Block background texts
 			BlockTargetPoint = data.Model.BlockTargetPoint;
 			BlockProducedG1 = data.ReportData[0];
 			ReportFillPercent = string.Format("{0:D2}%", data.ReportData[1]);
 			IsReportFilled = (data.ReportData[1] >= 100);
+			
 			//Navigation
-			//job
+			//specify the job (if not null)
 			if (data.Model.Job != null)
 			{
 				Job = new PPJobVm(data.Model.Job);
+				//check if the SelectedJobId in PPTable is the same as this Job
 				if (Parent.PPTable.SelectedJobId == Job.Id)
 					IsJobSelected = true;
 			}
-			//tasks
+			//add Tasks
 			foreach (var task in data.Model.Tasks)
 			{
 				TaskList.Add(new PPTaskVm(task, this));
 			}
+
+			//check if the SelectedBlock in PPTable is the same as this block
 			if (Parent.PPTable.SelectedBlock == null) ViewMode = PPViewMode.Simple;
 			else ViewMode = (Parent.PPTable.SelectedBlock.Id == Id) ? PPViewMode.Report : PPViewMode.Simple;
 		}
 		#endregion
 
+		#region Properties
+		/// <summary>
+		/// Gets the bindable containing parent of this Block
+		/// </summary>
+		public PPItemCollection Parent
+		{
+			get { return (PPItemCollection)GetValue(ParentProperty); }
+			protected set { SetValue(ParentProperty, value); }
+		}
+		public static readonly DependencyProperty ParentProperty =
+			DependencyProperty.Register("Parent", typeof(PPItemCollection), typeof(BlockVm), new UIPropertyMetadata(null));
+
 		#region Product and State
 		/// <summary>
-		/// Product Id
+		/// Gets the Product Id
 		/// </summary>
-		public int ProductId { get; set; }
-		//ProductCode Dependency Property
+		public int ProductId { get; protected set; }
+		/// <summary>
+		/// Gets a bindable Product Code
+		/// </summary>
 		public string ProductCode
 		{
 			get { return (string)GetValue(ProductCodeProperty); }
-			set { SetValue(ProductCodeProperty, value); }
+			protected set { SetValue(ProductCodeProperty, value); }
 		}
 		public static readonly DependencyProperty ProductCodeProperty =
 			DependencyProperty.Register("ProductCode", typeof(string), typeof(BlockVm), new UIPropertyMetadata(null));
-		//ProductName Dependency Property
+		/// <summary>
+		/// Gets a bindable Product Name
+		/// </summary>
 		public string ProductName
 		{
 			get { return (string)GetValue(ProductNameProperty); }
-			set { SetValue(ProductNameProperty, value); }
+			protected set { SetValue(ProductNameProperty, value); }
 		}
 		public static readonly DependencyProperty ProductNameProperty =
 			DependencyProperty.Register("ProductName", typeof(string), typeof(BlockVm), new UIPropertyMetadata(null));
-		//ProductColor Dependency Property
+		/// <summary>
+		/// Gets a bindable Product Color
+		/// <para>Changing the value causes the ForeColorProperty to update</para>
+		/// </summary>
 		public Color ProductColor
 		{
 			get { return (Color)GetValue(ProductColorProperty); }
-			set { SetValue(ProductColorProperty, value); }
+			protected set { SetValue(ProductColorProperty, value); }
 		}
 		public static readonly DependencyProperty ProductColorProperty =
 			DependencyProperty.Register("ProductColor", typeof(Color), typeof(BlockVm), new UIPropertyMetadata(Colors.White, (d, e) =>
 			d.SetValue(ForeColorProperty, new SolidColorBrush(((Color)e.NewValue).IsDark() ? Colors.White : Colors.Black))));
 		public static readonly DependencyProperty ForeColorProperty =
 			DependencyProperty.Register("ForeColor", typeof(SolidColorBrush), typeof(BlockVm), new UIPropertyMetadata(new SolidColorBrush(Colors.Black)));
-		//StateCode Dependency Property
+		/// <summary>
+		/// Gets a bindable State Code
+		/// </summary>
 		public string StateCode
 		{
 			get { return (string)GetValue(StateCodeProperty); }
-			set { SetValue(StateCodeProperty, value); }
+			protected set { SetValue(StateCodeProperty, value); }
 		}
 		public static readonly DependencyProperty StateCodeProperty =
 			DependencyProperty.Register("StateCode", typeof(string), typeof(BlockVm), new UIPropertyMetadata(null));
-		//IsRework Dependency Property
+		/// <summary>
+		/// Gets a bindable value that indicates if this Block is doing work on a rework
+		/// </summary>
 		public bool IsRework
 		{
 			get { return (bool)GetValue(IsReworkProperty); }
-			set { SetValue(IsReworkProperty, value); }
+			protected set { SetValue(IsReworkProperty, value); }
 		}
 		public static readonly DependencyProperty IsReworkProperty =
-			DependencyProperty.Register("IsRework", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false)); 
+			DependencyProperty.Register("IsRework", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false));
 		#endregion
 
 		#region Block background texts
-		//BlockTargetPoint Dependency Property
+		/// <summary>
+		/// Gets a bindable value for Block's TargetPoint
+		/// </summary>
 		public int BlockTargetPoint
 		{
 			get { return (int)GetValue(BlockTargetPointProperty); }
-			set { SetValue(BlockTargetPointProperty, value); }
+			protected set { SetValue(BlockTargetPointProperty, value); }
 		}
 		public static readonly DependencyProperty BlockTargetPointProperty =
 			DependencyProperty.Register("BlockTargetPoint", typeof(int), typeof(BlockVm), new UIPropertyMetadata(0));
-		//BlockProducedG1 Dependency Property
+		/// <summary>
+		/// Gets a bindable value for Block's produced count of grade 1 products
+		/// </summary>
 		public int BlockProducedG1
 		{
 			get { return (int)GetValue(BlockProducedG1Property); }
-			set { SetValue(BlockProducedG1Property, value); }
+			protected set { SetValue(BlockProducedG1Property, value); }
 		}
 		public static readonly DependencyProperty BlockProducedG1Property =
 			DependencyProperty.Register("BlockProducedG1", typeof(int), typeof(BlockVm), new UIPropertyMetadata(0));
-		//ReportFillPercent Dependency Property
+		/// <summary>
+		/// Gets a bindable value that shows the % of reports for this block that are filled
+		/// <para>value is between 0 and 100</para>
+		/// </summary>
 		public string ReportFillPercent
 		{
 			get { return (string)GetValue(ReportFillPercentProperty); }
-			set { SetValue(ReportFillPercentProperty, value); }
+			protected set { SetValue(ReportFillPercentProperty, value); }
 		}
 		public static readonly DependencyProperty ReportFillPercentProperty =
 			DependencyProperty.Register("ReportFillPercent", typeof(string), typeof(BlockVm), new UIPropertyMetadata("0"));
-		//IsReportFilled Dependency Property
+		/// <summary>
+		/// Gets a bindable value that indicates if all reports for this Block are filleds
+		/// </summary>
 		public bool IsReportFilled
 		{
 			get { return (bool)GetValue(IsReportFilledProperty); }
-			set { SetValue(IsReportFilledProperty, value); }
+			protected set { SetValue(IsReportFilledProperty, value); }
 		}
 		public static readonly DependencyProperty IsReportFilledProperty =
 			DependencyProperty.Register("IsReportFilled", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false));
 		#endregion
 
 		#region Tasks,Job,Report
+		/// <summary>
+		/// Gets a bindable collection of tasks inside this Block
+		/// </summary>
 		public ObservableCollection<PPTaskVm> TaskList { get { return _taskList; } }
 		private ObservableCollection<PPTaskVm> _taskList = new ObservableCollection<PPTaskVm>();
 
-		//Job Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for the Job associated with this Block
+		/// <para>If this task does not belong to any Job, this value is null</para>
+		/// </summary>
 		public PPJobVm Job
 		{
 			get { return (PPJobVm)GetValue(JobProperty); }
@@ -199,17 +265,22 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty JobProperty =
 			DependencyProperty.Register("Job", typeof(PPJobVm), typeof(BlockVm), new UIPropertyMetadata(null));
 
-		//BlockReport Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for the report of this Block
+		/// </summary>
 		public BlockReportVm BlockReport
 		{
 			get { return (BlockReportVm)GetValue(BlockReportProperty); }
 			set { SetValue(BlockReportProperty, value); }
 		}
 		public static readonly DependencyProperty BlockReportProperty =
-			DependencyProperty.Register("BlockReport", typeof(BlockReportVm), typeof(BlockVm), new UIPropertyMetadata(null)); 
+			DependencyProperty.Register("BlockReport", typeof(BlockReportVm), typeof(BlockVm), new UIPropertyMetadata(null));
 		#endregion
 
-		//CanAddSetupBefore Dependency Property
+		#region Other Props
+		/// <summary>
+		/// Gets a bindable value that indicates if a new Setup can be added before this Block
+		/// </summary>
 		public bool CanAddSetupBefore
 		{
 			get { return (bool)GetValue(CanAddSetupBeforeProperty); }
@@ -217,7 +288,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty CanAddSetupBeforeProperty =
 			DependencyProperty.Register("CanAddSetupBefore", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(true));
-		//IsEditMode Dependency Property
+		/// <summary>
+		/// Gets or sets a value that indicates if this Block is in Edit Mode
+		/// </summary>
 		public bool IsEditMode
 		{
 			get { return (bool)GetValue(IsEditModeProperty); }
@@ -225,9 +298,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty IsEditModeProperty =
 			DependencyProperty.Register("IsEditMode", typeof(bool), typeof(BlockVm), new UIPropertyMetadata(false));
-		//IsJobSelected Dependency Property
 		/// <summary>
-		/// To use this you must set SelectedJobId on PPTable to this.Job.Id then reload this block
+		/// Gets or sets a value that indicates if the Job associated with this Block is selected
+		/// <para>To use this you must set SelectedJobId on PPTable to this.Job.Id then reload this block</para>
 		/// </summary>
 		public bool IsJobSelected
 		{
@@ -237,41 +310,30 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty IsJobSelectedProperty =
 			DependencyProperty.Register("IsJobSelected", typeof(bool), typeof(BlockVm),
 			new UIPropertyMetadata(false));
+		#endregion
 
+		#endregion
 
 		#region Commands
-
+		/// <summary>
+		/// Initializes all commands
+		/// </summary>
 		void initializeCommands()
 		{
 			ReloadBlockCommand = new Commands.Command(o => Reload());
-            AddBlockToEditorCommand = new Commands.Command(o =>
+			AddBlockToEditorCommand = new Commands.Command(o =>
 			{
-				try
-				{
-                    if (_model == null) return;
-                    _ppTable.TaskEditor.BlockList.Add(new Soheil.Core.ViewModels.PP.Editor.PPEditorBlock(_model));
-                    _ppTable.TaskEditor.SelectedBlock = _ppTable.TaskEditor.BlockList.Last();
-				}
+				try { if (AddBlockToEditorStarted != null) AddBlockToEditorStarted(new Editor.PPEditorBlock(_model)); }
 				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
-			});
+			}, () => _model != null);
 			EditItemCommand = new Commands.Command(o =>
 			{
-				try
-				{
-					_ppTable.TaskEditor.Reset();
-					_ppTable.TaskEditor.IsVisible = true;
-					_ppTable.JobEditor.IsVisible = false;
-                    _ppTable.TaskEditor.BlockList.Add(new Soheil.Core.ViewModels.PP.Editor.PPEditorBlock(_model));
-                    _ppTable.TaskEditor.SelectedBlock = _ppTable.TaskEditor.BlockList.Last();
-				}
+				try { if (EditBlockStarted != null) EditBlockStarted(new Editor.PPEditorBlock(_model)); }
 				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
 			});
 			AddJobToEditorCommand = new Commands.Command(o =>
 			{
-				try
-				{
-					_ppTable.JobEditor.Append(Job);
-				}
+				try { if (AddJobToEditorStarted != null) AddJobToEditorStarted(Job); }
 				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
 			}, () =>
 			{
@@ -281,13 +343,7 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			EditJobCommand = new Commands.Command(o =>
 			{
-				try
-				{
-					_ppTable.TaskEditor.IsVisible = false;
-					_ppTable.JobEditor.IsVisible = true;
-					_ppTable.JobEditor.Reset();
-					_ppTable.JobEditor.Append(Job);
-				}
+				try { if (EditJobStarted != null) EditJobStarted(Job); }
 				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
 			}, () =>
 			{
@@ -297,38 +353,17 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			EditReportCommand = new Commands.Command(o =>
 			{
-				//try
-				{
-					BlockReport = new BlockReportVm(this);
-					BlockReport.ReloadProcessReportRows();
-                    _ppTable.SelectedBlock = this;
-                }
-				//catch (Exception exp)
-				{
-				//	Message.AddEmbeddedException(exp.Message);
-				}
+				try { if (EditReportStarted != null) EditReportStarted(this); }
+				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
 			});
 			DeleteItemCommand = new Commands.Command(o =>
 			{
-				try
-				{
-					_ppTable.BlockDataService.DeleteModelById(Id);
-					Parent.RemoveItem(this);
-				}
-				catch (Exception exp)
-				{
-					Message.AddEmbeddedException(exp.Message);
-				}
+				try { if (DeleteBlockStarted != null) DeleteBlockStarted(this); }
+				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
 			});
 			DeleteJobCommand = new Commands.Command(o =>
 			{
-				try
-				{
-					_ppTable.JobDataService.DeleteModel(Job.Id);
-					/*if (JobDeleted != null)
-						JobDeleted(Job);*/
-					_ppTable.RemoveBlocks(Job);
-				}
+				try { if (DeleteJobStarted != null) DeleteJobStarted(Job); }
 				catch (RoutedException exp)
 				{
 					if(exp.Target is PPTaskVm)
@@ -336,93 +371,109 @@ namespace Soheil.Core.ViewModels.PP
 					else //if(exp.Target is BlockVm)
 						Message.AddEmbeddedException(exp.Message);
 				}
-				catch (Exception exp)
-				{
-					Message.AddEmbeddedException(exp.Message);
-				}
+				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
 			}, () => { return Job != null; });
 			InsertSetupBefore = new Commands.Command(async o =>
 			{
+				//the following part is async version of "var result = tmp.InsertSetupBeforeTask(Id)"
 				var tmp = BlockDataService;
 				var result = await Task.Run(() => tmp.InsertSetupBeforeBlock(Id));
-				//var result = tmp.InsertSetupBeforeTask(Id);
-				if (result.IsSaved)
-				{
-					Parent.Reload();
-				}
-				else
-				{
-					if (result.IsSaved) return;
-					Message.AddEmbeddedException("قادر به افزودن آماده سازی نمی باشد.\nبرخی از Taskهای بعدی در این ایستگاه قابل تغییر نیستند.");
-					foreach (var error in result.Errors)
-					{
-						switch (error.Value1)
-						{
-							case Soheil.Core.DataServices.BlockDataService.InsertSetupBeforeBlockErrors.ErrorSource.Task:
-								var task = TaskList.FirstOrDefault(x => x.Id == error.Value3);
-								if (task != null) task.Message.AddEmbeddedException(error.Value2);
-								else Message.AddEmbeddedException(error.Value2);
-								break;
-							case Soheil.Core.DataServices.BlockDataService.InsertSetupBeforeBlockErrors.ErrorSource.NPT:
-								var npt = Parent[this.RowIndex].NPTs.FirstOrDefault(x => x.Id == error.Value3);
-								if (npt != null) npt.Message.AddEmbeddedException(error.Value2);
-								else Message.AddEmbeddedException(error.Value2);
-								break;
-							case Soheil.Core.DataServices.BlockDataService.InsertSetupBeforeBlockErrors.ErrorSource.This:
-								Message.AddEmbeddedException(error.Value2);
-								break;
-							default:
-								break;
-						}
-					}
-				}
+
+				//in case of error callback with result
+				if (result.IsSaved) Reload();
+				else InsertSetupBeforeCallback(result);
+				//if (InsertSetupStarted != null) InsertSetupStarted(this, InsertSetupBeforeCallback);
 			});
 		}
-		//ReloadBlockCommand Dependency Property
+		/// <summary>
+		/// This method runs after inserting a setup before this block
+		/// </summary>
+		/// <param name="result">result of BlockDataService's special operation, containing error messages</param>
+		void InsertSetupBeforeCallback(DataServices.BlockDataService.InsertSetupBeforeBlockErrors result)
+		{
+			//exit if saved successfully
+			if (result.IsSaved) return;
+			//add the basic error message
+			Message.AddEmbeddedException("قادر به افزودن آماده سازی نمی باشد.\nبرخی از Taskهای بعدی در این ایستگاه قابل تغییر نیستند.");
+			foreach (var error in result.Errors)
+			{
+				switch (error.Item1)
+				{
+					case Soheil.Core.DataServices.BlockDataService.InsertSetupBeforeBlockErrors.ErrorSource.Task:
+						var task = TaskList.FirstOrDefault(x => x.Id == error.Item3);
+						if (task != null) task.Message.AddEmbeddedException(error.Item2);
+						else Message.AddEmbeddedException(error.Item2);
+						break;
+					case Soheil.Core.DataServices.BlockDataService.InsertSetupBeforeBlockErrors.ErrorSource.NPT:
+						var npt = Parent[this.RowIndex].NPTs.FirstOrDefault(x => x.Id == error.Item3);
+						if (npt != null) npt.Message.AddEmbeddedException(error.Item2);
+						else Message.AddEmbeddedException(error.Item2);
+						break;
+					case Soheil.Core.DataServices.BlockDataService.InsertSetupBeforeBlockErrors.ErrorSource.This:
+						Message.AddEmbeddedException(error.Item2);
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		/// <summary>
+		/// Gets a bindable command to reload this block
+		/// </summary>
 		public Commands.Command ReloadBlockCommand
 		{
 			get { return (Commands.Command)GetValue(ReloadBlockCommandProperty); }
-			set { SetValue(ReloadBlockCommandProperty, value); }
+			protected set { SetValue(ReloadBlockCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ReloadBlockCommandProperty =
 			DependencyProperty.Register("ReloadBlockCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
-        //AddBlockToEditorCommand Dependency Property
-        public Commands.Command AddBlockToEditorCommand
+		/// <summary>
+		/// Gets a bindable command to add this block to TaskEditor
+		/// </summary>
+		public Commands.Command AddBlockToEditorCommand
 		{
             get { return (Commands.Command)GetValue(AddBlockToEditorCommandProperty); }
-            set { SetValue(AddBlockToEditorCommandProperty, value); }
+			protected set { SetValue(AddBlockToEditorCommandProperty, value); }
 		}
         public static readonly DependencyProperty AddBlockToEditorCommandProperty =
             DependencyProperty.Register("AddBlockToEditorCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
-		//AddJobToEditorCommand Dependency Property
+		/// <summary>
+		/// Gets a bindable command to add the Job associated with this block to JobEditor
+		/// </summary>
 		public Commands.Command AddJobToEditorCommand
 		{
 			get { return (Commands.Command)GetValue(AddJobToEditorCommandProperty); }
-			set { SetValue(AddJobToEditorCommandProperty, value); }
+			protected set { SetValue(AddJobToEditorCommandProperty, value); }
 		}
 		public static readonly DependencyProperty AddJobToEditorCommandProperty =
 			DependencyProperty.Register("AddJobToEditorCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
-		//EditJobCommand Dependency Property
+		/// <summary>
+		/// Gets a bindable command to open the JobEditor with value of Job associated with this block
+		/// </summary>
 		public Commands.Command EditJobCommand
 		{
 			get { return (Commands.Command)GetValue(EditJobCommandProperty); }
-			set { SetValue(EditJobCommandProperty, value); }
+			protected set { SetValue(EditJobCommandProperty, value); }
 		}
 		public static readonly DependencyProperty EditJobCommandProperty =
 			DependencyProperty.Register("EditJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
-		//DeleteJobCommand Dependency Property
+		/// <summary>
+		/// Gets a bindable command to delete the Job associated with this block
+		/// </summary>
 		public Commands.Command DeleteJobCommand
 		{
 			get { return (Commands.Command)GetValue(DeleteJobCommandProperty); }
-			set { SetValue(DeleteJobCommandProperty, value); }
+			protected set { SetValue(DeleteJobCommandProperty, value); }
 		}
 		public static readonly DependencyProperty DeleteJobCommandProperty =
 			DependencyProperty.Register("DeleteJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
-		//InsertSetupBefore Dependency Property
+		/// <summary>
+		/// Gets a bindable command to insert a setup before this Block
+		/// </summary>
 		public Commands.Command InsertSetupBefore
 		{
 			get { return (Commands.Command)GetValue(InsertSetupBeforeProperty); }
-			set { SetValue(InsertSetupBeforeProperty, value); }
+			protected set { SetValue(InsertSetupBeforeProperty, value); }
 		}
 		public static readonly DependencyProperty InsertSetupBeforeProperty =
 			DependencyProperty.Register("InsertSetupBefore", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));

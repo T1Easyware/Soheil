@@ -45,6 +45,7 @@
 		<DataTemplate x:Key="PPTableTemplate" DataType="{x:Type vm:PPTableVm}"
 			xmlns:local="clr-namespace:Soheil.Views.PP"
 			xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core"
+			xmlns:timeline="clr-namespace:Soheil.Core.ViewModels.PP.Timeline;assembly=Soheil.Core"
 			xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls">
 			<DataTemplate.Resources>
 				<System:Double x:Key="StationOrActivityHeaderWidth">100.0</System:Double>

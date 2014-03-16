@@ -70,13 +70,13 @@ namespace Soheil.Core.ViewModels.PP
 		DateTime? earliestTime()
 		{
 			var prev = Parent.PPTable.BlockDataService.FindPreviousBlock(SetupModel.Warmup.Station.Id, StartDateTime);
-			if (prev.Value1 != null) return prev.Value1.EndDateTime;
+			if (prev.Item1 != null) return prev.Item1.EndDateTime;
 			return null;
 		}
 		DateTime? lastestTime()
 		{
 			var next = Parent.PPTable.BlockDataService.FindNextBlock(SetupModel.Warmup.Station.Id, StartDateTime.AddSeconds(1));
-			if (next.Value1 != null) return next.Value1.StartDateTime.AddSeconds(-DurationSeconds);
+			if (next.Item1 != null) return next.Item1.StartDateTime.AddSeconds(-DurationSeconds);
 			return null;
 		}
 		protected override void initializeCommands()

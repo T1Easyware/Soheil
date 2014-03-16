@@ -458,7 +458,7 @@ WHERE block.Id = @id";
 		/// <param name="stationId"></param>
 		/// <param name="start"></param>
 		/// <returns></returns>
-		public Pair<Block, Setup> FindPreviousBlock(int stationId, DateTime start)
+		public Tuple<Block, Setup> FindPreviousBlock(int stationId, DateTime start)
 		{
 			return findPreviousPPItem(stationId, start);
 		}
@@ -472,10 +472,10 @@ WHERE block.Id = @id";
 		public bool CanAddSetupBeforeBlock(Model.Block model)
 		{
 			var previousBlock = FindPreviousBlock(model.StateStation.Station.Id, model.StartDateTime);
-			if (previousBlock.Value2 == null)
+			if (previousBlock.Item2 == null)
 			{
-				if (previousBlock.Value1 == null) return true;
-				return (previousBlock.Value1.StateStation.Id != model.StateStation.Id);
+				if (previousBlock.Item1 == null) return true;
+				return (previousBlock.Item1.StateStation.Id != model.StateStation.Id);
 			}
 			return false;
 		}
@@ -487,7 +487,7 @@ WHERE block.Id = @id";
 		/// <param name="stationId"></param>
 		/// <param name="end"></param>
 		/// <returns></returns>
-		public Pair<Block, Setup> FindNextBlock(int stationId, DateTime end)
+		public Tuple<Block, Setup> FindNextBlock(int stationId, DateTime end)
 		{
 			return findNextPPItem(stationId, end);
 		}
@@ -499,7 +499,7 @@ WHERE block.Id = @id";
 		/// <param name="stationId"></param>
 		/// <param name="start"></param>
 		/// <returns>Task or Setup</returns>
-		private Pair<Block, Setup> findPreviousPPItem(int stationId, DateTime start)
+		private Tuple<Block, Setup> findPreviousPPItem(int stationId, DateTime start)
 		{
 			var previousTask = _blockRepository.LastOrDefault(x =>
 				x.StateStation.Station.Id == stationId
@@ -515,11 +515,11 @@ WHERE block.Id = @id";
 					&& x.StartDateTime < start);
 
 			if (previousSetup == null || previousTask == null)
-				return new Pair<Block, Setup>(previousTask, previousSetup);
-			return new Pair<Block, Setup>(previousTask,
+				return new Tuple<Block, Setup>(previousTask, previousSetup);
+			return new Tuple<Block, Setup>(previousTask,
 				(previousSetup.StartDateTime >= previousTask.EndDateTime) ? previousSetup : null);
 		}
-		private Pair<Block, Setup> findNextPPItem(int stationId, DateTime end)
+		private Tuple<Block, Setup> findNextPPItem(int stationId, DateTime end)
 		{
 			var nextTask = _blockRepository.FirstOrDefault(x =>
 				x.StateStation.Station.Id == stationId
@@ -535,8 +535,8 @@ WHERE block.Id = @id";
 					&& x.StartDateTime >= end);
 
 			if (nextSetup == null || nextTask == null)
-				return new Pair<Block, Setup>(nextTask, nextSetup);
-			return new Pair<Block, Setup>(nextTask,
+				return new Tuple<Block, Setup>(nextTask, nextSetup);
+			return new Tuple<Block, Setup>(nextTask,
 				(nextSetup.EndDateTime <= nextTask.StartDateTime) ? nextSetup : null);
 		}
 
@@ -595,7 +595,7 @@ WHERE block.Id = @id";
 					changeoverRepository.Add(changeover);
 					if (result != null)
 					{
-						result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 							InsertSetupBeforeBlockErrors.ErrorSource.This,
 							"زمان تعویض مربوطه پیدا نشد در نتیجه زمان تعویض جدید تعریف و برابر صفر در نظر گرفته شد\n",
 							0));
@@ -652,7 +652,7 @@ WHERE block.Id = @id";
 				warmupRepository.Add(warmup);
 				if (result != null)
 				{
-					result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 						InsertSetupBeforeBlockErrors.ErrorSource.This,
 						"زمان آماده سازی مربوطه پیدا نشد در نتیجه زمان آماده سازی جدید تعریف و برابر صفر در نظر گرفته شد\n",
 						0));
@@ -664,7 +664,7 @@ WHERE block.Id = @id";
 
 		public class InsertSetupBeforeBlockErrors
 		{
-			public List<Pair<ErrorSource, string, int>> Errors = new List<Pair<ErrorSource, string, int>>();
+			public List<Tuple<ErrorSource, string, int>> Errors = new List<Tuple<ErrorSource, string, int>>();
 			public enum ErrorSource { Task, NPT, This }
 			public bool IsSaved = false;
 		}
@@ -699,7 +699,7 @@ WHERE block.Id = @id";
 						if (tmp != null) { errorousId = tmp.Id; break; }
 					}
 					//create error
-					result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 						InsertSetupBeforeBlockErrors.ErrorSource.Task,
 						"این Task گزارش دارد و قابل جابجایی نیست.",
 						errorousId));
@@ -711,7 +711,7 @@ WHERE block.Id = @id";
 					//find the setup with report
 					int errorousId = movingSetups.First(x => x.NonProductiveTaskReport != null).Id;
 					//create error
-					result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 						InsertSetupBeforeBlockErrors.ErrorSource.NPT,
 						"این Task گزارش دارد و قابل جابجایی نیست.",
 						errorousId));
@@ -726,7 +726,7 @@ WHERE block.Id = @id";
 				int delaySeconds = 0;
 
 				//check changeover
-				var changeover = findChangeover(block, previousItem.Value1, result);
+				var changeover = findChangeover(block, previousItem.Item1, result);
 				if (changeover != null)
 					delaySeconds += changeover.Seconds;
 
@@ -737,11 +737,11 @@ WHERE block.Id = @id";
 
 				//check if previousSetup needs to be removed
 				bool needToDeletePreviousSetup = false;
-				if (previousItem.Value2 != null)
+				if (previousItem.Item2 != null)
 				{
-					if (previousItem.Value2.Warmup.Id == warmup.Id && previousItem.Value2.Changeover.Id == changeover.Id)
+					if (previousItem.Item2.Warmup.Id == warmup.Id && previousItem.Item2.Changeover.Id == changeover.Id)
 					{
-						result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 							InsertSetupBeforeBlockErrors.ErrorSource.This,
 							"برای این Task راه اندازی وجود دارد لذا راه اندازی جدید افزوده نشد",
 							-1));
@@ -750,7 +750,7 @@ WHERE block.Id = @id";
 					}
 					else//it is a wrong setup
 					{
-						_nptRepository.Delete(previousItem.Value2);
+						_nptRepository.Delete(previousItem.Item2);
 						needToDeletePreviousSetup = true;
 					}
 				}
@@ -758,7 +758,7 @@ WHERE block.Id = @id";
 				//if it's zero seconds
 				if (delaySeconds == 0)
 				{
-					result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 						InsertSetupBeforeBlockErrors.ErrorSource.This,
 						"زمان کل برابر با صفر است، لذا راه اندازی افزوده نشد",
 						0));
@@ -794,7 +794,7 @@ WHERE block.Id = @id";
 			}
 			catch (Exception exp)
 			{
-				result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+				result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 					InsertSetupBeforeBlockErrors.ErrorSource.This,
 					exp.Message,
 					0));

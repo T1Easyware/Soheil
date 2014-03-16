@@ -99,8 +99,8 @@ namespace Soheil.Core.PP.Smart
 				.Select(x => SmartRange.ExistingSetup(x)).ToList();
 			//find the task and setup in database, which is just before startFrom
 			var previousItem = _blockDataService.FindPreviousBlock(stationId, startFrom);
-			var previousTask = SmartRange.ExistingBlock(previousItem.Value1);
-			var previousSetup = SmartRange.ExistingSetup(previousItem.Value2);
+			var previousTask = SmartRange.ExistingBlock(previousItem.Item1);
+			var previousSetup = SmartRange.ExistingSetup(previousItem.Item2);
 
 			//create a row for specified station if needed
 			if (!_reserve.Any(x => x.Key == stationId))
