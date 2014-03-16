@@ -1,0 +1,501 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Soheil.Core.ViewModels.PP.ActivityVm">
+    <Position X="22.5" Y="14.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAgAgAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\ActivityVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.BlockVm">
+    <Position X="39.75" Y="5" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>kJACJQQgAQAIhIgEGgACQFwBgQCCMCAAyBBAIACIITg=</HashCode>
+      <FileName>ViewModels\PP\BlockVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.CauseVm">
+    <Position X="55.75" Y="22.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAQAgAgAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\CauseVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.DaySlideItemVm">
+    <Position X="2.5" Y="21.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAIBAAEAAECAAgAAA=</HashCode>
+      <FileName>ViewModels\PP\DaySlideItemVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.DefectionVm">
+    <Position X="49.25" Y="22.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAEAAAAQAAAAAAAAAACAAAAAAAEAAACAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\DefectionVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.FilterableItemVm">
+    <Position X="57.75" Y="30" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ABACgAAAAACAAAAAAAAARAQAEAAAAAAAEAAACAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\FilterableItemVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.FilterBoxVm">
+    <Position X="57.75" Y="25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAACAAAEAAAAAAQYQJAAAIAACAhACAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\FilterBoxVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.FilterBoxVmCollection">
+    <Position X="57.75" Y="22.25" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAGAQAAAAQAAICAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\FilterBoxVmCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.HourSlideItemVm">
+    <Position X="4.5" Y="21.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAEAAAAAAAAAAAAAAAAAAAIBAAEAAACAAgAQA=</HashCode>
+      <FileName>ViewModels\PP\HourSlideItemVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.JobListItemVm">
+    <Position X="5" Y="6.25" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAkCAAAEAgEAAEAAAABAACgAAAABCIAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\JobListItemVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.JobListVm">
+    <Position X="5" Y="2" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>gAAQEBAAAACAlCQAAEACAACggAAAAAAAAAAAAEBAAQA=</HashCode>
+      <FileName>ViewModels\PP\JobListVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.JobProductGroupVm">
+    <Position X="10.75" Y="12.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\JobProductGroupVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.JobProductVm">
+    <Position X="10.75" Y="14" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\JobProductVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.MachineVm">
+    <Position X="24.75" Y="12.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>gAAAAAgAAAAAIAAAAAAkAAQAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\MachineVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.MonthSlideItemVm">
+    <Position X="0.5" Y="21.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgACAAEQAAFAAABAAAAAAQAAAAIBAAEABACAAgAAA=</HashCode>
+      <FileName>ViewModels\PP\MonthSlideItemVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.NPTVm">
+    <Position X="59.25" Y="5" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAASAQAAACAAkAAAAgCAQAAAoAAAAAAAAAAAAEAEAQA=</HashCode>
+      <FileName>ViewModels\PP\NPTVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.PPItemVm">
+    <Position X="47.5" Y="0.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACiAAACAAAEAAAAhAAAAAAMAAhAAAAgAgAIAgQAAA=</HashCode>
+      <FileName>ViewModels\PP\PPItemVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.PPJobVm">
+    <Position X="10.75" Y="9" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AQACAAAAAAAgAgAAEAAgAAAAAAAAAACAAAkQhAAAAQA=</HashCode>
+      <FileName>ViewModels\PP\PPJobVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.PPStationVm">
+    <Position X="19" Y="14.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAADAIAAAQ=</HashCode>
+      <FileName>ViewModels\PP\PPStationVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.PPTableVm" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="0.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>CEB1CS2gIe8eEMCEAJABAAhI5ma4VAHmyi6BoAZAhWA=</HashCode>
+      <FileName>ViewModels\PP\PPTableVm.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="2.393" />
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.PPTaskVm">
+    <Position X="44.5" Y="5.25" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAIGACIAAAAAEgAABAAAAggAAQEgEAAAgAgAAABABBA=</HashCode>
+      <FileName>ViewModels\PP\PPTaskVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.ProcessVm">
+    <Position X="49.75" Y="8.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AIAAAyCAASAAAIAAAAAAAAAAAAAAEAABAEAAABAIIAA=</HashCode>
+      <FileName>ViewModels\PP\ProcessVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.ProductGroupVm">
+    <Position X="16.5" Y="11.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAABgAAQAAAAAAAAAAIAQAAAAAAQ=</HashCode>
+      <FileName>ViewModels\PP\ProductGroupVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.ProductReworkVm">
+    <Position X="16.5" Y="17.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAgAAAAAAAAAAAAgAAQAAAAAAQAAQAAQAAAABAA=</HashCode>
+      <FileName>ViewModels\PP\ProductReworkVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.ProductVm">
+    <Position X="16.5" Y="14.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAEwAAAAAAAAIAAAgAAQIAAABAAAAAAAQgAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\ProductVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.BlockReportVm">
+    <Position X="39.75" Y="13" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAEAAFAAAAAEAAAEAAAICAAAQAAEIAAAAAAAABAAAA=</HashCode>
+      <FileName>ViewModels\PP\Report\BlockReportVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.DefectionReportCollection">
+    <Position X="53.5" Y="19.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAQAAAAAAAAAI=</HashCode>
+      <FileName>ViewModels\PP\Report\DefectionReportCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.DefectionReportVm">
+    <Position X="51" Y="22.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ACgCDAAAAAQABCEAAAAAQAIggCAAACACABEgAACAAAA=</HashCode>
+      <FileName>ViewModels\PP\Report\DefectionReportVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.DefectionStoppageCollectionBase">
+    <Position X="52.25" Y="16" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAADAAGAAAAUAAAAAQAAAAgAMAgAQAAAAA=</HashCode>
+      <FileName>ViewModels\PP\Report\DefectionStoppageCollectionBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.NPTReportVm">
+    <Position X="59.25" Y="14" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QAApBAAAAAAAEAQGAhAAQAAgAAAwAAACQAAAAEAIgAA=</HashCode>
+      <FileName>ViewModels\PP\Report\NPTReportVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.ProcessReportCellVm">
+    <Position X="52.25" Y="9.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAIyJIEgDCAAEEIAAgCYAEAFoEoBFAQAAAGAAEAECCA=</HashCode>
+      <FileName>ViewModels\PP\Report\ProcessReportCellVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.ProcessReportRowVm">
+    <Position X="49.75" Y="12.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAgAAAEAQAAAAAAAAAAAAAEAABAAAAA=</HashCode>
+      <FileName>ViewModels\PP\Report\ProcessReportRowVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.StoppageReportCollection">
+    <Position X="51" Y="19.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAQAAAAAAAAAI=</HashCode>
+      <FileName>ViewModels\PP\Report\StoppageReportCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.StoppageReportVm">
+    <Position X="53.5" Y="22.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ACAKDAAAAAAABCEAAEAAQAIggCAAACADAFEgAACAAAA=</HashCode>
+      <FileName>ViewModels\PP\Report\StoppageReportVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.TaskReportBaseVm">
+    <Position X="44.5" Y="10.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAQYBAAACAAAEIQDAhCAAAAgIEAgAAAAgEAAAEACAAA=</HashCode>
+      <FileName>ViewModels\PP\Report\TaskReportBaseVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.TaskReportHolderVm">
+    <Position X="45.75" Y="15.75" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QAAhAAAAAAFAEAEAABAgAABAgAAQACACQAAAAEAAAAA=</HashCode>
+      <FileName>ViewModels\PP\Report\TaskReportHolderVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.TaskReportVm">
+    <Position X="43" Y="15.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ABACAAAABAAAAAEAAAACAEEAgAABBAAGAAAIAAACIGA=</HashCode>
+      <FileName>ViewModels\PP\Report\TaskReportVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.ReworkVm">
+    <Position X="14.75" Y="17.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAgAAAAAAAAAAAAgAAQAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\ReworkVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.SetupVm">
+    <Position X="59.25" Y="9.25" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QBACAAAAAAAACACEAAQCQAAghEAAgAASCAAAIAAQAEQ=</HashCode>
+      <FileName>ViewModels\PP\SetupVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.StateStationActivityVm">
+    <Position X="22.5" Y="11.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAKAAQAAAAAAAAAIAAMAAAAA=</HashCode>
+      <FileName>ViewModels\PP\StateStationActivityVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.StateStationVm">
+    <Position X="20.75" Y="12.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ABAAgAgAAAAAAAAAAAAgAAQAAAAAAAAAAAgQAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\StateStationVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.StateVm">
+    <Position X="19" Y="11.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAgAAAAAAAAAAAAgABQAAAAAABAIAAAQAEAAAAA=</HashCode>
+      <FileName>ViewModels\PP\StateVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorActivityChoice">
+    <Position X="35.25" Y="8.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAEAAAAAAQIAIQAAAAAAAAAoAAIAAAAA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPEditorActivityChoice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorBlock">
+    <Position X="29.5" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ABBQpKACRAAShAYAADCQghSxoACoIDAEIAgApEDQAAA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPEditorBlock.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorJob">
+    <Position X="12.75" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>hQACIQQACCAoAEgAEgAjAAaAoCAAABCYQAVwgCAEEUA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPEditorJob.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorMachine">
+    <Position X="32.75" Y="16.75" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>hAAAAAgAAAAAAAAAAAAgAAQAAAgAAAAAAAAQEAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPEditorMachine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorOperator">
+    <Position X="32.75" Y="13.25" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAgAAgAAAAAEAAAMAAgAAYAAEAAAAAAAIAQAAAAAAA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPEditorOperator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorProcess">
+    <Position X="32.75" Y="8.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AgYCAQgAAAAUEAAgBwAAAIQQCEAoAAAEgAAAIAASAAI=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPEditorProcess.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorTask">
+    <Position X="29.5" Y="8.5" Width="3" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QAG8QQBABECAFAAgDjCQEChAoAnpgAhQUogQkUAACCA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPEditorTask.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorTaskHolder">
+    <Position X="27" Y="8.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPEditorTaskHolder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPJobEditorVm">
+    <Position X="10" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ACAgAJAaAQAAFAAEAABAAAAAgAAIAQAAAABARAAAAhA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPJobEditorVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPTaskEditorVm">
+    <Position X="26.75" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>CCAoAZAbASAEFAAAAEDAAIAAgBIAAABgQAAAVAAEAJA=</HashCode>
+      <FileName>ViewModels\PP\Editor\PPTaskEditorVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

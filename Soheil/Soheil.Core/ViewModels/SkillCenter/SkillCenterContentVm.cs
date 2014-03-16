@@ -8,46 +8,86 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.SkillCenter
 {
+	/// <summary>
+	/// ViewModel for Content of <see cref="SkillCenterVm"/> when a <see cref="BaseTreeItemVm"/> is selected
+	/// </summary>
 	public class SkillCenterContentVm : DependencyObject
 	{
+		/// <summary>
+		/// Specifies the tree type of <see cref="BaseTreeItemVm"/> which initializes this instance of <see cref="SkillCenterContentVm"/>
+		/// </summary>
 		public enum TargetMode { General, ProductRework, Product, ProductGroup };
-
+		
+		/// <summary>
+		/// Specifies the content mode of current Vm
+		/// </summary>
 		TargetMode _targetMode;
-
+		
+		/// <summary>
+		/// Occures when an error occures in this Vm (parameter contains the error message)
+		/// </summary>
 		public event Action<string> ErrorOccured;
 
-		//can be either productGroup, product, productRework or All(General)
-		//SelectedItem Dependency Property
+		/// <summary>
+		/// Gets an bindable instance of <see cref="ProductGroupVm"/>, <see cref="ProductVm"/>, <see cref="ProductReworkVm"/> or <see cref="GeneralVm"/> that initialized this Vm
+		/// </summary>
 		public BaseTreeItemVm SelectedItem
 		{
 			get { return (BaseTreeItemVm)GetValue(SelectedItemProperty); }
-			set { SetValue(SelectedItemProperty, value); }
+			protected set { SetValue(SelectedItemProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedItemProperty =
 			DependencyProperty.Register("SelectedItem", typeof(BaseTreeItemVm), typeof(SkillCenterContentVm), new UIPropertyMetadata(null));
 
 
 		#region DataServices
+		/// <summary>
+		/// Instance of <see cref="DataServices.OperatorDataService"/> initialized with local UOW
+		/// </summary>
 		DataServices.OperatorDataService _operatorDataService;
+		/// <summary>
+		/// Instance of <see cref="DataServices.ActivityDataService"/> initialized with local UOW
+		/// </summary>
 		DataServices.ActivityDataService _aDataService;
+		/// <summary>
+		/// Instance of <see cref="DataServices.ActivityGroupDataService"/> initialized with local UOW
+		/// </summary>
 		DataServices.ActivityGroupDataService _agDataService;
+		/// <summary>
+		/// Instance of <see cref="DataServices.ActivitySkillDataService"/> initialized with local UOW
+		/// </summary>
 		DataServices.ActivitySkillDataService _asDataService;
+		/// <summary>
+		/// Instance of <see cref="DataServices.ProductActivitySkillDataService"/> initialized with local UOW
+		/// </summary>
 		DataServices.ProductActivitySkillDataService _pasDataService; 
 		#endregion
 
 		#region Table
-		//Rows Observable Collection
+		/// <summary>
+		/// Gets a collection of <see cref="OperatorRowVm"/>s (all operators)
+		/// </summary>
 		public ObservableCollection<OperatorRowVm> Rows { get { return _rows; } }
 		private ObservableCollection<OperatorRowVm> _rows = new ObservableCollection<OperatorRowVm>();
-		//Groups Observable Collection
+		
+		/// <summary>
+		/// Gets a collection of <see cref="ActivityGroupColumnVm"/>, each for one column group in the skill center table
+		/// </summary>
 		public ObservableCollection<ActivityGroupColumnVm> Groups { get { return _groups; } }
 		private ObservableCollection<ActivityGroupColumnVm> _groups = new ObservableCollection<ActivityGroupColumnVm>();
-		//Columns Observable Collection
+	
+		/// <summary>
+		/// Gets a collection of <see cref="ActivityColumnVm"/>, each for one column in the skill center table
+		/// </summary>
 		public ObservableCollection<ActivityColumnVm> Columns { get { return _columns; } }
 		private ObservableCollection<ActivityColumnVm> _columns = new ObservableCollection<ActivityColumnVm>(); 
 		#endregion
 		
 		#region Ctor and Init
+		/// <summary>
+		/// Instantiates an initializes this Vm with the given <see cref="BaseTreeItemVm"/> node
+		/// </summary>
+		/// <param name="node">A tree item that initializes the mode and data of this Vm</param>
 		public SkillCenterContentVm(BaseTreeItemVm node)
 		{
 			SelectedItem = node;
@@ -69,6 +109,11 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			}
 			initializeData();
 		}
+
+		/// <summary>
+		/// Initializes UOW, data services, rows and columns of this Vm
+		/// <para>Fills the cells of the table according to type of the initializer node</para>
+		/// </summary>
 		void initializeData()
 		{
 			//Init DataServices
@@ -95,53 +140,60 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			switch (_targetMode)
 			{
 				case TargetMode.General:
+
+					//General mode
 					foreach (var row in rows)
 					{
-
 						foreach (var act in columns)
 						{
 							var activitySkill = _asDataService.FindOrAdd(row.Id, act.Id);
 							var skill = new ActivitySkillVm(activitySkill);
-							skill.Saved += skill_Saved;
+							skill.IluoChanged += saveSkillToDatabase;
 							row.Cells.Add(skill);
 						}
 						Rows.Add(row);
 					}
 					break;
 				case TargetMode.ProductRework:
+
+					//ProductRework mode
 					foreach (var row in rows)
 					{
 						foreach (var act in columns)
 						{
 							var productActivitySkill = _pasDataService.FindOrAdd(SelectedItem.Id, row.Id, act.Id);
 							var skill = new ProductReworkActivitySkillVm(productActivitySkill);
-							skill.Saved += skill_Saved;
+							skill.IluoChanged += saveSkillToDatabase;
 							row.Cells.Add(skill);
 						}
 						Rows.Add(row);
 					}
 					break;
 				case TargetMode.Product:
+
+					//Product mode
 					foreach (var row in rows)
 					{
 						foreach (var act in columns)
 						{
 							//var productActivitySkill = _pasDataService.FindOrAdd(row.Id, act.Id);
 							var skill = new ProductActivitySkillVm();
-							skill.Saved += skill_Saved;
+							skill.IluoChanged += saveSkillToDatabase;
 							row.Cells.Add(skill);
 						}
 						Rows.Add(row);
 					}
 					break;
 				case TargetMode.ProductGroup:
+
+					//ProductGroup mode
 					foreach (var row in rows)
 					{
 						foreach (var act in columns)
 						{
 							//var activitySkill = _asDataService.FindOrAdd(row.Id, act.Id);
 							var skill = new ProductGroupActivitySkillVm();
-							skill.Saved += skill_Saved;
+							skill.IluoChanged += saveSkillToDatabase;
 							row.Cells.Add(skill);
 						}
 						Rows.Add(row);
@@ -152,7 +204,11 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			}
 		}
 
-		void skill_Saved(BaseSkillVm skill)
+		/// <summary>
+		/// Event handler for IluoChanged event on each instance of <see cref="BaseSkillVm"/>
+		/// </summary>
+		/// <param name="skill">target skill that will be saved</param>
+		void saveSkillToDatabase(BaseSkillVm skill)
 		{
 			if (skill == null)
 			{
@@ -171,6 +227,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			}
 			else
 			{
+				//Modes: Product & ProductGroup are not supported yet???
 				if (ErrorOccured != null)
 					ErrorOccured("Can't Save in this mode.");
 			}
