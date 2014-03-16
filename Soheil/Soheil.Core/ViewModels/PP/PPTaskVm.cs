@@ -34,13 +34,18 @@ namespace Soheil.Core.ViewModels.PP
 			TaskProducedG1 = taskModel.TaskReports.Sum(x => x.TaskProducedG1);
 			Message = new EmbeddedException();
 
-			//TaskProducedG1 = 
-			var ids = new List<int>();
-			foreach (var item in taskModel.Processes)
+			//this non-crucial block of code is likely to throw
+			try
 			{
-				ids.AddRange(item.ProcessOperators.Select(x => x.Id));
+				//calculate the number of distinct operators
+				var ids = new List<int>();
+				foreach (var item in taskModel.Processes)
+				{
+					ids.AddRange(item.ProcessOperators.Select(x => x.Id));
+				}
+				TaskOperatorCount = ids.Distinct().Count();
 			}
-			TaskOperatorCount = ids.Distinct().Count();
+			catch { }
 		}
 
 		#endregion

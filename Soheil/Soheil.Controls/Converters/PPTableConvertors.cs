@@ -252,6 +252,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (values.Any(x => x == DependencyProperty.UnsetValue)) return Visibility.Collapsed;
 			return values.All(x => (bool)x) ? Visibility.Visible : Visibility.Collapsed;
 		}
 

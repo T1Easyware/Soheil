@@ -200,24 +200,6 @@ namespace Soheil.Views
 			PPTableVm.UpdateWidths();
 			PPTableVm.ResetTimeLine();
 		}
-
-		//TaskReports Load/Unload
-		private void TaskReports_Loaded(object sender, RoutedEventArgs e)
-		{
-			var task = sender.GetDataContext<PPTaskVm>();
-			if (task != null)
-			{
-				task.ReloadTaskReports();
-			}
-		}
-		private void TaskReports_Unloaded(object sender, RoutedEventArgs e)
-		{
-			var task = sender.GetDataContext<PPTaskVm>();
-			if (task != null)
-			{
-				task.ClearTaskReports();
-			}
-		}
 		#endregion
 
 		#region Scroll and Zoom

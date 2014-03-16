@@ -52,13 +52,15 @@ namespace Soheil.Core.ViewModels.PP
 				StoppageCount = (int)_model.StoppageReports.Sum(x => x.CountEquivalence);
 			}
 
-			StartDateTime = taskReport.StartDateTime;
-
+			//DateTimes and Durations
 			var tmp = (int)(ProcessReportTargetPoint * processReportRow.StateStationActivity.CycleTime);
 			if (tmp == 0 || tmp > taskReport.DurationSeconds)
 				DurationSeconds = taskReport.DurationSeconds;
 			else
 				DurationSeconds = tmp;
+			//by updating StartDateTime (while DurationSeconds is updated before) EndDateTime gets updated correctly
+			StartDateTime = taskReport.StartDateTime;
+
 	
 			DefectionReports = new DefectionReportCollection(this);
 			StoppageReports = new StoppageReportCollection(this);
@@ -125,7 +127,7 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("StoppageCount", typeof(int), typeof(ProcessReportCellVm), new UIPropertyMetadata(0));
 		#endregion
 
-		#region Startdt
+		#region DateTime
 		//StartDate Dependency Property
 		public DateTime StartDate
 		{
@@ -145,8 +147,19 @@ namespace Soheil.Core.ViewModels.PP
 		public override DateTime StartDateTime
 		{
 			get { return StartDate.Add(StartTime); }
-			set { StartDate = value.Date; StartTime = value.TimeOfDay; SetValue(StartDateTimeProperty, value); }
+			set
+			{
+				StartDate = value.Date;
+				StartTime = value.TimeOfDay;
+				SetValue(StartDateTimeProperty, value);
+				SetValue(EndDateTimeProperty, value.AddSeconds(DurationSeconds));
+			}
 		}
+		/// <summary>
+		/// Don't manually change the value of this property
+		/// </summary>
+		public static readonly DependencyProperty EndDateTimeProperty =
+			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(ProcessReportCellVm), new UIPropertyMetadata(DateTime.Now));
 		#endregion
 
 		#region Other Members

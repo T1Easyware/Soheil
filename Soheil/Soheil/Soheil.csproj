@@ -137,12 +137,12 @@
     <Compile Include="Views\Fpc\Toolbox.xaml.cs">
       <DependentUpon>Toolbox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PP\Block.xaml.cs">
+      <DependentUpon>Block.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\GridHelper.cs" />
     <Compile Include="Views\PP\JobList.xaml.cs">
       <DependentUpon>JobList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PP\Npt.xaml.cs">
-      <DependentUpon>Npt.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\NptEditor.xaml.cs">
       <DependentUpon>NptEditor.xaml</DependentUpon>
@@ -158,6 +158,12 @@
     </Compile>
     <Compile Include="Views\PP\ProcessReportBuilder.xaml.cs">
       <DependentUpon>ProcessReportBuilder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\ProcessReportCell.xaml.cs">
+      <DependentUpon>ProcessReportCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\Setup.xaml.cs">
+      <DependentUpon>Setup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\TaskReportBuilder.xaml.cs">
       <DependentUpon>TaskReportBuilder.xaml</DependentUpon>
@@ -225,11 +231,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PP\JobList.xaml">
+    <Page Include="Views\PP\Block.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PP\Npt.xaml">
+    <Page Include="Views\PP\JobList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -250,6 +256,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PP\ProcessReportBuilder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\ProcessReportCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\Setup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
