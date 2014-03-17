@@ -96,7 +96,8 @@ namespace Soheil.Core.PP.Smart
 			var inRangeItems = _blockDataService.GetInRange(startFrom, stationId)
 				.Select(x => SmartRange.ExistingBlock(x)).ToList();
 			var inRangeNPTs = _nptDataService.GetInRange(startFrom, stationId)
-				.Select(x => SmartRange.ExistingSetup(x)).ToList();
+				.Select(x => SmartRange.ExistingSetup(x))
+				.Where(x => x != null).ToList();
 			//find the task and setup in database, which is just before startFrom
 			var previousItem = _blockDataService.FindPreviousBlock(stationId, startFrom);
 			var previousTask = SmartRange.ExistingBlock(previousItem.Item1);

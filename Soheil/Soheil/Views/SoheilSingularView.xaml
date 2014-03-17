@@ -513,7 +513,7 @@
                             </ToggleButton>
                         </ToolBar>
                         <ToolBar Background="Transparent">
-                            <Button Command="{Binding GoToNow}" ToolTip="برو به الان">
+                            <Button Command="{Binding GoToNowCommand}" ToolTip="برو به الان">
                                 <Image Style="{StaticResource NowImage}"/>
                             </Button>
                             <WrapPanel VerticalAlignment="Center">

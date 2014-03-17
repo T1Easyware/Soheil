@@ -85,7 +85,6 @@ namespace Soheil.Core.DataServices
 		}
 		#endregion
 
-		public event EventHandler<ModelAddedEventArgs<Job>> JobAdded;
 		/// <summary>
 		/// Given a job, creates tasks for it and does the other stuff too
 		/// </summary>

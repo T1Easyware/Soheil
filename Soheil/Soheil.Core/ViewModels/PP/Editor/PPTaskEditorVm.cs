@@ -19,7 +19,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		protected DataServices.TaskDataService _taskDs;
 		protected DataServices.BlockDataService _blockDs;
 
-		internal event Action RefreshPPItems;
+		public event Action RefreshPPItems;
 
 		public Dal.SoheilEdmContext UOW { get; private set; }
 		public PPTaskEditorVm()
@@ -182,6 +182,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					if (SelectedBlock.IsAutoStart)
 						SelectedBlock.SetStartToAuto();
 					_blockDs.SaveBlock(SelectedBlock.Model);
+					if (RefreshPPItems != null) RefreshPPItems();
 				}
 				catch (Exception exp)
 				{
@@ -198,20 +199,19 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			});
 			SaveAllCommand = new Commands.Command(o =>
 			{
-				//try
+				try
 				{
 					foreach (var block in BlockList)
 					{
 						block.Save();
-						if (RefreshPPItems != null)
-							RefreshPPItems();
+						if (RefreshPPItems != null) RefreshPPItems();
 					}
 					Reset();
 					IsVisible = false;
 				}
-				//catch (Exception exp)
+				catch (Exception exp)
 				{
-				//	MessageBox.Show(exp.Message);
+					MessageBox.Show(exp.Message);
 				}
 			});
 			ResetCurrentBlockCommand = new Commands.Command(o =>
@@ -260,5 +260,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty ResetCurrentBlockCommandProperty =
 			DependencyProperty.Register("ResetCurrentBlockCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
 		#endregion
+
 	}
 }

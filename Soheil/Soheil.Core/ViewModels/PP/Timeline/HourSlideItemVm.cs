@@ -4,8 +4,15 @@ using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PP.Timeline
 {
+	/// <summary>
+	/// ViewModel for one hour in PPTable's timeline
+	/// </summary>
     public class HourSlideItemVm : DependencyObject
     {
+		/// <summary>
+		/// Creates an instance of HourSlideItemVm starting at the given DateTime
+		/// </summary>
+		/// <param name="dt">Pass the start of the hour</param>
 		public HourSlideItemVm(DateTime dt)
 		{
 			Data = dt;
@@ -13,7 +20,10 @@ namespace Soheil.Core.ViewModels.PP.Timeline
 			Text = string.Format("{0:D2}:00",dt.Hour);
 			DateText = string.Format("{0:D2}/{1:D2}", (int)dt.GetPersianMonth(), dt.GetPersianDayOfMonth());
 		}
-		//Data Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable value that represents the DateTime of this Vm
+		/// </summary>
 		public DateTime Data
 		{
 			get { return (DateTime)GetValue(DataProperty); }
@@ -21,7 +31,10 @@ namespace Soheil.Core.ViewModels.PP.Timeline
 		}
 		public static readonly DependencyProperty DataProperty =
 			DependencyProperty.Register("Data", typeof(DateTime), typeof(HourSlideItemVm), new UIPropertyMetadata(default(DateTime)));
-		//Text Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable text to show in GUI as this hour
+		/// </summary>
 		public string Text
 		{
 			get { return (string)GetValue(TextProperty); }
@@ -29,7 +42,10 @@ namespace Soheil.Core.ViewModels.PP.Timeline
 		}
 		public static readonly DependencyProperty TextProperty =
 			DependencyProperty.Register("Text", typeof(string), typeof(HourSlideItemVm), new UIPropertyMetadata(null));
-		//ColumnIndex Dependency Property (in hours, from the start of the year)
+		
+		/// <summary>
+		/// Gets a bindable number (zero-biased) that shows the number of hours since the start of year
+		/// </summary>
 		public int ColumnIndex
 		{
 			get { return (int)GetValue(ColumnIndexProperty); }
@@ -37,7 +53,10 @@ namespace Soheil.Core.ViewModels.PP.Timeline
 		}
 		public static readonly DependencyProperty ColumnIndexProperty =
 			DependencyProperty.Register("ColumnIndex", typeof(int), typeof(HourSlideItemVm), new UIPropertyMetadata(0));
-		//DateText Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable text to show in GUI as this hour
+		/// </summary>
 		public string DateText
 		{
 			get { return (string)GetValue(DateTextProperty); }

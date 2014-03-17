@@ -119,6 +119,8 @@ namespace Soheil.Core.ViewModels.PP.Timeline
 			}, (d, v) =>
 			{
 				if ((bool)v) return true;
+
+				//if the month can be deselected IsSelected=false
 				var vm = (MonthSlideItemVm)d;
 				if (vm.CanDeselected != null)
 					return !vm.CanDeselected(vm);

@@ -78,28 +78,6 @@ namespace Soheil.Core.ViewModels.PP
 			JobDataService = new DataServices.JobDataService(UOW);
 			TaskReportDataService = new DataServices.TaskReportDataService(UOW);
 			ProcessReportDataService = new DataServices.ProcessReportDataService(UOW);
-
-			//Add event handlers
-			BlockDataService.BlockAdded += (s, e) =>
-			{
-				PPItems.AddItem(e.NewModel);
-			};
-			BlockDataService.BlockUpdated += (s, e) =>
-			{
-				PPItems.RemoveItem(e.OldModel);
-				PPItems.AddItem(e.NewModel);
-			};
-			//useless???
-			JobDataService.JobAdded += (s, e) =>
-			{
-				var jobVm = new PPJobVm(e.NewModel);
-				foreach (var block in e.NewModel.Blocks)
-				{
-					var blockVm = PPItems.FindItem(block);
-					if (blockVm != null) blockVm.Job = jobVm;
-					else PPItems.AddItem(block);
-				}
-			};
 		}
 		/// <summary>
 		/// Initializes TaskEditor, JobEditor and JobList
@@ -108,10 +86,31 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			TaskEditor = new PPTaskEditorVm();
 			TaskEditor.RefreshPPItems += () => UpdateRange(true);
-			JobEditor = new PPJobEditorVm();
-			JobList = new JobListVm(JobDataService);
+			/*refresh is enough.
+			 * TaskEditor.BlockAdded += model => PPItems.AddItem(model);
+			TaskEditor.BlockUpdated += (oldModel, newModel) =>
+			{
+				PPItems.RemoveItem(oldModel);
+				var newVm = PPItems.AddItem(newModel);
+				if (SelectedBlock.Id == oldModel.Id)
+					SelectedBlock = newVm;
+			};*/
 
-			//Add an inline event handler for JobSelected event of JobList
+			JobEditor = new PPJobEditorVm();
+			TaskEditor.RefreshPPItems += () => UpdateRange(true);
+			/*refresh is enough.
+			 *JobEditor.JobAdded += model =>
+			{
+				var jobVm = new PPJobVm(model);
+				foreach (var block in model.Blocks)
+				{
+					var blockVm = PPItems.FindItem(block);
+					if (blockVm != null) blockVm.Job = jobVm;
+					else PPItems.AddItem(block);
+				}
+			};*/
+
+			JobList = new JobListVm(JobDataService);
 			JobList.JobSelected += job =>
 			{
 				if (job != null)
@@ -169,7 +168,50 @@ namespace Soheil.Core.ViewModels.PP
 
 					//initialize PPItems
 					PPItems = new PPItemCollection(this);
-					
+					PPItems.BlockRemoved += id =>
+					{
+						if (SelectedBlock != null && SelectedBlock.Id == id)
+							SelectedBlock = null;
+						BlockDataService.DeleteModelById(id);
+					};
+					PPItems.NptRemoved += id =>
+					{
+						if (SelectedNPT != null && SelectedNPT.Id == id)
+							SelectedNPT = null;
+					};
+					PPItems.JobRemoved += jobVm =>
+					{
+						JobDataService.DeleteModel(jobVm.Id);
+						RemoveBlocks(jobVm);
+					};
+					PPItems.TaskEditorUpdated += ppeblock =>
+					{
+						TaskEditor.BlockList.Add(ppeblock);
+						TaskEditor.SelectedBlock = ppeblock;
+					};
+					PPItems.TaskEditorReset += () =>
+					{
+						TaskEditor.Reset();
+						TaskEditor.IsVisible = true;
+						JobEditor.IsVisible = false;
+					};
+					PPItems.JobEditorUpdated += jobVm =>
+					{
+						JobEditor.Append(jobVm);
+					};
+					PPItems.JobEditorReset += () =>
+					{
+						TaskEditor.IsVisible = false;
+						JobEditor.IsVisible = true;
+						JobEditor.Reset();
+					};
+					PPItems.EditBlockReportStarted += blockVm =>
+					{
+						blockVm.BlockReport = new BlockReportVm(blockVm);
+						SelectedBlock = blockVm;
+					};
+
+
 					//Initialize stations
 					var stationModels = new DataServices.StationDataService(UOW).GetActives().OrderBy(x => x.Index);
 					NumberOfStations = stationModels.Count();
@@ -299,7 +341,7 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Editors
 		/// <summary>
-		/// Gets ViewModel for TaskEditor
+		/// Gets bindable ViewModel for TaskEditor
 		/// </summary>
 		public PPTaskEditorVm TaskEditor
 		{
@@ -310,7 +352,7 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("TaskEditor", typeof(PPTaskEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		/// <summary>
-		/// Gets ViewModel for JobEditor
+		/// Gets bindable ViewModel for JobEditor
 		/// </summary>
 		public PPJobEditorVm JobEditor
 		{
@@ -321,7 +363,7 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("JobEditor", typeof(PPJobEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		/// <summary>
-		/// Gets ViewModel for JobList
+		/// Gets bindable ViewModel for JobList
 		/// </summary>
 		public JobListVm JobList
 		{
@@ -341,25 +383,30 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				foreach (var block in station.Blocks.ToArray())
 				{
-					try
+					//check if this block in this station is part of the given Job
+					if (block.Job != null && block.Job.Id == job.Id)
 					{
-						BlockDataService.DeleteModelById(block.Id);
-						station.Blocks.Remove(block);
-					}
-					catch(Soheil.Common.SoheilException.RoutedException exp)
-					{
-						if (exp.Target is Model.Task)
+						try
 						{
-							block.TaskList.First(x => x.Id == ((Task)exp.Target).Id).Message.AddEmbeddedException(exp.Message);
+							//remove the block from database and ViewModel
+							BlockDataService.DeleteModelById(block.Id);
+							station.Blocks.Remove(block);
 						}
-						else// if (exp.Target is Model.Block)
+						catch (Soheil.Common.SoheilException.RoutedException exp)
+						{
+							if (exp.Target is Model.Task)
+							{
+								block.TaskList.First(x => x.Id == ((Task)exp.Target).Id).Message.AddEmbeddedException(exp.Message);
+							}
+							else// if (exp.Target is Model.Block)
+							{
+								block.Message.AddEmbeddedException(exp.Message);
+							}
+						}
+						catch (Exception exp)
 						{
 							block.Message.AddEmbeddedException(exp.Message);
 						}
-					}
-					catch(Exception exp)
-					{
-						block.Message.AddEmbeddedException(exp.Message);
 					}
 				}
 			}
@@ -367,37 +414,47 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region TimeRoll and Shifts
-		//ShiftsAndBreaks Observable Collection
-		private ObservableCollection<OrganizationCalendar.WorkTimeRangeVm> _shiftsAndBreaks = new ObservableCollection<OrganizationCalendar.WorkTimeRangeVm>();
+		/// <summary>
+		/// Gets a bindable collection of <see cref="OrganizationCalendar.WorkTimeRangeVm"/>s
+		/// </summary>
 		public ObservableCollection<OrganizationCalendar.WorkTimeRangeVm> ShiftsAndBreaks { get { return _shiftsAndBreaks; } }
+		private ObservableCollection<OrganizationCalendar.WorkTimeRangeVm> _shiftsAndBreaks = new ObservableCollection<OrganizationCalendar.WorkTimeRangeVm>();
 
-		//Hours Dependency Property
+		/// <summary>
+		/// Gets a bindable collection for timeline hours
+		/// </summary>
 		public HourCollection Hours
 		{
 			get { return (HourCollection)GetValue(HoursProperty); }
-			set { SetValue(HoursProperty, value); }
+			protected set { SetValue(HoursProperty, value); }
 		}
 		public static readonly DependencyProperty HoursProperty =
 			DependencyProperty.Register("Hours", typeof(HourCollection), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//Days Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable collection for timeline days
+		/// </summary>
 		public DayCollection Days
 		{
 			get { return (DayCollection)GetValue(DaysProperty); }
-			set { SetValue(DaysProperty, value); }
+			protected set { SetValue(DaysProperty, value); }
 		}
 		public static readonly DependencyProperty DaysProperty =
 			DependencyProperty.Register("Days", typeof(DayCollection), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//Months Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable collection for timeline months
+		/// </summary>
 		public MonthCollection Months
 		{
 			get { return (MonthCollection)GetValue(MonthsProperty); }
-			set { SetValue(MonthsProperty, value); }
+			protected set { SetValue(MonthsProperty, value); }
 		}
 		public static readonly DependencyProperty MonthsProperty =
 			DependencyProperty.Register("Months", typeof(MonthCollection), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		/// <summary>
-		/// Hours Passed (measured from the edge of the screen)
+		/// Gets or sets bindable Hours Passed (measured from the edge of the screen)
 		/// </summary>
 		public double HoursPassed
 		{
@@ -407,49 +464,49 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty HoursPassedProperty =
 			DependencyProperty.Register("HoursPassed", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(0d));
 		/// <summary>
-		/// A value indicating the Width of one month
+		/// Gets a bindable value indicating the Width of one month
 		/// <para>GridWidth divided by the Number of days in SelectedMonth</para>
 		/// <para>Default value = 40</para>
 		/// </summary>
 		public double DayZoom
 		{
 			get { return (double)GetValue(DayZoomProperty); }
-			set { SetValue(DayZoomProperty, value); }
+			protected set { SetValue(DayZoomProperty, value); }
 		}
 		public static readonly DependencyProperty DayZoomProperty =
 			DependencyProperty.Register("DayZoom", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(40d));
 		/// <summary>
-		/// Width of OneHour in HoursBar or in pptable
+		/// Gets bindable Width of OneHour in HoursBar or in pptable
 		/// </summary>
 		public double HourZoom
 		{
 			get { return (double)GetValue(HourZoomProperty); }
-			set { SetValue(HourZoomProperty, value); }
+			protected set { SetValue(HourZoomProperty, value); }
 		}
 		public static readonly DependencyProperty HourZoomProperty =
 			DependencyProperty.Register("HourZoom", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(36d, (d, e) => { ((PPTableVm)d).UpdateRange(false); }));
 		/// <summary>
-		/// Number of days in currect active year
+		/// Gets bindable Number of days in currect active year
 		/// </summary>
 		public int DaysInYear
 		{
 			get { return (int)GetValue(DaysInYearProperty); }
-			set { SetValue(DaysInYearProperty, value); }
+			protected set { SetValue(DaysInYearProperty, value); }
 		}
 		public static readonly DependencyProperty DaysInYearProperty =
 			DependencyProperty.Register("DaysInYear", typeof(int), typeof(PPTableVm), new UIPropertyMetadata(365));
 		/// <summary>
-		/// Total number of hours in current active year
+		/// Gets bindable Total number of hours in current active year
 		/// </summary>
 		public int HoursInYear
 		{
 			get { return (int)GetValue(HoursInYearProperty); }
-			set { SetValue(HoursInYearProperty, value); }
+			protected set { SetValue(HoursInYearProperty, value); }
 		}
 		public static readonly DependencyProperty HoursInYearProperty =
 			DependencyProperty.Register("HoursInYear", typeof(int), typeof(PPTableVm), new UIPropertyMetadata(8760));
 		/// <summary>
-		/// Gets or sets the Selected Month and Updates the timeline
+		/// Gets or sets a bindable value for Selected Month that when changed updates the timeline
 		/// </summary>
 		public MonthSlideItemVm SelectedMonth
 		{
@@ -477,7 +534,7 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Zoom and Pan
 		/// <summary>
-		/// Width of screen
+		/// Gets or sets Width of screen
 		/// </summary>
 		public double GridWidth { get; set; }
 		/// <summary>
@@ -502,7 +559,7 @@ namespace Soheil.Core.ViewModels.PP
 				DayZoom = GridWidth / SelectedMonth.NumOfDays;
 		}
 		/// <summary>
-		/// A value indicating the vertical offset of the PPTable's scrollviewer
+		/// Gets or sets a bindable value indicating the vertical offset of the PPTable's scrollviewer
 		/// </summary>
 		public double VerticalScreenOffset
 		{
@@ -566,23 +623,23 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Stations and their items
 		/// <summary>
-		/// Number of active stations in PPTable
+		/// Gets bindable Number of active stations in PPTable
 		/// </summary>
 		public int NumberOfStations
 		{
 			get { return (int)GetValue(NumberOfStationsProperty); }
-			set { SetValue(NumberOfStationsProperty, value); }
+			protected set { SetValue(NumberOfStationsProperty, value); }
 		}
 		public static readonly DependencyProperty NumberOfStationsProperty =
 			DependencyProperty.Register("NumberOfStations", typeof(int), typeof(PPTableVm), new UIPropertyMetadata(0));
 		/// <summary>
-		/// A collection of Stations, in each a collection of PPTable Items that are visible
+		/// Gets a bindable collection of Stations, in each a collection of PPTable Items that are visible
 		/// <para>Each item can be either an NPT or a Block</para>
 		/// </summary>
 		public PPItemCollection PPItems
 		{
 			get { return (PPItemCollection)GetValue(PPItemsProperty); }
-			set { SetValue(PPItemsProperty, value); }
+			protected set { SetValue(PPItemsProperty, value); }
 		}
 		public static readonly DependencyProperty PPItemsProperty =
 			DependencyProperty.Register("PPItems", typeof(PPItemCollection), typeof(PPTableVm), new UIPropertyMetadata(null));
@@ -767,7 +824,7 @@ namespace Soheil.Core.ViewModels.PP
 				TaskEditor.IsVisible = false;
 				JobEditor.Reset();
 			});
-			GoToNow = new Commands.Command(o =>
+			GoToNowCommand = new Commands.Command(o =>
 			{
 				BackupZoom();
 				DateTime now = DateTime.Now;
@@ -783,64 +840,83 @@ namespace Soheil.Core.ViewModels.PP
 		//Task commands
 
 		//ToggleTaskEditorCommand Dependency Property
+		/// <summary>
+		/// Gets a bindable command that toggles task editor's visiblity
+		/// </summary>
 		public Commands.Command ToggleTaskEditorCommand
 		{
 			get { return (Commands.Command)GetValue(ToggleTaskEditorCommandProperty); }
-			set { SetValue(ToggleTaskEditorCommandProperty, value); }
+			protected set { SetValue(ToggleTaskEditorCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ToggleTaskEditorCommandProperty =
 			DependencyProperty.Register("ToggleTaskEditorCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//CleanAddBlockCommand Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable command that resets the task editor and opens it
+		/// </summary>
 		public Commands.Command CleanAddBlockCommand
 		{
 			get { return (Commands.Command)GetValue(CleanAddBlockCommandProperty); }
-			set { SetValue(CleanAddBlockCommandProperty, value); }
+			protected set { SetValue(CleanAddBlockCommandProperty, value); }
 		}
 		public static readonly DependencyProperty CleanAddBlockCommandProperty =
 			DependencyProperty.Register("CleanAddBlockCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		//Job commands
 
-		//ToggleJobEditorCommand Dependency Property
+		/// <summary>
+		/// Gets a bindable command that toggles job editor's visiblity
+		/// </summary>
 		public Commands.Command ToggleJobEditorCommand
 		{
 			get { return (Commands.Command)GetValue(ToggleJobEditorCommandProperty); }
-			set { SetValue(ToggleJobEditorCommandProperty, value); }
+			protected set { SetValue(ToggleJobEditorCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ToggleJobEditorCommandProperty =
 			DependencyProperty.Register("ToggleJobEditorCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//CleanAddJobCommand Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable command that resets the job editor and opens it
+		/// </summary>
 		public Commands.Command CleanAddJobCommand
 		{
 			get { return (Commands.Command)GetValue(CleanAddJobCommandProperty); }
-			set { SetValue(CleanAddJobCommandProperty, value); }
+			protected set { SetValue(CleanAddJobCommandProperty, value); }
 		}
 		public static readonly DependencyProperty CleanAddJobCommandProperty =
 			DependencyProperty.Register("CleanAddJobCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		//Zoom commands
 
-		//GoToNow Command
-		public Commands.Command GoToNow
+		/// <summary>
+		/// Gets a bindable command that makes the timeline to navigates to Now
+		/// </summary>
+		public Commands.Command GoToNowCommand
 		{
 			get { return (Commands.Command)GetValue(GoToNowProperty); }
-			set { SetValue(GoToNowProperty, value); }
+			protected set { SetValue(GoToNowProperty, value); }
 		}
 		public static readonly DependencyProperty GoToNowProperty =
-			DependencyProperty.Register("GoToNow", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//ZoomStartedCommand Dependency Property
+			DependencyProperty.Register("GoToNowCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
+		
+		/// <summary>
+		/// Gets a bindable command to notify ViewModel when user starts dragging the zoom slider
+		/// </summary>
 		public Commands.Command ZoomStartedCommand
 		{
 			get { return (Commands.Command)GetValue(ZoomStartedCommandProperty); }
-			set { SetValue(ZoomStartedCommandProperty, value); }
+			protected set { SetValue(ZoomStartedCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ZoomStartedCommandProperty =
 			DependencyProperty.Register("ZoomStartedCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
-		//UndoZoomCommand Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable command that restore the timeline zoom to its backup values
+		/// </summary>
 		public Commands.Command UndoZoomCommand
 		{
 			get { return (Commands.Command)GetValue(UndoZoomCommandProperty); }
-			set { SetValue(UndoZoomCommandProperty, value); }
+			protected set { SetValue(UndoZoomCommandProperty, value); }
 		}
 		public static readonly DependencyProperty UndoZoomCommandProperty =
 			DependencyProperty.Register("UndoZoomCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
@@ -849,22 +925,23 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Toolbar extra items
 		/// <summary>
-		/// If set to true PPTable shows Product Codes, else it shows Product Names
+		/// Gets a value that indicates if PPTable shows Product Codes
+		/// <para>If set to false it shows Product Names</para>
 		/// </summary>
 		public bool ShowProductCodes
 		{
 			get { return (bool)GetValue(ShowProductCodesProperty); }
-			set { SetValue(ShowProductCodesProperty, value); }
+			protected set { SetValue(ShowProductCodesProperty, value); }
 		}
 		public static readonly DependencyProperty ShowProductCodesProperty =
 			DependencyProperty.Register("ShowProductCodes", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(true));
 		/// <summary>
-		/// Gets or sets a value indicating whether "Insert Setup Button" should be visible in PPTable between Blocks
+		/// Gets a value that indicates whether "Insert Setup Button" should be visible in PPTable between Blocks
 		/// </summary>
 		public bool ShowInsertSetupButton
 		{
 			get { return (bool)GetValue(ShowInsertSetupButtonProperty); }
-			set { SetValue(ShowInsertSetupButtonProperty, value); }
+			protected set { SetValue(ShowInsertSetupButtonProperty, value); }
 		}
 		public static readonly DependencyProperty ShowInsertSetupButtonProperty =
 			DependencyProperty.Register("ShowInsertSetupButton", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(true));

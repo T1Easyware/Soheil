@@ -18,6 +18,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public int StationId { get { return StateStation == null ? 0 : StateStation.StationId; } }
 		public int StateStationId { get { return StateStation == null ? 0 : StateStation.StateStationId; } }
 
+		public event Action<Model.Block> BlockAdded;
+
 		public DataServices.TaskDataService TaskDataService { get; private set; }
 		public DataServices.BlockDataService BlockDataService { get; private set; }
 
@@ -505,6 +507,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}
 
 			BlockDataService.SaveBlock(Model);
+			if (BlockAdded != null) BlockAdded(Model);
 		}
 	}
 }

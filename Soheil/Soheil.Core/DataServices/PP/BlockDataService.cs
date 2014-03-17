@@ -13,11 +13,6 @@ namespace Soheil.Core.DataServices
 {
 	public class BlockDataService : DataServiceBase, IDataService<Block>
 	{
-		public event EventHandler<ModelAddedEventArgs<Block>> BlockAdded;
-		public event EventHandler<ModelUpdatedEventArgs<Block>> BlockUpdated;
-		//public event EventHandler<ModelAddedEventArgs<TaskReport>> TaskReportAdded;
-		//public event EventHandler<ModelRemovedEventArgs> TaskReportRemoved;
-
 		Repository<Block> _blockRepository;
 		Repository<NonProductiveTask> _nptRepository;
 		Repository<Task> _taskRepository;
@@ -122,6 +117,27 @@ WHERE block.Id = @id";
 				||
 				(x.StartDateTime <= startDate && x.EndDateTime >= endDate), 
 				y => y.StartDateTime);
+		}
+
+		/// <summary>
+		/// Returns all block Ids which are completely or partially inside the given range
+		/// <para>blocks touching the range from outside are not counted</para>
+		/// </summary>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
+		public IEnumerable<int> GetIdsInRange(DateTime startDate, DateTime endDate)
+		{
+			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
+			return _blockRepository.Find(x =>
+				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+				||
+				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
+				||
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate),
+				y => y.StartDateTime)
+				
+				.Select(x => x.Id);
 		}
 
 		//blocks in specified station, after (or partially after) startDate

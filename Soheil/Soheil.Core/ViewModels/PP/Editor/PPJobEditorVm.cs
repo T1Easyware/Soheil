@@ -16,7 +16,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		DataServices.FPCDataService _fpcDs;
 		DataServices.JobDataService _jobDs;
 		Dal.SoheilEdmContext _uow;
-		internal event Action RefreshPPTable;
+		public event Action RefreshPPTable;
 		const int x = 0;
 		public PPJobEditorVm()
 		{
