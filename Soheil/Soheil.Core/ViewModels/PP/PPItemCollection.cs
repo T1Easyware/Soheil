@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Soheil.Core.ViewModels.PP.Timeline;
 using Soheil.Common;
 using Soheil.Core.PP;
+using Soheil.Common.SoheilException;
 
 namespace Soheil.Core.ViewModels.PP
 {
@@ -353,7 +354,7 @@ namespace Soheil.Core.ViewModels.PP
 			return blocks;
 		}
 		/// <summary>
-		/// Adds a new BlockVm to this collection with the given model
+		/// Adds a new BlockVm to this collection with the given model and sets all its commands
 		/// </summary>
 		/// <remarks>
 		/// Finds the row of items which this model should be in,
@@ -375,42 +376,102 @@ namespace Soheil.Core.ViewModels.PP
 
 				//create viewmodel for the new block
 				var vm = new BlockVm(model, this, model.StateStation.Station.Index);
-				vm.AddBlockToEditorStarted += editorBlockVm =>
-				{
-					if (TaskEditorUpdated != null) TaskEditorUpdated(editorBlockVm);
-				};
-				vm.EditBlockStarted += editorBlockVm =>
-				{
-					if (TaskEditorReset != null) TaskEditorReset();
-					if (TaskEditorUpdated != null) TaskEditorUpdated(editorBlockVm);
-				};
-				vm.AddJobToEditorStarted += jobVm =>
-				{
-					if (JobEditorUpdated != null) JobEditorUpdated(jobVm);
-				};
-				vm.EditJobStarted += jobVm =>
-				{
-					if (JobEditorReset != null) JobEditorReset();
-					if (JobEditorUpdated != null) JobEditorUpdated(jobVm);
-				};
-				vm.EditReportStarted += blockVm =>
-				{
-					if (EditBlockReportStarted != null) EditBlockReportStarted(blockVm);
-				};
-				vm.DeleteBlockStarted += blockVm =>
-				{
-					if (vm != null && BlockRemoved != null)
-						BlockRemoved(vm.Id);
-					RemoveItem(blockVm);
-				};
-				vm.DeleteJobStarted += jobVm =>
-				{
-					if (JobRemoved != null) JobRemoved(jobVm);
-				};
-				//vm.InsertSetupStarted += async (blockVm, callback) =>
-				//{
 
-				//};
+				#region block commands
+				vm.ReloadBlockCommand = new Commands.Command(o =>
+				{
+					var data = new Soheil.Core.PP.BlockFullData(BlockDataService, vm.Id);
+					vm.Reload(data);
+
+					//check for selected things
+
+					//check if the SelectedJobId in PPTable is the same as this Job
+					if (vm.Job != null)
+					{
+						if (PPTable.SelectedJobId == vm.Job.Id)
+						{
+							vm.IsJobSelected = true;
+						}
+					}
+					//check if the SelectedBlock in PPTable is the same as this block
+					if (PPTable.SelectedBlock == null)
+					{
+						ViewMode = PPViewMode.Simple;
+					}
+					else ViewMode = (PPTable.SelectedBlock.Id == vm.Id) ? PPViewMode.Report : PPViewMode.Simple;
+				});
+				vm.AddBlockToEditorCommand = new Commands.Command(o =>
+				{
+					try { if (TaskEditorUpdated != null) TaskEditorUpdated(new Editor.PPEditorBlock(vm.Model)); }
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				}, () => vm.Model != null);
+				vm.EditItemCommand = new Commands.Command(o =>
+				{
+					try
+					{
+						if (TaskEditorReset != null) TaskEditorReset();
+						if (TaskEditorUpdated != null) TaskEditorUpdated(new Editor.PPEditorBlock(vm.Model));
+					}
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				});
+				vm.AddJobToEditorCommand = new Commands.Command(o =>
+				{
+					try { if (JobEditorUpdated != null) JobEditorUpdated(vm.Job); }
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				}, () =>
+				{
+					if (vm.Job == null) return false;
+					if (vm.Job.Id == 0) return false;
+					return true;
+				});
+				vm.EditJobCommand = new Commands.Command(o =>
+				{
+					try
+					{
+						if (JobEditorReset != null) JobEditorReset();
+						if (JobEditorUpdated != null) JobEditorUpdated(vm.Job);
+					}
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				}, () =>
+				{
+					if (vm.Job == null) return false;
+					if (vm.Job.Id == 0) return false;
+					return true;
+				});
+				vm.EditReportCommand = new Commands.Command(blockVm =>
+				{
+					try { if (EditBlockReportStarted != null) EditBlockReportStarted(vm); }
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				});
+				vm.DeleteItemCommand = new Commands.Command(o =>
+				{
+					try { RemoveItem(vm); }
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				});
+				vm.DeleteJobCommand = new Commands.Command(o =>
+				{
+					try { if (JobRemoved != null) JobRemoved(vm.Job); }
+					catch (RoutedException exp)
+					{
+						if (exp.Target is PPTaskVm)
+							(exp.Target as PPTaskVm).Message.AddEmbeddedException(exp.Message);
+						else //if(exp.Target is BlockVm)
+							vm.Message.AddEmbeddedException(exp.Message);
+					}
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				}, () => { return vm.Job != null; });
+				vm.InsertSetupBefore = new Commands.Command(async o =>
+				{
+					//the following part is async version of "var result = tmp.InsertSetupBeforeTask(Id)"
+					var tmp = BlockDataService;
+					var id = vm.Id;
+					var result = await Task.Run(() => tmp.InsertSetupBeforeBlock(id));
+
+					//in case of error callback with result
+					if (result.IsSaved) Reload();
+					else vm.InsertSetupBeforeCallback(result);
+				}); 
+				#endregion
 
 				//add the viewmodel to its container
 				container.Add(vm);
@@ -438,6 +499,7 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			try
 			{
+				if (vm != null && BlockRemoved != null) BlockRemoved(vm.Id);
 				this[vm.RowIndex].Blocks.RemoveWhere(x => x.Id == vm.Id);
 			}
 			catch { }
@@ -524,8 +586,7 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			try
 			{
-				if (model != null && NptRemoved != null)
-					NptRemoved(model.Id);
+				if (model != null && NptRemoved != null) NptRemoved(model.Id);
 				if (model is Model.Setup)
 				{
 					var setupModel = model as Model.Setup;
@@ -543,8 +604,7 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			try
 			{
-				if (vm != null && NptRemoved != null)
-					NptRemoved(vm.Id); 
+				if (vm != null && NptRemoved != null) NptRemoved(vm.Id); 
 				this[vm.RowIndex].NPTs.RemoveWhere(x => x.Id == vm.Id);
 			}
 			catch { }

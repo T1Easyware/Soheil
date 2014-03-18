@@ -8,21 +8,35 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP
 {
+	/// <summary>
+	/// ViewModel for a collection of <see cref="FilterBoxVm"/> instances
+	/// <para>Used for guilty operators and stoppage report (cause)</para>
+	/// </summary>
 	public class FilterBoxVmCollection : DependencyObject
 	{
+		/// <summary>
+		/// Creates an instance of this vm to be used as a collection of guilty operators
+		/// </summary>
+		/// <param name="operatorIds">collection of operator Ids that are guilty by default</param>
+		/// <returns></returns>
 		public static FilterBoxVmCollection CreateForGuiltyOperators(IEnumerable<int> operatorIds)
 		{
+			//find all active operators
 			var operatorDs = new DataServices.OperatorDataService();
 			var operatorModels = operatorDs.GetActives();
+			
+			//create vm for all active operators
 			var operatorVms = new FilterableItemVm[operatorModels.Count];
 			for (int i = 0; i < operatorVms.Length; i++)
 			{
 				operatorVms[i] = FilterableItemVm.CreateForGuiltyOperator(operatorModels[i]);
 			}
+
+			//initiate this vm to auto-add operatorVms when a new FilterBoxVm is added to it
 			var vm = new FilterBoxVmCollection();
 			vm.AddCommand = new Commands.Command(o => vm.AddOperator(operatorVms, -1));
 
-			//select insert
+			//add new FilterBoxVm for each of guilty operators and select the guilty operator in it
 			if (operatorIds != null)
 			{
 				foreach (var operatorId in operatorIds)
@@ -33,20 +47,34 @@ namespace Soheil.Core.ViewModels.PP
 
 			return vm;
 		}
+
+		/// <summary>
+		/// Adds a FilterBoxVm to this collection specialized for guilty operators
+		/// </summary>
+		/// <param name="operatorVms">ViewModels for operators to be added to the filterBox</param>
+		/// <param name="selectedId">default guilty operator's Id</param>
 		private void AddOperator(FilterableItemVm[] operatorVms, int selectedId)
 		{
 			FilterBoxes.Add(FilterBoxVm.CreateForGuiltyOperators(this, selectedId, operatorVms));
 		}
-
+		/// <summary>
+		/// Creates an instance of this vm to be used as a collection of stoppage reports (cause)
+		/// </summary>
+		/// <param name="parent">Instance of <see cref="StoppageReportVm"/> that has this collection</param>
+		/// <param name="selectedIds">default cause Ids (must be like: {level1Id, level2Id, level3Id})</param>
+		/// <returns></returns>
 		public static FilterBoxVmCollection CreateForStoppageReport(StoppageReportVm parent, int[] selectedIds)
 		{
 			var vm = new FilterBoxVmCollection();
 
+			//find causes and create FilterBoxVm instances for each level
 			var causeDs = new DataServices.CauseDataService();
 			var causeL1Models = causeDs.GetActives().Where(x => x.Level == 0).ToArray();
 			var causeL3Box = FilterBoxVm.CreateForCause(null);
 			var causeL2Box = FilterBoxVm.CreateForCause(causeL3Box);
 			var causeL1Box = FilterBoxVm.CreateForCause(causeL2Box, causeL1Models);
+
+			//set the event handlers
 			causeL3Box.FilterBoxSelectedItemChanged += (s, v) =>
 			{
 				string code = string.Empty;
@@ -93,16 +121,21 @@ namespace Soheil.Core.ViewModels.PP
 				}
 			};
 
+			//add filterboxes to the collection
 			vm.FilterBoxes.Add(causeL1Box);
 			vm.FilterBoxes.Add(causeL2Box);
 			vm.FilterBoxes.Add(causeL3Box);
 
-			//select
+			//select the default cause
 			if (selectedIds != null)
 			{
-				causeL1Box.SelectedItem = causeL1Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[0]);
-				causeL2Box.SelectedItem = causeL2Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[1]);
-				causeL3Box.SelectedItem = causeL3Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[2]);
+				try
+				{
+					causeL1Box.SelectedItem = causeL1Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[0]);
+					causeL2Box.SelectedItem = causeL2Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[1]);
+					causeL3Box.SelectedItem = causeL3Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[2]);
+				}
+				catch { }
 			}
 
 			vm.AddCommand = new Commands.Command(o => { });
@@ -110,14 +143,19 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		
 
-		//FilterBoxes Observable Collection
-		private ObservableCollection<FilterBoxVm> _filterBoxes = new ObservableCollection<FilterBoxVm>();
+		/// <summary>
+		/// Gets a bindable collection of <see cref="FilterBoxVm"/>s
+		/// </summary>
 		public ObservableCollection<FilterBoxVm> FilterBoxes { get { return _filterBoxes; } }
-		//AddCommand Dependency Property
+		private ObservableCollection<FilterBoxVm> _filterBoxes = new ObservableCollection<FilterBoxVm>();
+		
+		/// <summary>
+		/// Gets a bindable command to add a new FilterBox to collection
+		/// </summary>
 		public Commands.Command AddCommand
 		{
 			get { return (Commands.Command)GetValue(AddCommandProperty); }
-			set { SetValue(AddCommandProperty, value); }
+			protected set { SetValue(AddCommandProperty, value); }
 		}
 		public static readonly DependencyProperty AddCommandProperty =
 			DependencyProperty.Register("AddCommand", typeof(Commands.Command), typeof(FilterBoxVmCollection), new UIPropertyMetadata(null));

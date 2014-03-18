@@ -18,82 +18,40 @@ namespace Soheil.Core.ViewModels.PP
 	/// </summary>
 	public class BlockVm : PPItemVm
 	{
-		Model.Block _model;
+		/// <summary>
+		/// Gets the model of this block
+		/// </summary>
+		public Model.Block Model { get; protected set; }
 		/// <summary>
 		/// Gets Id property of the model representing this ViewModel
 		/// </summary>
-		public override int Id { get { return _model.Id; } }
-		/// <summary>
-		/// Gets the BlockDataService with PPTable's UOW
-		/// </summary>
-		public DataServices.BlockDataService BlockDataService { get; private set; }
-
-		#region Events
-		/// <summary>
-		/// Occurs when TaskEditor is supposed to open with the value of this Block
-		/// </summary>
-		public event Action<Editor.PPEditorBlock> EditBlockStarted;
-		/// <summary>
-		/// Occurs when this Block is supposed to be added to TaskEditor
-		/// </summary>
-		public event Action<Editor.PPEditorBlock> AddBlockToEditorStarted;
-		/// <summary>
-		/// Occurs when Job associated with this Block is supposed to be added to JobEditor
-		/// </summary>
-		public event Action<PPJobVm> AddJobToEditorStarted;
-		/// <summary>
-		/// Occurs when JobEditor is supposed to open with the value of Job associated with this Block
-		/// </summary>
-		public event Action<PPJobVm> EditJobStarted;
-		/// <summary>
-		/// Occurs when Report of this Block is supposed to be opened with ReportEditor
-		/// </summary>
-		public event Action<BlockVm> EditReportStarted;
-		/// <summary>
-		/// Occurs when this Block is supposed to be removed
-		/// </summary>
-		public event Action<BlockVm> DeleteBlockStarted;
-		/// <summary>
-		/// Occurs when the Job associated with this Block is supposed to be removed
-		/// </summary>
-		public event Action<PPJobVm> DeleteJobStarted;
-		//public event Action<BlockVm, Action<DataServices.BlockDataService.InsertSetupBeforeBlockErrors>> InsertSetupStarted;
-		#endregion
+		public override int Id { get { return Model.Id; } }
 
 		#region Ctor, reload
 		/// <summary>
 		/// Creates an instance of BlockVm with the given model, parent and station index
 		/// </summary>
+		/// <remarks>commands must be set after creating a block</remarks>
 		/// <param name="model"></param>
 		/// <param name="parent"></param>
 		/// <param name="stationIndex"></param>
         public BlockVm(Model.Block model, PPItemCollection parent, int stationIndex)
 		{
-			_model = model;
-			BlockDataService = parent.BlockDataService;
+			Model = model;
             Parent = parent;
 			RowIndex = stationIndex;
 			StartDateTime = model.StartDateTime;
 			DurationSeconds = model.DurationSeconds;
-			initializeCommands();
 		}
 
-		/// <summary>
-		/// Reloads current block full data from database (according to its id)
-		/// <para></para>
-		/// </summary>
-		public void Reload()
-		{
-			var data = new Soheil.Core.PP.BlockFullData(BlockDataService, Id);
-			_model = data.Model;
-			Reload(data);
-		}
 		/// <summary>
 		/// Reloads current blocks full data with the given <see cref="Soheil.Core.PP.BlockFullData"/>
 		/// </summary>
 		/// <param name="data">An instance of <see cref="Soheil.Core.PP.BlockFullData"/> filled with required data</param>
 		public void Reload(Soheil.Core.PP.BlockFullData data)
 		{
+			Model = data.Model;
+
 			//Product and State
 			ProductId = data.Model.StateStation.State.FPC.Product.Id;
 			ProductCode = data.Model.StateStation.State.FPC.Product.Code;
@@ -113,19 +71,12 @@ namespace Soheil.Core.ViewModels.PP
 			if (data.Model.Job != null)
 			{
 				Job = new PPJobVm(data.Model.Job);
-				//check if the SelectedJobId in PPTable is the same as this Job
-				if (Parent.PPTable.SelectedJobId == Job.Id)
-					IsJobSelected = true;
 			}
 			//add Tasks
 			foreach (var task in data.Model.Tasks)
 			{
 				TaskList.Add(new PPTaskVm(task, this));
 			}
-
-			//check if the SelectedBlock in PPTable is the same as this block
-			if (Parent.PPTable.SelectedBlock == null) ViewMode = PPViewMode.Simple;
-			else ViewMode = (Parent.PPTable.SelectedBlock.Id == Id) ? PPViewMode.Report : PPViewMode.Simple;
 		}
 		#endregion
 
@@ -316,80 +267,10 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Commands
 		/// <summary>
-		/// Initializes all commands
-		/// </summary>
-		void initializeCommands()
-		{
-			ReloadBlockCommand = new Commands.Command(o => Reload());
-			AddBlockToEditorCommand = new Commands.Command(o =>
-			{
-				try { if (AddBlockToEditorStarted != null) AddBlockToEditorStarted(new Editor.PPEditorBlock(_model)); }
-				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
-			}, () => _model != null);
-			EditItemCommand = new Commands.Command(o =>
-			{
-				try { if (EditBlockStarted != null) EditBlockStarted(new Editor.PPEditorBlock(_model)); }
-				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
-			});
-			AddJobToEditorCommand = new Commands.Command(o =>
-			{
-				try { if (AddJobToEditorStarted != null) AddJobToEditorStarted(Job); }
-				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
-			}, () =>
-			{
-				if (Job == null) return false;
-				if (Job.Id == 0) return false;
-				return true;
-			});
-			EditJobCommand = new Commands.Command(o =>
-			{
-				try { if (EditJobStarted != null) EditJobStarted(Job); }
-				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
-			}, () =>
-			{
-				if (Job == null) return false;
-				if (Job.Id == 0) return false;
-				return true;
-			});
-			EditReportCommand = new Commands.Command(o =>
-			{
-				try { if (EditReportStarted != null) EditReportStarted(this); }
-				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
-			});
-			DeleteItemCommand = new Commands.Command(o =>
-			{
-				try { if (DeleteBlockStarted != null) DeleteBlockStarted(this); }
-				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
-			});
-			DeleteJobCommand = new Commands.Command(o =>
-			{
-				try { if (DeleteJobStarted != null) DeleteJobStarted(Job); }
-				catch (RoutedException exp)
-				{
-					if(exp.Target is PPTaskVm)
-						(exp.Target as PPTaskVm).Message.AddEmbeddedException(exp.Message);
-					else //if(exp.Target is BlockVm)
-						Message.AddEmbeddedException(exp.Message);
-				}
-				catch (Exception exp) { Message.AddEmbeddedException(exp.Message); }
-			}, () => { return Job != null; });
-			InsertSetupBefore = new Commands.Command(async o =>
-			{
-				//the following part is async version of "var result = tmp.InsertSetupBeforeTask(Id)"
-				var tmp = BlockDataService;
-				var result = await Task.Run(() => tmp.InsertSetupBeforeBlock(Id));
-
-				//in case of error callback with result
-				if (result.IsSaved) Reload();
-				else InsertSetupBeforeCallback(result);
-				//if (InsertSetupStarted != null) InsertSetupStarted(this, InsertSetupBeforeCallback);
-			});
-		}
-		/// <summary>
-		/// This method runs after inserting a setup before this block
+		/// This method runs after inserting a setup before this block to declare the errors
 		/// </summary>
 		/// <param name="result">result of BlockDataService's special operation, containing error messages</param>
-		void InsertSetupBeforeCallback(DataServices.BlockDataService.InsertSetupBeforeBlockErrors result)
+		internal void InsertSetupBeforeCallback(DataServices.BlockDataService.InsertSetupBeforeBlockErrors result)
 		{
 			//exit if saved successfully
 			if (result.IsSaved) return;
@@ -418,62 +299,62 @@ namespace Soheil.Core.ViewModels.PP
 			}
 		}
 		/// <summary>
-		/// Gets a bindable command to reload this block
+		/// Gets or sets a bindable command to reload this block
 		/// </summary>
 		public Commands.Command ReloadBlockCommand
 		{
 			get { return (Commands.Command)GetValue(ReloadBlockCommandProperty); }
-			protected set { SetValue(ReloadBlockCommandProperty, value); }
+			set { SetValue(ReloadBlockCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ReloadBlockCommandProperty =
 			DependencyProperty.Register("ReloadBlockCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
-		/// Gets a bindable command to add this block to TaskEditor
+		/// Gets or sets a bindable command to add this block to TaskEditor
 		/// </summary>
 		public Commands.Command AddBlockToEditorCommand
 		{
             get { return (Commands.Command)GetValue(AddBlockToEditorCommandProperty); }
-			protected set { SetValue(AddBlockToEditorCommandProperty, value); }
+			set { SetValue(AddBlockToEditorCommandProperty, value); }
 		}
         public static readonly DependencyProperty AddBlockToEditorCommandProperty =
             DependencyProperty.Register("AddBlockToEditorCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
-		/// Gets a bindable command to add the Job associated with this block to JobEditor
+		/// Gets or sets a bindable command to add the Job associated with this block to JobEditor
 		/// </summary>
 		public Commands.Command AddJobToEditorCommand
 		{
 			get { return (Commands.Command)GetValue(AddJobToEditorCommandProperty); }
-			protected set { SetValue(AddJobToEditorCommandProperty, value); }
+			set { SetValue(AddJobToEditorCommandProperty, value); }
 		}
 		public static readonly DependencyProperty AddJobToEditorCommandProperty =
 			DependencyProperty.Register("AddJobToEditorCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
-		/// Gets a bindable command to open the JobEditor with value of Job associated with this block
+		/// Gets or sets a bindable command to open the JobEditor with value of Job associated with this block
 		/// </summary>
 		public Commands.Command EditJobCommand
 		{
 			get { return (Commands.Command)GetValue(EditJobCommandProperty); }
-			protected set { SetValue(EditJobCommandProperty, value); }
+			set { SetValue(EditJobCommandProperty, value); }
 		}
 		public static readonly DependencyProperty EditJobCommandProperty =
 			DependencyProperty.Register("EditJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
-		/// Gets a bindable command to delete the Job associated with this block
+		/// Gets or sets a bindable command to delete the Job associated with this block
 		/// </summary>
 		public Commands.Command DeleteJobCommand
 		{
 			get { return (Commands.Command)GetValue(DeleteJobCommandProperty); }
-			protected set { SetValue(DeleteJobCommandProperty, value); }
+			set { SetValue(DeleteJobCommandProperty, value); }
 		}
 		public static readonly DependencyProperty DeleteJobCommandProperty =
 			DependencyProperty.Register("DeleteJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
-		/// Gets a bindable command to insert a setup before this Block
+		/// Gets or sets a bindable command to insert a setup before this Block
 		/// </summary>
 		public Commands.Command InsertSetupBefore
 		{
 			get { return (Commands.Command)GetValue(InsertSetupBeforeProperty); }
-			protected set { SetValue(InsertSetupBeforeProperty, value); }
+			set { SetValue(InsertSetupBeforeProperty, value); }
 		}
 		public static readonly DependencyProperty InsertSetupBeforeProperty =
 			DependencyProperty.Register("InsertSetupBefore", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));

@@ -9,11 +9,21 @@ using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PP
 {
+	/// <summary>
+	/// ViewModel for Job List in PPTable
+	/// </summary>
 	public class JobListVm : DependencyObject
 	{
+		/// <summary>
+		/// Occurs when a job is selected
+		/// </summary>
 		public event Action<JobListItemVm> JobSelected;
 		DataServices.JobDataService _jobDataService;
 
+		/// <summary>
+		/// Creates an instance of JobListVm and sets the date range
+		/// </summary>
+		/// <param name="jobDataService">data service to use in this vm</param>
 		public JobListVm(DataServices.JobDataService jobDataService)
 		{
 			_jobDataService = jobDataService;
@@ -25,6 +35,9 @@ namespace Soheil.Core.ViewModels.PP
 			StartDate = dt;
 			EndDate = dt.AddDays(dt.GetPersianMonthDays());
 		}
+		/// <summary>
+		/// Reloads all jobs within current date range
+		/// </summary>
 		void reloadJobs()
 		{
 			var jobs = _jobDataService.GetInRange(StartDate, EndDate, ByDefinition);
@@ -37,10 +50,15 @@ namespace Soheil.Core.ViewModels.PP
 			}
 		}
 
-		//Jobs Observable Collection
+		/// <summary>
+		/// Gets a bindable collection of Job items
+		/// </summary>
 		public ObservableCollection<JobListItemVm> Jobs { get { return _jobs; } }
 		private ObservableCollection<JobListItemVm> _jobs = new ObservableCollection<JobListItemVm>();
-		//SelectedJob Dependency Property
+		
+		/// <summary>
+		/// Gets or sets the selected job in items
+		/// </summary>
 		public JobListItemVm SelectedJob
 		{
 			get { return (JobListItemVm)GetValue(SelectedJobProperty); }
@@ -52,7 +70,9 @@ namespace Soheil.Core.ViewModels.PP
 				if (val != null) val.SelectCommand.Execute(null);
 			}));
 
-		//StartDate Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable start date
+		/// </summary>
 		public DateTime StartDate
 		{
 			get { return (DateTime)GetValue(StartDateProperty); }
@@ -60,7 +80,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty StartDateProperty =
 			DependencyProperty.Register("StartDate", typeof(DateTime), typeof(JobListVm), new UIPropertyMetadata(DateTime.Now));
-		//EndDate Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable end date
+		/// </summary>
 		public DateTime EndDate
 		{
 			get { return (DateTime)GetValue(EndDateProperty); }
@@ -69,7 +91,14 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty EndDateProperty =
 			DependencyProperty.Register("EndDate", typeof(DateTime), typeof(JobListVm), new UIPropertyMetadata(DateTime.Now));
 
-		//ByDefinition Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether load job by their definition values
+		/// </summary>
+		/// <remarks>definition values are Release date time and Deadline, 
+		/// if this value is set to true Definition values are in effect.
+		/// which means the job is shown if it is partially or completely is in the given range.
+		/// if this value is set to false Blocks range will be in effect.
+		/// which means the job is shown only if any of its Blocks are (partially or completely) in the given range</remarks>
 		public bool ByDefinition
 		{
 			get { return (bool)GetValue(ByDefinitionProperty); }
@@ -78,7 +107,10 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty ByDefinitionProperty =
 			DependencyProperty.Register("ByDefinition", typeof(bool), typeof(JobListVm), new UIPropertyMetadata(true));
 
-		//IsVisible Dependency Property
+		/// <summary>
+		/// Gets or sets a value that indicates whether the job list is visible
+		/// <para>Reloads jobs if set to true, deselect the selected job if set to false</para>
+		/// </summary>
 		public bool IsVisible
 		{
 			get { return (bool)GetValue(IsVisibleProperty); }
@@ -103,11 +135,13 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			SearchCommand = new Commands.Command(o => reloadJobs());
 		}
-		//SearchCommand Dependency Property
+		/// <summary>
+		/// Gets a bindable command that reload jobs in the specified range
+		/// </summary>
 		public Commands.Command SearchCommand
 		{
 			get { return (Commands.Command)GetValue(SearchCommandProperty); }
-			set { SetValue(SearchCommandProperty, value); }
+			protected set { SetValue(SearchCommandProperty, value); }
 		}
 		public static readonly DependencyProperty SearchCommandProperty =
 			DependencyProperty.Register("SearchCommand", typeof(Commands.Command), typeof(JobListVm), new UIPropertyMetadata(null));
