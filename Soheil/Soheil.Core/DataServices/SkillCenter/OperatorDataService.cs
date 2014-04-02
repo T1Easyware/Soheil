@@ -69,6 +69,7 @@ namespace Soheil.Core.DataServices
 
                 entity.Code = model.Code;
                 entity.Name = model.Name;
+                entity.Status = model.Status;
                 entity.CreatedDate = model.CreatedDate;
                 entity.ModifiedBy = LoginInfo.Id;
                 entity.ModifiedDate = DateTime.Now;

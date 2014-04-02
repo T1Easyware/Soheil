@@ -50,6 +50,12 @@ namespace Soheil.Core.ViewModels
             set { _model.Code = value; OnPropertyChanged("Code"); }
         }
 
+        public Status Status
+        {
+            get { return (Status) _model.Status; }
+            set { _model.Status = (byte) value; OnPropertyChanged("Status"); }
+        }
+
         public DateTime CreatedDate
         {
             get { return _model.CreatedDate; }

@@ -198,7 +198,7 @@ namespace Soheil.Core.DataServices
 
 		public ObservableCollection<ProductDefection> GetDefections(int productId)
 		{
-			Product entity = _productRepository.FirstOrDefault(product => product.Id == productId, "ProductDefection.Defection", "ProductDefection.Product");
+			Product entity = _productRepository.FirstOrDefault(product => product.Id == productId, "ProductDefections.Defection", "ProductDefections.Product");
 			return new ObservableCollection<ProductDefection>(entity.ProductDefections.Where(item => item.Defection.Status == (decimal)Status.Active));
 		}
 

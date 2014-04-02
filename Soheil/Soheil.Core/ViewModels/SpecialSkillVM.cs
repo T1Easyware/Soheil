@@ -37,23 +37,23 @@ namespace Soheil.Core.ViewModels
         /// </value>
         public OperatorVM OperatorVM { get; set; }
 
-       /* public string Reserve1
-        {
-            get { return _model.Reserve1; }
-            set { _model.Reserve1 = value; OnPropertyChanged("Reserve1"); }
-        }
+        /* public string Reserve1
+         {
+             get { return _model.Reserve1; }
+             set { _model.Reserve1 = value; OnPropertyChanged("Reserve1"); }
+         }
 
-        public string Reserve2
-        {
-            get { return _model.Reserve2; }
-            set { _model.Reserve2 = value; OnPropertyChanged("Reserve2"); }
-        }
+         public string Reserve2
+         {
+             get { return _model.Reserve2; }
+             set { _model.Reserve2 = value; OnPropertyChanged("Reserve2"); }
+         }
 
-        public string Reserve3
-        {
-            get { return _model.Reserve3; }
-            set { _model.Reserve3 = value; OnPropertyChanged("Reserve3"); }
-        }???*/
+         public string Reserve3
+         {
+             get { return _model.Reserve3; }
+             set { _model.Reserve3 = value; OnPropertyChanged("Reserve3"); }
+         }???*/
 
         public string ModifiedBy
         {

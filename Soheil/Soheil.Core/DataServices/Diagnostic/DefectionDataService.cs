@@ -143,7 +143,7 @@ namespace Soheil.Core.DataServices
             using (var context = new SoheilEdmContext())
             {
                 var repository = new Repository<Defection>(context);
-                Defection entity = repository.FirstOrDefault(defection => defection.Id == defectionId, "ProductDefection.Defection", "ProductDefection.Product");
+                Defection entity = repository.FirstOrDefault(defection => defection.Id == defectionId, "ProductDefections.Defection", "ProductDefections.Product");
                 models = new ObservableCollection<ProductDefection>(entity.ProductDefections.Where(item=>item.Product.Status == (decimal)Status.Active));
             }
 

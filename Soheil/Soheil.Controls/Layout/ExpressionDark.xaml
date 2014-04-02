@@ -5,6 +5,8 @@
                     xmlns:Converters="clr-namespace:Soheil.Controls.Converters"
                     xmlns:Controls="clr-namespace:Soheil.Controls"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                    xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls" 
+                    xmlns:b="clr-namespace:Soheil.Controls.Behaviors"
                     mc:Ignorable="d">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Brushes.xaml" />
@@ -1344,8 +1346,6 @@
               BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2,2,2,2" IsHitTestVisible="False" Opacity="0" />
             <Border x:Name="FocusVisualElement" BorderBrush="{StaticResource HoverShineBrush}"
               BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2,2,2,2" IsHitTestVisible="False" Opacity="0" />
-
-
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsFocused" Value="True">
@@ -3124,8 +3124,6 @@
 
     </ControlTemplate>
 
-
-
     <Style TargetType="{x:Type PersianCal:PersianDatePicker}">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="#FF000000"/>
@@ -3146,6 +3144,9 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="5" />
         <Setter Property="Margin" Value="2"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="tahoma" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -3393,6 +3394,10 @@
         <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
         <Setter Property="MinWidth" Value="60"/>
         <Setter Property="MinHeight" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="tahoma" />
+        <Setter Property="Margin" Value="2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
@@ -3841,6 +3846,38 @@
         <Setter Property="Background" Value="{StaticResource TextBoxBackground}"/>
         <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
         <Setter Property="CaretBrush" Value="{StaticResource Foreground}"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="tahoma" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="b:FocusSelectAllTextBoxBehavior.SelectAllTextOnFocus" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="1"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{StaticResource TextBoxBackgroundSelected}"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="true">
+                            <Setter Property="Background" Value="{StaticResource TextBoxBackgroundSelected}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="DatePickerTextBox" >
+        <Setter Property="Background" Value="{StaticResource TextBoxBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
+        <Setter Property="CaretBrush" Value="{StaticResource Foreground}"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="tahoma" />
+        <Setter Property="Margin" Value="2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">

@@ -72,10 +72,10 @@ namespace Soheil.Core.ViewModels
 
             ColumnHeaders = new List<ColumnInfo> 
             { 
-                new ColumnInfo("Name", false), 
-                new ColumnInfo("Date", false), 
-                new ColumnInfo("BusinessState", "txtBusinessDayState", true), 
-                new ColumnInfo("IsRecurrent", "txtIsRecurrent", true), 
+                new ColumnInfo("Name",0, false), 
+                new ColumnInfo("Date",1, false), 
+                new ColumnInfo("BusinessState", "txtBusinessDayState",2, true), 
+                new ColumnInfo("IsRecurrent", "txtIsRecurrent",3, true), 
             };
 
             AddCommand = new Command(Add, CanAdd);
