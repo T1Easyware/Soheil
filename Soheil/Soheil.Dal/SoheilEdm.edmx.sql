@@ -2,13 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
-<<<<<<< HEAD
--- Date Created: 02/10/2014 17:11:10
+-- Date Created: 04/02/2014 17:41:03
 -- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
-=======
--- Date Created: 03/03/2014 15:14:31
--- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
->>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -292,17 +287,17 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_StateStationBlock]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_StateStationBlock];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ProductReworkActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ProductReworkActivitySkill];
+IF OBJECT_ID(N'[dbo].[FK_OperatorActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_OperatorActivitySkill];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ActivityGeneralActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_ActivityGeneralActivitySkill];
+IF OBJECT_ID(N'[dbo].[FK_ActivityActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_ActivityActivitySkill];
 GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorGeneralActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_OperatorGeneralActivitySkill];
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkProductActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ProductReworkProductActivitySkill];
 GO
-IF OBJECT_ID(N'[dbo].[FK_GeneralActivitySkillActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_GeneralActivitySkillActivitySkill];
+IF OBJECT_ID(N'[dbo].[FK_ActivitySkillProductActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ActivitySkillProductActivitySkill];
 GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];

@@ -317,7 +317,6 @@
 								</MenuItem>
                                 <MenuItem Header="{Loc txtDefinitions}">
                                     <MenuItem Header="{Loc txtProducts}">
-<<<<<<< HEAD
                                         <MenuItem.Icon>
                                             <Image Source="/Soheil.Controls;component/Images/Menus/Product.png"/>
                                         </MenuItem.Icon>
@@ -395,7 +394,7 @@
                                         </MenuItem>
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSpeSkills}" Tag="243" >
                                         </MenuItem>
-=======
+
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtProducts}" Tag="211" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtReworks}" Tag="212" />
                                     </MenuItem>
@@ -415,7 +414,7 @@
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtOperators}" Tag="241" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtGenSkills}" Tag="242" />
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSpeSkills}" Tag="243" />
->>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
+
                                     </MenuItem>
                                     <MenuItem Header="{Loc txtCosts}">
                                         <MenuItem.Icon>
@@ -437,7 +436,7 @@
                                             <Image Source="/Soheil.Controls;component/Images/Menus/SetupTime.png"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-<<<<<<< HEAD
+
 								</MenuItem>
 								<MenuItem Header="{Loc txtProductControl}">
                                     <MenuItem.Icon>
@@ -458,7 +457,7 @@
                                             <Image Source="/Soheil.Controls;component/Images/Menus/Index.png"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-=======
+
                                     <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSetupTimes}" Tag="26" />
 									<MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSkillCenter}" Tag="27" />
 								</MenuItem>
@@ -466,7 +465,7 @@
 									<MenuItem Header="{Loc txtProductPlan}" Click="HandleAddTabAndSelect" Tag="311"/>
                                     <MenuItem Header="{Loc txtPerformance}" />
                                     <MenuItem Header="{Loc txtIndices}" Click="HandleAddTabAndSelect" Tag="33"/>
->>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
+
                                 </MenuItem>
                                 <MenuItem Header="{Loc txtReports}">
                                     <MenuItem.Icon>

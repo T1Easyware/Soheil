@@ -646,14 +646,9 @@ namespace Soheil.Views
 
 		#endregion
 
-<<<<<<< HEAD
-=======
 		private void skillCenterLoaded(object sender, RoutedEventArgs e)
 		{
 
 		}
-
-
->>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
 	}
 }

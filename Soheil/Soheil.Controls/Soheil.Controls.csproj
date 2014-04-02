@@ -288,8 +288,7 @@
     <Resource Include="Images\SelectGroup.png" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <Resource Include="Images\usersAccess.png" />
+ <Resource Include="Images\usersAccess.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\orgChart.png" />
@@ -343,7 +342,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Return.png" />
-=======
     <Resource Include="Images\all.png" />
   </ItemGroup>
   <ItemGroup>
@@ -504,7 +502,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\warning.png" />
->>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

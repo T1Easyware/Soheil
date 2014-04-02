@@ -3263,7 +3263,7 @@
 		<DataTemplate x:Key="PartWarehouseGroupTemplate" DataType="ViewModels:PartWarehouseGroupVM">
 			<GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
                       Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
-<<<<<<< HEAD
+
                 <I:Interaction.Behaviors>
                     <Behavior:ValidationExceptionBehavior />
                 </I:Interaction.Behaviors>
@@ -3279,23 +3279,6 @@
                 </DockPanel>
             </GroupBox>
         </DataTemplate>
-=======
-				<I:Interaction.Behaviors>
-					<Behavior:ValidationExceptionBehavior />
-				</I:Interaction.Behaviors>
-				<DockPanel FlowDirection="{Loc enumDirection}">
-					<Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
-					<DockPanel DockPanel.Dock="Top">
-						<ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-						<ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
-						<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
-					</DockPanel>
-					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
-					<Canvas DockPanel.Dock="Bottom" />
-				</DockPanel>
-			</GroupBox>
-		</DataTemplate>
->>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
 
 		<!--..........................................................................................................-->
 
