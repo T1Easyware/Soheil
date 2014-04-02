@@ -10,7 +10,7 @@
         xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" FlowDirection="RightToLeft">
+             d:DesignHeight="300" d:DesignWidth="700" FlowDirection="RightToLeft">
 	<UserControl.Resources>
         <Style TargetType="TextBlock" x:Key="verticalHeader">
             <Setter Property="TextAlignment" Value="Center"/>
@@ -67,7 +67,7 @@
 					</TextBlock>
 				</Border>
 				<Button Name="deleteButton" Command="{Binding DeleteBlockFromList}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext}" DockPanel.Dock="Right" VerticalAlignment="Bottom" Opacity="0">
-					<Image Style="{StaticResource deleteImage}"/>
+					<Image Style="{StaticResource Delete16Image}"/>
 				</Button>
                 <TextBlock Text="{Binding State.ProductRework.Product.Name}" DockPanel.Dock="Top"/>
                 <TextBlock Text="{Binding State.Name}" DockPanel.Dock="Left"/>
@@ -305,19 +305,19 @@
                                     <TextBlock Text="{Loc PPE_TaskTP}" VerticalAlignment="Center"/>
                                     <TextBox Text="{Binding TaskTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="30"/>
                                 </WrapPanel>
-                                <RadioButton Margin="1" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
+                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
                                     <WrapPanel>
                                         <TextBlock Text="{Loc PPE_SameTimeForActivites}" VerticalAlignment="Center"/>
                                         <TextBox IsEnabled="{Binding IsSameTimeForActivitiesSelected}" Text="{Binding SameTimeForActivities, Converter={StaticResource timeSpanToStringConverter}, UpdateSourceTrigger=PropertyChanged}" MinWidth="30" FlowDirection="LeftToRight"/>
                                     </WrapPanel>
                                 </RadioButton>
-                                <RadioButton Margin="1" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
+                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
                                     <WrapPanel>
                                         <TextBlock Text="{Loc PPE_SameQtyForActivites}" VerticalAlignment="Center"/>
                                         <TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="30"/>
                                     </WrapPanel>
                                 </RadioButton>
-                                <RadioButton Margin="1" IsChecked="{Binding IsDeferToActivitiesSelected}">
+                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsDeferToActivitiesSelected}">
                                     <WrapPanel Height="20">
                                         <TextBlock Text="{Loc PPE_DeferToActivites}" VerticalAlignment="Center"/>
                                     </WrapPanel>
@@ -336,7 +336,7 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DockPanel>
-                                            <Image Source="/Images/warning.png" Width="16" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" ToolTip="{Binding Message.FullExceptionText}"/>
+											<Image Style="{StaticResource Warning16Image}" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" ToolTip="{Binding Message.FullExceptionText}"/>
                                             <ItemsControl ItemsSource="{Binding Choices}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
@@ -412,7 +412,10 @@
     </UserControl.Resources>
 
 	<DockPanel>
-        <!-- select product and state(block) -->
+		<DockPanel.Effect>
+			<DropShadowEffect ShadowDepth="0" BlurRadius="6"/>
+		</DockPanel.Effect>
+		<!-- select product and state(block) -->
 		<Border DockPanel.Dock="Left" Margin="5,5,0,5" BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1" CornerRadius="1">
 			<DockPanel>
 				<TextBlock Text="محصول را انتخاب کنید" DockPanel.Dock="Top" Foreground="Silver"/>
@@ -558,14 +561,14 @@
                                                         <StackPanel>
                                                             <Button Command="{Binding DeleteTaskCommand}">
                                                                 <WrapPanel>
-                                                                    <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
+																	<Image Style="{StaticResource Delete16Image}"/>
                                                                     <TextBlock Text="{Loc txtDelete}" Foreground="Crimson"/>
                                                                 </WrapPanel>
                                                             </Button>
                                                             <TextBlock Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
                                                             <!--TextBlock Text="{Loc PPE_InvalidDuration}" Foreground="Red" Visibility="{Binding IsDurationValid, Converter={StaticResource booleanToInvisibilityConverter}}"/-->
                                                             <DockPanel>
-                                                                <Image DockPanel.Dock="Left" Source="/Images/PP/TargetPoint.png" Width="11"/>
+																<Image DockPanel.Dock="Left" Style="{StaticResource TargetPointImage}"/>
                                                                 <TextBlock Text="{Binding TaskTargetPoint}"/>
                                                             </DockPanel>
                                                         </StackPanel>
@@ -576,7 +579,7 @@
                                                     <Grid>
                                                         <Button Background="#3000" BorderBrush="GreenYellow" BorderThickness="2" Command="{Binding CreateNewTaskCommand}" Padding="12">
                                                             <DockPanel>
-                                                                <Image DockPanel.Dock="Left" Source="/Images/Fpc/Add16.png" Width="16"/>
+																<Image DockPanel.Dock="Left" Style="{StaticResource Add16Image}"/>
                                                                 <TextBlock Text="{Loc txtNew}" Foreground="Black"/>
                                                             </DockPanel>
                                                         </Button>
@@ -604,7 +607,7 @@
                                                     <WrapPanel>
                                                         <Button Command="{Binding ConfirmDeleteTaskCommand}" Margin="5">
                                                             <WrapPanel>
-                                                                <Image Source="/Images/Fpc/Delete16.png" Width="16"/>
+																<Image Style="{StaticResource Delete16Image}"/>
                                                                 <TextBlock Text="{Loc txtDelete}" Foreground="Crimson"/>
                                                             </WrapPanel>
                                                         </Button>
@@ -618,7 +621,7 @@
                                         <WrapPanel>
                                             <Button Background="#3000" BorderBrush="GreenYellow" BorderThickness="2" Command="{Binding CreateNewTaskCommand}" Padding="12">
                                                 <DockPanel>
-                                                    <Image DockPanel.Dock="Left" Source="/Images/Fpc/Add16.png" Width="16"/>
+													<Image DockPanel.Dock="Left" Style="{StaticResource Add16Image}"/>
                                                     <TextBlock Text="{Loc txtNew}" Foreground="Black"/>
                                                 </DockPanel>
                                             </Button>

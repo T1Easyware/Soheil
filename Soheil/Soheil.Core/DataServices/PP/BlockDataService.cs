@@ -13,11 +13,6 @@ namespace Soheil.Core.DataServices
 {
 	public class BlockDataService : DataServiceBase, IDataService<Block>
 	{
-		public event EventHandler<ModelAddedEventArgs<Block>> BlockAdded;
-		public event EventHandler<ModelUpdatedEventArgs<Block>> BlockUpdated;
-		//public event EventHandler<ModelAddedEventArgs<TaskReport>> TaskReportAdded;
-		//public event EventHandler<ModelRemovedEventArgs> TaskReportRemoved;
-
 		Repository<Block> _blockRepository;
 		Repository<NonProductiveTask> _nptRepository;
 		Repository<Task> _taskRepository;
@@ -42,28 +37,26 @@ namespace Soheil.Core.DataServices
 		/// <returns></returns>
 		public Block GetSingle(int id)
 		{
+			return _blockRepository.Single(x => x.Id == id);
+		}
+/*		public Block GetSingleFull(int id)
+		{
+			string qstr = 
+@"SELECT VALUE block FROM AdventureWorksEntities.Blocks
+WHERE block.Id = @id";
+			var query = context.CreateQuery<Block>(qstr, new System.Data.Objects.ObjectParameter("id", id));
+			return query.FirstOrDefault();
+		}*/
+		public Block GetSingleFull(int id)
+		{
 			return _blockRepository.Single(x => x.Id == id,
-				"Job", "Job.FPC",
-		//		"Education",
-				"StateStation",
-				"StateStation.State",
-				"StateStation.State.OnProductRework",
 				"StateStation.State.OnProductRework.Rework",
-				"StateStation.State.FPC",
 				"StateStation.State.FPC.Product",
-				"StateStation.Station",
-				"StateStation.StateStationActivities",
-				"StateStation.StateStationActivities.Activity",
-				"StateStation.StateStationActivities.StateStationActivityMachines",
 				"StateStation.StateStationActivities.StateStationActivityMachines.Machine",
-				"Tasks",
-				"Tasks.Processes",
+				"StateStation.Station",
+				"Job",
 				"Tasks.Processes.ProcessReports",
 				"Tasks.Processes.SelectedMachines",
-				"Tasks.Processes.SelectedMachines.StateStationActivityMachine",
-				"Tasks.TaskReports",
-				"Tasks.TaskReports.ProcessReports",
-				"Tasks.TaskReports.ProcessReports.OperatorProcessReports",
 				"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
 				"Tasks.TaskReports.ProcessReports.DefectionReports",
 				"Tasks.TaskReports.ProcessReports.StoppageReports"
@@ -82,7 +75,8 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(Block model)
 		{
-			throw new NotImplementedException();
+			_blockRepository.Add(model);
+			return model.Id;
 		}
 
 		public void UpdateModel(Block model)
@@ -93,7 +87,7 @@ namespace Soheil.Core.DataServices
 		public void DeleteModel(Block model)
 		{
 			var taskDataService = new TaskDataService(context);
-			foreach (var task in model.Tasks)
+			foreach (var task in model.Tasks.ToArray())
 			{
 				taskDataService.DeleteModel(task);
 			}
@@ -106,9 +100,44 @@ namespace Soheil.Core.DataServices
 		} 
 		#endregion
 
+		/// <summary>
+		/// Returns all blocks which are completely or partially inside the given range
+		/// <para>blocks touching the range from outside are not counted</para>
+		/// </summary>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
 		public IEnumerable<Block> GetInRange(DateTime startDate, DateTime endDate)
 		{
-			return _blockRepository.Find(x => x.StartDateTime < endDate && x.EndDateTime >= startDate, y => y.StartDateTime);
+			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
+			return _blockRepository.Find(x =>
+				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+				||
+				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
+				||
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate), 
+				y => y.StartDateTime);
+		}
+
+		/// <summary>
+		/// Returns all block Ids which are completely or partially inside the given range
+		/// <para>blocks touching the range from outside are not counted</para>
+		/// </summary>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
+		public IEnumerable<int> GetIdsInRange(DateTime startDate, DateTime endDate)
+		{
+			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
+			return _blockRepository.Find(x =>
+				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+				||
+				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
+				||
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate),
+				y => y.StartDateTime)
+				
+				.Select(x => x.Id);
 		}
 
 		//blocks in specified station, after (or partially after) startDate
@@ -135,19 +164,18 @@ namespace Soheil.Core.DataServices
 		/// Get infos of all taskReports associated with the given block
 		/// <para>The info includes: the sum of TaskProducedG1's, % of reported targetpoints</para>
 		/// </summary>
-		/// <param name="blockId"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
-		internal int[] GetProductionReportData(int blockId)
+		internal int[] GetProductionReportData(Block model)
 		{
 			int g1 = 0;
 			int taskTp = 0;
 			int reportedTaskTp = 0;
-			var tasks = _blockRepository.Single(x => x.Id == blockId).Tasks;
-			foreach (var task in tasks)
+			foreach (var task in model.Tasks)
 			{
 				g1 += task.TaskReports.Sum(x => x.TaskProducedG1);
 				taskTp += task.TaskTargetPoint;
-				reportedTaskTp += task.TaskReports.Sum(x => x.Task.TaskTargetPoint);
+				reportedTaskTp += task.TaskReports.Sum(x => x.TaskReportTargetPoint);
 			}
 			return new int[] { g1, taskTp == 0 ? 0 : 100 * reportedTaskTp / taskTp };
 		}
@@ -160,8 +188,17 @@ namespace Soheil.Core.DataServices
 				(int)block.StartDateTime.GetPersianDayOfYear(),
 				block.StartDateTime.Hour,
 				block.StateStation.Station.Code);
+
+			//fix tasks
+			var time = block.StartDateTime;
 			foreach (var task in block.Tasks)
 			{
+				//fix time
+				task.StartDateTime = time;
+				time = time.AddSeconds(task.DurationSeconds);
+				task.EndDateTime = time;
+
+				//fix processes
 				var emptyProcesses = task.Processes.Where(x => x.TargetCount == 0).ToArray();
 				foreach (var emptyProcess in emptyProcesses)
 				{
@@ -430,43 +467,59 @@ namespace Soheil.Core.DataServices
 
 		#region NPT
 		/// <summary>
-		/// <para>Returns previousTask and previousSetup which start before (or at the) start</para>
-		/// <para>if previousSetup is before previousTask it is considered as null</para>
+		/// <para>Returns previousBlock and previousSetup which start before start</para>
+		/// <para>if previousSetup is before previousBlock it is considered as null</para>
 		/// <para>This method is for auto setup-time add</para>
 		/// </summary>
 		/// <param name="stationId"></param>
 		/// <param name="start"></param>
 		/// <returns></returns>
-		public Pair<Block, Setup> FindPreviousTask(int stationId, DateTime start)
+		public Tuple<Block, Setup> FindPreviousBlock(int stationId, DateTime start)
 		{
 			return findPreviousPPItem(stationId, start);
 		}
 		/// <summary>
-		/// <para>Returns nextTask and nextSetup which start after (or at the) end</para>
-		/// <para>if nextSetup is after nextTask it is considered as null</para>
+		///Checks if a setup can be added before this block (due to its previous block's state)
+		///<para> free space is not considered, i.e. if there's not enough space before block it still may return true</para>
+		///<para> if previous item is a setup, returns false</para>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public bool CanAddSetupBeforeBlock(Model.Block model)
+		{
+			var previousBlock = FindPreviousBlock(model.StateStation.Station.Id, model.StartDateTime);
+			if (previousBlock.Item2 == null)
+			{
+				if (previousBlock.Item1 == null) return true;
+				return (previousBlock.Item1.StateStation.Id != model.StateStation.Id);
+			}
+			return false;
+		}
+		/// <summary>
+		/// <para>Returns nextBlock and nextSetup which start after (or at the) end</para>
+		/// <para>if nextSetup is after nextBlock it is considered as null</para>
 		/// <para>This method is for auto setup-time add</para>
 		/// </summary>
 		/// <param name="stationId"></param>
-		/// <param name="productReworkId"></param>
 		/// <param name="end"></param>
 		/// <returns></returns>
-		public Pair<Block, Setup> FindNextTask(int stationId, int productReworkId, DateTime end)
+		public Tuple<Block, Setup> FindNextBlock(int stationId, DateTime end)
 		{
 			return findNextPPItem(stationId, end);
 		}
 		/// <summary>
-		/// See FindPreviousTask
+		/// See FindPreviousBlock
 		/// </summary>
 		/// <param name="taskRepository"></param>
 		/// <param name="nptRepository"></param>
 		/// <param name="stationId"></param>
 		/// <param name="start"></param>
 		/// <returns>Task or Setup</returns>
-		private Pair<Block, Setup> findPreviousPPItem(int stationId, DateTime start)
+		private Tuple<Block, Setup> findPreviousPPItem(int stationId, DateTime start)
 		{
 			var previousTask = _blockRepository.LastOrDefault(x =>
 				x.StateStation.Station.Id == stationId
-				&& x.StartDateTime <= start,
+				&& x.StartDateTime < start,
 				dt => dt.StartDateTime,
 				"StateStation", "StateStation.Station", "StateStation.State", "StateStation.State.OnProductRework");
 
@@ -475,14 +528,14 @@ namespace Soheil.Core.DataServices
 				.OrderByDescending(x => x.StartDateTime)
 				.FirstOrDefault(x =>
 					x.Warmup.Station.Id == stationId
-					&& x.StartDateTime <= start);
+					&& x.StartDateTime < start);
 
 			if (previousSetup == null || previousTask == null)
-				return new Pair<Block, Setup>(previousTask, previousSetup);
-			return new Pair<Block, Setup>(previousTask,
+				return new Tuple<Block, Setup>(previousTask, previousSetup);
+			return new Tuple<Block, Setup>(previousTask,
 				(previousSetup.StartDateTime >= previousTask.EndDateTime) ? previousSetup : null);
 		}
-		private Pair<Block, Setup> findNextPPItem(int stationId, DateTime end)
+		private Tuple<Block, Setup> findNextPPItem(int stationId, DateTime end)
 		{
 			var nextTask = _blockRepository.FirstOrDefault(x =>
 				x.StateStation.Station.Id == stationId
@@ -498,8 +551,8 @@ namespace Soheil.Core.DataServices
 					&& x.StartDateTime >= end);
 
 			if (nextSetup == null || nextTask == null)
-				return new Pair<Block, Setup>(nextTask, nextSetup);
-			return new Pair<Block, Setup>(nextTask,
+				return new Tuple<Block, Setup>(nextTask, nextSetup);
+			return new Tuple<Block, Setup>(nextTask,
 				(nextSetup.EndDateTime <= nextTask.StartDateTime) ? nextSetup : null);
 		}
 
@@ -558,7 +611,7 @@ namespace Soheil.Core.DataServices
 					changeoverRepository.Add(changeover);
 					if (result != null)
 					{
-						result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 							InsertSetupBeforeBlockErrors.ErrorSource.This,
 							"زمان تعویض مربوطه پیدا نشد در نتیجه زمان تعویض جدید تعریف و برابر صفر در نظر گرفته شد\n",
 							0));
@@ -615,7 +668,7 @@ namespace Soheil.Core.DataServices
 				warmupRepository.Add(warmup);
 				if (result != null)
 				{
-					result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 						InsertSetupBeforeBlockErrors.ErrorSource.This,
 						"زمان آماده سازی مربوطه پیدا نشد در نتیجه زمان آماده سازی جدید تعریف و برابر صفر در نظر گرفته شد\n",
 						0));
@@ -627,7 +680,7 @@ namespace Soheil.Core.DataServices
 
 		public class InsertSetupBeforeBlockErrors
 		{
-			public List<Pair<ErrorSource, string, int>> Errors = new List<Pair<ErrorSource, string, int>>();
+			public List<Tuple<ErrorSource, string, int>> Errors = new List<Tuple<ErrorSource, string, int>>();
 			public enum ErrorSource { Task, NPT, This }
 			public bool IsSaved = false;
 		}
@@ -662,7 +715,7 @@ namespace Soheil.Core.DataServices
 						if (tmp != null) { errorousId = tmp.Id; break; }
 					}
 					//create error
-					result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 						InsertSetupBeforeBlockErrors.ErrorSource.Task,
 						"این Task گزارش دارد و قابل جابجایی نیست.",
 						errorousId));
@@ -674,7 +727,7 @@ namespace Soheil.Core.DataServices
 					//find the setup with report
 					int errorousId = movingSetups.First(x => x.NonProductiveTaskReport != null).Id;
 					//create error
-					result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 						InsertSetupBeforeBlockErrors.ErrorSource.NPT,
 						"این Task گزارش دارد و قابل جابجایی نیست.",
 						errorousId));
@@ -689,7 +742,7 @@ namespace Soheil.Core.DataServices
 				int delaySeconds = 0;
 
 				//check changeover
-				var changeover = findChangeover(block, previousItem.Value1, result);
+				var changeover = findChangeover(block, previousItem.Item1, result);
 				if (changeover != null)
 					delaySeconds += changeover.Seconds;
 
@@ -700,11 +753,11 @@ namespace Soheil.Core.DataServices
 
 				//check if previousSetup needs to be removed
 				bool needToDeletePreviousSetup = false;
-				if (previousItem.Value2 != null)
+				if (previousItem.Item2 != null)
 				{
-					if (previousItem.Value2.Warmup.Id == warmup.Id && previousItem.Value2.Changeover.Id == changeover.Id)
+					if (previousItem.Item2.Warmup.Id == warmup.Id && previousItem.Item2.Changeover.Id == changeover.Id)
 					{
-						result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 							InsertSetupBeforeBlockErrors.ErrorSource.This,
 							"برای این Task راه اندازی وجود دارد لذا راه اندازی جدید افزوده نشد",
 							-1));
@@ -713,7 +766,7 @@ namespace Soheil.Core.DataServices
 					}
 					else//it is a wrong setup
 					{
-						_nptRepository.Delete(previousItem.Value2);
+						_nptRepository.Delete(previousItem.Item2);
 						needToDeletePreviousSetup = true;
 					}
 				}
@@ -721,7 +774,7 @@ namespace Soheil.Core.DataServices
 				//if it's zero seconds
 				if (delaySeconds == 0)
 				{
-					result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 						InsertSetupBeforeBlockErrors.ErrorSource.This,
 						"زمان کل برابر با صفر است، لذا راه اندازی افزوده نشد",
 						0));
@@ -757,7 +810,7 @@ namespace Soheil.Core.DataServices
 			}
 			catch (Exception exp)
 			{
-				result.Errors.Add(new Pair<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+				result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
 					InsertSetupBeforeBlockErrors.ErrorSource.This,
 					exp.Message,
 					0));

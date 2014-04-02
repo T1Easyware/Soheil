@@ -97,32 +97,25 @@ namespace Soheil.Core.DataServices
 			if (report.ReportStartDateTime < task.StartDateTime) return null;
 			if (report.ReportDurationSeconds > task.DurationSeconds) return null;
 			if (report.TaskReportTargetPoint > task.TaskTargetPoint) return null;
+			report.ModifiedDate = DateTime.Now;
+			report.CreatedDate = DateTime.Now;
+			report.Task = task;
 
-			var taskReport = new TaskReport
-			{
-				ModifiedDate = DateTime.Now,
-				CreatedDate = DateTime.Now,
-				Task = task,
-				TaskReportTargetPoint = report.TaskReportTargetPoint,
-				ReportStartDateTime = report.ReportStartDateTime,
-				ReportEndDateTime = report.ReportEndDateTime,
-				ReportDurationSeconds = report.ReportDurationSeconds
-			};
-			foreach (var process in task.Processes)
+            foreach (var process in task.Processes)
 			{
 				int remainingPRTP = process.TargetCount - process.ProcessReports.Sum(x => x.ProcessReportTargetPoint);
 				int guessedPRTP = (int)(report.ReportDurationSeconds / process.StateStationActivity.CycleTime);
 				if (remainingPRTP < guessedPRTP) guessedPRTP = remainingPRTP;
-				taskReport.ProcessReports.Add(new ProcessReport
+                report.ProcessReports.Add(new ProcessReport
 				{
 					Process = process,
-					TaskReport = taskReport,
+                    TaskReport = report,
 					ProcessReportTargetPoint = guessedPRTP,
 				});
 			}
-			task.TaskReports.Add(taskReport);
+            task.TaskReports.Add(report);
 			context.SaveChanges();
-			return taskReport;
+            return report;
 		}
 
 		public IList<TaskReport> GetAllForTask(int taskId)
@@ -135,7 +128,7 @@ namespace Soheil.Core.DataServices
 		internal void DeleteById(int Id)
 		{
 			var model = _taskReportRepository.Single(x => x.Id == Id);
-			DeleteModel(model);
+			DeleteModel(model);//???
 			context.SaveChanges();
 		}
 

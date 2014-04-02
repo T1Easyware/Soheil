@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-
+using S = System;
 namespace Soheil.Core.ViewModels.PP.Editor
 {
 	/// <summary>
@@ -17,7 +16,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		DataServices.FPCDataService _fpcDs;
 		DataServices.JobDataService _jobDs;
 		Dal.SoheilEdmContext _uow;
-
+		public event Action RefreshPPTable;
+		const int x = 0;
 		public PPJobEditorVm()
 		{
 			initializeDataServices();
@@ -27,7 +27,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var pgList = _productGroupDs.GetActivesRecursive();
 			foreach (var pg in pgList)
 			{
-				AllProductGroups.Add(new ProductGroupVm(pg));
+				var pgvm = new JobProductGroupVm(pg, _jobDs);
+				AllProductGroups.Add(pgvm);
 			}
 
 			//event handler for DeleteJobCommand
@@ -37,6 +38,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					foreach (var item in e.NewItems.OfType<PPEditorJob>())
 					{
 						item.JobDeleted += job => JobList.Remove(job);
+						item.RefreshPPTable += () => { if (RefreshPPTable != null) RefreshPPTable(); };
 					}
 			};
 		}
@@ -74,9 +76,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		#endregion
 
 		#region Product etc
-		//AllProductGroups Observable Collection
-		private ObservableCollection<ProductGroupVm> _allProductGroups = new ObservableCollection<ProductGroupVm>();
-		public ObservableCollection<ProductGroupVm> AllProductGroups { get { return _allProductGroups; } }
+		//All Job ProductGroups Observable Collection
+		private ObservableCollection<JobProductGroupVm> _allProductGroups = new ObservableCollection<JobProductGroupVm>();
+		public ObservableCollection<JobProductGroupVm> AllProductGroups { get { return _allProductGroups; } }
 		//JobList Observable Collection
 		private ObservableCollection<PPEditorJob> _jobList = new ObservableCollection<PPEditorJob>();
 		public ObservableCollection<PPEditorJob> JobList { get { return _jobList; } }
@@ -98,10 +100,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				foreach (var job in JobList.Where(x => x.Quantity > 0))
 				{
-					job.SaveCommand.Execute(o);
+					job.SaveCommand.Execute(false);//false: job won't refresh pptable
 				}
 				Reset();
 				IsVisible = false;
+				if (RefreshPPTable != null)
+					RefreshPPTable();
 			});
 			ClearAllCommand = new Commands.Command(o => Reset());
 			ExitCommand = new Commands.Command(o => IsVisible = false);
@@ -132,5 +136,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty ExitCommandProperty =
 			DependencyProperty.Register("ExitCommand", typeof(Commands.Command), typeof(PPJobEditorVm), new UIPropertyMetadata(null)); 
 		#endregion
+
+		internal void Append(PPJobVm Job)
+		{
+			var job = new Editor.PPEditorJob(Job.Model, _jobDs);
+			job.RefreshPPTable += () => { if (RefreshPPTable != null) RefreshPPTable(); };
+            JobList.Add(job);
+		}
 	}
 }

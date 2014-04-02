@@ -49,7 +49,9 @@ namespace Soheil.Core.PP.Smart
 				var seq = _job.Manager.FindNextFreeSpace(
 					ss.Station.Id, ss.State.OnProductRework.Id, earliestPossibleReleaseTime, (int)DurationSeconds);
 
+				//find the newly added task
 				var taskseq = seq.FirstOrDefault(x => x.Type == SmartRange.RangeType.NewTask);
+
 				//Check for deadline
 				if (taskseq.StartDT.AddSeconds(DurationSeconds) > _job.Deadline) continue;
 

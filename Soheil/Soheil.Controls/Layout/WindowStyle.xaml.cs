@@ -69,7 +69,7 @@ namespace Soheil.Controls.Layout
             // window to it's normal state when the maximize button is clicked, otherwise maximize the window.
             if (window.WindowState == WindowState.Maximized)
             {
-                //window.WindowState = WindowState.Normal;???
+				window.WindowState = WindowState.Normal;
             }
             else
             {

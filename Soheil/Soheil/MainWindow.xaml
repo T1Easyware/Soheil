@@ -87,7 +87,14 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/changeOver.png"
                         Tag="26" />
-			</WrapPanel>
+                <Button Background="Transparent"
+                        Style="{StaticResource SoheilMenuButton}"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtSkillCenter}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        Tag="27" />
+            </WrapPanel>
         </DataTemplate>
         <DataTemplate x:Key="controlsTemplate">
             <WrapPanel Grid.Column="2" FlowDirection="RightToLeft">
@@ -195,7 +202,7 @@
                                       Tag="0" />
                         <ToggleButton x:Name="btnUsers"
                                       Checked="QuickAccessMenuChecked"
-                                      Content="{Loc txtUsers}"
+                                      Content="{Loc txtOrganization}"
                                       Tag="1" />
                         <ToggleButton x:Name="btnDefinitions"
                                       Checked="QuickAccessMenuChecked"
@@ -214,7 +221,7 @@
                                       Content="{Loc txtOptions}"
                                       Tag="5" />
                     </WrapPanel>
-                    <GridSplitter Grid.Column="5"
+                    <GridSplitter Grid.Column="4"
                                   Width="3"
                                   Height="25"
                                   Margin="0,-10,0,0"
@@ -256,7 +263,7 @@
                                          PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Button},
                                                                    Path=.,
                                                                    Converter={StaticResource debugc}}">
-                                <MenuItem Header="{Loc txtUsers}">
+                                <MenuItem Header="{Loc txtOrganization}">
                                     <MenuItem Header="{Loc txtUsersAccess}">
                                         <MenuItem.Icon>
                                             <Image Source="/Soheil.Controls;component/Images/Menus/userAccess.png"/>
@@ -310,6 +317,7 @@
 								</MenuItem>
                                 <MenuItem Header="{Loc txtDefinitions}">
                                     <MenuItem Header="{Loc txtProducts}">
+<<<<<<< HEAD
                                         <MenuItem.Icon>
                                             <Image Source="/Soheil.Controls;component/Images/Menus/Product.png"/>
                                         </MenuItem.Icon>
@@ -387,6 +395,27 @@
                                         </MenuItem>
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSpeSkills}" Tag="243" >
                                         </MenuItem>
+=======
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtProducts}" Tag="211" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtReworks}" Tag="212" />
+                                    </MenuItem>
+                                    <MenuItem Header="{Loc txtDiagnosis}">
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtDefections}" Tag="221" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtRoots}" Tag="222" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtActionPlans}" Tag="223" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtCauses}" Tag="224" />
+                                    </MenuItem>
+                                    <MenuItem Header="{Loc txtFPC}">
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtFPC}" Tag="231" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtStations}" Tag="232" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtMachines}" Tag="233" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtActivities}" Tag="234" />
+                                    </MenuItem>
+                                    <MenuItem Header="{Loc txtOperators}">
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtOperators}" Tag="241" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtGenSkills}" Tag="242" />
+                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSpeSkills}" Tag="243" />
+>>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
                                     </MenuItem>
                                     <MenuItem Header="{Loc txtCosts}">
                                         <MenuItem.Icon>
@@ -408,6 +437,7 @@
                                             <Image Source="/Soheil.Controls;component/Images/Menus/SetupTime.png"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
+<<<<<<< HEAD
 								</MenuItem>
 								<MenuItem Header="{Loc txtProductControl}">
                                     <MenuItem.Icon>
@@ -428,6 +458,15 @@
                                             <Image Source="/Soheil.Controls;component/Images/Menus/Index.png"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
+=======
+                                    <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSetupTimes}" Tag="26" />
+									<MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSkillCenter}" Tag="27" />
+								</MenuItem>
+                                <MenuItem Header="{Loc txtProductControl}">
+									<MenuItem Header="{Loc txtProductPlan}" Click="HandleAddTabAndSelect" Tag="311"/>
+                                    <MenuItem Header="{Loc txtPerformance}" />
+                                    <MenuItem Header="{Loc txtIndices}" Click="HandleAddTabAndSelect" Tag="33"/>
+>>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
                                 </MenuItem>
                                 <MenuItem Header="{Loc txtReports}">
                                     <MenuItem.Icon>

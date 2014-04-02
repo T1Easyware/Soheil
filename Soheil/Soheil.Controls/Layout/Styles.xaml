@@ -5,8 +5,8 @@
                     xmlns:Sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:ColorPicker="clr-namespace:Soheil.Controls.CustomControls.ColorPicker">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Brushes.xaml" />
-        <ResourceDictionary>
+		<ResourceDictionary Source="Brushes.xaml" />
+		<ResourceDictionary>
             <Converters:MarginConverter x:Key="MarginConverter" />
             <Converters:MultiSizeSubtractConverter x:Key="SizeConverter" />
             <Converters:DebugConverter x:Key="debugc" />

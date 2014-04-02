@@ -18,6 +18,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public int StationId { get { return StateStation == null ? 0 : StateStation.StationId; } }
 		public int StateStationId { get { return StateStation == null ? 0 : StateStation.StateStationId; } }
 
+		public event Action<Model.Block> BlockAdded;
+
 		public DataServices.TaskDataService TaskDataService { get; private set; }
 		public DataServices.BlockDataService BlockDataService { get; private set; }
 
@@ -227,7 +229,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsAutoStartProperty, value); }
 		}
 		public static readonly DependencyProperty IsAutoStartProperty =
-			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorBlock), new PropertyMetadata(true));
+			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorBlock), new PropertyMetadata(false));
 		#endregion
 
 		#region Additional Readonly info
@@ -377,8 +379,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			foreach (var taskVm in TaskList.OfType<PPEditorTask>())
 			{
-				taskVm.ForceCalculateDuration();
-
 				//processes don't follow the JIT model attachment strategy
 				//so we need to manually attach their models prior to Save.
 
@@ -470,6 +470,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						poModel.Role = poVm.Role;
 					}
 				}
+				taskVm.ForceCalculateDuration();
 			}
 
 			Model.DurationSeconds = TaskList.OfType<PPEditorTask>().Sum(t => t.DurationSeconds);
@@ -479,8 +480,34 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		internal void Save()
 		{
 			correctBlock();
-			BlockDataService.SaveBlock(Model);
-		}
 
+			var nptDs = new DataServices.NPTDataService(_uow);
+
+			//check if it fits
+			if(!IsAutoStart)
+			{
+				var inRangeBlocks = BlockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime);
+				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime);
+
+				if (inRangeBlocks.Any() || inRangeNPTs.Any()) IsAutoStart = true;
+			}
+
+			//check if should use auto start
+			if (IsAutoStart)
+			{
+				// Updates the start datetime of this block to fit the first empty space
+				Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(BlockDataService, nptDs);
+				var seq = sman.FindNextFreeSpace(StationId, State.ProductRework.Id, DateTime.Now, (int)Duration.TotalSeconds);
+				var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
+				StartDate = block.StartDT.Date;
+				StartTime = block.StartDT.TimeOfDay;
+			
+				if (!sman.SaveSetups(seq))
+					Message.AddEmbeddedException("Some setups could not be added. check setup times table.");
+			}
+
+			BlockDataService.SaveBlock(Model);
+			if (BlockAdded != null) BlockAdded(Model);
+		}
 	}
 }

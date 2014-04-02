@@ -147,13 +147,13 @@
                             <DockPanel Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=ShowDetails}" Background="#B555">
                                 <Canvas Height="2"/>
 							    <Button DockPanel.Dock="Left" ToolTip="حذف مرحله" Command="{Binding DeleteCommand}">
-								    <Image Style="{StaticResource deleteImage}"/>
+								    <Image Style="{StaticResource Delete16Image}"/>
 							    </Button>
 							    <Button DockPanel.Dock="Right" ToolTip="ذخیره مرحله" Command="{Binding SaveCommand}">
-								    <Image Style="{StaticResource saveImage}"/>
+								    <Image Style="{StaticResource Save16Image}"/>
 							    </Button>
 							    <Button DockPanel.Dock="Right" ToolTip="ریست کردن مرحله" Command="{Binding ResetCommand}">
-								    <Image Style="{StaticResource resetImage}"/>
+								    <Image Style="{StaticResource Undo16Image}"/>
 							    </Button>
 							    <Canvas/>
 						    </DockPanel>

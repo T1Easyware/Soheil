@@ -11,7 +11,8 @@ namespace Soheil.Core.ViewModels.PP
 	{
 		public PPJobVm(Model.Job model)
 		{
-			_model = model;
+			if (model == null) throw new Soheil.Common.SoheilException.SoheilExceptionBase("Job model can't be null.", Common.SoheilException.ExceptionLevel.Error);
+			Model = model;
 			Code = model.Code;
 			Deadline = model.Deadline;
 			ReleaseDT = model.ReleaseTime;
@@ -19,9 +20,9 @@ namespace Soheil.Core.ViewModels.PP
 			Description = model.Description;
 		}
 
-		Model.Job _model;
-		public int Id { get { return _model.Id; } }
-		public int FpcId { get { return _model.FPC.Id; } }
+		public Model.Job Model { get; protected set; }
+		public int Id { get { return Model.Id; } }
+		public int FpcId { get { return Model.FPC.Id; } }
 		//Code Dependency Property
 		public string Code
 		{
@@ -62,10 +63,5 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DescriptionProperty =
 			DependencyProperty.Register("Description", typeof(string), typeof(PPJobVm), new UIPropertyMetadata(null));
-
-		internal void AppendToJobEditor(PPTableVm root)
-		{
-            root.JobEditor.JobList.Add(new Soheil.Core.ViewModels.PP.Editor.PPEditorJob(_model));
-		}
 	}
 }

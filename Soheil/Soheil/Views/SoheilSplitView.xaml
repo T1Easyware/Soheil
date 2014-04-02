@@ -1434,16 +1434,6 @@
 					<Behavior:ValidationExceptionBehavior />
 				</I:Interaction.Behaviors>
 				<DockPanel FlowDirection="{Loc enumDirection}">
-					<Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-						<WrapPanel Margin="10"
-                                   HorizontalAlignment="Right"
-                                   DockPanel.Dock="Bottom">
-							<Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
-                                    CommandParameter="0"
-                                    Content="{Loc txtWorkProfiles}">
-							</Button>
-						</WrapPanel>
-					</Border>
 					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
 					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
 					<Border Style="{StaticResource SoheilContentUpperBorder}">
@@ -1492,11 +1482,9 @@
 													<TextBlock Text="{Binding Name}" HorizontalAlignment="Center"/>
 													<ToggleButton Grid.Row="1" IsChecked="{Binding IsWeekStart}" Opacity="0" x:Name="isWeekStartButton"
 																HorizontalAlignment="Stretch" VerticalAlignment="Center">
-														<Image Source="/Images/Fpc/notdefault.png" x:Name="isWeekStartButtonImage" Opacity="0.8"
-															HorizontalAlignment="Center" VerticalAlignment="Center" Width="16"/>
+														<Image Style="{StaticResource NotDefaultImage}" x:Name="isWeekStartButtonImage" Opacity="0.8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 													</ToggleButton>
-													<Image Grid.Row="1" Source="/Images/Fpc/default.png" x:Name="isWeekStartImage" Opacity="0"
-														HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" IsHitTestVisible="False"/>
+													<Image Grid.Row="1" Style="{StaticResource DefaultImage}" Width="18" x:Name="isWeekStartImage" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
 													<ComboBox Grid.Row="2" VerticalAlignment="Center"
 																Background="{Binding SelectedDayStateVm.Color, Converter={StaticResource colorFixer}}"
 															ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.WorkDays}"
@@ -1556,7 +1544,7 @@
 									<Button Margin="2" Content="-" Command="{Binding CurrentContent.AskForDecreaseNumberOfShifts}"/>
 									<Button Margin="2" Command="{Binding CurrentContent.DecreaseNumberOfShifts}" Background="ForestGreen"
 											Visibility="{Binding CurrentContent.IsPrototypeChangeAskVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-										<Image Source="/Images/Fpc/Save16.png" Width="16"/>
+										<Image Style="{StaticResource Save16Image}"/>
 									</Button>
 								</Grid>
 								<Button Margin="2" Content="+" DockPanel.Dock="Right" Width="40" Command="{Binding CurrentContent.IncreaseNumberOfShifts}"/>
@@ -1615,36 +1603,18 @@
 													<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 												</Border>
 												<Border BorderBrush="#2FFF" BorderThickness="0.5" Background="Transparent">
-													<!-- 1 min = 1 px (snap to 5 min or 5 px)-->
+													<!-- 1 min = 1 px (snap to 5 min or 5 px) so 1800 means 30 hours-->
 													<Grid Width="1800">
 														<!--ShiftLine-->
-														<!--                 ..       .       ..      .      .. -->
+														<!--       ..       .       ..      .      .. -->
                                                         <Canvas>
-                                                            <Rectangle 
-															StrokeDashArray=".2 14.8 .1 14.8 .2 14.8 .1 14.8 .2" 
-															Stroke="#8FFF" 
-															Width="1800"
-															Height="8"
-															StrokeThickness="4" 
-															Margin="0,20"/>
+                                                            <Rectangle StrokeDashArray=".2 14.8 .1 14.8 .2 14.8 .1 14.8 .2" Stroke="#8FFF" Width="1800" Height="10" StrokeThickness="4" Margin="0,19"/>
                                                         </Canvas>
 														<!--ShiftLine-->
-														<Thumb 
-															Tag="{Binding ElementName=timetip}" 
-															x:Name="shiftLine"
-															MouseMove="workShiftLineMouseMove"
-															DragStarted="shiftLineDragStart" 
-															DragDelta="shiftLineDragDelta" 
-															DragCompleted="shiftLineDragEnd">
+														<Thumb Tag="{Binding ElementName=timetip}" x:Name="shiftLine" MouseMove="workShiftLineMouseMove" DragStarted="shiftLineDragStart" DragDelta="shiftLineDragDelta" DragCompleted="shiftLineDragEnd">
 															<Thumb.Template>
 																<ControlTemplate>
-																	<Border 
-																		VerticalAlignment="Center" 
-																		HorizontalAlignment="Stretch"
-																		Background="#2FFF" 
-																		BorderBrush="#8FFF" 
-																		BorderThickness="0,1" 
-																		Height="4"/>
+																	<Border VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="#2FFF" BorderBrush="#8FFF" BorderThickness="0,1" Height="4"/>
 																</ControlTemplate>
 															</Thumb.Template>
 														</Thumb>
@@ -1692,7 +1662,7 @@
 																					<ControlTemplate>
 																						<Border BorderThickness="2,2,0,2" CornerRadius="3,0,0,3" BorderBrush="White" Width="20" Height="40">
 																							<Border.Background>
-																								<SolidColorBrush Color="{Binding Prototype.Color, Converter={StaticResource ColorToRgbBrush}}" Opacity="0" x:Name="brdr"/>
+                                                                                                <SolidColorBrush Color="{Binding Prototype.Color, Converter={StaticResource ColorToRgbBrush}}" Opacity="1" x:Name="brdr"/>
 																							</Border.Background>
 																							<TextBlock Text="{Binding Prototype.Name}" 
 																										HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -1705,14 +1675,14 @@
 																								<EventTrigger RoutedEvent="MouseEnter">
 																									<BeginStoryboard>
 																										<Storyboard Duration="0:0:0.1">
-																											<DoubleAnimation To="1" Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" Duration="0:0:0.1"/>
+                                                                                                            <DoubleAnimation Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
 																										</Storyboard>
 																									</BeginStoryboard>
 																								</EventTrigger>
 																								<EventTrigger RoutedEvent="MouseLeave">
 																									<BeginStoryboard>
 																										<Storyboard Duration="0:0:0.2">
-																											<DoubleAnimation To="0" Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
+                                                                                                            <DoubleAnimation Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" To="0.1" Duration="0:0:0.2"/>
 																										</Storyboard>
 																									</BeginStoryboard>
 																								</EventTrigger>
@@ -3290,9 +3260,10 @@
                 </DockPanel>
             </GroupBox>
         </DataTemplate>
-        <DataTemplate x:Key="PartWarehouseGroupTemplate" DataType="ViewModels:PartWarehouseGroupVM">
-            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+		<DataTemplate x:Key="PartWarehouseGroupTemplate" DataType="ViewModels:PartWarehouseGroupVM">
+			<GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
                       Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+<<<<<<< HEAD
                 <I:Interaction.Behaviors>
                     <Behavior:ValidationExceptionBehavior />
                 </I:Interaction.Behaviors>
@@ -3308,8 +3279,25 @@
                 </DockPanel>
             </GroupBox>
         </DataTemplate>
+=======
+				<I:Interaction.Behaviors>
+					<Behavior:ValidationExceptionBehavior />
+				</I:Interaction.Behaviors>
+				<DockPanel FlowDirection="{Loc enumDirection}">
+					<Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
+					<DockPanel DockPanel.Dock="Top">
+						<ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
+						<ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+						<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+					</DockPanel>
+					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+					<Canvas DockPanel.Dock="Bottom" />
+				</DockPanel>
+			</GroupBox>
+		</DataTemplate>
+>>>>>>> ab592a33ac373dec8d0608713cccbc4345ef28ad
 
-        <!--..........................................................................................................-->
+		<!--..........................................................................................................-->
 
         <!-- Template Selectors -->
         <TemplateSelectors:SplitViewSubContentSelector x:Key="SubContentTemplateSelector"

@@ -21,6 +21,7 @@ namespace Soheil.TemplateSelectors
 
         public DataTemplate CostSubContentTemplate { get; set; }
 
+
         public DataTemplate ModuleSubContentPanel { get; set; }
 
 		//!@#$

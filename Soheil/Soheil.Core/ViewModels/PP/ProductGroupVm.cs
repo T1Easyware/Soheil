@@ -11,7 +11,7 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class ProductGroupVm : DependencyObject
 	{
-		public ProductGroupVm()
+		protected ProductGroupVm()
 		{
 
 		}
@@ -29,7 +29,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 
 
-		int _id = -1;
+		protected int _id = 0;
 		//Name Dependency Property
 		public string Name
 		{

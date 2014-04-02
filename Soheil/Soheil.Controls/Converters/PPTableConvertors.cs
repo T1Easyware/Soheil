@@ -252,6 +252,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (values.Any(x => x == DependencyProperty.UnsetValue)) return Visibility.Collapsed;
 			return values.All(x => (bool)x) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
@@ -345,11 +346,11 @@ namespace Soheil.Controls.Converters.PP
 	public class PPTaskBorderWidthConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-		{
+        {
 			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return 0d;
 			var duration = (TimeSpan)values[0];
 			var oneHourWidth = (double)values[1];
-			return duration.TotalHours * oneHourWidth;
+            return duration.TotalHours * oneHourWidth;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -372,15 +373,27 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+    public class testConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 	public class PPTaskBorderMarginConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return new Thickness(0,2,0,2);
+            if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return new Thickness(0, 2, 0, 2);
 			var startDt = (DateTime)values[0];
 			var oneHourWidth = (double)values[1];
-			return new Thickness(startDt.Subtract(startDt.GetNorooz()).TotalHours * oneHourWidth, 2, 0, 2);
+            return new Thickness(startDt.Subtract(startDt.GetNorooz()).TotalHours * oneHourWidth, 2, 0, 2);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -388,6 +401,40 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+
+	public class StartEndToWidthConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return 0d;
+			var start = (DateTime)values[0];
+			var end = (DateTime)values[1];
+			var oneHourWidth = (double)values[2];
+			return end.Subtract(start).TotalSeconds * oneHourWidth / 3600;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+	public class StartToMarginConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return 0d;
+			var start = (DateTime)values[0];
+			var oneHourWidth = (double)values[1];
+			return (start.Ticks / TimeSpan.TicksPerSecond) * oneHourWidth / 3600;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+
 	#endregion
 
 	#region Operators
@@ -636,7 +683,7 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
-	public class FloatMultiplier : IMultiValueConverter
+	public class FloatMultiplier2 : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
@@ -680,15 +727,15 @@ namespace Soheil.Controls.Converters.PP
 		}
 	}
 
-	public class DoubleMultiplier : IValueConverter
+	public class FloatMultiplier : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value == DependencyProperty.UnsetValue) return 0f;
 			float val1;
 			float val2;
-			if (!(float.TryParse(value.ToString(), out val1))
-				&& !(float.TryParse(parameter.ToString(), out val2)))
+			if ((float.TryParse(value.ToString(), out val1))
+				&& (float.TryParse(parameter.ToString(), out val2)))
 				return (val1 * val2);
 			else return 0f;
 		}
@@ -722,7 +769,7 @@ namespace Soheil.Controls.Converters.PP
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = (TimeSpan)value;
-			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss");
+			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -760,7 +807,7 @@ namespace Soheil.Controls.Converters.PP
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = new TimeSpan(0, 0, System.Convert.ToInt32(value));
-			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss");
+			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -789,8 +836,8 @@ namespace Soheil.Controls.Converters.PP
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = new TimeSpan(0, 0, (int)((float)value));
-			if (ts.Hours == 0) return ts.ToString("mm\\ \\:\\ ss");
-			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss");
+			if (ts.Hours == 0) return ts.ToString("mm\\ \\:\\ ss", culture);
+			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -829,6 +876,22 @@ namespace Soheil.Controls.Converters.PP
 			return ((string)value).ToPersianDate();
 		}
 	}
+
+	public class DateToTimeStringConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (value == DependencyProperty.UnsetValue) return "";
+			var dt = (DateTime)value;
+			return dt.ToShortTimeString();
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+
 
 	[ValueConversion(typeof(DateTime), typeof(Arash.PersianDate))]
 	public class DateToPersianDateConverter : IValueConverter

@@ -49,7 +49,7 @@ namespace Soheil.Core.DataServices
 		}
 
 		/// <summary>
-		/// Gets all active products as view models.
+		/// Gets all active station models.
 		/// </summary>
 		/// <returns></returns>
 		public ObservableCollection<Station> GetActives()

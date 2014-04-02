@@ -31,15 +31,21 @@ namespace Soheil.Core.ViewModels.PP
 			StartDateTime = taskModel.StartDateTime;
 			DurationSeconds = taskModel.DurationSeconds;
 			TaskTargetPoint = taskModel.TaskTargetPoint;
+			TaskProducedG1 = taskModel.TaskReports.Sum(x => x.TaskProducedG1);
 			Message = new EmbeddedException();
 
-			//TaskProducedG1 = 
-			var ids = new List<int>();
-			foreach (var item in taskModel.Processes)
+			//this non-crucial block of code is likely to throw
+			try
 			{
-				ids.AddRange(item.ProcessOperators.Select(x => x.Id));
+				//calculate the number of distinct operators
+				var ids = new List<int>();
+				foreach (var item in taskModel.Processes)
+				{
+					ids.AddRange(item.ProcessOperators.Select(x => x.Id));
+				}
+				TaskOperatorCount = ids.Distinct().Count();
 			}
-			TaskOperatorCount = ids.Distinct().Count();
+			catch { }
 		}
 
 		#endregion
@@ -50,12 +56,12 @@ namespace Soheil.Core.ViewModels.PP
 			get { return Model.TaskTargetPoint; }
 			set { Model.TaskTargetPoint = value; OnPropertyChanged("TaskTargetPoint"); }
 		}
-		public new DateTime StartDateTime
+		public override DateTime StartDateTime
 		{
 			get { return Model.StartDateTime; }
 			set { Model.StartDateTime = value; OnPropertyChanged("StartDateTime"); }
 		}
-		public new int DurationSeconds
+		public override int DurationSeconds
 		{
 			get { return Model.DurationSeconds; }
 			set
@@ -65,10 +71,6 @@ namespace Soheil.Core.ViewModels.PP
 				OnPropertyChanged("DurationSeconds");
 			}
 		}
-		//DurationSeconds Dependency Property
-		public static readonly DependencyProperty DurationProperty =
-			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPTaskVm), new UIPropertyMetadata(TimeSpan.Zero));
-		
 		//TaskProducedG1 Dependency Property
 		public int TaskProducedG1
 		{
@@ -93,31 +95,46 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		public void ReloadTaskReports()
 		{
-			TaskReports.Clear();
-			var models = TaskReportDataService.GetAllForTask(Id);
-			int i = 0;
-			int sumOfTP = 0;
-			foreach (var model in models)
+			try
 			{
-				var vm = new TaskReportVm(this, model);
-				TaskReports.Add(vm);
-				sumOfTP += vm.TargetPoint;
-				i++;
+				TaskReports.Clear();
+				var models = TaskReportDataService.GetAllForTask(Id);
+				int i = 0;
+				int sumOfTP = 0;
+				foreach (var model in models)
+				{
+					var vm = new TaskReportVm(this, model);
+					TaskReports.Add(vm);
+					sumOfTP += vm.TargetPoint;
+					i++;
+				}
+				int sumOfDurations = models.Sum(x => x.ReportDurationSeconds);
+				if (sumOfDurations < this.DurationSeconds)
+				{
+					var taskReportHolder = new TaskReportHolderVm(this, sumOfDurations, sumOfTP);
+					taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
+					TaskReports.Add(taskReportHolder);
+				}
+				SumOfReportedHours = sumOfDurations / 3600d;
 			}
-			int sumOfDurations = models.Sum(x => x.ReportDurationSeconds);
-			if (sumOfDurations < this.DurationSeconds)
-			{
-				var taskReportHolder = new TaskReportHolderVm(this, sumOfDurations, sumOfTP);
-				taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
-				TaskReports.Add(taskReportHolder);
-			}
-			SumOfReportedHours = sumOfDurations / 3600d;
+			catch { }
 		}
 
 		public void ClearTaskReports()
 		{
 			TaskReports.Clear();
 		}
+		/// <summary>
+		/// Reloads all process reports in all tasks in the parent block of this task
+		/// </summary>
+		internal void ReloadAllProcessReports()
+		{
+			if (Block.BlockReport == null)
+				Block.BlockReport = new BlockReportVm(Block);
+			else
+				Block.BlockReport.ReloadProcessReportRows();
+		}
+
 		//TaskReports Observable Collection
 		public ObservableCollection<TaskReportBaseVm> TaskReports { get { return _taskReports; } }
 		private ObservableCollection<TaskReportBaseVm> _taskReports = new ObservableCollection<TaskReportBaseVm>();
@@ -131,5 +148,7 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty SumOfReportedHoursProperty =
 			DependencyProperty.Register("SumOfReportedHours", typeof(double), typeof(PPTaskVm), new UIPropertyMetadata(0d));
 		#endregion
+
+
 	}
 }

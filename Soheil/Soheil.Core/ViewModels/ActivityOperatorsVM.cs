@@ -20,7 +20,7 @@ namespace Soheil.Core.ViewModels
             ActivityDataService.OperatorAdded += OnOperatorAdded;
             ActivityDataService.OperatorRemoved += OnOperatorRemoved;
             OperatorDataService = new OperatorDataService();
-            ActivityOperatorDataService = new ActivityOperatorDataService();
+            ActivityOperatorDataService = new ActivitySkillDataService();
 
             var selectedVms = new ObservableCollection<ActivityOperatorVM>();
             foreach (var activityOperator in ActivityDataService.GetOperators(activity.Id))
@@ -64,7 +64,7 @@ namespace Soheil.Core.ViewModels
         /// <value>
         /// The data service.
         /// </value>
-        public ActivityOperatorDataService ActivityOperatorDataService { get; set; }
+        public ActivitySkillDataService ActivityOperatorDataService { get; set; }
 
         private void OnOperatorRemoved(object sender, ModelRemovedEventArgs e)
         {
@@ -82,7 +82,7 @@ namespace Soheil.Core.ViewModels
             }
         }
 
-        private void OnOperatorAdded(object sender, ModelAddedEventArgs<GeneralActivitySkill> e)
+        private void OnOperatorAdded(object sender, ModelAddedEventArgs<ActivitySkill> e)
         {
             var activityOperatorVm = new ActivityOperatorVM(e.NewModel, Access, ActivityOperatorDataService, RelationDirection.Straight);
             SelectedItems.AddNewItem(activityOperatorVm);

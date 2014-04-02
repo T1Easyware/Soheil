@@ -16,7 +16,7 @@ namespace Soheil.Core.ViewModels.PP
 		DataServices.ProcessReportDataService _processReportDataService;
 		DataServices.TaskReportDataService _taskReportDataService;
 		Model.ProcessReport _model;
-		public override int Id { get { return _model.Id; } }
+		public override int Id { get { return _model == null ? 0 : _model.Id; } }
 		public int ProcessId { get { return _model.Process.Id; } }
 		public ProcessReportRowVm ParentRow { get; private set; }
 		public TaskReportBaseVm ParentColumn { get; private set; }
@@ -39,17 +39,29 @@ namespace Soheil.Core.ViewModels.PP
 
 			if (model == null)
 			{
-				ProcessReportTargetPoint = 0;
-					//- processReportRow.ProcessReportCells.Where(y => y.Id > 0).Sum(x => x.ProcessReportTargetPoint);
+				ViewMode = PPViewMode.Empty;
+                ProcessReportTargetPoint = 0;
+                    //- processReportRow.ProcessReportCells.Where(y => y.Id > 0).Sum(x => x.ProcessReportTargetPoint);
 			}
 			else
 			{
+				ViewMode = PPViewMode.Simple;
 				ProducedG1 = model.ProducedG1;
 				ProcessReportTargetPoint = model.ProcessReportTargetPoint;
+				DefectionCount = (int)_model.DefectionReports.Sum(x => x.CountEquivalence);
+				StoppageCount = (int)_model.StoppageReports.Sum(x => x.CountEquivalence);
 			}
 
+			//DateTimes and Durations
+			var tmp = (int)(ProcessReportTargetPoint * processReportRow.StateStationActivity.CycleTime);
+			if (tmp == 0 || tmp > taskReport.DurationSeconds)
+				DurationSeconds = taskReport.DurationSeconds;
+			else
+				DurationSeconds = tmp;
+			//by updating StartDateTime (while DurationSeconds is updated before) EndDateTime gets updated correctly
 			StartDateTime = taskReport.StartDateTime;
-			DurationSeconds = (int)(ProcessReportTargetPoint * processReportRow.StateStationActivity.CycleTime);
+
+	
 			DefectionReports = new DefectionReportCollection(this);
 			StoppageReports = new StoppageReportCollection(this);
 
@@ -57,39 +69,6 @@ namespace Soheil.Core.ViewModels.PP
 		}
 
 		#endregion
-
-		#region Thread/Load/Save
-		public static int AcquisitionStartDelay = 100;
-		public static int AcquisitionPeriodicDelay = System.Threading.Timeout.Infinite;//5000???
-
-		//Thread Functions
-		protected override void acqusitionThreadStart()
-		{
-			//try
-			{
-				var model = _processReportDataService.GetSingleFull(Id);
-				Dispatcher.Invoke(new Action(() =>
-				{
-					Dispatcher.InvokeInBackground(acqusitionThreadEnd);
-				}));
-			}
-			//catch { }
-		}
-		protected override void acqusitionThreadEnd()
-		{
-			if (_model == null)
-			{
-				ViewMode = PPViewMode.Empty;
-			}
-			else
-			{
-				ProcessReportTargetPoint = _model.ProcessReportTargetPoint;
-				ProducedG1 = _model.ProducedG1;
-				DefectionCount = (int)_model.DefectionReports.Sum(x => x.CountEquivalence);
-				StoppageCount = (int)_model.StoppageReports.Sum(x => x.CountEquivalence);
-				ViewMode = PPViewMode.Simple;
-			}
-		}
 
 		public void LoadInnerData()
 		{
@@ -109,7 +88,6 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			_processReportDataService.Save(this);
 		}
-		#endregion
 
 
 		#region Count
@@ -149,7 +127,7 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("StoppageCount", typeof(int), typeof(ProcessReportCellVm), new UIPropertyMetadata(0));
 		#endregion
 
-		#region Startdt
+		#region DateTime
 		//StartDate Dependency Property
 		public DateTime StartDate
 		{
@@ -166,11 +144,22 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessReportCellVm), new UIPropertyMetadata(TimeSpan.Zero));
-		public new DateTime StartDateTime
+		public override DateTime StartDateTime
 		{
 			get { return StartDate.Add(StartTime); }
-			set { StartDate = value.Date; StartTime = value.TimeOfDay; }
+			set
+			{
+				StartDate = value.Date;
+				StartTime = value.TimeOfDay;
+				SetValue(StartDateTimeProperty, value);
+				SetValue(EndDateTimeProperty, value.AddSeconds(DurationSeconds));
+			}
 		}
+		/// <summary>
+		/// Don't manually change the value of this property
+		/// </summary>
+		public static readonly DependencyProperty EndDateTimeProperty =
+			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(ProcessReportCellVm), new UIPropertyMetadata(DateTime.Now));
 		#endregion
 
 		#region Other Members
@@ -193,14 +182,6 @@ namespace Soheil.Core.ViewModels.PP
 				else
 					vm.ParentRow.Parent.CurrentProcessReportBuilder = null;
 			}));
-		//Offset Dependency Property
-		public Point Offset
-		{
-			get { return (Point)GetValue(OffsetProperty); }
-			set { SetValue(OffsetProperty, value); }
-		}
-		public static readonly DependencyProperty OffsetProperty =
-			DependencyProperty.Register("Offset", typeof(Point), typeof(ProcessReportCellVm), new UIPropertyMetadata(new Point()));
 		//DefectionReports Dependency Property
 		public DefectionReportCollection DefectionReports
 		{
@@ -226,15 +207,9 @@ namespace Soheil.Core.ViewModels.PP
 			OpenCommand = new Commands.Command(o =>
 			{
 				if (ViewMode == PPViewMode.Simple) IsSelected = true;
-				else if (ViewMode == PPViewMode.Empty)
+				else if(ViewMode == PPViewMode.Empty)
 				{
-					ParentRow.Parent.CurrentTaskReportBuilderInProcess = new ProcessReportCellTaskReportHolder(
-						this,
-						new TaskReportHolderVm(
-							ParentColumn.Task,
-							ParentRow.ProcessReportCells.Where(x => x.ViewMode == PPViewMode.Simple).Sum(x => x.DurationSeconds),
-							ParentRow.ProcessReportCells.Where(x => x.ViewMode == PPViewMode.Simple).Sum(x => x.ProcessReportTargetPoint)));
-					ParentRow.Parent.CurrentTaskReportBuilderInProcess.RequestForChangeOfCurrentTaskReportBuilderInProcess += vm => ParentRow.Parent.CurrentTaskReportBuilderInProcess = vm;
+					//create task report column???
 				}
 			});
 			CloseCommand = new Commands.Command(o => { IsSelected = false; });

@@ -8,11 +8,11 @@ namespace Soheil.Core.ViewModels
 {
     public class ActivityOperatorVM : ItemRelationDetailViewModel
     {
-        private readonly GeneralActivitySkill _model;
+        private readonly ActivitySkill _model;
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductGroupVM"/> class initialized with default values.
         /// </summary>
-        public ActivityOperatorVM(AccessType access, ActivityOperatorDataService dataService, RelationDirection presentationType):base(access, presentationType)
+        public ActivityOperatorVM(AccessType access, ActivitySkillDataService dataService, RelationDirection presentationType):base(access, presentationType)
         {
             InitializeData(dataService);
         }
@@ -24,7 +24,7 @@ namespace Soheil.Core.ViewModels
         /// <param name="access"></param>
         /// <param name="dataService"></param>
         /// <param name="presentationType"></param>
-        public ActivityOperatorVM(GeneralActivitySkill entity, AccessType access, ActivityOperatorDataService dataService, RelationDirection presentationType)
+        public ActivityOperatorVM(ActivitySkill entity, AccessType access, ActivitySkillDataService dataService, RelationDirection presentationType)
             : base(access, presentationType)
         {
             InitializeData(dataService);
@@ -38,7 +38,7 @@ namespace Soheil.Core.ViewModels
             SkillPoint = (ILUO)entity.IluoNr;
         }
 
-        private void InitializeData(ActivityOperatorDataService dataService)
+        private void InitializeData(ActivitySkillDataService dataService)
         {
             DataService = dataService;
             SaveCommand = new Command(Save, CanSave);
@@ -50,7 +50,7 @@ namespace Soheil.Core.ViewModels
         /// <value>
         /// The activity-operator data service.
         /// </value>
-        public ActivityOperatorDataService DataService { get; set; }
+        public ActivitySkillDataService DataService { get; set; }
 
         /// <summary>
         /// Gets or sets the id.

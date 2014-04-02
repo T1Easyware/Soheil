@@ -18,6 +18,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		protected DataServices.OperatorDataService _operatorDs;
 		protected DataServices.TaskDataService _taskDs;
 		protected DataServices.BlockDataService _blockDs;
+
+		public event Action RefreshPPItems;
+
 		public Dal.SoheilEdmContext UOW { get; private set; }
 		public PPTaskEditorVm()
 		{
@@ -99,8 +102,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(null, (d, e) =>
 			{
 				var vm = (PPTaskEditorVm)d;
+				/*if (e.OldValue != null)
+					(e.OldValue as PPEditorBlock).IsEditMode = false;*/
 				if (e.NewValue != null)
+				{
 					vm.ShowFpc = false;
+					//(e.NewValue as PPEditorBlock).IsEditMode = true;
+				}
 			}));
 		#endregion
 
@@ -167,17 +175,19 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			SaveCommand = new Commands.Command(o =>
 			{
-				if (SelectedBlock == null) return;
+				throw new Exception("not meant to be run yet. reason of disability: possible loss of data due to shared UOW throughout the taskEditor");
+				/*if (SelectedBlock == null) return;
 				try
 				{
+					if (SelectedBlock.IsAutoStart)
+						SelectedBlock.SetStartToAuto();
 					_blockDs.SaveBlock(SelectedBlock.Model);
+					if (RefreshPPItems != null) RefreshPPItems();
 				}
 				catch (Exception exp)
 				{
 					MessageBox.Show(exp.Message);
-				}
-				
-				//throw new Exception("not meant to be run yet. reason of disability: possible loss of data due to shared UOW throughout the taskEditor");
+				}*/
 			});
 			ClearAllCommand = new Commands.Command(o =>
 			{
@@ -189,18 +199,19 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			});
 			SaveAllCommand = new Commands.Command(o =>
 			{
-				//try
+				try
 				{
 					foreach (var block in BlockList)
 					{
 						block.Save();
+						if (RefreshPPItems != null) RefreshPPItems();
 					}
 					Reset();
 					IsVisible = false;
 				}
-				//catch (Exception exp)
+				catch (Exception exp)
 				{
-				//	MessageBox.Show(exp.Message);
+					MessageBox.Show(exp.Message);
 				}
 			});
 			ResetCurrentBlockCommand = new Commands.Command(o =>
@@ -249,5 +260,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty ResetCurrentBlockCommandProperty =
 			DependencyProperty.Register("ResetCurrentBlockCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
 		#endregion
+
 	}
 }

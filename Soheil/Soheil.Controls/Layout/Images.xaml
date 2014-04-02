@@ -1,0 +1,193 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+	<Style x:Key="Add16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Add16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Delete16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Delete16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Save16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Save16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Undo16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Undo16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Warning16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/warning.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+
+	<!-- Fpc -->
+
+	<Style x:Key="SelectToolImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/SelectTool.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="SaveImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/Save.ico"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="New16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/New16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="IsDefaultImageStyle" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/Default.png"/>
+		<Setter Property="Width" Value="16"/>
+		<Style.Triggers>
+			<DataTrigger Binding="{Binding IsDefault}" Value="False">
+				<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/NotDefault.png"/>
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+	<!-- used as week start -->
+	<Style x:Key="DefaultImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/Default.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="NotDefaultImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/NotDefault.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+
+	<!-- Task/Block -->
+
+	<Style x:Key="TaskImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Task.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="NewTaskImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/TaskNew.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+
+	<Style x:Key="ReworkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Rework.png"/>
+		<Setter Property="Width" Value="15"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+	</Style>
+	<Style x:Key="OperatorImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Operator.png"/>
+		<Setter Property="Height" Value="15"/>
+	</Style>
+	<Style x:Key="TargetPointImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/TargetPoint.png"/>
+		<Setter Property="Width" Value="11"/>
+	</Style>
+	<Style x:Key="ProducedG1Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ProducedG1.png"/>
+		<Setter Property="Width" Value="11"/>
+	</Style>
+	
+	<!-- Report -->
+
+	<Style x:Key="ReportImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Report.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ViewReportImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ReportView.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="AddReportImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ReportAdd.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="EditReportImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ReportEdit.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ReportWarningImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ReportWarning.png"/>
+		<Setter Property="Width" Value="15"/>
+	</Style>
+
+	<!-- Process -->
+
+	<Style x:Key="ProcessReportImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ProcessReport.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="CycleTimeImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/CycleTime.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ManHourImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ManHour.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+
+	<!-- Job -->
+
+	<Style x:Key="JobImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Job.png"/>
+		<Setter Property="Width" Value="16"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+	</Style>
+	<Style x:Key="NewJobImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/JobNew.png"/>
+		<Setter Property="Width" Value="16"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+	</Style>
+	<Style x:Key="JobListImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/JobList.png"/>
+		<Setter Property="Width" Value="16"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+	</Style>
+	<Style x:Key="JobListByDefinitionImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/JobListByDefinition.png"/>
+		<Setter Property="Height" Value="28"/>
+	</Style>
+	<Style x:Key="JobListByTasksImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/JobListByTasks.png"/>
+		<Setter Property="Height" Value="28"/>
+	</Style>
+	
+	<!-- Setup -->
+
+	<Style x:Key="SetupImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Setup.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="AddSetupImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/SetupAdd.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	
+	<!-- PP Tools -->
+
+	<Style x:Key="NowImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Now.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ZoomImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Zoom.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ZoomUndoImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ZoomUndo.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="AutoLoadTaskImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/TaskAutoLoad.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ToggleShowCodeImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ShowCode.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="CloseWipeUpImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/CloseWipeUp.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="SaveWipeUpImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/SaveWipeUp.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+</ResourceDictionary>

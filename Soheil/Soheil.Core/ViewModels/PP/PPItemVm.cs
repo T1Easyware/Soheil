@@ -11,9 +11,15 @@ using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.PP
 {
+	/// <summary>
+	/// An abstract class suitable for any kind of Item that can (directly/indirectly) reside inside PPTable
+	/// <para>
+	/// <example>Example: BlockVm, PPTaskVm, NPTVm</example>
+	/// </para>
+	/// </summary>
 	public abstract class PPItemVm : ViewModelBase
 	{
-		protected PPItemVm() { Message = new EmbeddedException(); _threadLock = new object(); }
+		protected PPItemVm() { Message = new EmbeddedException(); }
 
 		//Message Dependency Property
 		public EmbeddedException Message
@@ -38,7 +44,7 @@ namespace Soheil.Core.ViewModels.PP
 		public abstract int Id { get; }
 
 		//StartDateTime Dependency Property
-		public DateTime StartDateTime
+		public virtual DateTime StartDateTime
 		{
 			get { return (DateTime)GetValue(StartDateTimeProperty); }
 			set { SetValue(StartDateTimeProperty, value); }
@@ -48,7 +54,7 @@ namespace Soheil.Core.ViewModels.PP
 		//DurationSeconds Dependency Property
 		public static readonly DependencyProperty DurationProperty =
 			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPItemVm), new UIPropertyMetadata(TimeSpan.Zero));
-		public int DurationSeconds
+		public virtual int DurationSeconds
 		{
 			get { return (int)GetValue(DurationSecondsProperty); }
 			set { SetValue(DurationSecondsProperty, value); }
@@ -91,56 +97,6 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DeleteTaskCommandProperty =
 			DependencyProperty.Register("DeleteItemCommand", typeof(Commands.Command), typeof(PPItemVm), new UIPropertyMetadata(null));
-		#endregion
-
-		#region Threads and Acquisition
-		//Members and Props
-		protected Timer _delayAcquisitor;
-		protected Thread _acqusitionThread;
-		protected static int _acquisitionStartDelay = 100;
-		protected static int _acquisitionPeriodicDelay = System.Threading.Timeout.Infinite;//5000???
-		protected Object _threadLock;
-		protected int _tries;
-		protected static int _MAX_TRIES = 10;
-
-		//Main Functions
-		/// <summary>
-		/// When Items are loaded their event calls this method
-		/// </summary>
-		public void BeginAcquisition()
-		{
-			try
-			{
-				ViewMode = PPViewMode.Acquiring;
-				_delayAcquisitor = new Timer((s) =>
-				{
-					try
-					{
-						Dispatcher.Invoke(() =>
-						{
-							_acqusitionThread.ForceQuit();
-							_acqusitionThread = new Thread(acqusitionThreadStart);
-							_acqusitionThread.Priority = ThreadPriority.Lowest;
-							_acqusitionThread.Start();
-						});
-					}
-					catch { }
-				}, null, _acquisitionStartDelay, _acquisitionPeriodicDelay);
-			}
-			catch { }
-		}
-		/// <summary>
-		/// When Items are unloaded their event calls this method
-		/// </summary>
-		public void UnloadData()
-		{
-			ViewMode = PPViewMode.Simple;
-			_acqusitionThread.ForceQuit();
-			if (_delayAcquisitor != null) _delayAcquisitor.Dispose();
-		}
-
-		protected virtual void acqusitionThreadStart() { }
-		protected virtual void acqusitionThreadEnd() { }
 		#endregion
 	}
 }

@@ -11,7 +11,7 @@ namespace Soheil.Core.ViewModels
     {
         #region Properties
 
-        private GeneralActivitySkill _model;
+		private ProductActivitySkill _model;
 
         public override int Id
         {
@@ -27,7 +27,7 @@ namespace Soheil.Core.ViewModels
         /// <value>
         /// The data service.
         /// </value>
-        public SpecialSkillDataService SpecialSkillDataService { get; set; }
+        public ProductActivitySkillDataService SpecialSkillDataService { get; set; }
 
         /// <summary>
         /// Gets or sets the operator ViewModel.
@@ -67,9 +67,9 @@ namespace Soheil.Core.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductGroupVM"/> class initialized with default values.
         /// </summary>
-        public SpecialSkillVM(AccessType access, SpecialSkillDataService dataService):base(access)
+        public SpecialSkillVM(AccessType access, ProductActivitySkillDataService dataService):base(access)
         {
-            _model = new GeneralActivitySkill();
+			_model = new ProductActivitySkill();
             InitializeData(dataService);
         }
 
@@ -78,7 +78,7 @@ namespace Soheil.Core.ViewModels
         /// </summary>
         /// <param name="entity">The model.</param>
         /// <param name="access"></param>
-        public SpecialSkillVM(GeneralActivitySkill entity, AccessType access, SpecialSkillDataService dataService)
+        public SpecialSkillVM(ProductActivitySkill entity, AccessType access, ProductActivitySkillDataService dataService)
             : base(access)
         {
             _model = entity;
@@ -90,7 +90,7 @@ namespace Soheil.Core.ViewModels
             //OperatorVM = new OperatorVM(entity.Operator);
         }
 
-        private void InitializeData(SpecialSkillDataService dataService)
+        private void InitializeData(ProductActivitySkillDataService dataService)
         {
             SpecialSkillDataService = dataService;
             SaveCommand = new Command(Save, CanSave);
@@ -110,9 +110,9 @@ namespace Soheil.Core.ViewModels
         #endregion
 
         #region Static Methods
-        public static GeneralActivitySkill CreateNew(SpecialSkillDataService dataService)
+		public static ProductActivitySkill CreateNew(ProductActivitySkillDataService dataService)
         {
-            int id = dataService.AddModel(new GeneralActivitySkill { /*???*/});
+			int id = dataService.AddModel(new ProductActivitySkill { /*???*/});
             return dataService.GetSingle(id);
         }
         #endregion

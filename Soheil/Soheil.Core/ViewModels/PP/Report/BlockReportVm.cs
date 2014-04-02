@@ -16,6 +16,7 @@ namespace Soheil.Core.ViewModels.PP
 		public BlockReportVm(BlockVm block)
 		{
 			Block = block;
+			ReloadProcessReportRows();
 		}
 		//Block Dependency Property
 		public BlockVm Block
@@ -75,28 +76,23 @@ namespace Soheil.Core.ViewModels.PP
 			//ProcessReportRows
 			foreach (var taskReport in TaskReports)
 			{
-				List<ProcessReportCellVm> processReports = new List<ProcessReportCellVm>();
 				if (taskReport is TaskReportVm)
 				{
 					var processReportModels = ProcessReportDataService.GetProcessReports((taskReport as TaskReportVm).Task.Id);
-					foreach (var processReportModel in processReportModels)
-					{
-						processReports.Add(new ProcessReportCellVm(
-							processReportModel,
-							taskReport,
-							ProcessReportRows.First(x => x.StateStationActivity.Id == processReportModel.Process.StateStationActivity.Id)));
-					}
+                    foreach (var processReportModel in processReportModels)
+                    {
+                        var row = ProcessReportRows.First(x => x.StateStationActivity.Id == processReportModel.Process.StateStationActivity.Id);
+                        row.ProcessReportCells.Add(new ProcessReportCellVm(processReportModel, taskReport, row));
+                    }
 				}
 				else//is holder
 				{
 					var processModels = TaskDataService.GetProcesses(taskReport.Task.Id);
-					foreach (var processModel in processModels)
-					{
-						processReports.Add(new ProcessReportCellVm(
-							null,
-							taskReport,
-							ProcessReportRows.First(x => x.StateStationActivity.Id == processModel.StateStationActivity.Id)));
-					}
+                    foreach (var processModel in processModels)
+                    {
+                        var row = ProcessReportRows.First(x => x.StateStationActivity.Id == processModel.StateStationActivity.Id);
+                        row.ProcessReportCells.Add(new ProcessReportCellVm(null, taskReport, row));
+                    }
 				}
 			}
 		}

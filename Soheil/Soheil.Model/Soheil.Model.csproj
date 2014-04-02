@@ -38,8 +38,15 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Xml.Linq" />
@@ -59,6 +66,9 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="ActivityGroup.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivitySkill.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="Block.cs">
@@ -98,9 +108,6 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="FPC.cs">
-      <DependentUpon>SoheilPOCO.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GeneralActivitySkill.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="Holiday.cs">
@@ -172,6 +179,9 @@
     <Compile Include="Product.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProductActivitySkill.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="ProductDefection.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
@@ -231,9 +241,6 @@
     <Compile Include="Test.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
-    <Compile Include="UniqueActivitySkill.cs">
-      <DependentUpon>SoheilPOCO.tt</DependentUpon>
-    </Compile>
     <Compile Include="User.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
@@ -269,6 +276,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="SoheilPOCO.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SoheilPOCO.cs</LastGenOutput>

@@ -16,44 +16,21 @@ namespace Soheil.Core.ViewModels.PP
 		public int ChangeoverId { get; set; }
 		public int WarmupId { get; set; }
 
-		#region Ctor, thread, load
+		internal Model.Setup SetupModel { get { return _model as Model.Setup; } }
+
+		#region Ctor
 		public SetupVm(Model.Setup model, PPItemCollection parent) 
 			: base(model, parent)
 		{
-			_threadLock = new Object();
-
 			StartDateTime = model.StartDateTime;
 			DurationSeconds = model.DurationSeconds;
 			RowIndex = model.Warmup.Station.Index;
 
 			initializeCommands();
 		}
-		//Thread Functions
-		protected override void acqusitionThreadStart()
-		{
-			try
-			{
-				Dispatcher.Invoke(new Action(() =>
-				{
-					if (!NPTDataService.UpdateViewModel(this))
-					{
-						Parent.RemoveNPT(this);
-					}
-					else
-					{
-						Dispatcher.Invoke(acqusitionThreadEnd);
-					}
-				}));
-			}
-			catch { }
-		}
-		protected override void acqusitionThreadEnd()
-		{
-			ViewMode = Parent.ViewMode;
-		} 
 		#endregion
 
-		#region Members
+		#region prop dps
 
 		//ChangeoverSeconds Dependency Property
 		public int ChangeoverSeconds
@@ -90,8 +67,53 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Commands
-		void initializeCommands()
+		DateTime? earliestTime()
 		{
+			var prev = Parent.PPTable.BlockDataService.FindPreviousBlock(SetupModel.Warmup.Station.Id, StartDateTime);
+			if (prev.Item1 != null) return prev.Item1.EndDateTime;
+			return null;
+		}
+		DateTime? lastestTime()
+		{
+			var next = Parent.PPTable.BlockDataService.FindNextBlock(SetupModel.Warmup.Station.Id, StartDateTime.AddSeconds(1));
+			if (next.Item1 != null) return next.Item1.StartDateTime.AddSeconds(-DurationSeconds);
+			return null;
+		}
+		protected override void initializeCommands()
+		{
+			base.initializeCommands();
+			SaveCommand = new Commands.Command(o =>
+			{
+				bool error = false;
+				var min = earliestTime();
+				if (min.HasValue)
+					if (StartDateTime < min.Value)
+						error = true;
+				var max = lastestTime();
+				if (max.HasValue)
+					if (StartDateTime > max.Value)
+						error = true;
+				if (error)
+				{
+					Message.AddEmbeddedException("زمان وارد شده با برنامه های موجود تداخل دارد");
+				}
+				else
+				{
+					SetupModel.StartDateTime = StartDateTime;
+					NPTDataService.UpdateViewModel(this);
+				}
+			});
+			CancelCommand = new Commands.Command(o => { StartDateTime = SetupModel.StartDateTime; IsEditMode = false; });
+			SetToEarliestTimeCommand = new Commands.Command(o =>
+			{
+				var dt = earliestTime();
+				if (dt.HasValue) StartDateTime = dt.Value;
+			});
+			SetToLatestTimeCommand = new Commands.Command(o =>
+			{
+				var dt = lastestTime();
+				if (dt.HasValue) StartDateTime = dt.Value;
+			});
 			EditItemCommand = new Commands.Command(o =>
 			{
 				Parent.PPTable.SelectedNPT = this;
@@ -122,6 +144,30 @@ namespace Soheil.Core.ViewModels.PP
 				}
 			});
 		}
+		//CancelCommand Dependency Property
+		public Commands.Command CancelCommand
+		{
+			get { return (Commands.Command)GetValue(CancelCommandProperty); }
+			set { SetValue(CancelCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CancelCommandProperty =
+			DependencyProperty.Register("CancelCommand", typeof(Commands.Command), typeof(SetupVm), new UIPropertyMetadata(null));
+		//SetToEarliestTimeCommand Dependency Property
+		public Commands.Command SetToEarliestTimeCommand
+		{
+			get { return (Commands.Command)GetValue(SetToEarliestTimeCommandProperty); }
+			set { SetValue(SetToEarliestTimeCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SetToEarliestTimeCommandProperty =
+			DependencyProperty.Register("SetToEarliestTimeCommand", typeof(Commands.Command), typeof(SetupVm), new UIPropertyMetadata(null));
+		//SetToLatestTimeCommand Dependency Property
+		public Commands.Command SetToLatestTimeCommand
+		{
+			get { return (Commands.Command)GetValue(SetToLatestTimeCommandProperty); }
+			set { SetValue(SetToLatestTimeCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SetToLatestTimeCommandProperty =
+			DependencyProperty.Register("SetToLatestTimeCommand", typeof(Commands.Command), typeof(SetupVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

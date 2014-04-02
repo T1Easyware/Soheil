@@ -52,6 +52,12 @@ namespace Soheil.Core.DataServices
 		{
 			throw new NotImplementedException();
 		}
+		public void UpdateDescriptionOnly(Job model)
+		{
+			var entity = _jobRepository.Single(x => x.Id == model.Id);
+			entity.Description = model.Description;
+			context.Commit();
+		}
 
 		public void DeleteModel(Job model)
 		{
@@ -79,8 +85,14 @@ namespace Soheil.Core.DataServices
 		}
 		#endregion
 
-		public event EventHandler<ModelAddedEventArgs<Job>> JobAdded;
-
+		/// <summary>
+		/// Given a job, creates tasks for it and does the other stuff too
+		/// </summary>
+		/// <param name="jobVms"></param>
+		internal void SaveAndGenerateTasks(ViewModels.PP.Editor.PPEditorJob job)
+		{
+			SaveAndGenerateTasks(new List<ViewModels.PP.Editor.PPEditorJob> { job });
+		}
 		/// <summary>
 		/// Given a list of jobs, creates tasks for all of them and does the other stuff too
 		/// </summary>
@@ -195,7 +207,11 @@ namespace Soheil.Core.DataServices
 			{
 				kvJM.Key.Id = kvJM.Value.Id;
 				if (JobAdded != null) JobAdded(this, new ModelAddedEventArgs<Job>(kvJM.Value));
-			}*/
+			}
+
+			if (JobAdded != null)
+				foreach (var job in jobVms)
+					JobAdded(this, new ModelAddedEventArgs<Job>(job.mo));*/
 		}
 
 
@@ -205,6 +221,35 @@ namespace Soheil.Core.DataServices
 			var fpc = new Repository<FPC>(context).FirstOrDefault(x => x.Product.Id == productId && x.IsDefault);
 			if (fpc == null) return -1;
 			return fpc.Id;
+		}
+
+		/// <summary>
+		/// Returns all jobs which are completely or partially inside the given range
+		/// <para>jobs touching the range from outside are not counted</para>
+		/// </summary>
+		/// <param name="StartDate"></param>
+		/// <param name="EndDate"></param>
+		/// <param name="byDefinition">[default = true] if set to false, change the criteria to the
+		/// <para>time range of "any block in the job" in the specified range</para></param>
+		/// <returns></returns>
+		internal IEnumerable<Job> GetInRange(DateTime StartDate, DateTime EndDate, bool byDefinition = true)
+		{
+			if (byDefinition)
+				return _jobRepository.Find(job =>
+					(job.ReleaseTime < EndDate && job.ReleaseTime >= StartDate)
+					||
+					(job.Deadline <= EndDate && job.Deadline > StartDate)
+					||
+					(job.ReleaseTime <= StartDate && job.Deadline >= EndDate)
+					);
+			else
+				return _jobRepository.Find(job => job.Blocks.Any(b =>
+					(b.StartDateTime < EndDate && b.StartDateTime >= StartDate)
+					||
+					(b.EndDateTime <= EndDate && b.EndDateTime > StartDate)
+					||
+					(b.StartDateTime <= StartDate && b.EndDateTime >= EndDate)
+					));
 		}
 	}
 }

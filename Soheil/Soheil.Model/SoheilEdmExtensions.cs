@@ -96,7 +96,7 @@ namespace Soheil.Model
 
 	public partial class DefectionReport
 	{
-		public float CountEquivalence { get { return LostCount + LostTime * ProcessReport.Process.StateStationActivity.CycleTime; } }
+		public float CountEquivalence { get { return LostCount + LostTime / ProcessReport.Process.StateStationActivity.CycleTime; } }
 	}
 
 	public partial class FPC
@@ -177,7 +177,7 @@ namespace Soheil.Model
 		//}
 	}
 
-	public partial class GeneralActivitySkill
+	public partial class ActivitySkill
 	{
 		public ILUO Iluo
 		{
@@ -185,7 +185,7 @@ namespace Soheil.Model
 			set { IluoNr = (byte)value; }
 		}
 	}
-	public partial class UniqueActivitySkill
+	public partial class ProductActivitySkill
 	{
 		public ILUO Iluo
 		{
@@ -271,7 +271,7 @@ namespace Soheil.Model
 		/// </summary>
 		public ProductRework MainProductRework { get { return ProductReworks.First(x => x.Rework == null); } }
 
-		public FPC DefaultFpc { get { return FPCs.First(x => x.IsDefault); } }
+		public FPC DefaultFpc { get { return FPCs.FirstOrDefault(x => x.IsDefault); } }
 	}
 
 	public partial class ProductDefection
@@ -303,10 +303,6 @@ namespace Soheil.Model
 		//    get { return (Status)Common.Status; }
 		//    set { Common.Status = (byte)value; }
 		//}
-	}
-
-	public partial class GeneralActivitySkill
-	{
 	}
 
 	public partial class State
@@ -360,7 +356,7 @@ namespace Soheil.Model
 
 	public partial class StoppageReport
 	{
-		public float CountEquivalence { get { return LostCount + LostTime * ProcessReport.Process.StateStationActivity.CycleTime; } }
+		public float CountEquivalence { get { return LostCount + LostTime / ProcessReport.Process.StateStationActivity.CycleTime; } }
 	}
 
 	public partial class Task

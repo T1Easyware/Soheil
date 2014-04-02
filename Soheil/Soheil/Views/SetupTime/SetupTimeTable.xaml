@@ -1,0 +1,350 @@
+﻿<UserControl x:Class="Soheil.Views.SetupTime.SetupTimeTable"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
+			 xmlns:v="clr-namespace:Soheil.Views.SetupTime"
+			 xmlns:vm="clr-namespace:Soheil.Core.ViewModels.SetupTime;assembly=Soheil.Core"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
+
+		<ControlTemplate x:Key="ScrollViewerHorizontalOnTopTemplate" TargetType="{x:Type ScrollViewer}">
+			<Grid x:Name="Grid" Background="{TemplateBinding Background}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" MinHeight="17"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				<Rectangle x:Name="Corner" 
+                    Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" 
+                    Grid.Column="1" Grid.Row="0"/>
+				<ScrollContentPresenter x:Name="PART_ScrollContentPresenter" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Grid.Column="0" Grid.Row="1" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False"/>
+				<ScrollBar x:Name="PART_VerticalScrollBar" 
+                    Cursor="Arrow" 
+                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" 
+                    Grid.Column="1" Grid.Row="1" 
+                    AutomationProperties.AutomationId="VerticalScrollBar" 
+                    Maximum="{TemplateBinding ScrollableHeight}" 
+                    Minimum="0" 
+                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                    ViewportSize="{TemplateBinding ViewportHeight}"/>
+				<ScrollBar x:Name="PART_HorizontalScrollBar" 
+                    Cursor="Arrow" 
+                    Grid.Column="0" 
+                    AutomationProperties.AutomationId="HorizontalScrollBar" 
+                    Maximum="{TemplateBinding ScrollableWidth}" 
+                    Minimum="0" 
+                    Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                    Orientation="Horizontal" 
+                    ViewportSize="{TemplateBinding ViewportWidth}"/>
+			</Grid>
+		</ControlTemplate>
+
+		<!--DataTemplate x:Key="templateTextCell" DataType="{x:Type vm:TextCell}">
+			<Border Background="Silver">
+				<TextBlock Text="{Binding Text}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			</Border>
+		</DataTemplate-->
+
+		<DataTemplate x:Key="templateProductGroupColumnHeaderCell" DataType="{x:Type vm:ProductGroup}">
+			<ToggleButton IsChecked="{Binding IsExpanded}" Padding="0" Margin="0">
+				<TextBlock Text="{Binding Name}" Margin="-1">
+					<TextBlock.LayoutTransform>
+						<RotateTransform Angle="270"/>
+					</TextBlock.LayoutTransform>
+				</TextBlock>
+			</ToggleButton>
+		</DataTemplate>
+		<DataTemplate x:Key="templateProductGroupRowHeaderCell" DataType="{x:Type vm:ProductGroup}">
+			<ToggleButton IsChecked="{Binding IsExpanded}" Padding="0" Margin="0">
+				<TextBlock Text="{Binding Name}"/>
+			</ToggleButton>
+		</DataTemplate>
+
+		<DataTemplate x:Key="templateProductColumnHeaderCell" DataType="{x:Type vm:Rework}">
+			<ToggleButton IsChecked="{Binding Product.IsExpanded}">
+				<ToggleButton.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+						<MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
+					</ContextMenu>
+				</ToggleButton.ContextMenu>
+				<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="WrapWithOverflow"/>
+			</ToggleButton>
+		</DataTemplate>
+		<DataTemplate x:Key="templateProductRowHeaderCell" DataType="{x:Type vm:Rework}">
+			<ToggleButton IsChecked="{Binding Product.IsExpanded}">
+				<ToggleButton.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+						<MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
+					</ContextMenu>
+				</ToggleButton.ContextMenu>
+				<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			</ToggleButton>
+		</DataTemplate>
+
+		<DataTemplate x:Key="templateReworkColumnHeaderCell" DataType="{x:Type vm:Rework}">
+			<Border Background="{Binding Product.Color}">
+				<Border.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+						<MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
+					</ContextMenu>
+				</Border.ContextMenu>
+				<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="WrapWithOverflow"/>
+			</Border>
+		</DataTemplate>
+		<DataTemplate x:Key="templateReworkRowHeaderCell" DataType="{x:Type vm:Rework}">
+			<Border Background="{Binding Product.Color}">
+				<Border.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+						<MenuItem Header="Paste" Command="{Binding PasteCommand}"/>
+					</ContextMenu>
+				</Border.ContextMenu>
+				<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			</Border>
+		</DataTemplate>
+
+
+		<DataTemplate x:Key="templateCheckboxCell" DataType="{x:Type vm:CheckboxCell}">
+			<Border Background="{Binding Row.Product.Color}">
+				<CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			</Border>
+		</DataTemplate>
+		<DataTemplate x:Key="templateWarmupCell" DataType="{x:Type vm:WarmupCell}">
+			<Border Background="{Binding Row.Product.Color}" MinWidth="60">
+				<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7"
+						 Visibility="{Binding Row.IsDurationsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
+					<TextBox.Triggers>
+						<EventTrigger RoutedEvent="MouseEnter">
+							<BeginStoryboard>
+								<Storyboard Duration="0:0:0.2">
+									<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+						<EventTrigger RoutedEvent="MouseLeave">
+							<BeginStoryboard>
+								<Storyboard Duration="0:0:0.4">
+									<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.4"/>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+						<EventTrigger RoutedEvent="GotFocus">
+							<BeginStoryboard>
+								<Storyboard Duration="0:0:0.2">
+									<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+						<EventTrigger RoutedEvent="LostFocus">
+							<BeginStoryboard>
+								<Storyboard Duration="0:0:0.4">
+									<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.4"/>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+					</TextBox.Triggers>
+				</TextBox>
+			</Border>
+		</DataTemplate>
+		<DataTemplate x:Key="templateChangeoverCell" DataType="{x:Type vm:ChangeoverCell}">
+			<Border>
+				<Grid>
+					<Border Background="{Binding CrossColors.HorColor}" Height="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+					<Border Background="{Binding CrossColors.VertColor}" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
+					<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7" x:Name="txt"
+								Visibility="{Binding Path=Row.IsDurationsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
+						<TextBox.Triggers>
+							<EventTrigger RoutedEvent="MouseEnter">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:0.2">
+										<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+							<EventTrigger RoutedEvent="MouseLeave">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:0.4">
+										<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.4"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+							<EventTrigger RoutedEvent="GotFocus">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:0.2">
+										<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+							<EventTrigger RoutedEvent="LostFocus">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:0.4">
+										<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.4"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+						</TextBox.Triggers>
+					</TextBox>
+				</Grid>
+			</Border>
+		</DataTemplate>
+		<DataTemplate x:Key="templateBlankCell" DataType="{x:Type vm:ChangeoverCell}">
+			<Border>
+				<Grid>
+					<Border Background="{Binding CrossColors.HorColor}" Height="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+					<Border Background="{Binding CrossColors.VertColor}" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
+				</Grid>
+			</Border>
+		</DataTemplate>
+	</UserControl.Resources>
+
+	<Grid x:Name="setupTimeTableRoot">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<ToolBar Grid.ColumnSpan="3">
+			<Menu>
+				<MenuItem Command="{Binding RefreshAllCommand}">
+					<Image Style="{StaticResource Undo16Image}"/>
+				</MenuItem>
+			</Menu>
+		</ToolBar>
+
+		<!--Stations-->
+		<DockPanel Grid.RowSpan="2" Grid.Column="2" Grid.Row="1" FlowDirection="RightToLeft">
+			<TextBlock Text="ایستگاه را انتخاب کنید" DockPanel.Dock="Top" Foreground="Silver"/>
+			<ListBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}" Focusable="False" DisplayMemberPath="Name"/>
+		</DockPanel>
+
+		<!--SelectedStation.ColumnHeaders-->
+		<DockPanel Grid.Column="1" Grid.Row="1">
+			<Border DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+				<TextBlock Text="زمانهای تعویض Changeover" DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Silver"/>
+			</Border>
+			<ScrollViewer ScrollChanged="columnHeaderScrollViewer_ScrollChanged" Template="{StaticResource ScrollViewerHorizontalOnTopTemplate}" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Background="Transparent">
+				<ItemsControl ItemsSource="{Binding SelectedStation.ColumnHeaders}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<Grid v:GridHelper.AllColumns="{Binding SelectedStation.ColumnPGList}" cc:GridHelper.RowCount="1"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemContainerStyle>
+						<Style TargetType="ContentPresenter">
+							<Setter Property="Grid.Row" Value="{Binding Path=RowIndex}"/>
+							<Setter Property="Grid.Column" Value="{Binding Path=ColumnIndex}"/>
+							<Style.Triggers>
+								<!--DataTrigger Binding="{Binding Path=CellType}" Value="TextCell">
+											<Setter Property="ContentTemplate" Value="{StaticResource templateTextCell}"/>
+											<Setter Property="Grid.ColumnSpan" Value="{Binding ElementName=setupTimeTableRoot, Path=DataContext.TotalVisualColumns}"/>
+										</DataTrigger-->
+								<DataTrigger Binding="{Binding Path=CellType}" Value="ProductGroupColumnHeaderCell">
+									<Setter Property="ContentTemplate" Value="{StaticResource templateProductGroupColumnHeaderCell}"/>
+								</DataTrigger>
+								<DataTrigger Binding="{Binding Path=CellType}" Value="ProductColumnHeaderCell">
+									<Setter Property="ContentTemplate" Value="{StaticResource templateProductColumnHeaderCell}"/>
+								</DataTrigger>
+								<DataTrigger Binding="{Binding Path=CellType}" Value="ReworkColumnHeaderCell">
+									<Setter Property="ContentTemplate" Value="{StaticResource templateReworkColumnHeaderCell}"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</ItemsControl.ItemContainerStyle>
+				</ItemsControl>
+			</ScrollViewer>
+		</DockPanel>
+
+		<!--SelectedStation.RowHeaders-->
+		<ScrollViewer Grid.Row="2" ScrollChanged="rowHeaderScrollViewer_ScrollChanged" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" FlowDirection="RightToLeft" Background="Transparent">
+			<ItemsControl ItemsSource="{Binding SelectedStation.RowHeaders}" FlowDirection="LeftToRight">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<Grid v:GridHelper.AllRows="{Binding SelectedStation.RowPGList}" cc:GridHelper.ColumnCount="3"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemContainerStyle>
+					<Style TargetType="ContentPresenter">
+						<Setter Property="Grid.Row" Value="{Binding Path=RowIndex}"/>
+						<Setter Property="Grid.Column" Value="{Binding Path=ColumnIndex}"/>
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Path=CellType}" Value="ProductGroupRowHeaderCell">
+								<Setter Property="ContentTemplate" Value="{StaticResource templateProductGroupRowHeaderCell}"/>
+								<Setter Property="Grid.ColumnSpan" Value="3"/>
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Path=CellType}" Value="ReworkRowHeaderCell">
+								<Setter Property="ContentTemplate" Value="{StaticResource templateReworkRowHeaderCell}"/>
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Path=CellType}" Value="ProductRowHeaderCell">
+								<Setter Property="ContentTemplate" Value="{StaticResource templateProductRowHeaderCell}"/>
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Path=CellType}" Value="CheckboxCell">
+								<Setter Property="ContentTemplate" Value="{StaticResource templateCheckboxCell}"/>
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Path=CellType}" Value="WarmupCell">
+								<Setter Property="ContentTemplate" Value="{StaticResource templateWarmupCell}"/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ItemsControl.ItemContainerStyle>
+			</ItemsControl>
+		</ScrollViewer>
+
+
+		<!--SelectedStation.ChangeoverCells-->
+		<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Grid.Row="2" Grid.Column="1" x:Name="changeoverScrollbar">
+			<ItemsControl ItemsSource="{Binding SelectedStation.ChangeoverCells}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<Grid 
+							v:GridHelper.AllColumns="{Binding SelectedStation.ColumnPGList}"
+							v:GridHelper.AllRows="{Binding SelectedStation.RowPGList}">
+						</Grid>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemContainerStyle>
+					<Style TargetType="ContentPresenter">
+						<Setter Property="Grid.Row" Value="{Binding Path=RowIndex}"/>
+						<Setter Property="Grid.Column" Value="{Binding Path=ColumnIndex}"/>
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Path=CellType}" Value="ChangeoverCell">
+								<Setter Property="ContentTemplate" Value="{StaticResource templateChangeoverCell}"/>
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Path=CellType}" Value="None">
+								<Setter Property="ContentTemplate" Value="{StaticResource templateBlankCell}"/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ItemsControl.ItemContainerStyle>
+			</ItemsControl>
+		</ScrollViewer>
+
+		<!--Texts-->
+		<DockPanel TextBlock.Foreground="Silver" Grid.Row="1">
+			<Border DockPanel.Dock="Right" Width="50">
+				<TextBlock Text="زمان آغاز به کار Warmup" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Bottom" TextAlignment="Center"/>
+			</Border>
+			<Border DockPanel.Dock="Right" Width="50">
+				<TextBlock Text="تولید اصلی لحاظ شود" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Bottom" TextAlignment="Center"/>
+			</Border>
+			<Border DockPanel.Dock="Left" Width="50">
+				<TextBlock Text="از محصول" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Bottom" TextAlignment="Center"/>
+			</Border>
+		</DockPanel>
+	</Grid>
+</UserControl>

@@ -243,6 +243,38 @@ namespace Soheil.Model
             }
         }
         private ICollection<Changeover> _changeoverTargets;
+    
+        public virtual ICollection<ProductActivitySkill> ProductActivitySkills
+        {
+            get
+            {
+                if (_productActivitySkills == null)
+                {
+                    var newCollection = new FixupCollection<ProductActivitySkill>();
+                    newCollection.CollectionChanged += FixupProductActivitySkills;
+                    _productActivitySkills = newCollection;
+                }
+                return _productActivitySkills;
+            }
+            set
+            {
+                if (!ReferenceEquals(_productActivitySkills, value))
+                {
+                    var previousValue = _productActivitySkills as FixupCollection<ProductActivitySkill>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupProductActivitySkills;
+                    }
+                    _productActivitySkills = value;
+                    var newValue = value as FixupCollection<ProductActivitySkill>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupProductActivitySkills;
+                    }
+                }
+            }
+        }
+        private ICollection<ProductActivitySkill> _productActivitySkills;
 
         #endregion
 
@@ -385,6 +417,28 @@ namespace Soheil.Model
                     if (ReferenceEquals(item.ToProductRework, this))
                     {
                         item.ToProductRework = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupProductActivitySkills(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ProductActivitySkill item in e.NewItems)
+                {
+                    item.ProductRework = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (ProductActivitySkill item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.ProductRework, this))
+                    {
+                        item.ProductRework = null;
                     }
                 }
             }

@@ -167,24 +167,6 @@ namespace Soheil.Views
         }
         #endregion
 
-		#region SetupTime Scroll events
-		ScrollViewer changeoverScrollbar = null;
-		private void setupTimeTableRootLoaded(object sender, RoutedEventArgs e)
-		{
-			changeoverScrollbar = (ScrollViewer)(sender as FrameworkElement).FindChild("changeoverScrollbar");
-		}
-		private void rowHeaderScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
-		{
-			if (changeoverScrollbar != null)
-				changeoverScrollbar.ScrollToVerticalOffset(e.VerticalOffset);
-		}
-		private void columnHeaderScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
-		{
-			if (changeoverScrollbar != null)
-				changeoverScrollbar.ScrollToHorizontalOffset(e.HorizontalOffset);
-		}
-		#endregion
-
 		#region PPTable
 
 		private enum SliderType
@@ -195,28 +177,19 @@ namespace Soheil.Views
 			hoursBar,
 			monthsLittleWindow,
 			daysLittleWindow,
-			taskReportBuilder,
-			taskReportBuilderInProcess,
-			processReportBuilder
 		}
+		public PPTableVm PPTableVm { get { return ViewModel as PPTableVm; } }
 	
 		#region Members
 		SliderType _sliderType = SliderType.none;
-		private Grid taskEditorPanel;
-		private Grid jobEditorPanel;
 		private FrameworkElement ic_months;
 		private ScrollViewer _stationsScrollbar;
 		private ScrollViewer _activitiesScrollbar;
-
-		public PPTableVm PPTableVm { get { return ViewModel as PPTableVm; } }
 		#endregion
 
-		#region Load/Unload PPTable,Task,Job,NPT,PRC
+		#region Load/Unload PPTable/TaskReport
 		private void ppTable_Loaded_1(object sender, RoutedEventArgs e)
 		{
-			taskEditorPanel = (Grid)(sender as FrameworkElement).FindChild("taskEditorPanel");
-			jobEditorPanel = (Grid)(sender as FrameworkElement).FindChild("jobEditorPanel");
-
 			ic_months = (ItemsControl)(sender as FrameworkElement).FindChild("ic_months");
 
 			ItemsControl ic_stations = (ItemsControl)(sender as FrameworkElement).FindChild("ic_stations");
@@ -224,57 +197,9 @@ namespace Soheil.Views
 			ItemsControl ic_activities = (ItemsControl)(sender as FrameworkElement).FindChild("ic_activities");
 			_activitiesScrollbar = (ScrollViewer)ic_activities.Template.FindName("sv_activities", ic_activities);
 
-			PPTableVm.InitializeViewModel();
 			PPTableVm.UpdateWidths();
 			PPTableVm.ResetTimeLine();
 		}
-		//Task/NPT Load/Unload
-		private void PPItem_Loaded(object sender, RoutedEventArgs e)
-		{
-			var vm = (sender as FrameworkElement).DataContext as PPItemVm;
-			if (vm != null)
-			{
-				vm.BeginAcquisition();
-			}
-		}
-		private void PPItem_Unloaded(object sender, RoutedEventArgs e)
-		{
-			var vm = (sender as FrameworkElement).DataContext as PPItemVm;
-			if (vm != null)
-				vm.UnloadData();
-		}
-		//TaskReports Load/Unload
-		private void TaskReports_Loaded(object sender, RoutedEventArgs e)
-		{
-			var task = (sender as FrameworkElement).DataContext as PPTaskVm;
-			if (task != null)
-			{
-				task.ReloadTaskReports();
-			}
-		}
-		private void TaskReports_Unloaded(object sender, RoutedEventArgs e)
-		{
-			var task = (sender as FrameworkElement).DataContext as PPTaskVm;
-			if (task != null)
-			{
-				task.ClearTaskReports();
-			}
-		}
-		//ProcessReports Load/Unload
-		private void PRC_Loaded(object sender, RoutedEventArgs e)
-		{
-			var prc = (sender as FrameworkElement).DataContext as ProcessReportCellVm;
-			if (prc != null)
-			{
-				prc.BeginAcquisition();
-			}
-		}
-		private void PRC_Unloaded(object sender, RoutedEventArgs e)
-		{
-			var prc = (sender as FrameworkElement).DataContext as ProcessReportCellVm;
-			if (prc != null)
-				prc.UnloadData();
-		} 
 		#endregion
 
 		#region Scroll and Zoom
@@ -356,15 +281,6 @@ namespace Soheil.Views
 					_prevX = newX;
 					PPTableVm.HoursPassed += (dx * 24 / PPTableVm.DayZoom);
 					break;
-				case SliderType.taskReportBuilder:
-					PPTableVm.CurrentTaskReportBuilder.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-					break;
-				case SliderType.taskReportBuilderInProcess:
-					PPTableVm.CurrentTaskReportBuilderInProcess.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-					break;
-				case SliderType.processReportBuilder:
-					PPTableVm.CurrentProcessReportBuilder.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-					break;
 				default:
 					break;
 			}
@@ -437,15 +353,6 @@ namespace Soheil.Views
 						}
 						_currentSlider.Cursor = _openCursor;
 						break;
-					case SliderType.taskReportBuilder:
-						PPTableVm.CurrentTaskReportBuilder.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-						break;
-					case SliderType.taskReportBuilderInProcess:
-						PPTableVm.CurrentTaskReportBuilderInProcess.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-						break;
-					case SliderType.processReportBuilder:
-						PPTableVm.CurrentProcessReportBuilder.Offset = e.GetPosition(this).SubtractPoint(_dragStartPoint);
-						break;
 					default:
 						break;
 				}
@@ -459,18 +366,6 @@ namespace Soheil.Views
 
 			_mouseIsUp = true;
 			#endregion
-		}
-		#endregion
-
-		#region Zoom
-		private void UndoZoomClicked(object sender, RoutedEventArgs e)
-		{
-			PPTableVm.RestoreZoom();
-		}
-		private void ZoomStarted(object sender, MouseButtonEventArgs e)
-		{
-			if (PPTableVm.SelectedBlock == null)//no block is in report state
-				PPTableVm.BackupZoom();
 		}
 		#endregion
 
@@ -496,42 +391,6 @@ namespace Soheil.Views
 
         #endregion
 
-		#region Other
-		private void productDefection_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (e.AddedItems.Count == 1)
-			{
-				sender.GetDataContext<DefectionReportVm>().ProductDefection.SelectedItem = (e.AddedItems[0] as FilterableItemVm);
-			}
-			else
-				sender.GetDataContext<DefectionReportVm>().ProductDefection.SelectedItem = null;
-		}
-
-		private void CausesSelectedCode_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			var vm = sender.GetDataContext<StoppageReportVm>();
-			var val = (sender as TextBox).Text;
-			if (string.IsNullOrWhiteSpace(val)) vm.StoppageLevels.FilterBoxes[0].SelectedItem = null;
-			if (val.Length >= 2)
-				vm.StoppageLevels.FilterBoxes[0].SelectedItem =
-					vm.StoppageLevels.FilterBoxes[0].FilteredList.FirstOrDefault(x => ((CauseVm)x.ViewModel).Code == val.Substring(0, 2));
-			if (val.Length >= 4)
-				vm.StoppageLevels.FilterBoxes[1].SelectedItem =
-					vm.StoppageLevels.FilterBoxes[1].FilteredList.FirstOrDefault(x => ((CauseVm)x.ViewModel).Code == val.Substring(2, 2));
-			if (val.Length == 6)
-				vm.StoppageLevels.FilterBoxes[2].SelectedItem =
-					vm.StoppageLevels.FilterBoxes[2].FilteredList.FirstOrDefault(x => ((CauseVm)x.ViewModel).Code == val.Substring(4, 2));
-		}
-
-		private void balloonClicked(object sender, MouseButtonEventArgs e)
-		{
-			var vm = sender.GetDataContext<EmbeddedException>();
-			if (vm != null) vm.ResetEmbeddedException();
-		}
 		#endregion
-
-
-		#endregion
-
 	}
 }

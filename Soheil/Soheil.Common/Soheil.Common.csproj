@@ -98,7 +98,6 @@
     <Compile Include="SoheilException\RoutedException.cs" />
     <Compile Include="SoheilException\SoheilExceptionBase.cs" />
     <Compile Include="SoheilFunctions.cs" />
-    <Compile Include="Structs.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

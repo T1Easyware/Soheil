@@ -18,7 +18,6 @@ namespace Soheil.Core.PP.Smart
 		}
 
 		internal List<SmartJob> SmartJobs { get; private set; }
-		protected TaskDataService _taskDataService;
 		protected BlockDataService _blockDataService;
 		protected NPTDataService _nptDataService;
 
@@ -76,7 +75,7 @@ namespace Soheil.Core.PP.Smart
 		/// <param name="sequence"></param>
 		/// <param name="freeSpaceSeconds"></param>
 		/// <returns></returns>
-		private bool validateSequence(List<SmartRange> sequence, int freeSpaceSeconds)
+		private bool validateSequence(IEnumerable<SmartRange> sequence, int freeSpaceSeconds)
 		{
 			return sequence.Where(x => x.Type != SmartRange.RangeType.DeleteSetup).Sum(x => x.DurationSeconds) <=
 				freeSpaceSeconds + sequence.Where(x => x.Type == SmartRange.RangeType.DeleteSetup).Sum(x => x.DurationSeconds);
@@ -89,7 +88,7 @@ namespace Soheil.Core.PP.Smart
 		/// <param name="productReworkId"></param>
 		/// <param name="startFrom"></param>
 		/// <param name="durationOftask"></param>
-		/// <param name="snapToLast">indicates if setups after a auto task should snap to its next task(true) or to the auto task(false)</param>
+		/// <param name="snapToLast">indicates if setups after an auto task should snap to its next task(true) or to the auto task(false)</param>
 		/// <returns></returns>
 		internal List<SmartRange> FindNextFreeSpace(int stationId, int productReworkId, DateTime startFrom, int durationOftask, bool snapToLast = true)
 		{
@@ -97,11 +96,12 @@ namespace Soheil.Core.PP.Smart
 			var inRangeItems = _blockDataService.GetInRange(startFrom, stationId)
 				.Select(x => SmartRange.ExistingBlock(x)).ToList();
 			var inRangeNPTs = _nptDataService.GetInRange(startFrom, stationId)
-				.Select(x => SmartRange.ExistingSetup(x)).ToList();
+				.Select(x => SmartRange.ExistingSetup(x))
+				.Where(x => x != null).ToList();
 			//find the task and setup in database, which is just before startFrom
-			var previousItem = _blockDataService.FindPreviousTask(stationId, startFrom);
-			var previousTask = SmartRange.ExistingBlock(previousItem.Value1);
-			var previousSetup = SmartRange.ExistingSetup(previousItem.Value2);
+			var previousItem = _blockDataService.FindPreviousBlock(stationId, startFrom);
+			var previousTask = SmartRange.ExistingBlock(previousItem.Item1);
+			var previousSetup = SmartRange.ExistingSetup(previousItem.Item2);
 
 			//create a row for specified station if needed
 			if (!_reserve.Any(x => x.Key == stationId))
@@ -112,7 +112,7 @@ namespace Soheil.Core.PP.Smart
 			PolynomialUnion(inRangeItems, reserve);
 			//*all are saved in inRangeItems*
 
-			TimeSpan minFreeSpace = new TimeSpan(0, 0, durationOftask);
+			TimeSpan minFreeSpace = TimeSpan.FromSeconds(durationOftask);
 
 
 			#region findSequenceOfSpotsBetween
@@ -365,6 +365,22 @@ namespace Soheil.Core.PP.Smart
 			}
 			data.Clear();
 			data.AddRange(dest);
+		}
+
+
+		/// <summary>
+		/// Saves all new setup entries in given list and returns true if all added successfully
+		/// </summary>
+		/// <param name="data">list of smart ranges creates by a smart manager</param>
+		/// <returns>true if all added successfully</returns>
+		internal bool SaveSetups(IEnumerable<SmartRange> data)
+		{
+			bool allOk = true;
+			foreach (var setup in data.Where(x=>x.Type == SmartRange.RangeType.NewSetup))
+			{
+				if (_nptDataService.AddModel(setup) <= 0) allOk = false;
+			}
+			return allOk;
 		}
 	}
 }

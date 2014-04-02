@@ -35,6 +35,8 @@ INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 		(27,'25','txtCosts',9),
 			(28,'251','txtCosts',27),
 			(29,'252','txtPartWarehouses',27),
+		(45,'26','txtSetupTimes',9),
+		(46,'27','txtSkillCenter',9),
 	(30,'3','txtControl',1),
 		(31,'31','txtProductPlan',30),
 		(32,'32','txtPerformance',30),

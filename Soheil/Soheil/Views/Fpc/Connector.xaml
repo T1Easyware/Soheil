@@ -103,7 +103,7 @@
 					<Image 
 						MouseDown="DeleteConnectorButton_Click" Name="deleteConnectorButton" ToolTip="حذف اتصال" Opacity="0"
 						HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0"
-						Style="{StaticResource deleteImage}">
+						Style="{StaticResource Delete16Image}">
 						<Image.Triggers>
 							<EventTrigger RoutedEvent="Mouse.MouseEnter">
 								<BeginStoryboard>

@@ -81,7 +81,5 @@ namespace Soheil.Views.PP
 		//	holder.CreateNewTaskCommand.Execute(null);
 			//((TabControl)sender).SelectedIndex--;
 		}
-
-
 	}
 }

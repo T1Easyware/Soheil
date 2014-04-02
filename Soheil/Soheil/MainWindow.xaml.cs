@@ -91,6 +91,8 @@ namespace Soheil
                     return;
                 }
             }
+
+			//!@#$
             switch (type)
             {
                 case SoheilEntityType.None:
@@ -136,6 +138,10 @@ namespace Soheil
 				case SoheilEntityType.WorkProfilePlan:
 					SplitList = new WorkProfilesVM(access);//-==-=-=-=-=---==-=----=-=-=-=-====-=-=--=-=-=-=---
 					chrometabs.AddTab(CreateSplitTab(type), true);
+					break;
+				case SoheilEntityType.SkillCenter:
+					SingularList = new Soheil.Core.ViewModels.SkillCenter.SkillCenterVm(access);
+					chrometabs.AddTab(CreateSingularTab(type), true);
 					break;
                 case SoheilEntityType.DefinitionsMenu:
                     break;
