@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Soheil.Core.ViewModels.SkillCenter
 {
 	/// <summary>
-	/// Basic abstract class to represent a tree item in skill center
+	/// Basic abstract class to represent a selectable tree item in skill center
 	/// <para>Derived types are <see cref="GeneralVm"/>, <see cref="ProductGroupVm"/>, <see cref="ProductVm"/> and <see cref="ProductReworkVm"/></para>
 	/// </summary>
 	public abstract class BaseTreeItemVm : BaseVm
@@ -17,7 +17,10 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		/// Occures when this tree item is selected
 		/// </summary>
 		public event Action<BaseTreeItemVm> Selected;
-		public BaseTreeItemVm()
+		/// <summary>
+		/// Initializes the commands (SelectCommand)
+		/// </summary>
+		protected void InitializeCommands()
 		{
 			SelectCommand = new Commands.Command(o =>
 			{
