@@ -715,4 +715,10 @@
   <data name="txtClose" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="txtInUse" xml:space="preserve">
+    <value>in use</value>
+  </data>
+  <data name="txtOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
 </root>

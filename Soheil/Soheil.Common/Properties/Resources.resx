@@ -720,4 +720,10 @@
   <data name="txtClose" xml:space="preserve">
     <value>بستن</value>
   </data>
+  <data name="txtInUse" xml:space="preserve">
+    <value>مورد استفاده</value>
+  </data>
+  <data name="txtOther" xml:space="preserve">
+    <value>سایر</value>
+  </data>
 </root>

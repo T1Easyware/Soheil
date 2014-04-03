@@ -10,7 +10,7 @@ using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
 {
-    public  class ActivityOperatorsVM : ItemLinkViewModel
+    public class ActivityOperatorsVM : ItemLinkViewModel
     {
         public ActivityOperatorsVM(ActivityVM activity, AccessType access)
             : base(access)

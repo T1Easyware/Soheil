@@ -146,7 +146,7 @@ namespace Soheil.Core.DataServices
 
         public ObservableCollection<ActivitySkill> GetOperators(int activityId)
         {
-			Activity entity = _activityRepository.FirstOrDefault(activity => activity.Id == activityId, "OperatorActivities.Activity", "OperatorActivities.Operator");
+			Activity entity = _activityRepository.FirstOrDefault(activity => activity.Id == activityId, "ActivitySkills.Activity", "ActivitySkills.Operator");
 			return new ObservableCollection<ActivitySkill>(entity.ActivitySkills.Where(item => item.Operator.Status == (decimal)Status.Active));
         }
 
