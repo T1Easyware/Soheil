@@ -94,7 +94,7 @@ namespace Soheil.Core.ViewModels
 
             AddCommand = new Command(Add, CanAdd);
 			RefreshCommand = new Command(CreateItems);
-            AddGroupCommand = new Command(Add, CanAddGroup);
+            AddGroupCommand = new Command(Add, () => false);
             CreateItems(null);
         }
 
@@ -116,7 +116,7 @@ namespace Soheil.Core.ViewModels
 
 		private void OnFpcAdded(object sender, ModelAddedEventArgs<FPC> e)
         {
-			var newFpcVm = new FpcVm(e.NewModel, Access, FpcDataService);
+			var newFpcVm = new FpcVm(e.NewModel, GroupItems, Access, FpcDataService);
             Items.AddNewItem(newFpcVm);
             Items.CommitNew();
 

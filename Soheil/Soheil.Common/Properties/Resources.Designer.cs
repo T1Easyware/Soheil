@@ -1114,6 +1114,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to مورد استفاده.
+        /// </summary>
+        public static string txtInUse {
+            get {
+                return ResourceManager.GetString("txtInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ورود.
         /// </summary>
         public static string txtLogin {
