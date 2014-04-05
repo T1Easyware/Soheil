@@ -29,7 +29,7 @@ namespace Soheil.Core.ViewModels
             SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<DefectionVM>();
-            foreach (var defection in DefectionDataService.GetActives(SoheilEntityType.Products))
+            foreach (var defection in DefectionDataService.GetActives(SoheilEntityType.Products, CurrentProduct.Id))
             {
                 allVms.Add(new DefectionVM(defection, Access, DefectionDataService));
             }

@@ -31,7 +31,7 @@ namespace Soheil.Core.ViewModels
             SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<PositionVM>();
-            foreach (var position in PositionDataService.GetActives(SoheilEntityType.Users))
+            foreach (var position in PositionDataService.GetActives(SoheilEntityType.Users, CurrentUser.Id))
             {
                 allVms.Add(new PositionVM(position, Access, PositionDataService));
             }

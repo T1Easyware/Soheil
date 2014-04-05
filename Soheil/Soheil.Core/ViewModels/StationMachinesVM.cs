@@ -30,7 +30,7 @@ namespace Soheil.Core.ViewModels
             SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<MachineVM>();
-            foreach (var machine in MachineDataService.GetActives(SoheilEntityType.Stations))
+            foreach (var machine in MachineDataService.GetActives(SoheilEntityType.Stations, CurrentStation.Id))
             {
                 allVms.Add(new MachineVM(machine, Access, MachineDataService, MachineFamilyDataService));
             }

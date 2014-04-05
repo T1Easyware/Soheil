@@ -44,11 +44,11 @@ namespace Soheil.Core.DataServices
                 return new ObservableCollection<Operator>(entityList);
         }
 
-        public ObservableCollection<Operator> GetActives(SoheilEntityType linkType)
+        public ObservableCollection<Operator> GetActives(SoheilEntityType linkType, int linkId = 0)
         {
             if (linkType == SoheilEntityType.Activities)
             {
-                    IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active && opr.ActivitySkills.Count == 0);
+                    IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active && opr.ActivitySkills.All(item=> item.Activity.Id != linkId));
                     return new ObservableCollection<Operator>(entityList);
             }
             return GetActives();

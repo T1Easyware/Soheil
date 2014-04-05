@@ -1548,7 +1548,41 @@
         <Setter Property="CornerRadius" Value="1,1,1,1" />
         <Setter Property="Margin" Value="2" />
     </Style>
-    
+
+    <!--  Soheil Medium Cover Border  -->
+    <Style x:Key="SoheilMediumCoverBorder" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="1,1,1,1" />
+        <Setter Property="Margin" Value="2" />
+    </Style>
+
+    <!--  Soheil Dark Cover Border  -->
+    <Style x:Key="SoheilDarkCoverBorder" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="{StaticResource ThemeDarkBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="1,1,1,1" />
+        <Setter Property="Margin" Value="2" />
+    </Style>
+
+    <!--  Soheil Fill Border  -->
+    <Style x:Key="SoheilFillBorder" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="1,1,1,1" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Background" Value="{StaticResource GroupGradientBrush}" />
+    </Style>
+
+    <!--  Soheil Simple Fill Border  -->
+    <Style x:Key="SoheilSimpleFillBorder" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="1,1,1,1" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Background" Value="{StaticResource ThemeMediumBrush}" />
+    </Style>
+
     <!--  Soheil DetailView Border  -->
     <Style x:Key="SoheilViewBorder" TargetType="{x:Type Border}">
         <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
@@ -1643,8 +1677,11 @@
         <Setter Property="Margin" Value="{StaticResource detailMargin}" />
         <Setter Property="HorizontalAlignment" Value="Right" />
         <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="{StaticResource BlueSelectedBrush}"/>
         <Setter Property="Height" Value="{StaticResource contentHeight}"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="tahoma" />
         <Setter Property="Width">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource SizeConverter}">
@@ -1750,6 +1787,15 @@
         <Setter Property="CornerRadius" Value="0,0,0,0" />
         <Setter Property="Margin" Value="{StaticResource barMargin}" />
         <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
+    </Style>
+
+    <!--  Soheil Item Border  -->
+    <Style x:Key="SoheilItemBorder" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="{StaticResource ThemeLightBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="1" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="Width" Value="130" />
     </Style>
 
     <!--  Soheil ContentUpperBar Border  -->
@@ -2441,6 +2487,111 @@
                             <Setter TargetName="Border" Property="BorderBrush"
                       Value="{DynamicResource DisabledBorderBrush}" />
                             <Setter TargetName="grid" Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Simple TextBox  -->
+    <Style x:Key="SimpleTextBox" TargetType="TextBox" >
+        <Setter Property="Background" Value="{StaticResource TextBoxBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
+        <Setter Property="CaretBrush" Value="{StaticResource Foreground}"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="tahoma" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="1"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{StaticResource TextBoxBackgroundSelected}"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="true">
+                            <Setter Property="Background" Value="{StaticResource TextBoxBackgroundSelected}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Soheil ListBox  -->
+    <DataTemplate x:Key="MetroListBoxItemTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="1" Margin="5">
+                <TextBlock Text="{Binding Path=Title, FallbackValue=Title}" FontFamily="Segoe UI Light" FontSize="20" 
+                            Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem, Mode=FindAncestor}, Path=Foreground}" />
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <Style x:Key="SoheilListBox" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Padding" Value="4,1"/>
+        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FocusVisualStyle">
+            <Setter.Value>
+                <Style>
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Rectangle Margin="2" SnapsToDevicePixels="True" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                        <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsSelected" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="Bd" Value="#FFB9B9B9"/>
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="{x:Null}"/>
+                            <Setter Property="Foreground" Value="Black" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                                <Condition Property="IsSelected" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="Bd" Value="{x:Null}"/>
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="{x:Null}"/>
+                            <Setter Property="Foreground" Value="Black" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="Bd" Value="#FF0072C6"/>
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="{x:Null}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

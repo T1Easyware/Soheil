@@ -181,16 +181,16 @@ namespace Soheil.Core.DataServices
 			var entityList = _productRepository.Find(product => product.Status == (decimal)Status.Active, "ProductGroup");
 			return new ObservableCollection<Product>(entityList);
 		}
-		public ObservableCollection<Product> GetActives(SoheilEntityType linkType)
+		public ObservableCollection<Product> GetActives(SoheilEntityType linkType, int linkId)
 		{
 			if (linkType == SoheilEntityType.Defections)
 			{
-				var entityList = _productRepository.Find(product => product.Status == (decimal)Status.Active && product.ProductDefections.Count == 0, "ProductGroup");
+				var entityList = _productRepository.Find(product => product.Status == (decimal)Status.Active && product.ProductDefections.All(item=> item.Defection.Id != linkId), "ProductGroup");
 				return new ObservableCollection<Product>(entityList);
 			}
 			if (linkType == SoheilEntityType.Reworks)
 			{
-				var entityList = _productRepository.Find(product => product.Status == (decimal)Status.Active && product.ProductReworks.Count == 0, "ProductGroup");
+				var entityList = _productRepository.Find(product => product.Status == (decimal)Status.Active && product.ProductReworks.All(item=> item.Rework.Id != linkId), "ProductGroup");
 				return new ObservableCollection<Product>(entityList);
 			}
 			return GetActives();

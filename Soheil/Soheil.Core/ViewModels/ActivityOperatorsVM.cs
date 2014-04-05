@@ -30,7 +30,7 @@ namespace Soheil.Core.ViewModels
             SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<OperatorVM>();
-            foreach (var opr in OperatorDataService.GetActives(SoheilEntityType.Activities))
+            foreach (var opr in OperatorDataService.GetActives(SoheilEntityType.Activities, CurrentActivity.Id))
             {
                 allVms.Add(new OperatorVM(opr, Access, OperatorDataService));
             }

@@ -129,7 +129,7 @@ namespace Soheil.Core.DataServices
                     var repository = new Repository<Root>(context);
                     IEnumerable<Root> entityList =
                         repository.Find(
-                            root => root.Status == (decimal)Status.Active && root.FishboneNodes.Count == 0, "ProductDefection", "ProductDefection.Product", "ProductDefection.Defection");
+                            root => root.Status == (decimal)Status.Active, "ProductDefection", "ProductDefection.Product", "ProductDefection.Defection");
                     models = new ObservableCollection<Root>(entityList);
                 }
                 return models;

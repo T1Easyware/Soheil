@@ -119,7 +119,7 @@ namespace Soheil.Core.DataServices
         /// Gets all active roots as view models.
         /// </summary>
         /// <returns></returns>
-        public ObservableCollection<ActionPlan> GetActives(SoheilEntityType linkType)
+        public ObservableCollection<ActionPlan> GetActives(SoheilEntityType linkType, int linkId = 0)
         {
             if (linkType == SoheilEntityType.Roots)
             {
