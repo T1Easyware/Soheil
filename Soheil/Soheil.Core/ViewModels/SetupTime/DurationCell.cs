@@ -55,14 +55,18 @@ namespace Soheil.Core.ViewModels.SetupTime
 					val = h * 3600 + m * 60 + s;
 					vm._seconds = val;
 					if (val == 0) return "";
-					return string.Format("{0}:{1}", val / 60, val % 60);
+					int year = val / 3600;
+					val %= 3600;
+					return string.Format("{0:D2}:{1:D2}:{2:D2}", year, val / 60, val % 60);
 				}
 				//in seconds
 				if (int.TryParse(str, out val))
 				{
 					vm._seconds = val;
 					if (val == 0) return "";
-					return string.Format("{0}:{1}", val / 60, val % 60);
+					int year = val / 3600;
+					val %= 3600;
+					return string.Format("{0:D2}:{1:D2}:{2:D2}", year, val / 60, val % 60);
 				}
 				//not recognized
 				vm._seconds = 0;

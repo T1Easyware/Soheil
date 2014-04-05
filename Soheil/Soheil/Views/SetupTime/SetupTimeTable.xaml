@@ -120,7 +120,7 @@
 			</Border>
 		</DataTemplate>
 		<DataTemplate x:Key="templateWarmupCell" DataType="{x:Type vm:WarmupCell}">
-			<Border Background="{Binding Row.Product.Color}" MinWidth="60">
+			<Border Background="{Binding Row.Product.Color}" MinWidth="75">
 				<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7"
 						 Visibility="{Binding Row.IsDurationsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 					<TextBox.Triggers>

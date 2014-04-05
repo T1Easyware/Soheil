@@ -860,7 +860,8 @@
                                             </Border.Width>
                                             <StackPanel>
                                                 <TextBlock FlowDirection="LeftToRight" Text="{Binding DurationSeconds,Converter={StaticResource secondsToStringConverter}}" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBox Text="{Binding TargetPoint}" Margin="0,2,0,0" IsReadOnly="{Binding CanUserEditTaskTPAndG1, Converter={StaticResource inverter}}" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Stretch">
+                                                <TextBox Text="{Binding TargetPoint}" Margin="0,2,0,0" IsReadOnly="False" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Stretch">
+                                                    <!-- is readonly was {Binding CanUserEditTaskTPAndG1, Converter={StaticResource inverter}}-->
                                                     <TextBox.Background>
                                                         <SolidColorBrush Color="Transparent" x:Name="bkgtp"/>
                                                     </TextBox.Background>

@@ -27,7 +27,11 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty IsDefaultProperty =
 			DependencyProperty.Register("IsDefault", typeof(bool), typeof(StateStationActivityMachineVm),
-			new UIPropertyMetadata(true, (d, e) => StateVm.AnyPropertyChangedCallback(((StateStationActivityMachineVm)d).ContainerSSA.ContainerSS.ContainerS.State, e)));
+			new UIPropertyMetadata(true, (d, e) => 
+				{
+					StateVm.AnyPropertyChangedCallback(((StateStationActivityMachineVm)d).ContainerSSA.ContainerSS.ContainerS.State, e);
+					((StateStationActivityMachineVm)d).Model.IsFixed = (bool)e.NewValue;
+				}));
 
 		public StateStationActivityVm ContainerSSA { get { return (StateStationActivityVm)base.Container; } set { base.Container = value; } }
 		public MachineVm ContainmentMachine { get { return (MachineVm)base.Containment; } set { base.Containment = value; } }
