@@ -715,10 +715,22 @@
   <data name="txtClose" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="txtInUse" xml:space="preserve">
-    <value>in use</value>
+  <data name="txtCurrentQuantity" xml:space="preserve">
+    <value>Current Quantity :</value>
   </data>
-  <data name="txtOther" xml:space="preserve">
-    <value>Other</value>
+  <data name="txtPartWHGroup" xml:space="preserve">
+    <value>Part Warehouse Group :</value>
+  </data>
+  <data name="txtStockStatus" xml:space="preserve">
+    <value>Stock Status :</value>
+  </data>
+  <data name="txtSelecteds" xml:space="preserve">
+    <value>Selected Items</value>
+  </data>
+  <data name="txtPaidCost" xml:space="preserve">
+    <value>Payment :</value>
+  </data>
+  <data name="txtUnitCost" xml:space="preserve">
+    <value>Unit Cost:</value>
   </data>
 </root>

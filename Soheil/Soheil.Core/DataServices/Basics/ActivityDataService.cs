@@ -132,13 +132,13 @@ namespace Soheil.Core.DataServices
         /// Gets all active activitys as view models.
         /// </summary>
         /// <returns></returns>
-        public ObservableCollection<Activity> GetActives(SoheilEntityType linkType)
+        public ObservableCollection<Activity> GetActives(SoheilEntityType linkType, int linkId)
         {
             if (linkType == SoheilEntityType.Operators)
             {
 				IEnumerable<Activity> entityList = _activityRepository.Find(activity => 
 					activity.Status == (decimal)Status.Active 
-					&& activity.ActivitySkills.Count == 0, "ActivityGroup");
+					&& activity.ActivitySkills.All(item=>item.Operator.Id != linkId), "ActivityGroup");
 				return new ObservableCollection<Activity>(entityList);
             }
             return GetActives();

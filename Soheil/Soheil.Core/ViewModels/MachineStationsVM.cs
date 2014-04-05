@@ -29,13 +29,12 @@ namespace Soheil.Core.ViewModels
 			}
 			SelectedItems = new ListCollectionView(selectedVms);
 
-			var allVms = new ObservableCollection<StationVM>();
-			foreach (var station in StationDataService.GetActives()
-				.Where(station => !selectedVms.Any(stationMachine => stationMachine.StationId == station.Id)))
-			{
-				allVms.Add(new StationVM(station, Access, StationDataService));
-			}
-			AllItems = new ListCollectionView(allVms);
+            var allVms = new ObservableCollection<StationVM>();
+            foreach (var station in StationDataService.GetActives(SoheilEntityType.Machines, CurrentMachine.Id))
+            {
+                allVms.Add(new StationVM(station, Access, StationDataService));
+            }
+            AllItems = new ListCollectionView(allVms);
 
 			IncludeCommand = new Command(Include, CanInclude);
 			ExcludeCommand = new Command(Exclude, CanExclude);

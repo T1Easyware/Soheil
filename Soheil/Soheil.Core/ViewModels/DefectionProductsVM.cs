@@ -32,7 +32,7 @@ namespace Soheil.Core.ViewModels
             SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<ProductVM>();
-            foreach (var product in ProductDataService.GetActives(SoheilEntityType.Defections))
+            foreach (var product in ProductDataService.GetActives(SoheilEntityType.Defections, CurrentDefection.Id))
             {
                 allVms.Add(new ProductVM(product, Access, ProductDataService, ProductGroupDataService));
             }

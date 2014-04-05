@@ -20,7 +20,7 @@ namespace Soheil.Core.ViewModels
             : base(access)
         {
             var accessRule = accessRuleDataService.GetSingle(accessRuleId);
-            Title = accessRule.Name;
+            Title = Common.Properties.Resources.ResourceManager.GetString(accessRule.Name);
             Id = accessRule.Id;
             ParentId =accessRule.Parent != null? accessRule.Parent.Id : -1;
             foreach (var child in accessRule.Children)

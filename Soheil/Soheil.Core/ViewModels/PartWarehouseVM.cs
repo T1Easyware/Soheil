@@ -83,6 +83,18 @@ namespace Soheil.Core.ViewModels
             set { _model.TotalCost = value; OnPropertyChanged("TotalCost"); }
         }
 
+        public double UnitCost
+        {
+            get
+            {
+                if (_model.TotalCost > 0 && OriginalQuantity > 0)
+                {
+                    return Math.Round((double) (_model.TotalCost/OriginalQuantity));
+                }
+                return 0;
+            }
+        }
+
         public Status Status
         {
             get { return (Status) _model.Status; }
@@ -195,6 +207,7 @@ namespace Soheil.Core.ViewModels
             OnPropertyChanged("ModifiedBy");
             OnPropertyChanged("ModifiedDate");
             OnPropertyChanged("IsReadOnly");
+            OnPropertyChanged("UnitCost");
         }
 
         public override bool CanSave()

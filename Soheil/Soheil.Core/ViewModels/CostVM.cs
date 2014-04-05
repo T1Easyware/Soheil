@@ -78,7 +78,8 @@ namespace Soheil.Core.ViewModels
             {
                 _model.CostValue = value;
                 OnPropertyChanged("CostValue"); 
-                OnPropertyChanged("IsReadOnly");
+                OnPropertyChanged("IsCostValueSet");
+                OnPropertyChanged("AllowChangeCostType");
                 OnPropertyChanged("IsEnable");
                 OnPropertyChanged("ComputationalCostVisibility");
                 OnPropertyChanged("FixedCostVisibility"); 
@@ -140,25 +141,34 @@ namespace Soheil.Core.ViewModels
             }
         }
 
-        public bool IsReadOnly
+        public bool IsCostValueSet
         {
             get
             {
                 return Math.Abs(CostValue - 0) > 0.00001;
             }
         }
+
+        public bool AllowChangeCostType
+        {
+            get
+            {
+                return !IsCostValueSet;
+            }
+        }
+
         public bool IsEnable
         {
             get
             {
-                return !IsReadOnly || CostType != CostType.Stock;
+                return !IsCostValueSet || CostType == CostType.Cash;
             }
         }
         public Visibility ComputationalCostVisibility
         {
             get
             {
-                if (IsReadOnly) return Visibility.Collapsed;
+                if (IsCostValueSet) return Visibility.Collapsed;
                 return Visibility.Visible;
             }
         }
@@ -166,7 +176,7 @@ namespace Soheil.Core.ViewModels
         {
             get
             {
-                if (IsReadOnly) return Visibility.Visible;
+                if (IsCostValueSet) return Visibility.Visible;
                 return Visibility.Collapsed;
             }
         }
@@ -286,7 +296,7 @@ namespace Soheil.Core.ViewModels
 
         public override void Save(object param)
         {
-            if (CostType == CostType.Stock && !IsReadOnly)
+            if (CostType == CostType.Stock && !IsCostValueSet)
                 SetCostParams();
             CostDataService.UpdateModel(_model, 
                 SelectedGroupVM.Id, SelectedWarehouseVM == null? null : SelectedWarehouseVM.Model, 
@@ -297,7 +307,7 @@ namespace Soheil.Core.ViewModels
         public override bool CanSave()
         {
             if (AllDataValid())
-                return IsReadOnly 
+                return (IsCostValueSet && CostType == CostType.Cash)
                     || (SelectedWarehouseVM != null 
                     && SelectedQuantity > 0
                     && Status == Status.Active
@@ -307,7 +317,7 @@ namespace Soheil.Core.ViewModels
 
         private void SetCostParams()
         {
-            bool readonlyStatus = IsReadOnly;
+            bool readonlyStatus = IsCostValueSet;
             var unitCost = SelectedWarehouseVM.TotalCost / SelectedWarehouseVM.OriginalQuantity;
 
             if (SelectedWarehouseVM.Quantity == SelectedQuantity)

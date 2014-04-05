@@ -152,5 +152,24 @@ namespace Soheil.Core.DataServices
 			context.Commit();
 			MachineRemoved(this, new ModelRemovedEventArgs(id));
 		}
+
+
+        /// <summary>
+        /// Gets all active products as view models.
+        /// </summary>
+        /// <returns></returns>
+		public ObservableCollection<Station> GetActives(SoheilEntityType linkType, int linkId)
+		{
+			if (linkType == SoheilEntityType.Machines)
+			{
+				ObservableCollection<Station> models;
+				IEnumerable<Station> entityList =
+					_stationRepository.Find(
+						station => station.Status == (decimal)Status.Active && station.StationMachines.All(item=>item.Machine.Id != linkId));
+				models = new ObservableCollection<Station>(entityList);
+				return models;
+			}
+			return GetActives();
+		}
     }
 }

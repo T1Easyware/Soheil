@@ -172,6 +172,22 @@ namespace Soheil.Core.DataServices
 			return new ObservableCollection<Machine>(entityList);
 		}
 
+        /// <summary>
+        /// Gets all active machines as view models.
+        /// </summary>
+        /// <returns></returns>
+        public ObservableCollection<Machine> GetActives(SoheilEntityType linkType, int linkId)
+        {
+            if (linkType == SoheilEntityType.Stations)
+            {
+				var entityList = _machineRepository.Find(machine => 
+					machine.Status == (decimal)Status.Active 
+					&& machine.StationMachines.All(item=>item.Station.Id != linkId), "MachineFamily");
+				return new ObservableCollection<Machine>(entityList);
+            }
+            return GetActives();
+        }
+
 		public IEnumerable<Machine> GetActives(int stateStationActivityId, params string[] includePath)
 		{
 			var models = new List<Machine>();
