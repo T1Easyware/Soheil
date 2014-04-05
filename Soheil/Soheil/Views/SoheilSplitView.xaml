@@ -2932,7 +2932,7 @@
                 </GroupBox>
                 <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtOperators}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
-                </-->
+                </GroupBox>
                 <Canvas />
             </DockPanel>
         </DataTemplate>
