@@ -108,7 +108,7 @@
         <!-- general operator -->
 		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="allOperatorsTemplate">
 			<Button Height="25" Name="btn" HorizontalAlignment="Stretch" Click="SelectOperator"
-					IsEnabled="{Binding IsSelected, Converter={StaticResource inverter}}">
+					IsEnabled="{Binding IsSelected, Converter={StaticResource inverter}}" Padding="0">
 				<Button.Visibility>
 					<MultiBinding Converter="{StaticResource filterMaker}">
 						<Binding Path="Code"/>
@@ -117,14 +117,15 @@
 					</MultiBinding>
 				</Button.Visibility>
 				<WrapPanel HorizontalAlignment="Left" TextBlock.Foreground="Black">
+					<TextBlock Text="{Binding EffectiveSkill}" Foreground="#099"/>
 					<TextBlock Name="txtCode" Text="{Binding Code}" Foreground="Gray"/>
-					<TextBlock Name="txtName" Text="{Binding Name}" Margin="5,0,0,0"/>
+					<TextBlock Name="txtName" Text="{Binding Name}" Foreground="DimGray"/>
 				</WrapPanel>
 			</Button>
 			<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding IsSelected}" Value="True">
-					<Setter TargetName="txtCode" Property="Foreground" Value="Silver"/>
-					<Setter TargetName="txtName" Property="Foreground" Value="Gray"/>
+					<Setter TargetName="txtCode" Property="Foreground" Value="LightGray"/>
+					<Setter TargetName="txtName" Property="Foreground" Value="Black"/>
 				</DataTrigger>
 				<Trigger SourceName="btn" Property="Visibility" Value="Hidden">
 					<Trigger.EnterActions>
@@ -156,8 +157,9 @@
 				<Button Height="25" Name="btn_deselect" HorizontalAlignment="Stretch" Click="DeselectOperator"
 					Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}">
 					<WrapPanel HorizontalAlignment="Left">
+						<TextBlock Text="{Binding EffectiveSkill}" Foreground="#099"/>
 						<TextBlock Text="{Binding Code}" Foreground="Gray"/>
-						<TextBlock Text="{Binding Name}" Margin="5,0,0,0"/>
+						<TextBlock Text="{Binding Name}" Foreground="DimGray" Margin="5,0,0,0"/>
 						<TextBlock Text="{Binding Role, Converter={StaticResource operatorRoleTextConverter}}" Margin="5,0,0,0" Foreground="Lime"/>
 					</WrapPanel>
 				</Button>

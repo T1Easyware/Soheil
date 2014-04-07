@@ -33,7 +33,7 @@ namespace Soheil.Core.ViewModels.PP
 		public DataServices.BlockDataService BlockDataService { get { return PPTable.BlockDataService; } }
 		public DataServices.JobDataService JobDataService { get { return PPTable.JobDataService; } }
 
-		private static readonly object _LOCK = new object();
+		private object _lockObject;
 		/// <summary>
 		/// Number of milliseconds to sleep when loading each item
 		/// </summary>
@@ -112,6 +112,7 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			PPTable = parent;
 			ViewMode = PPViewMode.Simple;
+			_lockObject = new Object();
 		}
 
 		/// <summary>
@@ -165,10 +166,12 @@ namespace Soheil.Core.ViewModels.PP
 				return;
 			}
 
-			//enter worker's critical segment
-			if (System.Threading.Monitor.TryEnter(_LOCK, 2000))
+			bool acquiredLock = false;
+			try
 			{
-				try
+				//enter worker's critical segment
+				System.Threading.Monitor.TryEnter(_lockObject, 2000, ref acquiredLock);
+				if (acquiredLock)
 				{
 					//load blocks within the modified range
 					var rangeStart = _rangeStart.AddHours(_startHourMargin);
@@ -202,9 +205,12 @@ namespace Soheil.Core.ViewModels.PP
 						worker.ReportProgress(2, npt);
 					}
 				}
-				finally
+			}
+			finally
+			{
+				if (acquiredLock)
 				{
-					System.Threading.Monitor.Exit(_LOCK);
+					System.Threading.Monitor.Exit(_lockObject);
 				}
 			}
 		}

@@ -393,7 +393,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			foreach (var taskVm in TaskList.OfType<PPEditorTask>())
 			{
 				//processes don't follow the JIT model attachment strategy
-				//so we need to manually attach their models prior to Save.
+				//so we need to manually attach or remove their models prior to Save.
 
 				//first remove those existing process models that there isn't any VM with the same Activity
 				var tmp = taskVm.Model.Processes.Where(m=>

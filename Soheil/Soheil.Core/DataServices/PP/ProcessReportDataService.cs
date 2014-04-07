@@ -62,22 +62,12 @@ namespace Soheil.Core.DataServices
 		{
 			if (id < 1) return null;
 			return _processReportRepository.FirstOrDefault(x => x.Id == id,
-					"Process",
 					"Process.StateStationActivity",
-					"ProcessOperatorReports",
-					"ProcessOperatorReports.Operator",
-					"ProcessOperatorReports.ProcessOperator",
 					"ProcessOperatorReports.ProcessOperator.Operator",
 					"StoppageReports",
-					"StoppageReports.Cause",
-					"StoppageReports.Cause.Parent",
 					"StoppageReports.Cause.Parent.Parent",
-					"StoppageReports.OperatorStoppageReports",
 					"StoppageReports.OperatorStoppageReports.Operator",
-					"DefectionReports",
-					"DefectionReports.OperatorDefectionReports",
 					"DefectionReports.OperatorDefectionReports.Operator",
-					"DefectionReports.ProductDefection",
 					"DefectionReports.ProductDefection.Defection");
 		}
 		/// <summary>
@@ -107,9 +97,9 @@ namespace Soheil.Core.DataServices
 					x => x.Process.Id == processId && x.TaskReport.Id == taskReportId);
 		}
 
-		internal IEnumerable<ProcessReport> GetProcessReports(int taskId)
+		internal IEnumerable<ProcessReport> GetProcessReports(int taskReportId)
 		{
-			return _processReportRepository.Find(x => x.TaskReport.Task.Id == taskId);
+			return _processReportRepository.Find(x => x.TaskReport.Id == taskReportId);
 		}
 
 		public void Save(ViewModels.PP.Report.ProcessReportCellVm vm)

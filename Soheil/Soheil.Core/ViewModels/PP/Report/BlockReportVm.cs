@@ -59,9 +59,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 				}
 			}
 
-			//removes duplicate SSAs from ssaModels
+			//find distince SSAs from ssaModels
 			ssaModels = ssaModels.DistinctBy(x => x.Id).OrderBy(x => x.Activity.Id).ThenBy(x => x.ManHour).ToList();
 
+			//add process report rows
 			foreach (var ssa in ssaModels)
 			{
 				//SSAList (finally add ssaVm to SSAList)
@@ -78,7 +79,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				if (taskReport is TaskReportVm)
 				{
-					var processReportModels = ProcessReportDataService.GetProcessReports((taskReport as TaskReportVm).Task.Id);
+					var processReportModels = ProcessReportDataService.GetProcessReports((taskReport as TaskReportVm).Id);
                     foreach (var processReportModel in processReportModels)
                     {
                         var row = ProcessReportRows.First(x => x.StateStationActivity.Id == processReportModel.Process.StateStationActivity.Id);

@@ -57,7 +57,7 @@ WHERE block.Id = @id";
 				"Job",
 				"Tasks.Processes.ProcessReports",
 				"Tasks.Processes.SelectedMachines",
-				"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
+				"Tasks.TaskReports.ProcessReports.ProcessOperatorReports.ProcessOperator.Operator",
 				"Tasks.TaskReports.ProcessReports.DefectionReports",
 				"Tasks.TaskReports.ProcessReports.StoppageReports"
 				);

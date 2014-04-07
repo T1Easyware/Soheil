@@ -89,6 +89,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 				//operators
 				var allOperatorModels = new DataServices.OperatorDataService(_uow).GetActives();
+				var operatorVms = new List<PPEditorOperator>();
 				foreach (var operatorModel in allOperatorModels)
 				{
 					var operatorVm = new PPEditorOperator(operatorModel, commonSSA);
@@ -98,6 +99,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						if (!_isInitializing)
 							SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == SelectedOperatorsCount);
 					};
+					operatorVms.Add(operatorVm);
+				}
+				foreach (var operatorVm in operatorVms.OrderByDescending(x => x.EffectiveSkill))
+				{
 					OperatorList.Add(operatorVm);
 				}
 			}

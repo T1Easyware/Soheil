@@ -17,28 +17,13 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="*"/>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
-
-				<DockPanel LastChildFill="False" Grid.RowSpan="2" HorizontalAlignment="Right">
-					<Button DockPanel.Dock="Right" Command="{Binding SaveCommand}">
-						<DockPanel>
-							<Image DockPanel.Dock="Left" Style="{StaticResource Save16Image}"/>
-							<TextBlock Text="ذخیره تغییرات و بستن" Foreground="Black"/>
-						</DockPanel>
-					</Button>
-					<Button DockPanel.Dock="Right" Command="{Binding CloseCommand}">
-						<DockPanel>
-							<Image DockPanel.Dock="Left" Style="{StaticResource Undo16Image}"/>
-							<TextBlock Text="بستن" Foreground="Black"/>
-						</DockPanel>
-					</Button>
-				</DockPanel>
 
 				<DockPanel>
 					<!-- main buttons -->
@@ -60,6 +45,21 @@
 					<TextBlock DockPanel.Dock="Left" Text="زمان شروع گزارش" VerticalAlignment="Center"/>
 					<cal:PersianDatePicker DockPanel.Dock="Left" SelectedDate="{Binding StartDate}" IsEnabled="False"/>
 					<TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" IsReadOnly="True" FlowDirection="LeftToRight"/>
+				</DockPanel>
+
+				<DockPanel LastChildFill="False" Grid.RowSpan="2" HorizontalAlignment="Right">
+					<Button DockPanel.Dock="Right" Command="{Binding SaveCommand}">
+						<DockPanel>
+							<Image DockPanel.Dock="Left" Style="{StaticResource Save16Image}"/>
+							<TextBlock Text="ذخیره تغییرات و بستن" Foreground="Black"/>
+						</DockPanel>
+					</Button>
+					<Button DockPanel.Dock="Right" Command="{Binding CloseCommand}">
+						<DockPanel>
+							<Image DockPanel.Dock="Left" Style="{StaticResource Undo16Image}"/>
+							<TextBlock Text="بستن" Foreground="Black"/>
+						</DockPanel>
+					</Button>
 				</DockPanel>
 
 				<!-- Operator produced G1 -->
@@ -131,22 +131,23 @@
 										<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding Name}" TextAlignment="Center" HorizontalAlignment="Center"/>
 										</ContentControl>
-										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}" HorizontalAlignment="Stretch">
-											<ContentControl.ToolTip>
-												<UniformGrid>
-													<TextBlock Text="سطح مهارت کلی"/>
-													<TextBlock Text="{Binding GeneralSkill}"/>
-													<TextBlock Text="سطح مهارت تخصصی"/>
-													<TextBlock Text="{Binding SpecialSkill}"/>
-												</UniformGrid>
-											</ContentControl.ToolTip>
+										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding Role, Converter={StaticResource operatorRoleTextConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
-											<TextBlock Text="{Binding EffectiveSkill}" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<TextBlock Text="{Binding EffectiveSkill}" TextAlignment="Center" HorizontalAlignment="Center">
+												<TextBlock.ToolTip>
+													<UniformGrid>
+														<TextBlock Text="سطح مهارت کلی"/>
+														<TextBlock Text="{Binding GeneralSkill}"/>
+														<TextBlock Text="سطح مهارت تخصصی"/>
+														<TextBlock Text="{Binding SpecialSkill}"/>
+													</UniformGrid>
+												</TextBlock.ToolTip>												
+											</TextBlock>
 										</ContentControl>
 										<ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
-											<TextBox Text="{Binding ProducedG1}" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+											<TextBox Text="{Binding ProducedG1, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" HorizontalAlignment="Stretch"/>
 										</ContentControl>
 									</Grid>
 								</DataTemplate>
