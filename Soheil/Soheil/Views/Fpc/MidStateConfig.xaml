@@ -9,6 +9,9 @@
 	<Color x:Key="stroke">#ECF8C0</Color>
 	<Color x:Key="fill">#ECF8C0</Color>
 
+    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource ResourceKey={x:Type TextBox}}">
+        <EventSetter Event="KeyDown" Handler="textBoxKeyDown"/>
+    </Style>
 	<Style x:Key="stackStyle" TargetType="ItemsControl">
 		<Setter Property="ItemsPanel">
 			<Setter.Value>

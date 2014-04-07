@@ -58,10 +58,10 @@ namespace Soheil.Core.ViewModels
 
             ColumnHeaders = new List<ColumnInfo> 
             { 
-                new ColumnInfo("Name", false), 
-                new ColumnInfo("StartDate", false), 
-                new ColumnInfo("EndDate", false), 
-                new ColumnInfo("SelectedProfile.Name", "txtWorkProfile", true), 
+                new ColumnInfo("Name",0, false), 
+                new ColumnInfo("StartDate",1, false), 
+                new ColumnInfo("EndDate",2, false), 
+                new ColumnInfo("SelectedProfile.Name", "txtWorkProfile",3, true), 
             };
 
             AddCommand = new Command(Add, CanAdd);

@@ -31,7 +31,7 @@ namespace Soheil.Core.ViewModels
             }
 
             var allVms = new ObservableCollection<PositionVM>();
-            foreach (var position in PositionDataService.GetActives(SoheilEntityType.OrganizationCharts))
+            foreach (var position in PositionDataService.GetActives(SoheilEntityType.OrganizationCharts, CurrentOrganizationChart.Id))
             {
                 allVms.Add(new PositionVM(position, Access, PositionDataService));
             }

@@ -11,7 +11,7 @@
     <Color x:Key="DisabledSelectionColor">#6D7E78</Color>
 
     <!--  Text Colors  -->
-    <Color x:Key="LightTextColor">#ECEBEE</Color>
+    <Color x:Key="LightTextColor">#ECEBEE</Color> 
     <Color x:Key="MediumTextColor">#D4D4D5</Color>
     <Color x:Key="DarkTextColor">#A0A3A4</Color>
 
@@ -57,23 +57,19 @@
     <Color x:Key="ButtonOrangeLightColor">#EDCE9B</Color>
     <Color x:Key="ButtonGrayLightColor">#DAE5E4</Color>
 
+    <Color x:Key="BlueDarkColor">#007ACC</Color>
+    <Color x:Key="BlueMediumColor">#1C97EA</Color>
+    <Color x:Key="BlueLightColor">#4DAFF2</Color>
 
     <!--ACCENT COLORS-->
     <Color x:Key="HighlightDarkColor">#FF086F9E</Color>
     <Color x:Key="HighlightLightColor">#FF086F9E</Color>
-    <!--60%-->
-    <Color x:Key="AccentColor2">#99119EDA</Color>
-    <!--40%-->
-    <Color x:Key="AccentColor3">#66119EDA</Color>
-    <!--20%-->
-    <Color x:Key="AccentColor4">#33119EDA</Color>
 
-    <Color x:Key="AccentColor">#2D2D30</Color>
     <!--<Color x:Key="WhiteColor">#2D2D30</Color>-->
     <Color x:Key="BlackColor">#FFFFFFFF</Color>
 
     <!-- ### Metro ### -->
-    
+
     <!--BASE COLORS-->
     <Color x:Key="Gray1">#FFCCCCCC</Color>
     <Color x:Key="Gray2">#FF7F7F7F</Color>

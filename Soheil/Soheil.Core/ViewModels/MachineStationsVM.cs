@@ -13,32 +13,32 @@ namespace Soheil.Core.ViewModels
     public class MachineStationsVM : ItemLinkViewModel
     {
 
-        public MachineStationsVM(MachineVM machine, AccessType access)
-            : base(access)
-        {
-            CurrentMachine = machine;
-            MachineDataService = new MachineDataService();
-            MachineDataService.StationAdded += OnStationAdded;
-            MachineDataService.StationRemoved += OnStationRemoved;
-            StationDataService = new StationDataService();
+		public MachineStationsVM(MachineVM machine, AccessType access)
+			: base(access)
+		{
+			CurrentMachine = machine;
+			MachineDataService = new MachineDataService();
+			MachineDataService.StationAdded += OnStationAdded;
+			MachineDataService.StationRemoved += OnStationRemoved;
+			StationDataService = new StationDataService();
 
-            var selectedVms = new ObservableCollection<StationMachineVM>();
-            foreach (var stationMachine in MachineDataService.GetStations(machine.Id))
-            {
-                selectedVms.Add(new StationMachineVM(stationMachine, Access, StationMachineDataService, RelationDirection.Reverse));
-            }
-            SelectedItems = new ListCollectionView(selectedVms);
+			var selectedVms = new ObservableCollection<StationMachineVM>();
+			foreach (var stationMachine in MachineDataService.GetStations(machine.Id))
+			{
+				selectedVms.Add(new StationMachineVM(stationMachine, Access, StationMachineDataService, RelationDirection.Reverse));
+			}
+			SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<StationVM>();
-            foreach (var station in StationDataService.GetActives(SoheilEntityType.Machines))
+            foreach (var station in StationDataService.GetActives(SoheilEntityType.Machines, CurrentMachine.Id))
             {
                 allVms.Add(new StationVM(station, Access, StationDataService));
             }
             AllItems = new ListCollectionView(allVms);
 
-            IncludeCommand = new Command(Include, CanInclude);
-            ExcludeCommand = new Command(Exclude, CanExclude);
-        }
+			IncludeCommand = new Command(Include, CanInclude);
+			ExcludeCommand = new Command(Exclude, CanExclude);
+		}
 
         public MachineVM CurrentMachine { get; set; }
 

@@ -29,7 +29,7 @@ namespace Soheil.Core.ViewModels
             SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<UserVM>();
-            foreach (var user in UserDataService.GetActives(SoheilEntityType.Positions))
+            foreach (var user in UserDataService.GetActives(SoheilEntityType.Positions, CurrentPosition.Id))
             {
                 allVms.Add(new UserVM(user, Access, UserDataService));
             }

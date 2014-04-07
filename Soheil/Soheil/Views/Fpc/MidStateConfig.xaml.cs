@@ -32,5 +32,19 @@ namespace Soheil.Views.Fpc
 				config.State.ParentWindowVm.FireSelectState(config.State);
 			}
 		}
+
+		private void textBoxKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter || e.Key == Key.Return || e.Key == Key.Space)
+			{
+				var sc = sender.GetDataContext<StateConfigVm>();
+				if (sc != null) sc.State.SaveCommand.Execute(null);
+				else
+				{
+					var ssa = sender.GetDataContext<StateStationActivityVm>();
+					if (ssa != null) ssa.ContainerSS.ContainerS.State.SaveCommand.Execute(null);
+				}
+			}
+		}
 	}
 }

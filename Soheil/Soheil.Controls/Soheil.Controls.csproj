@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\BindableSelectedItemBehavior.cs" />
+    <Compile Include="Behaviors\FocusSelectAllTextBoxBehavior.cs" />
     <Compile Include="Behaviors\LinqToVisualTree.cs" />
     <Compile Include="Behaviors\ScrollOffsetBinding.cs" />
     <Compile Include="Converters\BooleanToLengthConverter.cs" />
@@ -138,6 +139,8 @@
     <Compile Include="CustomControls\FrameworkElementAdorner.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="CustomControls\GridLengthAnimation.cs" />
+    <Compile Include="CustomControls\ImageRadioButton.cs" />
+    <Compile Include="CustomControls\ImageButton.cs" />
     <Compile Include="CustomControls\OverlayMessageBox.xaml.cs">
       <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
     </Compile>
@@ -285,6 +288,60 @@
     <Resource Include="Images\SelectGroup.png" />
   </ItemGroup>
   <ItemGroup>
+ <Resource Include="Images\usersAccess.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\orgChart.png" />
+    <Resource Include="Images\userAccess.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\Actionplan.png" />
+    <Resource Include="Images\Menus\activity.png" />
+    <Resource Include="Images\Menus\Cause.png" />
+    <Resource Include="Images\Menus\Cost.png" />
+    <Resource Include="Images\Menus\CostReport.png" />
+    <Resource Include="Images\Menus\Diagnosis.png" />
+    <Resource Include="Images\Menus\FPC.png" />
+    <Resource Include="Images\Menus\Holidays.png" />
+    <Resource Include="Images\Menus\Index.png" />
+    <Resource Include="Images\Menus\Machinery.png" />
+    <Resource Include="Images\Menus\orgChart.png" />
+    <Resource Include="Images\Menus\PC.png" />
+    <Resource Include="Images\Menus\pc2.png" />
+    <Resource Include="Images\Menus\Performance.png" />
+    <Resource Include="Images\Menus\Position.png" />
+    <Resource Include="Images\Menus\pp.png" />
+    <Resource Include="Images\Menus\Product.png" />
+    <Resource Include="Images\Menus\Report.png" />
+    <Resource Include="Images\Menus\Rework.png" />
+    <Resource Include="Images\Menus\Roots.png" />
+    <Resource Include="Images\Menus\Setting.png" />
+    <Resource Include="Images\Menus\SetupTime.png" />
+    <Resource Include="Images\Menus\Station.png" />
+    <Resource Include="Images\Menus\TimePlan.png" />
+    <Resource Include="Images\Menus\userAccess.png" />
+    <Resource Include="Images\Menus\users.png" />
+    <Resource Include="Images\Menus\usersAccess.png" />
+    <Resource Include="Images\Menus\warehouse.png" />
+    <Resource Include="Images\Menus\WorkingTime.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\operator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\changeOver.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\001_01.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Return.png" />
     <Resource Include="Images\all.png" />
   </ItemGroup>
   <ItemGroup>

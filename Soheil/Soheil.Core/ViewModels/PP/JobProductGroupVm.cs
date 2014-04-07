@@ -7,8 +7,17 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP
 {
+	/// <summary>
+	/// View model of product group used in job
+	/// <para><see cref="JobProductVm"/> instances in this vm can create new jobs based on their associating products and add them to a JobListVm</para>
+	/// </summary>
 	public class JobProductGroupVm : ProductGroupVm
 	{
+		/// <summary>
+		/// Creates an instance of this vm with given model and data service
+		/// </summary>
+		/// <param name="model">products and product reworks of this model are also in use</param>
+		/// <param name="jobDataService"></param>
 		public JobProductGroupVm(Model.ProductGroup model, DataServices.JobDataService jobDataService)
 		{
 			if (model == null) return;

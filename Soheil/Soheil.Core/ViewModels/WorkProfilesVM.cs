@@ -58,8 +58,8 @@ namespace Soheil.Core.ViewModels
 
             ColumnHeaders = new List<ColumnInfo> 
             { 
-                new ColumnInfo("Name", false), 
-                new ColumnInfo("NumberOfShiftsInGrid", "txtName", true), 
+                new ColumnInfo("Name",0, false), 
+                new ColumnInfo("NumberOfShiftsInGrid", "txtName",1, true), 
             };
 
             AddCommand = new Command(Add, CanAdd);

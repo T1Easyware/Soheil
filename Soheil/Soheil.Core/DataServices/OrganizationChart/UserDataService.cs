@@ -133,7 +133,7 @@ namespace Soheil.Core.DataServices
             return users;
         }
 
-        public ObservableCollection<User> GetActives(SoheilEntityType linkType)
+        public ObservableCollection<User> GetActives(SoheilEntityType linkType, int linkId = 0)
         {
             if (linkType == SoheilEntityType.Positions)
             {
@@ -143,7 +143,7 @@ namespace Soheil.Core.DataServices
                     var repository = new Repository<User>(context);
                     IEnumerable<User> entityList =
                         repository.Find(
-                            user => user.Status == (decimal)Status.Active && user.User_Positions.Count == 0);
+                            user => user.Status == (decimal)Status.Active && user.User_Positions.All(up => up.Position.Id != linkId));
                     users = new ObservableCollection<User>(entityList);
                 }
                 return users;

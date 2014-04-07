@@ -119,7 +119,7 @@ namespace Soheil.Core.DataServices
         /// Gets all active products as view models.
         /// </summary>
         /// <returns></returns>
-        public ObservableCollection<Defection> GetActives(SoheilEntityType linkType)
+        public ObservableCollection<Defection> GetActives(SoheilEntityType linkType, int linkId)
         {
             if (linkType == SoheilEntityType.Products)
             {
@@ -129,7 +129,7 @@ namespace Soheil.Core.DataServices
                     var repository = new Repository<Defection>(context);
                     IEnumerable<Defection> entityList =
                         repository.Find(
-                            defection => defection.Status == (decimal)Status.Active && defection.ProductDefections.Count == 0);
+                            defection => defection.Status == (decimal)Status.Active && defection.ProductDefections.All(item=> item.Product.Id != linkId));
                     models = new ObservableCollection<Defection>(entityList);
                 }
                 return models;
@@ -143,7 +143,7 @@ namespace Soheil.Core.DataServices
             using (var context = new SoheilEdmContext())
             {
                 var repository = new Repository<Defection>(context);
-                Defection entity = repository.FirstOrDefault(defection => defection.Id == defectionId, "ProductDefection.Defection", "ProductDefection.Product");
+                Defection entity = repository.FirstOrDefault(defection => defection.Id == defectionId, "ProductDefections.Defection", "ProductDefections.Product");
                 models = new ObservableCollection<ProductDefection>(entity.ProductDefections.Where(item=>item.Product.Status == (decimal)Status.Active));
             }
 

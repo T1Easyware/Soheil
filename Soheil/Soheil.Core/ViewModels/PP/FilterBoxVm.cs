@@ -9,7 +9,8 @@ using System.Windows;
 namespace Soheil.Core.ViewModels.PP
 {
 	/// <summary>
-	/// ViewModel for a collection of <see cref="FilterableItemVm"/> with same type of model
+	/// ViewModel for a collection of <see cref="FilterableItemVm"/> instances which all have the same type of model
+	/// <para>Currently designed to select a guilty operator from a list of operators, a Cause from a list of causes or a ProductDefection from a list of defections</para>
 	/// <para>Best to use this vm as ItemsSource of a ComboBox</para>
 	/// </summary>
 	public class FilterBoxVm : DependencyObject

@@ -123,7 +123,7 @@ namespace Soheil.Core.DataServices
 
                 if (costSourceId > 0)
                 {
-                    switch ((CostSourceType)costModel.CostCenter.SourceType)
+                    switch ((CostSourceType)costEntity.CostCenter.SourceType)
                     {
                         case CostSourceType.Other:
                             break;

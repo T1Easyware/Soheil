@@ -34,6 +34,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 				Name = model.Rework.Name;
 				Code = model.Rework.Code;
 			}
+			InitializeCommands();
 		}
 
 		/// <summary>

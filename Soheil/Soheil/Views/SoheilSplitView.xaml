@@ -17,6 +17,7 @@
              xmlns:Controls="clr-namespace:Soheil.Controls;assembly=Soheil.Controls"
              xmlns:Base="clr-namespace:Soheil.Core.Base;assembly=Soheil.Core" 
              xmlns:Interfaces="clr-namespace:Soheil.Core.Interfaces;assembly=Soheil.Core"
+             xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:ColorPicker="clr-namespace:Soheil.Controls.CustomControls.ColorPicker;assembly=Soheil.Controls"
              D:DesignHeight="{Binding RelativeSource={RelativeSource AncestorType=Control},
                                       Path=ActualHeight}"
@@ -96,16 +97,27 @@
             <ObjectDataProvider.MethodName><![CDATA[GetProperties]]></ObjectDataProvider.MethodName>
         </ObjectDataProvider>
 
+        <!-- General Templates -->
+        <ControlTemplate x:Key="ConfirmExcludeButton">
+            <DockPanel>
+                <ToggleButton Style="{StaticResource ConfirmCancelButton}" DockPanel.Dock="Left" Width="20" Content="X" Margin="1">
+                    <I:Interaction.Triggers>
+                        <I:EventTrigger EventName="Indeterminate">
+                            <I:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
+                                            CommandParameter="{Binding}" />
+                        </I:EventTrigger>
+                    </I:Interaction.Triggers>
+                </ToggleButton>
+                <Canvas/>
+            </DockPanel>
+        </ControlTemplate>    
         <!--.............................................. Navigation Templates ..........................................-->
 
         <!-- User-Position -->
         <DataTemplate x:Key="UserPositionTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -120,15 +132,13 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate x:Key="PositionUserTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -144,17 +154,15 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- User-AccessRule -->
         <DataTemplate x:Key="UserAccessRuleTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -169,17 +177,15 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- Position-AccessRule -->
         <DataTemplate x:Key="PositionAccessRuleTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -195,40 +201,36 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- Product-Defection -->
         <DataTemplate x:Key="ProductDefectionTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
-                    CommandParameter="{Binding}">
-                    <ContentPresenter>
-                        <ContentPresenter.ContentTemplate>
-                            <DataTemplate DataType="ViewModels:ProductDefectionVM">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Path=DefectionCode}" />
-                                    <TextBlock Text="{Binding Path=DefectionName}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ContentPresenter.ContentTemplate>
-                    </ContentPresenter>
-                </Button>
-            </WrapPanel>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
+                    <Button
+                        Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
+                        CommandParameter="{Binding}">
+                        <ContentPresenter>
+                            <ContentPresenter.ContentTemplate>
+                                <DataTemplate DataType="ViewModels:ProductDefectionVM">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Path=DefectionCode}" />
+                                        <TextBlock Text="{Binding Path=DefectionName}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ContentPresenter.ContentTemplate>
+                        </ContentPresenter>
+                    </Button>
+                </StackPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate x:Key="DefectionProductTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -243,17 +245,15 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- Product-Rework -->
         <DataTemplate x:Key="ProductReworkTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -270,15 +270,13 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate x:Key="ReworkProductTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -295,17 +293,15 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- Activity-Operator -->
         <DataTemplate x:Key="ActivityOperatorTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -321,15 +317,13 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate x:Key="GeneralActivitySkillTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -345,17 +339,15 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- Station-Machine -->
         <DataTemplate x:Key="StationMachineTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -370,15 +362,13 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate x:Key="MachineStationTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -393,17 +383,15 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- ActionPlan-FishboneNode -->
         <DataTemplate x:Key="ActionPlanFishboneNodeTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -418,15 +406,13 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate x:Key="FishboneNodeActionPlanTemplate">
-            <WrapPanel>
-                <Button
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
-                    CommandParameter="{Binding}"
-                        Content="X">
-                </Button>
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -441,7 +427,8 @@
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </Button>
-            </WrapPanel>
+            </StackPanel>
+            </Border>
         </DataTemplate>
 
         <TemplateSelectors:NavigationItemSelector x:Key="NavigationItemTemplateSelector"
@@ -475,7 +462,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.Template>
                     <ControlTemplate>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="ScrollViewer" 
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" x:Name="ScrollViewer" 
                                       Padding="{TemplateBinding Padding}">
                             <ItemsPresenter />
                         </ScrollViewer>
@@ -546,7 +533,7 @@
                 <UniformGrid Margin="5"
                              Columns="2"
                              Rows="2">
-                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
+                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}"  />
                     <TextBox Margin="2" Text="{Binding Path=CurrentContent.Code, ValidatesOnDataErrors=True, 
                         UpdateSourceTrigger=PropertyChanged}" />
                     <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
@@ -556,7 +543,7 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="GroupStatusInfoContent" TargetType="{x:Type ContentControl}">
-            <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentMiddleBorder}">
+            <Expander DockPanel.Dock="Top" Style="{StaticResource SoheilContentLowerExpander}">
                 <UniformGrid Margin="5"
                              Columns="2"
                              Rows="2">
@@ -569,7 +556,7 @@
                     <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStatus}" />
                     <ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedValue="{Binding Path=CurrentContent.Status}" />
                 </UniformGrid>
-            </Border>
+            </Expander>
         </ControlTemplate>
         <ControlTemplate x:Key="TypeStatusInfoContent" TargetType="{x:Type ContentControl}">
 			<Expander DockPanel.Dock="Top" Style="{StaticResource SoheilContentLowerExpander}">
@@ -633,12 +620,14 @@
             <Border DockPanel.Dock="Bottom" Style="{StaticResource SoheilContentLowerBorder}">
                 <UniformGrid Margin="5"
                              Columns="2"
-                             Rows="4">
+                             Rows="5">
+                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtOriginalQty}" />
+                    <TextBlock Margin="2" Text="{Binding Path=CurrentContent.OriginalQuantity}" />
+                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtUnitCost}" />
+                    <TextBlock Margin="2" Text="{Binding Path=CurrentContent.UnitCost}" />
                     <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtQty}" />
                     <TextBox Margin="2" IsReadOnly="{Binding CurrentContent.IsReadOnly}" Text="{Binding Path=CurrentContent.Quantity}" />
-                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtOriginalQty}" />
-                    <TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.OriginalQuantity}" />
-                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCost}" />
+                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtTotalCost}" />
                     <TextBox Margin="2" IsReadOnly="{Binding CurrentContent.IsReadOnly}" Text="{Binding Path=CurrentContent.TotalCost}" />
                     <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStockStatus}" />
                     <TextBlock Text="{Binding Path=CurrentContent.StockStatus}" />
@@ -649,8 +638,31 @@
             <Border DockPanel.Dock="Bottom" Style="{StaticResource SoheilContentLowerBarBorder}">
                 <WrapPanel>
                     <WrapPanel Margin="10" HorizontalAlignment="Left">
-                        <Button Command="{Binding Path=CurrentContent.SaveCommand, UpdateSourceTrigger=PropertyChanged}" Content="{Loc txtSave}" />
+                        <Button Height="30" Width="75"
+                            Command="{Binding Path=CurrentContent.SaveCommand, UpdateSourceTrigger=PropertyChanged}" >
+                            <DockPanel>
+                                <Image DockPanel.Dock="Left" VerticalAlignment="Center" Width="16" Height="16" Source="/Soheil.Controls;component/Images/Save.png"/>
+                                <Canvas Width="10"/>
+                                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Text="{Loc txtSave}"/>
+                            </DockPanel>
+                        </Button>
                     </WrapPanel>
+                </WrapPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="ReturnPanel" TargetType="ContentControl">
+            <Border Style="{StaticResource SoheilContentUpperBarBorder}">
+                <WrapPanel Margin="10"
+                                       HorizontalAlignment="Right"
+                                       DockPanel.Dock="Bottom">
+                    <Button Height="25" Width="100"
+                                        Command="{Binding Path=CurrentContent.BackToMainContentCommand}" >
+                        <DockPanel>
+                            <Image DockPanel.Dock="Left" VerticalAlignment="Center" Width="16" Height="16" Source="/Soheil.Controls;component/Images/Return.png"/>
+                            <Canvas Width="10"/>
+                            <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Text="{Loc txtBack}"/>
+                        </DockPanel>
+                    </Button>
                 </WrapPanel>
             </Border>
         </ControlTemplate>
@@ -666,18 +678,18 @@
         <!-- 1.1. Users Access -->
         <DataTemplate x:Key="UsersSubContentPanel">
             <WrapPanel Height="22" Margin="2">
-                <RadioButton Click="ListUpdated"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                              IsChecked="True"
-                            Style="{StaticResource SoheilTabButton}"
                             Content="{Loc txtUsers}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/users.png"
                             Tag="111" />
-                <RadioButton Click="ListUpdated"
-                        Style="{StaticResource SoheilTabButton}"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                         Content="{Loc txtPositions}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Position.png"
                         Tag="112" />
-                <RadioButton Click="ListUpdated"
-                        Style="{StaticResource SoheilTabButton}"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                         Content="{Loc txtOrgCharts}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/orgChart.png"
                         Tag="113" />
             </WrapPanel>
         </DataTemplate>
@@ -756,7 +768,7 @@
                                 <PasswordBox Margin="2" Controls:PasswordHelper.Attach="True" 
                                      Controls:PasswordHelper.Password="{Binding Text, ElementName=PlainConfirmPass, Mode=TwoWay}" 
                                              />
-                                <CheckBox Margin="2" Content="{Loc BypassAccess}" IsChecked="{Binding CurrentContent.BypassPositionAccess}"></CheckBox>
+                                <CheckBox Margin="2" Content="{Loc txtBypassAccess}" IsChecked="{Binding CurrentContent.BypassPositionAccess}"></CheckBox>
                             </UniformGrid>
                         </Border>
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
@@ -770,20 +782,13 @@
         <DataTemplate x:Key="UserPositionsTemplate" DataType="ViewModels:UserPositionsVM">
             <DockPanel  DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtPositions}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtUsers}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtPositions}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
                 <Canvas />
@@ -792,16 +797,9 @@
         <DataTemplate x:Key="UserAccessRulesTemplate" DataType="ViewModels:UserAccessRulesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtModules}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <TreeView FlowDirection="{Loc enumDirection}">
                             <TreeView.ItemsSource>
                                 <Binding>
@@ -965,14 +963,7 @@
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtUsers}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
@@ -985,16 +976,9 @@
         <DataTemplate x:Key="PositionAccessRulesTemplate" DataType="ViewModels:PositionAccessRulesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtModules}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <TreeView FlowDirection="{Loc enumDirection}">
                             <TreeView.ItemsSource>
                                 <Binding>
@@ -1039,7 +1023,7 @@
                         </TreeView>
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtPositions}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtUsers}">
                     <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}">
                         <ItemsControl DockPanel.Dock="Top" HorizontalAlignment="Left" 
                                   ItemsSource="{Binding Source={StaticResource AccessValues}}" >
@@ -1088,7 +1072,7 @@
         </DataTemplate>
         <DataTemplate x:Key="PositionOrganizationChartsTemplate" DataType="ViewModels:PositionOrganizationChartsVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtOrgCharts}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
                             <WrapPanel Margin="10"
@@ -1107,7 +1091,7 @@
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtPositions}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtOrgCharts}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
                 <Canvas />
@@ -1196,18 +1180,15 @@
                                                                                       VerticalAlignment="Center"
                                                                                       ContentSource="Header"
                                                                                       DockPanel.Dock="Left" />
-                                                                    <Button Width="20"
-                                                                            Content="x"
-                                                                            DockPanel.Dock="Right">
-                                                                        <Button.Command>
-                                                                            <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}">
-                                                                                <Binding.Path>ViewModel.CurrentContent.PositionsVM.ExcludeTreeCommand</Binding.Path>
-                                                                            </Binding>
-                                                                        </Button.Command>
-                                                                        <Button.CommandParameter>
-                                                                            <Binding Path="."></Binding>
-                                                                        </Button.CommandParameter>
-                                                                    </Button>
+                                                                    <ToggleButton DockPanel.Dock="Right" Style="{StaticResource ConfirmCancelButton}" Content="X" Width="20">
+                                                                        <I:Interaction.Triggers>
+                                                                            <I:EventTrigger EventName="Indeterminate">
+                                                                                <I:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
+                                                                                        Path=ViewModel.CurrentContent.PositionsVM.ExcludeTreeCommand}"
+                                                                                    CommandParameter="{Binding}" />
+                                                                            </I:EventTrigger>
+                                                                        </I:Interaction.Triggers>
+                                                                    </ToggleButton>
                                                                     <Canvas />
                                                                 </DockPanel>
                                                             </Border>
@@ -1336,7 +1317,7 @@
         </DataTemplate>
         <DataTemplate x:Key="OrganizationChartPositionsTemplate" DataType="ViewModels:OrganizationChartPositionsVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtOrgCharts}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
                             <WrapPanel Margin="10"
@@ -1365,11 +1346,11 @@
         <!-- 1.2. Modules -->
         <DataTemplate x:Key="ModulesSubContentPanel">
             <WrapPanel Height="22" Margin="2">
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                              IsChecked="True"
-                        Content="{Loc txtAccessRules}"
-                        Tag="121" />
+                            Content="{Loc txtAccessRules}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/pc2.png"
+                            Tag="121" />
             </WrapPanel>
         </DataTemplate>
 
@@ -1393,7 +1374,7 @@
         </DataTemplate>
         <DataTemplate x:Key="AccessRuleUsersTemplate" DataType="ViewModels:AccessRuleUsersVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtUsers}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
                             <WrapPanel Margin="10"
@@ -1412,7 +1393,7 @@
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtModules}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtUsers}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
                 <Canvas />
@@ -1420,7 +1401,7 @@
         </DataTemplate>
         <DataTemplate x:Key="AccessRulePositionsTemplate" DataType="ViewModels:AccessRulePositionsVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtPositions}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
                             <WrapPanel Margin="10"
@@ -1439,7 +1420,7 @@
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtModules}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtPositions}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
                 <Canvas />
@@ -1449,20 +1430,20 @@
 		<!-- 1.3. Working Times-->
 		<DataTemplate x:Key="OrganizationCalendarSubContentPanel">
 			<WrapPanel Height="22" Margin="2">
-				<RadioButton Click="ListUpdated"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                              IsChecked="True"
-                            Style="{StaticResource SoheilTabButton}"
                             Content="{Loc txtWorkProfiles}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/WorkingTime.png"
                             Tag="131" />
-				<RadioButton Click="ListUpdated"
-                        Style="{StaticResource SoheilTabButton}"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                         Content="{Loc txtHolidays}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Holidays.png"
                         Tag="132" />
-				<RadioButton Click="ListUpdated"
-                        Style="{StaticResource SoheilTabButton}"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                         Content="{Loc txtWorkProfilePlan}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/TimePlan.png"
                         Tag="133" />
-			</WrapPanel>
+            </WrapPanel>
 		</DataTemplate>
 		
 		<!--  1.2.1. Work Profile  -->
@@ -1947,15 +1928,15 @@
         <!-- 2.1. Products -->
         <DataTemplate x:Key="ProductsSubContentPanel">
             <WrapPanel Height="22" Margin="2">
-                <RadioButton Click="ListUpdated"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                              IsChecked="True"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtProducts}"
-                        Tag="211" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtReworks}"
-                        Tag="212" />
+                            Content="{Loc txtProducts}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Product.png"
+                            Tag="211" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtReworks}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Rework.png"
+                            Tag="212" />
             </WrapPanel>
         </DataTemplate>
 
@@ -2009,20 +1990,13 @@
         <DataTemplate x:Key="ProductDefectionsTemplate" DataType="ContentControl">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView},  Path=ViewModel}"
                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtDefections}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Template="{StaticResource ExcludeList}"/>
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtProducts}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtDefections}">
                     <ItemsControl Template="{StaticResource IncludeList}"/>
                 </GroupBox>
                 <Canvas />
@@ -2031,106 +2005,9 @@
         <DataTemplate x:Key="ProductReworksTemplate" DataType="ViewModels:ProductReworksVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtReworks}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
-                        <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
-                        <Border DockPanel.Dock="Bottom">
-                            <UniformGrid Margin="5"
-                                         Columns="2"
-                                         FlowDirection="{Loc enumDirection}"
-                                         Rows="4">
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
-                                <TextBox Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Code}"/>
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
-                                <TextBox Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Name}"/>
-                                <Canvas />
-                                <Canvas />
-                                <Button Content="{Loc txtEdit}">
-                                    <Button.Command>
-                                        <Binding>
-                                            <Binding.Path>CurrentContent.CurrentLink.Details.SaveCommand</Binding.Path>
-                                        </Binding>
-                                    </Button.Command>
-                                </Button>
-                            </UniformGrid>
-                        </Border>
-                        <Canvas DockPanel.Dock="Bottom" />
-                    </DockPanel>
-                </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtProducts}">
-                    <ItemsControl Template="{StaticResource IncludeList}" />
-                </GroupBox>
-                <Canvas />
-            </DockPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="ProductGroupTemplate" DataType="ViewModels:ProductGroupVM">
-            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
-                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
-                <I:Interaction.Behaviors>
-                    <Behavior:ValidationExceptionBehavior />
-                </I:Interaction.Behaviors>
-                <DockPanel FlowDirection="{Loc enumDirection}">
-                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
-                    <DockPanel DockPanel.Dock="Top">
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
-                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
-                    </DockPanel>
-                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
-                    <Canvas DockPanel.Dock="Bottom" />
-                </DockPanel>
-            </GroupBox>
-        </DataTemplate>
-
-        <!-- 2.1.2. Rework -->
-        <DataTemplate x:Key="ReworkTemplate" DataType="ViewModels:ReworkVM">
-            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
-                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
-                <I:Interaction.Behaviors>
-                    <Behavior:ValidationExceptionBehavior />
-                </I:Interaction.Behaviors>
-                <DockPanel FlowDirection="{Loc enumDirection}">
-                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                        <WrapPanel Margin="10"
-                                   HorizontalAlignment="Right"
-                                   DockPanel.Dock="Bottom">
-                            <Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
-                                    CommandParameter="0"
-                                    Content="{Loc txtProducts}">
-                            </Button>
-                        </WrapPanel>
-                    </Border>
-                    <DockPanel DockPanel.Dock="Top">
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
-                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
-                    </DockPanel>
-                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
-                    <Canvas DockPanel.Dock="Bottom" />
-                </DockPanel>
-            </GroupBox>
-        </DataTemplate>
-        <DataTemplate x:Key="ReworkProductsTemplate" DataType="ViewModels:ReworkProductsVM">
-            <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtProducts}">
-                    <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                         <Border DockPanel.Dock="Bottom">
                             <UniformGrid Margin="5"
@@ -2161,27 +2038,110 @@
                 <Canvas />
             </DockPanel>
         </DataTemplate>
+        <DataTemplate x:Key="ProductGroupTemplate" DataType="ViewModels:ProductGroupVM">
+            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
+                    <DockPanel DockPanel.Dock="Top">
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
+
+        <!-- 2.1.2. Rework -->
+        <DataTemplate x:Key="ReworkTemplate" DataType="ViewModels:ReworkVM">
+            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
+                        <WrapPanel Margin="10"
+                                   HorizontalAlignment="Right"
+                                   DockPanel.Dock="Bottom">
+                            <Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
+                                    CommandParameter="0"
+                                    Content="{Loc txtProducts}">
+                            </Button>
+                        </WrapPanel>
+                    </Border>
+                    <DockPanel DockPanel.Dock="Top">
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
+        <DataTemplate x:Key="ReworkProductsTemplate" DataType="ViewModels:ReworkProductsVM">
+            <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
+                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
+                        <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
+                        <Border DockPanel.Dock="Bottom">
+                            <UniformGrid Margin="5"
+                                         Columns="2"
+                                         FlowDirection="{Loc enumDirection}"
+                                         Rows="4">
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
+                                <TextBox Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Code}"/>
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+                                <TextBox Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Name}"/>
+                                <Canvas />
+                                <Canvas />
+                                <Button Content="{Loc txtEdit}">
+                                    <Button.Command>
+                                        <Binding>
+                                            <Binding.Path>CurrentContent.CurrentLink.Details.SaveCommand</Binding.Path>
+                                        </Binding>
+                                    </Button.Command>
+                                </Button>
+                            </UniformGrid>
+                        </Border>
+                        <Canvas DockPanel.Dock="Bottom" />
+                    </DockPanel>
+                </GroupBox>
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtProducts}">
+                    <ItemsControl Template="{StaticResource IncludeList}" />
+                </GroupBox>
+                <Canvas />
+            </DockPanel>
+        </DataTemplate>
 
         <!-- 2.2. Diagnosis -->
         <DataTemplate x:Key="DefectionsSubContentPanel">
             <WrapPanel Height="22" Margin="2">
-                <RadioButton Click="ListUpdated"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                              IsChecked="True"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtDefections}"
-                        Tag="221" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtRoots}"
-                        Tag="222" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtActionPlans}"
-                        Tag="223" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtCauses}"
-                        Tag="224" />
+                            Content="{Loc txtDefections}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Diagnosis.png"
+                            Tag="221" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtRoots}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Roots.png"
+                            Tag="222" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtActionPlans}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Actionplan.png"
+                            Tag="223" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtCauses}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Cause.png"
+                            Tag="224" />
             </WrapPanel>
         </DataTemplate>
 
@@ -2205,7 +2165,7 @@
                     </Border>
                     <DockPanel DockPanel.Dock="Top">
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
@@ -2216,20 +2176,13 @@
         <DataTemplate x:Key="DefectionProductsTemplate" DataType="ViewModels:DefectionProductsVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtProducts}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtDefections}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtProducts}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
                 <Canvas />
@@ -2359,18 +2312,15 @@
                                                                                           VerticalAlignment="Center"
                                                                                           ContentSource="Header"
                                                                                           DockPanel.Dock="Left" />
-                                                                                <Button Width="20"
-                                                                                Content="x"
-                                                                                DockPanel.Dock="Right">
-                                                                                    <Button.Command>
-                                                                                        <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}">
-                                                                                            <Binding.Path>ViewModel.CurrentContent.FishbonesVM.ExcludeTreeCommand</Binding.Path>
-                                                                                        </Binding>
-                                                                                    </Button.Command>
-                                                                                    <Button.CommandParameter>
-                                                                                        <Binding Path="."></Binding>
-                                                                                    </Button.CommandParameter>
-                                                                                </Button>
+                                                                                <ToggleButton DockPanel.Dock="Right" Style="{StaticResource ConfirmCancelButton}" Content="X" Width="20">
+                                                                                    <I:Interaction.Triggers>
+                                                                                        <I:EventTrigger EventName="Indeterminate">
+                                                                                            <I:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
+                                                                                        Path=ViewModel.CurrentContent.FishbonesVM.ExcludeTreeCommand}"
+                                                                                    CommandParameter="{Binding}" />
+                                                                                        </I:EventTrigger>
+                                                                                    </I:Interaction.Triggers>
+                                                                                </ToggleButton>
                                                                                 <Button Content="+" Width="20" DockPanel.Dock="Right">
                                                                                     <Button.Command>
                                                                                         <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}">
@@ -2401,18 +2351,15 @@
                                                                                           VerticalAlignment="Center"
                                                                                           ContentSource="Header"
                                                                                           DockPanel.Dock="Left" />
-                                                                                <Button Width="20"
-                                                                                Content="x"
-                                                                                DockPanel.Dock="Right">
-                                                                                    <Button.Command>
-                                                                                        <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}">
-                                                                                            <Binding.Path>ViewModel.CurrentContent.FishbonesVM.ExcludeTreeCommand</Binding.Path>
-                                                                                        </Binding>
-                                                                                    </Button.Command>
-                                                                                    <Button.CommandParameter>
-                                                                                        <Binding Path="."></Binding>
-                                                                                    </Button.CommandParameter>
-                                                                                </Button>
+                                                                                <ToggleButton DockPanel.Dock="Right" Style="{StaticResource ConfirmCancelButton}" Content="X" Width="20">
+                                                                                    <I:Interaction.Triggers>
+                                                                                        <I:EventTrigger EventName="Indeterminate">
+                                                                                            <I:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
+                                                                                        Path=ViewModel.CurrentContent.FishbonesVM.ExcludeTreeCommand}"
+                                                                                    CommandParameter="{Binding}" />
+                                                                                        </I:EventTrigger>
+                                                                                    </I:Interaction.Triggers>
+                                                                                </ToggleButton>
                                                                                 <Button Content="+" Width="20" DockPanel.Dock="Right">
                                                                                     <Button.Command>
                                                                                         <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}">
@@ -2585,7 +2532,7 @@
         </DataTemplate>
         <DataTemplate x:Key="RootFishbonesTemplate" DataType="ViewModels:RootFishbonesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtFishboneNodes}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
                             <WrapPanel Margin="10"
@@ -2604,7 +2551,7 @@
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtRoots}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtFishboneNodes}">
                     <ItemsControl Template="{StaticResource IncludeList}"/>
                 </GroupBox>
                 <Canvas />
@@ -2613,20 +2560,13 @@
         <DataTemplate x:Key="FishboneNodeActionPlansTemplate" DataType="ViewModels:FishboneNodeActionPlansVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtActionPlans}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtFishboneNodes}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtActionPlans}">
                     <ItemsControl Template="{StaticResource IncludeList}"/>
                 </GroupBox>
                 <Canvas />
@@ -2653,7 +2593,7 @@
                     </Border>
                     <DockPanel DockPanel.Dock="Top">
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
@@ -2664,20 +2604,13 @@
         <DataTemplate x:Key="ActionPlanFishboneNodesTemplate" DataType="ViewModels:ActionPlanFishbonesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtFishboneNodes}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtActionPlans}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtFishboneNodes}">
                     <ItemsControl 
                 HorizontalAlignment="Left" 
                 DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
@@ -2773,23 +2706,23 @@
         <!-- 2.3. FPC -->
         <DataTemplate x:Key="FpcSubContentPanel">
             <WrapPanel Height="22" Margin="2">
-                <RadioButton Click="ListUpdated"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                              IsChecked="True"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtFPC}"
-                        Tag="231" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtStations}"
-                        Tag="232" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtMachines}"
-                        Tag="233" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtActivities}"
-                        Tag="234" />
+                            Content="{Loc txtFPC}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/FPC.png"
+                            Tag="231" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtStations}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Station.png"
+                            Tag="232" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtMachines}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Machinery.png"
+                            Tag="233" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtActivities}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/activity.png"
+                            Tag="234" />
             </WrapPanel>
         </DataTemplate>
 
@@ -2822,7 +2755,7 @@
                     </Border>
                     <DockPanel DockPanel.Dock="Top">
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
@@ -2833,20 +2766,27 @@
         <DataTemplate x:Key="StationMachinesTemplate" DataType="ContentControl">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtMachines}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}">
+                    <GroupBox.Header>
+                        <WrapPanel>
+                            <TextBlock Text="{Loc txtMachines}"/>
+                            <TextBlock Text=" - "/>
+                            <TextBlock Text="{Loc txtInUse}"/>
+                        </WrapPanel>
+                    </GroupBox.Header>
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtStations}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}">
+                    <GroupBox.Header>
+                        <WrapPanel>
+                            <TextBlock Text="{Loc txtMachines}"/>
+                            <TextBlock Text=" - "/>
+                            <TextBlock Text="{Loc txtOther}"/>
+                        </WrapPanel>
+                    </GroupBox.Header>
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
                 <Canvas />
@@ -2884,20 +2824,27 @@
         <DataTemplate x:Key="MachineStationsTemplate" DataType="ContentControl">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView},  Path=ViewModel}"
                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtStations}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}">
+                    <GroupBox.Header>
+                        <WrapPanel>
+                            <TextBlock Text="{Loc txtStations}"/>
+                            <TextBlock Text=" - "/>
+                            <TextBlock Text="{Loc txtInUse}"/>
+                        </WrapPanel>
+                    </GroupBox.Header>
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Template="{StaticResource ExcludeList}"/>
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtMachines}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}">
+                    <GroupBox.Header>
+                        <WrapPanel>
+                            <TextBlock Text="{Loc txtStations}"/>
+                            <TextBlock Text=" - "/>
+                            <TextBlock Text="{Loc txtOther}"/>
+                        </WrapPanel>
+                    </GroupBox.Header>
                     <ItemsControl Template="{StaticResource IncludeList}"/>
                 </GroupBox>
                 <Canvas />
@@ -2913,7 +2860,7 @@
                     <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
                     <DockPanel DockPanel.Dock="Top">
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
@@ -2936,7 +2883,7 @@
                                    DockPanel.Dock="Bottom">
                             <Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
                                     CommandParameter="0"
-                                    Content="{Loc txtOperators}">
+                                    Content="{Loc txtGenSkills}">
                             </Button>
                         </WrapPanel>
                     </Border>
@@ -2953,16 +2900,9 @@
         <DataTemplate x:Key="ActivityOperatorsTemplate" DataType="ViewModels:ActivityOperatorsVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtOperators}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                         <Border DockPanel.Dock="Bottom">
                             <UniformGrid Margin="5"
@@ -2990,7 +2930,7 @@
                         <Canvas DockPanel.Dock="Bottom" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtActivities}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtOperators}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
                 <Canvas />
@@ -3006,7 +2946,7 @@
                     <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
                     <DockPanel DockPanel.Dock="Top">
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
@@ -3018,19 +2958,19 @@
         <!-- 2.4. Operators  -->
         <DataTemplate x:Key="OperatorsSubContentPanel">
             <WrapPanel Height="22" Margin="2">
-                <RadioButton Click="ListUpdated"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                              IsChecked="True"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtOperators}"
-                        Tag="241" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtGenSkills}"
-                        Tag="242" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtSpeSkills}"
-                        Tag="243" />
+                            Content="{Loc txtOperators}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/operator.png"
+                            Tag="241" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtGenSkills}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Report.png"
+                            Tag="242" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtSpeSkills}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Report.png"
+                            Tag="243" />
             </WrapPanel>
         </DataTemplate>
 
@@ -3054,7 +2994,7 @@
                     </Border>
                     <DockPanel DockPanel.Dock="Top">
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
@@ -3065,16 +3005,9 @@
         <DataTemplate x:Key="OperatorActivitiesTemplate" DataType="ViewModels:OperatorActivitiesVM">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
                         Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
-                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtActivities}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                            <WrapPanel Margin="10"
-                                       HorizontalAlignment="Right"
-                                       DockPanel.Dock="Bottom">
-                                <Button Command="{Binding Path=CurrentContent.BackToMainContentCommand}"
-                                        Content="{Loc txtBack}"/>
-                            </WrapPanel>
-                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
                         <Border DockPanel.Dock="Bottom">
                             <UniformGrid Margin="5"
@@ -3101,7 +3034,7 @@
                         <Canvas DockPanel.Dock="Bottom" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtOperators}">
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtActivities}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
                 <Canvas />
@@ -3220,15 +3153,15 @@
         <!-- 2.5. Costs  -->
         <DataTemplate x:Key="CostsSubContentPanel">
             <WrapPanel Height="22" Margin="2">
-                <RadioButton Click="ListUpdated"
+                <CustomControls:ImageRadioButton Click="ListUpdated"
                              IsChecked="True"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtCosts}"
-                        Tag="251" />
-                <RadioButton Click="ListUpdated"
-                            Style="{StaticResource SoheilTabButton}"
-                        Content="{Loc txtPartWarehouses}"
-                        Tag="252" />
+                            Content="{Loc txtCosts}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Cost.png"
+                            Tag="251" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtPartWarehouses}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/warehouse.png"
+                            Tag="252" />
             </WrapPanel>
         </DataTemplate>
 
@@ -3240,20 +3173,14 @@
                     <Behavior:ValidationExceptionBehavior />
                 </I:Interaction.Behaviors>
                 <DockPanel FlowDirection="{Loc enumDirection}">
-                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                        <WrapPanel Margin="10"
-                                   HorizontalAlignment="Right"
-                                   DockPanel.Dock="Bottom">
-                        </WrapPanel>
-                    </Border>
                     <DockPanel DockPanel.Dock="Top">
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilCoverBorder}">
-                            <UniformGrid Margin="2" Rows="5" Columns="2">
+                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilMediumCoverBorder}">
+                            <UniformGrid Margin="2" Rows="6" Columns="2">
                                 <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtDescription}" />
-                                <TextBox Margin="2" IsReadOnly="False" Text="{Binding CurrentContent.Description}"></TextBox>
+                                <TextBlock Margin="2"  Text="{Binding CurrentContent.Description}"></TextBlock>
                                 <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCost}" />
-                                <TextBox Margin="2" IsReadOnly="True" Visibility="{Binding CurrentContent.ComputationalCostVisibility}">
-                                    <TextBox.Text>
+                                <TextBlock Margin="2"  Visibility="{Binding CurrentContent.ComputationalCostVisibility}">
+                                    <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource MultiCostConverter}" >
                                             <Binding Path="CurrentContent.SelectedWarehouseVM.Quantity"></Binding>
                                             <Binding Path="CurrentContent.SelectedWarehouseVM.OriginalQuantity"></Binding>
@@ -3261,10 +3188,14 @@
                                             <Binding Path="CurrentContent.SelectedWarehouseVM.TotalCost"></Binding>
                                             <Binding Path="CurrentContent.SelectedWarehouseVM"></Binding>
                                         </MultiBinding>
-                                    </TextBox.Text>
-                                </TextBox>
-                                <TextBox Margin="2" IsReadOnly="True" Text="{Binding CurrentContent.CostValue}" 
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <TextBlock Margin="2" Text="{Binding CurrentContent.CostValue}" 
                                          Visibility="{Binding CurrentContent.FixedCostVisibility}"/>
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCostSource}" />
+                                <TextBlock Margin="2"  Text="{Binding Path=CurrentContent.SelectedCostSource.Name}"/>
+                                <Canvas/>
+                                <Canvas/>
                                 <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStatus}" />
                                 <ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedValue="{Binding Path=CurrentContent.Status}" />
                                 <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCDate}" />
@@ -3278,62 +3209,76 @@
                             </UniformGrid>
                         </Border>
                         <DockPanel>
-                            <Border DockPanel.Dock="Left" Style="{StaticResource SoheilCoverBorder}" Width="100">
-                                <ListBox ItemsSource="{Binding CurrentContent.CostSources}" 
-                                         SelectedValue="{Binding CurrentContent.SelectedCostSource, Mode=TwoWay}"
-                                         SelectedValuePath="."
-                                         DisplayMemberPath="Name"
-                                         IsEnabled="{Binding CurrentContent.IsEnable}"
-                                         Height="300"
-                                            >
-                                </ListBox>
-                            </Border>
-                            <Border Style="{StaticResource SoheilCoverBorder}" >
+                            <Border DockPanel.Dock="Left" Style="{StaticResource SoheilMediumCoverBorder}" Width="100">
                                 <DockPanel>
-                                    <Border DockPanel.Dock="Top" Margin="1,1,1,25" Style="{StaticResource SoheilCoverBorder}">
-                                        <DockPanel Margin="5">
-                                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCostType}" />
-                                            <ListBox IsEnabled="{Binding CurrentContent.IsEnable}" Style="{StaticResource RadioListBox}" DockPanel.Dock="Right">
-                                                <ListBoxItem Content="{Loc txtCash}"  IsSelected="{Binding Path=CurrentContent.CostType, 
+                                    <Border DockPanel.Dock="Top" Height="40"  Style="{StaticResource SoheilSimpleFillBorder}">
+                                        <TextBlock Margin="2,5,2,5" Text="{Loc txtCostSource}" Foreground="{StaticResource BlueHoverBrush}"/>
+                                    </Border>
+                                    <ListBox ItemsSource="{Binding CurrentContent.CostSources}" 
+                                             SelectedValue="{Binding CurrentContent.SelectedCostSource, Mode=TwoWay}"
+                                             SelectedValuePath="."
+                                             DisplayMemberPath="Name"
+                                             IsEnabled="{Binding CurrentContent.IsEnable}"
+                                             Height="300"
+                                                >
+                                    </ListBox>
+                                </DockPanel>
+                            </Border>
+                            <Border Style="{StaticResource SoheilMediumCoverBorder}" >
+                                <DockPanel>
+                                    <Border DockPanel.Dock="Top" Margin="1,1,1,25" Style="{StaticResource SoheilFillBorder}">
+                                        <DockPanel Margin="5" >
+                                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource EntryBoxHeader}" Foreground="{StaticResource BlueHoverBrush}" Text="{Loc txtCostType}" />
+                                            <WrapPanel IsEnabled="{Binding CurrentContent.AllowChangeCostType}"  DockPanel.Dock="Right">
+                                                <CustomControls:ImageRadioButton Content="{Loc txtCash}"
+                                                     IsChecked="{Binding Path=CurrentContent.CostType, 
                                                                         Converter={StaticResource ComparisonConverter}, 
-                                                                        ConverterParameter= {x:Static Common:CostType.Cash}}"/>
-                                                <ListBoxItem Content="{Loc txtStock}" IsSelected="{Binding Path=CurrentContent.CostType, 
+                                                                        ConverterParameter= {x:Static Common:CostType.Cash}}"
+                                                                        ImageSource="/Soheil.Controls;component/Images/Menus/Cost.png"/>
+                                                <CustomControls:ImageRadioButton Content="{Loc txtStock}"
+                                                    IsChecked="{Binding Path=CurrentContent.CostType, 
                                                                         Converter={StaticResource ComparisonConverter}, 
-                                                                        ConverterParameter= {x:Static Common:CostType.Stock}}"/>
-                                            </ListBox>
+                                                                        ConverterParameter= {x:Static Common:CostType.Stock}}"
+                                                                        ImageSource="/Soheil.Controls;component/Images/Menus/warehouse.png"/>
+                                            </WrapPanel>
                                             <Canvas/>
                                         </DockPanel>
                                     </Border>
-                                    <UniformGrid DockPanel.Dock="Top" Margin="2" Rows="1" Columns="2" >
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCostSource}" />
-                                        <TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.SelectedCostSource.Name}"></TextBox>
+                                    <UniformGrid DockPanel.Dock="Top" Margin="2" Rows="1" Columns="2">
+                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtDescription}" />
+                                        <TextBox Margin="2" IsReadOnly="False" Text="{Binding CurrentContent.Description}"/>
                                     </UniformGrid>
                                     <UniformGrid DockPanel.Dock="Top" Margin="2" Rows="1" Columns="2" 
                                                  Visibility="{Binding Path=CurrentContent.CostType, 
                                                             Converter={StaticResource ComparisonVisibilityConverter},
                                                             ConverterParameter={x:Static Common:CostType.Cash}}">
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCost}" />
-                                        <TextBox Margin="2" Text="{Binding CurrentContent.Value, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtPaidCost}" />
+                                        <TextBox Margin="2" Text="{Binding CurrentContent.CostValue, UpdateSourceTrigger=PropertyChanged}" />
                                     </UniformGrid>
-                                    <UniformGrid DockPanel.Dock="Top" Margin="2" Rows="5" Columns="2" 
+                                    <UniformGrid DockPanel.Dock="Top" Margin="2" Rows="1" Columns="2" 
                                                  Visibility="{Binding Path=CurrentContent.CostType, 
                                                             Converter={StaticResource ComparisonVisibilityConverter},
                                                             ConverterParameter={x:Static Common:CostType.Stock}}">
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtPartWHGroup}" />
-                                        <ComboBox Margin="2" DisplayMemberPath="Name" IsEnabled="{Binding CurrentContent.IsEnable}"
-                                      ItemsSource="{Binding Path=CurrentContent.Warehouses}"
-                                      SelectedValue="{Binding Path=CurrentContent.SelectedWarehouseVM,
-                                                              Mode=TwoWay}"
-                                      SelectedValuePath="." />
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
-                                        <TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.SelectedWarehouseVM.Code}"/>
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
-                                        <TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.SelectedWarehouseVM.Name}"/>
                                         <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtQty}" />
-                                        <TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.SelectedWarehouseVM.Quantity}"></TextBox>
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCurrentQuantity}" />
-                                        <TextBox Margin="2" IsReadOnly="{Binding CurrentContent.IsReadOnly}" Text="{Binding CurrentContent.SelectedQuantity, UpdateSourceTrigger=PropertyChanged}" ></TextBox>
+                                        <TextBox Margin="2" IsReadOnly="{Binding CurrentContent.IsCostValueSet}" Text="{Binding CurrentContent.SelectedQuantity, UpdateSourceTrigger=PropertyChanged}"/>
                                     </UniformGrid>
+                                    <Border Style="{StaticResource SoheilDarkCoverBorder}"
+                                              DockPanel.Dock="Top" Visibility="{Binding Path=CurrentContent.CostType, 
+                                                            Converter={StaticResource ComparisonVisibilityConverter},
+                                                            ConverterParameter={x:Static Common:CostType.Stock}}">
+                                        <UniformGrid DockPanel.Dock="Top" Margin="2" Rows="3" Columns="2" >
+                                            <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtPartWHGroup}" />
+                                            <ComboBox Margin="2" DisplayMemberPath="Name" IsEnabled="{Binding CurrentContent.IsEnable}"
+                                              ItemsSource="{Binding Path=CurrentContent.Warehouses}"
+                                              SelectedValue="{Binding Path=CurrentContent.SelectedWarehouseVM,
+                                                                      Mode=TwoWay}"
+                                              SelectedValuePath="." />
+                                            <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
+                                            <TextBlock Margin="2" Text="{Binding Path=CurrentContent.SelectedWarehouseVM.Code}"/>
+                                            <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCurrentQuantity}" />
+                                            <TextBlock Margin="2" Text="{Binding Path=CurrentContent.SelectedWarehouseVM.Quantity}"/>
+                                        </UniformGrid>
+                                    </Border>
                                     <Canvas/>
                                 </DockPanel>
                             </Border>
@@ -3379,9 +3324,9 @@
                     </Border>
                     <DockPanel DockPanel.Dock="Top">
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CostQuantityInfoContent}" />
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource UserDateInfoContent}" />
-                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource CostQuantityInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
                     <Canvas DockPanel.Dock="Bottom" />
@@ -3391,21 +3336,22 @@
 		<DataTemplate x:Key="PartWarehouseGroupTemplate" DataType="ViewModels:PartWarehouseGroupVM">
 			<GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
                       Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
-				<I:Interaction.Behaviors>
-					<Behavior:ValidationExceptionBehavior />
-				</I:Interaction.Behaviors>
-				<DockPanel FlowDirection="{Loc enumDirection}">
-					<Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
-					<DockPanel DockPanel.Dock="Top">
-						<ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-						<ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
-						<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
-					</DockPanel>
-					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
-					<Canvas DockPanel.Dock="Bottom" />
-				</DockPanel>
-			</GroupBox>
-		</DataTemplate>
+
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
+                    <DockPanel DockPanel.Dock="Top">
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
 
 		<!--..........................................................................................................-->
 
@@ -3451,6 +3397,7 @@
                       SelectedValuePath="."
                       TargetUpdated="ContentUpdated"
                       AutoGeneratingColumn="OnAutoGeneratingColumn"
+                      AutoGeneratedColumns="OnAutoGeneratedColumns"
                       PreviewKeyDown="GridPreviewKeyDown"
                       PreparingCellForEdit="DataGridOnPreparingCellForEdit"
                       SelectionChanged="DataGrid_OnSelectionChanged"

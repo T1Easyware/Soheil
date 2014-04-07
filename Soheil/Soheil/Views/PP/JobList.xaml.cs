@@ -26,6 +26,11 @@ namespace Soheil.Views.PP
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// Update the description in database
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void PPTableJobListDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
 		{
 			try

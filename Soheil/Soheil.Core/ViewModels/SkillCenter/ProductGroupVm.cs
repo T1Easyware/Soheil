@@ -31,6 +31,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			{
 				AddChild(new ProductVm(product));
 			}
+			InitializeCommands();
 		}
 	}
 }

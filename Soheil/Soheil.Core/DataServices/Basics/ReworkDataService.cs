@@ -92,11 +92,11 @@ namespace Soheil.Core.DataServices
 		/// Gets all active products as view models.
 		/// </summary>
 		/// <returns></returns>
-		public ObservableCollection<Rework> GetActives(SoheilEntityType linkType)
+		public ObservableCollection<Rework> GetActives(SoheilEntityType linkType, int linkId)
 		{
 			if (linkType == SoheilEntityType.Products)
 			{
-				var entityList = _reworkRepository.Find(rework => rework.Status == (decimal)Status.Active && rework.ProductReworks.Count == 0);
+				var entityList = _reworkRepository.Find(rework => rework.Status == (decimal)Status.Active && rework.ProductReworks.All(item=>item.Product.Id != linkId));
 				return new ObservableCollection<Rework>(entityList);
 			}
 			return GetActives();
@@ -126,7 +126,7 @@ namespace Soheil.Core.DataServices
 		public void RemoveProduct(int reworkId, int productId)
 		{
 			var reworkProductRepository = new Repository<ProductRework>(context);
-			Rework currentRework = _reworkRepository.Single(rework => rework.Id == reworkId);
+            Rework currentRework = _reworkRepository.Single(rework => rework.Id == reworkId);
 			ProductRework currentReworkProduct =
 				currentRework.ProductReworks.First(
 					reworkProduct =>
@@ -135,6 +135,7 @@ namespace Soheil.Core.DataServices
 			reworkProductRepository.Delete(currentReworkProduct);
 			context.Commit();
 			ProductRemoved(this, new ModelRemovedEventArgs(id));
+
 		}
 	}
 }

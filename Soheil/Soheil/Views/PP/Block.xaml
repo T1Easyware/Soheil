@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core"
+			xmlns:report="clr-namespace:Soheil.Core.ViewModels.PP.Report;assembly=Soheil.Core"
 			 xmlns:local="clr-namespace:Soheil.Views.PP"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:I="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
@@ -77,94 +78,6 @@
 									<Binding ElementName="root" Path="PPTable.HourZoom"/>
 								</MultiBinding>
 							</Border.Width>
-							<Border BorderBrush="WhiteSmoke" BorderThickness="0,0,1,0">
-								<Grid>
-									<!-- taskBackgroundTexts (TP, ProducedG1, OperCount) -->
-									<DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" x:Name="taskBackgroundTexts" ClipToBounds="True">
-										<Image Style="{StaticResource TargetPointImage}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-										<TextBlock Text="{Binding TaskTargetPoint}" Height="15" DockPanel.Dock="Left"/>
-										<Image Style="{StaticResource ProducedG1Image}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-										<TextBlock Text="{Binding TaskProducedG1}" Height="15" DockPanel.Dock="Left"/>
-										<Image Style="{StaticResource OperatorImage}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-										<TextBlock Text="{Binding TaskOperatorCount}" Height="15" DockPanel.Dock="Left"/>
-									</DockPanel>
-									<!-- taskReports (inside each task) -->
-									<ItemsControl ItemsSource="{Binding TaskReports}" Opacity="0" x:Name="taskReports" Loaded="TaskReports_Loaded" Unloaded="TaskReports_Unloaded">
-										<ItemsControl.Resources>
-											<!-- taskReport holder -->
-											<DataTemplate DataType="{x:Type vm:TaskReportHolderVm}">
-												<Button Command="{Binding FocusCommand}">
-													<Button.Width>
-														<MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
-															<Binding Path="Duration"/>
-															<Binding ElementName="root" Path="PPTable.HourZoom"/>
-														</MultiBinding>
-													</Button.Width>
-													<StackPanel>
-														<Image Style="{StaticResource ReportImage}" x:Name="reportImage" HorizontalAlignment="Left"/>
-														<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left"/>
-													</StackPanel>
-												</Button>
-											</DataTemplate>
-											<!-- taskReport -->
-											<DataTemplate DataType="{x:Type vm:TaskReportVm}">
-												<Grid>
-													<Grid.Width>
-														<MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
-															<Binding Path="Duration"/>
-															<Binding ElementName="root" Path="PPTable.HourZoom"/>
-														</MultiBinding>
-													</Grid.Width>
-													<Border BorderThickness="1,0" BorderBrush="Silver">
-														<Border.ToolTip>
-															<StackPanel>
-																<TextBlock Text="گزارش تولید"/>
-																<Image Style="{StaticResource ReportImage}"/>
-																<WrapPanel>
-																	<TextBlock Text="مدت"/>
-																	<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
-																</WrapPanel>
-																<WrapPanel>
-																	<TextBlock Text="شروع"/>
-																	<TextBlock Text="{Binding StartDate, Converter={StaticResource dateToLocalStringConverter}}"/>
-																	<TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}"/>
-																</WrapPanel>
-																<WrapPanel>
-																	<TextBlock Text="پایان"/>
-																	<TextBlock Text="{Binding EndDate, Converter={StaticResource dateToLocalStringConverter}}"/>
-																	<TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}"/>
-																</WrapPanel>
-																<WrapPanel>
-																	<TextBlock Text="هدف"/>
-																	<TextBlock Text="{Binding TargetPoint}"/>
-																</WrapPanel>
-																<WrapPanel>
-																	<TextBlock Text="تولید سالم"/>
-																	<TextBlock Text="{Binding ProducedG1}"/>
-																</WrapPanel>
-															</StackPanel>
-														</Border.ToolTip>
-														<StackPanel>
-															<Image Style="{StaticResource ReportImage}" x:Name="reportImage" HorizontalAlignment="Left"/>
-															<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" HorizontalAlignment="Left"/>
-														</StackPanel>
-													</Border>
-													<!--Button Command="{Binding OpenCommand}">
-                                                                                                        </-->
-													<Button Height="20" Width="20" Command="{Binding DeleteCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
-														<Image Style="{StaticResource Delete16Image}"/>
-													</Button>
-												</Grid>
-											</DataTemplate>
-										</ItemsControl.Resources>
-										<ItemsControl.ItemsPanel>
-											<ItemsPanelTemplate>
-												<StackPanel Orientation="Horizontal"/>
-											</ItemsPanelTemplate>
-										</ItemsControl.ItemsPanel>
-									</ItemsControl>
-								</Grid>
-							</Border>
 						</Border>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
@@ -175,58 +88,6 @@
 				</ItemsControl.ItemsPanel>
 			</ItemsControl>
 			<!-- Show Insert Setup Button -->
-			<Button Margin="-20,0" HorizontalAlignment="Left" ClipToBounds="False"  Command="{Binding InsertSetupBefore}">
-				<Button.Visibility>
-					<MultiBinding Converter="{StaticResource logicalAndToVisibility}">
-						<Binding ElementName="root" Path="PPTable.ShowInsertSetupButton"/>
-						<Binding Path="CanAddSetupBefore"/>
-					</MultiBinding>
-				</Button.Visibility>
-				<Button.Template>
-					<ControlTemplate>
-						<Grid Opacity="0.5" x:Name="grid">
-							<Ellipse Height="40" Width="40" Fill="#222" Stroke="#444"/>
-							<Ellipse x:Name="ellipse" Height="40" Width="40" Fill="White" Opacity="0"/>
-							<Image Style="{StaticResource AddSetupImage}"/>
-							<Grid.Triggers>
-								<EventTrigger RoutedEvent="MouseEnter">
-									<BeginStoryboard>
-										<Storyboard Duration="0:0:0.2">
-											<DoubleAnimation Storyboard.TargetName="grid" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="1"/>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<EventTrigger RoutedEvent="MouseLeave">
-									<BeginStoryboard>
-										<Storyboard Duration="0:0:0.3">
-											<DoubleAnimation Storyboard.TargetName="grid" Storyboard.TargetProperty="Opacity" Duration="0:0:0.3" To="0.5"/>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<EventTrigger RoutedEvent="MouseDown">
-									<BeginStoryboard>
-										<Storyboard>
-											<DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ellipse" From="1" To="0" Duration="0:0:0.5"/>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-							</Grid.Triggers>
-						</Grid>
-					</ControlTemplate>
-				</Button.Template>
-				<Button.ToolTip>
-					<StackPanel>
-						<WrapPanel>
-							<Image Style="{StaticResource AddSetupImage}"/>
-							<TextBlock Text="درج خودکار آماده سازی جدید در اینجا" VerticalAlignment="Bottom"/>
-						</WrapPanel>
-						<TextBlock Foreground="DarkGray" FontSize="10" Text="آیتمهایی که در این ایستگاه بعد از این آماده سازی قرار دارند، بطور خودکار در زمان جابجا می شوند"/>
-					</StackPanel>
-				</Button.ToolTip>
-				<Button.Effect>
-					<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}"/>
-				</Button.Effect>
-			</Button>
 		</Grid>
 
 		<!-- Triggers for different view modes -->

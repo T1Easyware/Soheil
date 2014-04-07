@@ -106,7 +106,7 @@ namespace Soheil.Core.DataServices
             return models;
         }
 
-        public ObservableCollection<Position> GetActives(SoheilEntityType linkType)
+        public ObservableCollection<Position> GetActives(SoheilEntityType linkType, int linkId)
         {
             if (linkType == SoheilEntityType.Users)
             {
@@ -116,7 +116,7 @@ namespace Soheil.Core.DataServices
                     var repository = new Repository<Position>(context);
                     IEnumerable<Position> entityList =
                         repository.Find(
-                            position => position.Status == (decimal)Status.Active && position.User_Positions.Count == 0);
+                            position => position.Status == (decimal)Status.Active && position.User_Positions.All(item=>item.User.Id != linkId));
                     models = new ObservableCollection<Position>(entityList);
                 }
                 return models;
@@ -129,7 +129,7 @@ namespace Soheil.Core.DataServices
                     var repository = new Repository<Position>(context);
                     IEnumerable<Position> entityList =
                         repository.Find(
-                            position => position.Status == (decimal)Status.Active && position.OrganizationChart_Positions.Count == 0);
+                            position => position.Status == (decimal)Status.Active && position.OrganizationChart_Positions.All(item=> item.OrganizationChart.Id != linkId));
                     models = new ObservableCollection<Position>(entityList);
                 }
                 return models;

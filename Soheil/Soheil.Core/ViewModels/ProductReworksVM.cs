@@ -31,7 +31,7 @@ namespace Soheil.Core.ViewModels
             SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<ReworkVM>();
-            foreach (var rework in ReworkDataService.GetActives(SoheilEntityType.Products))
+            foreach (var rework in ReworkDataService.GetActives(SoheilEntityType.Products, CurrentProduct.Id))
             {
                 allVms.Add(new ReworkVM(rework, Access, ReworkDataService));
             }

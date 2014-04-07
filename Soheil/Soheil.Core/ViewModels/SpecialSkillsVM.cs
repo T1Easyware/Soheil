@@ -55,10 +55,10 @@ namespace Soheil.Core.ViewModels
 
             ColumnHeaders = new List<ColumnInfo> 
             { 
-                new ColumnInfo("Reserve1"), 
-                new ColumnInfo("Reserve2"),
-                new ColumnInfo("Reserve3"),
-                new ColumnInfo("Mode",true) 
+                //new ColumnInfo("Reserve1",0), 
+                //new ColumnInfo("Reserve2",1),
+                //new ColumnInfo("Reserve3",2),
+                new ColumnInfo("Mode",0,true) 
             };
 
             AddCommand = new Command(Add, CanAdd);RefreshCommand = new Command(CreateItems);

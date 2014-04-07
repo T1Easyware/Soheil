@@ -18,6 +18,11 @@
         <GradientStop Offset="1.0" Color="{DynamicResource ThemeLightColor}" />
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="GroupGradientBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Offset="0.0" Color="{DynamicResource ThemeMediumColor}" />
+        <GradientStop Offset="1.0" Color="{DynamicResource ThemeDarkColor}" />
+    </LinearGradientBrush>
+
     <LinearGradientBrush x:Key="ButtonCyanBrush" StartPoint="0,0" EndPoint="1,0.5">
         <GradientStop Offset="0.0" Color="{DynamicResource ButtonCyanLightColor}" />
         <GradientStop Offset="1.0" Color="{DynamicResource ButtonCyanDarkColor}" />

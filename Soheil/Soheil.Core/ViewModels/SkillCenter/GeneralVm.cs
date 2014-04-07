@@ -21,6 +21,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			Id = -100;
 			Name = "همه";
 			Code = "...";
+			InitializeCommands();
 		}
 	}
 }
