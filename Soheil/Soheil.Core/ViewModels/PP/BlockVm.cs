@@ -219,13 +219,13 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Gets or sets a bindable value for the report of this Block
 		/// </summary>
-		public BlockReportVm BlockReport
+		public Report.BlockReportVm BlockReport
 		{
-			get { return (BlockReportVm)GetValue(BlockReportProperty); }
+			get { return (Report.BlockReportVm)GetValue(BlockReportProperty); }
 			set { SetValue(BlockReportProperty, value); }
 		}
 		public static readonly DependencyProperty BlockReportProperty =
-			DependencyProperty.Register("BlockReport", typeof(BlockReportVm), typeof(BlockVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("BlockReport", typeof(Report.BlockReportVm), typeof(BlockVm), new UIPropertyMetadata(null));
 		#endregion
 
 		#region Other Props

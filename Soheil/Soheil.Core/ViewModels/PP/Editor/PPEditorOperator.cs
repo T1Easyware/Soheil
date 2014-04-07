@@ -8,57 +8,32 @@ using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
-	public class PPEditorOperator : DependencyObject
+	public class PPEditorOperator : OperatorVm
 	{
-		internal Model.Operator OperatorModel { get; private set; }
-		public int OperatorId { get { return OperatorModel.Id; } }
-
 		public event Action SelectedOperatorsChanged;
 		
 		#region Ctor
 		/// <summary>
-		/// Must be called within an EdmContext
+		/// Use this constructor to create an operator outside a process
 		/// </summary>
 		/// <param name="model"></param>
-		public PPEditorOperator(Model.Operator model)
+		public PPEditorOperator(Model.Operator model, Model.StateStationActivity ssa)
+			: base(model, ssa)
 		{
-			OperatorModel = model;
-			Name = model.Name;
-			Code = model.Code;
 		}
 
 		/// <summary>
-		/// Must be called within an EdmContext
+		/// Use this constructor to create an operator inside a process
 		/// </summary>
 		/// <param name="model"></param>
 		public PPEditorOperator(Model.ProcessOperator model)
-			:this(model.Operator)
+			: base(model)
 		{
-			Role = model.Role;
 			IsSelected = true;
 		}
 
 		#endregion
 
-
-
-		#region DpProps
-		//Name Dependency Property
-		public string Name
-		{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
-		}
-		public static readonly DependencyProperty NameProperty =
-			DependencyProperty.Register("Name", typeof(string), typeof(PPEditorOperator), new UIPropertyMetadata(null));
-		//Code Dependency Property
-		public string Code
-		{
-			get { return (string)GetValue(CodeProperty); }
-			set { SetValue(CodeProperty, value); }
-		}
-		public static readonly DependencyProperty CodeProperty =
-			DependencyProperty.Register("Code", typeof(string), typeof(PPEditorOperator), new UIPropertyMetadata(null));
 
 		//IsSelected Dependency Property
 		public bool IsSelected
@@ -69,15 +44,5 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty IsSelectedProperty =
 			DependencyProperty.Register("IsSelected", typeof(bool), typeof(PPEditorOperator),
 			new UIPropertyMetadata(false, (d, e) => { if (((PPEditorOperator)d).SelectedOperatorsChanged != null) ((PPEditorOperator)d).SelectedOperatorsChanged(); }));
-
-		//Role Dependency Property
-		public OperatorRole Role
-		{
-			get { return (OperatorRole)GetValue(RoleProperty); }
-			set { SetValue(RoleProperty, value); }
-		}
-		public static readonly DependencyProperty RoleProperty =
-			DependencyProperty.Register("Role", typeof(OperatorRole), typeof(PPEditorOperator), new UIPropertyMetadata(OperatorRole.Main)); 
-		#endregion
 	}
 }

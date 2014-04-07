@@ -9,7 +9,7 @@ using System.Windows;
 using Soheil.Common;
 using Soheil.Common.SoheilException;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class ProcessReportCellVm : PPItemVm
 	{
@@ -61,7 +61,7 @@ namespace Soheil.Core.ViewModels.PP
 			//by updating StartDateTime (while DurationSeconds is updated before) EndDateTime gets updated correctly
 			StartDateTime = taskReport.StartDateTime;
 
-	
+			OperatorReports = new OperatorReportCollection(this);
 			DefectionReports = new DefectionReportCollection(this);
 			StoppageReports = new StoppageReportCollection(this);
 
@@ -73,6 +73,12 @@ namespace Soheil.Core.ViewModels.PP
 		public void LoadInnerData()
 		{
 			_model = _processReportDataService.GetSingleFull(Id);
+			_processReportDataService.CorrectOperatorReports(_model);
+			OperatorReports.Reset();
+			foreach (var opr in _model.ProcessOperatorReports)
+			{
+				OperatorReports.Add(new OperatorReportVm(opr));
+			}
 			DefectionReports.Reset();
 			foreach (var def in _model.DefectionReports)
 			{
@@ -162,6 +168,34 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(ProcessReportCellVm), new UIPropertyMetadata(DateTime.Now));
 		#endregion
 
+		#region Operator,Defection,Stoppage
+		//OperatorReports Dependency Property
+		public OperatorReportCollection OperatorReports
+		{
+			get { return (OperatorReportCollection)GetValue(OperatorReportsProperty); }
+			set { SetValue(OperatorReportsProperty, value); }
+		}
+		public static readonly DependencyProperty OperatorReportsProperty =
+			DependencyProperty.Register("OperatorReports", typeof(OperatorReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+		//DefectionReports Dependency Property
+		public DefectionReportCollection DefectionReports
+		{
+			get { return (DefectionReportCollection)GetValue(DefectionReportsProperty); }
+			set { SetValue(DefectionReportsProperty, value); }
+		}
+		public static readonly DependencyProperty DefectionReportsProperty =
+			DependencyProperty.Register("DefectionReports", typeof(DefectionReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+		//StoppageReports Dependency Property
+		public StoppageReportCollection StoppageReports
+		{
+			get { return (StoppageReportCollection)GetValue(StoppageReportsProperty); }
+			set { SetValue(StoppageReportsProperty, value); }
+		}
+		public static readonly DependencyProperty StoppageReportsProperty =
+			DependencyProperty.Register("StoppageReports", typeof(StoppageReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+
+		#endregion
+
 		#region Other Members
 		//IsSelected Dependency Property
 		public bool IsSelected
@@ -182,24 +216,8 @@ namespace Soheil.Core.ViewModels.PP
 				else
 					vm.ParentRow.Parent.CurrentProcessReportBuilder = null;
 			}));
-		//DefectionReports Dependency Property
-		public DefectionReportCollection DefectionReports
-		{
-			get { return (DefectionReportCollection)GetValue(DefectionReportsProperty); }
-			set { SetValue(DefectionReportsProperty, value); }
-		}
-		public static readonly DependencyProperty DefectionReportsProperty =
-			DependencyProperty.Register("DefectionReports", typeof(DefectionReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
-		//StoppageReports Dependency Property
-		public StoppageReportCollection StoppageReports
-		{
-			get { return (StoppageReportCollection)GetValue(StoppageReportsProperty); }
-			set { SetValue(StoppageReportsProperty, value); }
-		}
-		public static readonly DependencyProperty StoppageReportsProperty =
-			DependencyProperty.Register("StoppageReports", typeof(StoppageReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
-
 		#endregion
+
 
 		#region Commands
 		void initializeCommands()

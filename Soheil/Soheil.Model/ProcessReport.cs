@@ -133,38 +133,6 @@ namespace Soheil.Model
         }
         private ICollection<DefectionReport> _defectionReports;
     
-        public virtual ICollection<OperatorProcessReport> OperatorProcessReports
-        {
-            get
-            {
-                if (_operatorProcessReports == null)
-                {
-                    var newCollection = new FixupCollection<OperatorProcessReport>();
-                    newCollection.CollectionChanged += FixupOperatorProcessReports;
-                    _operatorProcessReports = newCollection;
-                }
-                return _operatorProcessReports;
-            }
-            set
-            {
-                if (!ReferenceEquals(_operatorProcessReports, value))
-                {
-                    var previousValue = _operatorProcessReports as FixupCollection<OperatorProcessReport>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupOperatorProcessReports;
-                    }
-                    _operatorProcessReports = value;
-                    var newValue = value as FixupCollection<OperatorProcessReport>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupOperatorProcessReports;
-                    }
-                }
-            }
-        }
-        private ICollection<OperatorProcessReport> _operatorProcessReports;
-    
         public virtual Process Process
         {
             get { return _process; }
@@ -179,6 +147,38 @@ namespace Soheil.Model
             }
         }
         private Process _process;
+    
+        public virtual ICollection<ProcessOperatorReport> ProcessOperatorReports
+        {
+            get
+            {
+                if (_processOperatorReports == null)
+                {
+                    var newCollection = new FixupCollection<ProcessOperatorReport>();
+                    newCollection.CollectionChanged += FixupProcessOperatorReports;
+                    _processOperatorReports = newCollection;
+                }
+                return _processOperatorReports;
+            }
+            set
+            {
+                if (!ReferenceEquals(_processOperatorReports, value))
+                {
+                    var previousValue = _processOperatorReports as FixupCollection<ProcessOperatorReport>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupProcessOperatorReports;
+                    }
+                    _processOperatorReports = value;
+                    var newValue = value as FixupCollection<ProcessOperatorReport>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupProcessOperatorReports;
+                    }
+                }
+            }
+        }
+        private ICollection<ProcessOperatorReport> _processOperatorReports;
 
         #endregion
 
@@ -260,11 +260,11 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupOperatorProcessReports(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupProcessOperatorReports(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (OperatorProcessReport item in e.NewItems)
+                foreach (ProcessOperatorReport item in e.NewItems)
                 {
                     item.ProcessReport = this;
                 }
@@ -272,7 +272,7 @@ namespace Soheil.Model
     
             if (e.OldItems != null)
             {
-                foreach (OperatorProcessReport item in e.OldItems)
+                foreach (ProcessOperatorReport item in e.OldItems)
                 {
                     if (ReferenceEquals(item.ProcessReport, this))
                     {

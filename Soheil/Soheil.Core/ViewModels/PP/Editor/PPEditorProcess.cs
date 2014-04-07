@@ -69,28 +69,38 @@ namespace Soheil.Core.ViewModels.PP.Editor
         }
         void initMembers()
         {
-            //choices
-            foreach (var choice in _ssaGroup)
-            {
-                Choices.Add(new PPEditorActivityChoice(choice, this));
-            }
+			Message = new Common.SoheilException.EmbeddedException();
 
-            //operators
-            var allOperatorModels = new DataServices.OperatorDataService(_uow).GetActives();
-            foreach (var operatorModel in allOperatorModels)
-            {
-                var operatorVm = new PPEditorOperator(operatorModel);
-                operatorVm.SelectedOperatorsChanged += () =>
-                {
-                    SelectedOperatorsCount = OperatorList.Count(x => x.IsSelected);
-                    if (!_isInitializing)
-                        SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == SelectedOperatorsCount);
-                };
-                OperatorList.Add(operatorVm);
-            }
+			//check the common ssa model for this process
+			if (!_ssaGroup.Any())
+			{
+				Message.AddEmbeddedException("فعالیتی وجود ندارد");
+			}
+			else
+			{
+				var commonSSA = _ssaGroup.First();
+				Name = _ssaGroup.First().Activity.Name;
 
-            Name = _ssaGroup.First().Activity.Name;
-            Message = new Common.SoheilException.EmbeddedException();
+				//choices
+				foreach (var choice in _ssaGroup)
+				{
+					Choices.Add(new PPEditorActivityChoice(choice, this));
+				}
+
+				//operators
+				var allOperatorModels = new DataServices.OperatorDataService(_uow).GetActives();
+				foreach (var operatorModel in allOperatorModels)
+				{
+					var operatorVm = new PPEditorOperator(operatorModel, commonSSA);
+					operatorVm.SelectedOperatorsChanged += () =>
+					{
+						SelectedOperatorsCount = OperatorList.Count(x => x.IsSelected);
+						if (!_isInitializing)
+							SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == SelectedOperatorsCount);
+					};
+					OperatorList.Add(operatorVm);
+				}
+			}
             _isInitializing = false;
         }
 		#endregion

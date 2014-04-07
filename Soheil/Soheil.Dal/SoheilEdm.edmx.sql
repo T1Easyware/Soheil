@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/03/2014 15:14:31
+-- Date Created: 04/07/2014 16:09:37
 -- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -287,17 +287,20 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_StateStationBlock]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_StateStationBlock];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ProductReworkActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ProductReworkActivitySkill];
+IF OBJECT_ID(N'[dbo].[FK_OperatorActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_OperatorActivitySkill];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ActivityGeneralActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_ActivityGeneralActivitySkill];
+IF OBJECT_ID(N'[dbo].[FK_ActivityActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_ActivityActivitySkill];
 GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorGeneralActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_OperatorGeneralActivitySkill];
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkProductActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ProductReworkProductActivitySkill];
 GO
-IF OBJECT_ID(N'[dbo].[FK_GeneralActivitySkillActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_GeneralActivitySkillActivitySkill];
+IF OBJECT_ID(N'[dbo].[FK_ActivitySkillProductActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ActivitySkillProductActivitySkill];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessOperatorOperatorProcessReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[OperatorProcessReports] DROP CONSTRAINT [FK_ProcessOperatorOperatorProcessReport];
 GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
@@ -1238,13 +1241,13 @@ CREATE TABLE [dbo].[WorkShiftPrototypes] (
 );
 GO
 
--- Creating table 'OperatorProcessReports'
-CREATE TABLE [dbo].[OperatorProcessReports] (
+-- Creating table 'ProcessOperatorReports'
+CREATE TABLE [dbo].[ProcessOperatorReports] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [OperatorProducedG1] int  NOT NULL,
     [ModifiedBy] int  NOT NULL,
-    [Operator_Id] int  NOT NULL,
-    [ProcessReport_Id] int  NOT NULL
+    [ProcessReport_Id] int  NOT NULL,
+    [ProcessOperator_Id] int  NOT NULL
 );
 GO
 
@@ -1681,9 +1684,9 @@ ADD CONSTRAINT [PK_WorkShiftPrototypes]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
--- Creating primary key on [Id] in table 'OperatorProcessReports'
-ALTER TABLE [dbo].[OperatorProcessReports]
-ADD CONSTRAINT [PK_OperatorProcessReports]
+-- Creating primary key on [Id] in table 'ProcessOperatorReports'
+ALTER TABLE [dbo].[ProcessOperatorReports]
+ADD CONSTRAINT [PK_ProcessOperatorReports]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -2805,20 +2808,6 @@ ON [dbo].[DefectionReports]
     ([ProductDefection_Id]);
 GO
 
--- Creating foreign key on [Operator_Id] in table 'OperatorProcessReports'
-ALTER TABLE [dbo].[OperatorProcessReports]
-ADD CONSTRAINT [FK_OperatorOperatorProcessReport]
-    FOREIGN KEY ([Operator_Id])
-    REFERENCES [dbo].[Operators]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_OperatorOperatorProcessReport'
-CREATE INDEX [IX_FK_OperatorOperatorProcessReport]
-ON [dbo].[OperatorProcessReports]
-    ([Operator_Id]);
-GO
-
 -- Creating foreign key on [Operator_Id] in table 'PersonalSkills'
 ALTER TABLE [dbo].[PersonalSkills]
 ADD CONSTRAINT [FK_OperatorPersonalSkill]
@@ -2859,20 +2848,6 @@ ADD CONSTRAINT [FK_FPCJob]
 CREATE INDEX [IX_FK_FPCJob]
 ON [dbo].[Jobs]
     ([FPC_Id]);
-GO
-
--- Creating foreign key on [ProcessReport_Id] in table 'OperatorProcessReports'
-ALTER TABLE [dbo].[OperatorProcessReports]
-ADD CONSTRAINT [FK_ProcessReportOperatorProcessReport]
-    FOREIGN KEY ([ProcessReport_Id])
-    REFERENCES [dbo].[ProcessReports]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_ProcessReportOperatorProcessReport'
-CREATE INDEX [IX_FK_ProcessReportOperatorProcessReport]
-ON [dbo].[OperatorProcessReports]
-    ([ProcessReport_Id]);
 GO
 
 -- Creating foreign key on [Block_Id] in table 'Tasks'
@@ -3041,6 +3016,34 @@ ADD CONSTRAINT [FK_ActivitySkillProductActivitySkill]
 CREATE INDEX [IX_FK_ActivitySkillProductActivitySkill]
 ON [dbo].[ProductActivitySkills]
     ([ActivitySkill_Id]);
+GO
+
+-- Creating foreign key on [ProcessReport_Id] in table 'ProcessOperatorReports'
+ALTER TABLE [dbo].[ProcessOperatorReports]
+ADD CONSTRAINT [FK_ProcessReportProcessOperatorReport]
+    FOREIGN KEY ([ProcessReport_Id])
+    REFERENCES [dbo].[ProcessReports]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ProcessReportProcessOperatorReport'
+CREATE INDEX [IX_FK_ProcessReportProcessOperatorReport]
+ON [dbo].[ProcessOperatorReports]
+    ([ProcessReport_Id]);
+GO
+
+-- Creating foreign key on [ProcessOperator_Id] in table 'ProcessOperatorReports'
+ALTER TABLE [dbo].[ProcessOperatorReports]
+ADD CONSTRAINT [FK_ProcessOperatorProcessOperatorReport]
+    FOREIGN KEY ([ProcessOperator_Id])
+    REFERENCES [dbo].[ProcessOperators]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ProcessOperatorProcessOperatorReport'
+CREATE INDEX [IX_FK_ProcessOperatorProcessOperatorReport]
+ON [dbo].[ProcessOperatorReports]
+    ([ProcessOperator_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'

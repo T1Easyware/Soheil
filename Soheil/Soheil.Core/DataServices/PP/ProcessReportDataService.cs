@@ -64,6 +64,10 @@ namespace Soheil.Core.DataServices
 			return _processReportRepository.FirstOrDefault(x => x.Id == id,
 					"Process",
 					"Process.StateStationActivity",
+					"ProcessOperatorReports",
+					"ProcessOperatorReports.Operator",
+					"ProcessOperatorReports.ProcessOperator",
+					"ProcessOperatorReports.ProcessOperator.Operator",
 					"StoppageReports",
 					"StoppageReports.Cause",
 					"StoppageReports.Cause.Parent",
@@ -75,6 +79,26 @@ namespace Soheil.Core.DataServices
 					"DefectionReports.OperatorDefectionReports.Operator",
 					"DefectionReports.ProductDefection",
 					"DefectionReports.ProductDefection.Defection");
+		}
+		/// <summary>
+		/// Adds missing ProcessOperatorReports to the ProcessReport's ProcessOperatorReport collection
+		/// </summary>
+		/// <param name="model"></param>
+		public void CorrectOperatorReports(ProcessReport model)
+		{
+			foreach (var processOperator in model.Process.ProcessOperators)
+			{
+				if (!model.ProcessOperatorReports.Any(x => x.ProcessOperator.Id == processOperator.Id))
+				{
+					processOperator.ProcessOperatorReports.Add(new ProcessOperatorReport
+					{
+						ProcessReport = model,
+						ProcessOperator = processOperator,
+						OperatorProducedG1 = 0,
+						ModifiedBy = LoginInfo.Id,
+					});
+				}
+			}
 		}
 
 		public ProcessReport GetByTaskReportIdAndProcessId(int taskReportId, int processId)
@@ -88,7 +112,7 @@ namespace Soheil.Core.DataServices
 			return _processReportRepository.Find(x => x.TaskReport.Task.Id == taskId);
 		}
 
-		public void Save(ViewModels.PP.ProcessReportCellVm vm)
+		public void Save(ViewModels.PP.Report.ProcessReportCellVm vm)
 		{
 			var productDefectionRepository = new Repository<ProductDefection>(context);
 			var causeRepository = new Repository<Cause>(context);
@@ -189,7 +213,7 @@ namespace Soheil.Core.DataServices
 				.Sum(s =>
 					s.CountEquivalence));
 			var g1 = model.TaskReport.TaskReportTargetPoint - (int)(stoppages + defections);
-			var vmvm = vm.ParentColumn as Soheil.Core.ViewModels.PP.TaskReportVm;
+			var vmvm = vm.ParentColumn as ViewModels.PP.Report.TaskReportVm;
 			if (vmvm != null) vmvm.ProducedG1 = g1;
 			model.TaskReport.TaskProducedG1 = g1;
 

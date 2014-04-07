@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class TaskReportVm : TaskReportBaseVm
 	{

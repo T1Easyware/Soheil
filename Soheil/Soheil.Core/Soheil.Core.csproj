@@ -99,6 +99,9 @@
     <Compile Include="Interfaces\IBarChartViewer.cs" />
     <Compile Include="Interfaces\IReportBarVm.cs" />
     <Compile Include="PP\BlockFullData.cs" />
+    <Compile Include="ViewModels\PP\Editor\PPEditorOperator.cs" />
+    <Compile Include="ViewModels\PP\OperatorVm.cs" />
+    <Compile Include="ViewModels\PP\Report\OperatorReportCollection.cs" />
     <Compile Include="ViewModels\PP\Timeline\HourCollection.cs" />
     <Compile Include="PP\Smart\SmartPlanner.cs" />
     <Compile Include="PP\Smart\SmartSpace.cs" />
@@ -225,7 +228,7 @@
     <Compile Include="ViewModels\PP\Editor\PPJobEditorVm.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorProcess.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorMachine.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorOperator.cs" />
+    <Compile Include="ViewModels\PP\Report\OperatorReportVm.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorTask.cs" />
     <Compile Include="ViewModels\PP\Timeline\HourSlideItemVm.cs" />
     <Compile Include="ViewModels\PP\MachineVm.cs" />

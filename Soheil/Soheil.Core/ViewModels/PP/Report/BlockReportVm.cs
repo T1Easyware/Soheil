@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Soheil.Common;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class BlockReportVm : DependencyObject
 	{

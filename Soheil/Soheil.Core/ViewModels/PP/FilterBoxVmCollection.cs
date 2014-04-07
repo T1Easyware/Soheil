@@ -63,7 +63,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="parent">Instance of <see cref="StoppageReportVm"/> that has this collection</param>
 		/// <param name="selectedIds">default cause Ids (must be like: {level1Id, level2Id, level3Id})</param>
 		/// <returns></returns>
-		public static FilterBoxVmCollection CreateForStoppageReport(StoppageReportVm parent, int[] selectedIds)
+		public static FilterBoxVmCollection CreateForStoppageReport(Report.StoppageReportVm parent, int[] selectedIds)
 		{
 			var vm = new FilterBoxVmCollection();
 

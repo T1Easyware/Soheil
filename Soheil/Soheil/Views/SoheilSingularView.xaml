@@ -45,6 +45,7 @@
 		<DataTemplate x:Key="PPTableTemplate" DataType="{x:Type vm:PPTableVm}"
 			xmlns:local="clr-namespace:Soheil.Views.PP"
 			xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core"
+			xmlns:report="clr-namespace:Soheil.Core.ViewModels.PP.Report;assembly=Soheil.Core"
 			xmlns:timeline="clr-namespace:Soheil.Core.ViewModels.PP.Timeline;assembly=Soheil.Core"
 			xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls">
 			<DataTemplate.Resources>
@@ -935,10 +936,10 @@
 
                                 <!-- ==================================== OneRowOfActivity ========================================= -->
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type vm:ProcessReportRowVm}">
+									<DataTemplate DataType="{x:Type report:ProcessReportRowVm}">
                                         <ItemsControl ItemsSource="{Binding ProcessReportCells}" Height="52">
                                             <ItemsControl.ItemTemplate>
-                                                <DataTemplate DataType="{x:Type vm:ProcessReportCellVm}">
+												<DataTemplate DataType="{x:Type report:ProcessReportCellVm}">
 													<Canvas>
 														<local:ProcessReportCell DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
 													</Canvas>
@@ -980,7 +981,7 @@
 
                                 <!-- ==================================== OneRowOfActivity Balloons ========================================= -->
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type vm:ProcessReportRowVm}">
+                                    <DataTemplate DataType="{x:Type report:ProcessReportRowVm}">
                                         <ItemsControl ItemsSource="{Binding ProcessReportCells}" Height="52" ItemTemplate="{StaticResource balloonTemplate}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>

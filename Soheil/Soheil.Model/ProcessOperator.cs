@@ -70,6 +70,38 @@ namespace Soheil.Model
             }
         }
         private Operator _operator;
+    
+        public virtual ICollection<ProcessOperatorReport> ProcessOperatorReports
+        {
+            get
+            {
+                if (_processOperatorReports == null)
+                {
+                    var newCollection = new FixupCollection<ProcessOperatorReport>();
+                    newCollection.CollectionChanged += FixupProcessOperatorReports;
+                    _processOperatorReports = newCollection;
+                }
+                return _processOperatorReports;
+            }
+            set
+            {
+                if (!ReferenceEquals(_processOperatorReports, value))
+                {
+                    var previousValue = _processOperatorReports as FixupCollection<ProcessOperatorReport>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupProcessOperatorReports;
+                    }
+                    _processOperatorReports = value;
+                    var newValue = value as FixupCollection<ProcessOperatorReport>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupProcessOperatorReports;
+                    }
+                }
+            }
+        }
+        private ICollection<ProcessOperatorReport> _processOperatorReports;
 
         #endregion
 
@@ -103,6 +135,28 @@ namespace Soheil.Model
                 if (!Operator.ProcessOperators.Contains(this))
                 {
                     Operator.ProcessOperators.Add(this);
+                }
+            }
+        }
+    
+        private void FixupProcessOperatorReports(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ProcessOperatorReport item in e.NewItems)
+                {
+                    item.ProcessOperator = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (ProcessOperatorReport item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.ProcessOperator, this))
+                    {
+                        item.ProcessOperator = null;
+                    }
                 }
             }
         }

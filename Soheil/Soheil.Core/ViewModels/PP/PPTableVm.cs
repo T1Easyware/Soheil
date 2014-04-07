@@ -207,7 +207,7 @@ namespace Soheil.Core.ViewModels.PP
 					};
 					PPItems.EditBlockReportStarted += blockVm =>
 					{
-						blockVm.BlockReport = new BlockReportVm(blockVm);
+						blockVm.BlockReport = new Report.BlockReportVm(blockVm);
 						SelectedBlock = blockVm;
 					};
 
@@ -735,9 +735,9 @@ namespace Soheil.Core.ViewModels.PP
 		/// <para>Automatically deselects other ReportBuilders if set (to an object)</para>
 		/// <para>Does not do that via binding</para>
 		/// </summary>
-		public TaskReportHolderVm CurrentTaskReportBuilder
+		public Report.TaskReportHolderVm CurrentTaskReportBuilder
 		{
-			get { return (TaskReportHolderVm)GetValue(CurrentTaskReportBuilderProperty); }
+			get { return (Report.TaskReportHolderVm)GetValue(CurrentTaskReportBuilderProperty); }
 			set
 			{
 				if (value != null)
@@ -751,15 +751,15 @@ namespace Soheil.Core.ViewModels.PP
 			}
 		}
 		public static readonly DependencyProperty CurrentTaskReportBuilderProperty =
-			DependencyProperty.Register("CurrentTaskReportBuilder", typeof(TaskReportHolderVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("CurrentTaskReportBuilder", typeof(Report.TaskReportHolderVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets the current NPTReportBuilder
 		/// <para>Automatically deselects other ReportBuilders if set (to an object)</para>
 		/// <para>Does not do that via binding</para>
 		/// </summary>
-		public NPTReportVm CurrentNPTReportBuilder
+		public Report.NPTReportVm CurrentNPTReportBuilder
 		{
-			get { return (NPTReportVm)GetValue(CurrentNPTReportBuilderProperty); }
+			get { return (Report.NPTReportVm)GetValue(CurrentNPTReportBuilderProperty); }
 			set
 			{
 				if (value != null)
@@ -773,15 +773,15 @@ namespace Soheil.Core.ViewModels.PP
 			}
 		}
 		public static readonly DependencyProperty CurrentNPTReportBuilderProperty =
-			DependencyProperty.Register("CurrentNPTReportBuilder", typeof(NPTReportVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("CurrentNPTReportBuilder", typeof(Report.NPTReportVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets the current ProcessReportBuilder
 		/// <para>Automatically deselects other ReportBuilders if set (to an object)</para>
 		/// <para>Does not do that via binding</para>
 		/// </summary>
-		public ProcessReportCellVm CurrentProcessReportBuilder
+		public Report.ProcessReportCellVm CurrentProcessReportBuilder
 		{
-			get { return (ProcessReportCellVm)GetValue(CurrentProcessReportBuilderProperty); }
+			get { return (Report.ProcessReportCellVm)GetValue(CurrentProcessReportBuilderProperty); }
 			set
 			{
 				if (value != null)
@@ -795,7 +795,7 @@ namespace Soheil.Core.ViewModels.PP
 			}
 		}
 		public static readonly DependencyProperty CurrentProcessReportBuilderProperty =
-			DependencyProperty.Register("CurrentProcessReportBuilder", typeof(ProcessReportCellVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("CurrentProcessReportBuilder", typeof(Report.ProcessReportCellVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 		#endregion
 
 		#region Commands

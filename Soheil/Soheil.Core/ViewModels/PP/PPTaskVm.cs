@@ -103,7 +103,7 @@ namespace Soheil.Core.ViewModels.PP
 				int sumOfTP = 0;
 				foreach (var model in models)
 				{
-					var vm = new TaskReportVm(this, model);
+					var vm = new Report.TaskReportVm(this, model);
 					TaskReports.Add(vm);
 					sumOfTP += vm.TargetPoint;
 					i++;
@@ -111,7 +111,7 @@ namespace Soheil.Core.ViewModels.PP
 				int sumOfDurations = models.Sum(x => x.ReportDurationSeconds);
 				if (sumOfDurations < this.DurationSeconds)
 				{
-					var taskReportHolder = new TaskReportHolderVm(this, sumOfDurations, sumOfTP);
+					var taskReportHolder = new Report.TaskReportHolderVm(this, sumOfDurations, sumOfTP);
 					taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
 					TaskReports.Add(taskReportHolder);
 				}
@@ -130,14 +130,14 @@ namespace Soheil.Core.ViewModels.PP
 		internal void ReloadAllProcessReports()
 		{
 			if (Block.BlockReport == null)
-				Block.BlockReport = new BlockReportVm(Block);
+				Block.BlockReport = new Report.BlockReportVm(Block);
 			else
 				Block.BlockReport.ReloadProcessReportRows();
 		}
 
 		//TaskReports Observable Collection
-		public ObservableCollection<TaskReportBaseVm> TaskReports { get { return _taskReports; } }
-		private ObservableCollection<TaskReportBaseVm> _taskReports = new ObservableCollection<TaskReportBaseVm>();
+		public ObservableCollection<Report.TaskReportBaseVm> TaskReports { get { return _taskReports; } }
+		private ObservableCollection<Report.TaskReportBaseVm> _taskReports = new ObservableCollection<Report.TaskReportBaseVm>();
 
 		//SumOfReportedHours Dependency Property
 		public double SumOfReportedHours
