@@ -125,15 +125,99 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty SelectedToolboxItemProperty =
 			DependencyProperty.Register("SelectedToolboxItem", typeof(ToolboxItemVm), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 
+		//MachineQuery Dependency Property
+		public string MachineQuery
+		{
+			get { return (string)GetValue(MachineQueryProperty); }
+			set { SetValue(MachineQueryProperty, value); }
+		}
+		public static readonly DependencyProperty MachineQueryProperty =
+			DependencyProperty.Register("MachineQuery", typeof(string), typeof(FpcWindowVm),
+			new UIPropertyMetadata("", (d, e) =>
+			{
+				var vm = d as FpcWindowVm;
+				var val = e.NewValue as string;
+				if (string.IsNullOrEmpty(val))
+				{
+					foreach (var mf in vm.MachineFamilies)
+					{
+						foreach (var m in mf.Machines)
+						{
+							m.IsVisible = true;
+						}
+						mf.IsExpanded = false;
+					}
+				}
+				else
+				{
+					foreach (var mf in vm.MachineFamilies)
+					{
+						bool isAnyVisible = false;
+						foreach (var m in mf.Machines)
+						{
+							if (m.Name.Contains(val))
+							{
+								m.IsVisible = true;
+								isAnyVisible = true;
+							}
+							else m.IsVisible = false;
+						}
+						mf.IsExpanded = isAnyVisible;
+					}
+				}
+			}));
+
+		//ActivityQuery Dependency Property
+		public string ActivityQuery
+		{
+			get { return (string)GetValue(ActivityQueryProperty); }
+			set { SetValue(ActivityQueryProperty, value); }
+		}
+		public static readonly DependencyProperty ActivityQueryProperty =
+			DependencyProperty.Register("ActivityQuery", typeof(string), typeof(FpcWindowVm),
+			new UIPropertyMetadata("", (d, e) =>
+			{
+				var vm = d as FpcWindowVm;
+				var val = e.NewValue as string;
+				if (string.IsNullOrEmpty(val))
+				{
+					foreach (var ag in vm.ActivityGroups)
+					{
+						foreach (var a in ag.Activities)
+						{
+							a.IsVisible = true;
+						}
+						ag.IsExpanded = false;
+					}
+				}
+				else
+				{
+					foreach (var ag in vm.ActivityGroups)
+					{
+						bool isAnyVisible = false;
+						foreach (var a in ag.Activities)
+						{
+							if (a.Name.Contains(val))
+							{
+								a.IsVisible = true;
+								isAnyVisible = true;
+							}
+							else a.IsVisible = false;
+						}
+						ag.IsExpanded = isAnyVisible;
+					}
+				}
+			}));
+
 		//Stations Observable Collection
-		private ObservableCollection<StationVm> _stations = new ObservableCollection<StationVm>();
 		public ObservableCollection<StationVm> Stations { get { return _stations; } }
+		private ObservableCollection<StationVm> _stations = new ObservableCollection<StationVm>();
 		//ActivityGroups Observable Collection
-		private ObservableCollection<ActivityGroupVm> _activityGroups = new ObservableCollection<ActivityGroupVm>();
 		public ObservableCollection<ActivityGroupVm> ActivityGroups { get { return _activityGroups; } }
+		private ObservableCollection<ActivityGroupVm> _activityGroups = new ObservableCollection<ActivityGroupVm>();
 		//MachineFamilies Observable Collection
-		private ObservableCollection<MachineFamilyVm> _machineFamilies = new ObservableCollection<MachineFamilyVm>();
 		public ObservableCollection<MachineFamilyVm> MachineFamilies { get { return _machineFamilies; } }
+		private ObservableCollection<MachineFamilyVm> _machineFamilies = new ObservableCollection<MachineFamilyVm>();
 
 		#endregion
 

@@ -39,6 +39,13 @@ namespace Soheil.Core.ViewModels
 
             IncludeCommand = new Command(Include, CanInclude);
             ExcludeCommand = new Command(Exclude, CanExclude);
+			IncludeAllCommand = new Command(o =>
+			{
+				foreach (var vm in allVms.ToArray())
+				{
+					StationDataService.AddMachine(CurrentStation.Id, ((IEntityItem)vm).Id);
+				}
+			}, () => allVms.Any());
         }
 
         public StationVM CurrentStation { get; set; }
@@ -121,5 +128,6 @@ namespace Soheil.Core.ViewModels
             StationDataService.RemoveMachine(CurrentStation.Id, ((IEntityItem) param).Id);
         }
 
+		public Command IncludeAllCommand { get; set; }
     }
 }

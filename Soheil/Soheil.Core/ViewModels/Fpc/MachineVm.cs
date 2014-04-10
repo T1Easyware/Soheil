@@ -36,5 +36,13 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty FamilyProperty =
 			DependencyProperty.Register("Family", typeof(MachineFamilyVm), typeof(MachineVm), new UIPropertyMetadata(null));
 
+		//IsVisible Dependency Property
+		public bool IsVisible
+		{
+			get { return (bool)GetValue(IsVisibleProperty); }
+			set { SetValue(IsVisibleProperty, value); }
+		}
+		public static readonly DependencyProperty IsVisibleProperty =
+			DependencyProperty.Register("IsVisible", typeof(bool), typeof(MachineVm), new UIPropertyMetadata(true));
 	}
 }

@@ -3,7 +3,7 @@
   <Class Name="Soheil.Core.Base.EntityObjectBase" Collapsed="true" HideInheritanceLine="true">
     <Position X="20.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAMAAABEAAUAACAIgAAECAAAAAAAAAAgAAAAEAEA=</HashCode>
+      <HashCode>AAAAAIAAADEAAUAACAIgAAECAAAAAAAAAAgAAAAEAEA=</HashCode>
       <FileName>Base\EntityObjectBase.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -11,7 +11,7 @@
   <Class Name="Soheil.Core.Base.ItemContentViewModel" Collapsed="true" HideInheritanceLine="true">
     <Position X="17.25" Y="5.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAEQAAAAAAAQEEABAAAAAAIAAgAAAAAAQQCEAAIAgAA=</HashCode>
+      <HashCode>QABiCEAAQYAAEEABQgAAAAAACgAAAEgAAAAAAAIAoIA=</HashCode>
       <FileName>Base\ItemContentViewModel.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -27,7 +27,7 @@
   <Class Name="Soheil.Core.Base.NodeContentViewModel" Collapsed="true" HideInheritanceLine="true">
     <Position X="22.75" Y="5.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAgCAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAEAEAAAAAAAAAAAAAAgAAgCAAAAAAAA=</HashCode>
       <FileName>Base\NodeContentViewModel.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -43,7 +43,7 @@
   <Class Name="Soheil.Core.Base.SplitViewModel" Collapsed="true" HideInheritanceLine="true">
     <Position X="24.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIAgAAAAAEACAAGAAIAAIBAAAAhAAABAAAAAAAAAAg=</HashCode>
+      <HashCode>QAIAgCAAQAEQDEAGgAIAAIBAAgilgAABEAAAAAAAAAg=</HashCode>
       <FileName>Base\SplitViewModel.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -51,7 +51,7 @@
   <Class Name="Soheil.Core.Base.GridSplitViewModel" Collapsed="true" HideInheritanceLine="true">
     <Position X="22.5" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAgAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Base\SplitViewModel.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -59,7 +59,7 @@
   <Class Name="Soheil.Core.Base.TreeSplitViewModel" Collapsed="true" HideInheritanceLine="true">
     <Position X="25" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAACAAEAAAAA=</HashCode>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAAAA=</HashCode>
       <FileName>Base\SplitViewModel.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -82,49 +82,49 @@
   <Interface Name="Soheil.Core.Interfaces.IEntityCollection" Collapsed="true">
     <Position X="10.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAgABgAAQIAACAAACAACAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAEAAABgAAQIAACAAACAACAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IEntityCollection.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.IEntityItem" Collapsed="true">
     <Position X="19" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IEntityItem.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.IEntityItemCollection" Collapsed="true">
     <Position X="14" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IEntityItemCollection.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.IEntityNode" Collapsed="true">
     <Position X="21.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAgCAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAgCAAAAAAAA=</HashCode>
       <FileName>Interfaces\IEntityNode.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.IEntityNodeCollection" Collapsed="true">
     <Position X="9.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAACAAAAAAABAAAAAAAAAAAAAAAIACAAA=</HashCode>
+      <HashCode>AAAQAAAAAAAAAAEAAAAAABAAAAAAAAAAQAAAAMACAAA=</HashCode>
       <FileName>Interfaces\IEntityNodeCollection.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.IEntityObject" Collapsed="true">
     <Position X="19" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAMAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AAAAAIAAAAAAAEAAAAAAAAACAAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>Interfaces\IEntityObject.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.ISplitContent" Collapsed="true">
     <Position X="16.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAEQAAAAAAAQEEABAAAAAAIAAgAAAAAAQQCEAAAAgAA=</HashCode>
+      <HashCode>QABACAAAQIAAEEABQAAAAAAAAgAAAAAAAAAAAAAAgIA=</HashCode>
       <FileName>Interfaces\ISplitContent.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -139,7 +139,7 @@
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\ISplitContent.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -153,14 +153,14 @@
   <Interface Name="Soheil.Core.Interfaces.ISplitDetail" Collapsed="true">
     <Position X="22.5" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAAAAAAAAAAACAAAAAAAgAAAAAAAEAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\ISplitDetail.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.ISplitList" Collapsed="true">
     <Position X="23" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIAgAAAAAEACAACAAAAAIBAAAAhAAABAAAAAAAAAAg=</HashCode>
+      <HashCode>AAIAgAAAAAEACAAGgAIAAIBAAAAlgAABEAAAAAAAAAg=</HashCode>
       <FileName>Interfaces\ISplitList.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -174,12 +174,12 @@
   <Interface Name="Soheil.Core.Interfaces.ITreeSplitList" Collapsed="true">
     <Position X="24.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAACAAEAAAAA=</HashCode>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAA=</HashCode>
       <FileName>Interfaces\ISplitList.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.ISplitRelation" Collapsed="true">
-    <Position X="11.25" Y="3.75" Width="1.5" />
+    <Position X="11.25" Y="3.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\ISplitRelation.cs</FileName>
@@ -188,8 +188,8 @@
   <Interface Name="Soheil.Core.Interfaces.ISplitCollectionLink" Collapsed="true">
     <Position X="12.5" Y="5.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Interfaces\ISplitRelation.cs</FileName>
+      <HashCode>AAAABAAAAAABAABAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Interfaces\ISplitLink.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Soheil.Core.Interfaces.ISplitItemCollectionRelation" Collapsed="true">

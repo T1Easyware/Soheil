@@ -2765,7 +2765,7 @@
         </DataTemplate>
         <DataTemplate x:Key="StationMachinesTemplate" DataType="ContentControl">
             <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}"
-                        Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
+                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}">
                     <GroupBox.Header>
                         <WrapPanel>
@@ -2775,8 +2775,11 @@
                         </WrapPanel>
                     </GroupBox.Header>
                     <DockPanel>
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
-                        <ItemsControl Template="{StaticResource ExcludeList}" />
+						<WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right">
+							<ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
+							<Button Height="25" Content="{Loc txtIncludeAll}" Command="{Binding CurrentContent.CurrentLink.IncludeAllCommand}"/>
+						</WrapPanel>
+						<ItemsControl Template="{StaticResource ExcludeList}" />
                     </DockPanel>
                 </GroupBox>
                 <GroupBox Style="{StaticResource SoheilDetailListViewBorder}">

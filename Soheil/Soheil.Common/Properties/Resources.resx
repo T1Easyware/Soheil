@@ -738,4 +738,7 @@
   <data name="txtUnitCost" xml:space="preserve">
     <value>هزینه واحد :</value>
   </data>
+  <data name="txtIncludeAll" xml:space="preserve">
+    <value>افزودن همه</value>
+  </data>
 </root>

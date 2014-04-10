@@ -28,7 +28,16 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 		}
 		//activities Observable Collection
-		private ObservableCollection<ActivityVm> _activities = new ObservableCollection<ActivityVm>();
 		public ObservableCollection<ActivityVm> Activities { get { return _activities; } }
+		private ObservableCollection<ActivityVm> _activities = new ObservableCollection<ActivityVm>();
+
+		//IsExpanded Dependency Property
+		public bool IsExpanded
+		{
+			get { return (bool)GetValue(IsExpandedProperty); }
+			set { SetValue(IsExpandedProperty, value); }
+		}
+		public static readonly DependencyProperty IsExpandedProperty =
+			DependencyProperty.Register("IsExpanded", typeof(bool), typeof(ActivityGroupVm), new UIPropertyMetadata(false));
 	}
 }

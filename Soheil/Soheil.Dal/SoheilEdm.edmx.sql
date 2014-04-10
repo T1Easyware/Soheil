@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/07/2014 16:09:37
+-- Date Created: 04/08/2014 10:42:34
 -- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -248,9 +248,6 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_ProductDefectionDefectionReport]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[DefectionReports] DROP CONSTRAINT [FK_ProductDefectionDefectionReport];
 GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorOperatorProcessReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[OperatorProcessReports] DROP CONSTRAINT [FK_OperatorOperatorProcessReport];
-GO
 IF OBJECT_ID(N'[dbo].[FK_OperatorPersonalSkill]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[PersonalSkills] DROP CONSTRAINT [FK_OperatorPersonalSkill];
 GO
@@ -259,9 +256,6 @@ IF OBJECT_ID(N'[dbo].[FK_OperatorOperatorDefectionReport]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_FPCJob]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Jobs] DROP CONSTRAINT [FK_FPCJob];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessReportOperatorProcessReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[OperatorProcessReports] DROP CONSTRAINT [FK_ProcessReportOperatorProcessReport];
 GO
 IF OBJECT_ID(N'[dbo].[FK_BlockTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_BlockTask];
@@ -299,8 +293,11 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_ActivitySkillProductActivitySkill]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ActivitySkillProductActivitySkill];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessOperatorOperatorProcessReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[OperatorProcessReports] DROP CONSTRAINT [FK_ProcessOperatorOperatorProcessReport];
+IF OBJECT_ID(N'[dbo].[FK_ProcessReportProcessOperatorReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProcessOperatorReports] DROP CONSTRAINT [FK_ProcessReportProcessOperatorReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessOperatorProcessOperatorReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProcessOperatorReports] DROP CONSTRAINT [FK_ProcessOperatorProcessOperatorReport];
 GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
@@ -505,8 +502,8 @@ GO
 IF OBJECT_ID(N'[dbo].[WorkShiftPrototypes]', 'U') IS NOT NULL
     DROP TABLE [dbo].[WorkShiftPrototypes];
 GO
-IF OBJECT_ID(N'[dbo].[OperatorProcessReports]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[OperatorProcessReports];
+IF OBJECT_ID(N'[dbo].[ProcessOperatorReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ProcessOperatorReports];
 GO
 IF OBJECT_ID(N'[dbo].[Blocks]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Blocks];

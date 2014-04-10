@@ -733,4 +733,7 @@
   <data name="txtUnitCost" xml:space="preserve">
     <value>Unit Cost:</value>
   </data>
+  <data name="txtIncludeAll" xml:space="preserve">
+    <value>Include Everything</value>
+  </data>
 </root>

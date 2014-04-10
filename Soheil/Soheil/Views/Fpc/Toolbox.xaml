@@ -101,7 +101,8 @@
 	</DataTemplate>
 
 	<DataTemplate x:Key="activityToolboxItemTemplate" DataType="{x:Type vm:ActivityVm}">
-		<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Activity_DragCompleted">
+		<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Activity_DragCompleted"
+			   Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 			<Thumb.Template>
 				<ControlTemplate>
 					<Border Style="{StaticResource toolboxItemBorderStyle}">
@@ -113,7 +114,8 @@
 	</DataTemplate>
 
 	<DataTemplate x:Key="machineToolboxItemTemplate" DataType="{x:Type vm:MachineVm}">
-		<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Machine_DragCompleted">
+		<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Machine_DragCompleted"
+			   Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 			<Thumb.Template>
 				<ControlTemplate>
 					<Border Style="{StaticResource toolboxItemBorderStyle}">
@@ -127,7 +129,7 @@
 	<!--toolbox groups-->
 	<DataTemplate x:Key="activityGroupToolboxItemTemplate" DataType="{x:Type vm:ActivityGroupVm}">
         <Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8443">
-            <Expander>
+            <Expander IsExpanded="{Binding IsExpanded}">
 				<Expander.Header>
 					<TextBlock Text="{Binding Name}" Foreground="White"/>
 				</Expander.Header>
@@ -139,7 +141,7 @@
 
 	<DataTemplate x:Key="machineFamilyToolboxItemTemplate" DataType="{x:Type vm:MachineFamilyVm}">
         <Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8345">
-            <Expander>
+			<Expander IsExpanded="{Binding IsExpanded}">
 				<Expander.Header>
 					<TextBlock Text="{Binding Name}" Foreground="White"/>
 				</Expander.Header>
@@ -172,6 +174,7 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<TextBlock Text="فعالیت ها"/>
+						<TextBox Text="{Binding ActivityQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
 						<ItemsControl ItemsSource="{Binding ActivityGroups}"
 									  ItemTemplate="{StaticResource activityGroupToolboxItemTemplate}"/>
 					</StackPanel>
@@ -181,6 +184,7 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<TextBlock Text=" ماشین ها"/>
+						<TextBox Text="{Binding MachineQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
 						<ItemsControl ItemsSource="{Binding MachineFamilies}"
 									  ItemTemplate="{StaticResource machineFamilyToolboxItemTemplate}"/>
 					</StackPanel>

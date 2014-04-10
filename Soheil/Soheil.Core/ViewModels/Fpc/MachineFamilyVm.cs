@@ -27,7 +27,17 @@ namespace Soheil.Core.ViewModels.Fpc
 			}*/
 		}
 		//Machines Observable Collection
-		private ObservableCollection<MachineVm> _machines = new ObservableCollection<MachineVm>();
 		public ObservableCollection<MachineVm> Machines { get { return _machines; } }
+		private ObservableCollection<MachineVm> _machines = new ObservableCollection<MachineVm>();
+
+		//IsExpanded Dependency Property
+		public bool IsExpanded
+		{
+			get { return (bool)GetValue(IsExpandedProperty); }
+			set { SetValue(IsExpandedProperty, value); }
+		}
+		public static readonly DependencyProperty IsExpandedProperty =
+			DependencyProperty.Register("IsExpanded", typeof(bool), typeof(MachineFamilyVm), new UIPropertyMetadata(false));
+
 	}
 }

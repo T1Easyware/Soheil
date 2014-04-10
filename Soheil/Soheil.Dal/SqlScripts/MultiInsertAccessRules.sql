@@ -100,11 +100,14 @@ INSERT INTO User_AccessRules(AccessRule_Id, [User_Id], ModifiedBy,ModifiedDate,[
 (40,1,0,'2013-01-01',31),
 (41,1,0,'2013-01-01',31),
 (42,1,0,'2013-01-01',31),
-(43,1,0,'2013-01-01',31);
+(43,1,0,'2013-01-01',31),
+(44,1,0,'2013-01-01',31),
+(45,1,0,'2013-01-01',31),
+(46,1,0,'2013-01-01',31);
 
 
---INSERT INTO Causes([Name],[Code],[Description],[ModifiedDate],[CreatedDate],[Status],[ModifiedBy],[Level]) VALUES
---('Causes',0,'','2013-01-01','2013-01-01',1,0,0);
+INSERT INTO Causes([Name],[Code],[Description],[ModifiedDate],[CreatedDate],[Status],[ModifiedBy],[Level]) VALUES
+('Causes',0,'','2013-01-01','2013-01-01',1,0,0);
 
 
 

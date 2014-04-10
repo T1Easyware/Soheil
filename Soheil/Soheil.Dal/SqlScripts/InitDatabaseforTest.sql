@@ -1,4 +1,15 @@
-﻿use SoheilDb
+﻿
+use SoheilV2
+
+SET IDENTITY_INSERT dbo.Machines ON
+insert into dbo.Machines (Id, Code, Name, MachineFamily_Id, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
+(48, '02001', N'چرخ آرایش 001', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(49, '02002', N'چرخ آرایش 002', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(50, '02003', N'چرخ آرایش 003', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(51, '02004', N'چرخ آرایش 004', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
+SET IDENTITY_INSERT dbo.Machines OFF
+
+
 SET IDENTITY_INSERT dbo.ProductGroups ON
 insert into dbo.ProductGroups (Id, Code, Name, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
 (1, 'PG1', N'زانویی', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
