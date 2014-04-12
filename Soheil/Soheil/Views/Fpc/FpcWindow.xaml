@@ -4,6 +4,7 @@
         xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
         xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
         xmlns:my="clr-namespace:System;assembly=mscorlib"
+		xmlns:local="clr-namespace:Soheil.Views.Fpc"
 		FlowDirection="RightToLeft"
 		FontFamily="Tahoma" Name="ParentWindow" Height="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=ActualHeight}"
 		MouseMove="Area_MouseMove" MouseUp="Area_MouseUp" KeyDown="RootWindow_KeyDown">
@@ -58,8 +59,8 @@
 			<!--WorkArea-->
 			<Border BorderBrush="#5FFF" BorderThickness="2,0,2,2" CornerRadius="0,0,2,2">
 				<DockPanel>
-					<ContentPresenter DockPanel.Dock="Left" Panel.ZIndex="5" Content="{Binding}" ContentTemplate="{StaticResource toolboxArea}"/>
-					<Canvas TextBlock.Foreground="Black" Background="#01000000" Name="DrawingArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
+					<local:Toolbox DockPanel.Dock="Left" Panel.ZIndex="5" DataContext="{Binding}" DrawingArea="{Binding ElementName=DrawingArea}"/>
+					<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
                         <Canvas Width="0" Height="0">
                             <ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Connectors}" ItemTemplate="{StaticResource connectorTemplate}"/>
                         </Canvas>

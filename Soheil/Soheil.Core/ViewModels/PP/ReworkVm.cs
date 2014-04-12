@@ -16,15 +16,18 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				Id = -1;
 				Name = "تولید عادی";
+				IsRework = false;
 			}
 			else
 			{
 				Id = model.Id;
 				Name = model.Name;
 				Code = model.Code;
+				IsRework = true;
 			}
 		}
 		public int Id { get; protected set; }
+		public bool IsRework { get; protected set; }
 		//Name Dependency Property
 		public string Name
 		{

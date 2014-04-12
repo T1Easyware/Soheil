@@ -102,8 +102,8 @@ namespace Soheil.Core.DataServices
 		public ObservableCollection<ActivitySkill> GetActivities(int oprId)
 		{
 			Operator entity = _operatorRepository.FirstOrDefault(opr => opr.Id == oprId,
-				"OperatorActivities.Operator",
-				"OperatorActivities.Activity");
+				"ActivitySkills.Operator",
+				"ActivitySkills.Activity");
 			return new ObservableCollection<ActivitySkill>(
 				entity.ActivitySkills.Where(item => item.Activity.Status == (decimal)Status.Active).ToList());
 		}
@@ -117,7 +117,14 @@ namespace Soheil.Core.DataServices
                 {
                     return;
                 }
-                var newGeneralActivitySkill = new ActivitySkill { Activity = newActivity, Operator = currentOperator };
+				var newGeneralActivitySkill = new ActivitySkill
+				{
+					Activity = newActivity,
+					Operator = currentOperator,
+					CreatedDate = DateTime.Now,
+					ModifiedDate = DateTime.Now,
+					ModifiedBy = LoginInfo.Id,
+				};
 				currentOperator.ActivitySkills.Add(newGeneralActivitySkill);
                 context.Commit();
                 ActivityAdded(this, new ModelAddedEventArgs<ActivitySkill>(newGeneralActivitySkill));

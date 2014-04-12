@@ -156,9 +156,21 @@ namespace Soheil.Common
 		#endregion
 
 		#region DataContext & EntityObject
+		static object _disconnectedItem;
+		static object DisconnectedItem
+		{
+			get
+			{
+				if (_disconnectedItem == null) _disconnectedItem = typeof(System.Windows.Data.BindingExpressionBase)
+				   .GetField("DisconnectedItem", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+				   .GetValue(null);
+				return _disconnectedItem;
+			}
+		}
 		public static T GetDataContext<T>(this object sender)
 		{
 			var dc = ((System.Windows.FrameworkElement)sender).DataContext;
+			if (dc == DisconnectedItem) return default(T);
 			if (dc is T)
 				return (T)dc;
 			else return default(T);

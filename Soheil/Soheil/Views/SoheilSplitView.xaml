@@ -2991,7 +2991,7 @@
                                    DockPanel.Dock="Bottom">
                             <Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
                                     CommandParameter="0"
-                                    Content="{Loc txtActivities}">
+                                    Content="{Loc txtGenSkills}">
                             </Button>
                         </WrapPanel>
                     </Border>

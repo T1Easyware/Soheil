@@ -58,7 +58,8 @@ namespace Soheil.Views.Fpc
 
 		private void midStateLoaded(object sender, RoutedEventArgs e)
 		{
-			sender.GetDataContext<StateVm>().InitializingPhase = false;
+			var dc = sender.GetDataContext<StateVm>();
+			if(dc != null) dc.InitializingPhase = false;
 		}
 	}
 }

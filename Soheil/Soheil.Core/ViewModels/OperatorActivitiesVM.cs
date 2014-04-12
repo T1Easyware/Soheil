@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Data;
+using System.Linq;
 using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
@@ -29,7 +30,8 @@ namespace Soheil.Core.ViewModels
             SelectedItems = new ListCollectionView(selectedVms);
 
             var allVms = new ObservableCollection<ActivityVM>();
-            foreach (var activity in ActivityDataService.GetActives())
+            foreach (var activity in ActivityDataService.GetActives()
+				.Where(activity => !selectedVms.Any(activityOperator => activityOperator.ActivityId == activity.Id)))
             {
                 allVms.Add(new ActivityVM(activity, Access, ActivityDataService, ActivityGroupDataService));
             }

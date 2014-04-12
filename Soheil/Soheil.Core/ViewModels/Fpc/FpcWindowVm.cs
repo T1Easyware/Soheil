@@ -58,7 +58,8 @@ namespace Soheil.Core.ViewModels.Fpc
 				{
 					Connectors.Add(new ConnectorVm(item,
 						States.FirstOrDefault(x => x.Id == item.StartState.Id),
-						States.FirstOrDefault(x => x.Id == item.EndState.Id)));
+						States.FirstOrDefault(x => x.Id == item.EndState.Id),
+						fpcDataService.connectorDataService));
 				}
 			}
 			catch (SoheilExceptionBase exp)
@@ -579,7 +580,7 @@ namespace Soheil.Core.ViewModels.Fpc
 
 					DragTarget = end;
 					States.Add(end);
-					Connectors.Add(new ConnectorVm(null, state, end, true));
+					Connectors.Add(new ConnectorVm(null, state, end, fpcDataService.connectorDataService, true));
 					RelativeDragPoint = new Point(0, 0);
 				}
 				//state is dragging

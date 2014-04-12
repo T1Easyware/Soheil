@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					x:Class="Soheil.Views.Fpc.Connector"
 					xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
+             xmlns:I="http://schemas.microsoft.com/expression/2010/interactivity"
 					xmlns:my="clr-namespace:System;assembly=mscorlib"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -100,10 +101,12 @@
 						<!--For a bug-->
 						<Canvas/>
 					</DockPanel>
-					<Image 
-						MouseDown="DeleteConnectorButton_Click" Name="deleteConnectorButton" ToolTip="حذف اتصال" Opacity="0"
-						HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0"
-						Style="{StaticResource Delete16Image}">
+					<Image Style="{StaticResource Delete16Image}" Name="deleteConnectorButton" ToolTip="حذف اتصال" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0">
+						<I:Interaction.Triggers>
+							<I:EventTrigger EventName="MouseDown">
+								<I:InvokeCommandAction Command="{Binding DeleteCommand}"/>
+							</I:EventTrigger>
+						</I:Interaction.Triggers>
 						<Image.Triggers>
 							<EventTrigger RoutedEvent="Mouse.MouseEnter">
 								<BeginStoryboard>

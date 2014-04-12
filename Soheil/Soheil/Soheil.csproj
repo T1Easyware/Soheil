@@ -234,6 +234,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Fpc\ToolboxDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PP\Block.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

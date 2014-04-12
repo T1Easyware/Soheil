@@ -44,6 +44,63 @@
 		<Border.Effect>
 			<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}"/>
 		</Border.Effect>
+		<Border.ToolTip>
+			<StackPanel Margin="2" FlowDirection="RightToLeft">
+				<TextBlock Text="{Loc ttBlock}" HorizontalAlignment="Center"/>
+				<Separator/>
+				
+				<DockPanel>
+					<Image Style="{StaticResource TaskImage}" Margin="4,0"/>
+					<TextBlock Text="{Loc txtCode}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding Code}" VerticalAlignment="Center" Margin="4,0"/>
+				</DockPanel>
+
+				<DockPanel Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}">
+					<Image Style="{StaticResource JobImage}" Margin="4,0"/>
+					<TextBlock Text="{Loc ttHasJob}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding Job.Description}" VerticalAlignment="Center" Margin="4,0"/>
+				</DockPanel>
+
+				<DockPanel>
+					<TextBlock Text="{Loc txtStartDate}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding StartDateTime}" VerticalAlignment="Center" Margin="4,0"/>
+				</DockPanel>
+				<DockPanel>
+					<TextBlock Text="{Loc txtEndDate}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding EndDateTime}" VerticalAlignment="Center" Margin="4,0"/>
+				</DockPanel>
+				
+				<DockPanel>
+					<Image Style="{StaticResource ReworkImage}" Margin="4,0" Visibility="{Binding IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
+					<TextBlock Text="{Binding ProductCode}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding ProductName}" VerticalAlignment="Center" Margin="4,0"/>
+				</DockPanel>
+				
+				<Separator/>
+
+				<DockPanel>
+					<Image Style="{StaticResource TargetPointImage}" Margin="4,0" VerticalAlignment="Center"/>
+					<TextBlock Text="{Loc txtTargetPoint}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding BlockTargetPoint}" VerticalAlignment="Center" Margin="4,0"/>
+				</DockPanel>
+				<DockPanel>
+					<Image Style="{StaticResource ProducedG1Image}" Margin="4,0" VerticalAlignment="Center"/>
+					<TextBlock Text="{Loc txtProducedG1}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding BlockProducedG1}" VerticalAlignment="Center" Margin="4,0"/>
+				</DockPanel>
+
+				<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}">
+					<Image Style="{StaticResource ReportWarningImage}" Margin="4,0"/>
+					<TextBlock Text="{Loc ttReportFillPercent}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding ReportFillPercent}" VerticalAlignment="Center" Margin="4,0"/>
+				</DockPanel>
+				<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToVisibilityConverter}}">
+					<Image Style="{StaticResource ReportImage}" Margin="4,0"/>
+					<TextBlock Text="{Loc ttReportCompleted}" VerticalAlignment="Center"/>
+				</DockPanel>
+
+			</StackPanel>
+		</Border.ToolTip>
 		<!-- main content -->
 		<Grid ClipToBounds="False" TextBlock.Foreground="{Binding ForeColor}">
 			<!-- block background texts -->

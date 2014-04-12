@@ -741,4 +741,28 @@
   <data name="txtIncludeAll" xml:space="preserve">
     <value>افزودن همه</value>
   </data>
+  <data name="txtInUse" xml:space="preserve">
+    <value>در حال استفاده</value>
+  </data>
+  <data name="txtOther" xml:space="preserve">
+    <value>سایر</value>
+  </data>
+  <data name="ttBlock" xml:space="preserve">
+    <value>Task</value>
+  </data>
+  <data name="ttTask" xml:space="preserve">
+    <value>قسمتی از Task</value>
+  </data>
+  <data name="ttHasJob" xml:space="preserve">
+    <value>جزئی از Job</value>
+  </data>
+  <data name="ttReportCompleted" xml:space="preserve">
+    <value>گزارش کامل است</value>
+  </data>
+  <data name="ttReportFillPercent" xml:space="preserve">
+    <value>درصد تکمیل گزارش</value>
+  </data>
+  <data name="txtProducedG1" xml:space="preserve">
+    <value>تولید سالم</value>
+  </data>
 </root>

@@ -50,13 +50,13 @@
 				<Separator/>
 				<WrapPanel>
 					<TextBlock Text="از محصول: " Foreground="DarkGray"/>
-					<Image Style="{StaticResource ReworkImage}" Visibility="{Binding FromProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+					<Image Style="{StaticResource ReworkImage}" Visibility="{Binding FromProduct.Rework.IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
 					<Rectangle Fill="{Binding FromProduct.Product.Color}" Width="15"/>
 					<TextBlock Text="{Binding FromProduct.Name}" TextWrapping="Wrap"/>
 				</WrapPanel>
 				<WrapPanel>
 					<TextBlock Text="به محصول: " Foreground="DarkGray"/>
-					<Image Style="{StaticResource ReworkImage}" Visibility="{Binding ToProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+					<Image Style="{StaticResource ReworkImage}" Visibility="{Binding ToProduct.Rework.IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
 					<Rectangle Fill="{Binding ToProduct.Product.Color}" Width="15"/>
 					<TextBlock Text="{Binding ToProduct.Name}" TextWrapping="Wrap"/>
 				</WrapPanel>

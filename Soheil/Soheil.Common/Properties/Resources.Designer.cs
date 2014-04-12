@@ -601,6 +601,24 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Task.
+        /// </summary>
+        public static string ttBlock {
+            get {
+                return ResourceManager.GetString("ttBlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to جزئی از Job.
+        /// </summary>
+        public static string ttHasJob {
+            get {
+                return ResourceManager.GetString("ttHasJob", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to جستجو بر اساس شروع و مهلت Jobها.
         /// </summary>
         public static string ttJobListByDefinition {
@@ -615,6 +633,33 @@ namespace Soheil.Common.Properties {
         public static string ttJobListByTasks {
             get {
                 return ResourceManager.GetString("ttJobListByTasks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to گزارش کامل است.
+        /// </summary>
+        public static string ttReportCompleted {
+            get {
+                return ResourceManager.GetString("ttReportCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to درصد تکمیل گزارش.
+        /// </summary>
+        public static string ttReportFillPercent {
+            get {
+                return ResourceManager.GetString("ttReportFillPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to قسمتی از Task.
+        /// </summary>
+        public static string ttTask {
+            get {
+                return ResourceManager.GetString("ttTask", resourceCulture);
             }
         }
         
@@ -1123,6 +1168,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to در حال استفاده.
+        /// </summary>
+        public static string txtInUse {
+            get {
+                return ResourceManager.GetString("txtInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ورود.
         /// </summary>
         public static string txtLogin {
@@ -1348,6 +1402,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to سایر.
+        /// </summary>
+        public static string txtOther {
+            get {
+                return ResourceManager.GetString("txtOther", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مبلغ :.
         /// </summary>
         public static string txtPaidCost {
@@ -1425,6 +1488,15 @@ namespace Soheil.Common.Properties {
         public static string txtPositions {
             get {
                 return ResourceManager.GetString("txtPositions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to تولید سالم.
+        /// </summary>
+        public static string txtProducedG1 {
+            get {
+                return ResourceManager.GetString("txtProducedG1", resourceCulture);
             }
         }
         
