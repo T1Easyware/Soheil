@@ -7,12 +7,22 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
+	/// <summary>
+	/// ViewModel for a specific StateStationActivity that can be a candidate for a process with same activity, but different StateStationActivity
+	/// <para>Before considering the number of operators (ManHour), multiple choices can represent a single process</para>
+	/// <para>After that operators are assigned, one of these choices (which manhour is equal to number of operators) are selected</para>
+	/// </summary>
 	public class PPEditorActivityChoice : DependencyObject
 	{
 		public Model.StateStationActivity Model { get; private set; }
 		public int ActivityId { get { return Model.Activity.Id; } }
 		public int StateStationActivityId { get { return Model.Id; } }
 
+		/// <summary>
+		/// Creates an instance of this vm with given StateStationActivity model and PPEditorProcess parent
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="parent"></param>
 		public PPEditorActivityChoice(Model.StateStationActivity model, PPEditorProcess parent)
 		{
 			Model = model;
@@ -47,5 +57,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty ManHourProperty =
 			DependencyProperty.Register("ManHour", typeof(float), typeof(PPEditorActivityChoice), new UIPropertyMetadata(0f));
 
+		/// <summary>
+		/// Gets or sets a bindable value to indicate whether Manhour matches the number of operators assigned to this choice
+		/// <para>This could be false when an auto planning considered this choice but not able to assign operators yet</para>
+		/// </summary>
+		public bool OperatorCountOk
+		{
+			get { return (bool)GetValue(OperatorCountOkProperty); }
+			set { SetValue(OperatorCountOkProperty, value); }
+		}
+		public static readonly DependencyProperty OperatorCountOkProperty =
+			DependencyProperty.Register("OperatorCountOk", typeof(bool), typeof(PPEditorActivityChoice), new UIPropertyMetadata(true));
 	}
 }

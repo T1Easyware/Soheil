@@ -19,7 +19,11 @@
 		<Setter Property="Width" Value="16"/>
 	</Style>
 	<Style x:Key="Warning16Image" TargetType="Image">
-		<Setter Property="Source" Value="/Soheil.Controls;component/Images/warning.png"/>
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/warning16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Error16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/error16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
 

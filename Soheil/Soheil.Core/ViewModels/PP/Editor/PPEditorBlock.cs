@@ -395,34 +395,62 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				//processes don't follow the JIT model attachment strategy
 				//so we need to manually attach or remove their models prior to Save.
 
-				//first remove those existing process models that there isn't any VM with the same Activity
-				var tmp = taskVm.Model.Processes.Where(m=>
-					!taskVm.ProcessList.Any(vm => 
-						vm.SelectedChoice != null && vm.SelectedChoice.ActivityId == m.StateStationActivity.Activity.Id)
-					).ToArray();
-				foreach (var processModel in tmp)
+				//select valid processes from Vm which will have a process in model
+				//these must have valid SelectedChoice and TargetPoint
+				foreach (var processVm in taskVm.ProcessList.Where(procVm =>
+					procVm.SelectedChoice != null && procVm.TargetPoint > 0))
 				{
-					TaskDataService.DeleteModel(processModel);
-				}
-
-				//then add new process Models (or attach if a process with the same Activity already exists)
-				foreach (var processVm in taskVm.ProcessList.Where(x => x.SelectedChoice != null))
-				{
-					//check for existance
-					var procModel = taskVm.Model.Processes.FirstOrDefault(x => 
+					//process model for current valid processVm
+					//initially it's null and later will be set (create new or to be found)
+					Model.Process procModel = null;
+					
+					//check for similar existing processes (that have the same activity)
+					//if multiple models found delete all and add a new process model
+					//if the found process has different stateStationActivity then correct it
+					//if non found add a new process model
+					var similarProcModels = taskVm.Model.Processes.Where(x => 
 						x.StateStationActivity.Activity.Id == processVm.SelectedChoice.ActivityId);
-					//create new Model
-					if (procModel == null)
+
+
+					// -> if just one is found
+					if (similarProcModels.Count() == 1)
 					{
-						procModel = new Model.Process();
+						//found it, then correct it
+						procModel = similarProcModels.First();
+
+						// -> if the found process has different stateStationActivity then correct it
+						if (procModel.StateStationActivity.Id != processVm.SelectedChoice.StateStationActivityId)
+						{
+							procModel.StateStationActivity = processVm.SelectedChoice.Model;
+						}
+						//either way update TP
+						procModel.TargetCount = processVm.TargetPoint;
+					}
+					else
+					{
+						// -> if multiple models found *delete all* and [add a new process model]
+						if (similarProcModels.Count() > 1)
+						{
+							foreach (var model in similarProcModels.ToArray())
+							{
+								TaskDataService.DeleteModel(model);
+							}
+						}
+
+						// -> if multiple models found [delete all] and *add a new process model*
+						// -> or
+						// -> if non found add a new process model
+						procModel = new Model.Process
+						{
+							Task = taskVm.Model,
+							StateStationActivity = processVm.SelectedChoice.Model,
+							TargetCount = processVm.TargetPoint,
+						};
+						//add it to repository
 						new Soheil.Dal.Repository<Model.Process>(_uow).Add(procModel);
-						//and add to parent model
+						//and also add to parent model
 						taskVm.Model.Processes.Add(procModel);
 					}
-					//update common info (create/attach)
-					procModel.Task = taskVm.Model;
-					procModel.StateStationActivity = processVm.SelectedChoice.Model;
-					procModel.TargetCount = processVm.TargetPoint;
 
 					//...
 					//do the same for machines

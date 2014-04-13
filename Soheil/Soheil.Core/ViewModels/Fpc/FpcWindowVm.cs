@@ -151,12 +151,13 @@ namespace Soheil.Core.ViewModels.Fpc
 				}
 				else
 				{
+					val = val.ToUpper();
 					foreach (var mf in vm.MachineFamilies)
 					{
 						bool isAnyVisible = false;
 						foreach (var m in mf.Machines)
 						{
-							if (m.Name.Contains(val))
+							if (m.Name.ToUpper().Contains(val) || m.Code.ToUpper().StartsWith(val))
 							{
 								m.IsVisible = true;
 								isAnyVisible = true;
@@ -193,12 +194,13 @@ namespace Soheil.Core.ViewModels.Fpc
 				}
 				else
 				{
+					val = val.ToUpper();
 					foreach (var ag in vm.ActivityGroups)
 					{
 						bool isAnyVisible = false;
 						foreach (var a in ag.Activities)
 						{
-							if (a.Name.Contains(val))
+							if (a.Name.ToUpper().Contains(val) || a.Model.Code.ToUpper().StartsWith(val))
 							{
 								a.IsVisible = true;
 								isAnyVisible = true;

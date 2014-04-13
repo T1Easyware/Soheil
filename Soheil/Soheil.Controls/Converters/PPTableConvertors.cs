@@ -470,14 +470,19 @@ namespace Soheil.Controls.Converters.PP
 		}
 	}
 
+	/// <summary>
+	/// First binding is Code (match if starts with query)
+	/// Second binding is Name (match if contains query)
+	/// Third binding is query (match if empty or whitespace)
+	/// </summary>
 	public class FilterMaker : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			var code = (string)values[0];
-			var name = (string)values[1];
-			var filter = (string)values[2];
-			return string.IsNullOrWhiteSpace(filter) || (code == filter) || ((name != null) && (name.Contains(filter)))
+			var code = ((string)values[0]).ToUpper();
+			var name = ((string)values[1]).ToUpper();
+			var filter = ((string)values[2]).ToUpper();
+			return string.IsNullOrWhiteSpace(filter) || (code.StartsWith(filter)) || ((name != null) && (name.Contains(filter)))
 				? Visibility.Visible : Visibility.Hidden;
 		}
 

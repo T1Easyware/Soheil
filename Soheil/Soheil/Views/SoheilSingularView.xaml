@@ -473,21 +473,21 @@
                                         </StackPanel>
                                     </Button.ToolTip>
                                 </Button>
-                                <Button Margin="1" Command="{Binding JobEditor.SaveAllCommand}">
+								<Button Margin="1" Command="{Binding JobEditor.ExitCommand}">
+									<Image Style="{StaticResource CloseWipeUpImage}"/>
+									<Button.ToolTip>
+										<StackPanel>
+											<TextBlock Text="بستن ویرایشگر"/>
+											<TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Job بسته می شود و آخرین اطلاعات آن نگه داشته می شود"/>
+										</StackPanel>
+									</Button.ToolTip>
+								</Button>
+								<Button Margin="1" Command="{Binding JobEditor.SaveAllCommand}">
                                     <Image Style="{StaticResource SaveWipeUpImage}"/>
                                     <Button.ToolTip>
                                         <StackPanel>
                                             <TextBlock Text="ذخیره همه و خروج"/>
                                             <TextBlock Foreground="DarkGray" FontSize="10" Text="تمام برنامه های ویرایشگر Job ذخیره و ویرایشگر بسته می شود"/>
-                                        </StackPanel>
-                                    </Button.ToolTip>
-                                </Button>
-                                <Button Margin="1" Command="{Binding JobEditor.ExitCommand}">
-                                    <Image Style="{StaticResource CloseWipeUpImage}"/>
-                                    <Button.ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="بستن ویرایشگر"/>
-                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Job بسته می شود و آخرین اطلاعات آن نگه داشته می شود"/>
                                         </StackPanel>
                                     </Button.ToolTip>
                                 </Button>

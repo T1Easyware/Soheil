@@ -65,6 +65,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
             TargetPoint = model.TargetCount;
             SelectedChoice = Choices.FirstOrDefault(x => x.StateStationActivityId == model.StateStationActivity.Id);
+			if ((int)SelectedChoice.ManHour != model.ProcessOperators.Count) SelectedChoice.OperatorCountOk = false;
             if (SelectedChoice == null) Message.AddEmbeddedException("نفرساعت مورد استفاده این فعالیت نامعتبر است");
         }
         void initMembers()
@@ -82,7 +83,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				Name = _ssaGroup.First().Activity.Name;
 
 				//choices
-				foreach (var choice in _ssaGroup)
+				foreach (var choice in _ssaGroup.OrderBy(ssa => ssa.ManHour))
 				{
 					Choices.Add(new PPEditorActivityChoice(choice, this));
 				}
@@ -97,7 +98,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					{
 						SelectedOperatorsCount = OperatorList.Count(x => x.IsSelected);
 						if (!_isInitializing)
+						{
 							SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == SelectedOperatorsCount);
+							if(SelectedChoice != null)
+								SelectedChoice.OperatorCountOk = true;
+						}
 					};
 					operatorVms.Add(operatorVm);
 				}
@@ -149,11 +154,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 
 		//MachineList Observable Collection
-		private ObservableCollection<PPEditorMachine> _machineList = new ObservableCollection<PPEditorMachine>();
 		public ObservableCollection<PPEditorMachine> MachineList { get { return _machineList; } }
+		private ObservableCollection<PPEditorMachine> _machineList = new ObservableCollection<PPEditorMachine>();
 		//OperatorList Observable Collection
-		private ObservableCollection<PPEditorOperator> _operatorList = new ObservableCollection<PPEditorOperator>();
 		public ObservableCollection<PPEditorOperator> OperatorList { get { return _operatorList; } }
+		private ObservableCollection<PPEditorOperator> _operatorList = new ObservableCollection<PPEditorOperator>();
 		public int SelectedOperatorsCount
 		{
 			get { return (int)GetValue(SelectedOperatorsCountProperty); }

@@ -107,7 +107,7 @@
         
         <!-- general operator -->
 		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="allOperatorsTemplate">
-			<Button Height="25" Name="btn" HorizontalAlignment="Stretch" Click="SelectOperator"
+			<Button Height="25" Name="btn" HorizontalAlignment="Stretch" Click="SelectOperator" Margin="0"
 					IsEnabled="{Binding IsSelected, Converter={StaticResource inverter}}" Padding="0">
 				<Button.Visibility>
 					<MultiBinding Converter="{StaticResource filterMaker}">
@@ -117,8 +117,8 @@
 					</MultiBinding>
 				</Button.Visibility>
 				<WrapPanel HorizontalAlignment="Left" TextBlock.Foreground="Black">
-					<TextBlock Text="{Binding EffectiveSkill}" Foreground="#099"/>
 					<TextBlock Name="txtCode" Text="{Binding Code}" Foreground="Gray"/>
+					<TextBlock Text="{Binding EffectiveSkill}" Foreground="#099"/>
 					<TextBlock Name="txtName" Text="{Binding Name}" Foreground="DimGray"/>
 				</WrapPanel>
 			</Button>
@@ -154,13 +154,13 @@
         <!-- selected operator -->
 		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="selectedOperatorsTemplate">
 			<StackPanel Name="root">
-				<Button Height="25" Name="btn_deselect" HorizontalAlignment="Stretch" Click="DeselectOperator"
+				<Button Height="25" Name="btn_deselect" HorizontalAlignment="Stretch" Click="DeselectOperator" Margin="0" Padding="0"
 					Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}">
 					<WrapPanel HorizontalAlignment="Left">
-						<TextBlock Text="{Binding EffectiveSkill}" Foreground="#099"/>
 						<TextBlock Text="{Binding Code}" Foreground="Gray"/>
-						<TextBlock Text="{Binding Name}" Foreground="DimGray" Margin="5,0,0,0"/>
-						<TextBlock Text="{Binding Role, Converter={StaticResource operatorRoleTextConverter}}" Margin="5,0,0,0" Foreground="Lime"/>
+						<TextBlock Text="{Binding EffectiveSkill}" Foreground="#099"/>
+						<TextBlock Text="{Binding Name}" Foreground="DimGray"/>
+						<TextBlock Text="{Binding Role, Converter={StaticResource operatorRoleTextConverter}}" Foreground="#099"/>
 					</WrapPanel>
 				</Button>
 				<StackPanel Name="rolesPanel" Height="0">
@@ -290,12 +290,16 @@
         <!-- task details -->
         <DataTemplate DataType="{x:Type ppevm:PPEditorTask}" x:Key="taskDetailsTemplate">
             <!-- 1 Task (Portion of a block) -->
-            <DockPanel Background="Silver" x:Name="root">
-                <DockPanel.Effect>
+			<Grid Background="Silver" x:Name="root">
+				<Grid.Effect>
                     <DropShadowEffect ShadowDepth="0"/>
-                </DockPanel.Effect>
-                <!-- Top half -->
-                <DockPanel DockPanel.Dock="Left">
+                </Grid.Effect>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+                <!-- Processes and TPs (Bottom first column) -->
+                <DockPanel>
                     <!-- TP -->
                     <DockPanel DockPanel.Dock="Top">
                         <Border DockPanel.Dock="Left" BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffHeaderBackground}" BorderThickness="1" CornerRadius="5,0,0,5" Height="{Binding ElementName=durationContents, Path=ActualHeight}" Margin="2,2,0,2">
@@ -338,7 +342,9 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DockPanel>
-											<Image Style="{StaticResource Warning16Image}" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" ToolTip="{Binding Message.FullExceptionText}"/>
+											<Image Style="{StaticResource Error16Image}" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" ToolTip="{Binding Message.FullExceptionText}"/>
+											<Image Style="{StaticResource Warning16Image}" Visibility="{Binding SelectedChoice.OperatorCountOk, Converter={StaticResource booleanToInvisibilityConverter}}" 
+												   ToolTip="تعداد اپراتورهای تخصیص داده شده برابر با نفرساعت این فعالیت نمی باشد"/>
                                             <ItemsControl ItemsSource="{Binding Choices}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
@@ -386,20 +392,28 @@
                         </DataGrid.Columns>
                         <DataGrid.RowDetailsTemplate>
                             <DataTemplate>
-                                <UniformGrid Rows="1" Columns="6" Background="Silver" TextBlock.Foreground="Black">
-                                    <TextBlock Text="{Loc txtOperators}" Foreground="Gray"/>
-                                    <TextBlock Text="{Binding SelectedOperatorsCount}"/>
-                                    <TextBlock Text="{Loc txtCycleTime}" Foreground="Gray"/>
-                                    <TextBlock Text="{Binding SelectedChoice.CycleTime}"/>
-                                    <TextBlock Text="{Loc txtDuration}" Foreground="Gray"/>
-                                    <TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight"/>
-                                </UniformGrid>
+                                <WrapPanel Background="Silver" TextBlock.Foreground="Black">
+									<DockPanel>
+										<TextBlock Text="{Loc txtOperators}" Foreground="Gray"/>
+										<TextBlock Text="{Binding SelectedOperatorsCount}" Margin="10,0,20,0"/>
+									</DockPanel>
+									<DockPanel>
+										<TextBlock Text="{Loc txtCycleTime}" Foreground="Gray"/>
+										<TextBlock Text="{Binding SelectedChoice.CycleTime}" Margin="10,0,20,0"/>
+									</DockPanel>
+									<DockPanel>
+										<TextBlock Text="{Loc txtDuration}" Foreground="Gray"/>
+										<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="10,0,0,0"/>
+									</DockPanel>
+                                </WrapPanel>
                             </DataTemplate>
                         </DataGrid.RowDetailsTemplate>
                     </DataGrid>
                 </DockPanel>
-                <ContentPresenter Content="{Binding SelectedProcess}" ContentTemplate="{StaticResource activityTabTemplate}"/>
-            </DockPanel>
+				<GridSplitter Width="5"/>
+				<!-- machines and operators (Bottom 2nd column) -->
+				<ContentPresenter Content="{Binding SelectedProcess}" ContentTemplate="{StaticResource activityTabTemplate}" Grid.Column="1"/>
+			</Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding HasUnsavedChanges}" Value="True">
                     <Setter TargetName="root" Property="Background">

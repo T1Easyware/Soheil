@@ -44,7 +44,10 @@
 				<Thumb.Template>
 					<ControlTemplate>
 						<Border Style="{StaticResource toolboxItemBorderStyle}">
-							<TextBlock Text="{Binding Name}" Foreground="White"/>
+							<DockPanel LastChildFill="False">
+								<TextBlock Text="{Binding Name}" Foreground="White" DockPanel.Dock="Left"/>
+								<TextBlock Text="{Binding Code}" Foreground="Silver" TextAlignment="Left" DockPanel.Dock="Right"/>
+							</DockPanel>
 						</Border>
 					</ControlTemplate>
 				</Thumb.Template>
