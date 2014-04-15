@@ -160,7 +160,13 @@ namespace Soheil.Core.DataServices
 				activityOperator.Activity.Id == activityId 
 				&& activityOperator.Operator.Id == operatorId))
 				return;
-			var newGeneralActivitySkill = new ActivitySkill { Operator = newOperator, Activity = currentActivity };
+			var newGeneralActivitySkill = new ActivitySkill { 
+				Operator = newOperator, 
+				Activity = currentActivity,
+				CreatedDate = DateTime.Now,
+				ModifiedBy = LoginInfo.Id,
+				ModifiedDate = DateTime.Now,
+			};
 			currentActivity.ActivitySkills.Add(newGeneralActivitySkill);
 			context.Commit();
 			OperatorAdded(this, new ModelAddedEventArgs<ActivitySkill>(newGeneralActivitySkill));

@@ -117,13 +117,14 @@
 							MinWidth="50" 
 							Visibility="{Binding Converter={StaticResource invisibilityConverter}, Path=ShowDetails}">
 							<TextBlock
-								Text="{Binding Name}" 
-								Margin="6,1,6,0" 
+								Text="{Binding Code}" 
+								Foreground="LightGray" 
+								Margin="5,1"
 								HorizontalAlignment="Center"/>
 							<TextBlock
-								Text="{Binding Code}" 
-								Foreground="Gray" 
-								Margin="2,0,2,0"
+								Text="{Binding Name}" 
+								Foreground="WhiteSmoke" 
+								Margin="5,1" 
 								HorizontalAlignment="Center"/>
 						</StackPanel>
 						<!-- config.inside -->
@@ -227,19 +228,19 @@
 							DockPanel.Dock="Top" 
 							MinWidth="50" 
 							Visibility="{Binding Converter={StaticResource invisibilityConverter}, Path=ShowDetails}">
-							<Button
-								DockPanel.Dock="Right"
-								Content="+"
-								Command="{Binding SelectCommand}"/>
+							<Button DockPanel.Dock="Right" Command="{Binding SelectCommand}" Width="32" Margin="0">
+								<Image Style="{StaticResource Add16Image}"/>
+							</Button>
 							<TextBlock
 								DockPanel.Dock="Top"
-								Text="{Binding Name}" 
-								Margin="6,1,6,0" 
+								Text="{Binding Code}" 
+								Foreground="WhiteSmoke" 
+								Margin="5,1"
 								HorizontalAlignment="Center"/>
 							<TextBlock
-								Text="{Binding Code}" 
-								Foreground="Gray" 
-								Margin="2,0,2,0"
+								Text="{Binding Name}" 
+								Foreground="Black" 
+								Margin="5,1" 
 								HorizontalAlignment="Center"/>
 						</DockPanel>
 						<!-- config.inside -->

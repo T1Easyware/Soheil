@@ -292,7 +292,6 @@ namespace Soheil.Core.DataServices
 					});
 
 			int reworkStateCounter = 0;
-			var rnd = new Random();
 			foreach (var productRework in model.Product.ProductReworks.Where(x => x.Rework != null))
 			{
 				if (!model.States.Any(x =>
@@ -303,14 +302,15 @@ namespace Soheil.Core.DataServices
 					stateDataService.AddModel(new State
 					{
 						FPC = model,
-						X = (++reworkStateCounter) * 50 + rnd.Next(-20, 20),
-						Y = reworkStateCounter * 50 + 200 + rnd.Next(-20, 20),
+						X = 20,
+						Y = reworkStateCounter * 35 + 500,
 						Name = productRework.Name,
 						Code = productRework.Code,
 						OnProductRework = productRework,
 						StateType = StateType.Rework,
 					});
 				}
+				reworkStateCounter++;
 			}
 			//set pr of a state to mainPR if it's null
 			var states = model.States.Where(x =>

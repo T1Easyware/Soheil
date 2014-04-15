@@ -60,8 +60,18 @@
 			<Border BorderBrush="#5FFF" BorderThickness="2,0,2,2" CornerRadius="0,0,2,2">
 				<DockPanel>
 					<local:Toolbox DockPanel.Dock="Left" Panel.ZIndex="5" DataContext="{Binding}" DrawingArea="{Binding ElementName=DrawingArea}"/>
-					<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
-                        <Canvas Width="0" Height="0">
+					<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown">
+						<Canvas.Style>
+							<Style TargetType="Canvas">
+								<Setter Property="Cursor" Value="/Images/openhand.cur"/>
+								<Style.Triggers>
+									<Trigger Property="IsMouseCaptured" Value="True">
+										<Setter Property="Cursor" Value="/Images/closehand.cur"/>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</Canvas.Style>
+						<Canvas Width="0" Height="0">
                             <ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Connectors}" ItemTemplate="{StaticResource connectorTemplate}"/>
                         </Canvas>
                         <Canvas Width="0" Height="0">

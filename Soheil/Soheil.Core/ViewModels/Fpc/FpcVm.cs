@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Media;
 using Soheil.Core.DataServices;
 using Soheil.Core.Base;
+using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
@@ -17,6 +18,11 @@ namespace Soheil.Core.ViewModels.Fpc
 		public Model.FPC Model { get; protected set; }
 
 		public int Id { get { return Model == null ? -1 : Model.Id; } }
+
+		public FpcVm()
+		{
+			States.CollectionChanged += (s, e) => HasStates = States.Any();
+		}
 
 		#region Methods
 		/// <summary>
@@ -65,15 +71,58 @@ namespace Soheil.Core.ViewModels.Fpc
 			new UIPropertyMetadata(true, (d, e) => ((FpcVm)d).IsDefaultChanged((bool)e.NewValue)));
 
 		//connectors Observable Collection
-		private ObservableCollection<ConnectorVm> _connectors = new ObservableCollection<ConnectorVm>();
 		public ObservableCollection<ConnectorVm> Connectors { get { return _connectors; } }
+		private ObservableCollection<ConnectorVm> _connectors = new ObservableCollection<ConnectorVm>();
 		//states Observable Collection
-		private ObservableCollection<StateVm> _states = new ObservableCollection<StateVm>();
 		public ObservableCollection<StateVm> States { get { return _states; } }
+		private ObservableCollection<StateVm> _states = new ObservableCollection<StateVm>();
 		//ProductReworks Observable Collection
+		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } }
 		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
-		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } } 
 		#endregion
 
+		protected void initCommands()
+		{
+			ExpandAllCommand = new Commands.Command(o =>
+			{
+				var items = States.Where(x => x.StateType == StateType.Mid);
+				foreach (var item in items)
+				{
+					item.ShowDetails = true;
+				}
+			});
+			CollapseAllCommand = new Commands.Command(o =>
+			{
+				foreach (var item in States.Where(x => x.StateType == StateType.Mid))
+				{
+					item.ShowDetails = false;
+				}
+			});
+		}
+		//ExpandAllCommand Dependency Property
+		public Commands.Command ExpandAllCommand
+		{
+			get { return (Commands.Command)GetValue(ExpandAllCommandProperty); }
+			set { SetValue(ExpandAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ExpandAllCommandProperty =
+			DependencyProperty.Register("ExpandAllCommand", typeof(Commands.Command), typeof(FpcVm), new UIPropertyMetadata(null));
+		//CollapseAllCommand Dependency Property
+		public Commands.Command CollapseAllCommand
+		{
+			get { return (Commands.Command)GetValue(CollapseAllCommandProperty); }
+			set { SetValue(CollapseAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CollapseAllCommandProperty =
+			DependencyProperty.Register("CollapseAllCommand", typeof(Commands.Command), typeof(FpcVm), new UIPropertyMetadata(null));
+
+		//HasStates Dependency Property
+		public bool HasStates
+		{
+			get { return (bool)GetValue(HasStatesProperty); }
+			set { SetValue(HasStatesProperty, value); }
+		}
+		public static readonly DependencyProperty HasStatesProperty =
+			DependencyProperty.Register("HasStates", typeof(bool), typeof(FpcVm), new UIPropertyMetadata(false));
 	}
 }

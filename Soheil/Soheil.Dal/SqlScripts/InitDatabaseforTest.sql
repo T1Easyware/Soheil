@@ -1,14 +1,4 @@
-﻿
-use SoheilV2
-
-SET IDENTITY_INSERT dbo.Machines ON
-insert into dbo.Machines (Id, Code, Name, MachineFamily_Id, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
-(48, '02001', N'چرخ آرایش 001', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(49, '02002', N'چرخ آرایش 002', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(50, '02003', N'چرخ آرایش 003', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(51, '02004', N'چرخ آرایش 004', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
-SET IDENTITY_INSERT dbo.Machines OFF
-
+﻿use SoheilDb
 
 SET IDENTITY_INSERT dbo.ProductGroups ON
 insert into dbo.ProductGroups (Id, Code, Name, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
@@ -542,22 +532,22 @@ insert into dbo.Connectors (Id, StartState_Id, EndState_Id) values
 SET IDENTITY_INSERT dbo.Connectors OFF
 
 SET IDENTITY_INSERT dbo.StationMachines ON
-insert into dbo.StationMachines (Id, Station_Id, Machine_Id) values 
-(1, 1, 1),
-(2, 2, 2),
-(3, 3, 3),
-(4, 4, 4),
-(5, 5, 5),
-(6, 6, 6),
-(7, 7, 7),
-(8, 8, 8),
-(9, 9, 9),
-(10, 9, 10),
-(11, 9, 11),
-(12, 1, 2),
-(13, 1, 3),
-(14, 2, 3),
-(15, 2, 4);
+insert into dbo.StationMachines (Id, Station_Id, Machine_Id, [Status]) values 
+(1, 1, 1, 1),
+(2, 2, 2, 1),
+(3, 3, 3, 1),
+(4, 4, 4, 1),
+(5, 5, 5, 1),
+(6, 6, 6, 1),
+(7, 7, 7, 1),
+(8, 8, 8, 1),
+(9, 9, 9, 1),
+(10, 9, 10, 1),
+(11, 9, 11, 1),
+(12, 1, 2, 1),
+(13, 1, 3, 1),
+(14, 2, 3, 1),
+(15, 2, 4, 1);
 SET IDENTITY_INSERT dbo.StationMachines OFF
 
 SET IDENTITY_INSERT dbo.StateStations ON

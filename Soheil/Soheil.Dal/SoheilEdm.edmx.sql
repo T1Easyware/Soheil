@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/08/2014 10:42:34
+-- Date Created: 04/14/2014 13:29:41
 -- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -1023,6 +1023,7 @@ GO
 -- Creating table 'StationMachines'
 CREATE TABLE [dbo].[StationMachines] (
     [Id] int IDENTITY(1,1) NOT NULL,
+    [Status] tinyint  NOT NULL,
     [Machine_Id] int  NOT NULL,
     [Station_Id] int  NOT NULL
 );

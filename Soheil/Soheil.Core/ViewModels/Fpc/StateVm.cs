@@ -118,7 +118,8 @@ namespace Soheil.Core.ViewModels.Fpc
 			set { SetValue(IsChangedProperty, value); }
 		}
 		public static readonly DependencyProperty IsChangedProperty =
-			DependencyProperty.Register("IsChanged", typeof(bool), typeof(StateVm), new UIPropertyMetadata(false));
+			DependencyProperty.Register("IsChanged", typeof(bool), typeof(StateVm),
+			new UIPropertyMetadata(false, (d, e) => { }, (d, v) => { return (bool)v && !(((StateVm)d).ParentWindowVm.IsReadonly); }));
 
 		private bool _isSavedAtLeastOnce = false;
 		public bool InitializingPhase { get; set; }
@@ -167,12 +168,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			set { SetValue(ShowDetailsProperty, value); }
 		}
 		public static readonly DependencyProperty ShowDetailsProperty =
-			DependencyProperty.Register("ShowDetails", typeof(bool), typeof(StateVm),
-			new UIPropertyMetadata(false, (d, e) => { }, (d, v) =>
-			{
-				if (((StateVm)d).IsChanged) return true;
-				return v;
-			}));
+			DependencyProperty.Register("ShowDetails", typeof(bool), typeof(StateVm), new UIPropertyMetadata(false));
 		//Opacity Dependency Property
 		public double Opacity
 		{
@@ -356,6 +352,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			Model.Y = (float)Location.Y;
 			SaveCommand.Execute(null);
 			Opacity = 1;
+			Config.IsExpanded = true;
 		}
 	}
 }

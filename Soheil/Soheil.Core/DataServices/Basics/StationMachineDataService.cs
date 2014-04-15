@@ -59,7 +59,7 @@ namespace Soheil.Core.DataServices
 		public void UpdateModel(StationMachine model)
 		{
 			StationMachine entity = _stationMachineRepository.Single(productDefection => productDefection.Id == model.Id);
-
+			entity.RecordStatus = model.RecordStatus;
 			context.Commit();
 			if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<StationMachine>(entity));
 		}

@@ -339,7 +339,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="S.ico" />
-    <Resource Include="favicon.ico" />
     <Content Include="Images\closehand.cur">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

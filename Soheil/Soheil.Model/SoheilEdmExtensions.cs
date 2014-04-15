@@ -352,6 +352,11 @@ namespace Soheil.Model
 
 	public partial class StationMachine
 	{
+		public Status RecordStatus
+		{
+			get { return (Common.Status)this.Status; }
+			set { this.Status = (byte)value; }
+		}
 	}
 
 	public partial class StoppageReport

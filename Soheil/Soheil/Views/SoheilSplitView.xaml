@@ -2779,8 +2779,19 @@
 							<ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
 							<Button Height="25" Content="{Loc txtIncludeAll}" Command="{Binding CurrentContent.CurrentLink.IncludeAllCommand}"/>
 						</WrapPanel>
-						<ItemsControl Template="{StaticResource ExcludeList}" />
-                    </DockPanel>
+						<ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}" />
+						<Border DockPanel.Dock="Bottom">
+							<UniformGrid Margin="5"
+                                         Columns="2"
+                                         Rows="2">
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStatus}" />
+								<ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedValue="{Binding Path=CurrentContent.CurrentLink.Details.Status}" />
+								<Canvas />
+								<Canvas />
+							</UniformGrid>
+						</Border>
+						<Canvas DockPanel.Dock="Bottom"/>
+					</DockPanel>
                 </GroupBox>
                 <GroupBox Style="{StaticResource SoheilDetailListViewBorder}">
                     <GroupBox.Header>
@@ -2910,7 +2921,7 @@
                         <Border DockPanel.Dock="Bottom">
                             <UniformGrid Margin="5"
                                          Columns="2"
-                                         Rows="3">
+                                         Rows="2">
                                 <TextBlock Style="{StaticResource EntryBoxHeader}" Text="ILUO :" />
                                 <ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource IluoValues}}">
                                     <ComboBox.SelectedValue>
@@ -2921,13 +2932,6 @@
                                 </ComboBox>
                                 <Canvas />
                                 <Canvas />
-                                <Button Content="{Loc txtEdit}">
-                                    <Button.Command>
-                                        <Binding>
-                                            <Binding.Path>CurrentContent.CurrentLink.Details.SaveCommand</Binding.Path>
-                                        </Binding>
-                                    </Button.Command>
-                                </Button>
                             </UniformGrid>
                         </Border>
                         <Canvas DockPanel.Dock="Bottom" />
@@ -3015,7 +3019,7 @@
                         <Border DockPanel.Dock="Bottom">
                             <UniformGrid Margin="5"
                                          Columns="2"
-                                         Rows="3">
+                                         Rows="2">
                                 <TextBlock Style="{StaticResource EntryBoxHeader}" Text="ILUO :" />
                                 <ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource IluoValues}}">
                                     <ComboBox.SelectedValue>
@@ -3025,13 +3029,7 @@
                                     </ComboBox.SelectedValue>
                                 </ComboBox>
                                 <Canvas />
-                                <Button Content="{Loc txtEdit}">
-                                    <Button.Command>
-                                        <Binding>
-                                            <Binding.Path>CurrentContent.CurrentLink.Details.SaveCommand</Binding.Path>
-                                        </Binding>
-                                    </Button.Command>
-                                </Button>
+                                <Canvas />
                             </UniformGrid>
                         </Border>
                         <Canvas DockPanel.Dock="Bottom" />

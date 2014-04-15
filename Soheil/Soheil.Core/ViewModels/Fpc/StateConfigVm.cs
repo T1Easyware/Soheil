@@ -17,7 +17,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			State = state;
 			TreeLevel = 0;
-			IsExpanded = true;
+			//IsExpanded = true;
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
 		//State Dependency Property
@@ -76,6 +76,12 @@ namespace Soheil.Core.ViewModels.Fpc
 
 		public void AddNewStateStation(FpcWindowVm fpc, StationVm station)
 		{
+			//if no station is already there and no name or code is set, set them to station's
+			if (!ContentsList.Any(x => !x.IsDropIndicator) && State.Name == "*" && State.Code == "*")
+			{
+				State.Name = station.Name;
+				State.Code = station.Code;
+			}
 			var ss = new Soheil.Model.StateStation
 			{
 				State = this.State.Model,

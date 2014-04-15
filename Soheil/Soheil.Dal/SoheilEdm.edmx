@@ -965,6 +965,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="Machine_Id" Type="int" Nullable="false" />
     <Property Name="Station_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -3560,6 +3561,7 @@
           <NavigationProperty Name="Machine" Relationship="SoheilEdm.MachineStationMachine" FromRole="StationMachine" ToRole="Machine" />
           <NavigationProperty Name="PMs" Relationship="SoheilEdm.StationMachinePM" FromRole="StationMachine" ToRole="PM" />
           <NavigationProperty Name="Station" Relationship="SoheilEdm.StationStationMachine" FromRole="StationMachine" ToRole="Station" />
+          <Property Name="Status" Type="Byte" Nullable="false" DefaultValue="1" />
         </EntityType>
         <Association Name="MachineStationMachine">
           <End Type="SoheilEdm.Machine" Role="Machine" Multiplicity="1" />
@@ -4607,6 +4609,7 @@
       <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.StationMachine)">
         <MappingFragment StoreEntitySet="StationMachines">
           <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -69,6 +69,17 @@ namespace Soheil.Views.Fpc
 		[System.Diagnostics.DebuggerStepThrough]
 		private void Area_MouseMove(object sender, MouseEventArgs e)
 		{
+			if (DrawingArea.IsMouseCaptured)
+			{
+				var pt = e.GetPosition(this);
+				var x = pt.X - _backDragStartPt.X;
+				if (x > 0) x = 0;
+				var y = pt.Y - _backDragStartPt.Y;
+				if (y > 0) y = 0;
+				DrawingArea.Margin = new Thickness(x, y, 0, 0);
+				return;
+			}
+
 			if (VM != null)
 				//perform drag mechanism
 				if (VM.DragTarget != null)
@@ -97,5 +108,16 @@ namespace Soheil.Views.Fpc
 				}
 		} 
 		#endregion
+
+		Point _backDragStartPt;
+		private void DrawingArea_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			if (DrawingArea.IsMouseDirectlyOver)
+			{
+				_backDragStartPt = e.GetPosition(this);
+				_backDragStartPt.Offset(-DrawingArea.Margin.Left, -DrawingArea.Margin.Top);
+				DrawingArea.CaptureMouse();
+			}
+		}
 	}
 }

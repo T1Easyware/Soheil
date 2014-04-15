@@ -16,22 +16,6 @@ namespace Soheil.Views.Fpc
 		{
 			InitializeComponent();
 		}
-		private TreeItemVm GetVm(object sender)
-		{
-			var fe = sender as FrameworkElement;
-			if (fe == null) return null;
-			var vm = fe.DataContext as TreeItemVm;
-			return vm;
-		}
-
-		private void SelectStateButton_Click(object sender, RoutedEventArgs e)
-		{
-			var config = ((sender as FrameworkElement).TemplatedParent as ContentPresenter).Content as StateConfigVm;
-			if (config != null)
-			{
-				config.State.ParentWindowVm.FireSelectState(config.State);
-			}
-		}
 
 		private void textBoxKeyDown(object sender, KeyEventArgs e)
 		{

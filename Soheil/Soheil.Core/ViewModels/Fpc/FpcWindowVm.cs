@@ -16,14 +16,18 @@ namespace Soheil.Core.ViewModels.Fpc
 		Dal.SoheilEdmContext _uow;
 
 		#region Ctor, ChangeFPC & Reset
-		public FpcWindowVm()
+		public FpcWindowVm(bool isReadonly = false)
+			: base()
 		{
 			initCommands();
+			IsReadonly = isReadonly;
 		}
-		public FpcWindowVm(Dal.SoheilEdmContext uow)
+		public FpcWindowVm(Dal.SoheilEdmContext uow, bool isReadonly = false)
+			: base()
 		{
 			_uow = uow;
 			initCommands();
+			IsReadonly = isReadonly;
 		}
 
 		/// <summary>
@@ -374,10 +378,20 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				//find existing family
 				var family = MachineFamilies.FirstOrDefault(x => x.Id == item.Machine.Family.Id);
+
+				//if family is not yet added, clear its machines and then add it
 				if (family == null)
-					MachineFamilies.Add(item.Machine.Family);
-				else if (!family.Machines.Any(x => x.Id == item.Machine.Id))
+				{
+					family = item.Machine.Family;
+					family.Machines.Clear();
+					MachineFamilies.Add(family);
+				}
+
+				//make sure the machine exists in that family
+				if (!family.Machines.Any(x => x.Id == item.Machine.Id))
+				{
 					family.Machines.Add(item.Machine);
+				}
 			}
 		}
 
@@ -389,6 +403,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		private void initCommands()
 		{
+			base.initCommands();
 			ExpandAllCommand = new Commands.Command(o =>
 			{
 				var items = States.Where(x => x.StateType == StateType.Mid);
@@ -477,23 +492,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty SaveAllCommandProperty =
 			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new PropertyMetadata(null));
 		
-		//ExpandAllCommand Dependency Property
-		public Commands.Command ExpandAllCommand
-		{
-			get { return (Commands.Command)GetValue(ExpandAllCommandProperty); }
-			set { SetValue(ExpandAllCommandProperty, value); }
-		}
-		public static readonly DependencyProperty ExpandAllCommandProperty =
-			DependencyProperty.Register("ExpandAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new UIPropertyMetadata(null));
-		//CollapseAllCommand Dependency Property
-		public Commands.Command CollapseAllCommand
-		{
-			get { return (Commands.Command)GetValue(CollapseAllCommandProperty); }
-			set { SetValue(CollapseAllCommandProperty, value); }
-		}
-		public static readonly DependencyProperty CollapseAllCommandProperty =
-			DependencyProperty.Register("CollapseAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new UIPropertyMetadata(null));
-
 		#endregion
 
 
@@ -711,7 +709,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		#endregion
 
 
-		#region Add new State
+		#region Fpc Viewer and special props
 		internal delegate void SelectStateEventHandler(StateVm state);
 		internal event SelectStateEventHandler SelectState;
 		/// <summary>
@@ -722,6 +720,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			if (SelectState != null) SelectState(state);
 		}
+
+		//IsReadonly Dependency Property
+		public bool IsReadonly { get; private set; }
 		#endregion
 	}
 }
