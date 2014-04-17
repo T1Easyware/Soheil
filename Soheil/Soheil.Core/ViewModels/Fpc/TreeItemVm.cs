@@ -7,56 +7,78 @@ using System.Collections.ObjectModel;
 using System.Windows.Media;
 using Soheil.Core.Base;
 
+/*
+ * X : TreeItemVM 
+ * 	Container is null as TreeItemVM 
+ * 	Containment is null as TreeItemVM 
+ * 	ContentsList is X.Ys as TreeItemVM 
+ * XY : TreeItemVM 
+ * 	Container is XY.X as TreeItemVM 
+ * 	Containment is XY.Y as TreeItemVM 
+ * 	ContentsList is XY.Zs as TreeItemVM 
+ * XYZ : TreeItemVM 
+ * 	Container is XYZ.XY as TreeItemVM 
+ * 	Containment is XYZ.Z as TreeItemVM 
+ * 	ContentsList is XYZ.Ws as TreeItemVM 
+ * XYZW : TreeItemVM 	
+ *  ...
+ */
+
 namespace Soheil.Core.ViewModels.Fpc
 {
-	//X : TreeItemVM 
-	//	Container is null as TreeItemVM 
-	//	Containment is null as TreeItemVM 
-	//	ContentsList is X.Ys as TreeItemVM 
-	//XY : TreeItemVM 
-	//	Container is XY.X as TreeItemVM 
-	//	Containment is XY.Y as TreeItemVM 
-	//	ContentsList is XY.Zs as TreeItemVM 
-	//XYZ : TreeItemVM 
-	//	Container is XYZ.XY as TreeItemVM 
-	//	Containment is XYZ.Z as TreeItemVM 
-	//	ContentsList is XYZ.Ws as TreeItemVM 
-	//XYZW : TreeItemVM 
-	//...
+	/// <summary>
+	/// Abstract view model for heirarchical items in fpc state
+	/// Such as <see cref="StateConfigVm"/>, <see cref="StateStationVm"/>, <see cref="StateStationActivityVm"/>, <see cref="StateStationActivityMachineVm"/>
+	/// <para>e.g. in StateStationActivityVm:</para>
+	/// <para> * Container is an instance of StateStationVm which is the parent of this vm</para>
+	/// <para> * Containment is an instance of ActivityVm which this vm is enclosing</para>
+	/// <para> * ContentsList is a collection of StateStationActivityMachineVm instances which are the children of this vm</para>
+	/// <para>*</para>
+	/// <para> * The database diagram is as follows StateStation 1 --- * StateStationActivity * --- 1 Activity</para>
+	/// </summary>
 	public abstract class TreeItemVm : ViewModelBase
 	{
 		/// <summary>
-		/// Must be overriden if Id is extracted directly from the Model
+		/// Gets the Id of model associated with derived class
+		/// <para>Must be overriden</para>
 		/// </summary>
 		public abstract int Id { get; }
 
+		/// <summary>
+		/// Initializes this vm (sets parent)
+		/// </summary>
+		/// <param name="parentWindowVm"></param>
 		public TreeItemVm(FpcWindowVm parentWindowVm)
 		{
 			Parent = parentWindowVm;
 		}
-		//Parent Dependency Property
+		/// <summary>
+		/// Gets a bindable value for parent vm
+		/// </summary>
 		public FpcWindowVm Parent
 		{
 			get { return (FpcWindowVm)GetValue(ParentProperty); }
-			set { SetValue(ParentProperty, value); }
+			protected set { SetValue(ParentProperty, value); }
 		}
 		public static readonly DependencyProperty ParentProperty =
 			DependencyProperty.Register("Parent", typeof(FpcWindowVm), typeof(TreeItemVm), new UIPropertyMetadata(null));
 
 		#region Structure
 		/// <summary>
-		/// Effective name of Containment
+		/// Gets or sets a bindable text to display as the effective name
+		/// <para>Containment's Name</para>
 		/// </summary>
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
+			protected set { SetValue(NameProperty, value); }
 		}
 		public static readonly DependencyProperty NameProperty =
 			DependencyProperty.Register("Name", typeof(string), typeof(TreeItemVm), new UIPropertyMetadata(""));
 
 		/// <summary>
-		/// Containment in TreeItemVm=XYZ is Z
+		/// Gets or sets a bindable value for effective view model enclosed by this vm
+		/// <para>TreeItemVm=XYZ => Containment=Z</para>
 		/// </summary>
 		public IToolboxData Containment
 		{
@@ -67,7 +89,8 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("Containment", typeof(IToolboxData), typeof(TreeItemVm), new UIPropertyMetadata(null));
 
 		/// <summary>
-		/// Container in TreeItemVm=XYZ is XY
+		/// Gets or sets a bindable value for parent view model that contains this vm
+		/// <para>TreeItemVm=XYZ => Container=XY</para>
 		/// </summary>
 		public TreeItemVm Container
 		{
@@ -78,14 +101,17 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("Container", typeof(TreeItemVm), typeof(TreeItemVm), new UIPropertyMetadata(null));
 
 		/// <summary>
-		/// ContentsList in TreeItemVm=XYZ is XYZW[ ]
+		/// Gets a bindable collection of view models which this vm contains
+		/// <para>TreeItemVm=XYZ => ContentsList=ObservableCollection&lt;XYZW&gt;</para>
 		/// </summary>
 		public ObservableCollection<TreeItemVm> ContentsList { get { return _contentsList; } }
 		private ObservableCollection<TreeItemVm> _contentsList = new ObservableCollection<TreeItemVm>();
 		#endregion
 
 		#region Level info
-		//TreeLevel Dependency Property
+		/// <summary>
+		/// Gets a bindable number that indicates which level of tree does this vm belongs to
+		/// </summary>
 		public int TreeLevel
 		{
 			get { return (int)GetValue(TreeLevelProperty); }
@@ -98,7 +124,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty TreeLevelProperty =
 			DependencyProperty.Register("TreeLevel", typeof(int), typeof(TreeItemVm), new UIPropertyMetadata(0));
-		//TitleText Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable text to display as the title of this tree level
+		/// </summary>
 		public string TitleText
 		{
 			get { return (string)GetValue(TitleTextProperty); }
@@ -106,6 +135,12 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty TitleTextProperty =
 			DependencyProperty.Register("TitleText", typeof(string), typeof(TreeItemVm), new UIPropertyMetadata(""));
+
+		/// <summary>
+		/// Returns a text as title of the given tree level
+		/// </summary>
+		/// <param name="level">tree level (zero-biased index)</param>
+		/// <returns></returns>
 		public string GetLevelTitle(int level)
 		{
 			switch (level)
@@ -120,7 +155,10 @@ namespace Soheil.Core.ViewModels.Fpc
 					return "";
 			}
 		}
-		//BackColor Dependency Property
+		
+		/// <summary>
+		/// Gets a bindable brush to display as the background color of this tree level
+		/// </summary>
 		public SolidColorBrush BackColor
 		{
 			get { return (SolidColorBrush)GetValue(BackColorProperty); }
@@ -128,6 +166,12 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty BackColorProperty =
 			DependencyProperty.Register("BackColor", typeof(SolidColorBrush), typeof(TreeItemVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Returns a brush as background color of the given tree level
+		/// </summary>
+		/// <param name="level">tree level (zero-biased index)</param>
+		/// <returns></returns>
 		public SolidColorBrush GetLevelColor(int level)
 		{
 			switch (level)
@@ -145,7 +189,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		#endregion
 
 		#region Other
-		//IsExpanded Dependency Property
+		/// <summary>
+		/// Gets a bindable value that indicates whether this vm is expanded as an expander
+		/// <para>Changing the value of this property calls isExpandedChanged(bool) in derived class</para>
+		/// </summary>
 		public bool IsExpanded
 		{
 			get { return (bool)GetValue(IsExpandedProperty); }
@@ -155,21 +202,33 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("IsExpanded", typeof(bool), typeof(TreeItemVm),
 			new UIPropertyMetadata(false, (d, e) => ((TreeItemVm)d).isExpandedChanged((bool)e.NewValue)));
 
-		//IsDropIndicator Dependency Property
+		/// <summary>
+		/// Gets a bindable value that indicates whether this vm is an instance of <see cref="DropIndicatorVm"/>
+		/// </summary>
 		public bool IsDropIndicator
 		{
 			get { return (bool)GetValue(IsDropIndicatorProperty); }
-			set { SetValue(IsDropIndicatorProperty, value); }
+			protected set { SetValue(IsDropIndicatorProperty, value); }
 		}
 		public static readonly DependencyProperty IsDropIndicatorProperty =
 			DependencyProperty.Register("IsDropIndicator", typeof(bool), typeof(TreeItemVm), new UIPropertyMetadata(false));
 		#endregion
-		
+
 		#region Virtual Methods
+		/// <summary>
+		/// Override this method to know when IsExpanded is changed
+		/// </summary>
+		/// <param name="newValue">true if this vm is expanded</param>
 		protected virtual void isExpandedChanged(bool newValue) { }
-		
+
+		/// <summary>
+		/// Override this method to specify what to do when this state (or any of its sub items) is changed
+		/// </summary>
 		public virtual void Change() { }
 
+		/// <summary>
+		/// Override this method to specify what to do when this state (or any of its sub items) is deleted
+		/// </summary>
 		public virtual void Delete() { }
 		#endregion
 	}

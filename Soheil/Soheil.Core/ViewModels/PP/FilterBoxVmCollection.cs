@@ -15,7 +15,7 @@ namespace Soheil.Core.ViewModels.PP
 	public class FilterBoxVmCollection : DependencyObject
 	{
 		/// <summary>
-		/// Creates an instance of this vm to be used as a collection of guilty operators
+		/// Creates an instance of FilterBoxVmCollection to be used as a collection of guilty operators
 		/// </summary>
 		/// <param name="operatorIds">collection of operator Ids that are guilty by default</param>
 		/// <returns></returns>
@@ -58,7 +58,7 @@ namespace Soheil.Core.ViewModels.PP
 			FilterBoxes.Add(FilterBoxVm.CreateForGuiltyOperators(this, selectedId, operatorVms));
 		}
 		/// <summary>
-		/// Creates an instance of this vm to be used as a collection of stoppage reports (cause)
+		/// Creates an instance of FilterBoxVmCollection to be used as a collection of stoppage reports (cause)
 		/// </summary>
 		/// <param name="parent">Instance of <see cref="StoppageReportVm"/> that has this collection</param>
 		/// <param name="selectedIds">default cause Ids (must be like: {level1Id, level2Id, level3Id})</param>

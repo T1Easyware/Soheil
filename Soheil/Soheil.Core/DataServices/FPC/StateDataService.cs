@@ -109,10 +109,11 @@ namespace Soheil.Core.DataServices
 
 		public void DeleteModel(State model)
 		{
-			if (model != null)
+			var entity = _stateRepository.Single(x => x.Id == model.Id);
+			if (entity != null)
 			{
 				//Delete tree
-				foreach (var ss in model.StateStations.ToArray())
+				foreach (var ss in entity.StateStations.ToArray())
 				{
 					foreach (var ssa in ss.StateStationActivities.ToArray())
 					{
@@ -122,19 +123,32 @@ namespace Soheil.Core.DataServices
 						}
 						ss.StateStationActivities.Remove(ssa);
 					}
-					model.StateStations.Remove(ss);
+					entity.StateStations.Remove(ss);
 				}
-				//Delete connectors
-				Repository<Connector> connectorRepository = new Repository<Connector>(context);
-				var connectors = connectorRepository.Find(x => x.StartState.Id == model.Id || x.EndState.Id == model.Id).ToArray();
-				foreach (var connector in connectors)
-				{
-					connectorRepository.Delete(connector);
-				}
-				//Delete State
-				//model.FPC.States.Remove(model);
-				_stateRepository.Delete(model);
 			}
+			//Delete tree
+			/*foreach (var ss in model.StateStations.ToArray())
+			{
+				foreach (var ssa in ss.StateStationActivities.ToArray())
+				{
+					foreach (var ssam in ssa.StateStationActivityMachines.ToArray())
+					{
+						ssa.StateStationActivityMachines.Remove(ssam);
+					}
+					ss.StateStationActivities.Remove(ssa);
+				}
+				model.StateStations.Remove(ss);
+			}*/
+			//Delete connectors
+			Repository<Connector> connectorRepository = new Repository<Connector>(context);
+			var connectors = connectorRepository.Find(x => x.StartState.Id == model.Id || x.EndState.Id == model.Id).ToArray();
+			foreach (var connector in connectors)
+			{
+				connectorRepository.Delete(connector);
+			}
+			//Delete State
+			//model.FPC.States.Remove(model);
+			_stateRepository.Delete(entity);
 			context.Commit();
 		}
 

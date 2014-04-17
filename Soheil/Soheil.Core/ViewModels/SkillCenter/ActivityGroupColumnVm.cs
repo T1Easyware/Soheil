@@ -12,7 +12,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 	public class ActivityGroupColumnVm : BaseVm
 	{
 		/// <summary>
-		/// Creates an instance of this Vm with the given model
+		/// Creates an instance of ActivityGroupColumnVm with the given model
 		/// </summary>
 		/// <param name="model">Id, Code and Name of this model are used, as well as number of Activities</param>
 		public ActivityGroupColumnVm(Model.ActivityGroup model)

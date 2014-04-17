@@ -19,7 +19,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public int StateStationActivityId { get { return Model.Id; } }
 
 		/// <summary>
-		/// Creates an instance of this vm with given StateStationActivity model and PPEditorProcess parent
+		/// Creates an instance of PPEditorActivityChoice with given StateStationActivity model and PPEditorProcess parent
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="parent"></param>

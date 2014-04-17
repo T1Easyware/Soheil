@@ -56,7 +56,7 @@
 
 		<!--toolbox groups-->
 		<DataTemplate x:Key="activityGroupToolboxItemTemplate" DataType="{x:Type vm:ActivityGroupVm}">
-			<Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8443">
+			<Border Style="{StaticResource toolboxGroupBorderStyle}">
 				<Expander IsExpanded="{Binding IsExpanded}">
 					<Expander.Header>
 						<TextBlock Text="{Binding Name}" Foreground="White"/>
@@ -68,7 +68,7 @@
 		</DataTemplate>
 
 		<DataTemplate x:Key="machineFamilyToolboxItemTemplate" DataType="{x:Type vm:MachineFamilyVm}">
-			<Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8345">
+			<Border Style="{StaticResource toolboxGroupBorderStyle}">
 				<Expander IsExpanded="{Binding IsExpanded}">
 					<Expander.Header>
 						<TextBlock Text="{Binding Name}" Foreground="White"/>
@@ -83,41 +83,37 @@
 	
 
 	<WrapPanel Orientation="Vertical">
-		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8777">
-			<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-				<StackPanel>
-					<TextBlock Text="ایستگاه ها"/>
-					<Expander>
-						<Expander.Header>
-							<TextBlock Text="همه ایستگاه ها" Foreground="White"/>
-						</Expander.Header>
-						<Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8333">
-							<ItemsControl ItemsSource="{Binding Stations}"
-											  ItemTemplate="{StaticResource stationToolboxItemTemplate}"/>
-						</Border>
-					</Expander>
-				</StackPanel>
-			</ScrollViewer>
+		<Border Style="{StaticResource toolboxBorderStyle}" Background="#86B9">
+			<Expander IsExpanded="True" Header=" ایستگاه ها ">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<Border Style="{StaticResource toolboxGroupBorderStyle}">
+						<ItemsControl ItemsSource="{Binding Stations}"
+											ItemTemplate="{StaticResource stationToolboxItemTemplate}"/>
+					</Border>
+				</ScrollViewer>
+			</Expander>
 		</Border>
-		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8998">
-			<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8C86">
+			<Expander IsExpanded="True" Header=" فعالیت ها ">
 				<StackPanel>
-					<TextBlock Text="فعالیت ها"/>
 					<TextBox Text="{Binding ActivityQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
-					<ItemsControl ItemsSource="{Binding ActivityGroups}"
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<ItemsControl ItemsSource="{Binding ActivityGroups}"
 									  ItemTemplate="{StaticResource activityGroupToolboxItemTemplate}"/>
+					</ScrollViewer>
 				</StackPanel>
-			</ScrollViewer>
+			</Expander>
 		</Border>
-		<Border Style="{StaticResource toolboxBorderStyle}" Background="#88AB">
-			<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8BC8">
+			<Expander IsExpanded="True" Header=" ماشین ها ">
 				<StackPanel>
-					<TextBlock Text=" ماشین ها"/>
 					<TextBox Text="{Binding MachineQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
-					<ItemsControl ItemsSource="{Binding MachineFamilies}"
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<ItemsControl ItemsSource="{Binding MachineFamilies}"
 									  ItemTemplate="{StaticResource machineFamilyToolboxItemTemplate}"/>
+					</ScrollViewer>
 				</StackPanel>
-			</ScrollViewer>
+			</Expander>
 		</Border>
 	</WrapPanel>
 </UserControl>

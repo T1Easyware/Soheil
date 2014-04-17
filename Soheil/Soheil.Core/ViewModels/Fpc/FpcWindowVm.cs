@@ -8,18 +8,35 @@ using Soheil.Common;
 using Soheil.Core.DataServices;
 using Soheil.Common.SoheilException;
 using System.Runtime.CompilerServices;
+using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
-	public class FpcWindowVm : FpcVm
+	public class FpcWindowVm : ViewModelBase
 	{
 		Dal.SoheilEdmContext _uow;
+
+		/// <summary>
+		/// Gets the DataService instance for this fpc
+		/// </summary>
+		public FPCDataService fpcDataService { get; protected set; }
+
+		/// <summary>
+		/// Gets the Model for this fpc
+		/// </summary>
+		public Model.FPC Model { get; protected set; }
+
+		/// <summary>
+		/// Gets the Id for this fpc
+		/// </summary>
+		public int Id { get { return Model == null ? -1 : Model.Id; } }
 
 		#region Ctor, ChangeFPC & Reset
 		public FpcWindowVm(bool isReadonly = false)
 			: base()
 		{
 			initCommands();
+			States.CollectionChanged += (s, e) => HasStates = States.Any();
 			IsReadonly = isReadonly;
 		}
 		public FpcWindowVm(Dal.SoheilEdmContext uow, bool isReadonly = false)
@@ -27,6 +44,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			_uow = uow;
 			initCommands();
+			States.CollectionChanged += (s, e) => HasStates = States.Any();
 			IsReadonly = isReadonly;
 		}
 
@@ -40,7 +58,20 @@ namespace Soheil.Core.ViewModels.Fpc
 			var model = fpcDataService.GetSingle(id);
 			try
 			{
-				initByModel(model);
+				//-----------
+				//load basics
+				//-----------
+				Model = model;
+				IsDefault = model.IsDefault;
+				Product = new ProductVm(model.Product);
+
+				//load all product reworks
+				var productReworkModels = fpcDataService.GetProductReworks(model, includeMainProduct: false);
+				ProductReworks.Clear();
+				foreach (var prodrew in productReworkModels)
+				{
+					ProductReworks.Add(new ProductReworkVm(prodrew));
+				}
 
 				//-----------
 				//load states
@@ -91,7 +122,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			_lock = false;
 			Message = new DependencyMessageBox();
-			if(_uow == null)
+			if (_uow == null)
 				fpcDataService = new FPCDataService();
 			else
 				fpcDataService = new FPCDataService(_uow);
@@ -113,10 +144,77 @@ namespace Soheil.Core.ViewModels.Fpc
 			Connectors.Clear();
 
 			FocusedState = null;
-			if (clearModel) 
+			if (clearModel)
 				Model = new Model.FPC();
 		}
 		#endregion
+
+		#region Main Props and lists
+		/// <summary>
+		/// Gets a bindable value for product of this fpc
+		/// </summary>
+		public ProductVm Product
+		{
+			get { return (ProductVm)GetValue(ProductProperty); }
+			protected set { SetValue(ProductProperty, value); }
+		}
+		public static readonly DependencyProperty ProductProperty =
+			DependencyProperty.Register("Product", typeof(ProductVm), typeof(FpcWindowVm), new UIPropertyMetadata(null));
+		
+		/// <summary>
+		/// Gets or sets a value that indicates whether this fpc is default fpc for this product
+		/// <para>Changing the value calls ChangeDefault method of fpcDataService</para>
+		/// </summary>
+		public bool IsDefault
+		{
+			get { return (bool)GetValue(IsDefaultProperty); }
+			set { SetValue(IsDefaultProperty, value); }
+		}
+		public static readonly DependencyProperty IsDefaultProperty =
+			DependencyProperty.Register("IsDefault", typeof(bool), typeof(FpcWindowVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				var vm = (FpcWindowVm)d;
+				try
+				{
+					vm.fpcDataService.ChangeDefault(vm.Model, (bool)e.NewValue);
+				}
+				catch (Exception exp)
+				{
+					vm.Message = new DependencyMessageBox(exp.Message);
+				}
+			}));
+		/// <summary>
+		/// Gets a bindable value that indicates whether this fpc has any states
+		/// </summary>
+		public bool HasStates
+		{
+			get { return (bool)GetValue(HasStatesProperty); }
+			private set { SetValue(HasStatesProperty, value); }
+		}
+		public static readonly DependencyProperty HasStatesProperty =
+			DependencyProperty.Register("HasStates", typeof(bool), typeof(FpcWindowVm), new UIPropertyMetadata(false));
+
+
+		/// <summary>
+		/// Gets a bindable collection of Connectors in this fpc
+		/// </summary>
+		public ObservableCollection<ConnectorVm> Connectors { get { return _connectors; } }
+		private ObservableCollection<ConnectorVm> _connectors = new ObservableCollection<ConnectorVm>();
+		/// <summary>
+		/// Gets a bindable collection of States in this fpc
+		/// </summary>
+		public ObservableCollection<StateVm> States { get { return _states; } }
+		private ObservableCollection<StateVm> _states = new ObservableCollection<StateVm>();
+		/// <summary>
+		/// Gets a bindable collection of all possible ProductReworks related to this fpc
+		/// </summary>
+		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } }
+		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
+		#endregion
+
+
+
 
 		#region OnScreenToolbox (stations, activities, machines)
 		/// <summary>
@@ -403,22 +501,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		private void initCommands()
 		{
-			base.initCommands();
-			ExpandAllCommand = new Commands.Command(o =>
-			{
-				var items = States.Where(x => x.StateType == StateType.Mid);
-				foreach (var item in items)
-				{
-					item.ShowDetails = true;
-				}
-			});
-			CollapseAllCommand = new Commands.Command(o =>
-			{
-				foreach (var item in States.Where(x => x.StateType == StateType.Mid))
-				{
-					item.ShowDetails = false;
-				}
-			});
 			SaveAllCommand = new Commands.Command(o =>
 			{
 				try
@@ -459,20 +541,23 @@ namespace Soheil.Core.ViewModels.Fpc
 						ExceptionLevel.Error);
 				}
 			});
+			ExpandAllCommand = new Commands.Command(o =>
+			{
+				var items = States.Where(x => x.StateType == StateType.Mid);
+				foreach (var item in items)
+				{
+					item.ShowDetails = true;
+				}
+			});
+			CollapseAllCommand = new Commands.Command(o =>
+			{
+				foreach (var item in States.Where(x => x.StateType == StateType.Mid))
+				{
+					item.ShowDetails = false;
+				}
+			});
 		}
 
-		//FpcVm will call this method
-		public override void IsDefaultChanged(bool newValue)
-		{
-			try
-			{
-				fpcDataService.ChangeDefault(Model, newValue);
-			}
-			catch (Exception exp)
-			{
-				Message = new DependencyMessageBox(exp.Message);
-			}
-		}
 		/*//Check For being Tracable
 		public Commands.Command CheckForTracableCommand
 		{
@@ -483,7 +568,9 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("CheckForTracableCommand", typeof(Commands.Command), typeof(FpcWindowVm), new PropertyMetadata(null));
 		*/
 
-		//Save All
+		/// <summary>
+		/// Gets or sets a bindable command to save everything in this fpc
+		/// </summary>
 		public Commands.Command SaveAllCommand
 		{
 			get { return (Commands.Command)GetValue(SaveAllCommandProperty); }
@@ -491,9 +578,28 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty SaveAllCommandProperty =
 			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new PropertyMetadata(null));
-		
-		#endregion
+		/// <summary>
+		/// Gets or sets a bindable command to expand all states in this fpc
+		/// </summary>
+		public Commands.Command ExpandAllCommand
+		{
+			get { return (Commands.Command)GetValue(ExpandAllCommandProperty); }
+			set { SetValue(ExpandAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ExpandAllCommandProperty =
+			DependencyProperty.Register("ExpandAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable command to collapse all states in this fpc
+		/// </summary>
+		public Commands.Command CollapseAllCommand
+		{
+			get { return (Commands.Command)GetValue(CollapseAllCommandProperty); }
+			set { SetValue(CollapseAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CollapseAllCommandProperty =
+			DependencyProperty.Register("CollapseAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 
+		#endregion
 
 		#region Mouse props
 		/// <summary>

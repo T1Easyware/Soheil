@@ -13,7 +13,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 	public class OperatorRowVm : BaseVm
 	{
 		/// <summary>
-		/// Creates an instance of this Vm with the given model
+		/// Creates an instance of OperatorRowVm with the given model
 		/// </summary>
 		/// <param name="model">Id, Code and Name of this model are used</param>
 		public OperatorRowVm(Model.Operator model)

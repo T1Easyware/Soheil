@@ -14,7 +14,7 @@ namespace Soheil.Core.ViewModels.PP
 	public class JobProductGroupVm : ProductGroupVm
 	{
 		/// <summary>
-		/// Creates an instance of this vm with given model and data service
+		/// Creates an instance of JobProductGroupVm with given model and data service
 		/// </summary>
 		/// <param name="model">products and product reworks of this model are also in use</param>
 		/// <param name="jobDataService"></param>

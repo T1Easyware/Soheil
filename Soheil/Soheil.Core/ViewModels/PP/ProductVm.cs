@@ -16,7 +16,7 @@ namespace Soheil.Core.ViewModels.PP
 	public class ProductVm : DependencyObject
 	{
 		/// <summary>
-		/// Creates an instance of this vm with the given model and parent
+		/// Creates an instance of ProductVm with the given model and parent
 		/// </summary>
 		/// <param name="model">product reworks are also in use</param>
 		/// <param name="parentVm">ProductGroup parent</param>

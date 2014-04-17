@@ -72,11 +72,21 @@
 							</Style>
 						</Canvas.Style>
 						<Canvas Width="0" Height="0">
-                            <ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Connectors}" ItemTemplate="{StaticResource connectorTemplate}"/>
+                            <ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Connectors}" ItemTemplate="{StaticResource connectorTemplate}" Cursor="Arrow"/>
                         </Canvas>
                         <Canvas Width="0" Height="0">
-                            <ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding States}" ItemTemplateSelector="{StaticResource stateTemplateSelector}"/>
-                        </Canvas>
+							<ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding States}" ItemTemplateSelector="{StaticResource stateTemplateSelector}" Cursor="Arrow">
+								<ItemsControl.ItemContainerStyle>
+									<Style TargetType="{x:Type ContentPresenter}">
+										<Style.Triggers>
+											<Trigger Property="IsMouseOver" Value="True">
+												<Setter Property="Panel.ZIndex" Value="10000" />
+											</Trigger>
+										</Style.Triggers>
+									</Style>
+								</ItemsControl.ItemContainerStyle>
+							</ItemsControl>
+						</Canvas>
                         <Canvas Width="0" Height="0">
                             <ContentPresenter Content="{Binding SelectedToolboxItem}" ContentTemplate="{StaticResource dragToolboxItemTemplate}"/>
                         </Canvas>

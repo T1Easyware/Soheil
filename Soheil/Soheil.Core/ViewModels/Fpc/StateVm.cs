@@ -10,30 +10,51 @@ using Soheil.Core.Commands;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
+	/// <summary>
+	/// View Model for State in a fpc
+	/// </summary>
 	public class StateVm : DragTarget
 	{
+		/// <summary>
+		/// Occurs when this state is deleted from its fpc
+		/// </summary>
 		public event EventHandler<ModelRemovedEventArgs> StateDeleted;
+		/// <summary>
+		/// Gets the model for this vm
+		/// </summary>
 		public Model.State Model { get; private set; }
+		/// <summary>
+		/// Gets the Id of this state
+		/// </summary>
 		public override int Id { get { return Model == null ? -1 : Model.Id; } }
+		/// <summary>
+		/// Gets or sets the Name of this state
+		/// </summary>
 		public string Name
 		{
 			get { return Model.Name; }
 			set { Model.Name = value; IsChanged = true; OnPropertyChanged("Name"); }
 		}
+		/// <summary>
+		/// Gets or sets the Code of this state
+		/// </summary>
 		public string Code
 		{
 			get { return Model.Code; }
 			set { Model.Code = value; IsChanged = true; OnPropertyChanged("Code"); }
 		}
+		/// <summary>
+		/// Gets the type of this state (Start, Mid, End, Rework)
+		/// </summary>
 		public StateType StateType
 		{
 			get { return Model.StateType; }
-			set { Model.StateType = value; OnPropertyChanged("StateType"); }
+			private set { Model.StateType = value; OnPropertyChanged("StateType"); }
 		}
 
 		#region Ctor
 		/// <summary>
-		/// Create a state from a model
+		/// Creates an instance of StateVm from the given model
 		/// </summary>
 		/// <param name="model">Must be full of data or completely null</param>
 		/// <param name="parentWindowVm">parent window vm</param>
@@ -61,7 +82,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("ParentWindowVm", typeof(FpcWindowVm), typeof(StateVm), new UIPropertyMetadata(null));
 		
 		//FPC Dependency Property
-		public FpcVm FPC { get { return (FpcVm)ParentWindowVm; } }
+		public FpcWindowVm FPC { get { return ParentWindowVm; } }
 		
 		//Config Dependency Property
 		public StateConfigVm Config

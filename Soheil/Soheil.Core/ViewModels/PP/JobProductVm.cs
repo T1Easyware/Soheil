@@ -14,7 +14,7 @@ namespace Soheil.Core.ViewModels.PP
 	public class JobProductVm : ProductVm
 	{
 		/// <summary>
-		/// Creates an instance of this vm with given model, parent and data service
+		/// Creates an instance of JobProductVm with given model, parent and data service
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="parentVm"></param>

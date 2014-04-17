@@ -203,12 +203,11 @@
     <Compile Include="ViewModels\Fpc\ActivityVm.cs" />
     <Compile Include="ViewModels\Fpc\ConnectorVm.cs" />
     <Compile Include="ViewModels\Fpc\DragTarget.cs" />
-    <Compile Include="ViewModels\Fpc\FpcVm.cs" />
     <Compile Include="ViewModels\Fpc\FpcWindowVm.cs" />
     <Compile Include="ViewModels\Fpc\MachineFamilyVm.cs" />
     <Compile Include="ViewModels\Fpc\MachineVm.cs" />
     <Compile Include="ViewModels\Fpc\ProductVm.cs" />
-    <Compile Include="ViewModels\Fpc\ReworkVm.cs" />
+    <Compile Include="ViewModels\Fpc\ProductReworkVm.cs" />
     <Compile Include="ViewModels\Fpc\StateConfigVm.cs" />
     <Compile Include="ViewModels\Fpc\StateStationActivityMachineVm.cs" />
     <Compile Include="ViewModels\Fpc\StateStationActivityVm.cs" />

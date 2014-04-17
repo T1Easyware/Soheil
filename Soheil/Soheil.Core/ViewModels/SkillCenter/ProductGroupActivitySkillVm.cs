@@ -15,7 +15,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		//public Model.ProductActivitySkill Model { get; protected set; }
 
 		/// <summary>
-		/// Creates an instance of this Vm and initializes the commands
+		/// Creates an instance of ProductGroupActivitySkillVm and initializes the commands
 		/// </summary>
 		public ProductGroupActivitySkillVm()
 			: base()

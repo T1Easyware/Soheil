@@ -8,11 +8,13 @@ using System.Windows;
 namespace Soheil.Core.ViewModels.Fpc
 {
 	/// <summary>
-	/// connector, state, toolbox item are DragTarget
+	/// Abstract view model for draggable objects such as : <see cref="ConnectorVm"/>, <see cref="StateVm"/>, <see cref="ToolboxItemVm"/>
 	/// </summary>
 	public abstract class DragTarget : ViewModelBase
 	{
-		//Location(Margin) Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value that indicates the Margin of this view model in its container
+		/// </summary>
 		public Vector Location
 		{
 			get
@@ -26,6 +28,10 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("Location", typeof(Thickness), typeof(DragTarget), 
 			new UIPropertyMetadata(new Thickness(0), StateVm.AnyPropertyChangedCallback));
 
+		/// <summary>
+		/// Gets the Id of the model associated with the derived class
+		/// <para>Must be overriden</para>
+		/// </summary>
 		public abstract int Id { get; }
 	}
 }

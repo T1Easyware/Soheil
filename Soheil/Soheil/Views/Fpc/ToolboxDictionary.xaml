@@ -4,9 +4,9 @@
 	
 
 	<Style x:Key="toolboxBorderStyle" TargetType="{x:Type Border}">
-		<Setter Property="BorderBrush" Value="#88FFFFFF"/>
-		<Setter Property="BorderThickness" Value="2"/>
-		<Setter Property="CornerRadius" Value="2"/>
+		<Setter Property="BorderBrush" Value="#8FFF"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="1"/>
 		<Setter Property="Margin" Value="4"/>
 		<Setter Property="Padding" Value="2"/>
 	</Style>
@@ -16,21 +16,26 @@
 			<EventTrigger RoutedEvent="MouseEnter">
 				<BeginStoryboard>
 					<Storyboard>
-						<DoubleAnimation Storyboard.TargetProperty="Opacity" 
-										To="1" Duration="0:0:0.1"/>
+						<ParallelTimeline>
+							<DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.02"/>
+							<ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)" To="#6FFF" Duration="0:0:0.2"/>
+						</ParallelTimeline>
 					</Storyboard>
 				</BeginStoryboard>
 			</EventTrigger>
 			<EventTrigger RoutedEvent="MouseLeave">
 				<BeginStoryboard>
 					<Storyboard>
-						<DoubleAnimation Storyboard.TargetProperty="Opacity" 
-										To="0.5" Duration="0:0:1"/>
+						<ParallelTimeline>
+							<DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.5"/>
+							<ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)" To="#6000" Duration="0:0:0.3"/>
+						</ParallelTimeline>
 					</Storyboard>
 				</BeginStoryboard>
 			</EventTrigger>
 		</Style.Triggers>
-		<Setter Property="BorderBrush" Value="#14AAFFE0"/>
+		<Setter Property="Background" Value="#6000"/>
+		<Setter Property="BorderBrush" Value="#40DD"/>
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="Opacity" Value="0.5"/>
 		<Setter Property="CornerRadius" Value="2"/>
@@ -42,26 +47,24 @@
 		<Style.Triggers>
 			<EventTrigger RoutedEvent="MouseEnter">
 				<BeginStoryboard>
-					<Storyboard>
-						<ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-										To="#88AAFFE0" Duration="0:0:0.1"/>
+					<Storyboard Duration="0:0:0.1">
+						<ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)" To="#44FF" Duration="0:0:0.1"/>
 					</Storyboard>
 				</BeginStoryboard>
 			</EventTrigger>
 			<EventTrigger RoutedEvent="MouseLeave">
 				<BeginStoryboard>
-					<Storyboard>
-						<ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-										To="#44224466" Duration="0:0:1"/>
+					<Storyboard Duration="0:0:0.2">
+						<ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)" To="#6000" Duration="0:0:0.2"/>
 					</Storyboard>
 				</BeginStoryboard>
 			</EventTrigger>
 		</Style.Triggers>
+		<Setter Property="Background" Value="#6000"/>
 		<Setter Property="Opacity" Value="1"/>
-		<Setter Property="BorderBrush" Value="#44FFFFFF"/>
+		<Setter Property="BorderBrush" Value="#40DD"/>
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="CornerRadius" Value="1"/>
-		<Setter Property="Background" Value="#4455"/>
 		<Setter Property="Margin" Value="2"/>
 		<Setter Property="Padding" Value="2"/>
 	</Style>
