@@ -204,25 +204,68 @@ namespace Soheil.Core.DataServices
 			return clone;
 		}
 
+		/// <summary>
+		/// Change the IsDefault value of the specified FPC to newValue
+		/// <para>If set to true, undefaults the previously default fpcs</para>
+		/// <para>If set to false, tries to make another fpc default</para>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="newValue"></param>
 		internal void ChangeDefault(FPC model, bool newValue)
 		{
 			if (model.IsDefault == newValue)
 				return;
 
-			var otherModels = _fpcRepository.Find(x => x.Product.Id == model.Product.Id && x.Id != model.Id);
 			if (newValue)
 			{
-				otherModels.Select(x => x.IsDefault = false);
+				// undefault the previously default fpcs
+				var otherModels = _fpcRepository.Find(x => 
+					x.IsDefault && 
+					x.Product.Id == model.Product.Id && 
+					x.Id != model.Id);
+				foreach (var otherModel in otherModels)
+				{
+					otherModel.IsDefault = false;
+				}
+
+				//apply the new value to the specified fpc (parameter)
 				model.IsDefault = true;
 			}
 			else
 			{
+				// try to make another fpc default
+				var otherModels = _fpcRepository.Find(x =>
+					x.Product.Id == model.Product.Id &&
+					x.Id != model.Id);
+
+				//if not the only fpc
 				if (otherModels.Any())
 				{
-					otherModels.First().IsDefault = true;
+					//finds another default fpc
+					bool found = false;
+					foreach (var otherModel in otherModels)
+					{
+						if (!found && otherModel.IsDefault)
+						{
+							found = true;
+						}
+						else
+						{
+							otherModel.IsDefault = false;
+						}
+					}
+
+					//if no other default fpc, make the first one default
+					if (!found)
+					{
+						otherModels.First().IsDefault = true;
+					}
+
+					//apply the new value to the specified fpc (parameter)
 					model.IsDefault = false;
 				}
 				else
+					//if no other fpc available, throw
 					throw new Exception("این تنها FPC برای این محصول است.\nلذا به ناچار همین FPC پیش فرض است");
 			}
 

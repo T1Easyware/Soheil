@@ -63,7 +63,8 @@ namespace Soheil.Core.DataServices
                 Defection entity = defectionRepository.Single(defection => defection.Id == model.Id);
 
                 entity.Code = model.Code;
-                entity.Name = model.Name;
+				entity.Name = model.Name;
+				entity.IsG2 = model.IsG2;
                 entity.CreatedDate = model.CreatedDate;
                 entity.ModifiedBy = LoginInfo.Id;
                 entity.ModifiedDate = DateTime.Now;

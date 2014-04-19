@@ -95,24 +95,24 @@
 		</Border>
 		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8C86">
 			<Expander IsExpanded="True" Header=" فعالیت ها ">
-				<StackPanel>
-					<TextBox Text="{Binding ActivityQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
-					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<TextBox Text="{Binding ActivityQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
 						<ItemsControl ItemsSource="{Binding ActivityGroups}"
 									  ItemTemplate="{StaticResource activityGroupToolboxItemTemplate}"/>
-					</ScrollViewer>
-				</StackPanel>
+					</StackPanel>
+				</ScrollViewer>
 			</Expander>
 		</Border>
 		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8BC8">
 			<Expander IsExpanded="True" Header=" ماشین ها ">
-				<StackPanel>
-					<TextBox Text="{Binding MachineQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
-					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<TextBox Text="{Binding MachineQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
 						<ItemsControl ItemsSource="{Binding MachineFamilies}"
 									  ItemTemplate="{StaticResource machineFamilyToolboxItemTemplate}"/>
-					</ScrollViewer>
-				</StackPanel>
+					</StackPanel>
+				</ScrollViewer>
 			</Expander>
 		</Border>
 	</WrapPanel>

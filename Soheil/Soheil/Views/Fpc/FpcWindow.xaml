@@ -39,6 +39,7 @@
 				<Button Width="80" Content="همه را ببند" Command="{Binding CollapseAllCommand}"/>
 				<ToggleButton Width="50" Content="سایه" IsChecked="True"
 					Checked="ShadowToggleButton_Checked" Unchecked="ShadowToggleButton_Unchecked"/>
+				<Button Width="80" Content="Reset Zoom" Command="{Binding ResetZoomCommand}"/>
 				<Separator/>
 				<Button Command="{Binding SaveAllCommand}">
 					<WrapPanel>
@@ -60,7 +61,10 @@
 			<Border BorderBrush="#5FFF" BorderThickness="2,0,2,2" CornerRadius="0,0,2,2">
 				<DockPanel>
 					<local:Toolbox DockPanel.Dock="Left" Panel.ZIndex="5" DataContext="{Binding}" DrawingArea="{Binding ElementName=DrawingArea}"/>
-					<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown">
+					<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown" MouseWheel="DrawingArea_MouseWheel">
+						<Canvas.LayoutTransform>
+							<ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>
+						</Canvas.LayoutTransform>
 						<Canvas.Style>
 							<Style TargetType="Canvas">
 								<Setter Property="Cursor" Value="/Images/openhand.cur"/>

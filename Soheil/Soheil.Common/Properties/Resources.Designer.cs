@@ -1177,6 +1177,24 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ضایعات است.
+        /// </summary>
+        public static string txtIsDefection {
+            get {
+                return ResourceManager.GetString("txtIsDefection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to خروجی درجه 2 است.
+        /// </summary>
+        public static string txtIsG2 {
+            get {
+                return ResourceManager.GetString("txtIsG2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ورود.
         /// </summary>
         public static string txtLogin {

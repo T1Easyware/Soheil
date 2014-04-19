@@ -765,4 +765,10 @@
   <data name="txtProducedG1" xml:space="preserve">
     <value>تولید سالم</value>
   </data>
+  <data name="txtIsDefection" xml:space="preserve">
+    <value>ضایعات است</value>
+  </data>
+  <data name="txtIsG2" xml:space="preserve">
+    <value>خروجی درجه 2 است</value>
+  </data>
 </root>

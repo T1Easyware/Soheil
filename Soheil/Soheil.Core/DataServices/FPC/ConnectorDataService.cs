@@ -15,6 +15,7 @@ namespace Soheil.Core.DataServices
 	{
 		Repository<Connector> _connectorRepository;
 		FPCDataService _parentDataService;
+
 		internal ConnectorDataService(SoheilEdmContext context, FPCDataService parentDataService)
 		{
 			this.context = context;

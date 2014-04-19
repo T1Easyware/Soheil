@@ -30,7 +30,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public void Reset()
 		{
 			FpcViewer = new Fpc.FpcWindowVm(UOW, true);
-			FpcViewer.SelectState += FpcViewer_AddNewBlock;
+			FpcViewer.SelectedStateChanged += FpcViewer_AddNewBlock;
 			initializeDataServices();
 			initializeCommands();
 			SelectedBlock = null;

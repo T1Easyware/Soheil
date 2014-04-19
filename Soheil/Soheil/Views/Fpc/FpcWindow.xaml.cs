@@ -84,8 +84,8 @@ namespace Soheil.Views.Fpc
 				//perform drag mechanism
 				if (VM.DragTarget != null)
 					VM.DragTarget.Location = new Vector(
-							e.GetPosition(DrawingArea).X - VM.RelativeDragPoint.X,
-							e.GetPosition(DrawingArea).Y - VM.RelativeDragPoint.Y);
+							e.GetPosition(DrawingArea).X - VM.RelativeDragPoint.X * VM.Zoom,
+							e.GetPosition(DrawingArea).Y - VM.RelativeDragPoint.Y * VM.Zoom);
 		}
 
 		private void ShadowToggleButton_Checked(object sender, RoutedEventArgs e)
@@ -118,6 +118,12 @@ namespace Soheil.Views.Fpc
 				_backDragStartPt.Offset(-DrawingArea.Margin.Left, -DrawingArea.Margin.Top);
 				DrawingArea.CaptureMouse();
 			}
+		}
+
+		private void DrawingArea_MouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			VM.Zoom += (e.Delta > 0) ? 0.1 : -0.1;
+			e.Handled = true;
 		}
 	}
 }

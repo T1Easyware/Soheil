@@ -14,6 +14,9 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class FpcWindowVm : ViewModelBase
 	{
+		/// <summary>
+		/// Unit of work used for this fpc
+		/// </summary>
 		Dal.SoheilEdmContext _uow;
 
 		/// <summary>
@@ -30,31 +33,86 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// Gets the Id for this fpc
 		/// </summary>
 		public int Id { get { return Model == null ? -1 : Model.Id; } }
+		
+		/// <summary>
+		/// Occurs when a state is selected
+		/// </summary>
+		internal event Action<StateVm> SelectedStateChanged;
+
+		/// <summary>
+		/// Gets a value indicating whether this view model is readonly
+		/// </summary>
+		public bool IsReadonly { get; private set; }
 
 		#region Ctor, ChangeFPC & Reset
+		/// <summary>
+		/// Creates an instance of FpcWindowVm with its own Unit of work
+		/// </summary>
+		/// <param name="isReadonly">optional parameter to make the viewmodel readonly</param>
 		public FpcWindowVm(bool isReadonly = false)
 			: base()
 		{
 			initCommands();
-			States.CollectionChanged += (s, e) => HasStates = States.Any();
+			initStates();
 			IsReadonly = isReadonly;
 		}
+		/// <summary>
+		/// Creates an instance of FpcWindowVm with the given Unit of work
+		/// </summary>
+		/// <param name="uow"></param>
+		/// <param name="isReadonly">optional parameter to make the viewmodel readonly</param>
 		public FpcWindowVm(Dal.SoheilEdmContext uow, bool isReadonly = false)
 			: base()
 		{
 			_uow = uow;
 			initCommands();
-			States.CollectionChanged += (s, e) => HasStates = States.Any();
+			initStates();
 			IsReadonly = isReadonly;
 		}
 
 		/// <summary>
-		/// Updates the ViewModel with an FPC Model with the given Id
+		/// Initializes States collection to automatically do some stuff for FpcWindowVm
+		/// </summary>
+		void initStates()
+		{
+			States.CollectionChanged += (s, e) =>
+			{
+				HasStates = States.Any();
+				//new items inform FpcWindowVm upon selection
+				if (e.NewItems != null)
+					foreach (StateVm newItem in e.NewItems)
+					{
+						newItem.StateSelected += () =>
+						{
+							//fire SelectedStateChanged event
+							if (SelectedStateChanged != null)
+								SelectedStateChanged(newItem);
+						};
+					}
+			};
+			Connectors.CollectionChanged += (s, e) =>
+			{
+				if (e.NewItems != null)
+					foreach (ConnectorVm newItem in e.NewItems)
+					{
+						newItem.ConnectorRemoved += () =>
+						{
+							Connectors.Remove(newItem);
+						};
+					}
+			};
+		}
+
+		/// <summary>
+		/// Updates the ViewModel to FPC Model with the given Id
 		/// </summary>
 		/// <param name="id">The id of the FPC Model which is used for updating the FpcWindowVm</param>
 		public void ChangeFpc(int id)
 		{
+			//clear all fpc data from the view model and reloads stations and activities
 			ResetFPC();
+
+			//get model
 			var model = fpcDataService.GetSingle(id);
 			try
 			{
@@ -111,13 +169,15 @@ namespace Soheil.Core.ViewModels.Fpc
 				Message = new DependencyMessageBox(exp);
 			}
 
+			//select the first mid-state
 			if (States.Count(x => x.StateType == StateType.Mid) > 0)
 				FocusedState = States.Where(x => x.StateType == StateType.Mid).First();
 		}
 
 		/// <summary>
-		/// Resets a viewer by changing its model to null
+		/// Clears the states and connectors and reloads dataservice, stations and activities
 		/// </summary>
+		/// <param name="clearModel">specify 'true' to create a new model as well</param>
 		public void ResetFPC(bool clearModel = false)
 		{
 			_lock = false;
@@ -142,16 +202,16 @@ namespace Soheil.Core.ViewModels.Fpc
 			//Drawing area
 			States.Clear();
 			Connectors.Clear();
-
 			FocusedState = null;
+
 			if (clearModel)
 				Model = new Model.FPC();
 		}
 		#endregion
 
-		#region Main Props and lists
+		#region Props and lists
 		/// <summary>
-		/// Gets a bindable value for product of this fpc
+		/// Gets a bindable vm for product of this fpc
 		/// </summary>
 		public ProductVm Product
 		{
@@ -162,7 +222,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("Product", typeof(ProductVm), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 		
 		/// <summary>
-		/// Gets or sets a value that indicates whether this fpc is default fpc for this product
+		/// Gets or sets a bindable value that indicates whether this fpc is default fpc for this product
 		/// <para>Changing the value calls ChangeDefault method of fpcDataService</para>
 		/// </summary>
 		public bool IsDefault
@@ -195,6 +255,15 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty HasStatesProperty =
 			DependencyProperty.Register("HasStates", typeof(bool), typeof(FpcWindowVm), new UIPropertyMetadata(false));
 
+		/// <summary>
+		/// Gets or sets the current bindable message box
+		/// </summary>
+		public DependencyMessageBox Message
+		{
+			get { return (DependencyMessageBox)GetValue(MessageProperty); }
+			set { SetValue(MessageProperty, value); }
+		}
+		public static readonly DependencyProperty MessageProperty = DependencyProperty.Register("Message", typeof(DependencyMessageBox), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets a bindable collection of Connectors in this fpc
@@ -213,12 +282,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
 		#endregion
 
-
-
-
 		#region OnScreenToolbox (stations, activities, machines)
 		/// <summary>
-		/// The Clone of an OnScreen Toolbox item which is being dragged by the mouse
+		/// The bindable clone of a ToolboxItem which is being dragged by the mouse
 		/// </summary>
 		public ToolboxItemVm SelectedToolboxItem
 		{
@@ -228,7 +294,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty SelectedToolboxItemProperty =
 			DependencyProperty.Register("SelectedToolboxItem", typeof(ToolboxItemVm), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 
-		//MachineQuery Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable text for filtering the machine list
+		/// </summary>
 		public string MachineQuery
 		{
 			get { return (string)GetValue(MachineQueryProperty); }
@@ -271,7 +339,9 @@ namespace Soheil.Core.ViewModels.Fpc
 				}
 			}));
 
-		//ActivityQuery Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable text for filtering the activity list
+		/// </summary>
 		public string ActivityQuery
 		{
 			get { return (string)GetValue(ActivityQueryProperty); }
@@ -314,21 +384,50 @@ namespace Soheil.Core.ViewModels.Fpc
 				}
 			}));
 
-		//Stations Observable Collection
+		/// <summary>
+		/// Gets a bindable collection of all Stations
+		/// </summary>
 		public ObservableCollection<StationVm> Stations { get { return _stations; } }
 		private ObservableCollection<StationVm> _stations = new ObservableCollection<StationVm>();
-		//ActivityGroups Observable Collection
+		/// <summary>
+		/// Gets a bindable collection of all ActivityGroups with their Activities
+		/// </summary>
 		public ObservableCollection<ActivityGroupVm> ActivityGroups { get { return _activityGroups; } }
 		private ObservableCollection<ActivityGroupVm> _activityGroups = new ObservableCollection<ActivityGroupVm>();
-		//MachineFamilies Observable Collection
+		/// <summary>
+		/// Gets a bindable collection of all MachineFamilies with their Machines
+		/// </summary>
 		public ObservableCollection<MachineFamilyVm> MachineFamilies { get { return _machineFamilies; } }
 		private ObservableCollection<MachineFamilyVm> _machineFamilies = new ObservableCollection<MachineFamilyVm>();
 
 		#endregion
 
-		#region MainToolbox
+		#region Menu bar items
+		//Zoom Dependency Property
+		public double Zoom
+		{
+			get { return (double)GetValue(ZoomProperty); }
+			set { SetValue(ZoomProperty, value); }
+		}
+		public static readonly DependencyProperty ZoomProperty =
+			DependencyProperty.Register("Zoom", typeof(double), typeof(FpcWindowVm), new UIPropertyMetadata(1d, (d, e) => { }, (d, v) =>
+				{
+					var val = (double)v;
+					if (val < _minZoom) return _minZoom;
+					if (val > _maxZoom) return _maxZoom;
+					return v;
+				}));
+		private const double _minZoom = 0.1d;
+		private const double _maxZoom = 3d;
+
+		/// <summary>
+		/// locks on one of toolbar menu items (selection, states, connectors) while deselecting the other two
+		/// </summary>
 		bool _lock;
-		//MainToolbox item : Select
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether 'Selection' is selected in Toolbar menu
+		/// <para>Selecting this item deselects other toolbar menu items</para>
+		/// </summary>
 		public bool ToolSelection
 		{
 			get { return (bool)GetValue(ToolSelectionProperty); }
@@ -348,7 +447,10 @@ namespace Soheil.Core.ViewModels.Fpc
 				else if ((bool)e.OldValue) d.SetValue(ToolSelectionProperty, true);
 				((FpcWindowVm)d)._lock = false;
 			}));
-		//MainToolbox item : State
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether 'State' is selected in Toolbar menu
+		/// <para>Selecting this item deselects other toolbar menu items</para>
+		/// </summary>
 		public bool ToolState
 		{
 			get { return (bool)GetValue(ToolStateProperty); }
@@ -371,6 +473,9 @@ namespace Soheil.Core.ViewModels.Fpc
 				else if ((bool)e.OldValue) d.SetValue(ToolStateProperty, true);
 				((FpcWindowVm)d)._lock = false;
 			}));
+		/// <summary>
+		/// Adds a state to this fpc (both model and viewModel) and stick it to mouse
+		/// </summary>
 		private void addStateByTool()
 		{
 			var stateModel = new Model.State
@@ -378,6 +483,7 @@ namespace Soheil.Core.ViewModels.Fpc
 				StateType = StateType.Mid,
 				X = -50,
 				Y = -20,
+				FPC = Model,
 			};
 			this.Model.States.Add(stateModel);
 
@@ -390,7 +496,10 @@ namespace Soheil.Core.ViewModels.Fpc
 			DragTarget = _newDraggingStateVm;
 			RelativeDragPoint = new Point(50, 20);
 		}
-		//MainToolbox item : Connector
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether 'Connector' is selected in Toolbar menu
+		/// <para>Selecting this item deselects other toolbar menu items</para>
+		/// </summary>
 		public bool ToolConnector
 		{
 			get { return (bool)GetValue(ToolConnectorProperty); }
@@ -413,18 +522,12 @@ namespace Soheil.Core.ViewModels.Fpc
 			}));
 		#endregion
 
-		//Message Dependency Property
-		public DependencyMessageBox Message
-		{
-			get { return (DependencyMessageBox)GetValue(MessageProperty); }
-			set { SetValue(MessageProperty, value); }
-		}
-		public static readonly DependencyProperty MessageProperty = DependencyProperty.Register("Message", typeof(DependencyMessageBox), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 
 		#region Select and focus
 		/// <summary>
-		/// Gets FocusedState or 
-		/// <para>Sets FocusedState and FocusedStateStation and selects a Station</para>
+		/// Gets or sets a bindable value for FocusedState
+		/// <para>Changing this value, automatically changes FocusedStateStation to match the first expanded station</para>
+		/// <para>If no station is expanded, expands the first station</para>
 		/// </summary>
 		public StateVm FocusedState
 		{
@@ -439,13 +542,18 @@ namespace Soheil.Core.ViewModels.Fpc
 				var state = e.NewValue as StateVm;
 				if (state == null) { vm.FocusedStateStation = null; return; }
 				if (state.Config == null) { vm.FocusedStateStation = null; return; }
+				//find and change the focues station
 				var station = state.Config.ContentsList.FirstOrDefault(x => x.IsExpanded);
+				if (station == null)
+				{
+					station = state.Config.ContentsList.FirstOrDefault();
+					if (station != null) station.IsExpanded = true;
+				}
 				vm.FocusedStateStation = station as StateStationVm;
-				vm.OnStationSelected(vm.FocusedStateStation);
 			}));
 		/// <summary>
-		/// Gets FocusedStateStation or 
-		/// <para>Sets FocusedStateStation and FocusedState and selects a Station</para>
+		/// Gets or sets a bindable value for FocusedStateStation
+		/// <para>Changing this value, automatically updates machines list</para>
 		/// </summary>
 		public StateStationVm FocusedStateStation
 		{
@@ -460,12 +568,14 @@ namespace Soheil.Core.ViewModels.Fpc
 				var ss = e.NewValue as StateStationVm;
 				if (ss == null) return;
 				var s = (ss.Container as StateConfigVm).State;
+				//make sure FocusedState is correct
 				if (s != vm.FocusedState)
 					(d as FpcWindowVm).FocusedState = s;
+				//reload machines
 				vm.OnStationSelected(ss);
 			}));
 		/// <summary>
-		/// Updates the OnScreenToolbox according to specified stateStation
+		/// Updates the Machines list of Toolbox according to specified stateStation
 		/// </summary>
 		/// <param name="ss"></param>
 		public void OnStationSelected(StateStationVm ss)
@@ -495,7 +605,7 @@ namespace Soheil.Core.ViewModels.Fpc
 
 		#endregion
 
-		#region Commands and etc
+		#region Commands 
 		/// <summary>
 		/// Initialize Commands
 		/// </summary>
@@ -556,6 +666,7 @@ namespace Soheil.Core.ViewModels.Fpc
 					item.ShowDetails = false;
 				}
 			});
+			ResetZoomCommand = new Commands.Command(o => Zoom = 1d);
 		}
 
 		/*//Check For being Tracable
@@ -599,6 +710,14 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty CollapseAllCommandProperty =
 			DependencyProperty.Register("CollapseAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 
+		//ResetZoomCommand Dependency Property
+		public Commands.Command ResetZoomCommand
+		{
+			get { return (Commands.Command)GetValue(ResetZoomCommandProperty); }
+			set { SetValue(ResetZoomCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ResetZoomCommandProperty =
+			DependencyProperty.Register("ResetZoomCommand", typeof(Commands.Command), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 		#endregion
 
 		#region Mouse props
@@ -626,43 +745,74 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// A TreeItemVm temporarily added to TreeItemVm container willing to accept current OnScreenToolbox item
 		/// </summary>
 		TreeItemVm _dropIndicator;
-
 		#endregion
 
 		#region Mouse methods
+		/// <summary>
+		/// Connects the dragging connector to the specified state
+		/// <para>Exits if no connector is being dragged</para>
+		/// <remarks>
+		/// By 'dragging connector', we mean dragging state with StateType=Temp which holds the end of the connector
+		/// </remarks>
+		/// </summary>
+		/// <param name="state">Target state as the end state for the connector</param>
 		public void MouseEntersState(StateVm state)
 		{
+			//find the drag target (temp state)
 			var dt = DragTarget as StateVm;
 			if (dt == null) return;
 			if (dt.StateType != StateType.Temp) return;
 
+			//find the connector that is being dragged
 			var conn = Connectors.FirstOrDefault(x => x.End == dt);
 			if (conn != null)
 			{
+				//if not making a loop or repeating an existing connector
 				if (state != conn.Start && !Connectors.Any(x => x.End == state && x.Start == conn.Start))
 				{
+					//mark the connector to be attached
 					conn.IsLoose = false;
 					_connectorDropTargetStateVm = state;
 				}
 			}
 		}
+		/// <summary>
+		/// Disconnects the dragging connector from the specified state
+		/// <para>Exits if no connector is being dragged</para>
+		/// <remarks>
+		/// By 'dragging connector', we mean dragging state with StateType=Temp which holds the end of the connector
+		/// </remarks>
+		/// </summary>
+		/// <param name="state">Target state as the end state for the connector</param>
 		public void MouseLeavesState(StateVm state)
 		{
+			//find the drag target (temp state)
 			var dt = DragTarget as StateVm;
 			if (dt == null) return;
 			if (dt.StateType != StateType.Temp) return;
 
+			//find the connector that is being dragged
 			var conn = Connectors.FirstOrDefault(x => x.End == dt);
 			if (conn != null)
 			{
+				//make the connector loose again
 				conn.IsLoose = true;
 				_connectorDropTargetStateVm = null;
 			}
 		}
-		public void MouseClicksState(StateVm state, Point pos_drawingArea, Point pos_firstChild, Point pos_canvas)
+		/// <summary>
+		/// Sets FocusedState to the specified state and do the following actions:
+		/// <para>Place the state into FpcWindowVm if it's not placed yet, Otherwise start dragging the state</para>
+		/// <para>Start drawing a connector if 'connector' is selected from menu bar</para>
+		/// </summary>
+		/// <param name="state"></param>
+		/// <param name="pos_drawingArea">location of mouse relative to drawing area</param>
+		/// <param name="pos_firstChild">location of mouse relative to first child of state</param>
+		/// <param name="pos_state">location of mouse relative to state</param>
+		public void MouseClicksState(StateVm state, Point pos_drawingArea, Point pos_firstChild, Point pos_state)
 		{
 			FocusedState = state;
-			//new state is dragging
+			//place the newly created state which was dragging
 			if (state == _newDraggingStateVm)
 			{
 				state.PlaceInFpc();
@@ -671,6 +821,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 			else
 			{
+				_initialDragPoint = pos_state;
 				//connector is dragging
 				if (ToolConnector)
 				{
@@ -696,23 +847,22 @@ namespace Soheil.Core.ViewModels.Fpc
 					RelativeDragPoint = pos_firstChild;
 				}
 			}
-			_initialDragPoint = pos_canvas;
 		}
 
 		/// <summary>
-		/// View calls this method when any kind of mouse release happens (drag&drop|click&release)
+		/// Expand the DragTarget or attach the dragging connector to _connectorDropTargetStateVm
+		/// <remarks>DragTarget must be a StateVm (Action is chosen based on its StateType)</remarks>
 		/// </summary>
-		/// <param name="curPos">release point</param>
-		public void ReleaseDragAt(Point curPos)
+		/// <param name="pos_drawingArea">location of mouse relative to drawing area</param>
+		public void ReleaseDragAt(Point pos_drawingArea)
 		{
-			if (DragTarget is StateVm)
+			var draggedState = DragTarget as StateVm;
+			if (draggedState != null)
 			{
-				var draggedState = DragTarget as StateVm;
-
-				//click-released
-				if (Math.Abs(curPos.X - _initialDragPoint.X) < 2 && Math.Abs(curPos.Y - _initialDragPoint.Y) < 2)
+				//if not moved a lot then it's a click-released
+				if (Math.Abs(pos_drawingArea.X - _initialDragPoint.X) < 2 && Math.Abs(pos_drawingArea.Y - _initialDragPoint.Y) < 2)
 				{
-					//if midState is clicked
+					//show details if midState is clicked
 					if (draggedState.StateType == StateType.Mid)
 					{
 						if (!draggedState.ShowDetails)
@@ -722,7 +872,7 @@ namespace Soheil.Core.ViewModels.Fpc
 					}
 				}
 
-				//drag-released
+				//else it's a drag-released
 				else
 				{
 					//if connector is dragging
@@ -731,37 +881,54 @@ namespace Soheil.Core.ViewModels.Fpc
 						var conn = Connectors.FirstOrDefault(x => x.End == draggedState);
 						if (conn != null)
 						{
-							//if can add this connector to fpc
+							//if connector isn't loose it can be added to fpc
 							if (!conn.IsLoose)
 							{
+								//remove temp state
 								States.Remove(draggedState);
+								//attach the end of the connector
 								conn.End = _connectorDropTargetStateVm;
+								//add the connector to database
 								fpcDataService.connectorDataService.AddConnector(conn.Start.Id, conn.End.Id);
 							}
 						}
 					}
+					//remove the dotted connector
 					RemoveHalfDrawnConnector();
 				}
 			}
+			//undrag DragTarget
 			DragTarget = null;
 		}
 
-		public void UpdateDropIndicator(Point mouse)
+
+
+		#endregion
+
+		#region Extra visuals (DropIndicator, incomplete connectors or temp states)
+		/// <summary>
+		/// Adds or removes the drap indicator object according to the tree item under the mouse
+		/// </summary>
+		/// <param name="pos_drawingArea">relative location of mouse in drawing area</param>
+		public void UpdateDropIndicator(Point pos_drawingArea)
 		{
+			//find the underlying tree item
 			TreeItemVm item = null;
 			if (SelectedToolboxItem.ContentData is StationVm)
-				item = SelectedToolboxItem.GetUnderlyingStateConfig(mouse);
+				item = SelectedToolboxItem.GetUnderlyingStateConfig(pos_drawingArea);
 			else if (SelectedToolboxItem.ContentData is ActivityVm)
-				item = SelectedToolboxItem.GetUnderlyingStateStation(mouse);
+				item = SelectedToolboxItem.GetUnderlyingStateStation(pos_drawingArea);
 			else if (SelectedToolboxItem.ContentData is MachineVm)
-				item = SelectedToolboxItem.GetUnderlyingStateStationActivity(mouse);
-			//if can't drop
+				item = SelectedToolboxItem.GetUnderlyingStateStationActivity(pos_drawingArea);
+
+			//remove the indicator if can't drop
 			if (item == null)
 			{
 				SelectedToolboxItem.CanDrop = false;
 				RemoveDropIndicator();
 			}
-			//if can drop (transition from can't drop)
+
+			//add an indicator if can drop (transition from can't drop)
 			else if (!item.ContentsList.Any(x => x.IsDropIndicator))
 			{
 				SelectedToolboxItem.CanDrop = true;
@@ -770,9 +937,6 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 		}
 
-		#endregion
-
-		#region Remove extra visuals (incomplete connectors or temp states)
 		/// <summary>
 		/// Removes the current dotted line (an incomplete connector)
 		/// </summary>
@@ -812,23 +976,6 @@ namespace Soheil.Core.ViewModels.Fpc
 				_dropIndicator = null;
 			}
 		}
-		#endregion
-
-
-		#region Fpc Viewer and special props
-		internal delegate void SelectStateEventHandler(StateVm state);
-		internal event SelectStateEventHandler SelectState;
-		/// <summary>
-		/// Fires SelectState event (for use in PPTaskEditor)
-		/// </summary>
-		/// <param name="state"></param>
-		public void FireSelectState(StateVm state)
-		{
-			if (SelectState != null) SelectState(state);
-		}
-
-		//IsReadonly Dependency Property
-		public bool IsReadonly { get; private set; }
 		#endregion
 	}
 }

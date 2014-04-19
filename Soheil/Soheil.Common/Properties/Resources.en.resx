@@ -760,4 +760,10 @@
   <data name="txtProducedG1" xml:space="preserve">
     <value>Produced Grade1</value>
   </data>
+  <data name="txtIsDefection" xml:space="preserve">
+    <value>Is a defection</value>
+  </data>
+  <data name="txtIsG2" xml:space="preserve">
+    <value>Is a grade 2 production</value>
+  </data>
 </root>

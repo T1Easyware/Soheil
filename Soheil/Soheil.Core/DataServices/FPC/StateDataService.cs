@@ -188,11 +188,11 @@ namespace Soheil.Core.DataServices
 					Name = viewModel.Name,
 					X = (float)viewModel.Location.X,
 					Y = (float)viewModel.Location.Y,
-					FPC = fpcRepository.FirstOrDefault(x => x.Id == viewModel.FPC.Id),
+					FPC = fpcRepository.FirstOrDefault(x => x.Id == viewModel.ParentWindowVm.Id),
 					StateType = viewModel.StateType,
 					OnProductRework = viewModel.StateType == StateType.Mid || viewModel.StateType == StateType.Rework ?
 						(viewModel.ProductRework == null
-							? prRepository.FirstOrDefault(x => x.Product.Id == viewModel.FPC.Product.Id && x.Rework == null)
+							? prRepository.FirstOrDefault(x => x.Product.Id == viewModel.ParentWindowVm.Product.Id && x.Rework == null)
 							: prRepository.FirstOrDefault(x => x.Id == viewModel.ProductRework.Id)
 						) : null
 				};

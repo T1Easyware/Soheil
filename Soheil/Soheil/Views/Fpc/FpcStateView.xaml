@@ -9,7 +9,10 @@
 	<Grid Background="{StaticResource fpcBackBrush}">
 		<Border BorderBrush="WhiteSmoke" BorderThickness="1" CornerRadius="0,0,1,1" ClipToBounds="True">
 			<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea"
-					HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown">
+					HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown" MouseWheel="DrawingArea_MouseWheel">
+				<Canvas.LayoutTransform>
+					<ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>
+				</Canvas.LayoutTransform>
 				<Canvas.Style>
 					<Style TargetType="Canvas">
 						<Setter Property="Cursor" Value="/Images/openhand.cur"/>
@@ -32,6 +35,7 @@
 		<WrapPanel Visibility="{Binding HasStates, Converter={StaticResource booleanToVisibilityConverter}}">
 			<Button Content="همه را باز کن" Command="{Binding ExpandAllCommand}"/>
 			<Button Content="همه را ببند" Command="{Binding CollapseAllCommand}"/>
+			<Button Content="Reset Zoom" Command="{Binding ResetZoomCommand}"/>
 		</WrapPanel>
 	</Grid>
 </UserControl>

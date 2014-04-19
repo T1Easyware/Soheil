@@ -62,9 +62,8 @@ namespace Soheil.Views.Fpc
 		private void ToolboxItem_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
 		{
 			VM.SelectedToolboxItem.Location = new Vector(
-				_dragStart.X + e.HorizontalChange, _dragStart.Y + e.VerticalChange);
-			var mouse = Mouse.GetPosition(DrawingArea);
-			VM.UpdateDropIndicator(mouse);
+				_dragStart.X + e.HorizontalChange / VM.Zoom, _dragStart.Y + e.VerticalChange / VM.Zoom);
+			VM.UpdateDropIndicator(Mouse.GetPosition(DrawingArea));
 		}
 
 

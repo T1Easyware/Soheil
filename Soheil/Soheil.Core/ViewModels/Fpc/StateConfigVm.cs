@@ -17,10 +17,12 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			State = state;
 			TreeLevel = 0;
-			//IsExpanded = true;
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
-		//State Dependency Property
+		
+		/// <summary>
+		/// State : Container of this view model
+		/// </summary>
 		public StateVm State
 		{
 			get { return (StateVm)GetValue(StateProperty); }

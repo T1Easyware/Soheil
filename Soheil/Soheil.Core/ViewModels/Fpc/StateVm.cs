@@ -20,6 +20,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		public event EventHandler<ModelRemovedEventArgs> StateDeleted;
 		/// <summary>
+		/// Occurs when this state is selected
+		/// </summary>
+		public event Action StateSelected;
+		/// <summary>
 		/// Gets the model for this vm
 		/// </summary>
 		public Model.State Model { get; private set; }
@@ -69,10 +73,46 @@ namespace Soheil.Core.ViewModels.Fpc
 			initCommands();
 			ResetCommand.Execute(null);//Updates StateConfigVm
 		}
+
+		/// <summary>
+		/// Place the state into the fpc and Executes SaveCommand
+		/// </summary>
+		internal void PlaceInFpc()
+		{
+			Name = "*";
+			Code = "*";
+			Model.X = (float)Location.X;
+			Model.Y = (float)Location.Y;
+			SaveCommand.Execute(null);
+			Opacity = 1;
+			Config.IsExpanded = true;
+		}
+
+		/// <summary>
+		/// Prepares the state for save by checking ManHours of activities
+		/// </summary>
+		internal void PromptSave()
+		{
+			Model.X = (float)this.Location.X;
+			Model.Y = (float)this.Location.Y;
+			//check for manhour duplication for ssa's with same activity defined in a stateStation
+			if (Config.ContentsList.Any(ss =>
+				ss.ContentsList.GroupBy(ssa => ssa.Containment.Id)
+				.Any(ssaWithSameActivity =>
+					ssaWithSameActivity.GroupBy(x => ((StateStationActivityVm)x).ManHour)
+					.Any(ssaWSA_grpByMH =>
+					ssaWSA_grpByMH.Count() > 1))))
+				throw new Soheil.Common.SoheilException.SoheilExceptionBase(
+					"بعضی از فعالیتهای همسان نفرساعت یکسان دارند",
+					Common.SoheilException.ExceptionLevel.Error,
+					"ذخیره نشد");
+		}
 		#endregion
 
-		#region Basic Props
-		//ParentWindowVm Dependency Property
+		#region Parent and Child
+		/// <summary>
+		/// Gets or sets a bindable value for Parent view model of this state
+		/// </summary>
 		public FpcWindowVm ParentWindowVm
 		{
 			get { return (FpcWindowVm)GetValue(ParentWindowVmProperty); }
@@ -81,19 +121,38 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty ParentWindowVmProperty =
 			DependencyProperty.Register("ParentWindowVm", typeof(FpcWindowVm), typeof(StateVm), new UIPropertyMetadata(null));
 		
-		//FPC Dependency Property
-		public FpcWindowVm FPC { get { return ParentWindowVm; } }
-		
-		//Config Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for configuration of this state (which contains all children as well)
+		/// </summary>
 		public StateConfigVm Config
 		{
 			get { return (StateConfigVm)GetValue(ConfigProperty); }
 			set { SetValue(ConfigProperty, value); }
 		}
 		public static readonly DependencyProperty ConfigProperty =
-			DependencyProperty.Register("Config", typeof(StateConfigVm), typeof(StateVm), new UIPropertyMetadata(null)); 
+			DependencyProperty.Register("Config", typeof(StateConfigVm), typeof(StateVm), new UIPropertyMetadata(null));
+		
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this state is showing its details (<see cref="StateConfigVm"/>)
+		/// </summary>
+		public bool ShowDetails
+		{
+			get { return (bool)GetValue(ShowDetailsProperty); }
+			set { SetValue(ShowDetailsProperty, value); }
+		}
+		public static readonly DependencyProperty ShowDetailsProperty =
+			DependencyProperty.Register("ShowDetails", typeof(bool), typeof(StateVm), new UIPropertyMetadata(false));
+		#endregion
 
-		//ProductRework Dependency Property
+		#region Product Rework
+		/// <summary>
+		/// locks IsRework or ProductRework when other one is changing
+		/// </summary>
+		private bool _lockPR = false;
+		/// <summary>
+		/// Gets or sets a bindable value that indicates the rework on which this state is working on
+		/// <para>Null if no rework is associated with this state</para>
+		/// </summary>
 		public ProductReworkVm ProductRework
 		{
 			get { return (ProductReworkVm)GetValue(ProductReworkProperty); }
@@ -112,7 +171,10 @@ namespace Soheil.Core.ViewModels.Fpc
 				else vm.IsRework = !val.IsMainProduction;
 				vm._lockPR = false;
 			}));
-		//IsMainProduction Dependency Property
+		
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this state is doing work on a rework
+		/// </summary>
 		public bool IsRework
 		{
 			get { return (bool)GetValue(IsReworkProperty); }
@@ -128,11 +190,22 @@ namespace Soheil.Core.ViewModels.Fpc
 				if (!(bool)e.NewValue) vm.ProductRework = null;
 				else vm.ProductRework = vm.ParentWindowVm.ProductReworks.FirstOrDefault();
 			}));
-		private bool _lockPR = false;
 		#endregion
 
-		#region IsChanged and other Visual dp
-		//IsChanged Dependency Property
+		#region Changes (IsChanged, InitializingPhase,...)
+		/// <summary>
+		/// indicates whether this state is save at least once (needed for reset)
+		/// </summary>
+		private bool _isSavedAtLeastOnce = false;
+		
+		/// <summary>
+		/// Gets or sets a value that indicates whether this state is in its initializing phase (loading data for the first time)
+		/// </summary>
+		public bool InitializingPhase { get; set; }
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this state (or any of its children) is changed without save
+		/// </summary>
 		public bool IsChanged
 		{
 			get { return (bool)GetValue(IsChangedProperty); }
@@ -142,9 +215,12 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("IsChanged", typeof(bool), typeof(StateVm),
 			new UIPropertyMetadata(false, (d, e) => { }, (d, v) => { return (bool)v && !(((StateVm)d).ParentWindowVm.IsReadonly); }));
 
-		private bool _isSavedAtLeastOnce = false;
-		public bool InitializingPhase { get; set; }
-
+		/// <summary>
+		/// Sets IsChanged to true (if not in InitializingPhase)
+		/// <para>Also corrects OnProductRework in model</para>
+		/// </summary>
+		/// <param name="d"></param>
+		/// <param name="e"></param>
 		public static void AnyPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var vm = d as StateVm;
@@ -155,16 +231,18 @@ namespace Soheil.Core.ViewModels.Fpc
 					vm.IsChanged = true;
 					if (e.Property == ProductReworkProperty)
 					{
-						var prvm = (ProductReworkVm)e.NewValue;
-						vm.Model.OnProductRework = prvm == null ? vm.ParentWindowVm.Model.Product.MainProductRework : prvm.Model;
+						var newProductReworkVm = (ProductReworkVm)e.NewValue;
+						vm.Model.OnProductRework = newProductReworkVm == null ? vm.ParentWindowVm.Model.Product.MainProductRework : newProductReworkVm.Model;
 					}
 				}
 			}
 		}
-		
+		#endregion
 
-
-		//Width Dependency Property
+		#region Visual (Width, Height, Opacity)
+		/// <summary>
+		/// Gets or sets a bindable value for width of this state
+		/// </summary>
 		public double Width
 		{
 			get { return (double)GetValue(WidthProperty); }
@@ -172,7 +250,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty WidthProperty =
 			DependencyProperty.Register("Width", typeof(double), typeof(StateVm), new UIPropertyMetadata(40d));
-		//Height Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for height of this state
+		/// </summary>
 		public double Height
 		{
 			get { return (double)GetValue(HeightProperty); }
@@ -180,17 +260,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty HeightProperty =
 			DependencyProperty.Register("Height", typeof(double), typeof(StateVm), new UIPropertyMetadata(38d));
-
-		
-		//ShowDetails Dependency Property
-		public bool ShowDetails
-		{
-			get { return (bool)GetValue(ShowDetailsProperty); }
-			set { SetValue(ShowDetailsProperty, value); }
-		}
-		public static readonly DependencyProperty ShowDetailsProperty =
-			DependencyProperty.Register("ShowDetails", typeof(bool), typeof(StateVm), new UIPropertyMetadata(false));
-		//Opacity Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for Opacity of this state
+		/// </summary>
 		public double Opacity
 		{
 			get { return (double)GetValue(OpacityProperty); }
@@ -281,15 +353,15 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				try
 				{
-					var connectors = FPC.Connectors.Where(x => x.Start.Id == Id || x.End.Id == Id).ToList();
+					var connectors = ParentWindowVm.Connectors.Where(x => x.Start.Id == Id || x.End.Id == Id).ToList();
 					ParentWindowVm.fpcDataService.stateDataService.DeleteModel(Model);
 
 					if (StateDeleted != null)
 						StateDeleted(this, new ModelRemovedEventArgs(Id));
-					FPC.States.Remove(this);
+					ParentWindowVm.States.Remove(this);
 					foreach (var connector in connectors)
 					{
-						FPC.Connectors.Remove(connector);
+						ParentWindowVm.Connectors.Remove(connector);
 					}
 
 					IsChanged = true;
@@ -310,28 +382,13 @@ namespace Soheil.Core.ViewModels.Fpc
 
 			SelectCommand = new Command(o =>
 			{
-				ParentWindowVm.FireSelectState(this);
+				if (StateSelected != null) StateSelected();
 			});
 		}
 
-		internal void PromptSave()
-		{
-			Model.X = (float)this.Location.X;
-			Model.Y = (float)this.Location.Y;
-			//check for manhour duplication for ssa's with same activity defined in a stateStation
-			if (Config.ContentsList.Any(ss => 
-				ss.ContentsList.GroupBy(ssa => ssa.Containment.Id)
-				.Any(ssaWithSameActivity => 
-					ssaWithSameActivity.GroupBy(x=>((StateStationActivityVm)x).ManHour)
-					.Any(ssaWSA_grpByMH => 
-					ssaWSA_grpByMH.Count() > 1))))
-				throw new Soheil.Common.SoheilException.SoheilExceptionBase(
-					"بعضی از فعالیتهای همسان نفرساعت یکسان دارند", 
-					Common.SoheilException.ExceptionLevel.Error,
-					"ذخیره نشد");
-		}
-
-		//SaveCommand
+		/// <summary>
+		/// Gets or sets a bindable command to save this state
+		/// </summary>
 		public Commands.Command SaveCommand
 		{
 			get { return (Commands.Command)GetValue(SaveCommandProperty); }
@@ -339,7 +396,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty SaveCommandProperty =
 			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(StateVm), new PropertyMetadata(null));
-		//ResetCommand
+		/// <summary>
+		/// Gets or sets a bindable command to reset this state to its original database values
+		/// </summary>
 		public Commands.Command ResetCommand
 		{
 			get { return (Commands.Command)GetValue(ResetCommandProperty); }
@@ -347,7 +406,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty ResetCommandProperty =
 			DependencyProperty.Register("ResetCommand", typeof(Commands.Command), typeof(StateVm), new PropertyMetadata(null));
-		//DeleteCommand
+		/// <summary>
+		/// Gets or sets a bindable command to delete this state and its connectors
+		/// </summary>
 		public Commands.Command DeleteCommand
 		{
 			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
@@ -355,7 +416,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty DeleteCommandProperty =
 			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(StateVm), new PropertyMetadata(null));
-		//SelectCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command to select this state
+		/// </summary>
 		public Commands.Command SelectCommand
 		{
 			get { return (Commands.Command)GetValue(SelectCommandProperty); }
@@ -365,15 +428,5 @@ namespace Soheil.Core.ViewModels.Fpc
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(StateVm), new UIPropertyMetadata(null));
 		#endregion
 
-		internal void PlaceInFpc()
-		{
-			Name = "*";
-			Code = "*";
-			Model.X = (float)Location.X;
-			Model.Y = (float)Location.Y;
-			SaveCommand.Execute(null);
-			Opacity = 1;
-			Config.IsExpanded = true;
-		}
 	}
 }
