@@ -56,6 +56,7 @@ namespace Soheil.Views.Fpc
 				state.ParentWindowVm.MouseLeavesState(state);
 		}
 
+		//This eventHandler is for all state except for temp states
 		private void midStateLoaded(object sender, RoutedEventArgs e)
 		{
 			var dc = sender.GetDataContext<StateVm>();

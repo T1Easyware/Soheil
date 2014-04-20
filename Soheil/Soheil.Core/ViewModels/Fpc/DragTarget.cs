@@ -13,7 +13,8 @@ namespace Soheil.Core.ViewModels.Fpc
 	public abstract class DragTarget : ViewModelBase
 	{
 		/// <summary>
-		/// Gets or sets a bindable value that indicates the Margin of this view model in its container
+		/// Gets or sets a bindable value that indicates the Location of this view model in its container
+		/// <remarks>The dependency property of this value is represented by Thickness</remarks>
 		/// </summary>
 		public Vector Location
 		{

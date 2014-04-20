@@ -45,10 +45,6 @@
 				<RowDefinition/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
-			<TextBlock Foreground="#FA0" Grid.ColumnSpan="2"
-					   Text="[ذخیره نشده است]" 
-					   ToolTip="تغییرات این مرحله هنوز ذخیره نشده است"
-					Visibility="{Binding State.IsChanged, Converter={StaticResource visibilityConverter}}"/>
 			<TextBlock Margin="4" Text="کد مرحله" Grid.Row="2"/>
 			<TextBox Margin="2" Text="{Binding State.Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap"/>
 			<TextBlock Margin="4" Text="نام مرحله" Grid.Row="1"/>

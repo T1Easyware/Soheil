@@ -507,6 +507,10 @@
     <Resource Include="Images\error16.png" />
     <Resource Include="Images\warning16.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\locationLocked.png" />
+    <Resource Include="Images\Fpc\locationUnlocked.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

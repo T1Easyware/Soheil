@@ -107,38 +107,28 @@ namespace Soheil.Core.DataServices
 			context.Commit();
 		}
 
+		/// <summary>
+		/// Deletes a state with its children and connectors
+		/// </summary>
+		/// <param name="model"></param>
 		public void DeleteModel(State model)
 		{
-			var entity = _stateRepository.Single(x => x.Id == model.Id);
-			if (entity != null)
-			{
-				//Delete tree
-				foreach (var ss in entity.StateStations.ToArray())
-				{
-					foreach (var ssa in ss.StateStationActivities.ToArray())
-					{
-						foreach (var ssam in ssa.StateStationActivityMachines.ToArray())
-						{
-							ssa.StateStationActivityMachines.Remove(ssam);
-						}
-						ss.StateStationActivities.Remove(ssa);
-					}
-					entity.StateStations.Remove(ss);
-				}
-			}
 			//Delete tree
-			/*foreach (var ss in model.StateStations.ToArray())
+			foreach (var ss in model.StateStations.ToArray())
 			{
 				foreach (var ssa in ss.StateStationActivities.ToArray())
 				{
 					foreach (var ssam in ssa.StateStationActivityMachines.ToArray())
 					{
 						ssa.StateStationActivityMachines.Remove(ssam);
+						_stateStationActivityMachineRepository.Delete(ssam);
 					}
 					ss.StateStationActivities.Remove(ssa);
+					_stateStationActivityRepository.Delete(ssa);
 				}
 				model.StateStations.Remove(ss);
-			}*/
+				_stateStationRepository.Delete(ss);
+			}
 			//Delete connectors
 			Repository<Connector> connectorRepository = new Repository<Connector>(context);
 			var connectors = connectorRepository.Find(x => x.StartState.Id == model.Id || x.EndState.Id == model.Id).ToArray();
@@ -147,8 +137,8 @@ namespace Soheil.Core.DataServices
 				connectorRepository.Delete(connector);
 			}
 			//Delete State
-			//model.FPC.States.Remove(model);
-			_stateRepository.Delete(entity);
+			model.FPC.States.Remove(model);
+			_stateRepository.Delete(model);
 			context.Commit();
 		}
 

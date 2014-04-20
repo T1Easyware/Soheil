@@ -82,7 +82,7 @@ namespace Soheil.Views.Fpc
 
 			if (VM != null)
 				//perform drag mechanism
-				if (VM.DragTarget != null)
+				if (VM.DragTarget != null && !VM.IsLocationsLocked)
 					VM.DragTarget.Location = new Vector(
 							e.GetPosition(DrawingArea).X - VM.RelativeDragPoint.X * VM.Zoom,
 							e.GetPosition(DrawingArea).Y - VM.RelativeDragPoint.Y * VM.Zoom);

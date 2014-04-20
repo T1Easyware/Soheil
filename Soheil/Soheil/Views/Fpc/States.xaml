@@ -4,43 +4,43 @@
 					xmlns:my="clr-namespace:System;assembly=mscorlib"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+	<Style x:Key="stateAdorner" TargetType="{x:Type AdornerDecorator}">
+		<Style.Triggers>
+			<EventTrigger RoutedEvent="Mouse.MouseEnter">
+				<BeginStoryboard>
+					<Storyboard>
+						<DoubleAnimation 
+									From="0.7" To="1" Duration="0:0:0.1"
+									Storyboard.TargetProperty="Opacity"/>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+			<EventTrigger RoutedEvent="Mouse.MouseLeave">
+				<BeginStoryboard>
+					<Storyboard>
+						<DoubleAnimation BeginTime="0:0:3"
+										To="0.6" Duration="0:0:1"
+										Storyboard.TargetProperty="Opacity"/>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+		</Style.Triggers>
+		<Style.Setters>
+			<Setter Property="Opacity" Value="0.6"/>
+			<Setter Property="BitmapEffect">
+				<Setter.Value>
+					<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
+				</Setter.Value>
+			</Setter>
+		</Style.Setters>
+	</Style>
+	
 	<!--           -->
 	<!--start state-->
 	<!--           -->
 	<DataTemplate x:Key="startStateTemplate" DataType="{x:Type vm:StateVm}">
-		<Canvas Width="0" Height="0" MouseDown="State_MouseDown">
-			<AdornerDecorator Margin="{Binding Location}" Opacity="0.7" Name="stateContainer">
-				<AdornerDecorator.Triggers>
-					<EventTrigger RoutedEvent="Mouse.MouseEnter">
-						<BeginStoryboard>
-							<Storyboard>
-								<DoubleAnimation 
-									To="1" Duration="0:0:0.1"
-									Storyboard.TargetName="stateContainer"
-									Storyboard.TargetProperty="Opacity"/>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-					<EventTrigger RoutedEvent="Mouse.MouseLeave">
-						<BeginStoryboard>
-							<Storyboard>
-								<ParallelTimeline>
-									<DoubleAnimation BeginTime="0:0:5"
-											To="0.8" Duration="0:0:1"
-											Storyboard.TargetName="stateContainer"
-											Storyboard.TargetProperty="Opacity"/>
-									<DoubleAnimation BeginTime="0:0:15"
-										To="0.5" Duration="0:0:1"
-										Storyboard.TargetName="stateContainer"
-										Storyboard.TargetProperty="Opacity"/>
-								</ParallelTimeline>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-				</AdornerDecorator.Triggers>
-				<AdornerDecorator.BitmapEffect>
-					<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
-				</AdornerDecorator.BitmapEffect>
+		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Loaded="midStateLoaded">
+			<AdornerDecorator Margin="{Binding Location}" Style="{StaticResource stateAdorner}">
 				<Grid Height="38" 
 					  SizeChanged="State_SizeChanged" 
 					  Tag="{Binding}">
@@ -63,36 +63,8 @@
 	<!--           -->
 	<DataTemplate x:Key="midStateTemplate" DataType="{x:Type vm:StateVm}">
 		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Opacity="{Binding Opacity}" Loaded="midStateLoaded">
-			<AdornerDecorator Margin="{Binding Location}" Opacity="0.7" Name="stateContainer"
+			<AdornerDecorator Margin="{Binding Location}" Style="{StaticResource stateAdorner}"
 							  MouseEnter="stateContainer_MouseEnter" MouseLeave="stateContainer_MouseLeave">
-				<AdornerDecorator.Triggers>
-					<EventTrigger RoutedEvent="Mouse.MouseEnter">
-						<BeginStoryboard>
-							<Storyboard>
-								<DoubleAnimation 
-									To="1" Duration="0:0:0.1"
-									Storyboard.TargetName="stateContainer"
-									Storyboard.TargetProperty="Opacity"/>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-					<EventTrigger RoutedEvent="Mouse.MouseLeave">
-						<BeginStoryboard>
-							<Storyboard>
-								<ParallelTimeline>
-									<DoubleAnimation BeginTime="0:0:5"
-											To="0.8" Duration="0:0:1"
-											Storyboard.TargetName="stateContainer"
-											Storyboard.TargetProperty="Opacity"/>
-									<DoubleAnimation BeginTime="0:0:15"
-										To="0.5" Duration="0:0:1"
-										Storyboard.TargetName="stateContainer"
-										Storyboard.TargetProperty="Opacity"/>
-								</ParallelTimeline>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-				</AdornerDecorator.Triggers>
 				<Border MinWidth="40" 
 						MinHeight="38"
 						MaxWidth="200"
@@ -107,9 +79,6 @@
 							<Binding Path="ParentWindowVm.FocusedState"/>
 						</MultiBinding>
 					</Border.BorderBrush>
-					<Border.BitmapEffect>
-						<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
-					</Border.BitmapEffect>
 					<StackPanel>
 						<!-- normal -->
 						<StackPanel
@@ -133,11 +102,11 @@
 									  VerticalScrollBarVisibility="Auto"
 									  Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=ShowDetails}">
 							<ContentControl Content="{Binding Config}" 
-											Tag="{Binding ElementName=stateContainer, Path=Parent}"
+											Tag="{Binding RelativeSource={RelativeSource AncestorType=AdornerDecorator}, Path=Parent}"
 											MouseDown="State_MouseDown"
 											ContentTemplate="{DynamicResource treeItemTemplate}"/>
 						</ScrollViewer>
-						<!-- config.buttons -->
+						<!-- config.buttons >
                         <Border>
                             <Border.Background>
                                 <MultiBinding Converter="{StaticResource focusedStateBorderBrushConverter}">
@@ -158,7 +127,7 @@
 							    </Button>
 							    <Canvas/>
 						    </DockPanel>
-                        </Border>
+                        </Border-->
                     </StackPanel>
                 </Border>
 			</AdornerDecorator>
@@ -170,36 +139,8 @@
 	<!--                  -->
 	<DataTemplate x:Key="midStateViewerTemplate" DataType="{x:Type vm:StateVm}">
 		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Opacity="{Binding Opacity}" Loaded="midStateLoaded">
-			<AdornerDecorator Margin="{Binding Location}" Opacity="0.7" Name="stateContainer"
-							  MouseEnter="stateContainer_MouseEnter" MouseLeave="stateContainer_MouseLeave">
-				<AdornerDecorator.Triggers>
-					<EventTrigger RoutedEvent="Mouse.MouseEnter">
-						<BeginStoryboard>
-							<Storyboard>
-								<DoubleAnimation 
-									To="1" Duration="0:0:0.1"
-									Storyboard.TargetName="stateContainer"
-									Storyboard.TargetProperty="Opacity"/>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-					<EventTrigger RoutedEvent="Mouse.MouseLeave">
-						<BeginStoryboard>
-							<Storyboard>
-								<ParallelTimeline>
-									<DoubleAnimation BeginTime="0:0:5"
-											To="0.8" Duration="0:0:1"
-											Storyboard.TargetName="stateContainer"
-											Storyboard.TargetProperty="Opacity"/>
-									<DoubleAnimation BeginTime="0:0:15"
-										To="0.5" Duration="0:0:1"
-										Storyboard.TargetName="stateContainer"
-										Storyboard.TargetProperty="Opacity"/>
-								</ParallelTimeline>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-				</AdornerDecorator.Triggers>
+			<AdornerDecorator Margin="{Binding Location}" Style="{StaticResource stateAdorner}"
+							MouseEnter="stateContainer_MouseEnter" MouseLeave="stateContainer_MouseLeave">
 				<Border MinWidth="40" 
 						MinHeight="38"
 						MaxWidth="200"
@@ -219,9 +160,6 @@
 							<Binding Path="ParentWindowVm.FocusedState"/>
 						</MultiBinding>
 					</Border.Background>
-					<Border.BitmapEffect>
-						<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
-					</Border.BitmapEffect>
 					<StackPanel>
 						<!-- normal -->
 						<DockPanel
@@ -249,7 +187,7 @@
 									  VerticalScrollBarVisibility="Auto"
 									  Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=ShowDetails}">
 							<ContentControl Content="{Binding Config}" 
-											Tag="{Binding ElementName=stateContainer, Path=Parent}"
+											Tag="{Binding RelativeSource={RelativeSource AncestorType=AdornerDecorator}, Path=Parent}"
 											MouseDown="State_MouseDown"
 											ContentTemplate="{DynamicResource treeItemViewerTemplate}"/>
 						</ScrollViewer>
@@ -264,40 +202,9 @@
 	<!--rework state-->
 	<!--           -->
 	<DataTemplate x:Key="reworkStateTemplate" DataType="{x:Type vm:StateVm}">
-		<Canvas Width="0" Height="0" MouseDown="State_MouseDown"
+		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Loaded="midStateLoaded"
 				MouseEnter="stateContainer_MouseEnter" MouseLeave="stateContainer_MouseLeave">
-			<AdornerDecorator Margin="{Binding Location}" Opacity="0.7" Name="stateContainer">
-				<AdornerDecorator.Triggers>
-					<EventTrigger RoutedEvent="Mouse.MouseEnter">
-						<BeginStoryboard>
-							<Storyboard>
-								<DoubleAnimation 
-									From="0.7" To="1" Duration="0:0:0.1"
-									Storyboard.TargetName="stateContainer"
-									Storyboard.TargetProperty="Opacity"/>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-					<EventTrigger RoutedEvent="Mouse.MouseLeave">
-						<BeginStoryboard>
-							<Storyboard>
-								<ParallelTimeline>
-									<DoubleAnimation BeginTime="0:0:5"
-											To="0.8" Duration="0:0:1"
-											Storyboard.TargetName="stateContainer"
-											Storyboard.TargetProperty="Opacity"/>
-									<DoubleAnimation BeginTime="0:0:15"
-										To="0.5" Duration="0:0:1"
-										Storyboard.TargetName="stateContainer"
-										Storyboard.TargetProperty="Opacity"/>
-								</ParallelTimeline>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-				</AdornerDecorator.Triggers>
-				<AdornerDecorator.BitmapEffect>
-					<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
-				</AdornerDecorator.BitmapEffect>
+			<AdornerDecorator Margin="{Binding Location}" Style="{StaticResource stateAdorner}">
 				<Grid Height="34" 
 					  SizeChanged="State_SizeChanged" 
 					  Tag="{Binding}">
@@ -330,40 +237,9 @@
 	<!--final state-->
 	<!--           -->
 	<DataTemplate x:Key="finalStateTemplate" DataType="{x:Type vm:StateVm}">
-		<Canvas Width="0" Height="0" MouseDown="State_MouseDown"
+		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Loaded="midStateLoaded"
 				MouseEnter="stateContainer_MouseEnter" MouseLeave="stateContainer_MouseLeave">
-			<AdornerDecorator Margin="{Binding Location}" Opacity="0.7" Name="stateContainer">
-				<AdornerDecorator.Triggers>
-					<EventTrigger RoutedEvent="Mouse.MouseEnter">
-						<BeginStoryboard>
-							<Storyboard>
-								<DoubleAnimation 
-									From="0.7" To="1" Duration="0:0:0.1"
-									Storyboard.TargetName="stateContainer"
-									Storyboard.TargetProperty="Opacity"/>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-					<EventTrigger RoutedEvent="Mouse.MouseLeave">
-						<BeginStoryboard>
-							<Storyboard>
-								<ParallelTimeline>
-									<DoubleAnimation BeginTime="0:0:5"
-											To="0.8" Duration="0:0:1"
-											Storyboard.TargetName="stateContainer"
-											Storyboard.TargetProperty="Opacity"/>
-									<DoubleAnimation BeginTime="0:0:15"
-										To="0.5" Duration="0:0:1"
-										Storyboard.TargetName="stateContainer"
-										Storyboard.TargetProperty="Opacity"/>
-								</ParallelTimeline>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-				</AdornerDecorator.Triggers>
-				<AdornerDecorator.BitmapEffect>
-					<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
-				</AdornerDecorator.BitmapEffect>
+			<AdornerDecorator Margin="{Binding Location}" Style="{StaticResource stateAdorner}">
 				<Grid Height="38" 
 					  SizeChanged="State_SizeChanged" 
 					  Tag="{Binding}">

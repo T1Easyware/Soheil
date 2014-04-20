@@ -135,7 +135,8 @@ namespace Soheil.Core.PP.Smart
 						return true;
 					}
 
-				if (veryStartState.OnProductRework.Rework == null)
+				if (veryStartState.OnProductRework == null
+					|| veryStartState.OnProductRework.Rework == null)
 				{
 					throw new SoheilExceptionBase(
 						string.Format("FPC {0} در مسیر تولید اصلی به مرحله نهایی ختم نمی شود", _fpcModel.Product.Name),

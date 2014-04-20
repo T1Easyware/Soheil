@@ -11,6 +11,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		public Model.Connector Model { get; protected set; }
 		public override int Id { get { return Model == null ? -1 : Model.Id; } }
 
+		/// <summary>
+		/// Occurs when a connector is manually deleted
+		/// </summary>
 		public event Action ConnectorRemoved;
 
 		public ConnectorVm(Model.Connector model, StateVm start, StateVm end, DataServices.ConnectorDataService connectorDataService, bool isLoose = false)

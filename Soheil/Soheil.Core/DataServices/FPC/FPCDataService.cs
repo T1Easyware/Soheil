@@ -304,8 +304,8 @@ namespace Soheil.Core.DataServices
 				stateDataService.AddModel(new State
 				{
 					FPC = model,
-					X = 50,
-					Y = 50,
+					X = 400,
+					Y = 100,
 					Name = "شروع",
 					Code = "",
 					StateType = StateType.Start
@@ -315,8 +315,8 @@ namespace Soheil.Core.DataServices
 				stateDataService.AddModel(new State
 				{
 					FPC = model,
-					X = 300,
-					Y = 50,
+					X = 50,
+					Y = 100,
 					Name = "محصول نهایی",
 					Code = "",
 					StateType = StateType.Final

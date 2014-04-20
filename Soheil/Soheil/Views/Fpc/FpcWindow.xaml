@@ -12,6 +12,7 @@
 	<Grid>
 		<DockPanel TextBlock.Foreground="WhiteSmoke" Margin="0,0,0,5" Background="{StaticResource fpcBackBrush}">
 			<ToolBar DockPanel.Dock="Top" Panel.ZIndex="999">
+				<!--main tools-->
 				<ToggleButton IsChecked="{Binding ToolSelection}">
 					<Image Style="{StaticResource SelectToolImage}"/>
 				</ToggleButton>
@@ -35,19 +36,27 @@
 					</Grid>
 				</ToggleButton>
 				<Separator/>
+				<!-- other options -->
 				<Button Width="80" Content="همه را باز کن" Command="{Binding ExpandAllCommand}"/>
 				<Button Width="80" Content="همه را ببند" Command="{Binding CollapseAllCommand}"/>
 				<ToggleButton Width="50" Content="سایه" IsChecked="True"
 					Checked="ShadowToggleButton_Checked" Unchecked="ShadowToggleButton_Unchecked"/>
 				<Button Width="80" Content="Reset Zoom" Command="{Binding ResetZoomCommand}"/>
+				<!--IsLocationsLocked Button-->
+				<ToggleButton IsChecked="{Binding IsLocationsLocked}">
+					<WrapPanel>
+						<TextBlock Text="قفل مختصات" VerticalAlignment="Center"/>
+						<Image Style="{StaticResource IsLocationsLockedImageStyle}" FlowDirection="LeftToRight"/>
+					</WrapPanel>
+				</ToggleButton>
 				<Separator/>
+				<!--save all Button-->
 				<Button Command="{Binding SaveAllCommand}">
 					<WrapPanel>
 						<Image Style="{StaticResource SaveImage}"/>
 						<TextBlock Text="ذخیره تغییرات"/>
 					</WrapPanel>
 				</Button>
-
 				<Separator/>
 				<!--isDefault Button-->
 				<ToggleButton IsChecked="{Binding IsDefault}">

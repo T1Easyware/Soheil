@@ -15,7 +15,8 @@ namespace Soheil.Core.ViewModels.Fpc
 	public class FpcWindowVm : ViewModelBase
 	{
 		/// <summary>
-		/// Unit of work used for this fpc
+		/// Common unit of work used for all fpcs showed in this window
+		/// <para>can be null if not a single one is used</para>
 		/// </summary>
 		Dal.SoheilEdmContext _uow;
 
@@ -44,6 +45,17 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		public bool IsReadonly { get; private set; }
 
+		/// <summary>
+		/// Gets or sets a value that indicated whether the location of states are readonly
+		/// </summary>
+		public bool IsLocationsLocked
+		{
+			get { return (bool)GetValue(IsLocationsLockedProperty); }
+			set { SetValue(IsLocationsLockedProperty, value); }
+		}
+		public static readonly DependencyProperty IsLocationsLockedProperty =
+			DependencyProperty.Register("IsLocationsLocked", typeof(bool), typeof(FpcWindowVm), new UIPropertyMetadata(false));
+
 		#region Ctor, ChangeFPC & Reset
 		/// <summary>
 		/// Creates an instance of FpcWindowVm with its own Unit of work
@@ -71,7 +83,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 
 		/// <summary>
-		/// Initializes States collection to automatically do some stuff for FpcWindowVm
+		/// Initializes States and Connectors collections to automatically do some stuff for FpcWindowVm
 		/// </summary>
 		void initStates()
 		{
@@ -87,6 +99,19 @@ namespace Soheil.Core.ViewModels.Fpc
 							//fire SelectedStateChanged event
 							if (SelectedStateChanged != null)
 								SelectedStateChanged(newItem);
+						};
+						newItem.StateDeleted += (connectors) =>
+						{
+							States.Remove(newItem);
+							foreach (var connector in connectors)
+							{
+								Connectors.Remove(connector);
+							}
+						};
+						newItem.ModelChanged += () =>
+						{
+							if(newItem.IsPlaced)
+								fpcDataService.ApplyChanges();
 						};
 					}
 			};
@@ -182,7 +207,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			_lock = false;
 			Message = new DependencyMessageBox();
-			if (_uow == null)
+			if (_uow == null) 
 				fpcDataService = new FPCDataService();
 			else
 				fpcDataService = new FPCDataService(_uow);
@@ -487,7 +512,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			};
 			this.Model.States.Add(stateModel);
 
-			_newDraggingStateVm = new StateVm(stateModel, this)
+			_newDraggingStateVm = new StateVm(stateModel, this, false)
 			{
 				Opacity = 0.4d,
 			};
@@ -620,10 +645,6 @@ namespace Soheil.Core.ViewModels.Fpc
 						state.PromptSave();
 					}
 					fpcDataService.ApplyChanges();
-					foreach (var state in States)
-					{
-						state.IsChanged = false;
-					}
 
 					//check for tracability
 					Soheil.Core.PP.Smart.SmartJob.AutoRouteCheck(this.Id);
@@ -636,10 +657,6 @@ namespace Soheil.Core.ViewModels.Fpc
 						msg += "FPC تعریف شده قابل مسیریابی نمی باشد.\nدر صورتی که می خواهید از قابلیت افزودن خودکار Job استفاده نمایید بایستی FPC را اصلاح کنید.\n";
 					msg += exp.Message;
 					Message = new DependencyMessageBox(msg, exp.Caption, MessageBoxButton.OK, exp.Level);
-					//this is actual after line for _fpcDataService.ApplyChanges(this); because it throws
-					if (exp.Level == ExceptionLevel.Info)
-						foreach (var state in States)
-							state.IsChanged = false;
 				}
 				catch (Exception exp)
 				{
@@ -827,17 +844,12 @@ namespace Soheil.Core.ViewModels.Fpc
 				{
 					RemoveHalfDrawnConnector();
 					
-					//create a temporary state attached to the end of connector
-					var end = new StateVm(new Model.State
-					{
-						X = (float)pos_drawingArea.X,
-						Y = (float)pos_drawingArea.Y,
-					}, 
-					this, true);
-
+					//create a temporary state and attach it to the end of connector
+					var end = StateVm.CreateTemp(pos_drawingArea.X, pos_drawingArea.Y, this);
 					DragTarget = end;
 					States.Add(end);
 					Connectors.Add(new ConnectorVm(null, state, end, fpcDataService.connectorDataService, true));
+
 					RelativeDragPoint = new Point(0, 0);
 				}
 				//state is dragging
@@ -881,14 +893,14 @@ namespace Soheil.Core.ViewModels.Fpc
 						var conn = Connectors.FirstOrDefault(x => x.End == draggedState);
 						if (conn != null)
 						{
-							//if connector isn't loose it can be added to fpc
+							//if connector isn't loose (ready to add) it can be added to fpc
 							if (!conn.IsLoose)
 							{
 								//remove temp state
 								States.Remove(draggedState);
 								//attach the end of the connector
 								conn.End = _connectorDropTargetStateVm;
-								//add the connector to database
+								//add the connector to database and save
 								fpcDataService.connectorDataService.AddConnector(conn.Start.Id, conn.End.Id);
 							}
 						}

@@ -222,11 +222,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		protected virtual void isExpandedChanged(bool newValue) { }
 
 		/// <summary>
-		/// Override this method to specify what to do when this state (or any of its sub items) is changed
-		/// </summary>
-		public virtual void Change() { }
-
-		/// <summary>
 		/// Override this method to specify what to do when this state (or any of its sub items) is deleted
 		/// </summary>
 		public virtual void Delete() { }
