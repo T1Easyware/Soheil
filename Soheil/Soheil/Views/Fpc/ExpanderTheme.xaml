@@ -194,7 +194,7 @@
 							Converter={StaticResource treeItemToExpanderButtonWidthConverter}, 
 							ConverterParameter=3}"/>
 						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="20"/>
+						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 					<ToggleButton
 						IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
@@ -206,8 +206,8 @@
 						Margin="2" 
 						ContentSource="Header" 
 						RecognizesAccessKey="True"/>
-					<Button 
-						Grid.Column="2"
+					<Button Grid.Column="2" Width="20"
+                            Visibility="{Binding IsFixed, Converter={StaticResource booleanToInvisibilityConverter}}"
 						Tag="{Binding Path=Tag, RelativeSource={RelativeSource TemplatedParent}}"
 						Template="{StaticResource ExpanderDeleteButton}"
 						Click="DeleteButton_Click">

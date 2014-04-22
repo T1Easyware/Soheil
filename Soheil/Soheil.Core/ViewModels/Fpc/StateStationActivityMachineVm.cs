@@ -30,6 +30,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			TreeLevel = 3;
 			Model = model;
+			IsFixed = model.SelectedMachines.Any();
 		}
 
 
@@ -83,11 +84,14 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		public override void Delete()
 		{
-			if (this.Model.SelectedMachines.Any())
+			//check for constraints
+			var entity = new Dal.Repository<Model.StateStationActivityMachine>(new Dal.SoheilEdmContext()).Single(x => x.Id == Id);
+			if (entity != null && entity.SelectedMachines.Any())
 			{
 				ContainerSSA.ContainerSS.ContainerS.Parent.Message = new Common.SoheilException.DependencyMessageBox("این ماشین در برنامه تولید استفاده شده است", "Error", MessageBoxButton.OK, Common.SoheilException.ExceptionLevel.Error);
 				return;
 			}
+			//delete
 			Container.ContentsList.Remove(this);
 		}
 	}

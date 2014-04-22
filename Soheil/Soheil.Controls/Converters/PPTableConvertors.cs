@@ -795,10 +795,49 @@ namespace Soheil.Controls.Converters.PP
 						System.Convert.ToInt32(tmp[0]),
 						System.Convert.ToInt32(tmp[1]));
 					case 3:
-					return new TimeSpan(
+						return new TimeSpan(
+							System.Convert.ToInt32(tmp[0]),
+							System.Convert.ToInt32(tmp[1]),
+							System.Convert.ToInt32(tmp[2]));
+					default:
+						return null;
+				}
+			}
+			catch { return null; }
+		}
+	}
+	public class FullTimeSpanToStringConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (value == DependencyProperty.UnsetValue) return "";
+			var ts = (TimeSpan)value;
+
+			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			try
+			{
+				var tmp = ((string)value).Split(':');
+				switch (tmp.Length)
+				{
+					case 1:
+						return new TimeSpan(
+						0,
+						0,
+						System.Convert.ToInt32(tmp[1]));
+					case 2:
+						return new TimeSpan(
+						0,
 						System.Convert.ToInt32(tmp[0]),
-						System.Convert.ToInt32(tmp[1]),
-						System.Convert.ToInt32(tmp[2]));
+						System.Convert.ToInt32(tmp[1]));
+					case 3:
+						return new TimeSpan(
+							System.Convert.ToInt32(tmp[0]),
+							System.Convert.ToInt32(tmp[1]),
+							System.Convert.ToInt32(tmp[2]));
 					default:
 						return null;
 				}

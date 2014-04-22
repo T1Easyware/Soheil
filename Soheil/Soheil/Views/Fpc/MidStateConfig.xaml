@@ -50,8 +50,8 @@
 			<TextBlock Margin="4" Text="نام مرحله" Grid.Row="1"/>
 			<TextBox Margin="2" Text="{Binding State.Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap"/>
 			<CheckBox Margin="3" Grid.Row="3" Content="دوباره کاری"
-					  IsChecked="{Binding State.IsRework}"/>
-			<ComboBox Grid.Row="3" Grid.Column="1" Margin="2,0" 
+					  IsChecked="{Binding State.IsRework}" IsEnabled="{Binding IsFixed}"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" Margin="2,0" IsReadOnly="{Binding IsFixed}"
 				ItemsSource="{Binding Parent.ProductReworks}" 
 				SelectedItem="{Binding State.ProductRework, Mode=TwoWay}" 
 				Visibility="{Binding State.IsRework, Converter={StaticResource booleanToVisibilityConverter}}">
@@ -80,9 +80,9 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<TextBlock Margin="4" Text="زمان سیکل(ثانیه)"/>
-                <TextBox Margin="2" Text="{Binding CycleTime, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                <TextBox Margin="2" IsReadOnly="{Binding IsFixed}" Text="{Binding CycleTime, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
 				<TextBlock Margin="4" Text="نفر ساعت" Grid.Row="1"/>
-                <TextBox Margin="2" Text="{Binding ManHour, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
+                <TextBox Margin="2" IsReadOnly="{Binding IsFixed}" Text="{Binding ManHour, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
 			</Grid>
 		</StackPanel>
 	</DataTemplate>
@@ -139,7 +139,7 @@
 							Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=ContentsList.Count, ConverterParameter=0}"
 							HorizontalAlignment="Center" 
 							Foreground="#AA6600" 
-							Text="خالی"/>
+							Text="خالی" FontStyle="Italic"/>
 						<ItemsControl
 							Visibility="{Binding Converter={StaticResource invisibilityConverter}, Path=ContentsList.Count, ConverterParameter=0}"
 							Style="{StaticResource stackStyle}"

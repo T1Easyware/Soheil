@@ -52,6 +52,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			Parent = parentWindowVm;
 		}
+
 		/// <summary>
 		/// Gets a bindable value for parent vm
 		/// </summary>
@@ -62,6 +63,8 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty ParentProperty =
 			DependencyProperty.Register("Parent", typeof(FpcWindowVm), typeof(TreeItemVm), new UIPropertyMetadata(null));
+
+
 
 		#region Structure
 		/// <summary>
@@ -188,7 +191,18 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		#endregion
 
-		#region Other
+		#region Other (IsFixed, IsExpanded, IsDropIndicator)
+		/// <summary>
+		/// Gets a bindable value that indicates whether this tree item is in use in PPTable (thus can't be deleted or change vital data)
+		/// </summary>
+		public bool IsFixed
+		{
+			get { return (bool)GetValue(IsFixedProperty); }
+			protected set { SetValue(IsFixedProperty, value); }
+		}
+		public static readonly DependencyProperty IsFixedProperty =
+			DependencyProperty.Register("IsFixed", typeof(bool), typeof(TreeItemVm), new PropertyMetadata(false));
+
 		/// <summary>
 		/// Gets a bindable value that indicates whether this vm is expanded as an expander
 		/// <para>Changing the value of this property calls isExpandedChanged(bool) in derived class</para>

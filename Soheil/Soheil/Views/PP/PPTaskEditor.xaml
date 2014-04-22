@@ -449,18 +449,10 @@
 						 MinHeight="100"/>
 			</DockPanel>
 		</Border>
-        <!-- top header (buttons and selected block indicator) -->
+        <!-- top header (selected state as blocklist item) -->
 		<Border DockPanel.Dock="Top" Margin="5" BorderThickness="1" CornerRadius="1" Height="45" Padding="5"
 				Background="{StaticResource HeaderBackground}" BorderBrush="{StaticResource HeaderBorderBrush}">
 			<DockPanel>
-                <!-- buttons -->
-                <!--Button DockPanel.Dock="Left" Content="پاک کردن این مرحله" Command="{Binding ResetCurrentBlockCommand}"/>
-                <Button DockPanel.Dock="Left" Content="پاک کردن همه مراحل" Command="{Binding ClearAllCommand}"/>
-                <Button DockPanel.Dock="Right" Content="انصراف و خروج" Command="{Binding ExitCommand}"/>
-                <Button DockPanel.Dock="Right" Content="ذخیره همه برنامه ها و خروج" Command="{Binding SaveAllCommand}"/-->
-                <!--Button DockPanel.Dock="Right" Content="ذخیره برنامه انتخاب شده" Command="{Binding SaveCommand}" IsEnabled="{Binding SelectedState, Converter={StaticResource isNull}}"/-->
-
-                <!-- indicator -->
                 <TextBlock Text="{Binding SelectedProduct.Name}" DockPanel.Dock="Left" Margin="2" Foreground="White" VerticalAlignment="Center"/>
 				<TextBlock Text="{Binding SelectedProduct.Code}" DockPanel.Dock="Left" Margin="2" Foreground="Gray" VerticalAlignment="Center"/>
                 <Rectangle Width="10" Height="10" Margin="2" VerticalAlignment="Center">
@@ -500,7 +492,7 @@
                                     <Button TextBlock.FontSize="8" DockPanel.Dock="Right" Content="انصراف از تغییر ایستگاه" Command="{Binding DontChangeStationCommand}" VerticalAlignment="Center"/>
                                     <TextBlock Text="باعث از بین رفتن اطلاعات این برنامه میشود" Foreground="Orange" VerticalAlignment="Center"/>
                                 </DockPanel>
-                                <Button Content="انتخاب ایستگاه" Command="{Binding ChangeStationCommand}"  Visibility="{Binding StateStation, Converter={StaticResource isNullToVisibility}}"/>
+                                <Button Content="انتخاب ایستگاه" Command="{Binding ChangeStationCommand}" Visibility="{Binding StateStation, Converter={StaticResource isNullToVisibility}}"/>
                             </Grid>
                         </Border>
                     </WrapPanel>
@@ -581,7 +573,7 @@
                                                                     <TextBlock Text="{Loc txtDelete}" Foreground="Crimson"/>
                                                                 </WrapPanel>
                                                             </Button>
-                                                            <TextBlock Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+                                                            <TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
                                                             <!--TextBlock Text="{Loc PPE_InvalidDuration}" Foreground="Red" Visibility="{Binding IsDurationValid, Converter={StaticResource booleanToInvisibilityConverter}}"/-->
                                                             <DockPanel>
 																<Image DockPanel.Dock="Left" Style="{StaticResource TargetPointImage}"/>

@@ -54,18 +54,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				AllProductGroups.Add(new ProductGroupVm(pg));
 			}
 		}
-
-		//FpcViewer Dependency Property
-		public Fpc.FpcWindowVm FpcViewer
-		{
-			get { return (Fpc.FpcWindowVm)GetValue(FpcViewerProperty); }
-			private set { SetValue(FpcViewerProperty, value); }
-		}
-		public static readonly DependencyProperty FpcViewerProperty =
-			DependencyProperty.Register("FpcViewer", typeof(Fpc.FpcWindowVm), typeof(PPTaskEditorVm),
-			new UIPropertyMetadata(null));
-
-		#region Interactions
 		//Add
 		void FpcViewer_AddNewBlock(Fpc.StateVm fpcState)
 		{
@@ -85,13 +73,28 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}
 			BlockList.Remove(block);
 		}
-		#endregion
+
+		/// <summary>
+		/// Gets the bindable <see cref="FpcWindowVm"/> instance in which fpc is being shown
+		/// </summary>
+		public Fpc.FpcWindowVm FpcViewer
+		{
+			get { return (Fpc.FpcWindowVm)GetValue(FpcViewerProperty); }
+			private set { SetValue(FpcViewerProperty, value); }
+		}
+		public static readonly DependencyProperty FpcViewerProperty =
+			DependencyProperty.Register("FpcViewer", typeof(Fpc.FpcWindowVm), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+
 
 		#region Blocks
 		//BlockList Observable Collection
 		public ObservableCollection<PPEditorBlock> BlockList { get { return _blockList; } }
 		private ObservableCollection<PPEditorBlock> _blockList = new ObservableCollection<PPEditorBlock>();
-		//SelectedBlock Dependency Property
+		
+		/// <summary>
+		/// Gets or sets a bindable value to indicate which EditorBlock is currently selected in the TaskEditor
+		/// <para>Setting this value will hide fpc and if 1 station is available in state select it</para>
+		/// </summary>
 		public PPEditorBlock SelectedBlock
 		{
 			get { return (PPEditorBlock)GetValue(SelectedBlockProperty); }
@@ -102,12 +105,18 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(null, (d, e) =>
 			{
 				var vm = (PPTaskEditorVm)d;
-				/*if (e.OldValue != null)
-					(e.OldValue as PPEditorBlock).IsEditMode = false;*/
-				if (e.NewValue != null)
+				var val = e.NewValue as PPEditorBlock;
+				if (val != null)
 				{
+					//hide fpc
 					vm.ShowFpc = false;
-					//(e.NewValue as PPEditorBlock).IsEditMode = true;
+
+					//automatically select the only station
+					if (val.StateStation == null && val.State.StateStationList.Count == 1)
+					{
+						val.SelectedStateStation = val.State.StateStationList.First();
+						val.ChangeStationCommand.Execute(null);
+					}
 				}
 			}));
 		#endregion

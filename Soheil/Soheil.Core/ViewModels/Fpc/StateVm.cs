@@ -96,6 +96,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			InitializingPhase = true;
 			ParentWindowVm = parentWindowVm;
 			IsPlaced = isPlaced;
+			if (isPlaced) { IsFixed = model.StateStations.Any(ss => ss.Blocks.Any()); }
 
 			initCommands();
 
@@ -285,6 +286,17 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		public bool InitializingPhase { get; set; }
 		/// <summary>
+		/// Gets a bindable value that indicates whether this state is in use in PPTable
+		/// </summary>
+		public bool IsFixed
+		{
+			get { return (bool)GetValue(IsFixedProperty); }
+			protected set { SetValue(IsFixedProperty, value); }
+		}
+		public static readonly DependencyProperty IsFixedProperty =
+			DependencyProperty.Register("IsFixed", typeof(bool), typeof(StateVm), new PropertyMetadata(false));
+
+		/// <summary>
 		/// Saves if not in InitializingPhase
 		/// <para>Also do some correction before saving OnProductRework and Location</para>
 		/// <para>Also checks to ensure it's safe to change ManHour, CycleTime or OnProductRework</para>
@@ -406,6 +418,14 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				try
 				{
+					//check for constraints
+					var entity = new Dal.Repository<Model.State>(new Dal.SoheilEdmContext()).Single(x => x.Id == Id);
+					if (entity != null && entity.StateStations.Any(ss => ss.Blocks.Any()))
+					{
+						ParentWindowVm.Message = new Common.SoheilException.DependencyMessageBox("این مرحله (بعضی از ایستگاهها) در برنامه تولید استفاده شده است", "Error", MessageBoxButton.OK, Common.SoheilException.ExceptionLevel.Error);
+						return;
+					}
+
 					var connectors = ParentWindowVm.Connectors.Where(x => x.Start.Id == Id || x.End.Id == Id).ToList();
 					ParentWindowVm.fpcDataService.stateDataService.DeleteModel(Model);
 

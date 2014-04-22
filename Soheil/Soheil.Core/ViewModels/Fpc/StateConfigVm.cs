@@ -13,6 +13,9 @@ namespace Soheil.Core.ViewModels.Fpc
 	/// </summary>
 	public class StateConfigVm : TreeItemVm
 	{
+		/// <summary>
+		/// Gets the state Id
+		/// </summary>
 		public override int Id { get { return State.Model == null ? -1 : State.Model.Id; } }
 
 		/// <summary>
@@ -24,6 +27,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			State = state;
 			TreeLevel = 0;
+			IsFixed = state.Model.StateStations.Any(ss => ss.Blocks.Any());
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
 		
@@ -90,11 +94,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		public override void Delete()
 		{
-			if (this.State.Model.StateStations.Any(ss=>ss.Blocks.Any()))
-			{
-				Parent.Message = new Common.SoheilException.DependencyMessageBox("این مرحله (بعضی از ایستگاهها) در برنامه تولید استفاده شده است", "Error", MessageBoxButton.OK, Common.SoheilException.ExceptionLevel.Error);
-				return;
-			}
+			//in DeleteCommand it checks for realtime entity constraints (used Blocks)
 			State.DeleteCommand.Execute(null); 
 		}
 

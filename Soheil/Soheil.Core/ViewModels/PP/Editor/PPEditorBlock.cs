@@ -143,6 +143,172 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (!TaskList.OfType<PPEditorTask>().Any())
 				InsertTask();
 		}
+		/// <summary>
+		/// Corrects block processes (use this before save)
+		/// </summary>
+		void correctBlock()
+		{
+			foreach (var taskVm in TaskList.OfType<PPEditorTask>())
+			{
+				//processes don't follow the JIT model attachment strategy
+				//so we need to manually attach or remove their models prior to Save.
+
+				//select valid processes from Vm which will have a process in model
+				//these must have valid SelectedChoice and TargetPoint
+				foreach (var processVm in taskVm.ProcessList.Where(procVm =>
+					procVm.SelectedChoice != null && procVm.TargetPoint > 0))
+				{
+					//process model for current valid processVm
+					//initially it's null and later will be set (create new or to be found)
+					Model.Process procModel = null;
+
+					//check for similar existing processes (that have the same activity)
+					//if multiple models found delete all and add a new process model
+					//if the found process has different stateStationActivity then correct it
+					//if non found add a new process model
+					var similarProcModels = taskVm.Model.Processes.Where(x =>
+						x.StateStationActivity.Activity.Id == processVm.SelectedChoice.ActivityId);
+
+
+					// -> if just one is found
+					if (similarProcModels.Count() == 1)
+					{
+						//found it, then correct it
+						procModel = similarProcModels.First();
+
+						// -> if the found process has different stateStationActivity then correct it
+						if (procModel.StateStationActivity.Id != processVm.SelectedChoice.StateStationActivityId)
+						{
+							procModel.StateStationActivity = processVm.SelectedChoice.Model;
+						}
+						//either way update TP
+						procModel.TargetCount = processVm.TargetPoint;
+					}
+					else
+					{
+						// -> if multiple models found *delete all* and [add a new process model]
+						if (similarProcModels.Count() > 1)
+						{
+							foreach (var model in similarProcModels.ToArray())
+							{
+								TaskDataService.DeleteModel(model);
+							}
+						}
+
+						// -> if multiple models found [delete all] and *add a new process model*
+						// -> or
+						// -> if non found add a new process model
+						procModel = new Model.Process
+						{
+							Task = taskVm.Model,
+							StateStationActivity = processVm.SelectedChoice.Model,
+							TargetCount = processVm.TargetPoint,
+						};
+						//add it to repository
+						new Soheil.Dal.Repository<Model.Process>(_uow).Add(procModel);
+						//and also add to parent model
+						taskVm.Model.Processes.Add(procModel);
+					}
+
+					//...
+					//do the same for machines
+					//...
+					var tmp1 = procModel.SelectedMachines.Where(m =>
+						!processVm.MachineList.Any(vm =>
+							vm.MachineId == m.StateStationActivityMachine.Machine.Id)
+						).ToArray();
+					foreach (var smModel in tmp1)
+					{
+						TaskDataService.DeleteModel(smModel);
+					}
+					foreach (var smVm in processVm.MachineList.Where(x => x.IsUsed))
+					{
+						//check for existance
+						var smModel = procModel.SelectedMachines.FirstOrDefault(x =>
+							x.StateStationActivityMachine.Machine.Id == smVm.MachineId);
+						//create new Model
+						if (smModel == null)
+						{
+							smModel = new Model.SelectedMachine();
+							new Soheil.Dal.Repository<Model.SelectedMachine>(_uow).Add(smModel);
+							//and add to parent model
+							procModel.SelectedMachines.Add(smModel);
+						}
+						//update common info (create/attach)
+						smModel.Process = procModel;
+						smModel.StateStationActivityMachine = smVm.StateStationActivityMachineModel;
+					}
+
+					//...
+					//do the same for operators
+					//...
+					var tmp2 = procModel.ProcessOperators.Where(m =>
+						!processVm.OperatorList.Any(vm =>
+							vm.OperatorId == m.Operator.Id)
+						).ToArray();
+					foreach (var poModel in tmp2)
+					{
+						TaskDataService.DeleteModel(poModel);
+					}
+					foreach (var poVm in processVm.OperatorList.Where(x => x.IsSelected))
+					{
+						//check for existance
+						var poModel = procModel.ProcessOperators.FirstOrDefault(x =>
+							x.Operator.Id == poVm.OperatorId);
+						//create new Model
+						if (poModel == null)
+						{
+							poModel = new Model.ProcessOperator();
+							new Soheil.Dal.Repository<Model.ProcessOperator>(_uow).Add(poModel);
+							//and add to parent model
+							poModel.Process = procModel;
+							poModel.Operator = poVm.OperatorModel;
+							procModel.ProcessOperators.Add(poModel);
+						}
+						//update common info (create/attach)
+						poModel.Role = poVm.Role;
+					}
+				}
+				taskVm.ForceCalculateDuration();
+			}
+
+			Model.DurationSeconds = TaskList.OfType<PPEditorTask>().Sum(t => t.DurationSeconds);
+			Model.EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);
+		}
+
+		internal void Save()
+		{
+			correctBlock();
+
+			var nptDs = new DataServices.NPTDataService(_uow);
+
+			//check if it fits
+			if (!IsAutoStart)
+			{
+				var inRangeBlocks = BlockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime);
+				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime);
+
+				if (inRangeBlocks.Any() || inRangeNPTs.Any()) IsAutoStart = true;
+			}
+
+			//check if should use auto start
+			if (IsAutoStart)
+			{
+				// Updates the start datetime of this block to fit the first empty space
+				Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(BlockDataService, nptDs);
+				var seq = sman.FindNextFreeSpace(StationId, State.ProductRework.Id, DateTime.Now, (int)Duration.TotalSeconds);
+				var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
+				StartDate = block.StartDT.Date;
+				StartTime = block.StartDT.TimeOfDay;
+
+				if (!sman.SaveSetups(seq))
+					Message.AddEmbeddedException("Some setups could not be added. check setup times table.");
+			}
+
+			BlockDataService.SaveBlock(Model);
+			if (BlockAdded != null) BlockAdded(Model);
+		}
+
 		/*public bool ValidateTimeRange(Model.Task taskModel)
 		{
 			var tasks = _model.Tasks.ToList();
@@ -385,170 +551,5 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("AddOneHourCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
 		#endregion
 
-		/// <summary>
-		/// Corrects block processes (use this before save)
-		/// </summary>
-		void correctBlock()
-		{
-			foreach (var taskVm in TaskList.OfType<PPEditorTask>())
-			{
-				//processes don't follow the JIT model attachment strategy
-				//so we need to manually attach or remove their models prior to Save.
-
-				//select valid processes from Vm which will have a process in model
-				//these must have valid SelectedChoice and TargetPoint
-				foreach (var processVm in taskVm.ProcessList.Where(procVm =>
-					procVm.SelectedChoice != null && procVm.TargetPoint > 0))
-				{
-					//process model for current valid processVm
-					//initially it's null and later will be set (create new or to be found)
-					Model.Process procModel = null;
-					
-					//check for similar existing processes (that have the same activity)
-					//if multiple models found delete all and add a new process model
-					//if the found process has different stateStationActivity then correct it
-					//if non found add a new process model
-					var similarProcModels = taskVm.Model.Processes.Where(x => 
-						x.StateStationActivity.Activity.Id == processVm.SelectedChoice.ActivityId);
-
-
-					// -> if just one is found
-					if (similarProcModels.Count() == 1)
-					{
-						//found it, then correct it
-						procModel = similarProcModels.First();
-
-						// -> if the found process has different stateStationActivity then correct it
-						if (procModel.StateStationActivity.Id != processVm.SelectedChoice.StateStationActivityId)
-						{
-							procModel.StateStationActivity = processVm.SelectedChoice.Model;
-						}
-						//either way update TP
-						procModel.TargetCount = processVm.TargetPoint;
-					}
-					else
-					{
-						// -> if multiple models found *delete all* and [add a new process model]
-						if (similarProcModels.Count() > 1)
-						{
-							foreach (var model in similarProcModels.ToArray())
-							{
-								TaskDataService.DeleteModel(model);
-							}
-						}
-
-						// -> if multiple models found [delete all] and *add a new process model*
-						// -> or
-						// -> if non found add a new process model
-						procModel = new Model.Process
-						{
-							Task = taskVm.Model,
-							StateStationActivity = processVm.SelectedChoice.Model,
-							TargetCount = processVm.TargetPoint,
-						};
-						//add it to repository
-						new Soheil.Dal.Repository<Model.Process>(_uow).Add(procModel);
-						//and also add to parent model
-						taskVm.Model.Processes.Add(procModel);
-					}
-
-					//...
-					//do the same for machines
-					//...
-					var tmp1 = procModel.SelectedMachines.Where(m =>
-						!processVm.MachineList.Any(vm => 
-							vm.MachineId == m.StateStationActivityMachine.Machine.Id)
-						).ToArray();
-					foreach (var smModel in tmp1)
-					{
-						TaskDataService.DeleteModel(smModel);
-					}
-					foreach (var smVm in processVm.MachineList.Where(x => x.IsUsed))
-					{
-						//check for existance
-						var smModel = procModel.SelectedMachines.FirstOrDefault(x => 
-							x.StateStationActivityMachine.Machine.Id == smVm.MachineId);
-						//create new Model
-						if (smModel == null)
-						{
-							smModel = new Model.SelectedMachine();
-							new Soheil.Dal.Repository<Model.SelectedMachine>(_uow).Add(smModel);
-							//and add to parent model
-							procModel.SelectedMachines.Add(smModel);
-						}
-						//update common info (create/attach)
-						smModel.Process = procModel;
-						smModel.StateStationActivityMachine = smVm.StateStationActivityMachineModel;
-					}
-
-					//...
-					//do the same for operators
-					//...
-					var tmp2 = procModel.ProcessOperators.Where(m =>
-						!processVm.OperatorList.Any(vm => 
-							vm.OperatorId == m.Operator.Id)
-						).ToArray();
-					foreach (var poModel in tmp2)
-					{
-						TaskDataService.DeleteModel(poModel);
-					}
-					foreach (var poVm in processVm.OperatorList.Where(x => x.IsSelected))
-					{
-						//check for existance
-						var poModel = procModel.ProcessOperators.FirstOrDefault(x =>
-							x.Operator.Id == poVm.OperatorId);
-						//create new Model
-						if (poModel == null)
-						{
-							poModel = new Model.ProcessOperator();
-							new Soheil.Dal.Repository<Model.ProcessOperator>(_uow).Add(poModel);
-							//and add to parent model
-							poModel.Process = procModel;
-							poModel.Operator = poVm.OperatorModel;
-							procModel.ProcessOperators.Add(poModel);
-						}
-						//update common info (create/attach)
-						poModel.Role = poVm.Role;
-					}
-				}
-				taskVm.ForceCalculateDuration();
-			}
-
-			Model.DurationSeconds = TaskList.OfType<PPEditorTask>().Sum(t => t.DurationSeconds);
-			Model.EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);
-		}
-
-		internal void Save()
-		{
-			correctBlock();
-
-			var nptDs = new DataServices.NPTDataService(_uow);
-
-			//check if it fits
-			if(!IsAutoStart)
-			{
-				var inRangeBlocks = BlockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime);
-				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime);
-
-				if (inRangeBlocks.Any() || inRangeNPTs.Any()) IsAutoStart = true;
-			}
-
-			//check if should use auto start
-			if (IsAutoStart)
-			{
-				// Updates the start datetime of this block to fit the first empty space
-				Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(BlockDataService, nptDs);
-				var seq = sman.FindNextFreeSpace(StationId, State.ProductRework.Id, DateTime.Now, (int)Duration.TotalSeconds);
-				var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
-				StartDate = block.StartDT.Date;
-				StartTime = block.StartDT.TimeOfDay;
-			
-				if (!sman.SaveSetups(seq))
-					Message.AddEmbeddedException("Some setups could not be added. check setup times table.");
-			}
-
-			BlockDataService.SaveBlock(Model);
-			if (BlockAdded != null) BlockAdded(Model);
-		}
 	}
 }

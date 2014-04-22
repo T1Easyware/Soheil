@@ -32,6 +32,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			TreeLevel = 1;
 			Model = model;
+			IsFixed = model.Blocks.Any();
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
 
@@ -105,11 +106,14 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		public override void Delete()
 		{
-			if (this.Model.Blocks.Any())
+			//check for constraints
+			var entity = new Dal.Repository<Model.StateStation>(new Dal.SoheilEdmContext()).Single(x => x.Id == Id);
+			if (entity != null && entity.Blocks.Any())
 			{
 				ContainerS.Parent.Message = new Common.SoheilException.DependencyMessageBox("این مرحله (همین ایستگاه) در برنامه تولید استفاده شده است", "Error", MessageBoxButton.OK, Common.SoheilException.ExceptionLevel.Error);
 				return;
 			}
+			//delete
 			Container.ContentsList.Remove(this);
 		}
 
