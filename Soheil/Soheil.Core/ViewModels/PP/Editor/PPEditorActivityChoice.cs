@@ -14,8 +14,17 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	/// </summary>
 	public class PPEditorActivityChoice : DependencyObject
 	{
+		/// <summary>
+		/// Gets the model for StateStationActivity
+		/// </summary>
 		public Model.StateStationActivity Model { get; private set; }
+		/// <summary>
+		/// Gets the Activity Id
+		/// </summary>
 		public int ActivityId { get { return Model.Activity.Id; } }
+		/// <summary>
+		/// Gets the StateStationActivity Id
+		/// </summary>
 		public int StateStationActivityId { get { return Model.Id; } }
 
 		/// <summary>
@@ -26,21 +35,20 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public PPEditorActivityChoice(Model.StateStationActivity model, PPEditorProcess parent)
 		{
 			Model = model;
-			Parent = parent;
+			SetValue(ParentProperty, parent);
 			CycleTime = Model.CycleTime;
 			ManHour = Model.ManHour;
 		}
 
-		//Parent Dependency Property
-		public PPEditorProcess Parent
-		{
-			get { return (PPEditorProcess)GetValue(ParentProperty); }
-			set { SetValue(ParentProperty, value); }
-		}
+		/// <summary>
+		/// Dependency property for parent used in xaml to compare this choice with selected choice
+		/// </summary>
 		public static readonly DependencyProperty ParentProperty =
 			DependencyProperty.Register("Parent", typeof(PPEditorProcess), typeof(PPEditorActivityChoice), new UIPropertyMetadata(null));
 
-		//CycleTime Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable CycleTime of this choice
+		/// </summary>
 		public float CycleTime
 		{
 			get { return (float)GetValue(CycleTimeProperty); }
@@ -48,7 +56,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty CycleTimeProperty =
 			DependencyProperty.Register("CycleTime", typeof(float), typeof(PPEditorActivityChoice), new UIPropertyMetadata(0f));
-		//ManHour Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable ManHour of this choice
+		/// </summary>
 		public float ManHour
 		{
 			get { return (float)GetValue(ManHourProperty); }
@@ -58,15 +68,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("ManHour", typeof(float), typeof(PPEditorActivityChoice), new UIPropertyMetadata(0f));
 
 		/// <summary>
-		/// Gets or sets a bindable value to indicate whether Manhour matches the number of operators assigned to this choice
-		/// <para>This could be false when an auto planning considered this choice but not able to assign operators yet</para>
+		/// Gets or sets a bindable value to indicate whether Manhour does not match the number of operators assigned to this choice
+		/// <para>This could be true when an auto planning considered this choice but not able to assign operators yet</para>
 		/// </summary>
-		public bool OperatorCountOk
+		public bool OperatorCountError
 		{
-			get { return (bool)GetValue(OperatorCountOkProperty); }
-			set { SetValue(OperatorCountOkProperty, value); }
+			get { return (bool)GetValue(OperatorCountErrorProperty); }
+			set { SetValue(OperatorCountErrorProperty, value); }
 		}
-		public static readonly DependencyProperty OperatorCountOkProperty =
-			DependencyProperty.Register("OperatorCountOk", typeof(bool), typeof(PPEditorActivityChoice), new UIPropertyMetadata(true));
+		public static readonly DependencyProperty OperatorCountErrorProperty =
+			DependencyProperty.Register("OperatorCountError", typeof(bool), typeof(PPEditorActivityChoice), new UIPropertyMetadata(true));
 	}
 }

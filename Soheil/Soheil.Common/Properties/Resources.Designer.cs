@@ -475,6 +475,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ساعت -1.
+        /// </summary>
+        public static string PPE_PreviousHour {
+            get {
+                return ResourceManager.GetString("PPE_PreviousHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مقدار هدف مساوی برای فعالیتها.
         /// </summary>
         public static string PPE_SameQtyForActivites {
@@ -507,6 +516,24 @@ namespace Soheil.Common.Properties {
         public static string PPE_StartOfNextHourTooltip {
             get {
                 return ResourceManager.GetString("PPE_StartOfNextHourTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ابتدای ساعت.
+        /// </summary>
+        public static string PPE_StartOfThisHour {
+            get {
+                return ResourceManager.GetString("PPE_StartOfThisHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ابتدای همین ساعت (زمان وارد شده مد نظر نمی باشد).
+        /// </summary>
+        public static string PPE_StartOfThisHourTooltip {
+            get {
+                return ResourceManager.GetString("PPE_StartOfThisHourTooltip", resourceCulture);
             }
         }
         
@@ -1821,6 +1848,15 @@ namespace Soheil.Common.Properties {
         public static string txtStartTime {
             get {
                 return ResourceManager.GetString("txtStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ترتیب ایستگاه.
+        /// </summary>
+        public static string txtStationIndex {
+            get {
+                return ResourceManager.GetString("txtStationIndex", resourceCulture);
             }
         }
         

@@ -67,7 +67,7 @@ namespace Soheil.Core.ViewModels.PP
 			set
 			{
 				Model.DurationSeconds = value;
-				SetValue(DurationProperty, new TimeSpan(value * TimeSpan.TicksPerSecond));
+				SetValue(DurationProperty, TimeSpan.FromSeconds(value));
 				OnPropertyChanged("DurationSeconds");
 			}
 		}

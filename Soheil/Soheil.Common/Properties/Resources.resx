@@ -771,4 +771,16 @@
   <data name="txtIsG2" xml:space="preserve">
     <value>خروجی درجه 2 است</value>
   </data>
+  <data name="txtStationIndex" xml:space="preserve">
+    <value>ترتیب ایستگاه</value>
+  </data>
+  <data name="PPE_PreviousHour" xml:space="preserve">
+    <value>ساعت -1</value>
+  </data>
+  <data name="PPE_StartOfThisHour" xml:space="preserve">
+    <value>ابتدای ساعت</value>
+  </data>
+  <data name="PPE_StartOfThisHourTooltip" xml:space="preserve">
+    <value>ابتدای همین ساعت (زمان وارد شده مد نظر نمی باشد)</value>
+  </data>
 </root>

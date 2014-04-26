@@ -236,7 +236,14 @@
 								<ItemsControl ItemsSource="{Binding MachineList}" Margin="2">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate DataType="{x:Type ppevm:PPEditorMachine}">
-											<ToggleButton IsChecked="{Binding IsUsed}">
+											<ToggleButton IsChecked="{Binding IsUsed}" IsEnabled="{Binding CanBeUsed}">
+												<ToggleButton.ToolTip>
+													<StackPanel>
+														<TextBlock Text="این ماشین در صورت استفاده از نفرساعت دیگری موجود می باشد" Visibility="{Binding CanBeUsed, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+														<TextBlock Text="این ماشین در این فعالیت استفاده می شود" Visibility="{Binding IsUsed, Converter={StaticResource booleanToVisibilityConverter}}"/>
+														<TextBlock Text="این ماشین در این فعالیت استفاده نمی شود" Visibility="{Binding IsUsed, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+													</StackPanel>
+												</ToggleButton.ToolTip>
 												<WrapPanel>
 													<TextBlock Text="{Binding Code}" Foreground="Gray"/>
 													<TextBlock Text="{Binding Name}" Margin="10,0,10,0"/>
@@ -307,23 +314,23 @@
                         </Border>
                         <Border BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffInsideBackground}" CornerRadius="0,5,5,0" BorderThickness="1" Margin="0,2,4,2" x:Name="durationContents">
                             <StackPanel>
-                                <WrapPanel>
-                                    <TextBlock Text="{Loc PPE_TaskTP}" VerticalAlignment="Center"/>
-                                    <TextBox Text="{Binding TaskTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="30"/>
-                                </WrapPanel>
-                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
+								<WrapPanel>
+									<TextBlock Text="{Loc PPE_TaskTP}" VerticalAlignment="Center" Foreground="#8FF"/>
+									<TextBox Text="{Binding TaskTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" FlowDirection="LeftToRight"/>
+								</WrapPanel>
+								<RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
                                     <WrapPanel>
                                         <TextBlock Text="{Loc PPE_SameTimeForActivites}" VerticalAlignment="Center"/>
-                                        <TextBox IsEnabled="{Binding IsSameTimeForActivitiesSelected}" Text="{Binding SameTimeForActivities, Converter={StaticResource timeSpanToStringConverter}, UpdateSourceTrigger=PropertyChanged}" MinWidth="30" FlowDirection="LeftToRight"/>
+										<TextBox IsEnabled="{Binding IsSameTimeForActivitiesSelected}" Text="{Binding SameTimeForActivities, Converter={StaticResource fullTimeSpanToStringConverter}, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" FlowDirection="LeftToRight"/>
                                     </WrapPanel>
                                 </RadioButton>
                                 <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
                                     <WrapPanel>
                                         <TextBlock Text="{Loc PPE_SameQtyForActivites}" VerticalAlignment="Center"/>
-                                        <TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="30"/>
+                                        <TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>
                                     </WrapPanel>
                                 </RadioButton>
-                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsDeferToActivitiesSelected}">
+                                <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsDeferToActivitiesSelected}" x:Name="deferToProcessRadioButton">
                                     <WrapPanel Height="20">
                                         <TextBlock Text="{Loc PPE_DeferToActivites}" VerticalAlignment="Center"/>
                                     </WrapPanel>
@@ -343,7 +350,7 @@
                                     <DataTemplate>
                                         <DockPanel>
 											<Image Style="{StaticResource Error16Image}" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" ToolTip="{Binding Message.FullExceptionText}"/>
-											<Image Style="{StaticResource Warning16Image}" Visibility="{Binding SelectedChoice.OperatorCountOk, Converter={StaticResource booleanToInvisibilityConverter}}" 
+											<Image Style="{StaticResource Warning16Image}" Visibility="{Binding SelectedChoice.OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" 
 												   ToolTip="تعداد اپراتورهای تخصیص داده شده برابر با نفرساعت این فعالیت نمی باشد"/>
                                             <ItemsControl ItemsSource="{Binding Choices}">
                                                 <ItemsControl.ItemTemplate>
@@ -385,11 +392,27 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Binding="{Binding TargetPoint}" IsReadOnly="{Binding DoesParentDeferToActivities, Converter={StaticResource inverter}}" Header="{Loc txtTargetPoint}"/>
-                            <!--DataGridTextColumn IsReadOnly="True" Binding="{Binding OperatorList}" Header="{Loc txtOperators}"/>
-                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding SelectedChoice.CycleTime}" Header="{Loc txtCycleTime}"/>
-                            <DataGridTextColumn Binding="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" Header="{Loc txtDuration}"/-->
-                        </DataGrid.Columns>
+							<DataGridTextColumn Width="60" Binding="{Binding TargetPoint}" IsReadOnly="{Binding ElementName=deferToProcessRadioButton, Path=IsChecked, Converter={StaticResource inverter}}" Header="{Loc txtTargetPoint}"/>
+							<DataGridTextColumn Width="60" Binding="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" IsReadOnly="{Binding ElementName=deferToProcessRadioButton, Path=IsChecked, Converter={StaticResource inverter}}" Header="{Loc txtDuration}"/>
+							<DataGridTemplateColumn Header="{Loc txtOperators}">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<ItemsControl ItemsSource="{Binding OperatorList}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<TextBlock Text="{Binding Name}" Margin="5,0" Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}"/>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<WrapPanel/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
                         <DataGrid.RowDetailsTemplate>
                             <DataTemplate>
                                 <WrapPanel Background="Silver" TextBlock.Foreground="Black">
@@ -511,17 +534,25 @@
                             </Border>
                             <Border BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffInsideBackground}" CornerRadius="0,5,5,0" BorderThickness="1" Margin="0,2,2,2" x:Name="startDateContents">
                                 <StackPanel>
-                                    <CheckBox Margin="3" Content="{Loc PPE_FirstEmptySpace}" IsChecked="{Binding IsAutoStart}"/>
-                                    <WrapPanel VerticalAlignment="Center" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
+									<CheckBox Margin="3" IsChecked="{Binding IsAutoStart}">
+										<WrapPanel>
+											<TextBlock Text="{Loc PPE_FirstEmptySpace}"/>
+											<TextBlock Text="{Binding StartDate, Converter={StaticResource dateToLocalStringConverter}}" FlowDirection="LeftToRight" Margin="20,0,10,0"/>
+											<TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+										</WrapPanel>
+									</CheckBox>
+									<WrapPanel VerticalAlignment="Center" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
                                         <TextBlock Margin="3" Text="{Loc txtDate}" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
                                         <cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
-                                        <Button Margin="3" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}"/>
-                                        <Button Margin="3" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}"/>
+                                        <Button Margin="3" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" FontSize="9"/>
+										<Button Margin="3" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}" FontSize="9"/>
                                         <TextBlock Margin="3" Text="{Loc txtTime}" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-                                        <TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}, UpdateSourceTrigger=PropertyChanged}" FlowDirection="LeftToRight"/>
-                                        <Button Margin="3" Content="{Loc PPE_StartOfNextHour}" Command="{Binding SelectNextHourCommand}" ToolTip="{Loc PPE_StartOfNextHourTooltip}"/>
-                                        <Button Margin="3" Content="{Loc PPE_NextHour}" Command="{Binding AddOneHourCommand}"/>
-                                    </WrapPanel>
+                                        <TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+										<Button Margin="3" Content="{Loc PPE_StartOfThisHour}" Command="{Binding SelectThisHourCommand}" ToolTip="{Loc PPE_StartOfThisHourTooltip}" FontSize="9"/>
+										<Button Margin="3" Content="{Loc PPE_StartOfNextHour}" Command="{Binding SelectNextHourCommand}" ToolTip="{Loc PPE_StartOfNextHourTooltip}" FontSize="9"/>
+										<Button Margin="3" Content="{Loc PPE_NextHour}" Command="{Binding AddOneHourCommand}" FontSize="9"/>
+										<Button Margin="3" Content="{Loc PPE_PreviousHour}" Command="{Binding SubtractOneHourCommand}" FontSize="9"/>
+									</WrapPanel>
                                 </StackPanel>
                             </Border>
                         </DockPanel>
@@ -538,7 +569,7 @@
                             <TextBlock Text="{Binding EndDate, Converter={StaticResource dateToPersianDateConverter}}" Background="#4FFF"/>
                             <TextBlock Text=" "/>
                             <TextBlock Text="{Loc txtDuration}"/>
-                            <TextBlock Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" Background="#4FFF" FlowDirection="LeftToRight"/>
+							<TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" Background="#4FFF" FlowDirection="LeftToRight"/>
                             <TextBlock Text=" "/>
                             <TextBlock Text="{Loc PPE_SumOfTP}"/>
                             <TextBlock Text="{Binding BlockTargetPoint}" Background="#4FFF"/>
@@ -567,15 +598,32 @@
                                                     <!-- TabHeader for real Tasks -->
                                                     <Border Background="#3000" BorderBrush="#8000" BorderThickness="2" CornerRadius="2" Margin="2" Padding="2">
                                                         <StackPanel>
-                                                            <Button Command="{Binding DeleteTaskCommand}">
-                                                                <WrapPanel>
-																	<Image Style="{StaticResource Delete16Image}"/>
-                                                                    <TextBlock Text="{Loc txtDelete}" Foreground="Crimson"/>
-                                                                </WrapPanel>
-                                                            </Button>
-                                                            <TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+															<!-- task delete button and its confirmation -->
+															<Grid Visibility="{Binding IsDurationFixed, Converter={StaticResource booleanToInvisibilityConverter}}">
+																<WrapPanel Visibility="{Binding IsDeleteTaskMessageVisible, Converter={StaticResource booleanToVisibilityConverter}}">
+																	<Button Command="{Binding ConfirmDeleteTaskCommand}">
+																		<WrapPanel>
+																			<Image Style="{StaticResource Delete16Image}"/>
+																			<TextBlock Text="{Loc txtDelete}" Foreground="Crimson"/>
+																		</WrapPanel>
+																	</Button>
+																	<Button Command="{Binding CancelDeleteTaskCommand}" Content="{Loc txtCancel}"/>
+																</WrapPanel>
+																<Button Command="{Binding DeleteTaskCommand}" Visibility="{Binding IsDeleteTaskMessageVisible, Converter={StaticResource booleanToInvisibilityConverter}}">
+																	<WrapPanel>
+																		<Image Style="{StaticResource Delete16Image}"/>
+																		<TextBlock Text="{Loc txtDelete}" Foreground="Crimson"/>
+																	</WrapPanel>
+																</Button>
+															</Grid>
+															<!-- report info -->
+															<TextBlock Text="{Binding ReportInfo}" TextWrapping="Wrap" HorizontalAlignment="Center" Height="30"
+																	   Visibility="{Binding IsDurationFixed, Converter={StaticResource booleanToVisibilityConverter}}"/>
+															<!-- Duration info -->
+															<TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight" HorizontalAlignment="Center"/>
                                                             <!--TextBlock Text="{Loc PPE_InvalidDuration}" Foreground="Red" Visibility="{Binding IsDurationValid, Converter={StaticResource booleanToInvisibilityConverter}}"/-->
-                                                            <DockPanel>
+															<!-- TaskTargetPoint info -->
+															<DockPanel HorizontalAlignment="Center">
 																<Image DockPanel.Dock="Left" Style="{StaticResource TargetPointImage}"/>
                                                                 <TextBlock Text="{Binding TaskTargetPoint}"/>
                                                             </DockPanel>
@@ -607,23 +655,7 @@
                                 <DataTemplate.Resources>
                                     <DataTemplate DataType="{x:Type ppevm:PPEditorTask}">
                                         <!-- each task -->
-                                        <Grid>
-                                            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource taskDetailsTemplate}"/>
-                                            <Grid Background="#8000" Visibility="{Binding IsDeleteTaskMessageVisible, Converter={StaticResource booleanToVisibilityConverter}}">
-                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Background="#8044">
-                                                    <TextBlock Text="{Loc msgDeleteTask}" Foreground="WhiteSmoke" FontWeight="Bold" FontSize="14" Margin="5"/>
-                                                    <WrapPanel>
-                                                        <Button Command="{Binding ConfirmDeleteTaskCommand}" Margin="5">
-                                                            <WrapPanel>
-																<Image Style="{StaticResource Delete16Image}"/>
-                                                                <TextBlock Text="{Loc txtDelete}" Foreground="Crimson"/>
-                                                            </WrapPanel>
-                                                        </Button>
-                                                        <Button Command="{Binding CancelDeleteTaskCommand}" Content="{Loc txtCancel}" Margin="5"/>
-                                                    </WrapPanel>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Grid>
+                                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource taskDetailsTemplate}"/>
                                     </DataTemplate>
                                     <DataTemplate DataType="{x:Type ppevm:PPEditorTaskHolder}">
                                         <WrapPanel>

@@ -94,8 +94,26 @@ namespace Soheil.Core.DataServices
 				||
 				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
 				||
-				(x.StartDateTime <= startDate && x.EndDateTime >= endDate),
-				y => y.StartDateTime);
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate))
+				.OrderBy(y=>y.StartDateTime);
+		}
+		/// <summary>
+		/// Returns all NonProductiveTask which are completely or partially inside the given range
+		/// <para>NonProductiveTask touching the range from outside are not counted</para>
+		/// </summary>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
+		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, DateTime endDate, int StationId)
+		{
+			var list = _nptRepository.Find(x =>
+				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+				||
+				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
+				||
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate));
+			//???
+			return list.OfType<Setup>().Where(x => x.Warmup.Station.Id == StationId).OrderBy(x => x.StartDateTime);
 		}
 
 		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, int stationId)

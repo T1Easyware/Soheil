@@ -519,7 +519,7 @@
                             </Button>
                             <WrapPanel VerticalAlignment="Center">
                                 <Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
-								<Slider Margin="2" Maximum="2000" Minimum="20" Value="{Binding HourZoom}" Width="140" VerticalAlignment="Center">
+								<Slider Margin="2" Maximum="10" Minimum="1" Value="{Binding HourZoom, Converter={StaticResource logarithmicSlider}}" Width="140" VerticalAlignment="Center">
 									<I:Interaction.Triggers>
 										<I:EventTrigger EventName="PreviewMouseDown">
 											<I:InvokeCommandAction Command="{Binding ZoomStartedCommand}"/>
@@ -794,7 +794,7 @@
                         </Border>
 
                         <!-- Activities itemsControl -->
-                        <ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.SSAList}" x:Name="ic_activities" IsHitTestVisible="False">
+                        <ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.SSAList}" IsHitTestVisible="False">
                             <ItemsControl.ItemTemplate>
                                 <!--first column (SSA List) ItemTemplate-->
                                 <DataTemplate>
@@ -830,7 +830,7 @@
                             <ItemsControl.Template>
                                 <ControlTemplate>
                                     <Border BorderThickness="0,2" BorderBrush="{StaticResource HeaderBorderBrush}">
-                                        <ScrollViewer Focusable="False" x:Name="sv_activities" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+                                        <ScrollViewer Focusable="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
                                             <ItemsPresenter/>
                                         </ScrollViewer>
                                     </Border>
@@ -918,16 +918,18 @@
                             <!-- Durations Template -->
                             <ItemsControl.Template>
                                 <ControlTemplate>
-                                    <ItemsPresenter>
-                                        <ItemsPresenter.Margin>
-                                            <MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-                                                <Binding Path="HoursPassed"/>
-                                                <Binding Path="HourZoom"/>
-                                                <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-                                            </MultiBinding>
-                                        </ItemsPresenter.Margin>
-                                    </ItemsPresenter>
-                                </ControlTemplate>
+									<Grid ClipToBounds="True">
+										<ItemsPresenter>
+											<ItemsPresenter.Margin>
+												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+													<Binding Path="HoursPassed"/>
+													<Binding Path="HourZoom"/>
+													<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+												</MultiBinding>
+											</ItemsPresenter.Margin>
+										</ItemsPresenter>
+									</Grid>
+								</ControlTemplate>
                             </ItemsControl.Template>
                         </ItemsControl>
 
@@ -958,22 +960,18 @@
                                 <!--RowsOfActivity Template-->
                                 <ItemsControl.Template>
                                     <ControlTemplate>
-                                        <ScrollViewer Focusable="False" DockPanel.Dock="Right"
-											    ScrollChanged="detailedReportsScrolled"
-											    Padding="{TemplateBinding Control.Padding}"
-											    HorizontalScrollBarVisibility="Hidden"
-											    VerticalScrollBarVisibility="Auto">
-                                            <ItemsPresenter>
-                                                <ItemsPresenter.Margin>
-                                                    <MultiBinding Converter="{StaticResource hoursPanelMarginConverter}" ConverterParameter="Top2">
-                                                        <Binding Path="HoursPassed"/>
-                                                        <Binding Path="HourZoom"/>
-                                                        <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-                                                    </MultiBinding>
-                                                </ItemsPresenter.Margin>
-                                            </ItemsPresenter>
-                                        </ScrollViewer>
-                                    </ControlTemplate>
+										<Grid ClipToBounds="True">
+											<ItemsPresenter>
+												<ItemsPresenter.Margin>
+													<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}" ConverterParameter="Top2">
+														<Binding Path="HoursPassed"/>
+														<Binding Path="HourZoom"/>
+														<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+													</MultiBinding>
+												</ItemsPresenter.Margin>
+											</ItemsPresenter>
+										</Grid>
+									</ControlTemplate>
                                 </ItemsControl.Template>
 
                             </ItemsControl>
@@ -996,7 +994,7 @@
                                 <!--RowsOfActivity Template-->
                                 <ItemsControl.Template>
                                     <ControlTemplate>
-                                        <ItemsPresenter>
+                                        <ItemsPresenter ClipToBounds="False">
                                             <ItemsPresenter.Margin>
                                                 <MultiBinding Converter="{StaticResource mainPanelMarginConverter}" ConverterParameter="Top2">
                                                     <Binding Path="HoursPassed"/>
@@ -1008,13 +1006,12 @@
                                         </ItemsPresenter>
                                     </ControlTemplate>
                                 </ItemsControl.Template>
-
                             </ItemsControl>
                         </Grid>
                     </DockPanel>
                   
                     <!--Stations-->
-                    <ItemsControl Grid.Row="6" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" Name="ic_stations" IsHitTestVisible="False">
+                    <ItemsControl Grid.Row="6" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" IsHitTestVisible="False">
                         <!--PPTable ItemTemplate-->
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:PPStationVm}">
@@ -1041,11 +1038,7 @@
                         <ItemsControl.Template>
                             <ControlTemplate>
                                 <Border BorderThickness="0,2" BorderBrush="{StaticResource HeaderBorderBrush}">
-                                    <ScrollViewer Focusable="False" Name="sv_stations"
-										      HorizontalScrollBarVisibility="Disabled"
-										      VerticalScrollBarVisibility="Hidden">
-                                        <ItemsPresenter/>
-                                    </ScrollViewer>
+									<ItemsPresenter/>
                                 </Border>
                             </ControlTemplate>
                         </ItemsControl.Template>
@@ -1097,22 +1090,18 @@
 						<!-- RowsOfItems Template -->
                         <ItemsControl.Template>
                             <ControlTemplate>
-                                <ScrollViewer Focusable="False" DockPanel.Dock="Right"
-										    ScrollChanged="tasksScrolled"
-										    Padding="{TemplateBinding Control.Padding}"
-										    HorizontalScrollBarVisibility="Hidden"
-										    VerticalScrollBarVisibility="Auto">
-                                    <ItemsPresenter>
-                                        <ItemsPresenter.Margin>
-                                            <MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-                                                <Binding Path="HoursPassed"/>
-                                                <Binding Path="HourZoom"/>
-                                                <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-                                            </MultiBinding>
-                                        </ItemsPresenter.Margin>
-                                    </ItemsPresenter>
-                                </ScrollViewer>
-                            </ControlTemplate>
+								<Grid ClipToBounds="True">
+									<ItemsPresenter>
+										<ItemsPresenter.Margin>
+											<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+												<Binding Path="HoursPassed"/>
+												<Binding Path="HourZoom"/>
+												<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+											</MultiBinding>
+										</ItemsPresenter.Margin>
+									</ItemsPresenter>
+								</Grid>
+							</ControlTemplate>
                         </ItemsControl.Template>
                     </ItemsControl>
 					
@@ -1146,16 +1135,16 @@
                         <!--RowsOfTasks Template-->
                         <ItemsControl.Template>
                             <ControlTemplate>
-                                    <ItemsPresenter ClipToBounds="False">
-                                        <ItemsPresenter.Margin>
-                                            <MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
-                                                <Binding Path="HoursPassed"/>
-                                                <Binding Path="HourZoom"/>
-                                                <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-                                                <Binding Path="VerticalScreenOffset"/>
-                                            </MultiBinding>
-                                        </ItemsPresenter.Margin>
-                                    </ItemsPresenter>
+                                <ItemsPresenter ClipToBounds="False">
+                                    <ItemsPresenter.Margin>
+                                        <MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
+                                            <Binding Path="HoursPassed"/>
+                                            <Binding Path="HourZoom"/>
+                                            <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+                                            <Binding Path="VerticalScreenOffset"/>
+                                        </MultiBinding>
+                                    </ItemsPresenter.Margin>
+                                </ItemsPresenter>
                             </ControlTemplate>
                         </ItemsControl.Template>
                     </ItemsControl>

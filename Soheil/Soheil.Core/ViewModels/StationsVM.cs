@@ -57,8 +57,9 @@ namespace Soheil.Core.ViewModels
             { 
                 new ColumnInfo("Code",0), 
                 new ColumnInfo("Name",1), 
-                new ColumnInfo("Status",2) ,
-                new ColumnInfo("Mode",3,true) 
+                new ColumnInfo("Index","txtStationIndex",2), 
+                new ColumnInfo("Status",3) ,
+                new ColumnInfo("Mode",4,true) 
             };
 
             AddCommand = new Command(Add, CanAdd);RefreshCommand = new Command(CreateItems);

@@ -5,6 +5,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+/* This is how Block->Task->Process is created:
+ * 
+ * 1. Create new block from state
+ *		PPEditorBlock(stateModel)
+ *		new Block model
+ *		ChangeStationCommand.Execute()
+ *			Reset()
+ *				(each existing Task).RebuildProcesses()
+ *				InsertTask()
+ *					new Task model
+ *					new PPEditorTask(taskModel, this, _uow)
+ *						RebuildProcesses()
+ * 
+ * 2. Reuse an existing block
+ *		PPEditorBlock(blockModel)
+ *			(each Task).new PPEditorTask(task, this, _uow)
+ *				(each Task).RebuildProcesses()
+ *			
+ */
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
@@ -28,12 +47,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		#region Ctor and methods
 		/// <summary>
 		/// Creates an instance of PPEditorState viewModel for an existing block model
+		/// <para>Each instance has an exclusive uow</para>
 		/// </summary>
 		/// <param name="blockModel">block containing some (or no) tasks to edit</param>
 		public PPEditorBlock(Model.Block blockModel)
 		{
-			_uow = new Dal.SoheilEdmContext();
-
 			initMembers();
 			initializeCommands();
 			
@@ -56,8 +74,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <param name="stateModel">state model to create a block</param>
 		public PPEditorBlock(Model.State stateModel)
 		{
-			_uow = new Dal.SoheilEdmContext();
-
 			initMembers();
 			initializeCommands();
 
@@ -73,12 +89,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			StartTime = DateTime.Now.TimeOfDay;
 
 			//Tasks
-			//InsertTask();
 			TaskList.Add(new PPEditorTaskHolder(this));
 		}
+
+		/// <summary>
+		/// Creates DataServices and sets event handlers for tasks
+		/// </summary>
 		void initMembers()
 		{
 			//DS
+			_uow = new Dal.SoheilEdmContext();
 			TaskDataService = new DataServices.TaskDataService(_uow);
 			BlockDataService = new DataServices.BlockDataService(_uow);
 			//TaskList
@@ -87,24 +107,51 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				if (e.NewItems != null) foreach (var item in e.NewItems.OfType<PPEditorTask>())
 				{
 					item.TaskDurationChanged += (d1, d2) => Duration += (d2 - d1);
-					item.TaskTargetPointChanged += (t1, t2) => BlockTargetPoint += (t2 - t1);
+					item.TaskTargetPointChanged += (t1, t2) => BlockTargetPoint = TaskList.OfType<PPEditorTask>().Sum(x => x.TaskTargetPoint);
+					Duration += TimeSpan.FromSeconds(item.DurationSeconds);
+					BlockTargetPoint += item.TaskTargetPoint;
 				}
 				if (e.OldItems != null) foreach (var item in e.OldItems.OfType<PPEditorTask>())
 				{
 					item.ForceCalculateDuration();
-					Duration -= new TimeSpan(item.DurationSeconds);
+					Duration -= TimeSpan.FromSeconds(item.DurationSeconds);
 					BlockTargetPoint -= item.TaskTargetPoint;
 				}
 			};
 			//Errors
 			Message = new Common.SoheilException.EmbeddedException();	
 		}
+
+		/// <summary>
+		/// Resets all tasks within this block (tries not to delete anything)
+		/// <para>Reseting a task causes its processes to be corrected</para>
+		/// <para>If no tasks in this block create one</para>
+		/// </summary>
+		internal void Reset()
+		{
+			foreach (var task in TaskList.OfType<PPEditorTask>())
+			{
+				task.RebuildProcesses();
+			}
+			if (!TaskList.OfType<PPEditorTask>().Any())
+				InsertTask();
+		}
+
+		/// <summary>
+		/// Creates a tasks and adds it to the end of tasks
+		/// </summary>
 		internal void InsertTask()
 		{
-			var last = TaskList.OfType<PPEditorTask>().LastOrDefault();
-			var startDt = (last == null) ? Model.StartDateTime : last.EndDateTime;
+			//make sure stateStation is specified
+			if (SelectedStateStation == null)
+				throw new Soheil.Common.SoheilException.SoheilExceptionBase(
+					"ایستگاه انتخاب نشده است",
+					Common.SoheilException.ExceptionLevel.Warning);
 
-			//task
+			var last = TaskList.OfType<PPEditorTask>().LastOrDefault();
+			var startDt = (last == null) ? StartDate.Add(StartTime) : last.EndDateTime;
+
+			//create a new task model after last one
 			var taskModel = new Model.Task
 			{
 				Block = Model,
@@ -114,35 +161,21 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				EndDateTime = startDt,
 				TaskTargetPoint = 0,
 			};
+			//add it to block
 			Model.Tasks.Add(taskModel);
 
-			//ss
-			if (SelectedStateStation == null)
-				throw new Soheil.Common.SoheilException.SoheilExceptionBase(
-					"ایستگاه انتخاب نشده است", 
-					Common.SoheilException.ExceptionLevel.Warning);
-
-			//processes
-			//taskModel.CreateBasicProcesses();
-
-			//add the VM and select it
+			//create and add the VM to TaskList
 			TaskList.Insert(TaskList.Any()? TaskList.Count - 1 : 0, new PPEditorTask(taskModel, this, _uow));
 			last = TaskList.OfType<PPEditorTask>().LastOrDefault();
-			if(last!=null) last.IsSelected = true;
+
+			//select the new task
+			//the selection works fine as long as a selector is used in view (TabControl has a selector)
+			if (last != null) 
+				last.IsSelected = true;
 		}
 
-		/// <summary>
-		/// Resets all tasks within this block (tries not to delete anything)
-		/// </summary>
-		internal void Reset()
-		{
-			foreach (var task in TaskList.OfType<PPEditorTask>())
-			{
-				task.Reset();
-			}
-			if (!TaskList.OfType<PPEditorTask>().Any())
-				InsertTask();
-		}
+
+
 		/// <summary>
 		/// Corrects block processes (use this before save)
 		/// </summary>
@@ -272,10 +305,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				taskVm.ForceCalculateDuration();
 			}
 
+			Model.StartDateTime = StartDate.Add(StartTime);
 			Model.DurationSeconds = TaskList.OfType<PPEditorTask>().Sum(t => t.DurationSeconds);
 			Model.EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);
 		}
 
+		/// <summary>
+		/// Saves this block and also finds the best empty space if needed
+		/// </summary>
 		internal void Save()
 		{
 			correctBlock();
@@ -283,12 +320,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var nptDs = new DataServices.NPTDataService(_uow);
 
 			//check if it fits
+			bool wasAutoStart = IsAutoStart;
 			if (!IsAutoStart)
 			{
-				var inRangeBlocks = BlockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime);
-				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime);
+				var inRangeBlocks = BlockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
+				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
 
-				if (inRangeBlocks.Any() || inRangeNPTs.Any()) IsAutoStart = true;
+				//if not fit, make it auto start
+				if (inRangeBlocks.Any() || inRangeNPTs.Any())
+					IsAutoStart = true;
 			}
 
 			//check if should use auto start
@@ -296,7 +336,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				// Updates the start datetime of this block to fit the first empty space
 				Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(BlockDataService, nptDs);
-				var seq = sman.FindNextFreeSpace(StationId, State.ProductRework.Id, DateTime.Now, (int)Duration.TotalSeconds);
+				var seq = sman.FindNextFreeSpace(
+					StationId, 
+					State.ProductRework.Id,
+					!wasAutoStart ? StartDate.Add(StartTime) : DateTime.Now, //put it after specifed time if it wasn't auto start
+					(int)Duration.TotalSeconds);
 				var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
 				StartDate = block.StartDT.Date;
 				StartTime = block.StartDT.TimeOfDay;
@@ -329,9 +373,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}*/
 		#endregion
 
+		/// <summary>
+		/// Gets a bindable collection of Tasks (<see cref="PPEditorTaskHolder"/>) in this block including the <see cref="PPEditorTaskHolder"/>
+		/// </summary>
+		public ObservableCollection<DependencyObject> TaskList { get { return _taskList; } }
+		private ObservableCollection<DependencyObject> _taskList = new ObservableCollection<DependencyObject>();
 
 
-		#region Top members
+		#region Fpc links
 		public StateVm State
 		{
 			get { return (StateVm)GetValue(StateProperty); }
@@ -339,6 +388,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty StateProperty =
 			DependencyProperty.Register("State", typeof(StateVm), typeof(PPEditorBlock), new PropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets the bindable StateStation that represents this block
+		/// </summary>
 		public StateStationVm StateStation
 		{
 			get { return (StateStationVm)GetValue(StateStationProperty); }
@@ -346,7 +398,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty StateStationProperty =
 			DependencyProperty.Register("StateStation", typeof(StateStationVm), typeof(PPEditorBlock), new UIPropertyMetadata(null));
-		//SelectedStateStation Dependency Property (only for combobox usage)
+		/// <summary>
+		/// Gets or sets the bindable selected StateStation from a list of available StateStations for block's State
+		/// </summary>
 		public StateStationVm SelectedStateStation
 		{
 			get { return (StateStationVm)GetValue(SelectedStateStationProperty); }
@@ -354,7 +408,23 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SelectedStateStationProperty =
 			DependencyProperty.Register("SelectedStateStation", typeof(StateStationVm), typeof(PPEditorBlock), new UIPropertyMetadata(null));
-		//StartDate Dependency Property
+		#endregion
+
+		#region Date & Time
+		/// <summary>
+		/// Gets or sets the bindable value that indicates whether this block will fit in the earliest possible space
+		/// </summary>
+		public bool IsAutoStart
+		{
+			get { return (bool)GetValue(IsAutoStartProperty); }
+			set { SetValue(IsAutoStartProperty, value); }
+		}
+		public static readonly DependencyProperty IsAutoStartProperty =
+			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorBlock), new PropertyMetadata(false));
+		/// <summary>
+		/// Gets or sets the bindable StartDate manually defined for this block
+		/// <para>Changing the value causes change to EndDate and EndTime of ViewModel</para>
+		/// </summary>
 		public DateTime StartDate
 		{
 			get { return (DateTime)GetValue(StartDateProperty); }
@@ -367,12 +437,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = d as PPEditorBlock;
 				var val = (DateTime)e.NewValue;
 				DateTime start = val.Add(vm.StartTime);
-				vm.Model.StartDateTime = start;
 				DateTime end = start.AddSeconds(vm.TaskList.OfType<PPEditorTask>().Sum(x => x.DurationSeconds));
 				vm.EndDate = end.Date;
 				vm.EndTime = end.TimeOfDay;
 			}));
-		//StartTime Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable StartTime manually defined for this block
+		/// <para>Changing the value causes change to EndDate and EndTime of ViewModel</para>
+		/// </summary>
 		public TimeSpan StartTime
 		{
 			get { return (TimeSpan)GetValue(StartTimeProperty); }
@@ -385,23 +457,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = d as PPEditorBlock;
 				var val = (TimeSpan)e.NewValue;
 				DateTime start = vm.StartDate.Add(val);
-				vm.Model.StartDateTime = start;
 				DateTime end = start.AddSeconds(vm.TaskList.OfType<PPEditorTask>().Sum(x => x.DurationSeconds));
 				vm.EndDate = end.Date;
 				vm.EndTime = end.TimeOfDay;
 			}));
-		//IsAutoStart Dependency Property
-		public bool IsAutoStart
-		{
-			get { return (bool)GetValue(IsAutoStartProperty); }
-			set { SetValue(IsAutoStartProperty, value); }
-		}
-		public static readonly DependencyProperty IsAutoStartProperty =
-			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(PPEditorBlock), new PropertyMetadata(false));
-		#endregion
-
-		#region Additional Readonly info
-		//EndDate Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable auto-calculated EndDate of this block
+		/// </summary>
 		public DateTime EndDate
 		{
 			get { return (DateTime)GetValue(EndDateProperty); }
@@ -409,7 +471,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty EndDateProperty =
 			DependencyProperty.Register("EndDate", typeof(DateTime), typeof(PPEditorBlock), new UIPropertyMetadata(DateTime.Now));
-		//EndTime Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable auto-calculated EndTime of this block
+		/// </summary>
 		public TimeSpan EndTime
 		{
 			get { return (TimeSpan)GetValue(EndTimeProperty); }
@@ -417,7 +481,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty EndTimeProperty =
 			DependencyProperty.Register("EndTime", typeof(TimeSpan), typeof(PPEditorBlock), new UIPropertyMetadata(TimeSpan.Zero));
-		//Duration Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable auto-calculated Duration of this block
+		/// <para>Changing the value causes change to Duration of model and EndDate and EndTime of ViewModel</para>
+		/// </summary>
 		public TimeSpan Duration
 		{
 			get { return (TimeSpan)GetValue(DurationProperty); }
@@ -429,11 +496,18 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				var vm = (PPEditorBlock)d;
 				var val = (TimeSpan)e.NewValue;
-				var end = vm.StartDate.Add(vm.StartTime).Add(val);
+				vm.Model.DurationSeconds = (int)val.TotalSeconds;
+				DateTime end = vm.StartDate.Add(vm.StartTime).Add(val);
 				vm.EndDate = end.Date;
 				vm.EndTime = end.TimeOfDay;
 			}));
-		//BlockTargetPoint Dependency Property
+		#endregion
+
+		#region other
+		/// <summary>
+		/// Gets or sets the bindable auto-calculate TargetPoint of this block
+		/// <para>Changing this value causes change to TargetPoint of model</para>
+		/// </summary>
 		public int BlockTargetPoint
 		{
 			get { return (int)GetValue(BlockTargetPointProperty); }
@@ -443,7 +517,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("BlockTargetPoint", typeof(int), typeof(PPEditorBlock),
 			new UIPropertyMetadata(0, (d, e) => ((PPEditorBlock)d).Model.BlockTargetPoint = (int)(e.NewValue)));
 
-		//Message Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable message box
+		/// </summary>
 		public Soheil.Common.SoheilException.EmbeddedException Message
 		{
 			get { return (Soheil.Common.SoheilException.EmbeddedException)GetValue(MessageProperty); }
@@ -453,9 +529,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("Message", typeof(Soheil.Common.SoheilException.EmbeddedException), typeof(PPEditorBlock), new UIPropertyMetadata(null));
 		#endregion
 
-		//TaskList Observable Collection
-		public ObservableCollection<DependencyObject> TaskList { get { return _taskList; } }
-		private ObservableCollection<DependencyObject> _taskList = new ObservableCollection<DependencyObject>();
 
 		#region Commands
 		void initializeCommands()
@@ -480,7 +553,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			SelectNextHourCommand = new Commands.Command(o =>
 			{
 				SelectTodayCommand.Execute(o);
-				StartTime = new TimeSpan(DateTime.Now.Hour + 1, 0, 0);
+				StartTime = TimeSpan.FromHours(DateTime.Now.Hour + 1);
+			});
+			SelectThisHourCommand = new Commands.Command(o =>
+			{
+				SelectTodayCommand.Execute(o);
+				StartTime = TimeSpan.FromHours(DateTime.Now.Hour);
 			});
 			AddOneHourCommand = new Commands.Command(o =>
 			{
@@ -491,9 +569,21 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					StartDate = StartDate.AddDays(1);
 				}
 			});
+			SubtractOneHourCommand = new Commands.Command(o =>
+			{
+				if (StartTime.CompareTo(TimeSpan.FromHours(1)) < 1)
+				{
+					StartTime = StartTime.Add(TimeSpan.FromHours(23));
+					StartDate = StartDate.AddDays(-1);
+				}
+				else
+					StartTime = StartTime.Add(TimeSpan.FromHours(-1));
+			});
 		}
 
-		//ChangeStationCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command to set StateStation of this block according to SelectedStateStation
+		/// </summary>
 		public Commands.Command ChangeStationCommand
 		{
 			get { return (Commands.Command)GetValue(ChangeStationCommandProperty); }
@@ -501,7 +591,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty ChangeStationCommandProperty =
 			DependencyProperty.Register("ChangeStationCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
-		//DontChangeStationCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command to cancel the setting of StateStation of this block
+		/// </summary>
 		public Commands.Command DontChangeStationCommand
 		{
 			get { return (Commands.Command)GetValue(DontChangeStationCommandProperty); }
@@ -509,7 +601,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty DontChangeStationCommandProperty =
 			DependencyProperty.Register("DontChangeStationCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
-		//DeleteBlockFromList Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command to delete this block from the list of States (Blocks) in PPEditor
+		/// </summary>
 		public Commands.Command DeleteBlockFromList
 		{
 			get { return (Commands.Command)GetValue(DeleteBlockFromListProperty); }
@@ -517,7 +611,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty DeleteBlockFromListProperty =
 			DependencyProperty.Register("DeleteBlockFromList", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
-		//SelectTodayCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command to set the StartDate of this block to Today
+		/// </summary>
 		public Commands.Command SelectTodayCommand
 		{
 			get { return (Commands.Command)GetValue(SelectTodayCommandProperty); }
@@ -525,7 +621,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SelectTodayCommandProperty =
 			DependencyProperty.Register("SelectTodayCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
-		//SelectTomorrowCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command to set the StartDate of this block to Tomorrow
+		/// </summary>
 		public Commands.Command SelectTomorrowCommand
 		{
 			get { return (Commands.Command)GetValue(SelectTomorrowCommandProperty); }
@@ -533,7 +631,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SelectTomorrowCommandProperty =
 			DependencyProperty.Register("SelectTomorrowCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
-		//SelectNextHourCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command to set the StartTime of this block to start of next hour
+		/// </summary>
 		public Commands.Command SelectNextHourCommand
 		{
 			get { return (Commands.Command)GetValue(SelectNextHourCommandProperty); }
@@ -541,7 +641,17 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SelectNextHourCommandProperty =
 			DependencyProperty.Register("SelectNextHourCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
-		//AddOneHourCommand Dependency Property
+		//SelectThisHourCommand Dependency Property
+		public Commands.Command SelectThisHourCommand
+		{
+			get { return (Commands.Command)GetValue(SelectThisHourCommandProperty); }
+			set { SetValue(SelectThisHourCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SelectThisHourCommandProperty =
+			DependencyProperty.Register("SelectThisHourCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable command to add 1 hour to the StartTime of this block
+		/// </summary>
 		public Commands.Command AddOneHourCommand
 		{
 			get { return (Commands.Command)GetValue(AddOneHourCommandProperty); }
@@ -549,6 +659,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty AddOneHourCommandProperty =
 			DependencyProperty.Register("AddOneHourCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
+		//SubtractOneHourCommand Dependency Property
+		public Commands.Command SubtractOneHourCommand
+		{
+			get { return (Commands.Command)GetValue(SubtractOneHourCommandProperty); }
+			set { SetValue(SubtractOneHourCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SubtractOneHourCommandProperty =
+			DependencyProperty.Register("SubtractOneHourCommand", typeof(Commands.Command), typeof(PPEditorBlock), new UIPropertyMetadata(null));
 		#endregion
 
 	}

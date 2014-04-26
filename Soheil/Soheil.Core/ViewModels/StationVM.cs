@@ -46,6 +46,12 @@ namespace Soheil.Core.ViewModels
             set { _model.Code = value; OnPropertyChanged("Code"); }
         }
 
+		public int Index
+		{
+			get { return _model.Index; }
+			set { _model.Index = value; OnPropertyChanged("Index"); }
+		}
+
         public Status Status
         {
             get { return (Status) _model.Status; }
@@ -129,7 +135,7 @@ namespace Soheil.Core.ViewModels
         #region Static Methods
         public static Station CreateNew(StationDataService dataService)
         {
-            int id = dataService.AddModel(new Station { Name = "جدید", Code = string.Empty, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now, Status = (byte)Status.Active});
+            int id = dataService.AddModel(new Station { Name = "جدید", Code = string.Empty, Index = dataService.GetNextIndex(), CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now, Status = (byte)Status.Active});
             return dataService.GetSingle(id);
         }
         #endregion

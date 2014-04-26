@@ -2767,8 +2767,19 @@
                         </WrapPanel>
                     </Border>
                     <DockPanel DockPanel.Dock="Top">
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
+						<Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBorder}">
+							<UniformGrid Margin="5"
+                             Columns="2"
+                             Rows="3">
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}"  />
+								<TextBox Margin="2" Text="{Binding Path=CurrentContent.Code, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+								<TextBox Margin="2" Text="{Binding Path=CurrentContent.Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStationIndex}" />
+								<TextBox Margin="2" Text="{Binding Path=CurrentContent.Index, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+							</UniformGrid>
+						</Border>
+						<ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />

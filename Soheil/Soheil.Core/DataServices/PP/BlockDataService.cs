@@ -107,15 +107,17 @@ WHERE block.Id = @id";
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public IEnumerable<Block> GetInRange(DateTime startDate, DateTime endDate)
+		public IEnumerable<Block> GetInRange(DateTime startDate, DateTime endDate, int stationId)
 		{
 			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
-			return _blockRepository.Find(x =>
-				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+			return _blockRepository.Find(x => 
+				x.StateStation.Station.Id == stationId 
+				&&
+				((x.StartDateTime < endDate && x.StartDateTime >= startDate)
 				||
 				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
 				||
-				(x.StartDateTime <= startDate && x.EndDateTime >= endDate), 
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate)), 
 				y => y.StartDateTime);
 		}
 

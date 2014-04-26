@@ -33,9 +33,9 @@
 							<SolidColorBrush Color="{Binding Parent.Process.Task.ProductColor}"/>
 						</Rectangle.Fill>
 					</Rectangle>
-					<TextBlock DockPanel.Dock="Left" Text="{Binding Parent.Process.Task.ProductName}"/>
+					<TextBlock DockPanel.Dock="Left" Text="{Binding ParentColumn.Task.Block.ProductName}"/>
 					<TextBlock DockPanel.Dock="Left" Text="     نام فعالیت: "/>
-					<TextBlock Text="{Binding Parent.Process.StateStationActivity.Activity.Name}"/>
+					<TextBlock Text="{Binding ParentRow.StateStationActivity.Activity.Name}"/>
 				</DockPanel>
 
 				<DockPanel Grid.Row="1" LastChildFill="False">

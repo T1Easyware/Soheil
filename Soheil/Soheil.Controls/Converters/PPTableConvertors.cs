@@ -765,6 +765,19 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+
+	public class LogarithmicSlider : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return Math.Sqrt(System.Convert.ToDouble(value) / 20d);
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return 20 * Math.Pow(System.Convert.ToDouble(value), 2);
+		}
+	}
 	#endregion
 
 	#region DateTime...
@@ -813,7 +826,7 @@ namespace Soheil.Controls.Converters.PP
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = (TimeSpan)value;
 
-			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
+			return string.Format(culture, "{0:D2}:{1:D2}:{2:D2}", (int)ts.TotalHours, ts.Minutes, ts.Seconds);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -851,7 +864,7 @@ namespace Soheil.Controls.Converters.PP
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = new TimeSpan(0, 0, System.Convert.ToInt32(value));
-			return ts.ToString("hh\\ \\:\\ mm\\ \\:\\ ss", culture);
+			return string.Format(culture, "{0:D2}:{1:D2}:{2:D2}", (int)ts.TotalHours, ts.Minutes, ts.Seconds);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

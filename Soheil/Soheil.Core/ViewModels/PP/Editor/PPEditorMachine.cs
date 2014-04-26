@@ -11,7 +11,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	public class PPEditorMachine : DependencyObject
 	{
 		public Model.StateStationActivityMachine StateStationActivityMachineModel { get; private set; }
-		public int MachineId { get { return StateStationActivityMachineModel.Machine.Id; } }
+		public int MachineId { get { return StateStationActivityMachineModel == null ? _machineId : StateStationActivityMachineModel.Machine.Id; } }
+		/// <summary>
+		/// this value is valid only when Model.Machine ctor is used
+		/// </summary>
+		int _machineId;
 
 		#region Ctor
 		/// <summary>
@@ -36,13 +40,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			Code = ssamModel.Machine.Code;
 			IsUsed = ssamModel.IsFixed;
 		}
-		public PPEditorMachine(Fpc.StateStationActivityMachineVm ssam)
+		public PPEditorMachine(Model.Machine machineModel)
 		{
-			StateStationActivityMachineModel = ssam.Model;
-			Name = ssam.Name;
-			Code = ((Fpc.MachineVm)ssam.Containment).Code;
-			IsUsed = ssam.IsDefault;
-		} 
+			StateStationActivityMachineModel = null;
+			_machineId = machineModel.Id;
+			Name = machineModel.Name;
+			Code = machineModel.Code;
+		}
 		#endregion
 
 
@@ -70,7 +74,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsUsedProperty, value); }
 		}
 		public static readonly DependencyProperty IsUsedProperty =
-			DependencyProperty.Register("IsUsed", typeof(bool), typeof(PPEditorMachine), new UIPropertyMetadata(false)); 
+			DependencyProperty.Register("IsUsed", typeof(bool), typeof(PPEditorMachine), new UIPropertyMetadata(false));
+		//CanBeUsed Dependency Property
+		public bool CanBeUsed
+		{
+			get { return (bool)GetValue(CanBeUsedProperty); }
+			set { SetValue(CanBeUsedProperty, value); }
+		}
+		public static readonly DependencyProperty CanBeUsedProperty =
+			DependencyProperty.Register("CanBeUsed", typeof(bool), typeof(PPEditorMachine), new UIPropertyMetadata(false));
 		#endregion
 	}
 }

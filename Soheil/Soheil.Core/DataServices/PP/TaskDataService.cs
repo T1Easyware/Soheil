@@ -95,13 +95,6 @@ namespace Soheil.Core.DataServices
 			throw new NotImplementedException();
 		}
 
-		public void DeleteModel(int taskId)
-		{
-			var model = _taskRepository.FirstOrDefault(x => x.Id == taskId);
-			if (model == null) throw new Exception("Already deleted.");
-			DeleteModel(model);
-			context.Commit();
-		}
 		/// <summary>
 		/// No commit
 		/// </summary>
@@ -133,6 +126,7 @@ namespace Soheil.Core.DataServices
 				DeleteModel(process);
 			}
 			_taskRepository.Delete(model);
+			context.Commit();
 		}
 		//Recursive (sm & po)
 		internal void DeleteModel(Process process)
@@ -203,7 +197,7 @@ namespace Soheil.Core.DataServices
 		public KeyValuePair<int, TimeSpan> GetSumOfReportedData(int taskId)
 		{
 			int healthy = 0;
-			TimeSpan duration = new TimeSpan();
+			TimeSpan duration = TimeSpan.Zero;
 			Task entity = _taskRepository.First(x => x.Id == taskId);
 			foreach (var processEntity in entity.Processes)
 			{
@@ -214,7 +208,7 @@ namespace Soheil.Core.DataServices
 			}
 			foreach (var taskReportEntity in entity.TaskReports)
 			{
-				duration.Add(new TimeSpan(taskReportEntity.ReportDurationSeconds * TimeSpan.TicksPerSecond));
+				duration.Add(TimeSpan.FromSeconds(taskReportEntity.ReportDurationSeconds));
 			}
 			return new KeyValuePair<int, TimeSpan>(healthy, duration);
 		}

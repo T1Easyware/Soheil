@@ -45,6 +45,7 @@
 	<ppconv:IntX7Converter x:Key="intX7Converter"/>
 	<ppconv:DoubleMultiplierToThickness x:Key="doubleMultiplierToThickness"/>
 	<ppconv:ACrossBDividebByC x:Key="aCrossBDividebByC"/>
+	<ppconv:LogarithmicSlider x:Key="logarithmicSlider"/>
 
 	<ppconv:PortionToStarConverter x:Key="portionToStarConverter"/>
 	<ppconv:TaskReportMargin x:Key="taskReportMargin"/>
@@ -73,8 +74,9 @@
 	<ppconv:OperatorRoleTextConverter x:Key="operatorRoleTextConverter"/>
 	<ppconv:OperatorRoleIsValue x:Key="operatorRoleIsValue"/>
 	<ppconv:FilterMaker x:Key="filterMaker"/>
-
+	
 	<ppconv:TimeSpanToStringConverter x:Key="timeSpanToStringConverter"/>
+	<ppconv:FullTimeSpanToStringConverter x:Key="fullTimeSpanToStringConverter"/>
 	<ppconv:SecondsToStringConverter x:Key="secondsToStringConverter"/>
 	<ppconv:CycleTimeToStringConverter x:Key="cycleTimeToStringConverter"/>
 	<ppconv:DateToLocalStringConverter x:Key="dateToLocalStringConverter"/>

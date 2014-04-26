@@ -28,7 +28,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		public event Action<int, int> TaskTargetPointChanged;
 
-		#region Ctor
+		#region Ctor and methods
 		/// <summary>
 		/// Must be called with an open connection
 		/// </summary>
@@ -47,133 +47,125 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			TaskTargetPoint = model.TaskTargetPoint;
 			DurationSeconds = model.DurationSeconds;
 
+			#region Auto check RadioButtons
 			if (!model.Processes.Any())
 			{
 				IsDeferToActivitiesSelected = true;
 			}
 			else if (model.Processes.AreAllEqual(x => x.TargetCount))
 			{
-				var tmp = model.Processes.FirstOrDefault();
-				if (tmp != null) SameQtyForActivities = tmp.TargetCount;
+				SameQtyForActivities = model.Processes.FirstOrDefault().TargetCount;
 				IsSameQtyForActivitiesSelected = true;
 			}
-			else if (model.Processes.AreAllEqual(x => x.TargetCount * x.StateStationActivity.CycleTime))
+			// if all processes have same duration then
+			//		DurationOfProcess = TP * CT
+			//		=> DurationOfTask = TP * CT + d, where (0 <= d < CT)
+			//		=> d = DurationOfTask - TP * CT
+			//		=> 0 <= (DurationOfTask - TP * CT)/CT < 1
+			else if (model.Processes.Select(
+				p => (DurationSeconds - p.TargetCount * p.StateStationActivity.CycleTime) / (float)p.StateStationActivity.CycleTime)
+				.All(diff => 0 <= diff && diff < 1f))
 			{
-				var tmp = model.Processes.FirstOrDefault();
-				if (tmp != null) SameTimeForActivities = TimeSpan.FromSeconds(tmp.TargetCount * tmp.StateStationActivity.CycleTime);
+				SameTimeForActivities = TimeSpan.FromSeconds(model.Processes.Max(p => p.TargetCount * p.StateStationActivity.CycleTime));
 				IsSameTimeForActivitiesSelected = true;
 			}
 			else
 			{
 				IsDeferToActivitiesSelected = true;
-			}
+			} 
+			#endregion
 
-			initProcesses();
-		}
-		void initProcesses()
-		{
-			ProcessList.Clear();
-			//Model.Processes.Clear();
-			//?
-
-			//convert and add each activity (ssaGroup) within current StateStation to ProcessList
-            //note that: each group of SSA (grouped by activity) MUST be added ONCE (not 0 not 5)
-			foreach (var ssaGroup in Model.Block.StateStation.StateStationActivities.GroupBy(ssa => ssa.Activity.Id))
-			{
-				PPEditorProcess processVm = null;
-				//processModel: existing process which its ssa is in ssaGroup
-				var processModel = Model.Processes.FirstOrDefault(p =>
-					ssaGroup.Any(ssa => ssa.Id == p.StateStationActivity.Id));
-				if (processModel != null)//a process exists matching a ssa in ssaGroup
-				{
-					processVm = new PPEditorProcess(this, processModel, _uow);
-				}
-				else//no process matches any ssa in ssaGroup
-				{
-					//processModel: existing process which its activity is in ssaGroup
-                    processModel = Model.Processes.FirstOrDefault(p => 
-						ssaGroup.Any(ssa => ssa.Activity.Id == p.StateStationActivity.Activity.Id));
-					if (processModel != null)//a process exists matching an activity in ssaGroup
-					{
-						//create new process as close as possible to ssaModel
-						var ssaModel = ssaGroup.FirstOrDefault(ssa => ssa.ManHour == processModel.StateStationActivity.ManHour);
-						if (ssaModel == null) ssaModel = ssaGroup.FirstOrDefault();
-						processModel.StateStationActivity = ssaModel;
-                        processModel.Task = Model;
-                        processModel.Code = Model.Code + ssaModel.Activity.Code;
-						processVm = new PPEditorProcess(this, processModel, _uow);
-					}
-					else
-					{
-						//create new process
-						processVm = new PPEditorProcess(this, ssaGroup,_uow);
-					}
-				}
-                //if processVm is created from a previously existing processModel:
-                if(processModel != null)
-                {
-                    //add operators
-                    foreach (var po in processModel.ProcessOperators)
-                    {
-                        var poVm = processVm.OperatorList.FirstOrDefault(o => o.OperatorId == po.Operator.Id);
-                        if (poVm == null) processVm.OperatorList.Add(new PPEditorOperator(po));
-                        else poVm.IsSelected = true;
-                    }
-                    //add machines
-                    foreach (var sm in processModel.SelectedMachines)
-                    {
-                        var smVm = processVm.MachineList.FirstOrDefault(o => o.MachineId == sm.StateStationActivityMachine.Machine.Id);
-                        if (smVm == null) processVm.MachineList.Add(new PPEditorMachine(sm));
-                        else smVm.IsUsed = true;
-                    }
-                }
-
-				//finally add it to ProcessList
-				ProcessList.Add(processVm);
-			}
-			//add leftover processes
-			/*foreach (var processModel in _model.Processes.Where(x => !ProcessList.Any(y => y.ActivityId == x.StateStationActivity.Activity.Id)))
-			{
-				ProcessList.Add(new PPEditorProcess(this, processModel));
-			}*/
-			//set the event handlers
-			foreach (var process in ProcessList)
-			{
-				process.ActivityChoiceChanged += (oldVal, newVal) =>
-				{
-					if (newVal == null) DurationSeconds = 0;
-					else if (IsSameTimeForActivitiesSelected)
-						process.TargetPoint = newVal.CycleTime == 0 ? 0 :
-							(int)Math.Floor(SameTimeForActivities.TotalSeconds / newVal.CycleTime);
-					else if (IsSameQtyForActivitiesSelected)
-					{
-						DurationSeconds = (int)Math.Floor(TaskTargetPoint * newVal.CycleTime);
-					}
-					else if (IsDeferToActivitiesSelected)
-					{
-						DurationSeconds = (int)Math.Floor(process.TargetPoint * newVal.CycleTime);
-					}
-					validateDuration(process);
-				};
-				process.ProcessTargetPointChanged += (oldVal, newVal) =>
-				{
-					if (newVal != SameQtyForActivities) IsDeferToActivitiesSelected = true;
-					if (process.SelectedChoice == null) return;
-					DurationSeconds = (int)Math.Floor(newVal * process.SelectedChoice.CycleTime);
-					validateDuration(process);
-				};
-			}
+			RebuildProcesses();
 		}
 		/// <summary>
 		/// Recreate all activities within this task
 		/// </summary>
-		public void Reset()
+		internal void RebuildProcesses()
 		{
-			Model.Block = Block.Model;
-			initProcesses();
+			ProcessList.Clear();
+
+			//convert and add each activity (ssaGroup) within current StateStation to ProcessList
+            //note that: each group of SSA (grouped by activity) MUST be added ONCE (not 0 not 5)
+			//			if SSA of one of processModels is in ssaGroup, consider that SSA
+			//			else create a new processModel
+			foreach (var ssaGroup in Model.Block.StateStation.StateStationActivities.GroupBy(ssa => ssa.Activity.Id))
+			{
+				PPEditorProcess processVm = null;
+
+				#region processVm = Create a new PPEditorProcess for this ssaGroup
+				//processModel: existing process which its ssa is in ssaGroup
+				var processModel = Model.Processes
+					.Where(p => p.StateStationActivity != null)
+					.FirstOrDefault(p => ssaGroup.Any(ssa => ssa.Id == p.StateStationActivity.Id));
+				if (processModel != null)//a process exists matching a ssa in ssaGroup
+				{
+					processVm = new PPEditorProcess(processModel, _uow);
+				}
+
+				else//no process matches any ssa in ssaGroup
+				{
+					processModel = new Model.Process();
+					processModel.Task = Model;
+					processVm = new PPEditorProcess(processModel, _uow, ssaGroup);
+				} 
+				#endregion
+
+				#region Set the event handlers of processVm
+				processVm.ActivityChoiceChanged += (oldVal, newVal) =>
+				{
+					if (newVal == null) return;
+
+					//update TargetPoint of process
+					if (IsSameQtyForActivitiesSelected)
+					{
+						processVm.TargetPoint = SameQtyForActivities;
+						var newDuration = SameQtyForActivities * (int)newVal.CycleTime;
+						if (newDuration != processVm.DurationSeconds)
+							processVm.DurationSeconds = newDuration;
+					}
+					else if (IsSameTimeForActivitiesSelected)
+					{
+						processVm.TargetPoint = (int)Math.Floor(SameTimeForActivities.TotalSeconds / newVal.CycleTime);
+						var newDuration = processVm.TargetPoint * (int)newVal.CycleTime;
+						if (newDuration != processVm.DurationSeconds)
+							processVm.DurationSeconds = newDuration;
+					}
+					else
+					{
+						if (processVm.TargetPoint > 0)
+							processVm.DurationSeconds = (int)Math.Floor(processVm.TargetPoint * newVal.CycleTime);
+						else if (processVm.DurationSeconds > 0)
+							processVm.TargetPoint = (int)Math.Floor(processVm.DurationSeconds / newVal.CycleTime);
+					}
+				};
+				processVm.ProcessTargetPointChanged += (oldVal, newVal) =>
+				{
+				};
+				processVm.ProcessDurationChanged += (oldVal, newVal) =>
+				{
+					DurationSeconds = ProcessList.Max(x => x.DurationSeconds);
+				}; 
+				#endregion
+
+				//finally add it to ProcessList
+				ProcessList.Add(processVm);
+			}
+		}
+		internal void ForceCalculateDuration()
+		{
+			DurationSeconds = 0;
+			foreach (var process in ProcessList)
+			{
+				DurationSeconds = Math.Max(DurationSeconds, process.SelectedChoice == null ? 0
+					: (int)Math.Floor(process.TargetPoint * process.SelectedChoice.CycleTime));
+			}
 		}
 		#endregion
-		//IsSelected Dependency Property
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this task is selected in the parent block
+		/// <remarks>If used with a Selector no need to deselect other tasks manually (i.e. in a tab control)</remarks>
+		/// </summary>
 		public bool IsSelected
 		{
 			get { return (bool)GetValue(IsSelectedProperty); }
@@ -181,11 +173,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty IsSelectedProperty =
 			DependencyProperty.Register("IsSelected", typeof(bool), typeof(PPEditorTask), new UIPropertyMetadata(true));
-		//Block Dependency Property
+		/// <summary>
+		/// Gets the bindable parent
+		/// </summary>
 		public PPEditorBlock Block
 		{
 			get { return (PPEditorBlock)GetValue(BlockProperty); }
-			set { SetValue(BlockProperty, value); }
+			private set { SetValue(BlockProperty, value); }
 		}
 		public static readonly DependencyProperty BlockProperty =
 			DependencyProperty.Register("Block", typeof(PPEditorBlock), typeof(PPEditorTask), new UIPropertyMetadata(null));
@@ -204,95 +198,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("SelectedProcess", typeof(PPEditorProcess), typeof(PPEditorTask), new UIPropertyMetadata(null));
 		#endregion
 
-		#region Time/Qty codes
-		void validateDuration(PPEditorProcess except)
-		{
-			foreach (var process in ProcessList.Except(new PPEditorProcess[] { except }))
-			{
-				DurationSeconds = Math.Max(DurationSeconds, process.DurationSeconds);
-			}
-		}
-		void durationChanged(DependencyPropertyChangedEventArgs e)
-		{
-			var oldVal = e.OldValue == DependencyProperty.UnsetValue ? TimeSpan.Zero : (TimeSpan)e.OldValue;
-			var newVal = e.NewValue == DependencyProperty.UnsetValue ? TimeSpan.Zero : (TimeSpan)e.NewValue;
-			if (TaskDurationChanged != null)
-				TaskDurationChanged(oldVal, newVal);
-			Model.DurationSeconds = (int)newVal.TotalSeconds;
-			Model.EndDateTime = Model.StartDateTime.AddSeconds((int)newVal.TotalSeconds);
-		}
-		void taskTargetPointChanged(DependencyPropertyChangedEventArgs e)
-		{
-			var oldVal = e.OldValue == DependencyProperty.UnsetValue ? 0 : (int)e.OldValue;
-			var newVal = e.NewValue == DependencyProperty.UnsetValue ? 0 : (int)e.NewValue;
-			if (TaskTargetPointChanged != null)
-				TaskTargetPointChanged(oldVal, newVal);
-			if (IsSameQtyForActivitiesSelected)
-			{
-				foreach (var process in ProcessList)
-				{
-					process.TargetPoint = newVal;
-				}
-			}
-			Model.TaskTargetPoint = newVal;
-		}
-		void isSameTimeForActivitiesSelectedChanged(bool newVal)
-		{
-			if (newVal)
-			{
-				//IsSameQtyForActivitiesSelected = false;
-				//IsDeferToActivitiesSelected = false;
-				foreach (var process in ProcessList)
-				{
-					process.DurationSeconds = (int)SameTimeForActivities.TotalSeconds;
-				}
-			}
-		}
-		void isSameQtyForActivitiesSelectedChanged(bool newVal)
-		{
-			if (newVal)
-			{
-				//IsSameTimeForActivitiesSelected = false;
-				//IsDeferToActivitiesSelected = false;
-				SameQtyForActivities = TaskTargetPoint;
-				foreach (var process in ProcessList)
-				{
-					process.TargetPoint = SameQtyForActivities;
-				}
-			}
-		}
-		void isDeferToActivitiesSelectedChanged(bool newVal)
-		{
-			if (newVal)
-			{
-				//IsSameTimeForActivitiesSelected = false;
-				//IsSameQtyForActivitiesSelected = false;
-			}
-			foreach (var process in ProcessList)
-			{
-				process.DoesParentDeferToActivities = newVal;
-			}
-		}
-		void sameTimeForActivitiesChanged(TimeSpan newVal)
-		{
-			foreach (var process in ProcessList)
-			{
-				process.DurationSeconds = (int)newVal.TotalSeconds;
-			}
-			DurationSeconds = (int)newVal.TotalSeconds;
-		}
-		void sameQtyForActivitiesChanged(int newVal)
-		{
-			foreach (var process in ProcessList)
-			{
-				process.TargetPoint = newVal;
-			}
-		}
 
-		#endregion
-
-		#region Time/Qty Propdps (no code)
-		//StartDate Dependency Property
+		#region Time/Qty Propdps
+		/// <summary>
+		/// Gets or sets the bindable StartDate of this task
+		/// <para>Changing the value updates StartDateTime of model and EndDateTime</para>
+		/// </summary>
 		public DateTime StartDate
 		{
 			get { return ((DateTime)GetValue(StartDateProperty)); }
@@ -305,24 +216,48 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = (PPEditorTask)d;
 				var val = (DateTime)e.NewValue;
 				vm.Model.StartDateTime = val.Add(vm.StartTime);
-				vm.Model.EndDateTime = vm.Model.StartDateTime.AddSeconds(vm.DurationSeconds);
+				vm.EndDateTime = vm.Model.StartDateTime.AddSeconds(vm.DurationSeconds);
 			}));
-		//StartTime Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable StartTime of this task
+		/// <para>Changing the value updates StartDateTime of model and EndDateTime</para>
+		/// </summary>
 		public TimeSpan StartTime
 		{
 			get { return (TimeSpan)GetValue(StartTimeProperty); }
 			set { SetValue(StartTimeProperty, value); }
 		}
 		public static readonly DependencyProperty StartTimeProperty =
-			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(PPEditorTask), 
+			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(PPEditorTask),
 			new PropertyMetadata(DateTime.Now.TimeOfDay, (d, e) =>
 			{
 				var vm = (PPEditorTask)d;
 				var val = (TimeSpan)e.NewValue;
 				vm.Model.StartDateTime = vm.StartDate.Add(val);
-				vm.Model.EndDateTime = vm.Model.StartDateTime.AddSeconds(vm.DurationSeconds);
+				vm.EndDateTime = vm.Model.StartDateTime.AddSeconds(vm.DurationSeconds);
 			}));
-		//durations
+		/// <summary>
+		/// Gets or sets the bindable EndDateTime of this task
+		/// <para>Changing the value updates EndDateTime of model</para>
+		/// </summary>
+		public DateTime EndDateTime
+		{
+			get { return (DateTime)GetValue(EndDateTimeProperty); }
+			set { SetValue(EndDateTimeProperty, value); }
+		}
+		public static readonly DependencyProperty EndDateTimeProperty =
+			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(PPEditorTask),
+			new UIPropertyMetadata(DateTime.Now, (d, e) =>
+			{
+				var vm = (PPEditorTask)d;
+				var val = (DateTime)e.NewValue;
+				vm.Model.EndDateTime = val;
+			}));
+
+		/// <summary>
+		/// Gets or sets the bindable DurationSeconds of this task
+		/// <para>Changing the value updates DurationSeconds of model and EndDateTime, also fires TaskDurationChanged</para>
+		/// </summary>
 		public int DurationSeconds
 		{
 			get { return (int)GetValue(DurationSecondsProperty); }
@@ -330,13 +265,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty DurationSecondsProperty =
 			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(PPEditorTask),
-			new UIPropertyMetadata(0, (d, e) => d.SetValue(DurationProperty, new TimeSpan((int)e.NewValue * TimeSpan.TicksPerSecond))));
+			new UIPropertyMetadata(0, (d, e) => d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue))));
 		public static readonly DependencyProperty DurationProperty =
 			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPEditorTask),
 			new UIPropertyMetadata(TimeSpan.Zero, (d, e) => ((PPEditorTask)d).durationChanged(e)));
-		//End DateTime
-		public DateTime EndDateTime { get { return StartDate.Add(StartTime).AddSeconds(DurationSeconds); } }
-		//TaskTargetPoint Dependency Property
+
+		/// <summary>
+		/// Gets or sets the bindable TaskTargetPoint of this task
+		/// </summary>
 		public int TaskTargetPoint
 		{
 			get { return (int)GetValue(TaskTargetPointProperty); }
@@ -345,6 +281,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty TaskTargetPointProperty =
 			DependencyProperty.Register("TaskTargetPoint", typeof(int), typeof(PPEditorTask),
 			new PropertyMetadata(0, (d, e) => ((PPEditorTask)d).taskTargetPointChanged(e)));
+		
 		//IsSameTimeForActivitiesSelected Dependency Property
 		public bool IsSameTimeForActivitiesSelected
 		{
@@ -372,7 +309,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty IsDeferToActivitiesSelectedProperty =
 			DependencyProperty.Register("IsDeferToActivitiesSelected", typeof(bool), typeof(PPEditorTask),
-			new UIPropertyMetadata(false, (d, e) => ((PPEditorTask)d).isDeferToActivitiesSelectedChanged((bool)e.NewValue)));
+			new UIPropertyMetadata(false));
 		//SameTimeForActivities Dependency Property
 		public TimeSpan SameTimeForActivities
 		{
@@ -381,7 +318,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SameTimeForActivitiesProperty =
 			DependencyProperty.Register("SameTimeForActivities", typeof(TimeSpan), typeof(PPEditorTask),
-			new UIPropertyMetadata(new TimeSpan(1, 0, 0), (d, e) => ((PPEditorTask)d).sameTimeForActivitiesChanged((TimeSpan)e.NewValue)));
+			new UIPropertyMetadata(TimeSpan.FromHours(1), (d, e) => ((PPEditorTask)d).sameTimeForActivitiesChanged((TimeSpan)e.NewValue)));
 		//SameQtyForActivities Dependency Property
 		public int SameQtyForActivities
 		{
@@ -392,6 +329,121 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("SameQtyForActivities", typeof(int), typeof(PPEditorTask),
 			new UIPropertyMetadata(0, (d, e) => ((PPEditorTask)d).sameQtyForActivitiesChanged((int)e.NewValue)));
 		#endregion
+
+		#region Time/Qty codes
+		/// <summary>
+		/// Updates DurationSeconds of model and EndDateTime, also fires TaskDurationChanged
+		/// </summary>
+		/// <param name="e"></param>
+		void durationChanged(DependencyPropertyChangedEventArgs e)
+		{
+			var oldVal = e.OldValue == DependencyProperty.UnsetValue ? TimeSpan.Zero : (TimeSpan)e.OldValue;
+			var newVal = e.NewValue == DependencyProperty.UnsetValue ? TimeSpan.Zero : (TimeSpan)e.NewValue;
+
+			//Update DurationSeconds of model
+			Model.DurationSeconds = (int)newVal.TotalSeconds;
+
+			//update EndDateTime
+			EndDateTime = Model.StartDateTime.AddSeconds((int)newVal.TotalSeconds);
+
+			//fire event
+			if (TaskDurationChanged != null)
+				TaskDurationChanged(oldVal, newVal);
+		}
+		/// <summary>
+		/// Updates TaskTargetPoint of model and fires TaskTargetPointChanged
+		/// </summary>
+		/// <param name="e"></param>
+		void taskTargetPointChanged(DependencyPropertyChangedEventArgs e)
+		{
+			var oldVal = e.OldValue == DependencyProperty.UnsetValue ? 0 : (int)e.OldValue;
+			var newVal = e.NewValue == DependencyProperty.UnsetValue ? 0 : (int)e.NewValue;
+
+			//update TaskTargetPoint of model
+			Model.TaskTargetPoint = newVal;
+
+			//fire event
+			if (TaskTargetPointChanged != null)
+				TaskTargetPointChanged(oldVal, newVal);
+		}
+		/// <summary>
+		/// Updates TargetPoint of all processes in which a valid choice is selected
+		/// </summary>
+		/// <param name="newVal"></param>
+		void isSameTimeForActivitiesSelectedChanged(bool newVal)
+		{
+			if (newVal)
+			{
+				foreach (var process in ProcessList)
+				{
+					process.HoldEvents = true;
+					if (process.SelectedChoice != null)
+						process.TargetPoint = (int)Math.Floor(SameTimeForActivities.TotalSeconds / process.SelectedChoice.CycleTime);
+					process.HoldEvents = false;
+				}
+				DurationSeconds = (int)SameTimeForActivities.TotalSeconds;
+			}
+		}
+		/// <summary>
+		/// Updates TargetPoint of all processes in which a valid choice is selected
+		/// <para>Does not take effect unless IsSameTimeForActivitiesSelected is set to true</para>
+		/// </summary>
+		/// <param name="newVal"></param>
+		void sameTimeForActivitiesChanged(TimeSpan newVal)
+		{
+			if (IsSameTimeForActivitiesSelected)
+			{
+				foreach (var process in ProcessList)
+				{
+					process.HoldEvents = true;
+					if (process.SelectedChoice != null)
+						process.TargetPoint = (int)Math.Floor(SameTimeForActivities.TotalSeconds / process.SelectedChoice.CycleTime);
+					process.HoldEvents = false;
+				}
+				DurationSeconds = (int)newVal.TotalSeconds;
+			}
+		}
+
+
+		/// <summary>
+		/// Updates TargetPoint of all processes
+		/// </summary>
+		/// <param name="newVal"></param>
+		void isSameQtyForActivitiesSelectedChanged(bool newVal)
+		{
+			if (newVal)
+			{
+				foreach (var process in ProcessList)
+				{
+					process.HoldEvents = true;
+					process.TargetPoint = SameQtyForActivities;
+					process.HoldEvents = false;
+				}
+				TaskTargetPoint = SameQtyForActivities;
+			}
+		}
+		/// <summary>
+		/// Updates TargetPoint of all processes
+		/// <para>Does not take effect unless IsSameQtyForActivitiesSelected is set to true</para>
+		/// </summary>
+		/// <param name="newVal"></param>
+		void sameQtyForActivitiesChanged(int newVal)
+		{
+			if (IsSameQtyForActivitiesSelected)
+			{
+				foreach (var process in ProcessList)
+				{
+					process.HoldEvents = true;
+					process.TargetPoint = newVal;
+					process.HoldEvents = false;
+				}
+				TaskTargetPoint = newVal;
+			}
+		}
+
+		#endregion
+
+		
 
 		#region Commands
 		void initializeCommands()
@@ -449,14 +501,5 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("CancelDeleteTaskCommand", typeof(Commands.Command), typeof(PPEditorTask), new UIPropertyMetadata(null)); 
 		#endregion
 
-		internal void ForceCalculateDuration()
-		{
-			DurationSeconds = 0;
-			foreach (var process in ProcessList)
-			{
-				DurationSeconds = Math.Max(DurationSeconds, process.SelectedChoice == null ? 0
-					: (int)Math.Floor(process.TargetPoint * process.SelectedChoice.CycleTime));
-			}
-		}
 	}
 }

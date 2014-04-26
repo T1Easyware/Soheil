@@ -171,5 +171,10 @@ namespace Soheil.Core.DataServices
 			}
 			return GetActives();
 		}
-    }
+
+		internal int GetNextIndex()
+		{
+			return _stationRepository.GetAll().Max(x => x.Index)+1;
+		}
+	}
 }

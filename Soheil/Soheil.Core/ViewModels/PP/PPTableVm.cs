@@ -484,7 +484,7 @@ namespace Soheil.Core.ViewModels.PP
 			protected set { SetValue(HourZoomProperty, value); }
 		}
 		public static readonly DependencyProperty HourZoomProperty =
-			DependencyProperty.Register("HourZoom", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(36d, (d, e) => { ((PPTableVm)d).UpdateRange(false); }));
+			DependencyProperty.Register("HourZoom", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(100d, (d, e) => { ((PPTableVm)d).UpdateRange(false); }));
 		/// <summary>
 		/// Gets bindable Number of days in currect active year
 		/// </summary>
@@ -944,7 +944,7 @@ namespace Soheil.Core.ViewModels.PP
 			protected set { SetValue(ShowInsertSetupButtonProperty, value); }
 		}
 		public static readonly DependencyProperty ShowInsertSetupButtonProperty =
-			DependencyProperty.Register("ShowInsertSetupButton", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(true));
+			DependencyProperty.Register("ShowInsertSetupButton", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(false));
 		#endregion
 
 	}

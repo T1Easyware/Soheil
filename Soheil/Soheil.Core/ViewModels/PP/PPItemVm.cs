@@ -61,7 +61,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DurationSecondsProperty =
 			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(PPItemVm),
-			new UIPropertyMetadata(0, (d, e) => d.SetValue(DurationProperty, new TimeSpan((int)e.NewValue * TimeSpan.TicksPerSecond))));
+			new UIPropertyMetadata(0, (d, e) => d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue))));
 		//ViewMode Dependency Property
 		public PPViewMode ViewMode
 		{

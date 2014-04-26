@@ -163,7 +163,7 @@
 					<TextBlock DockPanel.Dock="Left" VerticalAlignment="Center"
 							   Foreground="Black"
 							   Text="{Binding Name}" Opacity="{Binding TextOpacity}"/>
-					<Button DockPanel.Dock="Right" Command="{Binding SelectCommand}" Width="32" Margin="0" Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=0}">
+					<Button DockPanel.Dock="Right" Command="{Binding State.SelectCommand}" Width="32" Margin="0" Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=0}">
 						<Image Style="{StaticResource Add16Image}"/>
 					</Button>
 				</DockPanel>
