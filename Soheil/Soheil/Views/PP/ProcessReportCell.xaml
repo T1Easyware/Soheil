@@ -62,9 +62,6 @@
 				<ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource tooltip}"/>
 			</StackPanel>
 		</Border.ToolTip>
-		<Border.Effect>
-			<DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
-		</Border.Effect>
 		<Border.ContextMenu>
 			<ContextMenu FlowDirection="RightToLeft">
 				<MenuItem Header="ریست نمودن گزارش فعالیت" Command="{Binding DeleteProcessReportCommand}"/>

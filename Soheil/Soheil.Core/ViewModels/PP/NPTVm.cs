@@ -14,6 +14,7 @@ namespace Soheil.Core.ViewModels.PP
 		public override int Id { get { return _model.Id; } }
 
 		public NPTVm(Model.NonProductiveTask model, PPItemCollection parent)
+			: base()
 		{
 			_model = model;
 			Parent = parent;

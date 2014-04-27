@@ -778,4 +778,7 @@
   <data name="PPE_StartOfThisHourTooltip" xml:space="preserve">
     <value>Beginning of the current hour (not the entered time)</value>
   </data>
+  <data name="ttCode" xml:space="preserve">
+    <value>Code</value>
+  </data>
 </root>

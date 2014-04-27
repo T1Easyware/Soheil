@@ -26,7 +26,10 @@
 			<Binding ElementName="root" Path="PPTable.HourZoom"/>
 		</MultiBinding>
 	</UserControl.Width>
-	<Border Background="{Binding ProductColor, Converter={StaticResource colorFixer}}" BorderBrush="Black" BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="40" Margin="0,1">
+	<Border Background="{Binding ProductColor, Converter={StaticResource colorFixer}}" BorderBrush="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}" BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="40" Margin="0,1"
+			ToolTipService.ShowDuration="60000" ToolTipService.InitialShowDelay="100" ToolTipService.HasDropShadow="True">
+		
+		<!-- RightClick menu -->
 		<Border.ContextMenu>
 			<ContextMenu FlowDirection="RightToLeft">
 				<MenuItem Header="گزارش" Command="{Binding EditReportCommand}"/>
@@ -41,73 +44,119 @@
 				<MenuItem Header="حذف Job" Command="{Binding DeleteJobCommand}"/>
 			</ContextMenu>
 		</Border.ContextMenu>
-		<Border.Effect>
-			<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}"/>
-		</Border.Effect>
+		
+		<!-- Block Tooltip -->
 		<Border.ToolTip>
 			<StackPanel Margin="2" FlowDirection="RightToLeft">
-				<TextBlock Text="{Loc ttBlock}" HorizontalAlignment="Center"/>
+				<StackPanel.Resources>
+					<Style x:Key="headers" TargetType="TextBlock">
+						<Setter Property="Foreground" Value="Gray"/>
+						<Setter Property="Margin" Value="0,11,0,0"/>
+						<Setter Property="FontSize" Value="12"/>
+					</Style>
+					<Style x:Key="titles" TargetType="TextBlock">
+						<Setter Property="Foreground" Value="Gray"/>
+						<Setter Property="Margin" Value="4,0"/>
+						<Setter Property="FontSize" Value="12"/>
+						<Setter Property="VerticalAlignment" Value="Center"/>
+					</Style>
+					<Style TargetType="TextBlock">
+						<Setter Property="Foreground" Value="Black"/>
+						<Setter Property="Margin" Value="4,0"/>
+						<Setter Property="VerticalAlignment" Value="Center"/>
+						<Setter Property="HorizontalAlignment" Value="Right"/>
+						<Setter Property="FontSize" Value="14"/>
+						<Setter Property="FontWeight" Value="Bold"/>
+					</Style>
+				</StackPanel.Resources>
+
+				<TextBlock Text="{Loc txtProductPlan}" Style="{StaticResource headers}" Margin="0"/>
 				<Separator/>
 				
 				<DockPanel>
-					<Image Style="{StaticResource TaskImage}" Margin="4,0"/>
-					<TextBlock Text="{Loc txtCode}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding Code}" VerticalAlignment="Center" Margin="4,0"/>
+					<Image Style="{StaticResource TaskImage}"/>
+					<TextBlock Text="{Loc ttCode}" Style="{StaticResource titles}"/>
+					<TextBlock Text="{Loc ttBlock}" Style="{StaticResource titles}"/>
+					<TextBlock Text="{Binding Model.Code}" FlowDirection="LeftToRight"/>
 				</DockPanel>
+				<StackPanel Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}">
+					<DockPanel>
+						<Image Style="{StaticResource JobImage}"/>
+						<TextBlock Text="{Loc ttHasJob}" Style="{StaticResource titles}"/>
+						<TextBlock Text="{Binding Job.Code}" FlowDirection="LeftToRight"/>
+					</DockPanel>
+					<DockPanel>
+						<TextBlock Text="{Loc txtDescription}" Style="{StaticResource titles}"/>
+						<TextBlock Text="{Binding Job.Description}"/>
+					</DockPanel>
+				</StackPanel>
 
-				<DockPanel Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}">
-					<Image Style="{StaticResource JobImage}" Margin="4,0"/>
-					<TextBlock Text="{Loc ttHasJob}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding Job.Description}" VerticalAlignment="Center" Margin="4,0"/>
-				</DockPanel>
-
-				<DockPanel>
-					<TextBlock Text="{Loc txtStartDate}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding StartDateTime}" VerticalAlignment="Center" Margin="4,0"/>
-				</DockPanel>
-				<DockPanel>
-					<TextBlock Text="{Loc txtEndDate}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding EndDateTime}" VerticalAlignment="Center" Margin="4,0"/>
-				</DockPanel>
-				
-				<DockPanel>
-					<Image Style="{StaticResource ReworkImage}" Margin="4,0" Visibility="{Binding IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
-					<TextBlock Text="{Binding ProductCode}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding ProductName}" VerticalAlignment="Center" Margin="4,0"/>
-				</DockPanel>
-				
+				<TextBlock Text="{Loc txtTime}" Style="{StaticResource headers}"/>
 				<Separator/>
 
 				<DockPanel>
-					<Image Style="{StaticResource TargetPointImage}" Margin="4,0" VerticalAlignment="Center"/>
-					<TextBlock Text="{Loc txtTargetPoint}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding BlockTargetPoint}" VerticalAlignment="Center" Margin="4,0"/>
+					<TextBlock Text="{Loc txtStartDate}" Style="{StaticResource titles}"/>
+					<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
 				</DockPanel>
 				<DockPanel>
-					<Image Style="{StaticResource ProducedG1Image}" Margin="4,0" VerticalAlignment="Center"/>
-					<TextBlock Text="{Loc txtProducedG1}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding BlockProducedG1}" VerticalAlignment="Center" Margin="4,0"/>
+					<TextBlock Text="{Loc txtEndDate}" Style="{StaticResource titles}"/>
+					<TextBlock Text="{Binding Model.EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+				</DockPanel>
+				<DockPanel>
+					<TextBlock Text="{Loc txtDuration}" Style="{StaticResource titles}"/>
+					<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
 				</DockPanel>
 
+				<TextBlock Text="{Loc txtProduct}" Style="{StaticResource headers}"/>
+				<Separator/>
+				
+				<DockPanel LastChildFill="False">
+					<TextBlock Text="{Binding ProductName}" DockPanel.Dock="Left"/>
+					<TextBlock Text="{Binding ProductCode}" DockPanel.Dock="Right" FlowDirection="LeftToRight"/>
+				</DockPanel>
+				<DockPanel LastChildFill="False" Visibility="{Binding IsRework, Converter={StaticResource booleanToVisibilityConverter}}">
+					<Image Style="{StaticResource ReworkImage}" DockPanel.Dock="Left"/>
+					<TextBlock Text="{Binding Model.StateStation.State.OnProductRework.Rework.Name}" DockPanel.Dock="Left"/>
+					<TextBlock Text="{Binding Model.StateStation.State.OnProductRework.Rework.Code}" DockPanel.Dock="Right" FlowDirection="LeftToRight"/>
+				</DockPanel>
+
+				<TextBlock Text="{Loc txtProductPlan}" Style="{StaticResource headers}"/>
+				<Separator/>
+
+				<DockPanel>
+					<Image Style="{StaticResource TargetPointImage}"/>
+					<TextBlock Text="{Loc txtTargetPoint}" Style="{StaticResource titles}"/>
+					<TextBlock Text="{Binding BlockTargetPoint}"/>
+				</DockPanel>
+				<DockPanel>
+					<Image Style="{StaticResource ProducedG1Image}"/>
+					<TextBlock Text="{Loc txtProducedG1}" Style="{StaticResource titles}"/>
+					<TextBlock Text="{Binding BlockProducedG1}"/>
+				</DockPanel>
+
+				<TextBlock Text="{Loc txtReports}" Style="{StaticResource headers}"/>
+				<Separator/>
+				
 				<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}">
-					<Image Style="{StaticResource ReportWarningImage}" Margin="4,0"/>
-					<TextBlock Text="{Loc ttReportFillPercent}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding ReportFillPercent}" VerticalAlignment="Center" Margin="4,0"/>
+					<Image Style="{StaticResource ReportWarningImage}"/>
+					<TextBlock Text="{Loc ttReportFillPercent}" Style="{StaticResource titles}"/>
+					<TextBlock Text="{Binding ReportFillPercent}"/>
 				</DockPanel>
 				<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToVisibilityConverter}}">
-					<Image Style="{StaticResource ReportImage}" Margin="4,0"/>
-					<TextBlock Text="{Loc ttReportCompleted}" VerticalAlignment="Center"/>
+					<Image Style="{StaticResource ReportImage}"/>
+					<TextBlock Text="{Loc ttReportCompleted}"/>
 				</DockPanel>
 
 			</StackPanel>
 		</Border.ToolTip>
+		
 		<!-- main content -->
 		<Grid ClipToBounds="False" TextBlock.Foreground="{Binding ForeColor}">
 			<!-- block background texts -->
 			<WrapPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
-				<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}" Background="#4FA4">
-					<Image Style="{StaticResource ReportWarningImage}" DockPanel.Dock="Left"/>
+				<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}" Margin="0,0,2,0">
 					<TextBlock Text="{Binding ReportFillPercent}" Height="15" DockPanel.Dock="Left"/>
+					<Image Style="{StaticResource ReportWarningImage}" DockPanel.Dock="Left"/>
 				</DockPanel>
 				<Image Style="{StaticResource JobImage}" Margin="2,0" Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}"/>
 				<TextBlock Text="{Binding Code}" Height="16" Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}"/>
@@ -123,6 +172,7 @@
 					<TextBlock Text="{Binding BlockProducedG1}" Height="15"/>
 				</DockPanel>
 			</WrapPanel>
+			
 			<!-- task list inside a block -->
 			<ItemsControl ItemsSource="{Binding TaskList}">
 				<ItemsControl.ItemTemplate>
@@ -135,6 +185,112 @@
 									<Binding ElementName="root" Path="PPTable.HourZoom"/>
 								</MultiBinding>
 							</Border.Width>
+
+							<!-- Task Tooltip -->
+							<Border.ToolTip>
+								<StackPanel Margin="2" FlowDirection="RightToLeft">
+									<StackPanel.Resources>
+										<Style x:Key="headers" TargetType="TextBlock">
+											<Setter Property="Foreground" Value="Gray"/>
+											<Setter Property="Margin" Value="0,11,0,0"/>
+											<Setter Property="FontSize" Value="12"/>
+										</Style>
+										<Style x:Key="titles" TargetType="TextBlock">
+											<Setter Property="Foreground" Value="Gray"/>
+											<Setter Property="Margin" Value="4,0"/>
+											<Setter Property="FontSize" Value="12"/>
+											<Setter Property="VerticalAlignment" Value="Center"/>
+										</Style>
+										<Style TargetType="TextBlock">
+											<Setter Property="Foreground" Value="Black"/>
+											<Setter Property="Margin" Value="4,0"/>
+											<Setter Property="VerticalAlignment" Value="Center"/>
+											<Setter Property="HorizontalAlignment" Value="Right"/>
+											<Setter Property="FontSize" Value="14"/>
+											<Setter Property="FontWeight" Value="Bold"/>
+										</Style>
+									</StackPanel.Resources>
+
+									<TextBlock Text="{Loc txtProductPlan}" Style="{StaticResource headers}" Margin="0"/>
+									<Separator/>
+
+									<DockPanel>
+										<Image Style="{StaticResource TaskImage}"/>
+										<TextBlock Text="{Loc ttCode}" Style="{StaticResource titles}"/>
+										<TextBlock Text="{Loc ttBlock}" Style="{StaticResource titles}"/>
+										<TextBlock Text="{Binding Model.Code}" FlowDirection="LeftToRight"/>
+									</DockPanel>
+									<StackPanel Visibility="{Binding Job, Converter={StaticResource isNotNullToVisibility}}">
+										<DockPanel>
+											<Image Style="{StaticResource JobImage}"/>
+											<TextBlock Text="{Loc ttHasJob}" Style="{StaticResource titles}"/>
+											<TextBlock Text="{Binding Job.Code}" FlowDirection="LeftToRight"/>
+										</DockPanel>
+										<DockPanel>
+											<TextBlock Text="{Loc txtDescription}" Style="{StaticResource titles}"/>
+											<TextBlock Text="{Binding Job.Description}"/>
+										</DockPanel>
+									</StackPanel>
+
+									<TextBlock Text="{Loc txtTime}" Style="{StaticResource headers}"/>
+									<Separator/>
+
+									<DockPanel>
+										<TextBlock Text="{Loc txtStartDate}" Style="{StaticResource titles}"/>
+										<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+									</DockPanel>
+									<DockPanel>
+										<TextBlock Text="{Loc txtEndDate}" Style="{StaticResource titles}"/>
+										<TextBlock Text="{Binding Model.EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+									</DockPanel>
+									<DockPanel>
+										<TextBlock Text="{Loc txtDuration}" Style="{StaticResource titles}"/>
+										<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+									</DockPanel>
+
+									<TextBlock Text="{Loc txtProduct}" Style="{StaticResource headers}"/>
+									<Separator/>
+
+									<DockPanel LastChildFill="False">
+										<TextBlock Text="{Binding ProductName}" DockPanel.Dock="Left"/>
+										<TextBlock Text="{Binding ProductCode}" DockPanel.Dock="Right" FlowDirection="LeftToRight"/>
+									</DockPanel>
+									<DockPanel LastChildFill="False" Visibility="{Binding IsRework, Converter={StaticResource booleanToVisibilityConverter}}">
+										<Image Style="{StaticResource ReworkImage}" DockPanel.Dock="Left"/>
+										<TextBlock Text="{Binding Model.StateStation.State.OnProductRework.Rework.Name}" DockPanel.Dock="Left"/>
+										<TextBlock Text="{Binding Model.StateStation.State.OnProductRework.Rework.Code}" DockPanel.Dock="Right" FlowDirection="LeftToRight"/>
+									</DockPanel>
+
+									<TextBlock Text="{Loc txtProductPlan}" Style="{StaticResource headers}"/>
+									<Separator/>
+
+									<DockPanel>
+										<Image Style="{StaticResource TargetPointImage}"/>
+										<TextBlock Text="{Loc txtTargetPoint}" Style="{StaticResource titles}"/>
+										<TextBlock Text="{Binding BlockTargetPoint}"/>
+									</DockPanel>
+									<DockPanel>
+										<Image Style="{StaticResource ProducedG1Image}"/>
+										<TextBlock Text="{Loc txtProducedG1}" Style="{StaticResource titles}"/>
+										<TextBlock Text="{Binding BlockProducedG1}"/>
+									</DockPanel>
+
+									<TextBlock Text="{Loc txtReports}" Style="{StaticResource headers}"/>
+									<Separator/>
+
+									<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}">
+										<Image Style="{StaticResource ReportWarningImage}"/>
+										<TextBlock Text="{Loc ttReportFillPercent}" Style="{StaticResource titles}"/>
+										<TextBlock Text="{Binding ReportFillPercent}"/>
+									</DockPanel>
+									<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToVisibilityConverter}}">
+										<Image Style="{StaticResource ReportImage}"/>
+										<TextBlock Text="{Loc ttReportCompleted}"/>
+									</DockPanel>
+
+								</StackPanel>
+							</Border.ToolTip>
+							
 							<Border BorderBrush="WhiteSmoke" BorderThickness="0,0,1,0">
 								<Grid>
 									<!-- taskBackgroundTexts (TP, ProducedG1, OperCount) -->
@@ -174,6 +330,8 @@
 														</MultiBinding>
 													</Grid.Width>
 													<Border BorderThickness="1,0" BorderBrush="Silver">
+														
+														<!-- TaskReport tooltip -->
 														<Border.ToolTip>
 															<StackPanel>
 																<TextBlock Text="گزارش تولید"/>
@@ -231,7 +389,7 @@
 				</ItemsControl.ItemsPanel>
 			</ItemsControl>
 			<!-- Show Insert Setup Button -->
-			<Button Margin="-20,0" HorizontalAlignment="Left" ClipToBounds="False"  Command="{Binding InsertSetupBefore}">
+			<Button Margin="-20,0" HorizontalAlignment="Left" ClipToBounds="False" Command="{Binding InsertSetupBefore}">
 				<Button.Visibility>
 					<MultiBinding Converter="{StaticResource logicalAndToVisibility}">
 						<Binding ElementName="root" Path="PPTable.ShowInsertSetupButton"/>
@@ -279,9 +437,6 @@
 						<TextBlock Foreground="DarkGray" FontSize="10" Text="آیتمهایی که در این ایستگاه بعد از این آماده سازی قرار دارند، بطور خودکار در زمان جابجا می شوند"/>
 					</StackPanel>
 				</Button.ToolTip>
-				<Button.Effect>
-					<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}"/>
-				</Button.Effect>
 			</Button>
 		</Grid>
 

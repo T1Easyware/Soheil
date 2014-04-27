@@ -152,7 +152,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (bool)value ? Colors.Red : Colors.Black;
+			return new SolidColorBrush((bool)value ? Colors.Red : Colors.Black);
 		}
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
@@ -966,7 +966,24 @@ namespace Soheil.Controls.Converters.PP
 			Arash.PersianDate pDate = (Arash.PersianDate)value;
 			return pDate.ToDateTime();
 		}
-	} 
+	}
+
+	public class DateTimeToCompactConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (value == null) return null;
+			if (value == DependencyProperty.UnsetValue) return null;
+			var dt = (DateTime)value;
+			return dt.ToPersianCompactDateTimeString();
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 	#endregion
 
 }

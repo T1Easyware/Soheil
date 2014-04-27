@@ -936,8 +936,11 @@
                         <!--RowsOfActivity ItemsControl-->
                         <Grid>
                             <ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ProcessReportRows}" x:Name="ic_activitiesRows">
+								<ItemsControl.Effect>
+									<DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
+								</ItemsControl.Effect>
 
-                                <!-- ==================================== OneRowOfActivity ========================================= -->
+								<!-- ==================================== OneRowOfActivity ========================================= -->
                                 <ItemsControl.ItemTemplate>
 									<DataTemplate DataType="{x:Type report:ProcessReportRowVm}">
                                         <ItemsControl ItemsSource="{Binding ProcessReportCells}" Height="52">
@@ -1012,7 +1015,10 @@
                   
                     <!--Stations-->
                     <ItemsControl Grid.Row="6" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" IsHitTestVisible="False">
-                        <!--PPTable ItemTemplate-->
+						<ItemsControl.Effect>
+							<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="White"/>
+						</ItemsControl.Effect>
+						<!--PPTable ItemTemplate-->
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:PPStationVm}">
                                 <DockPanel VerticalAlignment="Stretch" Height="42">
@@ -1048,7 +1054,10 @@
 					<!-- ************************************************************************************** -->
 					<!-- RowsOfItems(Blocks,NPTs) ItemsControl -->
 					<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}">
-                        <ItemsControl.ItemTemplate>
+						<ItemsControl.Effect>
+							<DropShadowEffect Opacity="0.3" ShadowDepth="0" Color="White"/>
+						</ItemsControl.Effect>
+						<ItemsControl.ItemTemplate>
 							<DataTemplate DataType="{x:Type vm:PPStationVm}">
 								<Canvas Height="42">
 									

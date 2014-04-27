@@ -637,6 +637,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to کد.
+        /// </summary>
+        public static string ttCode {
+            get {
+                return ResourceManager.GetString("ttCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to جزئی از Job.
         /// </summary>
         public static string ttHasJob {

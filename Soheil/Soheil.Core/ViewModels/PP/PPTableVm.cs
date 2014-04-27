@@ -235,7 +235,7 @@ namespace Soheil.Core.ViewModels.PP
 					}
 
 					//Loads PPItems
-					UpdateRange(true);
+					GoToNowCommand.Execute(null);
 					BackupZoom();
 				})), null, _initialTimerInterval, System.Threading.Timeout.Infinite);
 		}

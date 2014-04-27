@@ -36,6 +36,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="parent"></param>
 		/// <param name="stationIndex"></param>
         public BlockVm(Model.Block model, PPItemCollection parent, int stationIndex)
+			: base()
 		{
 			Model = model;
             Parent = parent;

@@ -82,7 +82,8 @@
 	<ppconv:DateToLocalStringConverter x:Key="dateToLocalStringConverter"/>
 	<ppconv:DateToTimeStringConverter x:Key="dateToTimeStringConverter"/>
 	<ppconv:DateToPersianDateConverter x:Key="dateToPersianDateConverter"/>
-
+	<ppconv:DateTimeToCompactConverter x:Key="dateTimeToCompactConverter"/>
+	
 	<SolidColorBrush x:Key="stationBorderBrush" Color="Silver"/>
 	<SolidColorBrush x:Key="activityBorderBrush" Color="Silver"/>
 	<SolidColorBrush x:Key="activityBackBrush" Color="#677"/>

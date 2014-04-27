@@ -783,4 +783,7 @@
   <data name="PPE_StartOfThisHourTooltip" xml:space="preserve">
     <value>ابتدای همین ساعت (زمان وارد شده مد نظر نمی باشد)</value>
   </data>
+  <data name="ttCode" xml:space="preserve">
+    <value>کد</value>
+  </data>
 </root>

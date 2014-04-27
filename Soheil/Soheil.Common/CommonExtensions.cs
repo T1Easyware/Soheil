@@ -27,6 +27,13 @@ namespace Soheil.Common
 				+ _persianCalendar.GetMonth(dateTime).ToString("00") + "/"
 				+ _persianCalendar.GetDayOfMonth(dateTime).ToString("00");
 		}
+		public static string ToPersianCompactDateTimeString(this DateTime dateTime)
+		{
+			return string.Format("{0} {1} - {2}:{3}:{4}", 
+				_persianCalendar.GetDayOfMonth(dateTime), 
+				dateTime.GetPersianMonth(), 
+				dateTime.Hour, dateTime.Minute, dateTime.Second);
+		}
 		public static DateTime ToPersianDate(this string dtString)
 		{
 			return DateTime.Now;//???
@@ -78,7 +85,7 @@ namespace Soheil.Common
 		#region Color, Point
 		public static bool IsDark(this System.Windows.Media.Color color)
 		{
-			return (Math.Max(Math.Max(color.R, color.G), color.B) + Math.Min(Math.Min(color.R, color.G), color.B) < 220);
+			return (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) < 128;
 		}
 		public static Point SubtractPoint(this Point first, Point second) { return new Point(first.X - second.X, first.Y - second.Y); }
 		#endregion
