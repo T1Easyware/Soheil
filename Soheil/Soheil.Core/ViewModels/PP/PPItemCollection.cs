@@ -23,21 +23,20 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Members, props, consts
 		public PPTableVm PPTable { get; private set; }
+
+		Dal.SoheilEdmContext _uow;
+		DataServices.BlockDataService _blockDataService;
+
 		System.ComponentModel.BackgroundWorker _backgroundWorker;
 
 		DateTime _rangeStart;
 		DateTime _rangeEnd;
 
-		//DataServices
-		public DataServices.NPTDataService NPTDataService { get { return PPTable.NPTDataService; } }
-		public DataServices.BlockDataService BlockDataService { get { return PPTable.BlockDataService; } }
-		public DataServices.JobDataService JobDataService { get { return PPTable.JobDataService; } }
-
 		private object _lockObject;
 		/// <summary>
 		/// Number of milliseconds to sleep when loading each item
 		/// </summary>
-		private const int _workerSleepTime = 50;
+		private const int _workerSleepTime = 40;
 		/// <summary>
 		/// Number of hours to add to the startRange when loading items
 		/// </summary>
@@ -134,6 +133,9 @@ namespace Soheil.Core.ViewModels.PP
 		/// <remarks>This method uses a background worker to load items asynchronously</remarks>
 		public void Reload()
 		{
+			_uow = new Dal.SoheilEdmContext();
+			_blockDataService = new DataServices.BlockDataService(_uow);
+
 			if(_backgroundWorker!=null)
 			{
 				_backgroundWorker.CancelAsync();
@@ -176,7 +178,7 @@ namespace Soheil.Core.ViewModels.PP
 					//load blocks within the modified range
 					var rangeStart = _rangeStart.AddHours(_startHourMargin);
 					var rangeEnd = _rangeEnd.AddHours(_endHourMargin);
-					var blockIds = BlockDataService.GetIdsInRange(rangeStart, rangeEnd).ToArray();
+					var blockIds = new DataServices.BlockDataService(_uow).GetIdsInRange(rangeStart, rangeEnd).ToArray();
 
 					//change the background worker's progress for each block in the range
 					foreach (var blockId in blockIds)
@@ -187,7 +189,7 @@ namespace Soheil.Core.ViewModels.PP
 							{
 								System.Threading.Thread.Sleep(_workerSleepTime);
 								//load full data
-								var data = new BlockFullData(BlockDataService, blockId);
+								var data = new BlockFullData(blockId);
 								//load vm thru worker
 								worker.ReportProgress(1, data);
 								err = false;
@@ -195,14 +197,14 @@ namespace Soheil.Core.ViewModels.PP
 							catch { }
 					}
 
-					//load npts within the modified range
-					var nptModels = NPTDataService.GetInRange(rangeStart, rangeEnd).ToArray();
+					//load npt Ids within the modified range
+					var nptIds = new DataServices.NPTDataService(_uow).GetIdsInRange(rangeStart, rangeEnd).ToArray();
 
 					//change the background worker's progress for each npt in the range
-					foreach (var npt in nptModels)
+					foreach (var nptId in nptIds)
 					{
 						System.Threading.Thread.Sleep(_workerSleepTime);
-						worker.ReportProgress(2, npt);
+						worker.ReportProgress(2, nptId);
 					}
 				}
 			}
@@ -233,18 +235,13 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						var data = e.UserState as BlockFullData;
 						if (BlockFullData.IsNull(data)) return;
-
-						var vm = AddItem(data.Model);
-						vm.Reload(data);
+						var vm = AddItem(data);
 					}
 					//add npts to Vm within range
 					else if (e.ProgressPercentage == 2)
 					{
-						var npt = e.UserState as Model.NonProductiveTask;
-						var vm = AddNPT(npt);
-
-						//fill the vm from npt model
-						NPTDataService.UpdateViewModel(vm);
+						var nptId = (int)e.UserState;
+						var vm = AddNPT(nptId);
 						vm.ViewMode = ViewMode;
 					}
 
@@ -321,44 +318,44 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		public BlockVm FindItem(Model.Block model)
-		{
-			try
-			{
-				return GetRowContaining(model).FirstOrDefault(x => x.Id == model.Id);
-			}
-			catch { return null; }
-		} 
+		//public BlockVm FindItem(Model.Block model)
+		//{
+		//	try
+		//	{
+		//		return GetRowContaining(model).FirstOrDefault(x => x.Id == model.Id);
+		//	}
+		//	catch { return null; }
+		//} 
 		/// <summary>
 		/// Searches in all stations for an existing BlockVm
 		/// <para>Slow - not recommended for bottlenecks, use FindItem instead</para>
 		/// </summary>
 		/// <param name="id">Id of Block to find</param>
 		/// <returns>ViewModel of block from this collection</returns>
-		public BlockVm FindBlockById(int id)
-		{
-			foreach (var row in this)
-			{
-				var block = row.Blocks.FirstOrDefault(y => y.Id == id);
-				if (block != null) return block;
-			}
-			return null;
-		}
+		//public BlockVm FindBlockById(int id)
+		//{
+		//	foreach (var row in this)
+		//	{
+		//		var block = row.Blocks.FirstOrDefault(y => y.Id == id);
+		//		if (block != null) return block;
+		//	}
+		//	return null;
+		//}
 		/// <summary>
 		/// Searches in all stations for existing instances of <see cref="BlockVm"/> that are part of the given job
 		/// <para>Slow - not recommended for bottlenecks, use FindItem instead</para>
 		/// </summary>
 		/// <param name="id">Id of a job</param>
 		/// <returns>collection of BlockVms from this collection</returns>
-		public IEnumerable<BlockVm> FindBlocksByJobId(int id)
-		{
-			List<BlockVm> blocks = new List<BlockVm>();
-			foreach (var row in this)
-			{
-				blocks.AddRange(row.Blocks.Where(y => y.Id == id));
-			}
-			return blocks;
-		}
+		//public IEnumerable<BlockVm> FindBlocksByJobId(int id)
+		//{
+		//	List<BlockVm> blocks = new List<BlockVm>();
+		//	foreach (var row in this)
+		//	{
+		//		blocks.AddRange(row.Blocks.Where(y => y.Id == id));
+		//	}
+		//	return blocks;
+		//}
 		/// <summary>
 		/// Adds a new BlockVm to this collection with the given model and sets all its commands
 		/// </summary>
@@ -367,27 +364,26 @@ namespace Soheil.Core.ViewModels.PP
 		/// <para>converts the model into VM and adds it to that row</para>
 		/// <para>returns the VM</para>
 		/// </remarks>
-		/// <param name="model"></param>
+		/// <param name="data">full data fetched from database, UOW of which will be Block's</param>
 		/// <returns></returns>
-		public BlockVm AddItem(Model.Block model)
+		public BlockVm AddItem(BlockFullData data)
 		{
 			try
 			{
 				//find the container row of blocks
-				var container = GetRowContaining(model);
+				var container = GetRowContaining(data.Model);
 				//find any existing vm with same id
-				var currentVm = container.FirstOrDefault(x => x.Id == model.Id);
+				var currentVm = container.FirstOrDefault(x => x.Id == data.Model.Id);
 				//if already exist remove it
 				if (currentVm != null) container.Remove(currentVm);
 
 				//create viewmodel for the new block
-				var vm = new BlockVm(model, this, model.StateStation.Station.Index);
+				var vm = new BlockVm(data, this);
 
 				#region block commands
 				vm.ReloadBlockCommand = new Commands.Command(o =>
 				{
-					var data = new Soheil.Core.PP.BlockFullData(BlockDataService, vm.Id);
-					vm.Reload(data);
+					vm.Reload();
 
 					//check for selected things
 
@@ -469,7 +465,7 @@ namespace Soheil.Core.ViewModels.PP
 				vm.InsertSetupBefore = new Commands.Command(async o =>
 				{
 					//the following part is async version of "var result = tmp.InsertSetupBeforeTask(Id)"
-					var tmp = BlockDataService;
+					var tmp = _blockDataService;
 					var id = vm.Id;
 					var result = await Task.Run(() => tmp.InsertSetupBeforeBlock(id));
 
@@ -489,26 +485,28 @@ namespace Soheil.Core.ViewModels.PP
 		/// Removes a blockVm from this collection based on its Id
 		/// </summary>
 		/// <param name="model">model of block to remove (Id and Station are used)</param>
-		public void RemoveItem(Model.Block model)
-		{
-			try
-			{
-				GetRowContaining(model).RemoveWhere(x => x.Id == model.Id);
-			}
-			catch { }
-		}
+		//public void RemoveItem(Model.Block model)
+		//{
+		//	try
+		//	{
+		//		GetRowContaining(model).RemoveWhere(x => x.Id == model.Id);
+		//	}
+		//	catch { }
+		//}
 		/// <summary>
 		/// Removes a blockVm from this collection based on its Id
 		/// </summary>
 		/// <param name="vm">vm of block to remove (Id and RowIndex are used)</param>
 		public void RemoveItem(BlockVm vm)
 		{
+			if (vm == null) return;
 			try
 			{
-				if (vm != null && BlockRemoved != null) BlockRemoved(vm.Id);
+				_blockDataService.DeleteModel(vm.Model);
+				if (BlockRemoved != null) BlockRemoved(vm.Id);
 				this[vm.RowIndex].Blocks.RemoveWhere(x => x.Id == vm.Id);
 			}
-			catch { }
+			catch (Exception ex) { vm.Message.AddEmbeddedException(ex.Message); }
 		}
 
 		#endregion
@@ -519,38 +517,38 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		public ObservableCollection<NPTVm> GetRowContaining(Model.NonProductiveTask model)
-		{
-			if (model is Model.Setup)
-				return this[(model as Model.Setup).Warmup.Station.Index].NPTs;
-			else
-				throw new NotImplementedException();//???
-		}
+		//public ObservableCollection<NPTVm> GetRowContaining(Model.NonProductiveTask model)
+		//{
+		//	if (model is Model.Setup)
+		//		return this[(model as Model.Setup).Warmup.Station.Index].NPTs;
+		//	else
+		//		throw new NotImplementedException();//???
+		//}
 		/// <summary>
 		/// Finds an existing NPTVm in this collection
 		/// </summary>
 		/// <param name="id">id of npt</param>
 		/// <param name="stationIndex">index of station</param>
 		/// <returns></returns>
-		public NPTVm FindNPT(int id, int stationIndex)
-		{
-			return this[stationIndex].NPTs.FirstOrDefault(y => y.Id == id);
-		}
+		//public NPTVm FindNPT(int id, int stationIndex)
+		//{
+		//	return this[stationIndex].NPTs.FirstOrDefault(y => y.Id == id);
+		//}
 		/// <summary>
 		/// Searches in all stations for an existing NPTVm
 		/// <para>Slow - not recommended for bottlenecks, use FindItem instead</para>
 		/// </summary>
 		/// <param name="id">Id of NPT to find</param>
 		/// <returns>ViewModel of npt from this collection</returns>
-		public NPTVm FindNPTById(int id)
-		{
-			foreach (var row in this)
-			{
-				var npt = row.NPTs.FirstOrDefault(y => y.Id == id);
-				if (npt != null) return npt;
-			}
-			return null;
-		}
+		//public NPTVm FindNPTById(int id)
+		//{
+		//	foreach (var row in this)
+		//	{
+		//		var npt = row.NPTs.FirstOrDefault(y => y.Id == id);
+		//		if (npt != null) return npt;
+		//	}
+		//	return null;
+		//}
 		/// <summary>
 		/// Adds a new NPTVm to this collection with the given model
 		/// </summary>
@@ -561,26 +559,25 @@ namespace Soheil.Core.ViewModels.PP
 		/// </remarks>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		public NPTVm AddNPT(Model.NonProductiveTask model)
+		public NPTVm AddNPT(int nptId)
 		{
 			try
 			{
-				if (model is Model.Setup)
-				{
-					var setupModel = model as Model.Setup;
-					//find the container row of npts that this setup belongs to
-					var container = this[setupModel.Warmup.Station.Index].NPTs;
-					//find any existing setup vm that matches the Id
-					var currentVm = container.FirstOrDefault(x => x.Id == model.Id);
-					//if setup vm already exists remove it
-					if (currentVm != null) container.Remove(currentVm);
-					//create a new SetupVm
-					var vm = new SetupVm(setupModel, this);
-					//add it to container
-					container.Add(vm);
-					return vm;
-				}
-				else throw new NotImplementedException();//???
+				//if (model is Model.Setup)
+				//{
+				//create a new SetupVm
+				var vm = new SetupVm(nptId, this);
+				//find the container row of npts that this setup belongs to
+				var container = this[vm.RowIndex].NPTs;
+				//find any existing setup vm that matches the Id
+				var currentVm = container.FirstOrDefault(x => x.Id == nptId);
+				//if setup vm already exists remove it
+				if (currentVm != null) container.Remove(currentVm);
+				//add it to container
+				container.Add(vm);
+				return vm;
+				//}
+				//else throw new NotImplementedException();//???
 			}
 			catch { return null; }
 		}
@@ -588,20 +585,20 @@ namespace Soheil.Core.ViewModels.PP
 		/// Removes a NptVm from this collection based on its Id
 		/// </summary>
 		/// <param name="model">model of block to remove (Id and Station are used)</param>
-		public void RemoveNPT(Model.NonProductiveTask model)
-		{
-			try
-			{
-				if (model != null && NptRemoved != null) NptRemoved(model.Id);
-				if (model is Model.Setup)
-				{
-					var setupModel = model as Model.Setup;
-					this[setupModel.Warmup.Station.Index].NPTs.RemoveWhere(x => x.Id == setupModel.Id);
-				}
-				else throw new NotImplementedException();//???
-			}
-			catch { }
-		}
+		//public void RemoveNPT(Model.NonProductiveTask model)
+		//{
+		//	try
+		//	{
+		//		if (model != null && NptRemoved != null) NptRemoved(model.Id);
+		//		if (model is Model.Setup)
+		//		{
+		//			var setupModel = model as Model.Setup;
+		//			this[setupModel.Warmup.Station.Index].NPTs.RemoveWhere(x => x.Id == setupModel.Id);
+		//		}
+		//		else throw new NotImplementedException();//???
+		//	}
+		//	catch { }
+		//}
 		/// <summary>
 		/// Removes a nptVm from this collection based on its Id
 		/// </summary>

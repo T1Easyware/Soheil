@@ -55,8 +55,9 @@
 	<ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
 	<ppconv:StartEndToWidthConverter x:Key="StartEndToWidthConverter"/>
 	<ppconv:StartToMarginConverter x:Key="StartToMarginConverter"/>
+	<ppconv:BalloonVerticalMargin x:Key="balloonVerticalMargin"/>
 	<ppconv:testConverter x:Key="testConverter"/>
-
+	
 	<ppconv:IsEqualToBrushConverter x:Key="isEqualToBrushConverter"/>
 	<ppconv:ColorFixer x:Key="colorFixer"/>
 	<ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>

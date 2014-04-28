@@ -434,6 +434,22 @@ namespace Soheil.Controls.Converters.PP
 		}
 	}
 
+	public class BalloonVerticalMargin : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return new Thickness(0, 2, 0, 2);
+			int rowIndex = System.Convert.ToInt32(values[0]);
+			var startDt = (DateTime)values[1];
+			var oneHourWidth = (double)values[2];
+			return new Thickness(startDt.Subtract(startDt.GetNorooz()).TotalHours * oneHourWidth, rowIndex * 42, 0, 2);
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 	#endregion
 
@@ -826,7 +842,7 @@ namespace Soheil.Controls.Converters.PP
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = (TimeSpan)value;
 
-			return string.Format(culture, "{0:D2}:{1:D2}:{2:D2}", (int)ts.TotalHours, ts.Minutes, ts.Seconds);
+			return string.Format(culture, "{0:D2} : {1:D2} : {2:D2}", (int)ts.TotalHours, ts.Minutes, ts.Seconds);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -864,7 +880,7 @@ namespace Soheil.Controls.Converters.PP
 		{
 			if (value == DependencyProperty.UnsetValue) return "";
 			var ts = new TimeSpan(0, 0, System.Convert.ToInt32(value));
-			return string.Format(culture, "{0:D2}:{1:D2}:{2:D2}", (int)ts.TotalHours, ts.Minutes, ts.Seconds);
+			return string.Format(culture, "{0:D2} : {1:D2} : {2:D2}", (int)ts.TotalHours, ts.Minutes, ts.Seconds);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

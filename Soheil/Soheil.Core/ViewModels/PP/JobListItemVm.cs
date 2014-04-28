@@ -23,7 +23,8 @@ namespace Soheil.Core.ViewModels.PP
 		/// Creates an instance of JobListItemVm with the given model
 		/// </summary>
 		/// <param name="model">Product rework and Blocks in this job model are used</param>
-		public JobListItemVm(Model.Job model): base(model)
+		public JobListItemVm(Model.Job model)
+			: base(model)
 		{
 			initializeCommands();
 

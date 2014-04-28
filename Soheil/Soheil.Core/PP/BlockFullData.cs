@@ -8,13 +8,24 @@ namespace Soheil.Core.PP
 {
 	public class BlockFullData
 	{
-		private DataServices.BlockDataService BlockDataService;
-		public BlockFullData(DataServices.BlockDataService blockDataService, int blockId)
+		public Dal.SoheilEdmContext UOW { get; private set; }
+		public BlockFullData(int blockId)
 		{
-			this.BlockDataService = blockDataService;
-			Model = BlockDataService.GetSingleFull(blockId);
-			ReportData = BlockDataService.GetProductionReportData(Model);
-			CanAddSetupBefore = BlockDataService.CanAddSetupBeforeBlock(Model);
+			UOW = new Dal.SoheilEdmContext();
+			var blockDataService = new DataServices.BlockDataService(UOW);
+			Model = blockDataService.GetSingleFull(blockId);
+			ReportData = blockDataService.GetProductionReportData(Model);
+			CanAddSetupBefore = blockDataService.CanAddSetupBeforeBlock(Model);
+		}
+		/// <summary>
+		/// Reloads the block full data keeping the current UOW
+		/// </summary>
+		public void Reload()
+		{
+			var blockDataService = new DataServices.BlockDataService(UOW);
+			Model = blockDataService.GetSingleFull(Model.Id);
+			ReportData = blockDataService.GetProductionReportData(Model);
+			CanAddSetupBefore = blockDataService.CanAddSetupBeforeBlock(Model);
 		}
 
 		public static bool IsNull(BlockFullData instance)

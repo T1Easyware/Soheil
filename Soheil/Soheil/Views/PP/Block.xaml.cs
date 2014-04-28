@@ -67,7 +67,7 @@ namespace Soheil.Views.PP
 			var task = sender.GetDataContext<PPTaskVm>();
 			if (task != null)
 			{
-				task.ClearTaskReports();
+				task.TaskReports.Clear();
 			}
 		}
 	}

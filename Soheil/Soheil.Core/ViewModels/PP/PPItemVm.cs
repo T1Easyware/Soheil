@@ -19,6 +19,8 @@ namespace Soheil.Core.ViewModels.PP
 	/// </summary>
 	public abstract class PPItemVm : ViewModelBase
 	{
+		public event Action<DateTime> StartDateTimeChanged;
+		public event Action<int> DurationSecondsChanged;
 		protected PPItemVm() { Message = new EmbeddedException(); }
 
 		//Message Dependency Property
@@ -31,6 +33,9 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(PPItemVm), new UIPropertyMetadata(null));
 
 		#region Members
+
+		public Dal.SoheilEdmContext UOW { get; protected set; }
+
 		/// <summary>
 		/// Vertical Index of Item within its container 
 		/// <para>Could be station or SSA...</para>
@@ -44,24 +49,29 @@ namespace Soheil.Core.ViewModels.PP
 		public abstract int Id { get; }
 
 		//StartDateTime Dependency Property
-		public virtual DateTime StartDateTime
+		public DateTime StartDateTime
 		{
 			get { return (DateTime)GetValue(StartDateTimeProperty); }
 			set { SetValue(StartDateTimeProperty, value); }
 		}
 		public static readonly DependencyProperty StartDateTimeProperty =
-			DependencyProperty.Register("StartDateTime", typeof(DateTime), typeof(PPItemVm), new UIPropertyMetadata(DateTime.Now));
+			DependencyProperty.Register("StartDateTime", typeof(DateTime), typeof(PPItemVm),
+			new UIPropertyMetadata(DateTime.Now, (d, e) => 
+			{ if (((PPItemVm)d).StartDateTimeChanged != null) ((PPItemVm)d).StartDateTimeChanged((DateTime)e.NewValue); }));
 		//DurationSeconds Dependency Property
 		public static readonly DependencyProperty DurationProperty =
 			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPItemVm), new UIPropertyMetadata(TimeSpan.Zero));
-		public virtual int DurationSeconds
+		public int DurationSeconds
 		{
 			get { return (int)GetValue(DurationSecondsProperty); }
 			set { SetValue(DurationSecondsProperty, value); }
 		}
 		public static readonly DependencyProperty DurationSecondsProperty =
 			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(PPItemVm),
-			new UIPropertyMetadata(0, (d, e) => d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue))));
+			new UIPropertyMetadata(0, (d, e) =>{
+				d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue));
+				if (((PPItemVm)d).DurationSecondsChanged != null) ((PPItemVm)d).DurationSecondsChanged((int)e.NewValue);
+			}));
 		//ViewMode Dependency Property
 		public PPViewMode ViewMode
 		{

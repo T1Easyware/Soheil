@@ -341,8 +341,8 @@ namespace Soheil.Core.ViewModels.Fpc
 					var ssa = ((StateStationActivityVm)d);
 					if (e.Property == StateStationActivityVm.CycleTimeProperty || e.Property == StateStationActivityVm.ManHourProperty)
 					{
-						//check if no task is using this state
-						if (ssa.Model.StateStation.Blocks.Any())
+						//check if no process is using this SSA
+						if (ssa.Model.Processes.Any())
 						{
 							stateVm.ParentWindowVm.Message = new Common.SoheilException.DependencyMessageBox("این فعالیت در برنامه تولید استفاده شده است", "Error", MessageBoxButton.OK, Common.SoheilException.ExceptionLevel.Error);
 							return;

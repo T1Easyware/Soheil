@@ -29,13 +29,14 @@
 	<DataTemplate x:Key="balloonTemplate">
 		<Canvas>
 			<Canvas.Margin>
-				<MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
+				<MultiBinding Converter="{StaticResource balloonVerticalMargin}">
+					<Binding Path="RowIndex"/>
 					<Binding Path="StartDateTime"/>
 					<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
 				</MultiBinding>
 			</Canvas.Margin>
 			<Canvas DataContext="{Binding Message}" Width="0" Height="0" Margin="-20,-150,0,0" ClipToBounds="False" MouseDown="balloonClicked"
-							Visibility="{Binding HasException, Converter={StaticResource booleanToVisibilityConverter}}">
+					Visibility="{Binding HasException, Converter={StaticResource booleanToVisibilityConverter}}">
 				<Path x:Name="balloon" Width="183.667" Height="90.7315" Canvas.Left="1.49997" Canvas.Top="1.8334" Stretch="Fill"  MouseDown="balloonClicked"
 								Stroke="#4000" Fill="#FFB" Opacity="0.75" ClipToBounds="False"
 								Data="F1 M 6.99997,2.3334L 179.667,2.3334C 182.428,2.3334 184.667,4.57199 184.667,7.3334L 184.667,64.6667C 184.667,67.4282 182.428,69.6667 179.667,69.6667L 36.6112,69.6669L 44.5225,92.0649L 17.6166,69.6668L 6.99997,69.6667C 4.23854,69.6667 1.99997,67.4282 1.99997,64.6667L 1.99997,7.3334C 1.99997,4.57199 4.23854,2.3334 6.99997,2.3334 Z ">

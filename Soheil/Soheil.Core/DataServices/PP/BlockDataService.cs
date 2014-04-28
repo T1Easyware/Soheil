@@ -87,11 +87,13 @@ WHERE block.Id = @id";
 		public void DeleteModel(Block model)
 		{
 			var taskDataService = new TaskDataService(context);
-			foreach (var task in model.Tasks.ToArray())
+			var entity = _blockRepository.Single(x => x.Id == model.Id);
+			foreach (var task in entity.Tasks.ToArray())
 			{
 				taskDataService.DeleteModel(task);
 			}
-			_blockRepository.Delete(model);
+			_blockRepository.Delete(entity);
+			context.SaveChanges();
 		}
 
 		public void AttachModel(Block model)
@@ -199,13 +201,6 @@ WHERE block.Id = @id";
 				task.StartDateTime = time;
 				time = time.AddSeconds(task.DurationSeconds);
 				task.EndDateTime = time;
-
-				//fix processes
-				var emptyProcesses = task.Processes.Where(x => x.TargetCount == 0).ToArray();
-				foreach (var emptyProcess in emptyProcesses)
-				{
-					task.Processes.Remove(emptyProcess);
-				}
 
 				var invalidProcessGroup = task.Processes.GroupBy(p => p.StateStationActivity.Activity.Id).FirstOrDefault(ag => ag.Count() > 1);
 				if (invalidProcessGroup != null)

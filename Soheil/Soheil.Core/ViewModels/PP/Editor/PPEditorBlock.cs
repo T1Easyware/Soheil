@@ -181,130 +181,217 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		void correctBlock()
 		{
+			//processes don't follow the JIT model attachment strategy
+			//so we need to manually attach or remove their models prior to Save.
+			var processRepository = new Dal.Repository<Model.Process>(_uow);
+			var operatorRepository = new Dal.Repository<Model.Operator>(_uow);
+			var processOperatorRepository = new Dal.Repository<Model.ProcessOperator>(_uow);
+			var selectedMachineRepository = new Soheil.Dal.Repository<Model.SelectedMachine>(_uow);
+
 			foreach (var taskVm in TaskList.OfType<PPEditorTask>())
 			{
-				//processes don't follow the JIT model attachment strategy
-				//so we need to manually attach or remove their models prior to Save.
+				/* SSA of each process model can be converted to another SSA (with same activity) when ManHour changes
+				 * 
+				 *				ProcessModel	validProcessVm				change
+				 *				ssa#			ssa# of selected choice
+				 * process1		1				1							= same
+				 * process2		2				22							↔ changed
+				 * process3		3											x deleted
+				 * process4						4							* new
+				 * process5													= same
+				 * 
+				*/
 
-				//select valid processes from Vm which will have a process in model
-				//these must have valid SelectedChoice and TargetPoint
-				foreach (var processVm in taskVm.ProcessList.Where(procVm =>
-					procVm.SelectedChoice != null && procVm.TargetPoint > 0))
+				//Some (or all) of processes have (SelectedChoice!=null) and (TargetPoint>0)
+				//these are validProcessVms and will have a process in model
+				//other processes won't
+				var validProcessVms = taskVm.ProcessList.Where(procVm => procVm.SelectedChoice != null && procVm.TargetPoint > 0);
+				//existingProcesses is a list of all process models in database
+				var existingProcesses = taskVm.Model.Processes.ToArray();
+
+				//update existing process models that are in validProcessVms
+				//otherwise delete them
+				foreach (var processModel in existingProcesses)
 				{
-					//process model for current valid processVm
-					//initially it's null and later will be set (create new or to be found)
-					Model.Process procModel = null;
+					//find the validProcessVm for this process model
+					PPEditorProcess validProcessVm = null;
+					//if current process does not have SSA it means it's not saved yet
+					if (processModel.StateStationActivity != null)
+						validProcessVms.FirstOrDefault(x =>
+							x.SelectedChoice.ActivityId == processModel.StateStationActivity.Activity.Id);
 
-					//check for similar existing processes (that have the same activity)
-					//if multiple models found delete all and add a new process model
-					//if the found process has different stateStationActivity then correct it
-					//if non found add a new process model
-					var similarProcModels = taskVm.Model.Processes.Where(x =>
-						x.StateStationActivity.Activity.Id == processVm.SelectedChoice.ActivityId);
-
-
-					// -> if just one is found
-					if (similarProcModels.Count() == 1)
+					if (validProcessVm == null)
 					{
-						//found it, then correct it
-						procModel = similarProcModels.First();
-
-						// -> if the found process has different stateStationActivity then correct it
-						if (procModel.StateStationActivity.Id != processVm.SelectedChoice.StateStationActivityId)
-						{
-							procModel.StateStationActivity = processVm.SelectedChoice.Model;
-						}
-						//either way update TP
-						procModel.TargetCount = processVm.TargetPoint;
+						#region [x]
+						//if no validProcessVm found delete the process model
+						taskVm.Model.Processes.Remove(processModel);
+						TaskDataService.DeleteModel(processModel); 
+						#endregion
 					}
 					else
 					{
-						// -> if multiple models found *delete all* and [add a new process model]
-						if (similarProcModels.Count() > 1)
+						//if a validProcessVm is found for this process model
+						//	update its things
+						processModel.TargetCount = validProcessVm.TargetPoint;
+						#region selected machines
+						//delete SelectedMachine models that aren't in Vm
+						foreach (var smModel in processModel.SelectedMachines.ToArray())
 						{
-							foreach (var model in similarProcModels.ToArray())
+							if (!validProcessVm.MachineList.Any(x =>
+								x.CanBeUsed && 
+								x.IsUsed && 
+								x.MachineId == smModel.StateStationActivityMachine.Machine.Id))
 							{
-								TaskDataService.DeleteModel(model);
+								processModel.SelectedMachines.Remove(smModel);
+								selectedMachineRepository.Delete(smModel);
 							}
 						}
-
-						// -> if multiple models found [delete all] and *add a new process model*
-						// -> or
-						// -> if non found add a new process model
-						procModel = new Model.Process
+						//add or update SelectedMachine models that are in Vm
+						foreach (var machineVm in validProcessVm.MachineList.Where(x => x.CanBeUsed && x.IsUsed))
 						{
-							Task = taskVm.Model,
-							StateStationActivity = processVm.SelectedChoice.Model,
-							TargetCount = processVm.TargetPoint,
-						};
-						//add it to repository
-						new Soheil.Dal.Repository<Model.Process>(_uow).Add(procModel);
-						//and also add to parent model
-						taskVm.Model.Processes.Add(procModel);
-					}
+							//find the SSAM model that matches both machineVm and SSA
+							var ssamModel = processModel.StateStationActivity.StateStationActivityMachines.FirstOrDefault(x => x.Machine.Id == machineVm.MachineId);
+							//if SSAM is not available it must be a mistake, skip it
+							if (ssamModel == null) continue;
 
-					//...
-					//do the same for machines
-					//...
-					var tmp1 = procModel.SelectedMachines.Where(m =>
-						!processVm.MachineList.Any(vm =>
-							vm.MachineId == m.StateStationActivityMachine.Machine.Id)
-						).ToArray();
-					foreach (var smModel in tmp1)
-					{
-						TaskDataService.DeleteModel(smModel);
-					}
-					foreach (var smVm in processVm.MachineList.Where(x => x.IsUsed))
-					{
-						//check for existance
-						var smModel = procModel.SelectedMachines.FirstOrDefault(x =>
-							x.StateStationActivityMachine.Machine.Id == smVm.MachineId);
-						//create new Model
-						if (smModel == null)
-						{
-							smModel = new Model.SelectedMachine();
-							new Soheil.Dal.Repository<Model.SelectedMachine>(_uow).Add(smModel);
-							//and add to parent model
-							procModel.SelectedMachines.Add(smModel);
+							//find machineVm in processModel's SelectedMachines
+							var smModel = processModel.SelectedMachines.FirstOrDefault(po => po.StateStationActivityMachine.Machine.Id == machineVm.MachineId);
+							if (smModel != null)
+							{
+								//if machineVm is already in process model's SelectedMachines
+								//	update its SSAM (not necessary if SSA is the same[=], but just in case, we set it again)
+								smModel.StateStationActivityMachine = ssamModel;
+							}
+							else
+							{
+								//if machineVm is not in process model's SelectedMachines
+								//	create a new SelectedMachine model
+								smModel = new Model.SelectedMachine
+								{
+									Process = processModel,
+									StateStationActivityMachine = ssamModel,
+								};
+								//add SelectedMachine
+								selectedMachineRepository.Add(smModel);
+								processModel.SelectedMachines.Add(smModel);
+							}
 						}
-						//update common info (create/attach)
-						smModel.Process = procModel;
-						smModel.StateStationActivityMachine = smVm.StateStationActivityMachineModel;
-					}
-
-					//...
-					//do the same for operators
-					//...
-					var tmp2 = procModel.ProcessOperators.Where(m =>
-						!processVm.OperatorList.Any(vm =>
-							vm.OperatorId == m.Operator.Id)
-						).ToArray();
-					foreach (var poModel in tmp2)
-					{
-						TaskDataService.DeleteModel(poModel);
-					}
-					foreach (var poVm in processVm.OperatorList.Where(x => x.IsSelected))
-					{
-						//check for existance
-						var poModel = procModel.ProcessOperators.FirstOrDefault(x =>
-							x.Operator.Id == poVm.OperatorId);
-						//create new Model
-						if (poModel == null)
+						#endregion
+						#region process operators
+						//delete ProcessOperator models that aren't in Vm
+						foreach (var poModel in processModel.ProcessOperators.ToArray())
 						{
-							poModel = new Model.ProcessOperator();
-							new Soheil.Dal.Repository<Model.ProcessOperator>(_uow).Add(poModel);
-							//and add to parent model
-							poModel.Process = procModel;
-							poModel.Operator = poVm.OperatorModel;
-							procModel.ProcessOperators.Add(poModel);
+							if(!validProcessVm.OperatorList.Any(x=>
+								x.IsSelected &&
+								x.OperatorId == poModel.Operator.Id))
+							{
+								processModel.ProcessOperators.Remove(poModel);
+								processOperatorRepository.Delete(poModel);
+							}
 						}
-						//update common info (create/attach)
-						poModel.Role = poVm.Role;
+						//add or update ProcessOperator models that are in Vm
+						foreach (var operatorVm in validProcessVm.OperatorList.Where(x => x.IsSelected))
+						{
+							//find operatorVm in processModel's ProcessOperators
+							var poModel = processModel.ProcessOperators.FirstOrDefault(po => po.Operator.Id == operatorVm.OperatorId);
+							if (poModel != null)
+							{
+								//if operatorVm is already in process model's ProcessOperators
+								//	update its role
+								poModel.Role = operatorVm.Role;
+							}
+							else
+							{
+								//if operatorVm is not in process model's ProcessOperators
+								//	create a new SelectedMachine model
+								poModel = new Model.ProcessOperator
+								{
+									Process = processModel,
+									Operator = operatorRepository.Single(x => x.Id == operatorVm.OperatorId),
+									Role = operatorVm.Role,
+									Code = processModel.Code + operatorVm.Code,
+								};
+								//add SelectedMachine
+								processOperatorRepository.Add(poModel);
+								processModel.ProcessOperators.Add(poModel);
+							}
+						}
+						#endregion
+
+						//[↔]
+						if (validProcessVm.SelectedChoice.StateStationActivityId != processModel.StateStationActivity.Id)
+						{
+							//if validProcessVm has a different SSA from its original model's SSA
+							//	update its SSA
+							processModel.StateStationActivity = TaskDataService.GetStateStationActivity(validProcessVm.SelectedChoice.StateStationActivityId);
+						}
+						//else [=]
 					}
 				}
+
+				#region [*]
+				//add validProcessVms to model that aren't in process models
+				foreach (var validProcessVm in validProcessVms)
+				{
+					//if validProcessVm is not found among process models create a new model
+					if (!taskVm.Model.Processes.Any(x => x.StateStationActivity.Activity.Id == validProcessVm.SelectedChoice.ActivityId))
+					{
+						var ssaModel = TaskDataService.GetStateStationActivity(validProcessVm.SelectedChoice.StateStationActivityId);
+						//create a new Process model
+						var processModel = new Model.Process
+						{
+							Task = taskVm.Model,
+							StateStationActivity = ssaModel,
+							TargetCount = validProcessVm.TargetPoint,
+							Code = taskVm.Model.Code + "." + ssaModel.Activity.Code,
+						};
+						#region add selected machines
+						foreach (var machineVm in validProcessVm.MachineList.Where(x => x.CanBeUsed && x.IsUsed))
+						{
+							//find the SSAM model
+							var ssamModel = processModel.StateStationActivity.StateStationActivityMachines.FirstOrDefault(x => x.Machine.Id == machineVm.MachineId);
+
+							if (ssamModel != null)
+							{
+								//create a new SelectedMachine model
+								var smModel = new Model.SelectedMachine
+								{
+									Process = processModel,
+									StateStationActivityMachine = ssamModel,
+								};
+								//add SelectedMachine
+								selectedMachineRepository.Add(smModel);
+								processModel.SelectedMachines.Add(smModel);
+							}
+						}
+						#endregion
+						#region add process operators
+						foreach (var operatorVm in validProcessVm.OperatorList.Where(x => x.IsSelected))
+						{
+							//create a new SelectedMachine model
+							var poModel = new Model.ProcessOperator
+							{
+								Process = processModel,
+								Operator = operatorRepository.Single(x => x.Id == operatorVm.OperatorId),
+								Role = operatorVm.Role,
+								Code = processModel.Code + operatorVm.Code,
+							};
+							//add SelectedMachine
+							processOperatorRepository.Add(poModel);
+							processModel.ProcessOperators.Add(poModel);
+						}
+						#endregion
+						//add Process
+						processRepository.Add(processModel);
+						taskVm.Model.Processes.Add(processModel);
+					}
+				} 
+				#endregion
+
+				//correct task times
 				taskVm.ForceCalculateDuration();
 			}
-
+			//correct block times
 			Model.StartDateTime = StartDate.Add(StartTime);
 			Model.DurationSeconds = TaskList.OfType<PPEditorTask>().Sum(t => t.DurationSeconds);
 			Model.EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);

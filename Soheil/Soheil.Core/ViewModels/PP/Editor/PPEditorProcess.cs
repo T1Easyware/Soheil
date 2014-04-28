@@ -109,15 +109,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			#region Load machines
 			//Find all valid Machines for the whole ssaGroup
-			var machineVms = new List<PPEditorMachine>();
 			foreach (var ssa in _ssaGroup)
 			{
 				foreach (var ssam in ssa.StateStationActivityMachines)
 				{
-					if (!machineVms.Any(x => x.MachineId == ssam.Machine.Id))
+					if (!MachineList.Any(x => x.MachineId == ssam.Machine.Id))
 					{
 						//add the unique machines to MachineList
 						var machineVm = new PPEditorMachine(ssam.Machine);
+						//select it if it is in SelectedMachines of process model
+						machineVm.IsUsed = model.SelectedMachines.Any(x => x.StateStationActivityMachine.Machine.Id == machineVm.MachineId);
 						MachineList.Add(machineVm);
 					}
 				}

@@ -102,30 +102,31 @@ namespace Soheil.Core.DataServices
 		/// <param name="context"></param>
 		public void DeleteModel(Task model)
 		{
-			if(!_taskRepository.Exists(x => x.Id == model.Id))
+			var entity = _taskRepository.Single(x => x.Id == model.Id);
+			if (entity == null)
 			{
 				//not saved at all (just remove it from its parent)
 				model.Block.Tasks.Remove(model);
 				return;
 			}
 
-			if (_taskReportRepository.Find(x => x.Task.Id == model.Id).Any(x=>x.ProcessReports.Count > 0))
+			if (_taskReportRepository.Find(x => x.Task.Id == entity.Id).Any(x => x.ProcessReports.Count > 0))
 			{
-				var xx = _taskReportRepository.Find(x => x.Task.Id == model.Id);
-				var xxx = xx.First(x=>x.ProcessReports.Count > 0);
-				 throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
+				var taskReportEntity = _taskReportRepository.Find(x => x.Task.Id == entity.Id);
+				if (taskReportEntity.Any(x => x.ProcessReports.Count > 0))
+					throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
 			}
 
 			var taskReportDs = new TaskReportDataService(context);
-			foreach (var taskReportEnt in model.TaskReports)
+			foreach (var taskReportEnt in entity.TaskReports)
 			{
 				taskReportDs.DeleteModel(taskReportEnt);
 			}
-			foreach (var process in model.Processes.ToList())
+			foreach (var process in entity.Processes.ToList())
 			{
 				DeleteModel(process);
 			}
-			_taskRepository.Delete(model);
+			_taskRepository.Delete(entity);
 			context.Commit();
 		}
 		//Recursive (sm & po)

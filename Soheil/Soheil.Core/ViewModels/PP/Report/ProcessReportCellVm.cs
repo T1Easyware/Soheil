@@ -13,6 +13,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class ProcessReportCellVm : PPItemVm
 	{
+		public Dal.SoheilEdmContext UOW { get; protected set; }
 		DataServices.ProcessReportDataService _processReportDataService;
 		DataServices.TaskReportDataService _taskReportDataService;
 		Model.ProcessReport _model;
@@ -34,8 +35,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 			ParentRow = processReportRow;
 			ParentColumn = taskReport;
 			_model = model;
-			_processReportDataService = processReportRow.Parent.ProcessReportDataService;
-			_taskReportDataService = processReportRow.Parent.TaskReportDataService;
+
+			UOW = taskReport.UOW;
+			_processReportDataService = new DataServices.ProcessReportDataService(UOW);
+			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
 
 			if (model == null)
 			{
@@ -59,6 +62,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 			else
 				DurationSeconds = tmp;
 			//by updating StartDateTime (while DurationSeconds is updated before) EndDateTime gets updated correctly
+			StartDateTimeChanged += newVal =>
+			{
+				StartDate = newVal.Date;
+				StartTime = newVal.TimeOfDay;
+				SetValue(StartDateTimeProperty, newVal);
+				SetValue(EndDateTimeProperty, newVal.AddSeconds(DurationSeconds));
+			};
 			StartDateTime = taskReport.StartDateTime;
 
 			OperatorReports = new OperatorReportCollection(this);
@@ -150,17 +160,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessReportCellVm), new UIPropertyMetadata(TimeSpan.Zero));
-		public override DateTime StartDateTime
-		{
-			get { return StartDate.Add(StartTime); }
-			set
-			{
-				StartDate = value.Date;
-				StartTime = value.TimeOfDay;
-				SetValue(StartDateTimeProperty, value);
-				SetValue(EndDateTimeProperty, value.AddSeconds(DurationSeconds));
-			}
-		}
+
 		/// <summary>
 		/// Don't manually change the value of this property
 		/// </summary>

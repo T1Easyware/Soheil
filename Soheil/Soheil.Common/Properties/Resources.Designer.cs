@@ -691,7 +691,7 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to قسمتی از Task.
+        ///   Looks up a localized string similar to بخشی از Task.
         /// </summary>
         public static string ttTask {
             get {

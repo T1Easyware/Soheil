@@ -751,7 +751,7 @@
     <value>Task</value>
   </data>
   <data name="ttTask" xml:space="preserve">
-    <value>قسمتی از Task</value>
+    <value>بخشی از Task</value>
   </data>
   <data name="ttHasJob" xml:space="preserve">
     <value>جزئی از Job</value>

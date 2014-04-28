@@ -26,55 +26,62 @@ namespace Soheil.Core.ViewModels.PP
 		/// Gets Id property of the model representing this ViewModel
 		/// </summary>
 		public override int Id { get { return Model.Id; } }
+		Soheil.Core.PP.BlockFullData _fullData;
 
 		#region Ctor, reload
 		/// <summary>
-		/// Creates an instance of BlockVm with the given model, parent and station index
+		/// Creates an instance of BlockVm with the given model
 		/// </summary>
 		/// <remarks>commands must be set after creating a block</remarks>
 		/// <param name="model"></param>
 		/// <param name="parent"></param>
-		/// <param name="stationIndex"></param>
-        public BlockVm(Model.Block model, PPItemCollection parent, int stationIndex)
+        public BlockVm(Soheil.Core.PP.BlockFullData data, PPItemCollection parent)
 			: base()
 		{
-			Model = model;
-            Parent = parent;
-			RowIndex = stationIndex;
-			StartDateTime = model.StartDateTime;
-			DurationSeconds = model.DurationSeconds;
+			UOW = data.UOW;
+			Parent = parent;
+			_fullData = data;
+			load();
 		}
 
 		/// <summary>
-		/// Reloads current blocks full data with the given <see cref="Soheil.Core.PP.BlockFullData"/>
+		/// Reloads current blocks full data keeping the current UOW
 		/// </summary>
-		/// <param name="data">An instance of <see cref="Soheil.Core.PP.BlockFullData"/> filled with required data</param>
-		public void Reload(Soheil.Core.PP.BlockFullData data)
+		public void Reload()
 		{
-			Model = data.Model;
+			_fullData.Reload();
+			load();
+		}
+		public void load()
+		{
+			Model = _fullData.Model;
+
+			RowIndex = Model.StateStation.Station.Index;
+			StartDateTime = Model.StartDateTime;
+			DurationSeconds = Model.DurationSeconds;
 
 			//Product and State
-			ProductId = data.Model.StateStation.State.FPC.Product.Id;
-			ProductCode = data.Model.StateStation.State.FPC.Product.Code;
-			ProductName = data.Model.StateStation.State.FPC.Product.Name;
-			ProductColor = data.Model.StateStation.State.FPC.Product.Color;
-			StateCode = data.Model.StateStation.State.Code;
-			IsRework = data.Model.StateStation.State.IsReworkState == Bool3.True;
+			ProductId = Model.StateStation.State.FPC.Product.Id;
+			ProductCode = Model.StateStation.State.FPC.Product.Code;
+			ProductName = Model.StateStation.State.FPC.Product.Name;
+			ProductColor = Model.StateStation.State.FPC.Product.Color;
+			StateCode = Model.StateStation.State.Code;
+			IsRework = Model.StateStation.State.IsReworkState == Bool3.True;
 			
 			//Block background texts
-			BlockTargetPoint = data.Model.BlockTargetPoint;
-			BlockProducedG1 = data.ReportData[0];
-			ReportFillPercent = string.Format("{0:D2}%", data.ReportData[1]);
-			IsReportFilled = (data.ReportData[1] >= 100);
+			BlockTargetPoint = Model.BlockTargetPoint;
+			BlockProducedG1 = _fullData.ReportData[0];
+			ReportFillPercent = string.Format("{0:D2}%", _fullData.ReportData[1]);
+			IsReportFilled = (_fullData.ReportData[1] >= 100);
 			
 			//Navigation
 			//specify the job (if not null)
-			if (data.Model.Job != null)
+			if (Model.Job != null)
 			{
-				Job = new PPJobVm(data.Model.Job);
+				Job = new PPJobVm(Model.Job);
 			}
 			//add Tasks
-			foreach (var task in data.Model.Tasks)
+			foreach (var task in Model.Tasks)
 			{
 				TaskList.Add(new PPTaskVm(task, this));
 			}

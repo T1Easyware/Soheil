@@ -10,40 +10,22 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class PPEditorMachine : DependencyObject
 	{
-		public Model.StateStationActivityMachine StateStationActivityMachineModel { get; private set; }
-		public int MachineId { get { return StateStationActivityMachineModel == null ? _machineId : StateStationActivityMachineModel.Machine.Id; } }
-		/// <summary>
-		/// this value is valid only when Model.Machine ctor is used
-		/// </summary>
-		int _machineId;
+		public int MachineId { get; protected set; }
 
 		#region Ctor
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="model"></param>
-		public PPEditorMachine(Model.SelectedMachine model)
-		{
-			StateStationActivityMachineModel = model.StateStationActivityMachine;
-			Name = model.StateStationActivityMachine.Machine.Name;
-			Code = model.StateStationActivityMachine.Machine.Code;
-			IsUsed = model.StateStationActivityMachine.IsFixed;
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="model"></param>
 		public PPEditorMachine(Model.StateStationActivityMachine ssamModel)
 		{
-			StateStationActivityMachineModel = ssamModel;
 			Name = ssamModel.Machine.Name;
 			Code = ssamModel.Machine.Code;
 			IsUsed = ssamModel.IsFixed;
 		}
 		public PPEditorMachine(Model.Machine machineModel)
 		{
-			StateStationActivityMachineModel = null;
-			_machineId = machineModel.Id;
+			MachineId = machineModel.Id;
 			Name = machineModel.Name;
 			Code = machineModel.Code;
 		}

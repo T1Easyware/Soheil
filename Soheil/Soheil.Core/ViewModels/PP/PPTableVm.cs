@@ -22,36 +22,7 @@ namespace Soheil.Core.ViewModels.PP
 		public AccessType Access { get; private set; }
 		private static readonly object _LOCK = new object();
 
-		#region DataServices
-		/// <summary>
-		/// Gets BlockDataService (runs using local UOW)
-		/// </summary>
-		public DataServices.BlockDataService BlockDataService { get; private set; }
-		/// <summary>
-		/// Gets NPTDataService (runs using local UOW)
-		/// </summary>
-		public DataServices.NPTDataService NPTDataService { get; private set; }
-		/// <summary>
-		/// Gets TaskDataService (runs using local UOW)
-		/// </summary>
-		public DataServices.TaskDataService TaskDataService { get; private set; }
-		/// <summary>
-		/// Gets JobDataService (runs using local UOW)
-		/// </summary>
-		public DataServices.JobDataService JobDataService { get; private set; }
-		/// <summary>
-		/// Gets TaskReportDataService (runs using local UOW)
-		/// </summary>
-		public DataServices.TaskReportDataService TaskReportDataService { get; private set; }
-		/// <summary>
-		/// Gets ProcessReportDataService (runs using local UOW)
-		/// </summary>
-		public DataServices.ProcessReportDataService ProcessReportDataService { get; private set; }
-		/// <summary>
-		/// Gets Unit of Work for this View Model (local UOW)
-		/// </summary>
-		public Dal.SoheilEdmContext UOW { get; private set; } 
-		#endregion
+
 
 		#region Ctor, Init and Load
 		/// <summary>
@@ -62,23 +33,9 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			Access = access;
 			initializeCommands();
-			initializeDataServices();
 			initializeEditors();
 		}
-		/// <summary>
-		/// Instantiates UOW and DataServies and add their EventHandlers
-		/// </summary>
-		void initializeDataServices()
-		{
-			UOW = new Dal.SoheilEdmContext();
 
-			BlockDataService = new DataServices.BlockDataService(UOW);
-			NPTDataService = new DataServices.NPTDataService(UOW);
-			TaskDataService = new DataServices.TaskDataService(UOW);
-			JobDataService = new DataServices.JobDataService(UOW);
-			TaskReportDataService = new DataServices.TaskReportDataService(UOW);
-			ProcessReportDataService = new DataServices.ProcessReportDataService(UOW);
-		}
 		/// <summary>
 		/// Initializes TaskEditor, JobEditor and JobList
 		/// </summary>
@@ -110,7 +67,7 @@ namespace Soheil.Core.ViewModels.PP
 				}
 			};*/
 
-			JobList = new JobListVm(JobDataService);
+			JobList = new JobListVm();
 			JobList.JobSelected += job =>
 			{
 				if (job != null)
@@ -152,7 +109,9 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		public void ResetTimeLine()
 		{
-			if (_initialTimer != null) _initialTimer.Dispose();
+			//exit if loaded once
+			if (_initialTimer != null) return;
+
 			_initialTimer = new System.Threading.Timer(new System.Threading.TimerCallback
 				(o => Dispatcher.Invoke(() =>
 				{
@@ -172,7 +131,6 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						if (SelectedBlock != null && SelectedBlock.Id == id)
 							SelectedBlock = null;
-						BlockDataService.DeleteModelById(id);
 					};
 					PPItems.NptRemoved += id =>
 					{
@@ -181,7 +139,6 @@ namespace Soheil.Core.ViewModels.PP
 					};
 					PPItems.JobRemoved += jobVm =>
 					{
-						JobDataService.DeleteModel(jobVm.Id);
 						RemoveBlocks(jobVm);
 					};
 					PPItems.TaskEditorUpdated += ppeblock =>
@@ -213,7 +170,7 @@ namespace Soheil.Core.ViewModels.PP
 
 
 					//Initialize stations
-					var stationModels = new DataServices.StationDataService(UOW).GetActives().OrderBy(x => x.Index);
+					var stationModels = new DataServices.StationDataService().GetActives().OrderBy(x => x.Index);
 					NumberOfStations = stationModels.Count();
 					foreach (var stationModel in stationModels)
 					{
@@ -389,8 +346,7 @@ namespace Soheil.Core.ViewModels.PP
 						try
 						{
 							//remove the block from database and ViewModel
-							BlockDataService.DeleteModelById(block.Id);
-							station.Blocks.Remove(block);
+							PPItems.RemoveItem(block);
 						}
 						catch (Soheil.Common.SoheilException.RoutedException exp)
 						{

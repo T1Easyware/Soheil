@@ -11,11 +11,15 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class BlockReportVm : DependencyObject
 	{
-		public DataServices.ProcessReportDataService ProcessReportDataService { get { return Block.Parent.PPTable.ProcessReportDataService; } }
-		public DataServices.TaskDataService TaskDataService { get { return Block.Parent.PPTable.TaskDataService; } }
+		public Dal.SoheilEdmContext UOW { get; protected set; }
+		DataServices.TaskDataService TaskDataService;
+		DataServices.ProcessReportDataService ProcessReportDataService;
 		public BlockReportVm(BlockVm block)
 		{
 			Block = block;
+			UOW = block.UOW;
+			TaskDataService = new DataServices.TaskDataService(UOW);
+			ProcessReportDataService = new DataServices.ProcessReportDataService(UOW);
 			ReloadProcessReportRows();
 		}
 		//Block Dependency Property

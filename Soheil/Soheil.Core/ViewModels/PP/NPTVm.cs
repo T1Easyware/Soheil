@@ -10,29 +10,16 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public abstract class NPTVm : PPItemVm
 	{
-		protected Model.NonProductiveTask _model;
-		public override int Id { get { return _model.Id; } }
-
-		public NPTVm(Model.NonProductiveTask model, PPItemCollection parent)
+		public NPTVm(PPItemCollection parent)
 			: base()
 		{
-			_model = model;
 			Parent = parent;
+			StartDateTimeChanged += newVal =>
+			{
+				StartDate = newVal.Date;
+				StartTime = newVal.TimeOfDay;
+			};
 			initializeCommands();
-		}
-
-		public override DateTime StartDateTime
-		{
-			get
-			{
-				return base.StartDateTime;
-			}
-			set
-			{
-				StartDate = value.Date;
-				StartTime = value.TimeOfDay;
-				base.StartDateTime = value;
-			}
 		}
 
 		//StartDate Dependency Property

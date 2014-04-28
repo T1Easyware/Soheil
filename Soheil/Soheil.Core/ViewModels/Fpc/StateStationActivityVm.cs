@@ -31,7 +31,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			TreeLevel = 2;
 			Model = model;
-			IsFixed = model.StateStation.Blocks.Any();
+			IsFixed = model.Processes.Any();
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
 
@@ -138,7 +138,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			//check for constraints
 			var entity = new Dal.Repository<Model.StateStationActivity>(new Dal.SoheilEdmContext()).Single(x => x.Id == Id);
-			if (entity != null && entity.StateStation.Blocks.Any())
+			if (entity != null && entity.Processes.Any())
 			{
 				ContainerSS.ContainerS.Parent.Message = new Common.SoheilException.DependencyMessageBox("این فعالیت در برنامه تولید استفاده شده است", "Error", MessageBoxButton.OK, Common.SoheilException.ExceptionLevel.Error);
 				return;

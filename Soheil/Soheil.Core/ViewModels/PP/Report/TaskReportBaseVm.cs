@@ -8,11 +8,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class TaskReportBaseVm : DependencyObject
 	{
+		public Dal.SoheilEdmContext UOW { get; protected set; }
+
 		public DataServices.TaskReportDataService TaskReportDataService { get { return Task.TaskReportDataService; } }
 
 		protected TaskReportBaseVm(PPTaskVm parent)
 		{
 			Task = parent;
+			UOW = parent.UOW;
 		}
 
 		//Task Dependency Property
