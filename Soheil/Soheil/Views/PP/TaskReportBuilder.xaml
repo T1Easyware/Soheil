@@ -46,7 +46,7 @@
 
 			<Button Grid.Row="5" Grid.Column="0" Content="کل زمان باقیمانده" Command="{Binding AutoFillCommand}"/>
 			<Button Grid.Row="5" Grid.Column="1" Content="انصراف" Command="{Binding CancelCommand}"/>
-			<Button Grid.Row="5" Grid.Column="2" Content="تأیید" Command="{Binding OpenCommand}"/>
+			<Button Grid.Row="5" Grid.Column="2" Content="تأیید" Command="{Binding OpenReportCommand}"/>
 		</Grid>
 	</Border>
 </UserControl>

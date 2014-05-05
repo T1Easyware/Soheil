@@ -11,7 +11,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	/// <summary>
 	/// This is the whole Editor
 	/// </summary>
-	public class PPTaskEditorVm : DependencyObject
+	public class TaskEditorVm : DependencyObject
 	{
 		protected DataServices.ProductGroupDataService _productGroupDs;
 		protected DataServices.FPCDataService _fpcDs;
@@ -22,7 +22,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public event Action RefreshPPItems;
 
 		public Dal.SoheilEdmContext UOW { get; private set; }
-		public PPTaskEditorVm()
+		public TaskEditorVm()
 		{
 			UOW = new Dal.SoheilEdmContext();
 			Reset();
@@ -63,6 +63,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				block = new PPEditorBlock(fpcState.Model);
 				BlockList.Add(block);
 			}
+			else
+				SelectedBlock = block;
 		}
 		//Remove
 		public void FpcViewer_RemoveBlock(PPEditorBlock block)
@@ -83,7 +85,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			private set { SetValue(FpcViewerProperty, value); }
 		}
 		public static readonly DependencyProperty FpcViewerProperty =
-			DependencyProperty.Register("FpcViewer", typeof(Fpc.FpcWindowVm), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("FpcViewer", typeof(Fpc.FpcWindowVm), typeof(TaskEditorVm), new UIPropertyMetadata(null));
 
 
 		#region Blocks
@@ -101,10 +103,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SelectedBlockProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedBlockProperty =
-			DependencyProperty.Register("SelectedBlock", typeof(PPEditorBlock), typeof(PPTaskEditorVm),
+			DependencyProperty.Register("SelectedBlock", typeof(PPEditorBlock), typeof(TaskEditorVm),
 			new UIPropertyMetadata(null, (d, e) =>
 			{
-				var vm = (PPTaskEditorVm)d;
+				var vm = (TaskEditorVm)d;
 				var val = e.NewValue as PPEditorBlock;
 				if (val != null)
 				{
@@ -133,10 +135,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SelectedProductProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedProductProperty =
-			DependencyProperty.Register("SelectedProduct", typeof(ProductVm), typeof(PPTaskEditorVm),
+			DependencyProperty.Register("SelectedProduct", typeof(ProductVm), typeof(TaskEditorVm),
 			new UIPropertyMetadata(null, (d, e) =>
 			{
-				var vm = (PPTaskEditorVm)d;
+				var vm = (TaskEditorVm)d;
 				var val = (ProductVm)e.NewValue;
 
 				//reset fpc if product is null
@@ -167,7 +169,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(ShowFpcProperty, value); }
 		}
 		public static readonly DependencyProperty ShowFpcProperty =
-			DependencyProperty.Register("ShowFpc", typeof(bool), typeof(PPTaskEditorVm), new UIPropertyMetadata(true));
+			DependencyProperty.Register("ShowFpc", typeof(bool), typeof(TaskEditorVm), new UIPropertyMetadata(true));
 
 		//IsVisible Dependency Property
 		public bool IsVisible
@@ -176,7 +178,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsVisibleProperty, value); }
 		}
 		public static readonly DependencyProperty IsVisibleProperty =
-			DependencyProperty.Register("IsVisible", typeof(bool), typeof(PPTaskEditorVm), new UIPropertyMetadata(false));
+			DependencyProperty.Register("IsVisible", typeof(bool), typeof(TaskEditorVm), new UIPropertyMetadata(false));
 		#endregion
 
 		#region Commands
@@ -235,7 +237,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SaveCommandProperty, value); }
 		}
 		public static readonly DependencyProperty SaveCommandProperty =
-			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(TaskEditorVm), new UIPropertyMetadata(null));
 		//ClearAllCommand Dependency Property
 		public Commands.Command ClearAllCommand
 		{
@@ -243,7 +245,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(ClearAllCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ClearAllCommandProperty =
-			DependencyProperty.Register("ClearAllCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("ClearAllCommand", typeof(Commands.Command), typeof(TaskEditorVm), new UIPropertyMetadata(null));
 		//ExitCommand Dependency Property
 		public Commands.Command ExitCommand
 		{
@@ -251,7 +253,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(ExitCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ExitCommandProperty =
-			DependencyProperty.Register("ExitCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("ExitCommand", typeof(Commands.Command), typeof(TaskEditorVm), new UIPropertyMetadata(null));
 		//SaveAllCommand Dependency Property
 		public Commands.Command SaveAllCommand
 		{
@@ -259,7 +261,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SaveAllCommandProperty, value); }
 		}
 		public static readonly DependencyProperty SaveAllCommandProperty =
-			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(TaskEditorVm), new UIPropertyMetadata(null));
 		//ResetCurrentBlockCommand Dependency Property
 		public Commands.Command ResetCurrentBlockCommand
 		{
@@ -267,7 +269,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(ResetCurrentBlockCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ResetCurrentBlockCommandProperty =
-			DependencyProperty.Register("ResetCurrentBlockCommand", typeof(Commands.Command), typeof(PPTaskEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("ResetCurrentBlockCommand", typeof(Commands.Command), typeof(TaskEditorVm), new UIPropertyMetadata(null));
 		#endregion
 
 	}

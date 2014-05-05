@@ -46,7 +46,7 @@ namespace Soheil.Core.DataServices
 		{
 				var repository = new Repository<NonProductiveTask>(context);
 				repository.Add(model);
-				context.SaveChanges();
+				context.Commit();
 			return 1;
 		}
 
@@ -56,7 +56,7 @@ namespace Soheil.Core.DataServices
 				var entity = repository.FirstOrDefault(x => x.Id == model.Id);
 				if (entity == null) AddModel(model);
 				else repository.Add(model);
-				context.SaveChanges();
+				context.Commit();
 		}
 
 		public void DeleteModel(NonProductiveTask model)
@@ -64,14 +64,14 @@ namespace Soheil.Core.DataServices
 				var repository = new Repository<NonProductiveTask>(context);
 				var entity = repository.FirstOrDefault(x => x.Id == model.Id);
 				if (entity != null) repository.Delete(entity);
-				context.SaveChanges();
+				context.Commit();
 		}
 		public void DeleteModel(int id)
 		{
 				var repository = new Repository<NonProductiveTask>(context);
 				var entity = repository.FirstOrDefault(x => x.Id == id);
 				if (entity != null) repository.Delete(entity);
-				context.SaveChanges();
+				context.Commit();
 		}
 
 		public void AttachModel(NonProductiveTask model)

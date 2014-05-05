@@ -14,11 +14,12 @@ namespace Soheil.Core.ViewModels.PP
 	/// <summary>
 	/// An abstract class suitable for any kind of Item that can (directly/indirectly) reside inside PPTable
 	/// <para>
-	/// <example>Example: BlockVm, PPTaskVm, NPTVm</example>
+	/// <example>Example: BlockVm, TaskVm, NPTVm</example>
 	/// </para>
 	/// </summary>
 	public abstract class PPItemVm : ViewModelBase
 	{
+		public event Action<PPViewMode> ViewModeChanged;
 		public event Action<DateTime> StartDateTimeChanged;
 		public event Action<int> DurationSecondsChanged;
 		protected PPItemVm() { Message = new EmbeddedException(); }
@@ -79,7 +80,8 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(ViewModeProperty, value); }
 		}
 		public static readonly DependencyProperty ViewModeProperty =
-			DependencyProperty.Register("ViewMode", typeof(PPViewMode), typeof(PPItemVm), new UIPropertyMetadata(PPViewMode.Acquiring)); 
+			DependencyProperty.Register("ViewMode", typeof(PPViewMode), typeof(PPItemVm),
+			new UIPropertyMetadata(PPViewMode.Acquiring, (d, e) => { if (((PPItemVm)d).ViewModeChanged != null) ((PPItemVm)d).ViewModeChanged((PPViewMode)e.NewValue); })); 
 		#endregion
 
 		#region Commands
@@ -91,7 +93,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty EditItemCommandProperty =
 			DependencyProperty.Register("EditItemCommand", typeof(Commands.Command), typeof(PPItemVm), new UIPropertyMetadata(null));
-		//EditReportCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command that reloads all related reports
+		/// </summary>
 		public Commands.Command EditReportCommand
 		{
 			get { return (Commands.Command)GetValue(EditReportCommandProperty); }

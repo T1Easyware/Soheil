@@ -7,9 +7,9 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP
 {
-	public class PPJobVm : DependencyObject
+	public class JobVm : DependencyObject
 	{
-		public PPJobVm(Model.Job model)
+		public JobVm(Model.Job model)
 		{
 			if (model == null) throw new Soheil.Common.SoheilException.SoheilExceptionBase("Job model can't be null.", Common.SoheilException.ExceptionLevel.Error);
 			Model = model;
@@ -30,7 +30,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(CodeProperty, value); }
 		}
 		public static readonly DependencyProperty CodeProperty =
-			DependencyProperty.Register("Code", typeof(string), typeof(PPJobVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Code", typeof(string), typeof(JobVm), new UIPropertyMetadata(null));
 		//Deadline Dependency Property
 		public DateTime Deadline
 		{
@@ -38,7 +38,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(DeadlineProperty, value); }
 		}
 		public static readonly DependencyProperty DeadlineProperty =
-			DependencyProperty.Register("Deadline", typeof(DateTime), typeof(PPJobVm), new UIPropertyMetadata(DateTime.Now));
+			DependencyProperty.Register("Deadline", typeof(DateTime), typeof(JobVm), new UIPropertyMetadata(DateTime.Now));
 		//Release DP
 		public DateTime ReleaseDT
 		{
@@ -46,7 +46,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(ReleaseDTProperty, value); }
 		}
 		public static readonly DependencyProperty ReleaseDTProperty =
-			DependencyProperty.Register("ReleaseDT", typeof(DateTime), typeof(PPJobVm), new PropertyMetadata(DateTime.Now));
+			DependencyProperty.Register("ReleaseDT", typeof(DateTime), typeof(JobVm), new PropertyMetadata(DateTime.Now));
 		//Quantity Dependency Property
 		public int Quantity
 		{
@@ -54,7 +54,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(QuantityProperty, value); }
 		}
 		public static readonly DependencyProperty QuantityProperty =
-			DependencyProperty.Register("Quantity", typeof(int), typeof(PPJobVm), new UIPropertyMetadata(0));
+			DependencyProperty.Register("Quantity", typeof(int), typeof(JobVm), new UIPropertyMetadata(0));
 		//Description Dependency Property
 		public string Description
 		{
@@ -62,6 +62,6 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(DescriptionProperty, value); }
 		}
 		public static readonly DependencyProperty DescriptionProperty =
-			DependencyProperty.Register("Description", typeof(string), typeof(PPJobVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Description", typeof(string), typeof(JobVm), new UIPropertyMetadata(null));
 	}
 }

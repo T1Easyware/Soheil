@@ -71,7 +71,7 @@ namespace Soheil.Core.DataServices
 
 		public void UpdateModel(WorkProfile model)
 		{
-			context.SaveChanges();
+			context.Commit();
 			//var workProfileRepository = new Repository<WorkProfile>(context);
 			//WorkProfile entity = workProfileRepository.Single(x => x.Id == model.Id);
 			/*entity.Name = model.Name;
@@ -183,13 +183,13 @@ namespace Soheil.Core.DataServices
 				"WorkDays.WorkShifts.WorkShiftPrototype",
 				"WorkDays.WorkShifts.WorkBreaks");
 			var clone = cloneModel(model);
-			context.SaveChanges();
+			context.Commit();
 			return clone;
 		}
 		public /*override*/ WorkProfile Clone(WorkProfile model)
 		{
 			var clone = cloneModel(model);
-			context.SaveChanges();
+			context.Commit();
 			return clone;
 		}
 

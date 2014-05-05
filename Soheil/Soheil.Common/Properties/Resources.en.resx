@@ -781,4 +781,13 @@
   <data name="ttCode" xml:space="preserve">
     <value>Code</value>
   </data>
+  <data name="txtHalfHour" xml:space="preserve">
+    <value>Half Hour</value>
+  </data>
+  <data name="txtOneHour" xml:space="preserve">
+    <value>One Hour</value>
+  </data>
+  <data name="txtQuarterHour" xml:space="preserve">
+    <value>Qurater Hour</value>
+  </data>
 </root>

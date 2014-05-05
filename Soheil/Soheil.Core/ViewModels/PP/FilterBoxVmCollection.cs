@@ -69,7 +69,7 @@ namespace Soheil.Core.ViewModels.PP
 
 			//find causes and create FilterBoxVm instances for each level
 			var causeDs = new DataServices.CauseDataService();
-			var causeL1Models = causeDs.GetActives().Where(x => x.Level == 0).ToArray();
+			var causeL1Models = causeDs.GetRoot().Children.ToArray();
 			var causeL3Box = FilterBoxVm.CreateForCause(null);
 			var causeL2Box = FilterBoxVm.CreateForCause(causeL3Box);
 			var causeL1Box = FilterBoxVm.CreateForCause(causeL2Box, causeL1Models);

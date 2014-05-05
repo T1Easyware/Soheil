@@ -10,7 +10,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	/// <summary>
 	/// This is the whole Editor
 	/// </summary>
-	public class PPJobEditorVm : DependencyObject
+	public class JobEditorVm : DependencyObject
 	{
 		DataServices.ProductGroupDataService _productGroupDs;
 		DataServices.FPCDataService _fpcDs;
@@ -18,7 +18,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		Dal.SoheilEdmContext _uow;
 		public event Action RefreshPPTable;
 		const int x = 0;
-		public PPJobEditorVm()
+		public JobEditorVm()
 		{
 			initializeDataServices();
 			initializeCommands();
@@ -91,7 +91,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsVisibleProperty, value); }
 		}
 		public static readonly DependencyProperty IsVisibleProperty =
-			DependencyProperty.Register("IsVisible", typeof(bool), typeof(PPJobEditorVm), new UIPropertyMetadata(false));
+			DependencyProperty.Register("IsVisible", typeof(bool), typeof(JobEditorVm), new UIPropertyMetadata(false));
 
 		#region Commands
 		void initializeCommands()
@@ -118,7 +118,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SaveAllCommandProperty, value); }
 		}
 		public static readonly DependencyProperty SaveAllCommandProperty =
-			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(PPJobEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(JobEditorVm), new UIPropertyMetadata(null));
 		//ClearAllCommand Dependency Property
 		public Commands.Command ClearAllCommand
 		{
@@ -126,7 +126,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(ClearAllCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ClearAllCommandProperty =
-			DependencyProperty.Register("ClearAllCommand", typeof(Commands.Command), typeof(PPJobEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("ClearAllCommand", typeof(Commands.Command), typeof(JobEditorVm), new UIPropertyMetadata(null));
 		//ExitCommand Dependency Property
 		public Commands.Command ExitCommand
 		{
@@ -134,10 +134,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(ExitCommandProperty, value); }
 		}
 		public static readonly DependencyProperty ExitCommandProperty =
-			DependencyProperty.Register("ExitCommand", typeof(Commands.Command), typeof(PPJobEditorVm), new UIPropertyMetadata(null)); 
+			DependencyProperty.Register("ExitCommand", typeof(Commands.Command), typeof(JobEditorVm), new UIPropertyMetadata(null)); 
 		#endregion
 
-		internal void Append(PPJobVm Job)
+		internal void Append(JobVm Job)
 		{
 			var job = new Editor.PPEditorJob(Job.Model, _jobDs);
 			job.RefreshPPTable += () => { if (RefreshPPTable != null) RefreshPPTable(); };

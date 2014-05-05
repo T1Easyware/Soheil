@@ -12,7 +12,7 @@ namespace Soheil.Core.ViewModels.PP
 	/// <summary>
 	/// View model for a selectable item in a <see cref="JobListVm"/>
 	/// </summary>
-	public class JobListItemVm : PPJobVm
+	public class JobListItemVm : JobVm
 	{
 		/// <summary>
 		/// Occurs when this item is selected

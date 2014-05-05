@@ -12,20 +12,20 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		public DataServices.TaskReportDataService TaskReportDataService { get { return Task.TaskReportDataService; } }
 
-		protected TaskReportBaseVm(PPTaskVm parent)
+		protected TaskReportBaseVm(TaskVm parent)
 		{
 			Task = parent;
 			UOW = parent.UOW;
 		}
 
 		//Task Dependency Property
-		public PPTaskVm Task
+		public TaskVm Task
 		{
-			get { return (PPTaskVm)GetValue(TaskProperty); }
+			get { return (TaskVm)GetValue(TaskProperty); }
 			set { SetValue(TaskProperty, value); }
 		}
 		public static readonly DependencyProperty TaskProperty =
-			DependencyProperty.Register("Task", typeof(PPTaskVm), typeof(TaskReportBaseVm), new PropertyMetadata(null));
+			DependencyProperty.Register("Task", typeof(TaskVm), typeof(TaskReportBaseVm), new PropertyMetadata(null));
 		
 		//TargetPoint Dependency Property
 		public int TargetPoint
@@ -41,14 +41,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm != null) vm.SaveTargetPoint((int)e.NewValue);
 			}));
 
-		//OpenCommand Dependency Property
-		public Commands.Command OpenCommand
+		//OpenReportCommand Dependency Property
+		public Commands.Command OpenReportCommand
 		{
-			get { return (Commands.Command)GetValue(OpenCommandProperty); }
-			set { SetValue(OpenCommandProperty, value); }
+			get { return (Commands.Command)GetValue(OpenReportCommandProperty); }
+			set { SetValue(OpenReportCommandProperty, value); }
 		}
-		public static readonly DependencyProperty OpenCommandProperty =
-			DependencyProperty.Register("OpenCommand", typeof(Commands.Command), typeof(TaskReportBaseVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty OpenReportCommandProperty =
+			DependencyProperty.Register("OpenReportCommand", typeof(Commands.Command), typeof(TaskReportBaseVm), new UIPropertyMetadata(null));
 		//CanUserEditTaskTPAndG1 Dependency Property
 		public bool CanUserEditTaskTPAndG1
 		{

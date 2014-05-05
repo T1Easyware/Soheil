@@ -1150,6 +1150,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to نیم ساعت.
+        /// </summary>
+        public static string txtHalfHour {
+            get {
+                return ResourceManager.GetString("txtHalfHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to راهنما.
         /// </summary>
         public static string txtHelp {
@@ -1384,6 +1393,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to یک ساعت.
+        /// </summary>
+        public static string txtOneHour {
+            get {
+                return ResourceManager.GetString("txtOneHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to اپراتور.
         /// </summary>
         public static string txtOperator {
@@ -1605,6 +1623,15 @@ namespace Soheil.Common.Properties {
         public static string txtQuantity {
             get {
                 return ResourceManager.GetString("txtQuantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ربع ساعت.
+        /// </summary>
+        public static string txtQuarterHour {
+            get {
+                return ResourceManager.GetString("txtQuarterHour", resourceCulture);
             }
         }
         

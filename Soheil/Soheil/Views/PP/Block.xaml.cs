@@ -38,36 +38,21 @@ namespace Soheil.Views.PP
 		public static readonly DependencyProperty PPTableProperty =
 			DependencyProperty.Register("PPTable", typeof(PPTableVm), typeof(Block), new UIPropertyMetadata(null));
 
-		/// <summary>
-		/// A timer to load task reports with a delay
-		/// </summary>
-		System.Threading.Timer _detailsTimer;
-		/// <summary>
-		/// Delay of loading the task reports
-		/// </summary>
-		const int _detailsTimerDelay = 20;
-		private void TaskReports_Loaded(object sender, RoutedEventArgs e)
+		private void MouseEnters(object sender, MouseEventArgs e)
 		{
-			var task = sender.GetDataContext<PPTaskVm>();
-			if (task != null)
+			var block = sender.GetDataContext<BlockVm>();
+			if(block!=null)
 			{
-				//kill the current timer
-				if (_detailsTimer != null)
-					_detailsTimer.Dispose();
-				//starts a new timer in order to load the task reports
-				_detailsTimer = new System.Threading.Timer(o =>
-				{
-					//load the task reports
-					Dispatcher.Invoke(() => task.ReloadTaskReports());
-				}, null, _detailsTimerDelay, System.Threading.Timeout.Infinite);
+				block.ShowTasks = true;
 			}
 		}
-		private void TaskReports_Unloaded(object sender, RoutedEventArgs e)
+		private void MouseLeaves(object sender, MouseEventArgs e)
 		{
-			var task = sender.GetDataContext<PPTaskVm>();
-			if (task != null)
+			var block = sender.GetDataContext<BlockVm>();
+			if(block!=null)
 			{
-				task.TaskReports.Clear();
+				if (block.Parent.PPTable.SelectedBlock != block)
+					block.ShowTasks = false;
 			}
 		}
 	}

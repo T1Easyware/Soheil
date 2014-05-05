@@ -40,7 +40,7 @@
 			<TextBox Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Grid.ColumnSpan="2" IsEnabled="{Binding ByEndDate, Converter={StaticResource inverter}}" Grid.Column="1" Grid.Row="3" Margin="3"/>
 
 			<Button Grid.Row="5" Grid.Column="0" Content="انصراف" Command="{Binding CancelCommand}"/>
-			<Button Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Content="تأیید" Command="{Binding OpenCommand}"/>
+			<Button Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Content="تأیید" Command="{Binding OpenReportCommand}"/>
 		</Grid>
 	</Border>
 </UserControl>

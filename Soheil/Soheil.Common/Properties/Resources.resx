@@ -786,4 +786,13 @@
   <data name="ttCode" xml:space="preserve">
     <value>کد</value>
   </data>
+  <data name="txtHalfHour" xml:space="preserve">
+    <value>نیم ساعت</value>
+  </data>
+  <data name="txtOneHour" xml:space="preserve">
+    <value>یک ساعت</value>
+  </data>
+  <data name="txtQuarterHour" xml:space="preserve">
+    <value>ربع ساعت</value>
+  </data>
 </root>

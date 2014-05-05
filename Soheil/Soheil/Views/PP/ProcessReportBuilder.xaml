@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
              xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core" 
+			 xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
@@ -168,10 +169,10 @@
 								<ColumnDefinition Width="30"/>
 								<ColumnDefinition Width="40"/>
 								<ColumnDefinition Width="150"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
@@ -207,10 +208,10 @@
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="180"/>
 								<ColumnDefinition Width="40"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
@@ -221,9 +222,9 @@
 								</DockPanel>
 							</Button>
 							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
-							<TextBlock Margin="2" Grid.Column="2" Text="{Binding DefectionReports.SumOfLostTime, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding DefectionReports.SumOfLostTime}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="3" Text="{Binding DefectionReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
-							<TextBlock Margin="2" Grid.Column="5" Text="{Binding DefectionReports.SumOfTimeEquivalent, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding DefectionReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding DefectionReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- Defections List -->
@@ -235,10 +236,10 @@
 											<ColumnDefinition Width="30"/>
 											<ColumnDefinition Width="40"/>
 											<ColumnDefinition Width="150"/>
-											<ColumnDefinition Width="75"/>
+											<ColumnDefinition Width="100"/>
+											<ColumnDefinition Width="70"/>
 											<ColumnDefinition Width="50"/>
-											<ColumnDefinition Width="50"/>
-											<ColumnDefinition Width="75"/>
+											<ColumnDefinition Width="100"/>
 											<ColumnDefinition Width="50"/>
 											<ColumnDefinition Width="*"/>
 										</Grid.ColumnDefinitions>
@@ -267,7 +268,7 @@
 											</DockPanel>
 										</ContentControl>
 										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-											<TextBox Text="{Binding LostSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<CustomControls:TimeBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
 											<TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -276,7 +277,7 @@
 											<CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
 										</ContentControl>
 										<ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-											<TextBlock Text="{Binding TimeEquivalent, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<CustomControls:TimeBox DurationSeconds="{Binding TimeEquivalent, Mode=TwoWay}" IsReadOnly="True"/>
 										</ContentControl>
 										<ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding QuantityEquivalent}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -349,10 +350,10 @@
 								<ColumnDefinition Width="30"/>
 								<ColumnDefinition Width="160"/>
 								<ColumnDefinition Width="30"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
@@ -391,10 +392,10 @@
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="180"/>
 								<ColumnDefinition Width="40"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
@@ -406,8 +407,9 @@
 							</Button>
 							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
 							<TextBlock Margin="2" Grid.Column="2" Text="{Binding StoppageReports.SumOfLostTime, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding StoppageReports.SumOfLostTime}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="3" Text="{Binding StoppageReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
-							<TextBlock Margin="2" Grid.Column="5" Text="{Binding StoppageReports.SumOfTimeEquivalent, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding StoppageReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding StoppageReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- Stoppages List -->
@@ -419,10 +421,10 @@
 											<ColumnDefinition Width="30"/>
 											<ColumnDefinition Width="160"/>
 											<ColumnDefinition Width="30"/>
-											<ColumnDefinition Width="75"/>
+											<ColumnDefinition Width="100"/>
+											<ColumnDefinition Width="70"/>
 											<ColumnDefinition Width="50"/>
-											<ColumnDefinition Width="50"/>
-											<ColumnDefinition Width="75"/>
+											<ColumnDefinition Width="100"/>
 											<ColumnDefinition Width="50"/>
 											<ColumnDefinition Width="*"/>
 										</Grid.ColumnDefinitions>
@@ -457,7 +459,7 @@
 											<TextBox Text="{Binding SelectedCode}" TextChanged="CausesSelectedCode_TextChanged" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="25"/>
 										</ContentControl>
 										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-											<TextBox Text="{Binding LostSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<CustomControls:TimeBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
 											<TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -466,7 +468,7 @@
 											<CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
 										</ContentControl>
 										<ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-											<TextBlock Text="{Binding TimeEquivalent, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<CustomControls:TimeBox DurationSeconds="{Binding TimeEquivalent, Mode=TwoWay}" IsReadOnly="True"/>
 										</ContentControl>
 										<ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding QuantityEquivalent}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>

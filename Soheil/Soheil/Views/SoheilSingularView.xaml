@@ -550,10 +550,13 @@
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
                             <Separator/>
-                            <ToggleButton IsChecked="{Binding ShowBlockReport}">
-								<Image Style="{StaticResource ProcessReportImage}"/>
+							<ToggleButton IsChecked="{Binding ShowBlockReport}" Visibility="{Binding ShowBlockReport, Converter={StaticResource booleanToVisibilityConverter}}">
+								<WrapPanel>
+									<Image Style="{StaticResource ProcessReportImage}"/>
+									<TextBlock Text="گزارش"/>
+								</WrapPanel>
                                 <ToggleButton.ToolTip>
-                                    <ToolTip>گزارش</ToolTip>
+                                    <ToolTip>بستن گزارش تولید</ToolTip>
                                 </ToggleButton.ToolTip>
                             </ToggleButton>
                         </ToolBar>
@@ -781,7 +784,7 @@
                     </ItemsControl>
 
 
-                    <!--Activities (first column of process report) -->
+                    <!-- titles of Activities (just the first column of process report) -->
                     <DockPanel Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
                         <Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
                             <TextBlock Text="مدت زمان" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -838,7 +841,7 @@
                             </ItemsControl.Template>
                         </ItemsControl>
                     </DockPanel>
-                    <!--RowsOfActivity ItemsControl & Durations, TP, G1 (other columns of process report) -->
+                    <!--RowsOfActivity ItemsControl & ExceptionBalloons, Durations, TP, G1 (other columns of process report) -->
                     <DockPanel Grid.Row="5" Grid.Column="1" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
                         <!-- & Durations, TPs, G1s -->
                         <ItemsControl DockPanel.Dock="Top" Height="59" ItemsSource="{Binding SelectedBlock.BlockReport.TaskReports}">
@@ -933,7 +936,7 @@
                             </ItemsControl.Template>
                         </ItemsControl>
 
-                        <!--RowsOfActivity ItemsControl-->
+						<!--RowsOfActivity ItemsControl & Exceptions Balloons-->
                         <Grid>
                             <ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ProcessReportRows}" x:Name="ic_activitiesRows">
 								<ItemsControl.Effect>
@@ -963,10 +966,10 @@
                                 <!--RowsOfActivity Template-->
                                 <ItemsControl.Template>
                                     <ControlTemplate>
-										<Grid ClipToBounds="True">
+										<Grid ClipToBounds="True" Margin="0,6,0,0">
 											<ItemsPresenter>
 												<ItemsPresenter.Margin>
-													<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}" ConverterParameter="Top2">
+													<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
 														<Binding Path="HoursPassed"/>
 														<Binding Path="HourZoom"/>
 														<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
@@ -979,7 +982,7 @@
 
                             </ItemsControl>
                             <!--RowsOfActivity ExceptionTooltips-->
-                            <ItemsControl ItemsSource="{Binding SelectedBlock.ProcessReportRows}">
+                            <ItemsControl ItemsSource="{Binding SelectedBlock.ProcessReportRows}" Margin="0,6,0,0">
 
                                 <!-- ==================================== OneRowOfActivity Balloons ========================================= -->
                                 <ItemsControl.ItemTemplate>
@@ -999,7 +1002,7 @@
                                     <ControlTemplate>
                                         <ItemsPresenter ClipToBounds="False">
                                             <ItemsPresenter.Margin>
-                                                <MultiBinding Converter="{StaticResource mainPanelMarginConverter}" ConverterParameter="Top2">
+                                                <MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
                                                     <Binding Path="HoursPassed"/>
                                                     <Binding Path="HourZoom"/>
                                                     <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
@@ -1013,14 +1016,14 @@
                         </Grid>
                     </DockPanel>
                   
-                    <!--Stations-->
+                    <!-- titles of Stations-->
                     <ItemsControl Grid.Row="6" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" IsHitTestVisible="False">
 						<ItemsControl.Effect>
 							<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="White"/>
 						</ItemsControl.Effect>
 						<!--PPTable ItemTemplate-->
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:PPStationVm}">
+                            <DataTemplate DataType="{x:Type vm:StationVm}">
                                 <DockPanel VerticalAlignment="Stretch" Height="42">
                                     <Border Background="{StaticResource HeaderBackground}" DockPanel.Dock="Left" Width="{StaticResource StationOrActivityHeaderWidth}"
 									    BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,1,1">
@@ -1058,7 +1061,7 @@
 							<DropShadowEffect Opacity="0.3" ShadowDepth="0" Color="White"/>
 						</ItemsControl.Effect>
 						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="{x:Type vm:PPStationVm}">
+							<DataTemplate DataType="{x:Type vm:StationVm}">
 								<Canvas Height="42">
 									
 									<!-- Blocks ItemsControl -->
@@ -1117,7 +1120,7 @@
                     <!-- ExceptionTooltips for Tasks,NPTs -->
                     <ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}" ClipToBounds="False">
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:PPStationVm}">
+                            <DataTemplate DataType="{x:Type vm:StationVm}">
                                 <Canvas>
 									
                                     <!-- Tasks ItemsControl -->

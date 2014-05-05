@@ -14,6 +14,11 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public Dal.SoheilEdmContext UOW { get; protected set; }
 		DataServices.TaskDataService TaskDataService;
 		DataServices.ProcessReportDataService ProcessReportDataService;
+
+		/// <summary>
+		/// Creates a report for the given block, fills all process reports
+		/// </summary>
+		/// <param name="block"></param>
 		public BlockReportVm(BlockVm block)
 		{
 			Block = block;

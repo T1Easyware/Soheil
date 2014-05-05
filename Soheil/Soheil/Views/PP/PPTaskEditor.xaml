@@ -7,6 +7,7 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib" 
              xmlns:fpcView="clr-namespace:Soheil.Views.Fpc" 
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
         xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
@@ -321,7 +322,7 @@
 								<RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
                                     <WrapPanel>
                                         <TextBlock Text="{Loc PPE_SameTimeForActivites}" VerticalAlignment="Center"/>
-										<TextBox IsEnabled="{Binding IsSameTimeForActivitiesSelected}" Text="{Binding SameTimeForActivities, Converter={StaticResource fullTimeSpanToStringConverter}, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" FlowDirection="LeftToRight"/>
+										<CustomControls:TimeBox Time="{Binding SameTimeForActivities, Mode=TwoWay}" IsReadOnly="{Binding IsSameTimeForActivitiesSelected, Converter={StaticResource inverter}}"/>
                                     </WrapPanel>
                                 </RadioButton>
                                 <RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
@@ -392,8 +393,32 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-							<DataGridTextColumn Width="60" Binding="{Binding TargetPoint}" IsReadOnly="{Binding ElementName=deferToProcessRadioButton, Path=IsChecked, Converter={StaticResource inverter}}" Header="{Loc txtTargetPoint}"/>
-							<DataGridTextColumn Width="60" Binding="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" IsReadOnly="{Binding ElementName=deferToProcessRadioButton, Path=IsChecked, Converter={StaticResource inverter}}" Header="{Loc txtDuration}"/>
+							<DataGridTemplateColumn Width="60" Header="{Loc txtTargetPoint}">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding TargetPoint}"/>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+								<DataGridTemplateColumn.CellEditingTemplate>
+									<DataTemplate>
+										<TextBox Text="{Binding TargetPoint}" IsReadOnly="{Binding ElementName=deferToProcessRadioButton, Path=IsChecked, Converter={StaticResource inverter}}"
+													ToolTip="برای تغییر دستی مقدار هدف، بایستی مقادیر فعالیتها مستقل باشند"/>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellEditingTemplate>
+							</DataGridTemplateColumn>
+							<DataGridTemplateColumn Width="100" Header="{Loc txtDuration}">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight"/>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+								<DataGridTemplateColumn.CellEditingTemplate>
+									<DataTemplate>
+										<CustomControls:TimeBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding ElementName=deferToProcessRadioButton, Path=IsChecked, Converter={StaticResource inverter}}"
+													ToolTip="برای تغییر دستی مدت فعالیت، بایستی مقادیر فعالیتها مستقل باشند"/>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellEditingTemplate>
+							</DataGridTemplateColumn>
 							<DataGridTemplateColumn Header="{Loc txtOperators}">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
@@ -418,17 +443,32 @@
                                 <WrapPanel Background="Silver" TextBlock.Foreground="Black">
 									<DockPanel>
 										<TextBlock Text="{Loc txtOperators}" Foreground="Gray"/>
-										<TextBlock Text="{Binding SelectedOperatorsCount}" Margin="10,0,20,0"/>
+										<TextBlock Text="{Binding SelectedOperatorsCount}" Margin="5,0,10,0"/>
 									</DockPanel>
 									<DockPanel>
 										<TextBlock Text="{Loc txtCycleTime}" Foreground="Gray"/>
-										<TextBlock Text="{Binding SelectedChoice.CycleTime}" Margin="10,0,20,0"/>
+										<TextBlock Text="{Binding SelectedChoice.CycleTime}" Margin="2,0,10,0"/>
 									</DockPanel>
 									<DockPanel>
 										<TextBlock Text="{Loc txtDuration}" Foreground="Gray"/>
-										<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="10,0,0,0"/>
+										<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="5,0,0,0"/>
 									</DockPanel>
-                                </WrapPanel>
+									<Button Content="{Loc txtOneHour}" Command="{Binding SetDurationMinutesCommand}" Margin="2,0" Padding="1,-2">
+										<Button.CommandParameter>
+											<sys:Int32>60</sys:Int32>
+										</Button.CommandParameter>
+									</Button>
+									<Button Content="{Loc txtHalfHour}" Command="{Binding SetDurationMinutesCommand}" Margin="2,0" Padding="1,-2">
+										<Button.CommandParameter>
+											<sys:Int32>30</sys:Int32>
+										</Button.CommandParameter>
+									</Button>
+									<Button Content="{Loc txtQuarterHour}" Command="{Binding SetDurationMinutesCommand}" Margin="2,0" Padding="1,-2">
+										<Button.CommandParameter>
+											<sys:Int32>15</sys:Int32>
+										</Button.CommandParameter>
+									</Button>
+								</WrapPanel>
                             </DataTemplate>
                         </DataGrid.RowDetailsTemplate>
                     </DataGrid>
@@ -538,7 +578,7 @@
 										<WrapPanel>
 											<TextBlock Text="{Loc PPE_FirstEmptySpace}"/>
 											<TextBlock Text="{Binding StartDate, Converter={StaticResource dateToLocalStringConverter}}" FlowDirection="LeftToRight" Margin="20,0,10,0"/>
-											<TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+											<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}" IsReadOnly="True"/>
 										</WrapPanel>
 									</CheckBox>
 									<WrapPanel VerticalAlignment="Center" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
@@ -547,7 +587,7 @@
                                         <Button Margin="3" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" FontSize="9"/>
 										<Button Margin="3" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}" FontSize="9"/>
                                         <TextBlock Margin="3" Text="{Loc txtTime}" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-                                        <TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+										<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
 										<Button Margin="3" Content="{Loc PPE_StartOfThisHour}" Command="{Binding SelectThisHourCommand}" ToolTip="{Loc PPE_StartOfThisHourTooltip}" FontSize="9"/>
 										<Button Margin="3" Content="{Loc PPE_StartOfNextHour}" Command="{Binding SelectNextHourCommand}" ToolTip="{Loc PPE_StartOfNextHourTooltip}" FontSize="9"/>
 										<Button Margin="3" Content="{Loc PPE_NextHour}" Command="{Binding AddOneHourCommand}" FontSize="9"/>

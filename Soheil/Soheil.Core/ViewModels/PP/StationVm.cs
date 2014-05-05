@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP
 {
-	public class PPStationVm : DependencyObject
+	public class StationVm : DependencyObject
 	{
 		//Text Dependency Property
 		public string Text
@@ -17,7 +17,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(TextProperty, value); }
 		}
 		public static readonly DependencyProperty TextProperty =
-			DependencyProperty.Register("Text", typeof(string), typeof(PPStationVm), new UIPropertyMetadata(""));
+			DependencyProperty.Register("Text", typeof(string), typeof(StationVm), new UIPropertyMetadata(""));
 		//Tasks Observable Collection
 		private ObservableCollection<BlockVm> _blocks = new ObservableCollection<BlockVm>();
 		public ObservableCollection<BlockVm> Blocks { get { return _blocks; } }

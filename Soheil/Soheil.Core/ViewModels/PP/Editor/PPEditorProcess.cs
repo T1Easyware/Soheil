@@ -137,6 +137,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			TargetPoint = model.TargetCount;
 			HoldEvents = false;
+
+			//Set the command
+			SetDurationMinutesCommand = new Commands.Command(min => DurationSeconds = (int)min * 60);
 		}
 		#endregion
 
@@ -315,5 +318,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (ActivityChoiceChanged != null)
 				ActivityChoiceChanged(oldVal, newVal);
 		}
+
+		//SetDurationMinutesCommand Dependency Property
+		public Commands.Command SetDurationMinutesCommand
+		{
+			get { return (Commands.Command)GetValue(SetDurationMinutesCommandProperty); }
+			set { SetValue(SetDurationMinutesCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
+			DependencyProperty.Register("SetDurationMinutesCommand", typeof(Commands.Command), typeof(PPEditorProcess), new UIPropertyMetadata(null));
 	}
 }

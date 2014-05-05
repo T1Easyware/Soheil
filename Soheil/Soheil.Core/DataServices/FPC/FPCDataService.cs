@@ -121,7 +121,7 @@ namespace Soheil.Core.DataServices
 		{
 			model.ModifiedDate = DateTime.Now;
 			model.ModifiedBy = LoginInfo.Id;
-			context.SaveChanges();
+			context.Commit();
 		} 
 		#endregion
 
@@ -269,7 +269,7 @@ namespace Soheil.Core.DataServices
 					throw new Exception("این تنها FPC برای این محصول است.\nلذا به ناچار همین FPC پیش فرض است");
 			}
 
-			context.SaveChanges();
+			context.Commit();
 		}
 
 		public IEnumerable<ProductRework> GetProductReworks(FPC model, bool includeMainProduct)
@@ -364,7 +364,7 @@ namespace Soheil.Core.DataServices
 				state.OnProductRework = model.Product.ProductReworks.First(x => x.Rework == null);
 			}
 			//...
-			context.SaveChanges();
+			context.Commit();
 		}
 	}
 }

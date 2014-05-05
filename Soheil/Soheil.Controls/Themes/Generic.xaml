@@ -362,4 +362,120 @@ TargetType="{x:Type Button}">
             </Setter.Value>
         </Setter>
     </Style>
+
+	<Style TargetType="{x:Type CustomControls:TimeBox}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type CustomControls:TimeBox}">
+					<ControlTemplate.Resources>
+						<Style x:Key="TimeComponents" TargetType="{x:Type TextBox}">
+							<Setter Property="SnapsToDevicePixels" Value="True" />
+							<Setter Property="OverridesDefaultStyle" Value="True" />
+							<Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle"/>
+							<Setter Property="MinWidth" Value="22"/>
+							<Setter Property="Height" Value="22"/>
+							<Setter Property="VerticalAlignment" Value="Center"/>
+							<Setter Property="Foreground" Value="White"/>
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="{x:Type TextBoxBase}">
+										<Border Name="Border" CornerRadius="2" Padding="2" BorderThickness="1">
+											<Border.Background>
+												<SolidColorBrush Color="#4088"/>
+											</Border.Background>
+											<Border.BorderBrush>
+												<SolidColorBrush Color="#8088"/>
+											</Border.BorderBrush>
+											<VisualStateManager.VisualStateGroups>
+												<VisualStateGroup x:Name="CommonStates">
+													<VisualState x:Name="Normal"/>
+													<VisualState x:Name="Disabled">
+														<Storyboard>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="Transparent"/>
+															</ColorAnimationUsingKeyFrames>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="Transparent"/>
+															</ColorAnimationUsingKeyFrames>
+														</Storyboard>
+													</VisualState>
+													<VisualState x:Name="ReadOnly">
+														<Storyboard>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="Transparent" />
+															</ColorAnimationUsingKeyFrames>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="Transparent" />
+															</ColorAnimationUsingKeyFrames>
+														</Storyboard>
+													</VisualState>
+													<VisualState x:Name="MouseOver">
+														<Storyboard>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="#88FF"/>
+															</ColorAnimationUsingKeyFrames>
+														</Storyboard>
+													</VisualState>
+													<VisualState x:Name="Focused">
+														<Storyboard>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="#C8FF"/>
+															</ColorAnimationUsingKeyFrames>
+														</Storyboard>
+													</VisualState>
+												</VisualStateGroup>
+											</VisualStateManager.VisualStateGroups>
+											<ScrollViewer Margin="0" x:Name="PART_ContentHost"/>
+										</Border>
+										<ControlTemplate.Triggers>
+											<Trigger Property="IsReadOnly" Value="True">
+												<Setter Property="Foreground">
+													<Setter.Value>
+														<SolidColorBrush Color="Gray"/>
+													</Setter.Value>
+												</Setter>
+											</Trigger>
+											<Trigger Property="IsFocused" Value="True">
+												<Setter Property="Foreground">
+													<Setter.Value>
+														<SolidColorBrush Color="Black"/>
+													</Setter.Value>
+												</Setter>
+											</Trigger>
+										</ControlTemplate.Triggers>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</ControlTemplate.Resources>
+					<Grid FlowDirection="LeftToRight">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Hour, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center"/>
+						<TextBlock Text=":" VerticalAlignment="Center" Grid.Column="1"/>
+						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Minute, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center" Grid.Column="2"/>
+						<TextBlock Text=":" VerticalAlignment="Center" Grid.Column="3"/>
+						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Second, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center" Grid.Column="4"/>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 </ResourceDictionary>

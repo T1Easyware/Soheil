@@ -40,7 +40,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// If you use this constructor, you can't use Machines or Operators
 		/// </summary>
 		/// <param name="model"></param>
-		public ProcessVm(Model.Process model, PPTaskVm task)
+		public ProcessVm(Model.Process model, TaskVm task)
 			: this(model.StateStationActivity)
 		{
 			TargetCount = model.TargetCount;
@@ -78,13 +78,13 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("StateStationActivity", typeof(StateStationActivityVm), typeof(ProcessVm), new UIPropertyMetadata(null));
 
 		//Task Dependency Property
-		public PPTaskVm Task
+		public TaskVm Task
 		{
-			get { return (PPTaskVm)GetValue(TaskProperty); }
+			get { return (TaskVm)GetValue(TaskProperty); }
 			set { SetValue(TaskProperty, value); }
 		}
 		public static readonly DependencyProperty TaskProperty =
-			DependencyProperty.Register("Task", typeof(PPTaskVm), typeof(ProcessVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Task", typeof(TaskVm), typeof(ProcessVm), new UIPropertyMetadata(null));
 
 		//IsExpanded Dependency Property
 		public event EventHandler<ProcessVm> IsExpandedCallback;

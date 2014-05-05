@@ -555,9 +555,7 @@ namespace Soheil.Controls.Converters.PP
 			var hoursPassed = (double)values[0];
 			var hourZoom = (double)values[1];
 			var daysFromStartOfYear = (int)values[2];
-			if(parameter==null)
-				return new Thickness(-(hoursPassed + daysFromStartOfYear * 24) * hourZoom, 0, 0, 0);
-			return new Thickness(-(hoursPassed + daysFromStartOfYear * 24) * hourZoom, 2, 0, 0);
+			return new Thickness(-(hoursPassed + daysFromStartOfYear * 24) * hourZoom, 0, 0, 0);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -575,9 +573,7 @@ namespace Soheil.Controls.Converters.PP
 			var hourZoom = (double)values[1];
 			var daysFromStartOfYear = (int)values[2];
 			var verticalOffset = (double)values[3];
-			if (parameter == null)
-				return new Thickness(-(hoursPassed + daysFromStartOfYear * 24) * hourZoom, verticalOffset, 0, 0);
-			return new Thickness(-(hoursPassed + daysFromStartOfYear * 24) * hourZoom, verticalOffset+2, 0, 0);
+			return new Thickness(-(hoursPassed + daysFromStartOfYear * 24) * hourZoom, verticalOffset, 0, 0);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

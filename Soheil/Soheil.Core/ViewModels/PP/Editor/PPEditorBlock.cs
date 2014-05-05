@@ -224,7 +224,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					{
 						#region [x]
 						//if no validProcessVm found delete the process model
-						taskVm.Model.Processes.Remove(processModel);
 						TaskDataService.DeleteModel(processModel); 
 						#endregion
 					}
@@ -633,7 +632,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			});
 			DeleteBlockFromList = new Commands.Command(vm =>
 			{
-				((PPTaskEditorVm)vm).FpcViewer_RemoveBlock(this);
+				((TaskEditorVm)vm).FpcViewer_RemoveBlock(this);
 			});
 			SelectTodayCommand = new Commands.Command(o => StartDate = DateTime.Now.Date);
 			SelectTomorrowCommand = new Commands.Command(o => StartDate = DateTime.Now.AddDays(1).Date);

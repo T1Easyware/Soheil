@@ -55,6 +55,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External Assemblies\System.Windows.Interactivity.dll</HintPath>
@@ -144,6 +145,7 @@
     <Compile Include="CustomControls\OverlayMessageBox.xaml.cs">
       <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\TimeBox.cs" />
     <Compile Include="DataGridTextSearch.cs" />
     <Compile Include="Layout\PPStyles.xaml.cs">
       <DependentUpon>PPStyles.xaml</DependentUpon>

@@ -64,7 +64,7 @@ namespace Soheil.Core.DataServices
 		{
            // model.ModifiedBy = LoginInfo.Id;
            // model.ModifiedDate = DateTime.Now;
-			context.SaveChanges();
+			context.Commit();
 		}
 
         public void DeleteModel(Holiday model)
@@ -87,13 +87,13 @@ namespace Soheil.Core.DataServices
 		{
             var model = _holidayRepository.Single(x => x.Id == id);
 			var clone = cloneModel(model);
-			context.SaveChanges();
+			context.Commit();
 			return clone;
 		}
 		public /*override*/ Holiday Clone(Holiday model)
         {
 			var clone = cloneModel(model);
-			context.SaveChanges();
+			context.Commit();
 			return clone;
         }
 		/*
@@ -106,7 +106,7 @@ namespace Soheil.Core.DataServices
 			var typed_model = (Holiday)Convert.ChangeType(model, typeof(Holiday));
 			var typed_clone = cloneModel(typed_model);
 			var t_clone = (T)Convert.ChangeType(typed_clone, typeof(T));
-			context.SaveChanges();
+			context.Commit();
 			return t_clone;
 		}*/
 

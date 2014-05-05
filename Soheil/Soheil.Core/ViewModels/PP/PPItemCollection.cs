@@ -18,7 +18,7 @@ namespace Soheil.Core.ViewModels.PP
 	/// <para>This class also provide add/remove/find methods that directly target Blocks and Npts regardless of their station</para>
 	/// </summary>
 	/// <remarks>Only those items in each station are shown that are within the timeline range</remarks>
-	public class PPItemCollection : ObservableCollection<PPStationVm>
+	public class PPItemCollection : ObservableCollection<StationVm>
 	{
 
 		#region Members, props, consts
@@ -68,6 +68,7 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Events
+		public event Action<BlockVm> BlockAdded;
 		/// <summary>
 		/// Occurs when a block is removed from this collection. parameter is blockId
 		/// </summary>
@@ -76,30 +77,6 @@ namespace Soheil.Core.ViewModels.PP
 		/// Occurs when an npt is removed from this collection. parameter is nptId
 		/// </summary>
 		public event Action<int> NptRemoved;
-		/// <summary>
-		/// Occurs when a job is removed from this collection. parameter is jobVm
-		/// </summary>
-		public event Action<PPJobVm> JobRemoved;
-		/// <summary>
-		/// Occurs when an npt is removed from this collection. parameter is nptId
-		/// </summary>
-		public event Action<Editor.PPEditorBlock> TaskEditorUpdated;
-		/// <summary>
-		/// Occurs when an npt is removed from this collection. parameter is nptId
-		/// </summary>
-		public event Action TaskEditorReset;
-		/// <summary>
-		/// Occurs when an npt is removed from this collection. parameter is nptId
-		/// </summary>
-		public event Action<PPJobVm> JobEditorUpdated;
-		/// <summary>
-		/// Occurs when an npt is removed from this collection. parameter is nptId
-		/// </summary>
-		public event Action JobEditorReset;
-		/// <summary>
-		/// Occurs when an npt is removed from this collection. parameter is nptId
-		/// </summary>
-		public event Action<BlockVm> EditBlockReportStarted;
 		#endregion
 
 		#region Ctor, Parallel loading
@@ -313,49 +290,7 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			return this[model.StateStation.Station.Index].Blocks;
 		}
-		/// <summary>
-		/// Finds an existing BlockVm in this collection
-		/// </summary>
-		/// <param name="model"></param>
-		/// <returns></returns>
-		//public BlockVm FindItem(Model.Block model)
-		//{
-		//	try
-		//	{
-		//		return GetRowContaining(model).FirstOrDefault(x => x.Id == model.Id);
-		//	}
-		//	catch { return null; }
-		//} 
-		/// <summary>
-		/// Searches in all stations for an existing BlockVm
-		/// <para>Slow - not recommended for bottlenecks, use FindItem instead</para>
-		/// </summary>
-		/// <param name="id">Id of Block to find</param>
-		/// <returns>ViewModel of block from this collection</returns>
-		//public BlockVm FindBlockById(int id)
-		//{
-		//	foreach (var row in this)
-		//	{
-		//		var block = row.Blocks.FirstOrDefault(y => y.Id == id);
-		//		if (block != null) return block;
-		//	}
-		//	return null;
-		//}
-		/// <summary>
-		/// Searches in all stations for existing instances of <see cref="BlockVm"/> that are part of the given job
-		/// <para>Slow - not recommended for bottlenecks, use FindItem instead</para>
-		/// </summary>
-		/// <param name="id">Id of a job</param>
-		/// <returns>collection of BlockVms from this collection</returns>
-		//public IEnumerable<BlockVm> FindBlocksByJobId(int id)
-		//{
-		//	List<BlockVm> blocks = new List<BlockVm>();
-		//	foreach (var row in this)
-		//	{
-		//		blocks.AddRange(row.Blocks.Where(y => y.Id == id));
-		//	}
-		//	return blocks;
-		//}
+
 		/// <summary>
 		/// Adds a new BlockVm to this collection with the given model and sets all its commands
 		/// </summary>
@@ -379,101 +314,8 @@ namespace Soheil.Core.ViewModels.PP
 
 				//create viewmodel for the new block
 				var vm = new BlockVm(data, this);
-
-				#region block commands
-				vm.ReloadBlockCommand = new Commands.Command(o =>
-				{
-					vm.Reload();
-
-					//check for selected things
-
-					//check if the SelectedJobId in PPTable is the same as this Job
-					if (vm.Job != null)
-					{
-						if (PPTable.SelectedJobId == vm.Job.Id)
-						{
-							vm.IsJobSelected = true;
-						}
-					}
-					//check if the SelectedBlock in PPTable is the same as this block
-					if (PPTable.SelectedBlock == null)
-					{
-						ViewMode = PPViewMode.Simple;
-					}
-					else ViewMode = (PPTable.SelectedBlock.Id == vm.Id) ? PPViewMode.Report : PPViewMode.Simple;
-				});
-				vm.AddBlockToEditorCommand = new Commands.Command(o =>
-				{
-					try { if (TaskEditorUpdated != null) TaskEditorUpdated(new Editor.PPEditorBlock(vm.Model)); }
-					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
-				}, () => vm.Model != null);
-				vm.EditItemCommand = new Commands.Command(o =>
-				{
-					try
-					{
-						if (TaskEditorReset != null) TaskEditorReset();
-						if (TaskEditorUpdated != null) TaskEditorUpdated(new Editor.PPEditorBlock(vm.Model));
-					}
-					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
-				});
-				vm.AddJobToEditorCommand = new Commands.Command(o =>
-				{
-					try { if (JobEditorUpdated != null) JobEditorUpdated(vm.Job); }
-					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
-				}, () =>
-				{
-					if (vm.Job == null) return false;
-					if (vm.Job.Id == 0) return false;
-					return true;
-				});
-				vm.EditJobCommand = new Commands.Command(o =>
-				{
-					try
-					{
-						if (JobEditorReset != null) JobEditorReset();
-						if (JobEditorUpdated != null) JobEditorUpdated(vm.Job);
-					}
-					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
-				}, () =>
-				{
-					if (vm.Job == null) return false;
-					if (vm.Job.Id == 0) return false;
-					return true;
-				});
-				vm.EditReportCommand = new Commands.Command(blockVm =>
-				{
-					try { if (EditBlockReportStarted != null) EditBlockReportStarted(vm); }
-					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
-				});
-				vm.DeleteItemCommand = new Commands.Command(o =>
-				{
-					try { RemoveItem(vm); }
-					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
-				});
-				vm.DeleteJobCommand = new Commands.Command(o =>
-				{
-					try { if (JobRemoved != null) JobRemoved(vm.Job); }
-					catch (RoutedException exp)
-					{
-						if (exp.Target is PPTaskVm)
-							(exp.Target as PPTaskVm).Message.AddEmbeddedException(exp.Message);
-						else //if(exp.Target is BlockVm)
-							vm.Message.AddEmbeddedException(exp.Message);
-					}
-					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
-				}, () => { return vm.Job != null; });
-				vm.InsertSetupBefore = new Commands.Command(async o =>
-				{
-					//the following part is async version of "var result = tmp.InsertSetupBeforeTask(Id)"
-					var tmp = _blockDataService;
-					var id = vm.Id;
-					var result = await Task.Run(() => tmp.InsertSetupBeforeBlock(id));
-
-					//in case of error callback with result
-					if (result.IsSaved) Reload();
-					else vm.InsertSetupBeforeCallback(result);
-				}); 
-				#endregion
+				if (BlockAdded != null) BlockAdded(vm);
+				initializeCommands(vm);
 
 				//add the viewmodel to its container
 				container.Add(vm);
@@ -481,18 +323,7 @@ namespace Soheil.Core.ViewModels.PP
 			}
 			catch { return null; }
 		}
-		/// <summary>
-		/// Removes a blockVm from this collection based on its Id
-		/// </summary>
-		/// <param name="model">model of block to remove (Id and Station are used)</param>
-		//public void RemoveItem(Model.Block model)
-		//{
-		//	try
-		//	{
-		//		GetRowContaining(model).RemoveWhere(x => x.Id == model.Id);
-		//	}
-		//	catch { }
-		//}
+
 		/// <summary>
 		/// Removes a blockVm from this collection based on its Id
 		/// </summary>
@@ -512,43 +343,6 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region NPT Operations
-		/// <summary>
-		/// Returns the row of npts which contains the provided model
-		/// </summary>
-		/// <param name="model"></param>
-		/// <returns></returns>
-		//public ObservableCollection<NPTVm> GetRowContaining(Model.NonProductiveTask model)
-		//{
-		//	if (model is Model.Setup)
-		//		return this[(model as Model.Setup).Warmup.Station.Index].NPTs;
-		//	else
-		//		throw new NotImplementedException();//???
-		//}
-		/// <summary>
-		/// Finds an existing NPTVm in this collection
-		/// </summary>
-		/// <param name="id">id of npt</param>
-		/// <param name="stationIndex">index of station</param>
-		/// <returns></returns>
-		//public NPTVm FindNPT(int id, int stationIndex)
-		//{
-		//	return this[stationIndex].NPTs.FirstOrDefault(y => y.Id == id);
-		//}
-		/// <summary>
-		/// Searches in all stations for an existing NPTVm
-		/// <para>Slow - not recommended for bottlenecks, use FindItem instead</para>
-		/// </summary>
-		/// <param name="id">Id of NPT to find</param>
-		/// <returns>ViewModel of npt from this collection</returns>
-		//public NPTVm FindNPTById(int id)
-		//{
-		//	foreach (var row in this)
-		//	{
-		//		var npt = row.NPTs.FirstOrDefault(y => y.Id == id);
-		//		if (npt != null) return npt;
-		//	}
-		//	return null;
-		//}
 		/// <summary>
 		/// Adds a new NPTVm to this collection with the given model
 		/// </summary>
@@ -581,24 +375,7 @@ namespace Soheil.Core.ViewModels.PP
 			}
 			catch { return null; }
 		}
-		/// <summary>
-		/// Removes a NptVm from this collection based on its Id
-		/// </summary>
-		/// <param name="model">model of block to remove (Id and Station are used)</param>
-		//public void RemoveNPT(Model.NonProductiveTask model)
-		//{
-		//	try
-		//	{
-		//		if (model != null && NptRemoved != null) NptRemoved(model.Id);
-		//		if (model is Model.Setup)
-		//		{
-		//			var setupModel = model as Model.Setup;
-		//			this[setupModel.Warmup.Station.Index].NPTs.RemoveWhere(x => x.Id == setupModel.Id);
-		//		}
-		//		else throw new NotImplementedException();//???
-		//	}
-		//	catch { }
-		//}
+
 		/// <summary>
 		/// Removes a nptVm from this collection based on its Id
 		/// </summary>
@@ -611,6 +388,32 @@ namespace Soheil.Core.ViewModels.PP
 				this[vm.RowIndex].NPTs.RemoveWhere(x => x.Id == vm.Id);
 			}
 			catch { }
+		}
+		#endregion
+
+		#region Commands
+		/// <summary>
+		/// Initializes BlockVm commands of vm that can be assigned in this class
+		/// </summary>
+		/// <param name="vm"></param>
+		private void initializeCommands(BlockVm vm)
+		{
+			vm.InsertSetupBefore = new Commands.Command(async o =>
+			{
+				//the following part is async version of "var result = tmp.InsertSetupBeforeTask(Id)"
+				var tmp = _blockDataService;
+				var id = vm.Id;
+				var result = await Task.Run(() => tmp.InsertSetupBeforeBlock(id));
+
+				//in case of error callback with result
+				if (result.IsSaved) Reload();
+				else vm.InsertSetupBeforeCallback(result);
+			});
+			vm.DeleteItemCommand = new Commands.Command(o =>
+			{
+				try { RemoveItem(vm); }
+				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+			});
 		}
 		#endregion
 	}

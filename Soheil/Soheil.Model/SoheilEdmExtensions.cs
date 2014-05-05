@@ -406,11 +406,52 @@ namespace Soheil.Model
 			}
 		}
 	}
+	/// <summary>
+	/// Gets a value indicating that whether report is empty
+	/// </summary>
 	public partial class TaskReport
 	{
-
+		public bool IsEmpty
+		{
+			get
+			{
+				return
+					TaskProducedG1 == 0 && (
+					!ProcessReports.Any() ||
+					ProcessReports.All(x => x.IsEmpty));
+			}
+		}
 	}
-
+	public partial class Process
+	{
+		/// <summary>
+		/// Gets a value indicating that whether no valid (non-empty) reports exist in this process
+		/// </summary>
+		public bool IsReportEmpty
+		{
+			get
+			{
+				return !ProcessReports.Any()
+					|| ProcessReports.All(x => x.IsEmpty);
+			}
+		}
+	}
+	/// <summary>
+	/// Gets a value indicating that whether report is empty
+	/// </summary>
+	public partial class ProcessReport
+	{
+		public bool IsEmpty
+		{
+			get
+			{
+				return
+					ProducedG1 == 0 &&
+					!DefectionReports.Any() &&
+					!StoppageReports.Any();
+			}
+		}
+	}
 	public partial class User
 	{
 		//public Status RecordStatus

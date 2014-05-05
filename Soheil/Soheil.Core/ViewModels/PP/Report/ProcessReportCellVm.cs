@@ -31,8 +31,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// <param name="taskReport">column of the viewModel cell within the report grid</param>
 		/// <param name="processReportRow">row of the viewModel cell within the report grid</param>
 		public ProcessReportCellVm(Model.ProcessReport model, TaskReportBaseVm taskReport, ProcessReportRowVm processReportRow)
+			:base()
 		{
 			ParentRow = processReportRow;
+			RowIndex = ParentRow.Index;
 			ParentColumn = taskReport;
 			_model = model;
 
@@ -222,13 +224,28 @@ namespace Soheil.Core.ViewModels.PP.Report
 		#region Commands
 		void initializeCommands()
 		{
-			OpenCommand = new Commands.Command(o =>
+			OpenReportCommand = new Commands.Command(o =>
 			{
+				//Message.AddEmbeddedException("salaaaaaam");
 				if (ViewMode == PPViewMode.Simple) IsSelected = true;
 				else if(ViewMode == PPViewMode.Empty)
 				{
-					//create task report column???
+					var holder = ParentColumn as TaskReportHolderVm;
+					if (holder != null) holder.OpenReportCommand.Execute(o);
 				}
+			});
+			OpenReportRangeCommand = new Commands.Command(o =>
+			{
+				TaskReportHolderVm holder = ParentColumn as TaskReportHolderVm;
+				if (holder == null)
+				{
+					int idx = ParentColumn.Task.TaskReports.IndexOf(ParentColumn);
+					holder = ParentColumn.Task.TaskReports.Skip(idx + 1).FirstOrDefault(x => x is TaskReportHolderVm) as TaskReportHolderVm;
+				}
+				if (holder == null)
+					holder = ParentColumn.Task.TaskReports.LastOrDefault(x => x is TaskReportHolderVm) as TaskReportHolderVm;
+				if (holder != null)
+					holder.IsSelected = true;
 			});
 			CloseCommand = new Commands.Command(o => { IsSelected = false; });
 			SaveCommand = new Commands.Command(o =>
@@ -266,7 +283,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 					_processReportDataService.ResetById(Id,
 						_model.Process.TargetCount
 						- ParentRow.ProcessReportCells.Where(y => y.Id != -1).Sum(x => x.ProcessReportTargetPoint));
-					ParentColumn.Task.Block.BlockReport.ReloadProcessReportRows();
+					ParentColumn.Task.Block.ReloadReports();
 				}
 				catch
 				{
@@ -275,14 +292,22 @@ namespace Soheil.Core.ViewModels.PP.Report
 			});
 		}
 
-		//OpenCommand Dependency Property
-		public Commands.Command OpenCommand
+		//OpenReportCommand Dependency Property
+		public Commands.Command OpenReportCommand
 		{
-			get { return (Commands.Command)GetValue(OpenCommandProperty); }
-			set { SetValue(OpenCommandProperty, value); }
+			get { return (Commands.Command)GetValue(OpenReportCommandProperty); }
+			set { SetValue(OpenReportCommandProperty, value); }
 		}
-		public static readonly DependencyProperty OpenCommandProperty =
-			DependencyProperty.Register("OpenCommand", typeof(Commands.Command), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty OpenReportCommandProperty =
+			DependencyProperty.Register("OpenReportCommand", typeof(Commands.Command), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+		//OpenReportRangeCommand Dependency Property
+		public Commands.Command OpenReportRangeCommand
+		{
+			get { return (Commands.Command)GetValue(OpenReportRangeCommandProperty); }
+			set { SetValue(OpenReportRangeCommandProperty, value); }
+		}
+		public static readonly DependencyProperty OpenReportRangeCommandProperty =
+			DependencyProperty.Register("OpenReportRangeCommand", typeof(Commands.Command), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
 		//SaveCommand Dependency Property
 		public Commands.Command SaveCommand
 		{

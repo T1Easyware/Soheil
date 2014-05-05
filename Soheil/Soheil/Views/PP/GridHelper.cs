@@ -80,7 +80,7 @@ namespace Soheil.Views.PP
 		}
 
 		// Set
-		public static void SetAllRows(DependencyObject obj, IEnumerable<PPStationVm> value)
+		public static void SetAllRows(DependencyObject obj, IEnumerable<StationVm> value)
 		{
 			obj.SetValue(AllRowsProperty, value);
 		}

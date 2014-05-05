@@ -70,7 +70,7 @@ namespace Soheil.Core.DataServices
 		{
             model.ModifiedBy = LoginInfo.Id;
             model.ModifiedDate = DateTime.Now;
-			context.SaveChanges();
+			context.Commit();
 		}
 
         public void DeleteModel(WorkProfilePlan model)
@@ -93,7 +93,7 @@ namespace Soheil.Core.DataServices
 		{
             var model = workProfilePlanRepository.Single(x => x.Id == id);
 			var clone = cloneModel(model);
-			context.SaveChanges();
+			context.Commit();
 			return clone;
 		}
         public /*override*/ T Clone<T>(T model)
@@ -101,7 +101,7 @@ namespace Soheil.Core.DataServices
 			var typed_model = (WorkProfilePlan)Convert.ChangeType(model, typeof(WorkProfilePlan));
 			var typed_clone = cloneModel(typed_model);
 			var t_clone = (T)Convert.ChangeType(typed_clone, typeof(T));
-            context.SaveChanges();
+            context.Commit();
 			return t_clone;
         }
 

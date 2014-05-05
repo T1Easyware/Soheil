@@ -5,7 +5,7 @@ using Soheil.Core.Interfaces;
 
 namespace Soheil.Core.Base
 {
-    public abstract class RecursiveDataServiceBase
+    public abstract class RecursiveDataServiceBase : DataServiceBase
     {
         public IEntityNode Root { get; set; }
         public abstract ObservableCollection<IEntityNode> GetChildren(int id);

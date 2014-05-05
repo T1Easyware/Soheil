@@ -26,7 +26,7 @@ namespace Soheil.Core.ViewModels.PP
 				(vm =>
 					{
 						var job = Soheil.Core.ViewModels.PP.Editor.PPEditorJob.CreateForProduct(model, jobDataService);
-						((Soheil.Core.ViewModels.PP.Editor.PPJobEditorVm)vm).JobList.Add(job);
+						((Soheil.Core.ViewModels.PP.Editor.JobEditorVm)vm).JobList.Add(job);
 					}
 				);
 		}

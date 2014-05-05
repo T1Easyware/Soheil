@@ -93,7 +93,7 @@ WHERE block.Id = @id";
 				taskDataService.DeleteModel(task);
 			}
 			_blockRepository.Delete(entity);
-			context.SaveChanges();
+			context.Commit();
 		}
 
 		public void AttachModel(Block model)
@@ -397,11 +397,11 @@ WHERE block.Id = @id";
 		/// </summary>
 		/// <param name="vm"></param>
 		/// <returns></returns>
-		internal bool UpdateViewModel(ViewModels.PP.PPTaskVm vm)
+		internal bool UpdateViewModel(ViewModels.PP.TaskVm vm)
 		{
 			var model = _taskRepository.FirstOrDefault(x => x.Id == vm.Id);
 			if (model == null) return false;
-			vm.Job = new ViewModels.PP.PPJobVm(model.Job);
+			vm.Job = new ViewModels.PP.JobVm(model.Job);
 			vm.ProductCode = model.StateStation.State.FPC.Product.Code;
 			vm.ProductName = model.StateStation.State.FPC.Product.Name;
 			vm.ProductColor = model.StateStation.State.FPC.Product.Color;
@@ -573,7 +573,7 @@ WHERE block.Id = @id";
 					Seconds = 0
 				};
 				changeoverRepository.Add(changeover);
-				context.SaveChanges();
+				context.Commit();
 				/*if (result != null)
 				{
 					result.Errors.Add(new Pair<InsertSetupBeforeTaskErrors.ErrorSource, string, int>(
@@ -635,7 +635,7 @@ WHERE block.Id = @id";
 					Seconds = 0
 				};
 				warmupRepository.Add(warmup);
-				context.SaveChanges();
+				context.Commit();
 				/*if (result != null)
 				{
 					result.Errors.Add(new Pair<InsertSetupBeforeTaskErrors.ErrorSource, string, int>(
@@ -776,7 +776,7 @@ WHERE block.Id = @id";
 						"زمان کل برابر با صفر است، لذا راه اندازی افزوده نشد",
 						0));
 					result.IsSaved = needToDeletePreviousSetup;
-					if (needToDeletePreviousSetup) context.SaveChanges();
+					if (needToDeletePreviousSetup) context.Commit();
 					return result;
 				}
 
@@ -802,7 +802,7 @@ WHERE block.Id = @id";
 					movingSetup.EndDateTime = movingSetup.EndDateTime.AddSeconds(delaySeconds);
 				}
 				//etc...
-				context.SaveChanges();
+				context.Commit();
 				result.IsSaved = true;
 			}
 			catch (Exception exp)

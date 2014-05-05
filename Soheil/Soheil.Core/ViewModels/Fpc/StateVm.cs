@@ -215,7 +215,11 @@ namespace Soheil.Core.ViewModels.Fpc
 			set { SetValue(ShowDetailsProperty, value); }
 		}
 		public static readonly DependencyProperty ShowDetailsProperty =
-			DependencyProperty.Register("ShowDetails", typeof(bool), typeof(StateVm), new UIPropertyMetadata(false));
+			DependencyProperty.Register("ShowDetails", typeof(bool), typeof(StateVm),
+			new UIPropertyMetadata(false, (d, e) => {
+				var vm = (StateVm)d;
+				if (vm.Config != null) vm.Config.IsExpanded = (bool)e.NewValue;
+			}));
 		#endregion
 
 		#region Product Rework

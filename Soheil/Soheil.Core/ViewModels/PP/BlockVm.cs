@@ -41,6 +41,7 @@ namespace Soheil.Core.ViewModels.PP
 			UOW = data.UOW;
 			Parent = parent;
 			_fullData = data;
+			this.ViewModeChanged += v => ShowTasks = v == PPViewMode.Report;
 			load();
 		}
 
@@ -52,7 +53,10 @@ namespace Soheil.Core.ViewModels.PP
 			_fullData.Reload();
 			load();
 		}
-		public void load()
+		/// <summary>
+		/// Loads everything from _fullData (everything until Task)
+		/// </summary>
+		private void load()
 		{
 			Model = _fullData.Model;
 
@@ -78,14 +82,42 @@ namespace Soheil.Core.ViewModels.PP
 			//specify the job (if not null)
 			if (Model.Job != null)
 			{
-				Job = new PPJobVm(Model.Job);
+				Job = new JobVm(Model.Job);
 			}
-			//add Tasks
-			foreach (var task in Model.Tasks)
+			/*foreach (var task in Model.Tasks)
 			{
-				TaskList.Add(new PPTaskVm(task, this));
+				TaskList.Add(new TaskVm(task, this));
+			}*/
+		}
+		private void reloadTasks()
+		{
+			TaskList.Clear();
+			if (Model != null)
+			{
+				//add Tasks
+				foreach (var task in Model.Tasks)
+				{
+					TaskList.Add(new TaskVm(task, this));
+				}
 			}
 		}
+		/// <summary>
+		/// Reloads (or Creates) all task reports and process reports for this block
+		/// </summary>
+		public void ReloadReports()
+		{
+			//create/reload task reports
+			foreach (var task in TaskList)
+			{
+				task.ReloadTaskReports();
+			}
+			//create/reload process reports
+			if (BlockReport == null)
+				BlockReport = new Report.BlockReportVm(this);
+			else
+				BlockReport.ReloadProcessReportRows();
+		}
+
 		#endregion
 
 		#region Properties
@@ -209,20 +241,20 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Gets a bindable collection of tasks inside this Block
 		/// </summary>
-		public ObservableCollection<PPTaskVm> TaskList { get { return _taskList; } }
-		private ObservableCollection<PPTaskVm> _taskList = new ObservableCollection<PPTaskVm>();
+		public ObservableCollection<TaskVm> TaskList { get { return _taskList; } }
+		private ObservableCollection<TaskVm> _taskList = new ObservableCollection<TaskVm>();
 
 		/// <summary>
 		/// Gets or sets a bindable value for the Job associated with this Block
 		/// <para>If this task does not belong to any Job, this value is null</para>
 		/// </summary>
-		public PPJobVm Job
+		public JobVm Job
 		{
-			get { return (PPJobVm)GetValue(JobProperty); }
+			get { return (JobVm)GetValue(JobProperty); }
 			set { SetValue(JobProperty, value); }
 		}
 		public static readonly DependencyProperty JobProperty =
-			DependencyProperty.Register("Job", typeof(PPJobVm), typeof(BlockVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Job", typeof(JobVm), typeof(BlockVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets or sets a bindable value for the report of this Block
@@ -237,6 +269,21 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Other Props
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this block shows its tasks
+		/// </summary>
+		public bool ShowTasks
+		{
+			get { return (bool)GetValue(ShowTasksProperty); }
+			set { SetValue(ShowTasksProperty, value); }
+		}
+		public static readonly DependencyProperty ShowTasksProperty =
+			DependencyProperty.Register("ShowTasks", typeof(bool), typeof(BlockVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				if ((bool)e.NewValue)
+					((BlockVm)d).reloadTasks();
+			}));
 		/// <summary>
 		/// Gets a bindable value that indicates if a new Setup can be added before this Block
 		/// </summary>

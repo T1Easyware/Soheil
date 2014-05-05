@@ -13,7 +13,7 @@ using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.PP
 {
-	public class PPTaskVm : PPItemVm
+	public class TaskVm : PPItemVm
 	{
 		public Model.Task Model { get; private set; }
 		public override int Id { get { return Model.Id; } }
@@ -22,7 +22,7 @@ namespace Soheil.Core.ViewModels.PP
 		public DataServices.TaskReportDataService TaskReportDataService { get; private set; }
 
 		#region Ctor
-		public PPTaskVm(Model.Task taskModel, BlockVm parentBlock)
+		public TaskVm(Model.Task taskModel, BlockVm parentBlock)
 		{
 			//data service
 			UOW = parentBlock.UOW;
@@ -72,7 +72,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(TaskProducedG1Property, value); }
 		}
 		public static readonly DependencyProperty TaskProducedG1Property =
-			DependencyProperty.Register("TaskProducedG1", typeof(int), typeof(PPTaskVm), new UIPropertyMetadata(0));
+			DependencyProperty.Register("TaskProducedG1", typeof(int), typeof(TaskVm), new UIPropertyMetadata(0));
 		
 		/// <summary>
 		/// Gets or sets the bindable number of operators in this task
@@ -83,7 +83,7 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(TaskOperatorCountProperty, value); }
 		}
 		public static readonly DependencyProperty TaskOperatorCountProperty =
-			DependencyProperty.Register("TaskOperatorCount", typeof(int), typeof(PPTaskVm), new UIPropertyMetadata(0));
+			DependencyProperty.Register("TaskOperatorCount", typeof(int), typeof(TaskVm), new UIPropertyMetadata(0));
 		#endregion
 
 		#region TaskReports
@@ -95,30 +95,68 @@ namespace Soheil.Core.ViewModels.PP
 			try
 			{
 				TaskReports.Clear();
-				var models = TaskReportDataService.GetAllForTask(Id);
-				int i = 0;
-				int sumOfTP = 0;
-				foreach (var model in models)
+				var models = TaskReportDataService.GetAllForTask(Id).OrderBy(x => x.ReportStartDateTime);
+
+				int remainingTP = TaskTargetPoint - models.Sum(x => x.TaskReportTargetPoint);
+				int remainingDuration = DurationSeconds - models.Sum(x => x.ReportDurationSeconds);
+				int gap = 0;
+
+				//checks before the first report to see if there is any place for a holder
+				DateTime first = Model.EndDateTime;
+				if (models.Any()) first = models.First().ReportStartDateTime;
+				gap = (int)first.Subtract(Model.StartDateTime).TotalSeconds;
+				if (gap > 0)
 				{
-					var vm = new Report.TaskReportVm(this, model);
-					TaskReports.Add(vm);
-					sumOfTP += vm.TargetPoint;
-					i++;
+					//guess TP and modify remainings
+					int guessedTP = (int)Math.Round(gap * remainingTP / (float)remainingDuration);
+					remainingTP -= guessedTP;
+					remainingDuration -= gap;
+
+					//holder is put in the unreported space at the beginning of all reports
+					var taskReportHolder = new Report.TaskReportHolderVm(this, StartDateTime, gap, guessedTP);
+					taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
+					TaskReports.Add(taskReportHolder);
 				}
 
-				//checks if there is any place for a holder
-				//holder is put in the unreported space (if any)
-				//sumOfDurations = sum of duration of all task reports (if equal to DurationSeconds => IsReportFilled=true)
-				int sumOfDurations = models.Sum(x => x.ReportDurationSeconds);
-				if (sumOfDurations < this.DurationSeconds)
+				Model.TaskReport previousModel = null;
+				foreach (var model in models)
 				{
-					var taskReportHolder = new Report.TaskReportHolderVm(this, sumOfDurations, sumOfTP);
+					//if empty gap between two reports (previousModel & model)
+					if (previousModel != null && remainingDuration > 0)
+					{
+						//put a holder in between
+						gap = (int)model.ReportStartDateTime.Subtract(previousModel.ReportEndDateTime).TotalSeconds;
+						if (gap > 0)
+						{
+							//guess TP and modify remainings
+							int guessedTP = (int)Math.Round(gap * remainingTP / (float)remainingDuration);
+							remainingTP -= guessedTP;
+							remainingDuration -= gap;
+
+							var taskReportHolder = new Report.TaskReportHolderVm(this, previousModel.ReportEndDateTime, gap, guessedTP);
+							taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
+							TaskReports.Add(taskReportHolder);
+						}
+					}
+					var taskReportVm = new Report.TaskReportVm(this, model);
+					TaskReports.Add(taskReportVm);
+					previousModel = model;
+				}
+
+				//checks after the last report to see if there is any place for a holder
+				DateTime last = StartDateTime;
+				if (models.Any()) last = models.Last().ReportEndDateTime;
+				gap = (int)Model.EndDateTime.Subtract(last).TotalSeconds;
+				if (gap > 0)
+				{
+					//holder is put in the unreported space at the end of all reports
+					var taskReportHolder = new Report.TaskReportHolderVm(this, last, gap, remainingTP);
 					taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
 					TaskReports.Add(taskReportHolder);
 
 					//if any space is remained unreported IsReportFilled is false
 					IsReportFilled = false;
-					ReportFillPercent = string.Format("{0:D2}%", (100 * DurationSeconds / sumOfDurations));
+					ReportFillPercent = string.Format("{0:D2}%", (100 * models.Sum(x => x.ReportDurationSeconds) / DurationSeconds));
 				}
 				else
 				{
@@ -127,17 +165,6 @@ namespace Soheil.Core.ViewModels.PP
 				}
 			}
 			catch { }
-		}
-
-		/// <summary>
-		/// Reloads all process reports in all Tasks in the parent Block of this Task
-		/// </summary>
-		internal void ReloadAllProcessReports()
-		{
-			if (Block.BlockReport == null)
-				Block.BlockReport = new Report.BlockReportVm(Block);
-			else
-				Block.BlockReport.ReloadProcessReportRows();
 		}
 
 		/// <summary>
@@ -156,7 +183,7 @@ namespace Soheil.Core.ViewModels.PP
 			protected set { SetValue(ReportFillPercentProperty, value); }
 		}
 		public static readonly DependencyProperty ReportFillPercentProperty =
-			DependencyProperty.Register("ReportFillPercent", typeof(string), typeof(PPTaskVm), new UIPropertyMetadata("0"));
+			DependencyProperty.Register("ReportFillPercent", typeof(string), typeof(TaskVm), new UIPropertyMetadata("0"));
 		/// <summary>
 		/// Gets a bindable value that indicates if all reports for this Task are filleds
 		/// </summary>
@@ -166,7 +193,7 @@ namespace Soheil.Core.ViewModels.PP
 			protected set { SetValue(IsReportFilledProperty, value); }
 		}
 		public static readonly DependencyProperty IsReportFilledProperty =
-			DependencyProperty.Register("IsReportFilled", typeof(bool), typeof(PPTaskVm), new UIPropertyMetadata(false));
+			DependencyProperty.Register("IsReportFilled", typeof(bool), typeof(TaskVm), new UIPropertyMetadata(false));
 		#endregion
 
 

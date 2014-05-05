@@ -21,6 +21,7 @@ namespace Soheil.Core.DataServices
 		Repository<Process> _processRepository;
 		Repository<ProcessOperator> _processOperatorRepository;
 		Repository<SelectedMachine> _selectedMachineRepository;
+		ProcessReportDataService _processReportDataService;
 
 		public event EventHandler<ModelAddedEventArgs<Task>> TaskAdded;
 		public event EventHandler<ModelUpdatedEventArgs<Task>> TaskUpdated;
@@ -40,6 +41,7 @@ namespace Soheil.Core.DataServices
 			_processRepository = new Repository<Process>(context);
 			_processOperatorRepository = new Repository<ProcessOperator>(context);
 			_selectedMachineRepository = new Repository<SelectedMachine>(context);
+			_processReportDataService = new ProcessReportDataService(context);
 		}
 
 
@@ -126,28 +128,40 @@ namespace Soheil.Core.DataServices
 			{
 				DeleteModel(process);
 			}
+			model.Block.Tasks.Remove(model);
 			_taskRepository.Delete(entity);
 			context.Commit();
 		}
 		//Recursive (sm & po)
 		internal void DeleteModel(Process process)
 		{
-			foreach (var po in process.ProcessOperators.ToList())
+			process.Task.Processes.Remove(process);
+			foreach (var po in process.ProcessOperators.ToArray())
 			{
 				DeleteModel(po);
 			}
-			foreach (var sm in process.SelectedMachines.ToList())
+			foreach (var sm in process.SelectedMachines.ToArray())
 			{
 				DeleteModel(sm);
 			}
+			if (process.IsReportEmpty)
+			{
+				foreach (var processReport in process.ProcessReports.ToArray())
+				{
+					_processReportDataService.DeleteModel(processReport);
+				}
+			}
 			_processRepository.Delete(process);
 		}
+
 		internal void DeleteModel(SelectedMachine sm)
 		{
+			sm.Process.SelectedMachines.Remove(sm);
 			_selectedMachineRepository.Delete(sm);
 		}
 		internal void DeleteModel(ProcessOperator po)
 		{
+			po.Process.ProcessOperators.Remove(po);
 			_processOperatorRepository.Delete(po);
 		}
 

@@ -21,9 +21,9 @@ namespace Soheil.Views.PP
 		}
 
 		#region Vm and Basic
-		public PPTaskEditorVm VM
+		public TaskEditorVm VM
 		{
-			get { return (PPTaskEditorVm)DataContext; }
+			get { return (TaskEditorVm)DataContext; }
 			set { DataContext = value; }
 		}
 		#endregion

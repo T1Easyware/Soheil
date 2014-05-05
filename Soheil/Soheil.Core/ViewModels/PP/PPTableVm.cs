@@ -10,6 +10,7 @@ using Soheil.Common;
 using Soheil.Core.Interfaces;
 using Soheil.Core.ViewModels.PP.Timeline;
 using Soheil.Core.ViewModels.PP.Editor;
+using Soheil.Common.SoheilException;
 
 namespace Soheil.Core.ViewModels.PP
 {
@@ -41,7 +42,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		void initializeEditors()
 		{
-			TaskEditor = new PPTaskEditorVm();
+			TaskEditor = new TaskEditorVm();
 			TaskEditor.RefreshPPItems += () => UpdateRange(true);
 			/*refresh is enough.
 			 * TaskEditor.BlockAdded += model => PPItems.AddItem(model);
@@ -53,12 +54,12 @@ namespace Soheil.Core.ViewModels.PP
 					SelectedBlock = newVm;
 			};*/
 
-			JobEditor = new PPJobEditorVm();
+			JobEditor = new JobEditorVm();
 			TaskEditor.RefreshPPItems += () => UpdateRange(true);
 			/*refresh is enough.
 			 *JobEditor.JobAdded += model =>
 			{
-				var jobVm = new PPJobVm(model);
+				var jobVm = new JobVm(model);
 				foreach (var block in model.Blocks)
 				{
 					var blockVm = PPItems.FindItem(block);
@@ -113,7 +114,7 @@ namespace Soheil.Core.ViewModels.PP
 			if (_initialTimer != null) return;
 
 			_initialTimer = new System.Threading.Timer(new System.Threading.TimerCallback
-				(o => Dispatcher.Invoke(() =>
+				(t => Dispatcher.Invoke(() =>
 				{
 					//initialize DateTimes
 					var currentDate = Arash.PersianDate.Today.ToDateTime();
@@ -127,6 +128,10 @@ namespace Soheil.Core.ViewModels.PP
 
 					//initialize PPItems
 					PPItems = new PPItemCollection(this);
+					PPItems.BlockAdded += vm =>
+					{
+						initializeCommands(vm);
+					};
 					PPItems.BlockRemoved += id =>
 					{
 						if (SelectedBlock != null && SelectedBlock.Id == id)
@@ -137,44 +142,13 @@ namespace Soheil.Core.ViewModels.PP
 						if (SelectedNPT != null && SelectedNPT.Id == id)
 							SelectedNPT = null;
 					};
-					PPItems.JobRemoved += jobVm =>
-					{
-						RemoveBlocks(jobVm);
-					};
-					PPItems.TaskEditorUpdated += ppeblock =>
-					{
-						TaskEditor.BlockList.Add(ppeblock);
-						TaskEditor.SelectedBlock = ppeblock;
-					};
-					PPItems.TaskEditorReset += () =>
-					{
-						TaskEditor.Reset();
-						TaskEditor.IsVisible = true;
-						JobEditor.IsVisible = false;
-					};
-					PPItems.JobEditorUpdated += jobVm =>
-					{
-						JobEditor.Append(jobVm);
-					};
-					PPItems.JobEditorReset += () =>
-					{
-						TaskEditor.IsVisible = false;
-						JobEditor.IsVisible = true;
-						JobEditor.Reset();
-					};
-					PPItems.EditBlockReportStarted += blockVm =>
-					{
-						blockVm.BlockReport = new Report.BlockReportVm(blockVm);
-						SelectedBlock = blockVm;
-					};
-
 
 					//Initialize stations
 					var stationModels = new DataServices.StationDataService().GetActives().OrderBy(x => x.Index);
 					NumberOfStations = stationModels.Count();
 					foreach (var stationModel in stationModels)
 					{
-						PPItems.Add(new PPStationVm { Text = stationModel.Name });
+						PPItems.Add(new StationVm { Text = stationModel.Name });
 					}
 
 					//Set advanced timeline components
@@ -300,24 +274,24 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Gets bindable ViewModel for TaskEditor
 		/// </summary>
-		public PPTaskEditorVm TaskEditor
+		public TaskEditorVm TaskEditor
 		{
-			get { return (PPTaskEditorVm)GetValue(TaskEditorProperty); }
+			get { return (TaskEditorVm)GetValue(TaskEditorProperty); }
 			private set { SetValue(TaskEditorProperty, value); }
 		}
 		public static readonly DependencyProperty TaskEditorProperty =
-			DependencyProperty.Register("TaskEditor", typeof(PPTaskEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("TaskEditor", typeof(TaskEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets bindable ViewModel for JobEditor
 		/// </summary>
-		public PPJobEditorVm JobEditor
+		public JobEditorVm JobEditor
 		{
-			get { return (PPJobEditorVm)GetValue(JobEditorProperty); }
+			get { return (JobEditorVm)GetValue(JobEditorProperty); }
 			private set { SetValue(JobEditorProperty, value); }
 		}
 		public static readonly DependencyProperty JobEditorProperty =
-			DependencyProperty.Register("JobEditor", typeof(PPJobEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("JobEditor", typeof(JobEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets bindable ViewModel for JobList
@@ -334,7 +308,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// Removes all blocks of a job from PPTable and database
 		/// </summary>
 		/// <param name="job"></param>
-		public void RemoveBlocks(PPJobVm job)
+		public void RemoveBlocks(JobVm job)
 		{
 			foreach (var station in PPItems.ToList())
 			{
@@ -632,7 +606,6 @@ namespace Soheil.Core.ViewModels.PP
 				if (val == null)
 				{
 					vm.ShowBlockReport = false;
-					vm.RestoreZoom();
 				}
 				//if a block is selected zoom to it and show its reports
 				else
@@ -755,6 +728,9 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Commands
+		/// <summary>
+		/// Initializes PPTableVm commands that can be assigned in this class
+		/// </summary>
 		void initializeCommands()
 		{
 			//command
@@ -792,7 +768,121 @@ namespace Soheil.Core.ViewModels.PP
 			ZoomStartedCommand = new Commands.Command(o => BackupZoom());
 			UndoZoomCommand = new Commands.Command(o => RestoreZoom());
 		}
+		/// <summary>
+		/// Initializes BlockVm commands of vm that can be assigned in this class
+		/// </summary>
+		/// <param name="vm"></param>
+		void initializeCommands(BlockVm vm)
+		{
+			vm.ReloadBlockCommand = new Commands.Command(o =>
+			{
+				vm.Reload();
 
+				//check for selected things
+
+				//check if the SelectedJobId in PPTable is the same as this Job
+				if (vm.Job != null)
+				{
+					if (SelectedJobId == vm.Job.Id)
+					{
+						vm.IsJobSelected = true;
+					}
+				}
+				//check if the SelectedBlock in PPTable is the same as this block
+				if (SelectedBlock == null)
+				{
+					PPItems.ViewMode = PPViewMode.Simple;
+				}
+				else PPItems.ViewMode = (SelectedBlock.Id == vm.Id) ? PPViewMode.Report : PPViewMode.Simple;
+			});
+			//Task editor
+			vm.AddBlockToEditorCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					var ppeBlock = new Editor.PPEditorBlock(vm.Model);
+					TaskEditor.BlockList.Add(ppeBlock);
+					TaskEditor.SelectedBlock = ppeBlock;
+				}
+				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+			}, () => vm.Model != null);
+			vm.EditItemCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					TaskEditor.Reset();
+					TaskEditor.IsVisible = true;
+					JobEditor.IsVisible = false;
+					vm.AddBlockToEditorCommand.Execute(o);
+				}
+				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+			});
+			//Job editor
+			vm.AddJobToEditorCommand = new Commands.Command(o =>
+			{
+				try { JobEditor.Append(vm.Job); }
+				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+			}, () =>
+			{
+				if (vm.Job == null) return false;
+				if (vm.Job.Id == 0) return false;
+				return true;
+			});
+			vm.EditJobCommand = new Commands.Command(o =>
+			{
+				try
+				{
+					TaskEditor.IsVisible = false;
+					JobEditor.IsVisible = true;
+					JobEditor.Reset();
+					vm.AddJobToEditorCommand.Execute(o);
+				}
+				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+			}, () =>
+			{
+				if (vm.Job == null) return false;
+				if (vm.Job.Id == 0) return false;
+				return true;
+			});
+
+
+			vm.DeleteJobCommand = new Commands.Command(o =>
+			{
+				try { RemoveBlocks(vm.Job); }
+				catch (RoutedException exp)
+				{
+					if (exp.Target is TaskVm)
+						(exp.Target as TaskVm).Message.AddEmbeddedException(exp.Message);
+					else //if(exp.Target is BlockVm)
+						vm.Message.AddEmbeddedException(exp.Message);
+				}
+				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+			}, () => { return vm.Job != null; });
+			//report
+			vm.EditReportCommand = new Commands.Command(blockVm =>
+			{
+				try
+				{
+					vm.BlockReport = new Report.BlockReportVm(vm);
+					SelectedBlock = vm;
+				}
+				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+			});
+			//EditReportCommand reloads *ALL* reports for its block 
+			vm.TaskList.CollectionChanged += (s, e) =>
+			{
+				if (e.NewItems != null)
+					foreach (var task in e.NewItems.OfType<TaskVm>())
+					{
+						if (task != null)
+							task.EditReportCommand = new Commands.Command(o =>
+							{
+								SelectedBlock = vm;
+								vm.ReloadReports();
+							});
+					}
+			};
+		}
 		//Task commands
 
 		//ToggleTaskEditorCommand Dependency Property

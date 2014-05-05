@@ -8,7 +8,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class TaskReportVm : TaskReportBaseVm
 	{
-		public TaskReportVm(PPTaskVm parent, Model.TaskReport model)
+		public TaskReportVm(TaskVm parent, Model.TaskReport model)
 			: base(parent)
 		{
 			if (model != null)
@@ -99,9 +99,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 		#region Commands
 		void initializeCommands()
 		{
-			OpenCommand = new Commands.Command(o =>
+			OpenReportCommand = new Commands.Command(o =>
 			{
-				//Task.Block.Parent.PPTable.CurrentTaskReportBuilder = new TaskReportHolderVm(Task,blah,blah)
+				//Task.Block.Parent.PPTable.CurrentTaskReportBuilder = new TaskReportHolderVm(Task, 0, 0);
 			});
 			DeleteCommand = new Commands.Command(o =>
 			{
