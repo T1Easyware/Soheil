@@ -27,9 +27,9 @@
 		</Style.Triggers>
 		<Style.Setters>
 			<Setter Property="Opacity" Value="0.6"/>
-			<Setter Property="BitmapEffect">
+			<Setter Property="Effect">
 				<Setter.Value>
-					<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
+					<DropShadowEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
 				</Setter.Value>
 			</Setter>
 		</Style.Setters>

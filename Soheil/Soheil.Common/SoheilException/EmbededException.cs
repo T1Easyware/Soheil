@@ -34,12 +34,21 @@ namespace Soheil.Common.SoheilException
 		public static readonly DependencyProperty FullExceptionTextProperty =
 			DependencyProperty.Register("FullExceptionText", typeof(string), typeof(EmbeddedException), new UIPropertyMetadata(null));
 
-		public void AddEmbeddedException(string text) {
+		public void AddEmbeddedException(string text)
+		{
 			HasException = true;
 			MainExceptionText = text;
 			if (!string.IsNullOrWhiteSpace(FullExceptionText))
 				FullExceptionText += "\n";
 			FullExceptionText += text;
+		}
+		public void AddEmbeddedException(Exception ex)
+		{
+			HasException = true;
+			MainExceptionText = ex.Message;
+			if (!string.IsNullOrWhiteSpace(FullExceptionText))
+				FullExceptionText += "\n";
+			FullExceptionText += ex.InnerException == null ? ex.Message : ex.InnerException.Message;
 		}
 		public void ResetEmbeddedException()
 		{

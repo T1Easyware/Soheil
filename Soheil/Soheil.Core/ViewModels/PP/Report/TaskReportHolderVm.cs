@@ -118,6 +118,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 				else
 					TargetPoint = (int)Math.Round(_guessedTP * DurationSeconds / (float)_durationSeconds);
 			});
+			AutoFindDuration = new Commands.Command(o =>
+			{
+				if (TargetPoint == _guessedTP)
+					DurationSeconds = _durationSeconds;
+				else
+					DurationSeconds = (int)Math.Round(_durationSeconds * TargetPoint / (float)_guessedTP);
+			});
 		}
 		//FocusCommand Dependency Property
 		public Commands.Command FocusCommand
@@ -151,6 +158,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty AutoFindTargetPointProperty =
 			DependencyProperty.Register("AutoFindTargetPoint", typeof(Commands.Command), typeof(TaskReportHolderVm), new UIPropertyMetadata(null));
+		//AutoFindDuration Dependency Property
+		public Commands.Command AutoFindDuration
+		{
+			get { return (Commands.Command)GetValue(AutoFindDurationProperty); }
+			set { SetValue(AutoFindDurationProperty, value); }
+		}
+		public static readonly DependencyProperty AutoFindDurationProperty =
+			DependencyProperty.Register("AutoFindDuration", typeof(Commands.Command), typeof(TaskReportHolderVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

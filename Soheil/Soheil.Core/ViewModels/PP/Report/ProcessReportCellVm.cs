@@ -226,7 +226,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 		{
 			OpenReportCommand = new Commands.Command(o =>
 			{
-				//Message.AddEmbeddedException("salaaaaaam");
 				if (ViewMode == PPViewMode.Simple) IsSelected = true;
 				else if(ViewMode == PPViewMode.Empty)
 				{
@@ -252,7 +251,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				Save();
 				IsSelected = false;
-				ParentRow.Parent.SelectedBlock.BlockReport.ReloadProcessReportRows();
+				ParentColumn.Task.ReloadTaskReports(true);
 			});
 			DeleteTaskReportCommand = new Commands.Command(o =>
 			{
@@ -264,8 +263,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 						if (realTaskReport != null)
 						{
 							_taskReportDataService.DeleteById(realTaskReport.Id);
-							realTaskReport.Task.ReloadTaskReports();
-							ParentRow.Parent.SelectedBlock.BlockReport.ReloadProcessReportRows();
+							realTaskReport.Task.ReloadTaskReports(true);
 						}
 					}
 					else
@@ -282,7 +280,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				{
 					_processReportDataService.ResetById(Id,
 						_model.Process.TargetCount
-						- ParentRow.ProcessReportCells.Where(y => y.Id != -1).Sum(x => x.ProcessReportTargetPoint));
+						- ParentRow.ProcessReportCells.Where(y => y.Id != Id).Sum(x => x.ProcessReportTargetPoint));
 					ParentColumn.Task.Block.ReloadReports();
 				}
 				catch

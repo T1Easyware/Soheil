@@ -767,6 +767,7 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			ZoomStartedCommand = new Commands.Command(o => BackupZoom());
 			UndoZoomCommand = new Commands.Command(o => RestoreZoom());
+			CloseBlockReportCommand = new Commands.Command(o => ShowBlockReport = false);
 		}
 		/// <summary>
 		/// Initializes BlockVm commands of vm that can be assigned in this class
@@ -859,7 +860,7 @@ namespace Soheil.Core.ViewModels.PP
 				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 			}, () => { return vm.Job != null; });
 			//report
-			vm.EditReportCommand = new Commands.Command(blockVm =>
+			vm.EditReportCommand = new Commands.Command(o =>
 			{
 				try
 				{
@@ -867,6 +868,17 @@ namespace Soheil.Core.ViewModels.PP
 					SelectedBlock = vm;
 				}
 				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+			});
+			vm.DeleteBlockWithReportsCommand = new Commands.Command(o =>
+			{
+				foreach (var task in vm.TaskList)
+				{
+					foreach (var taskReport in task.TaskReports.OfType<Soheil.Core.ViewModels.PP.Report.TaskReportVm>())
+					{
+						taskReport.TaskReportDataService.DeleteById(taskReport.Id);
+					}
+				}
+				vm.ReloadReports();
 			});
 			//EditReportCommand reloads *ALL* reports for its block 
 			vm.TaskList.CollectionChanged += (s, e) =>
@@ -883,7 +895,6 @@ namespace Soheil.Core.ViewModels.PP
 					}
 			};
 		}
-		//Task commands
 
 		//ToggleTaskEditorCommand Dependency Property
 		/// <summary>
@@ -967,6 +978,14 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty UndoZoomCommandProperty =
 			DependencyProperty.Register("UndoZoomCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
 
+		//CloseBlockReportCommand Dependency Property
+		public Commands.Command CloseBlockReportCommand
+		{
+			get { return (Commands.Command)GetValue(CloseBlockReportCommandProperty); }
+			set { SetValue(CloseBlockReportCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CloseBlockReportCommandProperty =
+			DependencyProperty.Register("CloseBlockReportCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
 		#endregion
 
 		#region Toolbar extra items

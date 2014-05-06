@@ -37,7 +37,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// <summary>
 		/// TaskReport Id
 		/// </summary>
-		public int Id { get; set; }
+		public int Id { get; protected set; }
 
 
 		#region Count
@@ -106,7 +106,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			DeleteCommand = new Commands.Command(o =>
 			{
 				TaskReportDataService.DeleteById(Id);
-				Task.ReloadTaskReports();
+				Task.ReloadTaskReports(true);
 			});
 		}
 		//DeleteCommand Dependency Property

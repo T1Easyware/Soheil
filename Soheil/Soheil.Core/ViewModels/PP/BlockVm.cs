@@ -109,7 +109,7 @@ namespace Soheil.Core.ViewModels.PP
 			//create/reload task reports
 			foreach (var task in TaskList)
 			{
-				task.ReloadTaskReports();
+				task.ReloadTaskReports(false);
 			}
 			//create/reload process reports
 			if (BlockReport == null)
@@ -403,6 +403,16 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DeleteJobCommandProperty =
 			DependencyProperty.Register("DeleteJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable command to delete a block with all its tasks and reports
+		/// </summary>
+		public Commands.Command DeleteBlockWithReportsCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteBlockWithReportsCommandProperty); }
+			set { SetValue(DeleteBlockWithReportsCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteBlockWithReportsCommandProperty =
+			DependencyProperty.Register("DeleteBlockWithReportsCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets a bindable command to insert a setup before this Block
 		/// </summary>

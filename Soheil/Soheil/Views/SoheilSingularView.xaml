@@ -376,551 +376,811 @@
 						</Setter.Value>
 					</Setter>
 				</Style>
+				<Style x:Key="normalButtonFont" TargetType="TextBlock">
+					<Setter Property="FontSize" Value="10"/>
+					<Setter Property="Foreground" Value="Black"/>
+					<Setter Property="VerticalAlignment" Value="Center"/>
+					<Setter Property="Margin" Value="2,0"/>
+					<Setter Property="Effect">
+						<Setter.Value>
+							<DropShadowEffect BlurRadius="2" ShadowDepth="1" Color="WhiteSmoke" Opacity="1"/>
+						</Setter.Value>
+					</Setter>
+				</Style>
 			</DataTemplate.Resources>
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+			<DockPanel>
+				<ToolBarTray Background="Transparent" DockPanel.Dock="Top" FlowDirection="RightToLeft">
+					<ToolBar Background="Transparent">
+						<!-- task -->
+						<Button Margin="1" Command="{Binding ToggleTaskEditorCommand}">
+							<DockPanel>
+								<Image DockPanel.Dock="Left" Style="{StaticResource TaskImage}"/>
+								<TextBlock Text="Task Editor" Style="{StaticResource normalButtonFont}"/>
+							</DockPanel>
+							<Button.ToolTip>
+								<StackPanel>
+									<TextBlock Text="ویرایشگر Task"/>
+									<TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Task با محتویات اخیر نمایش داده می شود"/>
+								</StackPanel>
+							</Button.ToolTip>
+						</Button>
+						<DockPanel x:Name="taskEditorToolbarButtons" Width="0">
+							<DockPanel.Effect>
+								<DropShadowEffect BlurRadius="8" ShadowDepth="0" Color="LightSeaGreen" Opacity="1"/>
+							</DockPanel.Effect>
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.ResetCurrentBlockCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource Undo16Image}"/>
+									<TextBlock Text="Reset Task" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+								<Button.ToolTip>
+									<StackPanel>
+										<TextBlock Text="خالی کردن برنامه"/>
+										<TextBlock Foreground="DarkGray" FontSize="10" Text="تمام اطلاعات مربوط به برنامه فعلی از صفحه پاک می شود"/>
+									</StackPanel>
+								</Button.ToolTip>
+							</Button>
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.ClearAllCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource NewTaskImage}"/>
+									<TextBlock Text="Clear All" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+								<Button.ToolTip>
+									<StackPanel>
+										<TextBlock Text="خالی کردن صفحه"/>
+										<TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات موجود در ویرایشگر Task حذف خواهد شد"/>
+									</StackPanel>
+								</Button.ToolTip>
+							</Button>
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.SaveCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource Save16Image}"/>
+									<TextBlock Text="Save Task" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+                                <Button.ToolTip>
+                                    <StackPanel>
+                                        <TextBlock Text="ذخیره برنامه"/>
+                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="برنامه فعلی در ویرایشگر Task ذخیره می شود"/>
+                                    </StackPanel>
+                                </Button.ToolTip>
+                            </Button>
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.ExitCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource CloseWipeUpImage}"/>
+									<TextBlock Text="Exit" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+								<Button.ToolTip>
+									<StackPanel>
+										<TextBlock Text="بستن ویرایشگر"/>
+										<TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Task بسته می شود و آخرین اطلاعات آن نگه داشته می شود"/>
+									</StackPanel>
+								</Button.ToolTip>
+							</Button>
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.SaveAllCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource SaveWipeUpImage}"/>
+									<TextBlock Text="Save &amp; Exit" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+								<Button.ToolTip>
+									<StackPanel>
+										<TextBlock Text="ذخیره همه و خروج"/>
+										<TextBlock Foreground="DarkGray" FontSize="10" Text="تمام برنامه های ویرایشگر Task ذخیره و ویرایشگر بسته می شود"/>
+									</StackPanel>
+								</Button.ToolTip>
+							</Button>
+						</DockPanel>
+						<Separator/>
 
-                <Grid Margin="5" Background="{StaticResource SingularViewBackground}" 
+						<!-- job -->
+						<Button Margin="1" Command="{Binding ToggleJobEditorCommand}">
+							<DockPanel>
+								<Image DockPanel.Dock="Left" Style="{StaticResource JobImage}"/>
+								<TextBlock Text="Job Editor" Style="{StaticResource normalButtonFont}"/>
+							</DockPanel>
+							<Button.ToolTip>
+								<StackPanel>
+									<TextBlock Text="ویرایشگر Job"/>
+									<TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Job با محتویات اخیر نمایش داده می شود"/>
+								</StackPanel>
+							</Button.ToolTip>
+						</Button>
+						<DockPanel x:Name="jobEditorToolbarButtons" Width="0">
+							<DockPanel.Effect>
+								<DropShadowEffect BlurRadius="8" ShadowDepth="0" Color="LightSeaGreen" Opacity="1"/>
+							</DockPanel.Effect>
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding JobEditor.ClearAllCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource NewJobImage}"/>
+									<TextBlock Text="Clear All" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+								<Button.ToolTip>
+									<StackPanel>
+										<TextBlock Text="خالی کردن صفحه"/>
+										<TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات موجود در ویرایشگر Job حذف خواهد شد"/>
+									</StackPanel>
+								</Button.ToolTip>
+							</Button>
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding JobEditor.ExitCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource CloseWipeUpImage}"/>
+									<TextBlock Text="Exit" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+								<Button.ToolTip>
+									<StackPanel>
+										<TextBlock Text="بستن ویرایشگر"/>
+										<TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Job بسته می شود و آخرین اطلاعات آن نگه داشته می شود"/>
+									</StackPanel>
+								</Button.ToolTip>
+							</Button>
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding JobEditor.SaveAllCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource SaveWipeUpImage}"/>
+									<TextBlock Text="Save &amp; Exit" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+								<Button.ToolTip>
+									<StackPanel>
+										<TextBlock Text="ذخیره همه و خروج"/>
+										<TextBlock Foreground="DarkGray" FontSize="10" Text="تمام برنامه های ویرایشگر Job ذخیره و ویرایشگر بسته می شود"/>
+									</StackPanel>
+								</Button.ToolTip>
+							</Button>
+						</DockPanel>
+						<Separator/>
+						<ToggleButton Margin="2" IsChecked="{Binding JobList.IsVisible}">
+							<DockPanel>
+								<Image DockPanel.Dock="Left" Style="{StaticResource JobListImage}"/>
+								<TextBlock Text="Job List" Style="{StaticResource normalButtonFont}"/>
+							</DockPanel>
+							<ToggleButton.ToolTip>
+								<StackPanel>
+									<TextBlock Text="نمایش لیست Job ها"/>
+									<TextBlock Foreground="DarkGray" FontSize="10" Text="Job های بازه زمانی مشخص شده لیست می شوند"/>
+								</StackPanel>
+							</ToggleButton.ToolTip>
+						</ToggleButton>
+					</ToolBar>
+					
+					<!-- tools -->
+					<ToolBar Background="Transparent">
+						<!-- time -->
+						<Button Command="{Binding GoToNowCommand}" ToolTip="برو به الان">
+							<Image Style="{StaticResource NowImage}"/>
+						</Button>
+						<WrapPanel VerticalAlignment="Center">
+							<Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
+							<Slider Margin="2" Maximum="10" Minimum="1" Value="{Binding HourZoom, Converter={StaticResource logarithmicSlider}}" Width="140" VerticalAlignment="Center">
+								<I:Interaction.Triggers>
+									<I:EventTrigger EventName="PreviewMouseDown">
+										<I:InvokeCommandAction Command="{Binding ZoomStartedCommand}"/>
+									</I:EventTrigger>
+								</I:Interaction.Triggers>
+							</Slider>
+							<WrapPanel.ToolTip>
+								<ToolTip>بزرگنمایی زمان</ToolTip>
+							</WrapPanel.ToolTip>
+						</WrapPanel>
+						<Button Command="{Binding UndoZoomCommand}">
+							<Image Style="{StaticResource ZoomUndoImage}"/>
+							<Button.ToolTip>
+								<ToolTip>بزرگنمایی قبلی</ToolTip>
+							</Button.ToolTip>
+						</Button>
+						<Separator/>
+					
+						<!-- extra tools -->
+						<ToggleButton IsChecked="{Binding AlwaysLoadTasks}">
+							<Image Style="{StaticResource AutoLoadTaskImage}"/>
+							<ToggleButton.ToolTip>
+								<ToolTip>لود اتوماتیک</ToolTip>
+							</ToggleButton.ToolTip>
+						</ToggleButton>
+						<ToggleButton Margin="2" IsChecked="{Binding ShowInsertSetupButton}">
+							<Image Style="{StaticResource AddSetupImage}"/>
+							<ToggleButton.ToolTip>
+								<StackPanel>
+									<TextBlock Text="نمایش کلیدهای آماده سازی خودکار"/>
+									<TextBlock Foreground="DarkGray" FontSize="10" Text="با کلیک بر روی کلید هر Task، آماده سازی بطور خودکار قبل از آن Task اضافه میشود"/>
+								</StackPanel>
+							</ToggleButton.ToolTip>
+						</ToggleButton>
+						<ToggleButton IsChecked="{Binding ShowProductCodes}">
+							<Image Style="{StaticResource ToggleShowCodeImage}"/>
+							<ToggleButton.ToolTip>
+								<ToolTip>نمایش کد بجای نام محصولات</ToolTip>
+							</ToggleButton.ToolTip>
+						</ToggleButton>
+						<Separator/>
+					</ToolBar>
+					
+					<!-- reports -->
+					<ToolBar Background="Transparent">
+						<Button Command="{Binding CloseBlockReportCommand}" Visibility="{Binding ShowBlockReport, Converter={StaticResource booleanToVisibilityConverter}}">
+							<DockPanel>
+								<Image DockPanel.Dock="Left" Style="{StaticResource ProcessReportImage}"/>
+								<TextBlock Text="Hide Activities" Style="{StaticResource normalButtonFont}"/>
+							</DockPanel>
+							<Button.ToolTip>
+								<ToolTip>بستن گزارش تولید</ToolTip>
+							</Button.ToolTip>
+						</Button>
+						<DockPanel x:Name="processReportBuilderToolbar" Width="0">
+							<TextBlock Text="گزارش:" Style="{StaticResource normalButtonFont}" DockPanel.Dock="Left"/>
+							<Button Margin="1" Command="{Binding CurrentProcessReportBuilder.CloseCommand}" DockPanel.Dock="Left">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource CloseWipeUpImage}"/>
+									<TextBlock Text="Close Report" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+							</Button>
+							<Button Margin="1" Command="{Binding CurrentProcessReportBuilder.SaveCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource SaveWipeUpImage}"/>
+									<TextBlock Text="Save &amp; Exit" Style="{StaticResource normalButtonFont}"/>
+								</DockPanel>
+							</Button>
+						</DockPanel>
+					</ToolBar>
+				</ToolBarTray>
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+
+					<Grid Margin="5" Background="{StaticResource SingularViewBackground}" 
 				      x:Name="ppTable" MouseMove="Area_MouseMove" MouseUp="Area_MouseUp" Loaded="ppTable_Loaded_1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="40"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Name="cd_stations" Width="{StaticResource StationOrActivityHeaderGridLength}"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="40"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Name="cd_stations" Width="{StaticResource StationOrActivityHeaderGridLength}"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
 
-                    <ToolBarTray Background="Transparent" Grid.ColumnSpan="2" FlowDirection="RightToLeft">
-                        <ToolBar Background="Transparent">
-                            <Button Margin="1" Command="{Binding ToggleTaskEditorCommand}">
-								<Image Style="{StaticResource TaskImage}"/>
-                                <Button.ToolTip>
-                                    <StackPanel>
-                                        <TextBlock Text="ویرایشگر Task"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Task با محتویات اخیر نمایش داده می شود"/>
-                                    </StackPanel>
-                                </Button.ToolTip>
-                            </Button>
-                            <UniformGrid Rows="1" Background="#80FF" x:Name="taskEditorToolbarButtons" Width="0">
-                                <Button Margin="1" Command="{Binding TaskEditor.ResetCurrentBlockCommand}">
-									<Image Style="{StaticResource Undo16Image}"/>
-                                    <Button.ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="خالی کردن برنامه"/>
-                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="تمام اطلاعات مربوط به برنامه فعلی از صفحه پاک می شود"/>
-                                        </StackPanel>
-                                    </Button.ToolTip>
-                                </Button>
-                                <Button Margin="1" Command="{Binding TaskEditor.ClearAllCommand}">
-                                    <Image Style="{StaticResource NewTaskImage}"/>
-                                    <Button.ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="خالی کردن صفحه"/>
-                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات موجود در ویرایشگر Task حذف خواهد شد"/>
-                                        </StackPanel>
-                                    </Button.ToolTip>
-                                </Button>
-                                <!--Button Margin="1" Command="{Binding TaskEditor.SaveCommand}">
-									<Image Style="{StaticResource Save16Image}"/>
-                                    <Button.ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="ذخیره برنامه"/>
-                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="برنامه فعلی در ویرایشگر Task ذخیره می شود"/>
-                                        </StackPanel>
-                                    </Button.ToolTip>
-                                </Button-->
-                                <Button Margin="1" Command="{Binding TaskEditor.ExitCommand}">
-									<Image Style="{StaticResource CloseWipeUpImage}"/>
-                                    <Button.ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="بستن ویرایشگر"/>
-                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Task بسته می شود و آخرین اطلاعات آن نگه داشته می شود"/>
-                                        </StackPanel>
-                                    </Button.ToolTip>
-                                </Button>
-                                <Button Margin="1" Command="{Binding TaskEditor.SaveAllCommand}">
-									<Image Style="{StaticResource SaveWipeUpImage}"/>
-                                    <Button.ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="ذخیره همه و خروج"/>
-                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="تمام برنامه های ویرایشگر Task ذخیره و ویرایشگر بسته می شود"/>
-                                        </StackPanel>
-                                    </Button.ToolTip>
-                                </Button>
-                            </UniformGrid>
-                            <Separator/>
-                            <Button Margin="1" Command="{Binding ToggleJobEditorCommand}">
-                                <Image Style="{StaticResource JobImage}"/>
-                                <Button.ToolTip>
-                                    <StackPanel>
-                                        <TextBlock Text="ویرایشگر Job"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Job با محتویات اخیر نمایش داده می شود"/>
-                                    </StackPanel>
-                                </Button.ToolTip>
-                            </Button>
-                            <UniformGrid Rows="1" Background="#80FF" x:Name="jobEditorToolbarButtons" Width="0">
-                                <Button Margin="1" Command="{Binding JobEditor.ClearAllCommand}">
-                                    <Image Style="{StaticResource NewJobImage}"/>
-                                    <Button.ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="خالی کردن صفحه"/>
-                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="اطلاعات موجود در ویرایشگر Job حذف خواهد شد"/>
-                                        </StackPanel>
-                                    </Button.ToolTip>
-                                </Button>
-								<Button Margin="1" Command="{Binding JobEditor.ExitCommand}">
-									<Image Style="{StaticResource CloseWipeUpImage}"/>
-									<Button.ToolTip>
-										<StackPanel>
-											<TextBlock Text="بستن ویرایشگر"/>
-											<TextBlock Foreground="DarkGray" FontSize="10" Text="ویرایشگر Job بسته می شود و آخرین اطلاعات آن نگه داشته می شود"/>
-										</StackPanel>
-									</Button.ToolTip>
-								</Button>
-								<Button Margin="1" Command="{Binding JobEditor.SaveAllCommand}">
-                                    <Image Style="{StaticResource SaveWipeUpImage}"/>
-                                    <Button.ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="ذخیره همه و خروج"/>
-                                            <TextBlock Foreground="DarkGray" FontSize="10" Text="تمام برنامه های ویرایشگر Job ذخیره و ویرایشگر بسته می شود"/>
-                                        </StackPanel>
-                                    </Button.ToolTip>
-                                </Button>
-                            </UniformGrid>
-                            <Separator/>
-                            <ToggleButton Margin="2" IsChecked="{Binding ShowInsertSetupButton}">
-                                <Image Style="{StaticResource AddSetupImage}"/>
-                                <ToggleButton.ToolTip>
-                                    <StackPanel>
-                                        <TextBlock Text="نمایش کلیدهای آماده سازی خودکار"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="با کلیک بر روی کلید هر Task، آماده سازی بطور خودکار قبل از آن Task اضافه میشود"/>
-                                    </StackPanel>
-                                </ToggleButton.ToolTip>
-                            </ToggleButton>
 
-                            <ToggleButton Margin="2" IsChecked="{Binding JobList.IsVisible}">
-								<Image Style="{StaticResource JobListImage}"/>
-                                <ToggleButton.ToolTip>
-                                    <StackPanel>
-                                        <TextBlock Text="نمایش لیست Job ها"/>
-                                        <TextBlock Foreground="DarkGray" FontSize="10" Text="Job های بازه زمانی مشخص شده لیست می شوند"/>
-                                    </StackPanel>
-                                </ToggleButton.ToolTip>
-                            </ToggleButton>
-                        </ToolBar>
-                        <ToolBar Background="Transparent">
-                            <Button Command="{Binding GoToNowCommand}" ToolTip="برو به الان">
-                                <Image Style="{StaticResource NowImage}"/>
-                            </Button>
-                            <WrapPanel VerticalAlignment="Center">
-                                <Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
-								<Slider Margin="2" Maximum="10" Minimum="1" Value="{Binding HourZoom, Converter={StaticResource logarithmicSlider}}" Width="140" VerticalAlignment="Center">
-									<I:Interaction.Triggers>
-										<I:EventTrigger EventName="PreviewMouseDown">
-											<I:InvokeCommandAction Command="{Binding ZoomStartedCommand}"/>
-										</I:EventTrigger>
-									</I:Interaction.Triggers>
-								</Slider>
-								<WrapPanel.ToolTip>
-                                    <ToolTip>بزرگنمایی زمان</ToolTip>
-                                </WrapPanel.ToolTip>
-                            </WrapPanel>
-							<Button Command="{Binding UndoZoomCommand}">
-								<Image Style="{StaticResource ZoomUndoImage}"/>
-                                <Button.ToolTip>
-                                    <ToolTip>بزرگنمایی قبلی</ToolTip>
-                                </Button.ToolTip>
-                            </Button>
-                            <Separator/>
-                            <ToggleButton IsChecked="{Binding AlwaysLoadTasks}">
-								<Image Style="{StaticResource AutoLoadTaskImage}"/>
-                                <ToggleButton.ToolTip>
-                                    <ToolTip>لود اتوماتیک</ToolTip>
-                                </ToggleButton.ToolTip>
-                            </ToggleButton>
-                            <ToggleButton IsChecked="{Binding ShowProductCodes}">
-								<Image Style="{StaticResource ToggleShowCodeImage}"/>
-                                <ToggleButton.ToolTip>
-                                    <ToolTip>نمایش کد بجای نام محصولات</ToolTip>
-                                </ToggleButton.ToolTip>
-                            </ToggleButton>
-                            <Separator/>
-							<ToggleButton IsChecked="{Binding ShowBlockReport}" Visibility="{Binding ShowBlockReport, Converter={StaticResource booleanToVisibilityConverter}}">
-								<WrapPanel>
-									<Image Style="{StaticResource ProcessReportImage}"/>
-									<TextBlock Text="گزارش"/>
-								</WrapPanel>
-                                <ToggleButton.ToolTip>
-                                    <ToolTip>بستن گزارش تولید</ToolTip>
-                                </ToggleButton.ToolTip>
-                            </ToggleButton>
-                        </ToolBar>
-                    </ToolBarTray>
-
-                    <!-- JobList -->
-					<local:JobList x:Name="jobListPanel" Grid.ColumnSpan="2" Grid.Row="1" Height="0" 
+						<!-- JobList -->
+						<local:JobList x:Name="jobListPanel" Grid.ColumnSpan="2" Grid.Row="1" Height="0" 
 								   DataContext="{Binding JobList}" FlowDirection="RightToLeft"/>
-                    <!--Job Editor-->
-					<local:PPJobEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobEditorPanel" Height="0"
+						<!--Job Editor-->
+						<local:PPJobEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="jobEditorPanel" Height="0"
 										HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20"
 										DataContext="{Binding JobEditor}"/>
-                    <!--Task Editor-->
-					<local:PPTaskEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskEditorPanel" Height="0"
+						<!--Task Editor-->
+						<local:PPTaskEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskEditorPanel" Height="0"
 										HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20"
 										DataContext="{Binding TaskEditor}"/>
-                    <!-- NPT Editor-->
-					<local:NptEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptEditorPanel" Height="0"
+						<!-- NPT Editor-->
+						<local:NptEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptEditorPanel" Height="0"
 									 DataContext="{Binding SelectedNPT}" FlowDirection="RightToLeft"/>
-					<!-- TaskReportBuilder -->
-					<local:TaskReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskReportBuilderPanel" Height="0"
+						<!-- TaskReportBuilder -->
+						<local:TaskReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskReportBuilderPanel" Height="0"
 											 DataContext="{Binding CurrentTaskReportBuilder}" FlowDirection="RightToLeft"/>
-					<!-- NPTReportBuilder -->
-					<local:NptReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptReportBuilderPanel" Height="0"
+						<!-- NPTReportBuilder -->
+						<local:NptReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="nptReportBuilderPanel" Height="0"
 											DataContext="{Binding CurrentNPTReportBuilder}" FlowDirection="RightToLeft"/>
-					<!-- ProcessReportBuilder -->
-					<local:ProcessReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="processReportBuilderPanel" Height="0"
+						<!-- ProcessReportBuilder -->
+						<local:ProcessReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="processReportBuilderPanel" Height="0"
 												DataContext="{Binding CurrentProcessReportBuilder}" FlowDirection="RightToLeft"/>
 
-					<!-- Month-Day-Hour Sliders-->
-                    <ItemsControl Grid.Row="2" Grid.Column="1" SizeChanged="Grid_SizeChanged" ItemsSource="{Binding Months}" Name="ic_months">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Grid customControls:GridHelper.ColumnCount="12" customControls:GridHelper.RowCount="1"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <ToggleButton BorderBrush="{StaticResource HeaderBorderBrush}" IsChecked="{Binding IsSelected}" SnapsToDevicePixels="True">
-                                    <ToggleButton.Width>
-                                        <MultiBinding Converter="{StaticResource aCrossBDividebByC}">
-                                            <Binding Path="NumOfDays"/>
-                                            <Binding ElementName="ic_months" Path="ActualWidth"/>
-                                            <Binding ElementName="ppTable" Path="DataContext.DaysInYear"/>
-                                        </MultiBinding>
-                                    </ToggleButton.Width>
-                                    <ToggleButton.Background>
-                                        <SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Month}"/>
-                                    </ToggleButton.Background>
-                                    <TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <TextBlock.Foreground>
-                                            <SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Month}"/>
-                                        </TextBlock.Foreground>
-                                    </TextBlock>
-                                </ToggleButton>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style TargetType="ContentPresenter">
-                                <Setter Property="Grid.Column" Value="{Binding ColumnIndex}"/>
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.Template>
-                            <ControlTemplate>
-                                <Grid>
-                                    <Border BorderThickness="0,1,0,0" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
-                                        <ItemsPresenter/>
-                                    </Border>
-                                </Grid>
-                            </ControlTemplate>
-                        </ItemsControl.Template>
-                    </ItemsControl>
-                    <ItemsControl Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Days}" ClipToBounds="True">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Grid customControls:GridHelper.ColumnCount="{Binding DaysInYear}" customControls:GridHelper.RowCount="1"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Width="{Binding ElementName=ppTable, Path=DataContext.DayZoom}" SnapsToDevicePixels="True">
-                                    <Border.Background>
-                                        <SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Day}"/>
-                                    </Border.Background>
-                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2,0">
-                                            <TextBlock.Foreground>
-                                                <SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Day}"/>
-                                            </TextBlock.Foreground>
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding DayOfWeek}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2,-4,2,2">
-                                            <TextBlock.Foreground>
-                                                <SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Day}"/>
-                                            </TextBlock.Foreground>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style TargetType="ContentPresenter">
-                                <Setter Property="Grid.Column" Value="{Binding ColumnIndex}"/>
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.Template>
-                            <ControlTemplate>
-                                <Grid>
-                                    <Border BorderThickness="0,1,0,0" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
-                                        <ItemsPresenter ClipToBounds="True"/>
-                                    </Border>
-                                    <Border Cursor="ScrollWE" BorderThickness="1" CornerRadius="2" HorizontalAlignment="Left" ClipToBounds="True"
+						
+						<!-- Month-Day-Hour Sliders-->
+						<ItemsControl Grid.Row="2" Grid.Column="1" SizeChanged="Grid_SizeChanged" ItemsSource="{Binding Months}" Name="ic_months">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Grid customControls:GridHelper.ColumnCount="12" customControls:GridHelper.RowCount="1"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<ToggleButton BorderBrush="{StaticResource HeaderBorderBrush}" IsChecked="{Binding IsSelected}" SnapsToDevicePixels="True">
+										<ToggleButton.Width>
+											<MultiBinding Converter="{StaticResource aCrossBDividebByC}">
+												<Binding Path="NumOfDays"/>
+												<Binding ElementName="ic_months" Path="ActualWidth"/>
+												<Binding ElementName="ppTable" Path="DataContext.DaysInYear"/>
+											</MultiBinding>
+										</ToggleButton.Width>
+										<ToggleButton.Background>
+											<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Month}"/>
+										</ToggleButton.Background>
+										<TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center">
+											<TextBlock.Foreground>
+												<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Month}"/>
+											</TextBlock.Foreground>
+										</TextBlock>
+									</ToggleButton>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.ItemContainerStyle>
+								<Style TargetType="ContentPresenter">
+									<Setter Property="Grid.Column" Value="{Binding ColumnIndex}"/>
+								</Style>
+							</ItemsControl.ItemContainerStyle>
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Grid>
+										<Border BorderThickness="0,1,0,0" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
+											<ItemsPresenter/>
+										</Border>
+									</Grid>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+						<ItemsControl Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Days}" ClipToBounds="True">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Grid customControls:GridHelper.ColumnCount="{Binding DaysInYear}" customControls:GridHelper.RowCount="1"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Border Width="{Binding ElementName=ppTable, Path=DataContext.DayZoom}" SnapsToDevicePixels="True">
+										<Border.Background>
+											<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Day}"/>
+										</Border.Background>
+										<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+											<TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2,0">
+												<TextBlock.Foreground>
+													<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Day}"/>
+												</TextBlock.Foreground>
+											</TextBlock>
+											<TextBlock Text="{Binding DayOfWeek}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2,-4,2,2">
+												<TextBlock.Foreground>
+													<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Day}"/>
+												</TextBlock.Foreground>
+											</TextBlock>
+										</StackPanel>
+									</Border>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.ItemContainerStyle>
+								<Style TargetType="ContentPresenter">
+									<Setter Property="Grid.Column" Value="{Binding ColumnIndex}"/>
+								</Style>
+							</ItemsControl.ItemContainerStyle>
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Grid>
+										<Border BorderThickness="0,1,0,0" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
+											<ItemsPresenter ClipToBounds="True"/>
+										</Border>
+										<Border Cursor="ScrollWE" BorderThickness="1" CornerRadius="2" HorizontalAlignment="Left" ClipToBounds="True"
 									    Background="{StaticResource SlideWindowBackground}" BorderBrush="{StaticResource SlideWindowBorder}"
 									    MouseDown="dayLittleWindowMouseDown" Name="daysLittleWindow" SnapsToDevicePixels="True">
-                                        <Border.Width>
-                                            <MultiBinding Converter="{StaticResource zoomMathDayLittleWindowWidth}">
-                                                <Binding ElementName="ic_months" Path="ActualWidth"/>
-                                                <Binding Path="DayZoom"/>
-                                                <Binding Path="HourZoom"/>
-                                            </MultiBinding>
-                                        </Border.Width>
-                                        <Border.Margin>
-                                            <MultiBinding Converter="{StaticResource zoomMathDayLittleWindowMargin}">
-                                                <Binding Path="HoursPassed"/>
-                                                <Binding Path="DayZoom"/>
-                                            </MultiBinding>
-                                        </Border.Margin>
-                                    </Border>
-                                </Grid>
-                            </ControlTemplate>
-                        </ItemsControl.Template>
-                    </ItemsControl>
-                    <ItemsControl Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Hours}" Name="ic_hours" ClipToBounds="True">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas ClipToBounds="True"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Height="40" Width="{Binding ElementName=ppTable, Path=DataContext.HourZoom}" ClipToBounds="True"
+											<Border.Width>
+												<MultiBinding Converter="{StaticResource zoomMathDayLittleWindowWidth}">
+													<Binding ElementName="ic_months" Path="ActualWidth"/>
+													<Binding Path="DayZoom"/>
+													<Binding Path="HourZoom"/>
+												</MultiBinding>
+											</Border.Width>
+											<Border.Margin>
+												<MultiBinding Converter="{StaticResource zoomMathDayLittleWindowMargin}">
+													<Binding Path="HoursPassed"/>
+													<Binding Path="DayZoom"/>
+												</MultiBinding>
+											</Border.Margin>
+										</Border>
+									</Grid>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+						<ItemsControl Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Hours}" Name="ic_hours" ClipToBounds="True">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Canvas ClipToBounds="True"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Border Height="40" Width="{Binding ElementName=ppTable, Path=DataContext.HourZoom}" ClipToBounds="True"
 									    BorderThickness="1,0,0,0" BorderBrush="{StaticResource HeaderBorderBrush}" SnapsToDevicePixels="True">
-                                    <Border.Margin>
-                                        <MultiBinding Converter="{StaticResource gridColumnToMargin}">
-                                            <Binding Path="ColumnIndex"/>
-                                            <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-                                        </MultiBinding>
-                                    </Border.Margin>
-                                    <Border.Background>
-                                        <SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Hour}"/>
-                                    </Border.Background>
-                                    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Left">
-                                        <StackPanel.LayoutTransform>
-                                            <RotateTransform Angle="270"/>
-                                        </StackPanel.LayoutTransform>
-                                        <TextBlock Text="{Binding Text}" TextAlignment="Left" Margin="2,0,0,0">
-                                            <TextBlock.Foreground>
-                                                <SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Hour}"/>
-                                            </TextBlock.Foreground>
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding DateText}" TextAlignment="Left" Foreground="Silver" Margin="5,0,0,0"/>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.Template>
-                            <ControlTemplate>
-                                <Border BorderThickness="0,1,0,0" ClipToBounds="True" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
-                                    <ItemsPresenter ClipToBounds="True" MouseDown="hoursBarMouseDown">
-                                        <ItemsPresenter.Margin>
-                                            <MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-                                                <Binding Path="HoursPassed"/>
-                                                <Binding Path="HourZoom"/>
-                                                <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-                                            </MultiBinding>
-                                        </ItemsPresenter.Margin>
-                                    </ItemsPresenter>
-                                </Border>
-                            </ControlTemplate>
-                        </ItemsControl.Template>
-                    </ItemsControl>
-                    <!-- Shifts and Break hours -->
-                    <ItemsControl Grid.Row="4" Grid.RowSpan="2" Grid.Column="1" ItemsSource="{Binding ShiftsAndBreaks}" Name="ic_shiftsAndBreaks" ClipToBounds="True" IsHitTestVisible="False">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas ClipToBounds="True"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <DockPanel ClipToBounds="True" SnapsToDevicePixels="True">
-                                    <DockPanel.Width>
-										<MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
-                                            <Binding Path="StartSeconds"/>
-                                            <Binding Path="EndSeconds"/>
-                                            <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-                                        </MultiBinding>
-                                    </DockPanel.Width>
-                                    <DockPanel.Margin>
-										<MultiBinding Converter="{StaticResource StartToMarginConverter}">
-                                            <Binding Path="StartSeconds"/>
-                                            <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-                                        </MultiBinding>
-                                    </DockPanel.Margin>
-                                    <Border DockPanel.Dock="Top" Height="40" Background="{Binding Color, Converter={StaticResource colorFixer}}"/>
-                                    <Border Opacity="0.2" Background="{Binding Color, Converter={StaticResource colorFixer}}"
+										<Border.Margin>
+											<MultiBinding Converter="{StaticResource gridColumnToMargin}">
+												<Binding Path="ColumnIndex"/>
+												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+											</MultiBinding>
+										</Border.Margin>
+										<Border.Background>
+											<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Hour}"/>
+										</Border.Background>
+										<StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Left">
+											<StackPanel.LayoutTransform>
+												<RotateTransform Angle="270"/>
+											</StackPanel.LayoutTransform>
+											<TextBlock Text="{Binding Text}" TextAlignment="Left" Margin="2,0,0,0">
+												<TextBlock.Foreground>
+													<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Hour}"/>
+												</TextBlock.Foreground>
+											</TextBlock>
+											<TextBlock Text="{Binding DateText}" TextAlignment="Left" Foreground="Silver" Margin="5,0,0,0"/>
+										</StackPanel>
+									</Border>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Border BorderThickness="0,1,0,0" ClipToBounds="True" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
+										<ItemsPresenter ClipToBounds="True" MouseDown="hoursBarMouseDown">
+											<ItemsPresenter.Margin>
+												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+													<Binding Path="HoursPassed"/>
+													<Binding Path="HourZoom"/>
+													<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+												</MultiBinding>
+											</ItemsPresenter.Margin>
+										</ItemsPresenter>
+									</Border>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+						<!-- Shifts and Break hours -->
+						<ItemsControl Grid.Row="4" Grid.RowSpan="2" Grid.Column="1" ItemsSource="{Binding ShiftsAndBreaks}" Name="ic_shiftsAndBreaks" ClipToBounds="True" IsHitTestVisible="False">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Canvas ClipToBounds="True"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<DockPanel ClipToBounds="True" SnapsToDevicePixels="True">
+										<DockPanel.Width>
+											<MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
+												<Binding Path="StartSeconds"/>
+												<Binding Path="EndSeconds"/>
+												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+											</MultiBinding>
+										</DockPanel.Width>
+										<DockPanel.Margin>
+											<MultiBinding Converter="{StaticResource StartToMarginConverter}">
+												<Binding Path="StartSeconds"/>
+												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+											</MultiBinding>
+										</DockPanel.Margin>
+										<Border DockPanel.Dock="Top" Height="40" Background="{Binding Color, Converter={StaticResource colorFixer}}"/>
+										<Border Opacity="0.2" Background="{Binding Color, Converter={StaticResource colorFixer}}"
                                     BorderBrush="#3FFF" BorderThickness="1,0,0,0"/>
-                                </DockPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.Template>
-                            <ControlTemplate>
-                                <Border ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True" IsHitTestVisible="False">
-                                    <ItemsPresenter ClipToBounds="True">
-                                        <ItemsPresenter.Margin>
-                                            <MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-                                                <Binding Path="HoursPassed"/>
-                                                <Binding Path="HourZoom"/>
-                                                <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-                                            </MultiBinding>
-                                        </ItemsPresenter.Margin>
-                                    </ItemsPresenter>
-                                </Border>
-                            </ControlTemplate>
-                        </ItemsControl.Template>
-                    </ItemsControl>
+									</DockPanel>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Border ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True" IsHitTestVisible="False">
+										<ItemsPresenter ClipToBounds="True">
+											<ItemsPresenter.Margin>
+												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+													<Binding Path="HoursPassed"/>
+													<Binding Path="HourZoom"/>
+													<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+												</MultiBinding>
+											</ItemsPresenter.Margin>
+										</ItemsPresenter>
+									</Border>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
 
 
-                    <!-- titles of Activities (just the first column of process report) -->
-                    <DockPanel Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
-                        <Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
-                            <TextBlock Text="مدت زمان" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
-                            <TextBlock Text="مقدار هدف ایستگاه" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
-                            <TextBlock Text="خروجی سالم ایستگاه" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
+						<!-- first column of Activities -->
+						<DockPanel Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
+							<Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
+								<TextBlock Text="مدت زمان" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Border>
+							<Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
+								<TextBlock Text="مقدار هدف ایستگاه" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Border>
+							<Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
+								<TextBlock Text="خروجی سالم ایستگاه" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Border>
 
-                        <!-- Activities itemsControl -->
-                        <ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.SSAList}" IsHitTestVisible="False">
-                            <ItemsControl.ItemTemplate>
-                                <!--first column (SSA List) ItemTemplate-->
-                                <DataTemplate>
-                                    <DockPanel VerticalAlignment="Stretch" Height="52">
-                                        <Border Background="{StaticResource HeaderBackground}" DockPanel.Dock="Left" Width="{StaticResource StationOrActivityHeaderWidth}" BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,1,1">
-                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <TextBlock TextWrapping="NoWrap" Text="{Binding Activity.Name}"  Foreground="Silver" HorizontalAlignment="Center"/>
-                                                <WrapPanel HorizontalAlignment="Center">
-                                                    <Image Style="{StaticResource CycleTimeImage}"/>
-                                                    <TextBlock TextWrapping="Wrap" Text="{Binding CycleTime, Converter={StaticResource cycleTimeToStringConverter}}" Foreground="Silver"/>
-                                                </WrapPanel>
-                                                <WrapPanel HorizontalAlignment="Center">
-                                                    <Image Style="{StaticResource ManHourImage}"/>
-                                                    <TextBlock TextWrapping="Wrap" Text="{Binding ManHour}" Foreground="Silver"/>
-                                                </WrapPanel>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border BorderThickness="0,0,0,1">
-                                            <Border.BorderBrush>
-                                                <LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,0" MappingMode="Absolute">
-                                                    <GradientStop Color="Transparent" Offset="0"/>
-                                                    <GradientStop Color="Transparent" Offset="0.39"/>
-                                                    <GradientStop Color="{StaticResource HighlightColor}" Offset="0.4"/>
-                                                    <GradientStop Color="{StaticResource HighlightColor}" Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </Border.BorderBrush>
-                                        </Border>
-                                    </DockPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
+							<!-- Activities itemsControl -->
+							<ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.SSAList}" IsHitTestVisible="False">
+								<ItemsControl.ItemTemplate>
+									<!--first column (SSA List) ItemTemplate-->
+									<DataTemplate>
+										<DockPanel VerticalAlignment="Stretch" Height="52">
+											<Border Background="{StaticResource HeaderBackground}" DockPanel.Dock="Left" Width="{StaticResource StationOrActivityHeaderWidth}" BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,1,1">
+												<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+													<TextBlock TextWrapping="NoWrap" Text="{Binding Activity.Name}"  Foreground="Silver" HorizontalAlignment="Center"/>
+													<WrapPanel HorizontalAlignment="Center">
+														<Image Style="{StaticResource CycleTimeImage}"/>
+														<TextBlock TextWrapping="Wrap" Text="{Binding CycleTime, Converter={StaticResource cycleTimeToStringConverter}}" Foreground="Silver"/>
+													</WrapPanel>
+													<WrapPanel HorizontalAlignment="Center">
+														<Image Style="{StaticResource ManHourImage}"/>
+														<TextBlock TextWrapping="Wrap" Text="{Binding ManHour}" Foreground="Silver"/>
+													</WrapPanel>
+												</StackPanel>
+											</Border>
+											<Border BorderThickness="0,0,0,1">
+												<Border.BorderBrush>
+													<LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,0" MappingMode="Absolute">
+														<GradientStop Color="Transparent" Offset="0"/>
+														<GradientStop Color="Transparent" Offset="0.39"/>
+														<GradientStop Color="{StaticResource HighlightColor}" Offset="0.4"/>
+														<GradientStop Color="{StaticResource HighlightColor}" Offset="1"/>
+													</LinearGradientBrush>
+												</Border.BorderBrush>
+											</Border>
+										</DockPanel>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
 
-                            <!--Activities Template-->
-                            <ItemsControl.Template>
-                                <ControlTemplate>
-                                    <Border BorderThickness="0,2" BorderBrush="{StaticResource HeaderBorderBrush}">
-                                        <ScrollViewer Focusable="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
-                                            <ItemsPresenter/>
-                                        </ScrollViewer>
-                                    </Border>
-                                </ControlTemplate>
-                            </ItemsControl.Template>
-                        </ItemsControl>
-                    </DockPanel>
-                    <!--RowsOfActivity ItemsControl & ExceptionBalloons, Durations, TP, G1 (other columns of process report) -->
-                    <DockPanel Grid.Row="5" Grid.Column="1" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
-                        <!-- & Durations, TPs, G1s -->
-                        <ItemsControl DockPanel.Dock="Top" Height="59" ItemsSource="{Binding SelectedBlock.BlockReport.TaskReports}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <!-- One Duration, TP, G1  -->
-                                    <Canvas>
-                                        <Canvas.Margin>
-                                            <MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
-                                                <Binding Path="StartDateTime"/>
-                                                <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-                                            </MultiBinding>
-                                        </Canvas.Margin>
-                                        <Border Background="#023" Height="59" BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,0,0">
-                                            <Border.Width>
-                                                <MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
-                                                    <Binding Path="Duration"/>
-                                                    <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-                                                </MultiBinding>
-                                            </Border.Width>
-                                            <StackPanel>
-                                                <TextBlock FlowDirection="LeftToRight" Text="{Binding DurationSeconds,Converter={StaticResource secondsToStringConverter}}" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBox Text="{Binding TargetPoint}" Margin="0,2,0,0" IsReadOnly="False" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Stretch">
-                                                    <!-- is readonly was {Binding CanUserEditTaskTPAndG1, Converter={StaticResource inverter}}-->
-                                                    <TextBox.Background>
-                                                        <SolidColorBrush Color="Transparent" x:Name="bkgtp"/>
-                                                    </TextBox.Background>
-                                                    <TextBox.Triggers>
-                                                        <EventTrigger RoutedEvent="MouseEnter">
-                                                            <BeginStoryboard>
-                                                                <Storyboard Duration="0:0:0.2">
-                                                                    <ColorAnimation Storyboard.TargetName="bkgtp" Storyboard.TargetProperty="Color" Duration="0:0:0.2" To="DimGray"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                        <EventTrigger RoutedEvent="MouseLeave">
-                                                            <BeginStoryboard>
-                                                                <Storyboard Duration="0:0:0.7">
-                                                                    <ColorAnimation Storyboard.TargetName="bkgtp" Storyboard.TargetProperty="Color" Duration="0:0:0.7" To="Transparent"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                    </TextBox.Triggers>
-                                                </TextBox>
-                                                <TextBox Text="{Binding ProducedG1}" Margin="0,2,0,0" IsReadOnly="{Binding CanUserEditTaskTPAndG1, Converter={StaticResource inverter}}" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Stretch">
-                                                    <TextBox.Background>
-                                                        <SolidColorBrush Color="Transparent" x:Name="bkgg1"/>
-                                                    </TextBox.Background>
-                                                    <TextBox.Triggers>
-                                                        <EventTrigger RoutedEvent="MouseEnter">
-                                                            <BeginStoryboard>
-                                                                <Storyboard Duration="0:0:0.2">
-                                                                    <ColorAnimation Storyboard.TargetName="bkgg1" Storyboard.TargetProperty="Color" Duration="0:0:0.2" To="DimGray"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                        <EventTrigger RoutedEvent="MouseLeave">
-                                                            <BeginStoryboard>
-                                                                <Storyboard Duration="0:0:0.7">
-                                                                    <ColorAnimation Storyboard.TargetName="bkgg1" Storyboard.TargetProperty="Color" Duration="0:0:0.7" To="Transparent"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                    </TextBox.Triggers>
-                                                </TextBox>
-                                            </StackPanel>
-                                        </Border>
-                                    </Canvas>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                            <!-- Durations ItemsPanel -->
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <Canvas/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <!-- Durations Template -->
-                            <ItemsControl.Template>
-                                <ControlTemplate>
+								<!--Activities Template-->
+								<ItemsControl.Template>
+									<ControlTemplate>
+										<Border BorderThickness="0,2" BorderBrush="{StaticResource HeaderBorderBrush}">
+											<ScrollViewer Focusable="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+												<ItemsPresenter/>
+											</ScrollViewer>
+										</Border>
+									</ControlTemplate>
+								</ItemsControl.Template>
+							</ItemsControl>
+						</DockPanel>
+						<!--RowsOfActivity ItemsControl & ExceptionBalloons, Durations, TP, G1 (other columns of process report) -->
+						<DockPanel Grid.Row="5" Grid.Column="1" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
+							<!-- & Durations, TPs, G1s -->
+							<ItemsControl DockPanel.Dock="Top" Height="59" ItemsSource="{Binding SelectedBlock.BlockReport.TaskReports}">
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<!-- One Duration, TP, G1  -->
+										<Canvas>
+											<Canvas.Margin>
+												<MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
+													<Binding Path="StartDateTime"/>
+													<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+												</MultiBinding>
+											</Canvas.Margin>
+											<Border Background="#023" Height="59" BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,0,0">
+												<Border.Width>
+													<MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
+														<Binding Path="Duration"/>
+														<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+													</MultiBinding>
+												</Border.Width>
+												<StackPanel>
+													<TextBlock FlowDirection="LeftToRight" Text="{Binding DurationSeconds,Converter={StaticResource secondsToStringConverter}}" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Center"/>
+													<TextBox Text="{Binding TargetPoint}" Margin="0,2,0,0" IsReadOnly="False" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Stretch">
+														<!-- is readonly was {Binding CanUserEditTaskTPAndG1, Converter={StaticResource inverter}}-->
+														<TextBox.Background>
+															<SolidColorBrush Color="Transparent" x:Name="bkgtp"/>
+														</TextBox.Background>
+														<TextBox.Triggers>
+															<EventTrigger RoutedEvent="MouseEnter">
+																<BeginStoryboard>
+																	<Storyboard Duration="0:0:0.2">
+																		<ColorAnimation Storyboard.TargetName="bkgtp" Storyboard.TargetProperty="Color" Duration="0:0:0.2" To="DimGray"/>
+																	</Storyboard>
+																</BeginStoryboard>
+															</EventTrigger>
+															<EventTrigger RoutedEvent="MouseLeave">
+																<BeginStoryboard>
+																	<Storyboard Duration="0:0:0.7">
+																		<ColorAnimation Storyboard.TargetName="bkgtp" Storyboard.TargetProperty="Color" Duration="0:0:0.7" To="Transparent"/>
+																	</Storyboard>
+																</BeginStoryboard>
+															</EventTrigger>
+														</TextBox.Triggers>
+													</TextBox>
+													<TextBox Text="{Binding ProducedG1}" Margin="0,2,0,0" IsReadOnly="{Binding CanUserEditTaskTPAndG1, Converter={StaticResource inverter}}" Height="19" Foreground="Silver" TextAlignment="Center" HorizontalAlignment="Stretch">
+														<TextBox.Background>
+															<SolidColorBrush Color="Transparent" x:Name="bkgg1"/>
+														</TextBox.Background>
+														<TextBox.Triggers>
+															<EventTrigger RoutedEvent="MouseEnter">
+																<BeginStoryboard>
+																	<Storyboard Duration="0:0:0.2">
+																		<ColorAnimation Storyboard.TargetName="bkgg1" Storyboard.TargetProperty="Color" Duration="0:0:0.2" To="DimGray"/>
+																	</Storyboard>
+																</BeginStoryboard>
+															</EventTrigger>
+															<EventTrigger RoutedEvent="MouseLeave">
+																<BeginStoryboard>
+																	<Storyboard Duration="0:0:0.7">
+																		<ColorAnimation Storyboard.TargetName="bkgg1" Storyboard.TargetProperty="Color" Duration="0:0:0.7" To="Transparent"/>
+																	</Storyboard>
+																</BeginStoryboard>
+															</EventTrigger>
+														</TextBox.Triggers>
+													</TextBox>
+												</StackPanel>
+											</Border>
+										</Canvas>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+								<!-- Durations ItemsPanel -->
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<Canvas/>
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+								<!-- Durations Template -->
+								<ItemsControl.Template>
+									<ControlTemplate>
+										<Grid ClipToBounds="True">
+											<ItemsPresenter>
+												<ItemsPresenter.Margin>
+													<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+														<Binding Path="HoursPassed"/>
+														<Binding Path="HourZoom"/>
+														<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+													</MultiBinding>
+												</ItemsPresenter.Margin>
+											</ItemsPresenter>
+										</Grid>
+									</ControlTemplate>
+								</ItemsControl.Template>
+							</ItemsControl>
+
+							<!--RowsOfActivity ItemsControl & Exceptions Balloons-->
+							<Grid>
+								<ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ProcessReportRows}" x:Name="ic_activitiesRows">
+									<ItemsControl.Effect>
+										<DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
+									</ItemsControl.Effect>
+
+									<!-- ==================================== OneRowOfActivity ========================================= -->
+									<ItemsControl.ItemTemplate>
+										<DataTemplate DataType="{x:Type report:ProcessReportRowVm}">
+											<ItemsControl ItemsSource="{Binding ProcessReportCells}" Height="52">
+												<ItemsControl.ItemTemplate>
+													<DataTemplate DataType="{x:Type report:ProcessReportCellVm}">
+														<Canvas>
+															<local:ProcessReportCell DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
+														</Canvas>
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
+												<ItemsControl.ItemsPanel>
+													<ItemsPanelTemplate>
+														<Canvas/>
+													</ItemsPanelTemplate>
+												</ItemsControl.ItemsPanel>
+											</ItemsControl>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+
+									<!--RowsOfActivity Template-->
+									<ItemsControl.Template>
+										<ControlTemplate>
+											<Grid ClipToBounds="True" Margin="0,6,0,0">
+												<ItemsPresenter>
+													<ItemsPresenter.Margin>
+														<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+															<Binding Path="HoursPassed"/>
+															<Binding Path="HourZoom"/>
+															<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+														</MultiBinding>
+													</ItemsPresenter.Margin>
+												</ItemsPresenter>
+											</Grid>
+										</ControlTemplate>
+									</ItemsControl.Template>
+
+								</ItemsControl>
+								<!--RowsOfActivity ExceptionTooltips-->
+								<ItemsControl ItemsSource="{Binding SelectedBlock.ProcessReportRows}" Margin="0,6,0,0">
+
+									<!-- ==================================== OneRowOfActivity Balloons ========================================= -->
+									<ItemsControl.ItemTemplate>
+										<DataTemplate DataType="{x:Type report:ProcessReportRowVm}">
+											<ItemsControl ItemsSource="{Binding ProcessReportCells}" Height="52" ItemTemplate="{StaticResource balloonTemplate}">
+												<ItemsControl.ItemsPanel>
+													<ItemsPanelTemplate>
+														<Canvas/>
+													</ItemsPanelTemplate>
+												</ItemsControl.ItemsPanel>
+											</ItemsControl>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+
+									<!--RowsOfActivity Template-->
+									<ItemsControl.Template>
+										<ControlTemplate>
+											<ItemsPresenter ClipToBounds="False">
+												<ItemsPresenter.Margin>
+													<MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
+														<Binding Path="HoursPassed"/>
+														<Binding Path="HourZoom"/>
+														<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+														<Binding Path="VerticalScreenOffset"/>
+													</MultiBinding>
+												</ItemsPresenter.Margin>
+											</ItemsPresenter>
+										</ControlTemplate>
+									</ItemsControl.Template>
+								</ItemsControl>
+							</Grid>
+						</DockPanel>
+
+						
+						<!-- first column of Stations-->
+						<ItemsControl Grid.Row="6" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" IsHitTestVisible="False">
+							<ItemsControl.Effect>
+								<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="White"/>
+							</ItemsControl.Effect>
+							<!--PPTable ItemTemplate-->
+							<ItemsControl.ItemTemplate>
+								<DataTemplate DataType="{x:Type vm:StationVm}">
+									<DockPanel VerticalAlignment="Stretch" Height="42">
+										<Border Background="{StaticResource HeaderBackground}" DockPanel.Dock="Left" Width="{StaticResource StationOrActivityHeaderWidth}"
+									    BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,1,1">
+											<TextBlock TextWrapping="Wrap" Text="{Binding Text}" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+										</Border>
+										<Border BorderThickness="0,0,0,1">
+											<Border.BorderBrush>
+												<LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,0" EndPoint="16,0" MappingMode="Absolute">
+													<GradientStop Color="Transparent" Offset="0"/>
+													<GradientStop Color="Transparent" Offset="0.39"/>
+													<GradientStop Color="{StaticResource HighlightColor}" Offset="0.4"/>
+													<GradientStop Color="{StaticResource HighlightColor}" Offset="1"/>
+												</LinearGradientBrush>
+											</Border.BorderBrush>
+										</Border>
+									</DockPanel>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+
+							<!--Stations Template-->
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Border BorderThickness="0,2" BorderBrush="{StaticResource HeaderBorderBrush}">
+										<ItemsPresenter/>
+									</Border>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+						<!-- ************************************************************************************** -->
+						<!-- ***************************** tasks, blocks, setups here ***************************** -->
+						<!-- ************************************************************************************** -->
+						<!-- RowsOfItems(Blocks,NPTs) ItemsControl -->
+						<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}">
+							<ItemsControl.Effect>
+								<DropShadowEffect Opacity="0.3" ShadowDepth="0" Color="White"/>
+							</ItemsControl.Effect>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate DataType="{x:Type vm:StationVm}">
+									<Canvas Height="42">
+
+										<!-- Blocks ItemsControl -->
+										<ItemsControl ItemsSource="{Binding Blocks}" Height="42">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate DataType="{x:Type vm:BlockVm}">
+													<Canvas>
+														<local:Block DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
+													</Canvas>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<Canvas/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+
+										<!-- NPTs ItemsControl -->
+										<ItemsControl ItemsSource="{Binding NPTs}" Height="42">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate DataType="{x:Type vm:NPTVm}">
+													<Canvas>
+														<local:Setup DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
+													</Canvas>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<Canvas/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+									</Canvas>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+
+							<!-- RowsOfItems Template -->
+							<ItemsControl.Template>
+								<ControlTemplate>
 									<Grid ClipToBounds="True">
 										<ItemsPresenter>
 											<ItemsPresenter.Margin>
@@ -933,237 +1193,57 @@
 										</ItemsPresenter>
 									</Grid>
 								</ControlTemplate>
-                            </ItemsControl.Template>
-                        </ItemsControl>
+							</ItemsControl.Template>
+						</ItemsControl>
 
-						<!--RowsOfActivity ItemsControl & Exceptions Balloons-->
-                        <Grid>
-                            <ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ProcessReportRows}" x:Name="ic_activitiesRows">
-								<ItemsControl.Effect>
-									<DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
-								</ItemsControl.Effect>
+						<!-- ExceptionTooltips for Tasks,NPTs -->
+						<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}" ClipToBounds="False">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate DataType="{x:Type vm:StationVm}">
+									<Canvas>
 
-								<!-- ==================================== OneRowOfActivity ========================================= -->
-                                <ItemsControl.ItemTemplate>
-									<DataTemplate DataType="{x:Type report:ProcessReportRowVm}">
-                                        <ItemsControl ItemsSource="{Binding ProcessReportCells}" Height="52">
-                                            <ItemsControl.ItemTemplate>
-												<DataTemplate DataType="{x:Type report:ProcessReportCellVm}">
-													<Canvas>
-														<local:ProcessReportCell DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
-													</Canvas>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <Canvas/>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                        </ItemsControl>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
+										<!-- Tasks ItemsControl -->
+										<ItemsControl ItemsSource="{Binding Blocks}" Height="42" ClipToBounds="False" ItemTemplate="{StaticResource balloonTemplate}">
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<Canvas/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
 
-                                <!--RowsOfActivity Template-->
-                                <ItemsControl.Template>
-                                    <ControlTemplate>
-										<Grid ClipToBounds="True" Margin="0,6,0,0">
-											<ItemsPresenter>
-												<ItemsPresenter.Margin>
-													<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-														<Binding Path="HoursPassed"/>
-														<Binding Path="HourZoom"/>
-														<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-													</MultiBinding>
-												</ItemsPresenter.Margin>
-											</ItemsPresenter>
-										</Grid>
-									</ControlTemplate>
-                                </ItemsControl.Template>
+										<!-- NPTs ItemsControl -->
+										<ItemsControl ItemsSource="{Binding NPTs}" Height="42" ClipToBounds="False" ItemTemplate="{StaticResource balloonTemplate}">
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<Canvas/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+									</Canvas>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
 
-                            </ItemsControl>
-                            <!--RowsOfActivity ExceptionTooltips-->
-                            <ItemsControl ItemsSource="{Binding SelectedBlock.ProcessReportRows}" Margin="0,6,0,0">
-
-                                <!-- ==================================== OneRowOfActivity Balloons ========================================= -->
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type report:ProcessReportRowVm}">
-                                        <ItemsControl ItemsSource="{Binding ProcessReportCells}" Height="52" ItemTemplate="{StaticResource balloonTemplate}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <Canvas/>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                        </ItemsControl>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-
-                                <!--RowsOfActivity Template-->
-                                <ItemsControl.Template>
-                                    <ControlTemplate>
-                                        <ItemsPresenter ClipToBounds="False">
-                                            <ItemsPresenter.Margin>
-                                                <MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
-                                                    <Binding Path="HoursPassed"/>
-                                                    <Binding Path="HourZoom"/>
-                                                    <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-                                                    <Binding Path="VerticalScreenOffset"/>
-                                                </MultiBinding>
-                                            </ItemsPresenter.Margin>
-                                        </ItemsPresenter>
-                                    </ControlTemplate>
-                                </ItemsControl.Template>
-                            </ItemsControl>
-                        </Grid>
-                    </DockPanel>
-                  
-                    <!-- titles of Stations-->
-                    <ItemsControl Grid.Row="6" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" IsHitTestVisible="False">
-						<ItemsControl.Effect>
-							<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="White"/>
-						</ItemsControl.Effect>
-						<!--PPTable ItemTemplate-->
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:StationVm}">
-                                <DockPanel VerticalAlignment="Stretch" Height="42">
-                                    <Border Background="{StaticResource HeaderBackground}" DockPanel.Dock="Left" Width="{StaticResource StationOrActivityHeaderWidth}"
-									    BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,1,1">
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding Text}" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <Border BorderThickness="0,0,0,1">
-                                        <Border.BorderBrush>
-                                            <LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,0" EndPoint="16,0" MappingMode="Absolute">
-                                                <GradientStop Color="Transparent" Offset="0"/>
-                                                <GradientStop Color="Transparent" Offset="0.39"/>
-                                                <GradientStop Color="{StaticResource HighlightColor}" Offset="0.4"/>
-                                                <GradientStop Color="{StaticResource HighlightColor}" Offset="1"/>
-                                            </LinearGradientBrush>
-                                        </Border.BorderBrush>
-                                    </Border>
-                                </DockPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-
-                        <!--Stations Template-->
-                        <ItemsControl.Template>
-                            <ControlTemplate>
-                                <Border BorderThickness="0,2" BorderBrush="{StaticResource HeaderBorderBrush}">
-									<ItemsPresenter/>
-                                </Border>
-                            </ControlTemplate>
-                        </ItemsControl.Template>
-                    </ItemsControl>
-					<!-- ************************************************************************************** -->
-					<!-- ***************************** tasks, blocks, setups here ***************************** -->
-					<!-- ************************************************************************************** -->
-					<!-- RowsOfItems(Blocks,NPTs) ItemsControl -->
-					<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}">
-						<ItemsControl.Effect>
-							<DropShadowEffect Opacity="0.3" ShadowDepth="0" Color="White"/>
-						</ItemsControl.Effect>
-						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="{x:Type vm:StationVm}">
-								<Canvas Height="42">
-									
-									<!-- Blocks ItemsControl -->
-									<ItemsControl ItemsSource="{Binding Blocks}" Height="42">
-										<ItemsControl.ItemTemplate>
-											<DataTemplate DataType="{x:Type vm:BlockVm}">
-												<Canvas>
-													<local:Block DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
-												</Canvas>
-											</DataTemplate>
-										</ItemsControl.ItemTemplate>
-										<ItemsControl.ItemsPanel>
-											<ItemsPanelTemplate>
-												<Canvas/>
-											</ItemsPanelTemplate>
-										</ItemsControl.ItemsPanel>
-									</ItemsControl>
-
-									<!-- NPTs ItemsControl -->
-									<ItemsControl ItemsSource="{Binding NPTs}" Height="42">
-										<ItemsControl.ItemTemplate>
-											<DataTemplate DataType="{x:Type vm:NPTVm}">
-												<Canvas>
-													<local:Setup DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
-												</Canvas>
-											</DataTemplate>
-										</ItemsControl.ItemTemplate>
-										<ItemsControl.ItemsPanel>
-											<ItemsPanelTemplate>
-												<Canvas/>
-											</ItemsPanelTemplate>
-										</ItemsControl.ItemsPanel>
-									</ItemsControl>
-								</Canvas>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-						
-						<!-- RowsOfItems Template -->
-                        <ItemsControl.Template>
-                            <ControlTemplate>
-								<Grid ClipToBounds="True">
-									<ItemsPresenter>
+							<!--RowsOfTasks Template-->
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<ItemsPresenter ClipToBounds="False">
 										<ItemsPresenter.Margin>
-											<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+											<MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
 												<Binding Path="HoursPassed"/>
 												<Binding Path="HourZoom"/>
 												<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+												<Binding Path="VerticalScreenOffset"/>
 											</MultiBinding>
 										</ItemsPresenter.Margin>
 									</ItemsPresenter>
-								</Grid>
-							</ControlTemplate>
-                        </ItemsControl.Template>
-                    </ItemsControl>
-					
-                    <!-- ExceptionTooltips for Tasks,NPTs -->
-                    <ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}" ClipToBounds="False">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:StationVm}">
-                                <Canvas>
-									
-                                    <!-- Tasks ItemsControl -->
-                                    <ItemsControl ItemsSource="{Binding Blocks}" Height="42" ClipToBounds="False" ItemTemplate="{StaticResource balloonTemplate}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <Canvas/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                    </ItemsControl>
-
-                                    <!-- NPTs ItemsControl -->
-                                    <ItemsControl ItemsSource="{Binding NPTs}" Height="42" ClipToBounds="False" ItemTemplate="{StaticResource balloonTemplate}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <Canvas/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                    </ItemsControl>
-                                </Canvas>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-
-                        <!--RowsOfTasks Template-->
-                        <ItemsControl.Template>
-                            <ControlTemplate>
-                                <ItemsPresenter ClipToBounds="False">
-                                    <ItemsPresenter.Margin>
-                                        <MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
-                                            <Binding Path="HoursPassed"/>
-                                            <Binding Path="HourZoom"/>
-                                            <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-                                            <Binding Path="VerticalScreenOffset"/>
-                                        </MultiBinding>
-                                    </ItemsPresenter.Margin>
-                                </ItemsPresenter>
-                            </ControlTemplate>
-                        </ItemsControl.Template>
-                    </ItemsControl>
-                </Grid>
-            </ScrollViewer>
-            
-            
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+					</Grid>
+				</ScrollViewer>
+			</DockPanel>
+			
+			
             <DataTemplate.Triggers>
 				<!-- TaskEditor -->
                 <DataTrigger Binding="{Binding TaskEditor.IsVisible}" Value="True">
@@ -1171,7 +1251,7 @@
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
-                                <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="128"/>
+                                <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="420"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
@@ -1191,7 +1271,7 @@
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="jobEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
-                                <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="92"/>
+                                <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="280"/>
 							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
@@ -1264,7 +1344,8 @@
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
-                                <DoubleAnimation Storyboard.TargetName="processReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
+								<DoubleAnimation Storyboard.TargetName="processReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
+								<DoubleAnimation Storyboard.TargetName="processReportBuilderToolbar" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="250"/>
 							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
@@ -1272,8 +1353,9 @@
                         <BeginStoryboard>
                             <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="processReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
-                            </Storyboard>
-                        </BeginStoryboard>
+								<DoubleAnimation Storyboard.TargetName="processReportBuilderToolbar" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
+							</Storyboard>
+						</BeginStoryboard>
                     </DataTrigger.ExitActions>
                 </DataTrigger>
 

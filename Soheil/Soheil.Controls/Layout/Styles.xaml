@@ -1912,7 +1912,7 @@
                 <GradientStop Offset="0" Color="Honeydew" />
                 <GradientStop Offset="1" Color="Black" />
             </LinearGradientBrush>
-            <DropShadowBitmapEffect x:Key="DropShadowEffect" />
+            <DropShadowEffect x:Key="DropShadowEffect" />
         </Style.Resources>
         <Setter Property="Template">
             <Setter.Value>
@@ -1943,7 +1943,7 @@
                             <Setter TargetName="Bd" Property="Panel.Background" Value="{StaticResource SelectedItemAreaBrush}" />
                             <Setter TargetName="Bd" Property="Border.BorderBrush" Value="{StaticResource SelectedItemBorderBrush}" />
                             <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
-                            <Setter TargetName="Bd" Property="Border.BitmapEffect" Value="{StaticResource DropShadowEffect}" />
+                            <Setter TargetName="Bd" Property="Border.Effect" Value="{StaticResource DropShadowEffect}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

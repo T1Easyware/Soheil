@@ -1633,7 +1633,7 @@
         </Setter>
     </Style>
 
-    <DropShadowBitmapEffect x:Key="PopupDropShadow" ShadowDepth="1.5" Softness="0.15" />
+    <DropShadowEffect x:Key="PopupDropShadow" ShadowDepth="1.5" BlurRadius="4" />
     <Style TargetType="{x:Type MenuItem}">
         <Setter Property="HorizontalContentAlignment"
             Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
@@ -1733,7 +1733,7 @@
                         <Trigger SourceName="SubMenuPopup" Property="AllowsTransparency" Value="true">
                             <Setter TargetName="SubMenu" Property="Margin" Value="0,0,3,3" />
                             <Setter TargetName="SubMenu" Property="SnapsToDevicePixels" Value="true" />
-                            <Setter TargetName="SubMenuBorder" Property="BitmapEffect"
+                            <Setter TargetName="SubMenuBorder" Property="Effect"
                       Value="{DynamicResource PopupDropShadow}" />
                         </Trigger>
                         <Trigger Property="IsHighlighted" Value="true">

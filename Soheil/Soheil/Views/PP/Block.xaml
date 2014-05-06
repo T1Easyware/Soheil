@@ -96,6 +96,7 @@
 				<MenuItem Header="ویرایش Task" Command="{Binding EditItemCommand}"/>
 				<MenuItem Header="افزودن Task به ویرایشگر" Command="{Binding AddBlockToEditorCommand}"/>
 				<MenuItem Header="حذف Task" Command="{Binding DeleteItemCommand}"/>
+				<MenuItem Header="حذف Task و گزارشها" Command="{Binding DeleteBlockWithReportsCommand}"/>
 				<Separator/>
 				<MenuItem Header="ویرایش Job" Command="{Binding EditJobCommand}"/>
 				<MenuItem Header="افزودن Job به ویرایشگر" Command="{Binding AddJobToEditorCommand}"/>

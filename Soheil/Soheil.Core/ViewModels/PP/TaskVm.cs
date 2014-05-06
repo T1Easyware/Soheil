@@ -88,83 +88,101 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region TaskReports
 		/// <summary>
-		/// Partitions a Task into TaskReports
+		/// Partitions this Task into TaskReports and fills gaps with <see cref="TaskReportHolderVm"/>
+		/// <para>Also reloads all process reports of the block, if asked to</para>
 		/// </summary>
-		public void ReloadTaskReports()
+		/// <param name="reloadProcessReports">Calls ReloadProcessReportRows on Block.BlockReport</param>
+		public void ReloadTaskReports(bool reloadProcessReports)
 		{
 			try
 			{
 				TaskReports.Clear();
-				var models = TaskReportDataService.GetAllForTask(Id).OrderBy(x => x.ReportStartDateTime);
+				var taskReportModels = TaskReportDataService.GetAllForTask(Id).OrderBy(x => x.ReportStartDateTime);
 
-				int remainingTP = TaskTargetPoint - models.Sum(x => x.TaskReportTargetPoint);
-				int remainingDuration = DurationSeconds - models.Sum(x => x.ReportDurationSeconds);
 				int gap = 0;
-
-				//checks before the first report to see if there is any place for a holder
-				DateTime first = Model.EndDateTime;
-				if (models.Any()) first = models.First().ReportStartDateTime;
-				gap = (int)first.Subtract(Model.StartDateTime).TotalSeconds;
-				if (gap > 0)
+				int remainingTP = TaskTargetPoint - taskReportModels.Sum(x => x.TaskReportTargetPoint);
+				int remainingDuration = DurationSeconds - taskReportModels.Sum(x => x.ReportDurationSeconds);
+				if (remainingDuration > 0)
 				{
-					//guess TP and modify remainings
-					int guessedTP = (int)Math.Round(gap * remainingTP / (float)remainingDuration);
-					remainingTP -= guessedTP;
-					remainingDuration -= gap;
-
-					//holder is put in the unreported space at the beginning of all reports
-					var taskReportHolder = new Report.TaskReportHolderVm(this, StartDateTime, gap, guessedTP);
-					taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
-					TaskReports.Add(taskReportHolder);
-				}
-
-				Model.TaskReport previousModel = null;
-				foreach (var model in models)
-				{
-					//if empty gap between two reports (previousModel & model)
-					if (previousModel != null && remainingDuration > 0)
-					{
-						//put a holder in between
-						gap = (int)model.ReportStartDateTime.Subtract(previousModel.ReportEndDateTime).TotalSeconds;
-						if (gap > 0)
-						{
-							//guess TP and modify remainings
-							int guessedTP = (int)Math.Round(gap * remainingTP / (float)remainingDuration);
-							remainingTP -= guessedTP;
-							remainingDuration -= gap;
-
-							var taskReportHolder = new Report.TaskReportHolderVm(this, previousModel.ReportEndDateTime, gap, guessedTP);
-							taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
-							TaskReports.Add(taskReportHolder);
-						}
-					}
-					var taskReportVm = new Report.TaskReportVm(this, model);
-					TaskReports.Add(taskReportVm);
-					previousModel = model;
-				}
-
-				//checks after the last report to see if there is any place for a holder
-				DateTime last = StartDateTime;
-				if (models.Any()) last = models.Last().ReportEndDateTime;
-				gap = (int)Model.EndDateTime.Subtract(last).TotalSeconds;
-				if (gap > 0)
-				{
-					//holder is put in the unreported space at the end of all reports
-					var taskReportHolder = new Report.TaskReportHolderVm(this, last, gap, remainingTP);
-					taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
-					TaskReports.Add(taskReportHolder);
-
 					//if any space is remained unreported IsReportFilled is false
 					IsReportFilled = false;
-					ReportFillPercent = string.Format("{0:D2}%", (100 * models.Sum(x => x.ReportDurationSeconds) / DurationSeconds));
+					ReportFillPercent = string.Format("{0:D2}%", (100 * taskReportModels.Sum(x => x.ReportDurationSeconds) / DurationSeconds));
 				}
 				else
 				{
 					IsReportFilled = true;
-					ReportFillPercent = "100";
+					ReportFillPercent = "100%";
+				}
+
+				//find all checkpoints in this task
+				//Task:		---TaskReport----TaskReport-----
+				//splits:	x  x         x   x         x   x
+				//type:		dt model     dt  model     dt  dt
+				List<object> splits = new List<object>();
+				DateTime? previousEndDateTime = null;
+				//add start of Task if gap at the start
+				if (taskReportModels.Any())
+				{
+					if (taskReportModels.First().ReportStartDateTime > StartDateTime)
+						splits.Add(StartDateTime);
+				}
+				else
+					splits.Add(StartDateTime);
+				//add taskReports and gaps between them if any
+				foreach (var taskReportModel in taskReportModels)
+				{
+					if(previousEndDateTime.HasValue && previousEndDateTime.Value < taskReportModel.ReportStartDateTime)
+					{
+						splits.Add(previousEndDateTime.Value);
+					}
+					splits.Add(taskReportModel);
+					previousEndDateTime = taskReportModel.ReportEndDateTime;
+				}
+				//add end of last report if gap in the end
+				if (taskReportModels.Any() && taskReportModels.Last().ReportEndDateTime < Model.EndDateTime)
+				{
+					splits.Add(previousEndDateTime.Value);
+				}
+				//adds the end of range
+				splits.Add(Model.EndDateTime);
+
+				//put reports and holders
+				for (int i = 0; i < splits.Count-1; i++)
+				{
+					if(splits[i] is Model.TaskReport)
+					{
+						var taskReportModel = splits[i] as Model.TaskReport;
+						var taskReportVm = new Report.TaskReportVm(this, taskReportModel);
+						TaskReports.Add(taskReportVm);
+					}
+					else
+					{
+						//find the gap
+						var startDt = (DateTime)splits[i];
+						var endDt = (splits[i + 1] is Model.TaskReport)
+									? (splits[i + 1] as Model.TaskReport).ReportStartDateTime
+									: (DateTime)splits[i + 1];
+						gap = (int)endDt.Subtract(startDt).TotalSeconds;
+
+						//guess the gapTP and modify remainings
+						int gapTP = (int)Math.Round(gap * remainingTP / (float)remainingDuration);
+						remainingTP -= gapTP;
+						remainingDuration -= gap;
+
+						//put the holder
+						var taskReportHolder = new Report.TaskReportHolderVm(this, startDt, gap, gapTP);
+						taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
+						TaskReports.Add(taskReportHolder);
+					}
+				}
+
+				//load process reports
+				if(reloadProcessReports)
+				{
+					Block.BlockReport.ReloadProcessReportRows();
 				}
 			}
-			catch { }
+			catch (Exception ex) { Message.AddEmbeddedException(ex.Message); }
 		}
 
 		/// <summary>

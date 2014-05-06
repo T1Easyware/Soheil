@@ -1155,7 +1155,7 @@
                                                     <GradientStop Offset="0" Color="Honeydew" />
                                                     <GradientStop Offset="1" Color="Black" />
                                                 </LinearGradientBrush>
-                                                <DropShadowBitmapEffect x:Key="DropShadowEffect" />
+                                                <DropShadowEffect x:Key="DropShadowEffect" />
                                             </Style.Resources>
                                             <Setter Property="Template">
                                                 <Setter.Value>
@@ -1199,7 +1199,7 @@
                                                                 <Setter TargetName="Bd" Property="Panel.Background" Value="{StaticResource SelectedItemAreaBrush}" />
                                                                 <Setter TargetName="Bd" Property="Border.BorderBrush" Value="{StaticResource SelectedItemBorderBrush}" />
                                                                 <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
-                                                                <Setter TargetName="Bd" Property="Border.BitmapEffect" Value="{StaticResource DropShadowEffect}" />
+                                                                <Setter TargetName="Bd" Property="Border.Effect" Value="{StaticResource DropShadowEffect}" />
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>
                                                     </ControlTemplate>
@@ -2270,7 +2270,7 @@
                                                         <GradientStop Offset="0" Color="Honeydew" />
                                                         <GradientStop Offset="1" Color="Black" />
                                                     </LinearGradientBrush>
-                                                    <DropShadowBitmapEffect x:Key="DropShadowEffect" />
+                                                    <DropShadowEffect x:Key="DropShadowEffect" />
                                                     <Converters:FishboneHorizontalUpVisibilityConverter x:Key="HorizontalUpVisibilityConverter"/>
                                                     <Converters:FishboneHorizontalDownVisibilityConverter x:Key="HorizontalDownVisibilityConverter"/>
                                                     <Converters:FishboneUpGapVisibilityConverter x:Key="UpGapVisibilityConverter"/>
@@ -2399,11 +2399,11 @@
                                                                     <Setter TargetName="UpBd" Property="Panel.Background" Value="{StaticResource SelectedItemAreaBrush}" />
                                                                     <Setter TargetName="UpBd" Property="Border.BorderBrush" Value="{StaticResource SelectedItemBorderBrush}" />
                                                                     <Setter TargetName="UpBd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
-                                                                    <Setter TargetName="UpBd" Property="Border.BitmapEffect" Value="{StaticResource DropShadowEffect}" />
+                                                                    <Setter TargetName="UpBd" Property="Border.Effect" Value="{StaticResource DropShadowEffect}" />
                                                                     <Setter TargetName="DownBd" Property="Panel.Background" Value="{StaticResource SelectedItemAreaBrush}" />
                                                                     <Setter TargetName="DownBd" Property="Border.BorderBrush" Value="{StaticResource SelectedItemBorderBrush}" />
                                                                     <Setter TargetName="DownBd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
-                                                                    <Setter TargetName="DownBd" Property="Border.BitmapEffect" Value="{StaticResource DropShadowEffect}" />
+                                                                    <Setter TargetName="DownBd" Property="Border.Effect" Value="{StaticResource DropShadowEffect}" />
                                                                 </Trigger>
                                                             </ControlTemplate.Triggers>
                                                         </ControlTemplate>

@@ -34,9 +34,9 @@
 	<!--Connector-->
 	<DataTemplate x:Key="connectorTemplate" DataType="{x:Type vm:ConnectorVm}">
 		<Canvas Width="0" Height="0">
-			<Canvas.BitmapEffect>
-				<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
-			</Canvas.BitmapEffect>
+			<Canvas.Effect>
+				<DropShadowEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
+			</Canvas.Effect>
 			<AdornerDecorator>
 				<AdornerDecorator.Triggers>
 					<EventTrigger RoutedEvent="Mouse.MouseEnter">
@@ -138,9 +138,9 @@
 	<!--Connector-->
 	<DataTemplate x:Key="connectorViewerTemplate" DataType="{x:Type vm:ConnectorVm}">
 		<Canvas Width="0" Height="0">
-			<Canvas.BitmapEffect>
-				<DropShadowBitmapEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
-			</Canvas.BitmapEffect>
+			<Canvas.Effect>
+				<DropShadowEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
+			</Canvas.Effect>
 			<AdornerDecorator>
 				<AdornerDecorator.Margin>
 					<MultiBinding Converter="{StaticResource connectorLocationConverter}">
