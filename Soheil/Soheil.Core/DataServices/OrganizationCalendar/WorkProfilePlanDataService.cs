@@ -120,10 +120,6 @@ namespace Soheil.Core.DataServices
 			return clone;
 		}
 
-		internal void Postpone(WorkProfilePlan model)
-		{
-			context.PostponeChanges(model);
-		}
  
         /// <summary>
         /// <para>Sets the WorkProfile reference of a plan according to the given workProfileId</para>

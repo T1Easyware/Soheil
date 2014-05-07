@@ -132,11 +132,6 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
                     SelectedProfile = Profiles.FirstOrDefault(x => x.Id == _model.WorkProfile.Id);
         }
 
-        internal void Reset()
-        {
-            WorkProfilePlanDataService.Postpone(_model);
-        }
-
         public override void Save(object param)
         {
             WorkProfilePlanDataService.UpdateModel(_model);

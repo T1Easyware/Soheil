@@ -1449,18 +1449,7 @@
 		<!--  1.2.1. Work Profile  -->
 		<DataTemplate x:Key="WorkProfileTemplate" DataType="wt:WorkProfileVm"
 					  xmlns:wt="clr-namespace:Soheil.Core.ViewModels.OrganizationCalendar"
-					  xmlns:conv="clr-namespace:Soheil.Controls.Converters.PP;assembly=Soheil.Controls">
-			<DataTemplate.Resources>
-				<conv:ColorFixer x:Key="colorFixer"/>
-				<Converters:ColorToRgbBrush x:Key="ColorToRgbBrush"/>
-				<Converters:ShiftStartSecondsToMargin x:Key="ShiftStartSecondsToMargin"/>
-				<Converters:ShiftEndSecondsToMargin x:Key="ShiftEndSecondsToMargin"/>
-				<Converters:ShiftDurationToWidth x:Key="ShiftDurationToWidth"/>
-				<Converters:ShiftBreakDurationToEndMargin x:Key="ShiftBreakDurationToEndMargin"/>
-				<Converters:ShiftBreakDurationToWidth x:Key="ShiftBreakDurationToWidth"/>
-				<Converters:WorkShiftSecondsToString x:Key="WorkShiftSecondsToString"/>
-				
-			</DataTemplate.Resources>
+					  xmlns:ocv="clr-namespace:Soheil.Views.OrganizationCalendar">
 			<GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
                       Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
 				<I:Interaction.Behaviors>
@@ -1496,16 +1485,12 @@
 							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtWeekDays}" Grid.Row="1"/>
 							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtWeekStart}" Grid.Row="2" ToolTip="آیا شروع هفته از این روز است؟"/>
 							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtBusinessDayState}" Grid.Row="3"/>
-							<ScrollViewer Grid.Row="1" Grid.RowSpan="3" Grid.Column="1"
-											HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-								<ItemsControl Margin="2"
-										ItemsSource="{Binding CurrentContent.Week}">
+							<ScrollViewer Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+								<ItemsControl Margin="2" ItemsSource="{Binding CurrentContent.Week}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
-											<Border BorderBrush="{StaticResource ThemeLightBrush}" 
-													BorderThickness="1"
-													Background="{Binding Color, Converter={StaticResource colorFixer}}"
-													Margin="1">
+											<Border BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1" Margin="1"
+													Background="{Binding SelectedDayStateVm.Color, Converter={StaticResource colorFixer}}">
 												<Grid>
 													<Grid.RowDefinitions>
 														<RowDefinition Height="*"/>
@@ -1574,35 +1559,34 @@
 							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtNumberOfShifts}" Grid.Row="5"/>
 							<DockPanel Grid.Column="1" Grid.Row="5">
 								<Grid DockPanel.Dock="Left" Width="40">
-									<Button Margin="2" Content="-" Command="{Binding CurrentContent.AskForDecreaseNumberOfShifts}"/>
-									<Button Margin="2" Command="{Binding CurrentContent.DecreaseNumberOfShifts}" Background="ForestGreen"
-											Visibility="{Binding CurrentContent.IsPrototypeChangeAskVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+									<Button Margin="2" Command="{Binding CurrentContent.AskForIncreaseNumberOfShifts}"
+											ToolTip="افزودن شیفت">
+										<Image Style="{StaticResource Add16Image}"/>
+									</Button>
+									<Button Margin="2" Command="{Binding CurrentContent.IncreaseNumberOfShifts}" Background="ForestGreen"
+											Visibility="{Binding CurrentContent.IsPrototypeChangeAskVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+											ToolTip="{Loc txtSave}">
 										<Image Style="{StaticResource Save16Image}"/>
 									</Button>
 								</Grid>
-								<Button Margin="2" Content="+" DockPanel.Dock="Right" Width="40" Command="{Binding CurrentContent.IncreaseNumberOfShifts}"/>
 								<TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.NumberOfShiftsModifier, UpdateSourceTrigger=PropertyChanged}"/>
 							</DockPanel>
 							<!--Protos-->
 							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtShiftPrototypeName}" Grid.Row="7"/>
 							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtShiftPrototypeColor}" Grid.Row="8"/>
-							<ScrollViewer Grid.Row="7" Grid.Column="1" Grid.RowSpan="2"
-											HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+							<ScrollViewer Grid.Row="7" Grid.Column="1" Grid.RowSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
 								<ItemsControl Margin="2" ItemsSource="{Binding CurrentContent.ShiftPrototypes}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
-											<Border BorderBrush="{StaticResource ThemeLightBrush}" 
-													BorderThickness="1"
-													Background="{Binding Color, Converter={StaticResource colorFixer}}"
-													Margin="1">
+											<Border BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1" Margin="1"
+													Background="{Binding SelectedColor.Color, Converter={StaticResource colorFixer}}">
 												<Grid Width="60">
 													<Grid.RowDefinitions>
 														<RowDefinition Height="*"/>
 														<RowDefinition Height="*"/>
 													</Grid.RowDefinitions>
 													<TextBlock Text="{Binding Name}" HorizontalAlignment="Center"/>
-													<ComboBox Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-																Background="{Binding Color, Converter={StaticResource colorFixer}}"
+													<ComboBox Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="{Binding SelectedColor.Color, Converter={StaticResource colorFixer}}"
 															ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.ShiftColors}"
 															SelectedItem="{Binding SelectedColor}">
 														<ComboBox.ItemTemplate>
@@ -1623,293 +1607,17 @@
 								</ItemsControl>
 							</ScrollViewer>
 							<!--shifts-->
-							<ScrollViewer Grid.Row="10" Grid.ColumnSpan="2" 
-											HorizontalScrollBarVisibility="Auto"
-											VerticalScrollBarVisibility="Auto">
+							<ScrollViewer Grid.Row="10" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 								<ItemsControl ItemsSource="{Binding CurrentContent.WorkDays}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<DockPanel Height="50">
-												<Border BorderBrush="#2FFF" BorderThickness="0.5,0.5,0,0.5" 
-														DockPanel.Dock="Left" Width="60"
+												<Border BorderBrush="#2FFF" BorderThickness="0.5,0.5,0,0.5" DockPanel.Dock="Left" Width="60"
 														Background="{Binding Color, Converter={StaticResource colorFixer}}">
 													<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 												</Border>
 												<Border BorderBrush="#2FFF" BorderThickness="0.5" Background="Transparent">
-													<!-- 1 min = 1 px (snap to 5 min or 5 px) so 1800 means 30 hours-->
-													<Grid Width="1800">
-														<!--ShiftLine-->
-														<!--       ..       .       ..      .      .. -->
-                                                        <Canvas>
-                                                            <Rectangle StrokeDashArray=".2 14.8 .1 14.8 .2 14.8 .1 14.8 .2" Stroke="#8FFF" Width="1800" Height="10" StrokeThickness="4" Margin="0,19"/>
-                                                        </Canvas>
-														<!--ShiftLine-->
-														<Thumb Tag="{Binding ElementName=timetip}" x:Name="shiftLine" MouseMove="workShiftLineMouseMove" DragStarted="shiftLineDragStart" DragDelta="shiftLineDragDelta" DragCompleted="shiftLineDragEnd">
-															<Thumb.Template>
-																<ControlTemplate>
-																	<Border VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="#2FFF" BorderBrush="#8FFF" BorderThickness="0,1" Height="4"/>
-																</ControlTemplate>
-															</Thumb.Template>
-														</Thumb>
-														<!--Shift ItemsControl-->
-														<ItemsControl ItemsSource="{Binding Shifts}">
-															<ItemsControl.Resources>
-																<Style TargetType="Canvas">
-																	<Setter Property="HorizontalAlignment" Value="Left"/>
-																	<Setter Property="VerticalAlignment" Value="Top"/>
-																	<Setter Property="Width" Value="0"/>
-																	<Setter Property="Height" Value="0"/>
-																</Style>
-															</ItemsControl.Resources>
-															<ItemsControl.ItemTemplate>
-																<DataTemplate>
-																	<Canvas>
-																		<!--whole shift-->
-																		<!--<Canvas>
-																			<Border BorderThickness="2" CornerRadius="3" BorderBrush="#2FFF" Height="40"
-																					IsHitTestVisible="False" Background="{Binding Prototype.Color, Converter={StaticResource colorFixer}}"
-																					Margin="{Binding StartSeconds, Converter={StaticResource ShiftStartSecondsToMargin}}">
-																				<Border.Width>
-																					<MultiBinding Converter="{StaticResource ShiftDurationToWidth}">
-																						<Binding Path="StartSeconds"/>
-																						<Binding Path="EndSeconds"/>
-																					</MultiBinding>
-																				</Border.Width>
-																			</Border>
-																		</Canvas>-->
-																		<!-- Start of shift -->
-																		<Canvas>
-																			<Thumb DragStarted="shiftStartDragStart" DragDelta="shiftStartDragDelta" DragCompleted="shiftStartDragEnd"
-																				   Margin="{Binding StartSeconds, Converter={StaticResource ShiftStartSecondsToMargin}}"
-																				   Tag="{Binding ElementName=shiftLine}">
-																				<Thumb.ToolTip>
-																					<StackPanel>
-																						<WrapPanel>
-																							<TextBlock Text="شروع شیفت "/>
-																							<TextBlock Text="{Binding Prototype.Name}"/>
-																						</WrapPanel>
-																						<TextBlock Text="{Binding StartSeconds, Converter={StaticResource WorkShiftSecondsToString}}" FlowDirection="LeftToRight"/>
-																					</StackPanel>
-																				</Thumb.ToolTip>
-																				<Thumb.Template>
-																					<ControlTemplate>
-																						<Border BorderThickness="2,2,0,2" CornerRadius="3,0,0,3" BorderBrush="White" Width="20" Height="40">
-																							<Border.Background>
-                                                                                                <SolidColorBrush Color="{Binding Prototype.Color, Converter={StaticResource ColorToRgbBrush}}" Opacity="1" x:Name="brdr"/>
-																							</Border.Background>
-																							<TextBlock Text="{Binding Prototype.Name}" 
-																										HorizontalAlignment="Center" VerticalAlignment="Center"
-																										IsHitTestVisible="False" Foreground="White">
-																								<TextBlock.Effect>
-																									<DropShadowEffect ShadowDepth="0" BlurRadius="3"/>
-																								</TextBlock.Effect>
-																							</TextBlock>
-																							<Border.Triggers>
-																								<EventTrigger RoutedEvent="MouseEnter">
-																									<BeginStoryboard>
-																										<Storyboard Duration="0:0:0.1">
-                                                                                                            <DoubleAnimation Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
-																										</Storyboard>
-																									</BeginStoryboard>
-																								</EventTrigger>
-																								<EventTrigger RoutedEvent="MouseLeave">
-																									<BeginStoryboard>
-																										<Storyboard Duration="0:0:0.2">
-                                                                                                            <DoubleAnimation Storyboard.TargetName="brdr" Storyboard.TargetProperty="Opacity" To="0.1" Duration="0:0:0.2"/>
-																										</Storyboard>
-																									</BeginStoryboard>
-																								</EventTrigger>
-																							</Border.Triggers>
-																						</Border>
-																					</ControlTemplate>
-																				</Thumb.Template>
-																			</Thumb>
-																			<!-- must be after the correspondant thumb-->
-																			<Border BorderBrush="#2FFF" Background="#7000" BorderThickness="1" Visibility="Collapsed"
-																					IsHitTestVisible="False"
-																					Margin="{Binding StartSeconds, Converter={StaticResource ShiftStartSecondsToMargin}, ConverterParameter=Below}">
-																				<TextBlock Text="{Binding StartSeconds, Converter={StaticResource WorkShiftSecondsToString}}" 
-																						   FlowDirection="LeftToRight"/>
-																			</Border>
-																		</Canvas>
-																		<!-- End of shift -->
-																		<Canvas>
-																			<Thumb DragStarted="shiftEndDragStart" DragDelta="shiftEndDragDelta" DragCompleted="shiftEndDragEnd"
-																					Margin="{Binding EndSeconds, Converter={StaticResource ShiftEndSecondsToMargin}}"
-																				   Tag="{Binding ElementName=shiftLine}">
-																				<Thumb.ToolTip>
-																					<StackPanel>
-																						<WrapPanel>
-																							<TextBlock Text="پایان شیفت "/>
-																							<TextBlock Text="{Binding Prototype.Name}"/>
-																						</WrapPanel>
-																						<TextBlock Text="{Binding EndSeconds, Converter={StaticResource WorkShiftSecondsToString}}" FlowDirection="LeftToRight"/>
-																					</StackPanel>
-																				</Thumb.ToolTip>
-																				<Thumb.Template>
-																					<ControlTemplate>
-																						<Border BorderThickness="0,2,2,2" CornerRadius="0,3,3,0" BorderBrush="White" Width="20" Height="40">
-																							<Border.Background>
-																								<SolidColorBrush Color="{Binding Prototype.Color, Converter={StaticResource ColorToRgbBrush}}" Opacity="0"/>
-																							</Border.Background>
-																							<TextBlock Text="{Binding Prototype.Name}" 
-																										HorizontalAlignment="Center" VerticalAlignment="Center"
-																										IsHitTestVisible="False" Foreground="Gray">
-																								<TextBlock.Effect>
-																									<DropShadowEffect ShadowDepth="0" BlurRadius="3"/>
-																								</TextBlock.Effect>
-																							</TextBlock>
-																							<!--<Border.Triggers>
-																								<EventTrigger RoutedEvent="MouseEnter">
-																									<BeginStoryboard>
-																										<Storyboard Duration="0:0:0.1">
-																											<DoubleAnimation To="1" Storyboard.TargetProperty="Background.Opacity" Duration="0:0:0.1"/>
-																										</Storyboard>
-																									</BeginStoryboard>
-																								</EventTrigger>
-																								<EventTrigger RoutedEvent="MouseLeave">
-																									<BeginStoryboard>
-																										<Storyboard Duration="0:0:0.2">
-																											<DoubleAnimation To="0" Storyboard.TargetProperty="Background.Opacity" Duration="0:0:0.2"/>
-																										</Storyboard>
-																									</BeginStoryboard>
-																								</EventTrigger>
-																							</Border.Triggers>-->
-																						</Border>
-																					</ControlTemplate>
-																				</Thumb.Template>
-																			</Thumb>
-																			<!-- must be after the correspondant thumb-->
-																			<Border BorderBrush="#2FFF" Background="#7000" BorderThickness="1" Visibility="Collapsed"
-																					IsHitTestVisible="False"
-																					Margin="{Binding EndSeconds, Converter={StaticResource ShiftEndSecondsToMargin}, ConverterParameter=Below}">
-																				<TextBlock Text="{Binding EndSeconds, Converter={StaticResource WorkShiftSecondsToString}}" 
-																						   FlowDirection="LeftToRight"/>
-																			</Border>
-																		</Canvas>
-																		<!-- WorkBreaks -->
-																		<Canvas>
-																			<ItemsControl ItemsSource="{Binding Breaks}">
-																				<ItemsControl.ItemTemplate>
-																					<DataTemplate>
-																						<Canvas>
-																							<!-- Start of break -->
-																							<Canvas>
-																								<Thumb DragStarted="shiftStartDragStart" DragDelta="breakStartDragDelta" DragCompleted="shiftStartDragEnd"
-																									Margin="{Binding StartSeconds, Converter={StaticResource ShiftStartSecondsToMargin}}"
-																									   Tag="{Binding ElementName=shiftLine}">
-																									<Thumb.ToolTip>
-																										<StackPanel>
-																											<TextBlock Text="شروع زمان استراحت"/>
-																											<TextBlock Text="{Binding StartSeconds, Converter={StaticResource WorkShiftSecondsToString}}" FlowDirection="LeftToRight"/>
-																										</StackPanel>
-																									</Thumb.ToolTip>
-																									<Thumb.ContextMenu>
-																										<ContextMenu>
-																											<MenuItem Header="{Loc txtDelete}" Command="{Binding DeleteCommand}"/>
-																										</ContextMenu>
-																									</Thumb.ContextMenu>
-																									<Thumb.Template>
-																										<ControlTemplate>
-																											<Border Background="#AC22" CornerRadius="3,0,0,3" Height="17" Margin="0,10,0,0" MinWidth="5">
-																												<Border.Width>
-																													<MultiBinding Converter="{StaticResource ShiftBreakDurationToWidth}">
-																														<Binding Path="StartSeconds"/>
-																														<Binding Path="EndSeconds"/>
-																													</MultiBinding>
-																												</Border.Width>
-																											</Border>
-																										</ControlTemplate>
-																									</Thumb.Template>
-																								</Thumb>
-																								<!-- must be after the correspondant thumb-->
-																								<Border BorderBrush="#2FFF" Background="#7000" BorderThickness="1" Visibility="Collapsed"
-																									IsHitTestVisible="False"
-																										Margin="{Binding StartSeconds, Converter={StaticResource ShiftStartSecondsToMargin}, ConverterParameter=Below}">
-																									<TextBlock Text="{Binding StartSeconds, Converter={StaticResource WorkShiftSecondsToString}}" 
-																										FlowDirection="LeftToRight"/>
-																								</Border>
-																							</Canvas>
-																							<!-- End of break -->
-																							<Canvas>
-																								<Thumb DragStarted="shiftEndDragStart" DragDelta="breakEndDragDelta" DragCompleted="shiftEndDragEnd"
-																									   Tag="{Binding ElementName=shiftLine}">
-																									<Thumb.Margin>
-																										<MultiBinding Converter="{StaticResource ShiftBreakDurationToEndMargin}">
-																											<Binding Path="StartSeconds"/>
-																											<Binding Path="EndSeconds"/>
-																										</MultiBinding>
-																									</Thumb.Margin>
-																									<Thumb.ContextMenu>
-																										<ContextMenu>
-																											<MenuItem Header="{Loc txtDelete}" Command="{Binding DeleteCommand}"/>
-																										</ContextMenu>
-																									</Thumb.ContextMenu>
-																									<Thumb.ToolTip>
-																										<StackPanel>
-																											<TextBlock Text="پایان زمان استراحت"/>
-																											<TextBlock Text="{Binding EndSeconds, Converter={StaticResource WorkShiftSecondsToString}}" FlowDirection="LeftToRight"/>
-																										</StackPanel>																									
-																									</Thumb.ToolTip>
-																									<Thumb.Template>
-																										<ControlTemplate>
-																											<Border Background="#AC22" CornerRadius="0,3,3,0" Height="17" MinWidth="5">
-																												<Border.Width>
-																													<MultiBinding Converter="{StaticResource ShiftBreakDurationToWidth}">
-																														<Binding Path="StartSeconds"/>
-																														<Binding Path="EndSeconds"/>
-																													</MultiBinding>
-																												</Border.Width>
-																											</Border>
-																										</ControlTemplate>
-																									</Thumb.Template>
-																								</Thumb>
-																								<!-- must be after the correspondant thumb-->
-																								<Border BorderBrush="#2FFF" Background="#7000" BorderThickness="1" Visibility="Collapsed"
-																									IsHitTestVisible="False"
-																									Margin="{Binding EndSeconds, Converter={StaticResource ShiftEndSecondsToMargin}, ConverterParameter=Below}">
-																									<TextBlock Text="{Binding EndSeconds, Converter={StaticResource WorkShiftSecondsToString}}" 
-																									  FlowDirection="LeftToRight"/>
-																								</Border>
-																							</Canvas>
-																						</Canvas>
-																					</DataTemplate>
-																				</ItemsControl.ItemTemplate>
-																				<ItemsControl.ItemsPanel>
-																					<ItemsPanelTemplate>
-																						<Canvas/>
-																					</ItemsPanelTemplate>
-																				</ItemsControl.ItemsPanel>
-																			</ItemsControl>
-																		</Canvas>
-																	</Canvas>
-																</DataTemplate>
-															</ItemsControl.ItemTemplate>
-															<ItemsControl.ItemsPanel>
-																<ItemsPanelTemplate>
-																	<Canvas/>
-																</ItemsPanelTemplate>
-															</ItemsControl.ItemsPanel>
-														</ItemsControl>
-														<!--Timetip-->
-														<!-- To use this set margin and its tag (to desired text) and opacity to 1-->
-														<Canvas x:Name="timetip" ClipToBounds="False" IsHitTestVisible="False" Opacity="0">
-															<Border BorderBrush="#2FFF" Background="#7000" BorderThickness="1">
-																<TextBlock Text="{Binding ElementName=timetip, Path=Tag}" FlowDirection="LeftToRight"/>
-															</Border>
-															<Canvas.Resources>
-																<Storyboard Duration="0:0:2" x:Key="fadeout">
-																	<DoubleAnimation Storyboard.TargetName="timetip"
-																					 Storyboard.TargetProperty="Opacity"
-																					 Duration="0:0:0.2" To="1"/>
-																	<DoubleAnimation Storyboard.TargetName="timetip"
-																					 Storyboard.TargetProperty="Opacity"
-																					 BeginTime="0:0:1"
-																					 Duration="0:0:1" To="0"/>
-																</Storyboard>
-															</Canvas.Resources>
-														</Canvas>
-													</Grid>
+													<ocv:WorkDayLine DataContext="{Binding}"/>
 												</Border>
 											</DockPanel>
 										</DataTemplate>

@@ -8,20 +8,39 @@ using System.Windows.Media;
 
 namespace Soheil.Core.ViewModels.OrganizationCalendar
 {
+	/// <summary>
+	/// ViewModel for <see cref="Soheil.Model.WorkShiftPrototype"/> which has its color selected from <see cref="WorkProfileVm"/>'s ShiftColors collection
+	/// </summary>
 	public class WorkShiftPrototypeVm : DependencyObject
 	{
+		/// <summary>
+		/// Creates an instance of WorkShiftPrototypeVm with given model and chooses the instance of shiftcolor for it
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="shiftColors">Collection of shift colors could be modified after ctor</param>
 		public WorkShiftPrototypeVm(Model.WorkShiftPrototype model, ICollection<ShiftColorVm> shiftColors)
 		{
 			_model = model;
 			Name = _model.Name;
-			Color = _model.Color;
-			SelectedColor = shiftColors.First(x => x.Color == Color);
 			Index = _model.Index;
+
+			SelectedColor = shiftColors.FirstOrDefault(x => x.Color == model.Color);
+			if (SelectedColor == null)
+			{
+				var custom = new ShiftColorVm { Color = model.Color, Name = "Custom" };
+				shiftColors.Add(custom);
+			}
 		}
 
 		private Model.WorkShiftPrototype _model;
+		/// <summary>
+		/// Gets Id of this prototype
+		/// </summary>
 		public int Id { get { return _model.Id; } }
-		//Name Dependency Property
+
+		/// <summary>
+		/// Gets or sets the bindable text for name
+		/// </summary>
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
@@ -34,20 +53,10 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				var val = (string)e.NewValue;
 				vm._model.Name = val;
 			}));
-		//Color Dependency Property
-		public Color Color
-		{
-			get { return (Color)GetValue(ColorProperty); }
-			set { SetValue(ColorProperty, value); }
-		}
-		public static readonly DependencyProperty ColorProperty =
-			DependencyProperty.Register("Color", typeof(Color), typeof(WorkShiftPrototypeVm), new UIPropertyMetadata(Colors.Transparent, (d, e) =>
-			{
-				var vm = (WorkShiftPrototypeVm)d;
-				var val = (Color)e.NewValue;
-				vm._model.Color = val;
-			}));
-		//SelectedColor Dependency Property
+
+		/// <summary>
+		/// Gets or sets the bindable instance of ShiftColor for SelectedColor of this prototype
+		/// </summary>
 		public ShiftColorVm SelectedColor
 		{
 			get { return (ShiftColorVm)GetValue(SelectedColorProperty); }
@@ -60,8 +69,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				var vm = (WorkShiftPrototypeVm)d;
 				var val = (ShiftColorVm)e.NewValue;
 				if (val == null) return;
-				vm.Color = val.Color;
+				vm._model.Color = val.Color;
 			}));
+
 		/// <summary>
 		/// Zero-biased index of this shift prototype in its WorkProfile where it's being used
 		/// </summary>

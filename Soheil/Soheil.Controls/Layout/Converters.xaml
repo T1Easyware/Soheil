@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:ppconv="clr-namespace:Soheil.Controls.Converters.PP"
+					xmlns:Converters="clr-namespace:Soheil.Controls.Converters"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:sys="clr-namespace:System;assembly=mscorlib"
 					>
@@ -18,7 +19,13 @@
 	<sys:Double x:Key="shadowOpacity">0.3</sys:Double>
 
 
-
+	<Converters:ColorToRgbBrush x:Key="ColorToRgbBrush"/>
+	<Converters:ShiftStartSecondsToMargin x:Key="ShiftStartSecondsToMargin"/>
+	<Converters:ShiftEndSecondsToMargin x:Key="ShiftEndSecondsToMargin"/>
+	<Converters:ShiftDurationToWidth x:Key="ShiftDurationToWidth"/>
+	<Converters:ShiftBreakDurationToEndMargin x:Key="ShiftBreakDurationToEndMargin"/>
+	<Converters:ShiftBreakDurationToWidth x:Key="ShiftBreakDurationToWidth"/>
+	<Converters:WorkShiftSecondsToString x:Key="WorkShiftSecondsToString"/>
 
 
 

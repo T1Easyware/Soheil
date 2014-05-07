@@ -376,17 +376,6 @@
 						</Setter.Value>
 					</Setter>
 				</Style>
-				<Style x:Key="normalButtonFont" TargetType="TextBlock">
-					<Setter Property="FontSize" Value="10"/>
-					<Setter Property="Foreground" Value="Black"/>
-					<Setter Property="VerticalAlignment" Value="Center"/>
-					<Setter Property="Margin" Value="2,0"/>
-					<Setter Property="Effect">
-						<Setter.Value>
-							<DropShadowEffect BlurRadius="2" ShadowDepth="1" Color="WhiteSmoke" Opacity="1"/>
-						</Setter.Value>
-					</Setter>
-				</Style>
 			</DataTemplate.Resources>
 			<DockPanel>
 				<ToolBarTray Background="Transparent" DockPanel.Dock="Top" FlowDirection="RightToLeft">
@@ -395,7 +384,7 @@
 						<Button Margin="1" Command="{Binding ToggleTaskEditorCommand}">
 							<DockPanel>
 								<Image DockPanel.Dock="Left" Style="{StaticResource TaskImage}"/>
-								<TextBlock Text="Task Editor" Style="{StaticResource normalButtonFont}"/>
+								<TextBlock Text="Task Editor" Style="{StaticResource TextBlock3DTextStyle}"/>
 							</DockPanel>
 							<Button.ToolTip>
 								<StackPanel>
@@ -404,14 +393,11 @@
 								</StackPanel>
 							</Button.ToolTip>
 						</Button>
-						<DockPanel x:Name="taskEditorToolbarButtons" Width="0">
-							<DockPanel.Effect>
-								<DropShadowEffect BlurRadius="8" ShadowDepth="0" Color="LightSeaGreen" Opacity="1"/>
-							</DockPanel.Effect>
+						<DockPanel x:Name="taskEditorToolbarButtons" Width="0" Style="{StaticResource Panel3DEffectStyle}">
 							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.ResetCurrentBlockCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource Undo16Image}"/>
-									<TextBlock Text="Reset Task" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Reset Task" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 								<Button.ToolTip>
 									<StackPanel>
@@ -423,7 +409,7 @@
 							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.ClearAllCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource NewTaskImage}"/>
-									<TextBlock Text="Clear All" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Clear All" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 								<Button.ToolTip>
 									<StackPanel>
@@ -435,7 +421,7 @@
 							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.SaveCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource Save16Image}"/>
-									<TextBlock Text="Save Task" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Save Task" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
                                 <Button.ToolTip>
                                     <StackPanel>
@@ -447,7 +433,7 @@
 							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.ExitCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource CloseWipeUpImage}"/>
-									<TextBlock Text="Exit" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Exit" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 								<Button.ToolTip>
 									<StackPanel>
@@ -459,7 +445,7 @@
 							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.SaveAllCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource SaveWipeUpImage}"/>
-									<TextBlock Text="Save &amp; Exit" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Save &amp; Exit" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 								<Button.ToolTip>
 									<StackPanel>
@@ -475,7 +461,7 @@
 						<Button Margin="1" Command="{Binding ToggleJobEditorCommand}">
 							<DockPanel>
 								<Image DockPanel.Dock="Left" Style="{StaticResource JobImage}"/>
-								<TextBlock Text="Job Editor" Style="{StaticResource normalButtonFont}"/>
+								<TextBlock Text="Job Editor" Style="{StaticResource TextBlock3DTextStyle}"/>
 							</DockPanel>
 							<Button.ToolTip>
 								<StackPanel>
@@ -484,14 +470,11 @@
 								</StackPanel>
 							</Button.ToolTip>
 						</Button>
-						<DockPanel x:Name="jobEditorToolbarButtons" Width="0">
-							<DockPanel.Effect>
-								<DropShadowEffect BlurRadius="8" ShadowDepth="0" Color="LightSeaGreen" Opacity="1"/>
-							</DockPanel.Effect>
+						<DockPanel x:Name="jobEditorToolbarButtons" Width="0" Style="{StaticResource Panel3DEffectStyle}">
 							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding JobEditor.ClearAllCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource NewJobImage}"/>
-									<TextBlock Text="Clear All" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Clear All" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 								<Button.ToolTip>
 									<StackPanel>
@@ -503,7 +486,7 @@
 							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding JobEditor.ExitCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource CloseWipeUpImage}"/>
-									<TextBlock Text="Exit" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Exit" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 								<Button.ToolTip>
 									<StackPanel>
@@ -515,7 +498,7 @@
 							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding JobEditor.SaveAllCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource SaveWipeUpImage}"/>
-									<TextBlock Text="Save &amp; Exit" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Save &amp; Exit" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 								<Button.ToolTip>
 									<StackPanel>
@@ -529,7 +512,7 @@
 						<ToggleButton Margin="2" IsChecked="{Binding JobList.IsVisible}">
 							<DockPanel>
 								<Image DockPanel.Dock="Left" Style="{StaticResource JobListImage}"/>
-								<TextBlock Text="Job List" Style="{StaticResource normalButtonFont}"/>
+								<TextBlock Text="Job List" Style="{StaticResource TextBlock3DTextStyle}"/>
 							</DockPanel>
 							<ToggleButton.ToolTip>
 								<StackPanel>
@@ -597,24 +580,24 @@
 						<Button Command="{Binding CloseBlockReportCommand}" Visibility="{Binding ShowBlockReport, Converter={StaticResource booleanToVisibilityConverter}}">
 							<DockPanel>
 								<Image DockPanel.Dock="Left" Style="{StaticResource ProcessReportImage}"/>
-								<TextBlock Text="Hide Activities" Style="{StaticResource normalButtonFont}"/>
+								<TextBlock Text="Hide Activities" Style="{StaticResource TextBlock3DTextStyle}"/>
 							</DockPanel>
 							<Button.ToolTip>
-								<ToolTip>بستن گزارش تولید</ToolTip>
+								<ToolTip>بستن ردیفهای فعالیت</ToolTip>
 							</Button.ToolTip>
 						</Button>
 						<DockPanel x:Name="processReportBuilderToolbar" Width="0">
-							<TextBlock Text="گزارش:" Style="{StaticResource normalButtonFont}" DockPanel.Dock="Left"/>
+							<TextBlock Text="گزارش:" Style="{StaticResource TextBlock3DTextStyle}" DockPanel.Dock="Left"/>
 							<Button Margin="1" Command="{Binding CurrentProcessReportBuilder.CloseCommand}" DockPanel.Dock="Left">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource CloseWipeUpImage}"/>
-									<TextBlock Text="Close Report" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Close Report" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 							</Button>
 							<Button Margin="1" Command="{Binding CurrentProcessReportBuilder.SaveCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource SaveWipeUpImage}"/>
-									<TextBlock Text="Save &amp; Exit" Style="{StaticResource normalButtonFont}"/>
+									<TextBlock Text="Save &amp; Exit" Style="{StaticResource TextBlock3DTextStyle}"/>
 								</DockPanel>
 							</Button>
 						</DockPanel>

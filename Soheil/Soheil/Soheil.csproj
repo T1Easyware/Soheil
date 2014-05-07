@@ -140,6 +140,12 @@
     <Compile Include="Views\Fpc\Toolbox.xaml.cs">
       <DependentUpon>Toolbox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\OrganizationCalendar\ShiftBoundary.xaml.cs">
+      <DependentUpon>ShiftBoundary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OrganizationCalendar\WorkDayLine.xaml.cs">
+      <DependentUpon>WorkDayLine.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\Block.xaml.cs">
       <DependentUpon>Block.xaml</DependentUpon>
     </Compile>
@@ -235,6 +241,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Fpc\ToolboxDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OrganizationCalendar\ShiftBoundary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OrganizationCalendar\WorkDayLine.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

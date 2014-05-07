@@ -319,7 +319,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				ActivityChoiceChanged(oldVal, newVal);
 		}
 
-		//SetDurationMinutesCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command which sets duration to 'minutes' specified as parameter
+		/// </summary>
 		public Commands.Command SetDurationMinutesCommand
 		{
 			get { return (Commands.Command)GetValue(SetDurationMinutesCommandProperty); }

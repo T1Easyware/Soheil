@@ -121,11 +121,6 @@ namespace Soheil.Core.DataServices
 			return clone;
 		}
 
-        internal void Postpone(Holiday model)
-		{
-			context.PostponeChanges(model);
-		}
-
         internal Holiday GetCurrent()
         {
             return _holidayRepository.FirstOrDefault(x => x.Date == DateTime.Now.Date);

@@ -272,6 +272,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		/// <summary>
 		/// Gets or sets the bindable TaskTargetPoint of this task
+		/// <para>Changing this value updates model's TP and also fires TaskTargetPointChanged event</para>
 		/// </summary>
 		public int TaskTargetPoint
 		{
@@ -413,13 +414,17 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			if (newVal)
 			{
+				if (TaskTargetPoint > 0)
+					SameQtyForActivities = TaskTargetPoint;
+				else
+					TaskTargetPoint = SameQtyForActivities;
+
 				foreach (var process in ProcessList)
 				{
 					process.HoldEvents = true;
 					process.TargetPoint = SameQtyForActivities;
 					process.HoldEvents = false;
 				}
-				TaskTargetPoint = SameQtyForActivities;
 			}
 		}
 		/// <summary>
@@ -466,6 +471,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				}
 			});
 			CancelDeleteTaskCommand = new Commands.Command(o => IsDeleteTaskMessageVisible = false);
+			SetDurationMinutesCommand = new Commands.Command(min => SameTimeForActivities = TimeSpan.FromMinutes(Convert.ToDouble(min)));
 		}
 		//DeleteTaskCommand Dependency Property
 		public Commands.Command DeleteTaskCommand
@@ -498,7 +504,18 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(CancelDeleteTaskCommandProperty, value); }
 		}
 		public static readonly DependencyProperty CancelDeleteTaskCommandProperty =
-			DependencyProperty.Register("CancelDeleteTaskCommand", typeof(Commands.Command), typeof(PPEditorTask), new UIPropertyMetadata(null)); 
+			DependencyProperty.Register("CancelDeleteTaskCommand", typeof(Commands.Command), typeof(PPEditorTask), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable command which sets duration to 'minutes' specified as parameter
+		/// </summary>
+		public Commands.Command SetDurationMinutesCommand
+		{
+			get { return (Commands.Command)GetValue(SetDurationMinutesCommandProperty); }
+			set { SetValue(SetDurationMinutesCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
+			DependencyProperty.Register("SetDurationMinutesCommand", typeof(Commands.Command), typeof(PPEditorTask), new UIPropertyMetadata(null));
+
 		#endregion
 
 	}

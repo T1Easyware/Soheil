@@ -10,8 +10,16 @@ using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.OrganizationCalendar
 {
+	/// <summary>
+	/// ViewModel for a <see cref="Soheil.Model.WorkShift"/> which includes a <see cref="WorkShiftPrototypeVm"/> and a collection of <see cref="WorkBreakVm"/>s
+	/// </summary>
 	public class WorkShiftVm : DependencyObject
 	{
+		/// <summary>
+		/// Creates an instance of <see cref="WorkShiftVm"/> with the given model and work shift prototype viewModel
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="prototype"></param>
 		public WorkShiftVm(Model.WorkShift model, WorkShiftPrototypeVm prototype)
 		{
 			_model = model;
@@ -27,8 +35,14 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		}
 
 		private Model.WorkShift _model;
-		public int Id { get { return _model.Id; } }
-		//StartSeconds Dependency Property
+		//public int Id { get { return _model.Id; } }
+
+		/// <summary>
+		/// Gets or sets a bindable value for start of this time range
+		/// <para>The number of seconds after 0:00AM</para>
+		/// <para>Changing this value updates model's StartSeconds</para>
+		/// <remarks>The value received by this property will be rounded by 5mins and trimmed bases on constraints, EndSeconds</remarks>
+		/// </summary>
 		public int StartSeconds
 		{
 			get { return (int)GetValue(StartSecondsProperty); }
@@ -50,7 +64,12 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				if (val > SoheilConstants.EDITOR_END_SECONDS - 3600) return SoheilConstants.EDITOR_END_SECONDS - 3600;
 				return SoheilFunctions.RoundFiveMinutes(val);
 			}));
-		//EndSeconds Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for end of this time range
+		/// <para>The number of seconds after 0:00AM</para>
+		/// <para>Changing this value updates model's EndSeconds</para>
+		/// <remarks>The value received by this property will be rounded by 5mins and trimmed bases on constraints, StartSeconds</remarks>
+		/// </summary>
 		public int EndSeconds
 		{
 			get { return (int)GetValue(EndSecondsProperty); }
@@ -73,7 +92,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				return SoheilFunctions.RoundFiveMinutes(val);
 			}));
 
-		//Prototype Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable Prototype of this shift which includes additional information about this shift
+		/// </summary>
 		public WorkShiftPrototypeVm Prototype
 		{
 			get { return (WorkShiftPrototypeVm)GetValue(PrototypeProperty); }
@@ -82,11 +103,17 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		public static readonly DependencyProperty PrototypeProperty =
 			DependencyProperty.Register("Prototype", typeof(WorkShiftPrototypeVm), typeof(WorkShiftVm), new UIPropertyMetadata(null));
 
-		//Breaks Observable Collection
-		private ObservableCollection<WorkBreakVm> _breaks = new ObservableCollection<WorkBreakVm>();
+		/// <summary>
+		/// Gets an observable collection of WorkBreaks for this shift
+		/// </summary>
 		public ObservableCollection<WorkBreakVm> Breaks { get { return _breaks; } }
+		private ObservableCollection<WorkBreakVm> _breaks = new ObservableCollection<WorkBreakVm>();
 
-		
+		/// <summary>
+		/// Creates a temporary break at the given time with duration of zero, and adds it to Breaks
+		/// </summary>
+		/// <param name="seconds"></param>
+		/// <returns></returns>
 		public WorkBreakVm AddTemporaryBreak(int seconds)
 		{
 			var wbreak = new WorkBreakVm(new Model.WorkBreak
@@ -100,6 +127,10 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			return wbreak;
 		}
 
+		/// <summary>
+		/// Removes the given view model from Breaks (no commit)
+		/// </summary>
+		/// <param name="wbreak"></param>
 		private void deleteBreak(WorkBreakVm wbreak)
 		{
 			Breaks.Remove(wbreak);

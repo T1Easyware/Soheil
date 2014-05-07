@@ -19,11 +19,6 @@ namespace Soheil.Dal
 			Soheil.Common.CommitNotifierHelper.Commit();
         }
 
-		public void PostponeChanges(object entity)
-		{
-			ObjectStateManager.ChangeObjectState(entity, System.Data.EntityState.Unchanged);
-		}
-
         #endregion
     }
 }

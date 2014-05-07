@@ -89,11 +89,7 @@ namespace Soheil.Core.ViewModels
 
 		public override void Reset(object oldVm)
 		{
-			var vm = oldVm as WorkProfilePlanVm;
-			if (vm != null)
-			{
-				vm.Reset();
-			}
+			//
 		}
 
         private void OnWorkProfilePlanAdded(object sender, ModelAddedEventArgs<WorkProfilePlan> e)

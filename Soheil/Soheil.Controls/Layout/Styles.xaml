@@ -2598,5 +2598,40 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
+	<Style x:Key="TextBlock3DTextStyle" TargetType="TextBlock">
+		<Setter Property="FontSize" Value="10"/>
+		<Setter Property="Foreground" Value="Black"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="2,0"/>
+		<Setter Property="Effect">
+			<Setter.Value>
+				<DropShadowEffect BlurRadius="2" ShadowDepth="1" Color="WhiteSmoke" Opacity="1"/>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="Button3DTextStyle" TargetType="Button">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<Button Padding="2" Margin="0">
+						<TextBlock Text="{TemplateBinding Content}" Style="{StaticResource TextBlock3DTextStyle}">
+							<TextBlock.Effect>
+								<DropShadowEffect BlurRadius="2" ShadowDepth="1" Color="WhiteSmoke" Opacity="1"/>
+							</TextBlock.Effect>
+						</TextBlock>
+					</Button>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="Panel3DEffectStyle" TargetType="Panel">
+		<Setter Property="Effect">
+			<Setter.Value>
+				<DropShadowEffect BlurRadius="8" ShadowDepth="0" Color="LightSeaGreen" Opacity="1"/>
+			</Setter.Value>
+		</Setter>
+	</Style>
 </ResourceDictionary>
 

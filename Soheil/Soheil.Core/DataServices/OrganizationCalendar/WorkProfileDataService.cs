@@ -250,26 +250,5 @@ namespace Soheil.Core.DataServices
 				WorkProfileAdded(this, new ModelAddedEventArgs<WorkProfile>(clone));
 			return clone;
 		}
-
-		internal void Postpone(WorkProfile model)
-		{
-			context.PostponeChanges(model);
-			foreach (var proto in model.WorkShiftPrototypes)
-			{
-				context.PostponeChanges(proto);
-				foreach (var shift in proto.WorkShifts)
-				{
-					context.PostponeChanges(shift);
-					foreach (var wbreak in shift.WorkBreaks)
-					{
-						context.PostponeChanges(wbreak);
-					}
-				}
-			}
-			foreach (var day in model.WorkDays)
-			{
-				context.PostponeChanges(day);
-			}
-		}
 	}
 }
