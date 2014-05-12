@@ -16,26 +16,51 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 	public class WorkShiftVm : DependencyObject
 	{
 		/// <summary>
+		/// Occurs when IsOpen changed on this shift
+		/// </summary>
+		public event Action<bool> IsOpenChanged;
+
+		public Model.WorkShift Model { get; private set; }
+
+		/// <summary>
 		/// Creates an instance of <see cref="WorkShiftVm"/> with the given model and work shift prototype viewModel
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="prototype"></param>
 		public WorkShiftVm(Model.WorkShift model, WorkShiftPrototypeVm prototype)
 		{
-			_model = model;
+			Model = model;
 			Prototype = prototype;
 			StartSeconds = model.StartSeconds;
 			EndSeconds = model.EndSeconds;
+			IsOpen = model.IsOpen;
+
+			//add workbreak models
 			foreach (var workBreak in model.WorkBreaks)
 			{
 				var wbreak = new WorkBreakVm(workBreak);
-				wbreak.DeleteCommand = new Commands.Command(o => deleteBreak(wbreak));
+				wbreak.DeleteCommand = new Commands.Command(o => Breaks.Remove(wbreak));
 				Breaks.Add(wbreak);
 			}
+
+			//auto add future workbreak models
+			Breaks.CollectionChanged += (s, e) =>
+			{
+				if (e.NewItems != null)
+					foreach (WorkBreakVm wbreak in e.NewItems)
+					{
+						Model.WorkBreaks.Add(wbreak.Model);
+					}
+				if(e.OldItems!=null)
+					foreach (WorkBreakVm wbreak in e.OldItems)
+					{
+						Model.WorkBreaks.Remove(wbreak.Model);
+					}
+			};
+
+			ToggleIsOpenCommand = new Commands.Command(o => IsOpen = !IsOpen);
 		}
 
-		private Model.WorkShift _model;
-		//public int Id { get { return _model.Id; } }
 
 		/// <summary>
 		/// Gets or sets a bindable value for start of this time range
@@ -54,12 +79,12 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			{
 				var vm = (WorkShiftVm)d;
 				var val = (int)e.NewValue;
-				vm._model.StartSeconds = val;
+				vm.Model.StartSeconds = val;
 			}, (d, v) =>
 			{
 				var val = (int)v;
 				var vm = (WorkShiftVm)d;
-				if (vm._model.EndSeconds - val < 3600) return vm._model.EndSeconds - 3600;
+				if (vm.Model.EndSeconds - val < 3600) return vm.Model.EndSeconds - 3600;
 				if (val < SoheilConstants.EDITOR_START_SECONDS) return SoheilConstants.EDITOR_START_SECONDS;
 				if (val > SoheilConstants.EDITOR_END_SECONDS - 3600) return SoheilConstants.EDITOR_END_SECONDS - 3600;
 				return SoheilFunctions.RoundFiveMinutes(val);
@@ -81,16 +106,45 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			{
 				var vm = (WorkShiftVm)d;
 				var val = (int)e.NewValue;
-				vm._model.EndSeconds = val;
+				vm.Model.EndSeconds = val;
 			}, (d, v) =>
 			{
 				var val = (int)v;
 				var vm = (WorkShiftVm)d;
-				if (val < vm._model.StartSeconds + 3600) return vm._model.StartSeconds + 3600;
+				if (val < vm.Model.StartSeconds + 3600) return vm.Model.StartSeconds + 3600;
 				if (val < SoheilConstants.EDITOR_START_SECONDS + 3600) return SoheilConstants.EDITOR_START_SECONDS + 3600;
 				if (val > SoheilConstants.EDITOR_END_SECONDS) return SoheilConstants.EDITOR_END_SECONDS;
 				return SoheilFunctions.RoundFiveMinutes(val);
 			}));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this shift is open in current work day
+		/// </summary>
+		public bool IsOpen
+		{
+			get { return (bool)GetValue(IsOpenProperty); }
+			set { SetValue(IsOpenProperty, value); }
+		}
+		public static readonly DependencyProperty IsOpenProperty =
+			DependencyProperty.Register("IsOpen", typeof(bool), typeof(WorkShiftVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				var vm = (WorkShiftVm)d;
+				var val = (bool)e.NewValue;
+				vm.Model.IsOpen = val;
+				if (vm.IsOpenChanged != null) vm.IsOpenChanged(val);
+			}));
+
+		/// <summary>
+		/// Gets or sets a bindable command that toggles the IsOpen value
+		/// </summary>
+		public Commands.Command ToggleIsOpenCommand
+		{
+			get { return (Commands.Command)GetValue(ToggleIsOpenCommandProperty); }
+			set { SetValue(ToggleIsOpenCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ToggleIsOpenCommandProperty =
+			DependencyProperty.Register("ToggleIsOpenCommand", typeof(Commands.Command), typeof(WorkShiftVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets or sets the bindable Prototype of this shift which includes additional information about this shift
@@ -118,23 +172,13 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		{
 			var wbreak = new WorkBreakVm(new Model.WorkBreak
 			{
-				WorkShift = _model,
+				WorkShift = Model,
 				StartSeconds = seconds,
 				EndSeconds = seconds,
 			});
-			wbreak.DeleteCommand = new Commands.Command(o => deleteBreak(wbreak));
+			wbreak.DeleteCommand = new Commands.Command(o => Breaks.Remove(wbreak));
 			Breaks.Add(wbreak);
 			return wbreak;
-		}
-
-		/// <summary>
-		/// Removes the given view model from Breaks (no commit)
-		/// </summary>
-		/// <param name="wbreak"></param>
-		private void deleteBreak(WorkBreakVm wbreak)
-		{
-			Breaks.Remove(wbreak);
-			_model.WorkBreaks.Remove(wbreak.Model);
 		}
 	}
 }

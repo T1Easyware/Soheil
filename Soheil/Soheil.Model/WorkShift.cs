@@ -38,6 +38,13 @@ namespace Soheil.Model
             set { _endSeconds = value; }
         }
         private int _endSeconds = 0;
+    
+        public virtual bool IsOpen
+        {
+            get { return _isOpen; }
+            set { _isOpen = value; }
+        }
+        private bool _isOpen = true;
 
         #endregion
 

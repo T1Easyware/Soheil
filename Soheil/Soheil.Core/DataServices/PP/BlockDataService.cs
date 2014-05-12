@@ -133,14 +133,9 @@ WHERE block.Id = @id";
 		public IEnumerable<int> GetIdsInRange(DateTime startDate, DateTime endDate)
 		{
 			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
-			return _blockRepository.Find(x =>
-				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
-				||
-				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
-				||
-				(x.StartDateTime <= startDate && x.EndDateTime >= endDate),
-				y => y.StartDateTime)
-				
+			return _blockRepository
+				.Find(x => !(x.EndDateTime <= startDate || x.StartDateTime >= endDate))
+				.OrderBy(y => y.StartDateTime)
 				.Select(x => x.Id);
 		}
 

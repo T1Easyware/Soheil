@@ -72,7 +72,12 @@ namespace Soheil.Views
 				var tmpl = (DataTemplate)FindResource("WorkProfileTemplate");
 				_itemContentView.ContentTemplate = tmpl;
 			}
-            else if (ViewModel.CurrentContent is CauseVM)
+			else if (ViewModel.CurrentContent is Soheil.Core.ViewModels.OrganizationCalendar.WorkProfilePlanVm)
+			{
+				var tmpl = (DataTemplate)FindResource("WorkProfilePlanTemplate");
+				_itemContentView.ContentTemplate = tmpl;
+			}
+			else if (ViewModel.CurrentContent is CauseVM)
             {
                 var tmpl = (DataTemplate)FindResource("CauseTemplate");
                 _itemContentView.ContentTemplate = tmpl;
@@ -198,7 +203,8 @@ namespace Soheil.Views
             var accessItem = AccessList.FirstOrDefault(item => item.Item1 == code);
             var access = accessItem == null ? AccessType.None : accessItem.Item2;
             var type = ((SoheilEntityType)Convert.ToInt32(((Control)sender).Tag));
-            switch (type)
+			//!@#$
+			switch (type)
             {
                 case SoheilEntityType.None:
                     break;
@@ -224,10 +230,10 @@ namespace Soheil.Views
 					ViewModel = new WorkProfilesVM(access);
 					break;
 				case SoheilEntityType.Holidays:
-					ViewModel = new WorkProfilesVM(access);//---=-====-=-==-=----=-=-=-=-=-=-=-=----=-=-=
+					ViewModel = new HolidaysVM(access);
 					break;
 				case SoheilEntityType.WorkProfilePlan:
-					ViewModel = new WorkProfilesVM(access);//-=----=-=-==-====-=-==-=----=-=-=-=-=-=-=-=-
+					ViewModel = new WorkProfilePlansVM(access);
 					break;
                 case SoheilEntityType.DefinitionsMenu:
                     break;

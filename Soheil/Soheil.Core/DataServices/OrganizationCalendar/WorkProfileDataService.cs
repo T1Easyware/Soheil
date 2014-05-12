@@ -165,7 +165,8 @@ namespace Soheil.Core.DataServices
 
 		public void AttachModel(WorkProfile model)
 		{
-			throw new NotImplementedException();
+			workProfileRepository.Add(model);
+			context.Commit();
 		}
 		
 		/// <summary>
@@ -233,6 +234,7 @@ namespace Soheil.Core.DataServices
 						WorkShiftPrototype = clone.WorkShiftPrototypes.First(x => x.Index == workShiftModel.WorkShiftPrototype.Index),
 						StartSeconds = workShiftModel.StartSeconds,
 						EndSeconds = workShiftModel.EndSeconds,
+						IsOpen = workShiftModel.IsOpen,
 					};
 					foreach (var workBreakModel in workShiftModel.WorkBreaks.ToArray())
 					{

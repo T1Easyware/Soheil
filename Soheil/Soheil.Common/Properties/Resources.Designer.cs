@@ -673,6 +673,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to آخرین شیفت این برنامه زمانی (درست به هنگام فرارسیدن برنامه بعدی) ممکن است ناقص بماند. رفتار این شیفت مطابق گزینه انتخاب شده خواهد بود. گزینه ها: Incomplete: ناقص بماند، WithLastShift: جزوی از شیفت قبل خود محسوب شود، Closed: تعطیل در نظر گرفته شود.
+        /// </summary>
+        public static string ttMergingStrategy {
+            get {
+                return ResourceManager.GetString("ttMergingStrategy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to گزارش کامل است.
         /// </summary>
         public static string ttReportCompleted {
@@ -1330,6 +1339,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to رفتار شیفت ناقص.
+        /// </summary>
+        public static string txtMergingStrategy {
+            get {
+                return ResourceManager.GetString("txtMergingStrategy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to روش.
         /// </summary>
         public static string txtMethod {
@@ -1767,6 +1785,15 @@ namespace Soheil.Common.Properties {
         public static string txtSelecteds {
             get {
                 return ResourceManager.GetString("txtSelecteds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ساعت کاری مطابق:.
+        /// </summary>
+        public static string txtSelectWorkProfile {
+            get {
+                return ResourceManager.GetString("txtSelectWorkProfile", resourceCulture);
             }
         }
         

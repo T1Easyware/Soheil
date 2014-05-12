@@ -132,11 +132,11 @@ namespace Soheil
                     chrometabs.AddTab(CreateSplitTab(type), true);
 					break;
 				case SoheilEntityType.Holidays:
-					SplitList = new WorkProfilesVM(access);//-=-=-=-===-==-=-=-=-=-=-=-=---==-=----=-=-=-===-=-
+					SplitList = new HolidaysVM(access);
 					chrometabs.AddTab(CreateSplitTab(type), true);
 					break;
 				case SoheilEntityType.WorkProfilePlan:
-					SplitList = new WorkProfilesVM(access);//-==-=-=-=-=---==-=----=-=-=-=-====-=-=--=-=-=-=---
+					SplitList = new WorkProfilePlansVM(access);
 					chrometabs.AddTab(CreateSplitTab(type), true);
 					break;
 				case SoheilEntityType.SkillCenter:

@@ -2615,7 +2615,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="Button">
-					<Button Padding="2" Margin="0">
+					<Button Padding="2" Margin="0" Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}">
 						<TextBlock Text="{TemplateBinding Content}" Style="{StaticResource TextBlock3DTextStyle}">
 							<TextBlock.Effect>
 								<DropShadowEffect BlurRadius="2" ShadowDepth="1" Color="WhiteSmoke" Opacity="1"/>

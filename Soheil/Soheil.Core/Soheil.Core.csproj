@@ -98,14 +98,18 @@
     <Compile Include="Fpc\StateTemplateSelector.cs" />
     <Compile Include="Interfaces\IBarChartViewer.cs" />
     <Compile Include="Interfaces\IReportBarVm.cs" />
-    <Compile Include="PP\BlockFullData.cs" />
+    <Compile Include="PP\ActionData.cs" />
+    <Compile Include="PP\PPItemBlock.cs" />
+    <Compile Include="PP\PPItemBase.cs" />
+    <Compile Include="PP\PPItemNpt.cs" />
+    <Compile Include="ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorOperator.cs" />
     <Compile Include="ViewModels\PP\OperatorVm.cs" />
     <Compile Include="ViewModels\PP\Report\OperatorReportCollection.cs" />
     <Compile Include="ViewModels\PP\Timeline\HourCollection.cs" />
     <Compile Include="PP\Smart\SmartPlanner.cs" />
     <Compile Include="PP\Smart\SmartSpace.cs" />
-    <Compile Include="PP\TaskManager.cs" />
+    <Compile Include="PP\PPItemManager.cs" />
     <Compile Include="LoginInfo.cs" />
     <Compile Include="Reports\ActualCostBarProvider.cs" />
     <Compile Include="Reports\ActualCostBarSlideProvider.cs" />
@@ -125,7 +129,7 @@
     <Compile Include="ViewModels\OrganizationCalendar\WorkProfileVm.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\WorkShiftPrototypeVm.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\WorkShiftVm.cs" />
-    <Compile Include="ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs" />
+    <Compile Include="PP\PPItemWorkTime.cs" />
     <Compile Include="ViewModels\HolidaysVM.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorActivityChoice.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorBlock.cs" />
@@ -186,7 +190,6 @@
     <Compile Include="ViewModels\PP\PPItemCollection.cs" />
     <Compile Include="Virtualizing\VirtualizingCollection.cs" />
     <Compile Include="Interfaces\ISingularList.cs" />
-    <Compile Include="PP\ShiftManager.cs" />
     <Compile Include="PP\Smart\SmartJob.cs" />
     <Compile Include="PP\Smart\SmartLayer.cs" />
     <Compile Include="PP\Smart\SmartManager.cs" />

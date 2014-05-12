@@ -20,9 +20,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		/// <param name="shiftColors">Collection of shift colors could be modified after ctor</param>
 		public WorkShiftPrototypeVm(Model.WorkShiftPrototype model, ICollection<ShiftColorVm> shiftColors)
 		{
-			_model = model;
-			Name = _model.Name;
-			Index = _model.Index;
+			Model = model;
+			Name = Model.Name;
+			Index = Model.Index;
 
 			SelectedColor = shiftColors.FirstOrDefault(x => x.Color == model.Color);
 			if (SelectedColor == null)
@@ -32,11 +32,12 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			}
 		}
 
-		private Model.WorkShiftPrototype _model;
+		public Model.WorkShiftPrototype Model { get; private set; }
+
 		/// <summary>
 		/// Gets Id of this prototype
 		/// </summary>
-		public int Id { get { return _model.Id; } }
+		public int Id { get { return Model.Id; } }
 
 		/// <summary>
 		/// Gets or sets the bindable text for name
@@ -51,7 +52,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			{
 				var vm = (WorkShiftPrototypeVm)d;
 				var val = (string)e.NewValue;
-				vm._model.Name = val;
+				vm.Model.Name = val;
 			}));
 
 		/// <summary>
@@ -69,7 +70,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				var vm = (WorkShiftPrototypeVm)d;
 				var val = (ShiftColorVm)e.NewValue;
 				if (val == null) return;
-				vm._model.Color = val.Color;
+				vm.Model.Color = val.Color;
 			}));
 
 		/// <summary>
@@ -85,7 +86,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			{
 				var vm = (WorkShiftPrototypeVm)d;
 				var val = (byte)(int)e.NewValue;
-				vm._model.Index = val;
+				vm.Model.Index = val;
 			}));
 
 	}

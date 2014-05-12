@@ -96,8 +96,15 @@
                             x:Key="ColorPropertiesOdp">
             <ObjectDataProvider.MethodName><![CDATA[GetProperties]]></ObjectDataProvider.MethodName>
         </ObjectDataProvider>
+		<ObjectDataProvider x:Key="MergingStrategies"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="Common:WorkProfileMergingStrategy" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
 
-        <!-- General Templates -->
+		<!-- General Templates -->
         <ControlTemplate x:Key="ConfirmExcludeButton">
             <DockPanel>
                 <ToggleButton Style="{StaticResource ConfirmCancelButton}" DockPanel.Dock="Left" Width="20" Content="X" Margin="1">
@@ -1463,11 +1470,7 @@
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="5"/>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="5"/>
@@ -1478,14 +1481,16 @@
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
 							<!--Name-->
-							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
-							<TextBox Margin="2" Grid.Column="1"
-										Text="{Binding Path=CurrentContent.Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+							<TextBlock Margin="0,5" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+							<TextBox Margin="5" Grid.Column="1"
+									Text="{Binding Path=CurrentContent.Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 							<!--Week-->
-							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtWeekDays}" Grid.Row="1"/>
-							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtWeekStart}" Grid.Row="2" ToolTip="آیا شروع هفته از این روز است؟"/>
-							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtBusinessDayState}" Grid.Row="3"/>
-							<ScrollViewer Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+							<UniformGrid Rows="3" Columns="1" Grid.Row="1" Margin="0,10,0,20">
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtWeekDays}"/>
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtWeekStart}" ToolTip="آیا شروع هفته از این روز است؟"/>
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtBusinessDayState}"/>
+							</UniformGrid>
+							<ScrollViewer Margin="5" Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
 								<ItemsControl Margin="2" ItemsSource="{Binding CurrentContent.Week}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
@@ -1556,8 +1561,8 @@
 								</ItemsControl>
 							</ScrollViewer>
 							<!--Protos count-->
-							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtNumberOfShifts}" Grid.Row="5"/>
-							<DockPanel Grid.Column="1" Grid.Row="5">
+							<TextBlock Margin="0,5" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtNumberOfShifts}" Grid.Row="3"/>
+							<DockPanel Grid.Column="1" Grid.Row="3" Margin="5">
 								<Grid DockPanel.Dock="Left" Width="40">
 									<Button Margin="2" Command="{Binding CurrentContent.AskForIncreaseNumberOfShifts}"
 											ToolTip="افزودن شیفت">
@@ -1572,9 +1577,11 @@
 								<TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.NumberOfShiftsModifier, UpdateSourceTrigger=PropertyChanged}"/>
 							</DockPanel>
 							<!--Protos-->
-							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtShiftPrototypeName}" Grid.Row="7"/>
-							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtShiftPrototypeColor}" Grid.Row="8"/>
-							<ScrollViewer Grid.Row="7" Grid.Column="1" Grid.RowSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+							<StackPanel Margin="0,15,0,5" Grid.Row="4">
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtShiftPrototypeName}"/>
+								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtShiftPrototypeColor}"/>
+							</StackPanel>
+							<ScrollViewer Margin="5" Grid.Row="4" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
 								<ItemsControl Margin="2" ItemsSource="{Binding CurrentContent.ShiftPrototypes}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
@@ -1607,14 +1614,51 @@
 								</ItemsControl>
 							</ScrollViewer>
 							<!--shifts-->
-							<ScrollViewer Grid.Row="10" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+							<ScrollViewer Margin="5" Grid.Row="6" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 								<ItemsControl ItemsSource="{Binding CurrentContent.WorkDays}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<DockPanel Height="50">
 												<Border BorderBrush="#2FFF" BorderThickness="0.5,0.5,0,0.5" DockPanel.Dock="Left" Width="60"
 														Background="{Binding Color, Converter={StaticResource colorFixer}}">
-													<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+													<StackPanel>
+														<Button Command="{Binding ToggleIsOpenCommand}" HorizontalAlignment="Left">
+															<Button.Style>
+																<Style TargetType="Button">
+																	<Style.Triggers>
+																		<DataTrigger Binding="{Binding ThreeStateIsOpen}" Value="0">
+																			<Setter Property="Template">
+																				<Setter.Value>
+																					<ControlTemplate TargetType="Button">
+																						<Border Background="Red" BorderBrush="#8000" BorderThickness="1" CornerRadius="1" Width="10" Height="10" ToolTip="همه شیفتها را فعال کن"/>
+																					</ControlTemplate>
+																				</Setter.Value>
+																			</Setter>
+																		</DataTrigger>
+																		<DataTrigger Binding="{Binding ThreeStateIsOpen}" Value="1">
+																			<Setter Property="Template">
+																				<Setter.Value>
+																					<ControlTemplate TargetType="Button">
+																						<Border Background="Green" BorderBrush="#8000" BorderThickness="1" CornerRadius="1" Width="10" Height="10" ToolTip="همه شیفتها را غیرفعال کن"/>
+																					</ControlTemplate>
+																				</Setter.Value>
+																			</Setter>
+																		</DataTrigger>
+																		<DataTrigger Binding="{Binding ThreeStateIsOpen}" Value="2">
+																			<Setter Property="Template">
+																				<Setter.Value>
+																					<ControlTemplate TargetType="Button">
+																						<Border Background="Gray" BorderBrush="#8000" BorderThickness="1" CornerRadius="1" Width="10" Height="10" ToolTip="همه شیفتها را فعال کن"/>
+																					</ControlTemplate>
+																				</Setter.Value>
+																			</Setter>
+																		</DataTrigger>
+																	</Style.Triggers>
+																</Style>
+															</Button.Style>
+														</Button>
+														<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"/>
+													</StackPanel>
 												</Border>
 												<Border BorderBrush="#2FFF" BorderThickness="0.5" Background="Transparent">
 													<ocv:WorkDayLine DataContext="{Binding}"/>
@@ -1630,8 +1674,72 @@
 			</GroupBox>
 		</DataTemplate>
 
+		<DataTemplate x:Key="WorkProfilePlanTemplate" DataType="wt:WorkProfilePlanVm"
+					  xmlns:wt="clr-namespace:Soheil.Core.ViewModels.OrganizationCalendar"
+					  xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"
+					  xmlns:ocv="clr-namespace:Soheil.Views.OrganizationCalendar">
+			<GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+				<I:Interaction.Behaviors>
+					<Behavior:ValidationExceptionBehavior />
+				</I:Interaction.Behaviors>
+				<DockPanel FlowDirection="{Loc enumDirection}">
+					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+					<Border Style="{StaticResource SoheilContentUpperBorder}">
+						<Grid Margin="5">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="30"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="30"/>
+								<RowDefinition Height="30"/>
+								<RowDefinition Height="30"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="20"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							
+							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}"/>
+							<TextBox Margin="2" Text="{Binding Path=CurrentContent.Name}" Grid.Column="2"/>
 
-        <!--................................................ 2.Definitions ...........................................-->
+							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtSelectWorkProfile}" Grid.Row="1"/>
+							<ListView ItemsSource="{Binding CurrentContent.Profiles}" Background="Transparent" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2"
+									  SelectedItem="{Binding CurrentContent.SelectedProfile}" HorizontalAlignment="Left" MaxHeight="200">
+								<ListView.View>
+									<GridView AllowsColumnReorder="true" ColumnHeaderToolTip="Employee Information">
+										<GridView.ColumnHeaderContainerStyle>
+											<Style>
+												<Setter Property="TextBlock.Foreground" Value="Black"/>
+												<Setter Property="TextBlock.FontSize" Value="10"/>
+											</Style>
+										</GridView.ColumnHeaderContainerStyle>
+										<GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Header="{Loc txtName}" Width="100"/>
+										<GridViewColumn DisplayMemberBinding="{Binding Path=NumberOfShiftsModifier}" Header="{Loc txtNumberOfShifts}" Width="100"/>
+									</GridView>
+								</ListView.View>
+							</ListView>
+
+							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStartDate}" Grid.Row="2"/>
+							<cal:PersianDatePicker SelectedDate="{Binding CurrentContent.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource dateToPersianDateConverter}}" Grid.Column="2" Grid.Row="2"/>
+							
+							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtEndDate}" Grid.Row="3"/>
+							<cal:PersianDatePicker SelectedDate="{Binding CurrentContent.EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource dateToPersianDateConverter}}" Grid.Column="2" Grid.Row="3"/>
+
+							<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtMergingStrategy}" Grid.Row="4" ToolTip="{Loc ttMergingStrategy}"/>
+							<ComboBox ItemsSource="{Binding Source={StaticResource MergingStrategies}}"
+									  SelectedItem="{Binding CurrentContent.MergingStrategy, Mode=TwoWay}"
+									  Grid.Column="2" Grid.Row="4" ToolTip="{Loc ttMergingStrategy}"/>
+							<TextBlock FontSize="11" FontWeight="Normal" Foreground="Gray" Text="{Loc ttMergingStrategy}" Grid.Column="3" Grid.Row="4" TextWrapping="Wrap" Margin="50,0,0,0" Grid.RowSpan="2"/>
+						</Grid>
+					</Border>
+				</DockPanel>
+			</GroupBox>
+		</DataTemplate>
+		<!--................................................ 2.Definitions ...........................................-->
 
         <!-- 2.1. Products -->
         <DataTemplate x:Key="ProductsSubContentPanel">

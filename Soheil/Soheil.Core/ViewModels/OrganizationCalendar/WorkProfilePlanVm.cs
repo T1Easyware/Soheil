@@ -84,8 +84,8 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
         }
 
         //Profiles Observable Collection
-        private ObservableCollection<WorkProfileInfo> _profiles = new ObservableCollection<WorkProfileInfo>();
-        public ObservableCollection<WorkProfileInfo> Profiles { get { return _profiles; } }
+		public ObservableCollection<WorkProfileInfo> Profiles { get { return _profiles; } }
+		private ObservableCollection<WorkProfileInfo> _profiles = new ObservableCollection<WorkProfileInfo>();
 
         #endregion
 

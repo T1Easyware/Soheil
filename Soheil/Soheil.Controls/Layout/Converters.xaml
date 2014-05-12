@@ -46,6 +46,8 @@
 	<ppconv:IsEqualToInvisibilityConverter2 x:Key="isEqualToInvisibilityConverter2"/>
 	<ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
 
+
+	<ppconv:SumOfThree x:Key="sumOfThree"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier2"/>
 	<ppconv:DoubleMultiplier2 x:Key="doubleMultiplier2"/>
@@ -63,13 +65,13 @@
 	<ppconv:StartEndToWidthConverter x:Key="StartEndToWidthConverter"/>
 	<ppconv:StartToMarginConverter x:Key="StartToMarginConverter"/>
 	<ppconv:BalloonVerticalMargin x:Key="balloonVerticalMargin"/>
+	<ppconv:HideIfSmallerThan20 x:Key="hideIfSmallerThan20"/>
+	<ppconv:HideIfSmallerThan40 x:Key="hideIfSmallerThan40"/>
 	<ppconv:testConverter x:Key="testConverter"/>
 	
 	<ppconv:IsEqualToBrushConverter x:Key="isEqualToBrushConverter"/>
 	<ppconv:ColorFixer x:Key="colorFixer"/>
 	<ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>
-	<ppconv:TimeRollItemBackgroundConverter x:Key="timeRollItemBackgroundConverter"/>
-	<ppconv:TimeRollItemForegroundConverter x:Key="timeRollItemForegroundConverter"/>
 	<ppconv:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>
 	<ppconv:OpaqueIfPositiveInt x:Key="opaqueIfPositiveInt"/>
 	<ppconv:HasErrorToShadowColor x:Key="hasErrorToShadowColor"/>
@@ -101,8 +103,9 @@
 
 	<Color x:Key="HighlightColor">#40FF</Color>
 	<SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource HighlightColor}" />
-	<SolidColorBrush x:Key="HeaderBackground" Color="#A012" />
-	<SolidColorBrush x:Key="HeaderBorderBrush" Color="#6044" />
+	<SolidColorBrush x:Key="HeaderBorderBrush" Color="#6066" />
+	<SolidColorBrush x:Key="HeaderBackground" Color="#A4AA" />
+	<SolidColorBrush x:Key="VagueBorderBrush" Color="#34AA" />
 	<SolidColorBrush x:Key="GlyphBrush" Color="#444" />
 
 

@@ -7,6 +7,10 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.OrganizationCalendar
 {
+	/// <summary>
+	/// A simple but informative ViewModel for WorkProfile
+	/// <para>It contains Name and Number of shifts</para>
+	/// </summary>
     public class WorkProfileInfo : DependencyObject
     {
         public static readonly DependencyProperty NameProperty = DependencyProperty.Register("Name", typeof(string), typeof(WorkProfileInfo), new PropertyMetadata(""));

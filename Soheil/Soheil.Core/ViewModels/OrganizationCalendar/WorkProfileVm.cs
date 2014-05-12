@@ -33,7 +33,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		public WorkProfileVm(AccessType access)
 			: base(access)
 		{
-			_model = WorkProfile.CreateDefault();
+			_model = null;//filled in InitializeData()
 			InitializeData();
 		}
 
@@ -58,6 +58,15 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		{
 			UOW = new Dal.SoheilEdmContext();
 			WorkProfileDataService = new WorkProfileDataService(UOW);
+			if (_model == null)
+			{
+				_model = WorkProfile.CreateDefault();
+				WorkProfileDataService.AttachModel(_model);
+			}
+			else
+				_model = WorkProfileDataService.GetSingle(_model.Id);
+
+
 			SaveCommand = new Command(Save, CanSave);
 
 			AskForIncreaseNumberOfShifts = new Command(o => IsPrototypeChangeAskVisible = true);
@@ -72,6 +81,21 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 
 			//fill vm with _model data
 			Load();
+
+			ShiftPrototypes.CollectionChanged += (s, e) =>
+			{
+				if (e.NewItems != null)
+					foreach (WorkShiftPrototypeVm proto in e.NewItems)
+					{
+						_model.WorkShiftPrototypes.Add(proto.Model);
+					}
+				if (e.OldItems != null)
+					foreach (WorkShiftPrototypeVm proto in e.OldItems)
+					{
+						_model.WorkShiftPrototypes.Remove(proto.Model);
+					}
+			};
+
 		}
 
 		/// <summary>
@@ -234,7 +258,19 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		}
 		#endregion
 
-		#region Shifts
+		/// <summary>
+		/// Gets an observable collection for openness state of days (count=6) this is for shifts and etc...
+		/// </summary>
+		public ObservableCollection<WorkDayVm> WorkDays { get { return _workDays; } }
+		private ObservableCollection<WorkDayVm> _workDays = new ObservableCollection<WorkDayVm>();
+		/// <summary>
+		/// <para>Gets an observable collection for the whole week (count=7) </para>
+		/// <para>used for week start and for businessState of each day</para>
+		/// <para>the collection always starts from saturday</para>
+		/// </summary>
+		public ObservableCollection<DayOfWeekVm> Week { get { return _week; } }
+		private ObservableCollection<DayOfWeekVm> _week = new ObservableCollection<DayOfWeekVm>();
+
 		/// <summary>
 		/// Gets an observable collection of Shift prototypes to add or remove or modify
 		/// </summary>
@@ -247,6 +283,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		public ObservableCollection<ShiftColorVm> ShiftColors { get { return _shiftColors; } }
 		private ObservableCollection<ShiftColorVm> _shiftColors = new ObservableCollection<ShiftColorVm>();
 
+		#region Shifts props and commands
 		/// <summary>
 		/// Gets the number of shifts from a valid model
 		/// </summary>
@@ -307,23 +344,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			set { SetValue(IncreaseNumberOfShiftsProperty, value); }
 		}
 		public static readonly DependencyProperty IncreaseNumberOfShiftsProperty =
-			DependencyProperty.Register("IncreaseNumberOfShifts", typeof(Command), typeof(WorkProfileVm), new UIPropertyMetadata(null)); 
-		#endregion
-
-		#region Days
-		/// <summary>
-		/// Gets an observable collection for openness state of days (count=6) this is for shifts and etc...
-		/// </summary>
-		public ObservableCollection<WorkDayVm> WorkDays { get { return _workDays; } }
-		private ObservableCollection<WorkDayVm> _workDays = new ObservableCollection<WorkDayVm>();
-		/// <summary>
-		/// <para>Gets an observable collection for the whole week (count=7) </para>
-		/// <para>used for week start and for businessState of each day</para>
-		/// <para>the collection always starts from saturday</para>
-		/// </summary>
-		public ObservableCollection<DayOfWeekVm> Week { get { return _week; } }
-		private ObservableCollection<DayOfWeekVm> _week = new ObservableCollection<DayOfWeekVm>();
-
+			DependencyProperty.Register("IncreaseNumberOfShifts", typeof(Command), typeof(WorkProfileVm), new UIPropertyMetadata(null));
 		#endregion
 
 

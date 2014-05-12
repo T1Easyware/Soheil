@@ -551,7 +551,7 @@
 						<Separator/>
 					
 						<!-- extra tools -->
-						<ToggleButton IsChecked="{Binding AlwaysLoadTasks}">
+						<ToggleButton IsChecked="{Binding AutoRefresh}">
 							<Image Style="{StaticResource AutoLoadTaskImage}"/>
 							<ToggleButton.ToolTip>
 								<ToolTip>لود اتوماتیک</ToolTip>
@@ -606,15 +606,15 @@
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 
 					<Grid Margin="5" Background="{StaticResource SingularViewBackground}" 
-				      x:Name="ppTable" MouseMove="Area_MouseMove" MouseUp="Area_MouseUp" Loaded="ppTable_Loaded_1">
+				      x:Name="ppTable" MouseMove="Area_MouseMove" MouseUp="Area_MouseUp" Loaded="ppTable_Loaded" Unloaded="ppTable_Unloaded">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="40"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="*"/>
+							<RowDefinition Height="40" x:Name="shiftsAndBreaksPart1"/>
+							<RowDefinition Height="Auto" x:Name="shiftsAndBreaksPart2"/>
+							<RowDefinition Height="*" x:Name="shiftsAndBreaksPart3"/>
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Name="cd_stations" Width="{StaticResource StationOrActivityHeaderGridLength}"/>
@@ -646,146 +646,44 @@
 						<local:ProcessReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="processReportBuilderPanel" Height="0"
 												DataContext="{Binding CurrentProcessReportBuilder}" FlowDirection="RightToLeft"/>
 
-						
-						<!-- Month-Day-Hour Sliders-->
-						<ItemsControl Grid.Row="2" Grid.Column="1" SizeChanged="Grid_SizeChanged" ItemsSource="{Binding Months}" Name="ic_months">
+						<!-- Shifts and Break hours -->
+						<ItemsControl Grid.Row="4" Grid.RowSpan="3" Grid.Column="1" ItemsSource="{Binding ShiftsAndBreaks}"
+									  IsHitTestVisible="False" ClipToBounds="True">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
-									<Grid customControls:GridHelper.ColumnCount="12" customControls:GridHelper.RowCount="1"/>
+									<Canvas/>
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<ToggleButton BorderBrush="{StaticResource HeaderBorderBrush}" IsChecked="{Binding IsSelected}" SnapsToDevicePixels="True">
-										<ToggleButton.Width>
-											<MultiBinding Converter="{StaticResource aCrossBDividebByC}">
-												<Binding Path="NumOfDays"/>
-												<Binding ElementName="ic_months" Path="ActualWidth"/>
-												<Binding ElementName="ppTable" Path="DataContext.DaysInYear"/>
-											</MultiBinding>
-										</ToggleButton.Width>
-										<ToggleButton.Background>
-											<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Month}"/>
-										</ToggleButton.Background>
-										<TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center">
-											<TextBlock.Foreground>
-												<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Month}"/>
-											</TextBlock.Foreground>
-										</TextBlock>
-									</ToggleButton>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-							<ItemsControl.ItemContainerStyle>
-								<Style TargetType="ContentPresenter">
-									<Setter Property="Grid.Column" Value="{Binding ColumnIndex}"/>
-								</Style>
-							</ItemsControl.ItemContainerStyle>
-							<ItemsControl.Template>
-								<ControlTemplate>
-									<Grid>
-										<Border BorderThickness="0,1,0,0" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
-											<ItemsPresenter/>
-										</Border>
-									</Grid>
-								</ControlTemplate>
-							</ItemsControl.Template>
-						</ItemsControl>
-						<ItemsControl Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Days}" ClipToBounds="True">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<Grid customControls:GridHelper.ColumnCount="{Binding DaysInYear}" customControls:GridHelper.RowCount="1"/>
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Border Width="{Binding ElementName=ppTable, Path=DataContext.DayZoom}" SnapsToDevicePixels="True">
-										<Border.Background>
-											<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Day}"/>
-										</Border.Background>
-										<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-											<TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2,0">
-												<TextBlock.Foreground>
-													<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Day}"/>
-												</TextBlock.Foreground>
-											</TextBlock>
-											<TextBlock Text="{Binding DayOfWeek}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2,-4,2,2">
-												<TextBlock.Foreground>
-													<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Day}"/>
-												</TextBlock.Foreground>
-											</TextBlock>
-										</StackPanel>
-									</Border>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-							<ItemsControl.ItemContainerStyle>
-								<Style TargetType="ContentPresenter">
-									<Setter Property="Grid.Column" Value="{Binding ColumnIndex}"/>
-								</Style>
-							</ItemsControl.ItemContainerStyle>
-							<ItemsControl.Template>
-								<ControlTemplate>
-									<Grid>
-										<Border BorderThickness="0,1,0,0" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
-											<ItemsPresenter ClipToBounds="True"/>
-										</Border>
-										<Border Cursor="ScrollWE" BorderThickness="1" CornerRadius="2" HorizontalAlignment="Left" ClipToBounds="True"
-									    Background="{StaticResource SlideWindowBackground}" BorderBrush="{StaticResource SlideWindowBorder}"
-									    MouseDown="dayLittleWindowMouseDown" Name="daysLittleWindow" SnapsToDevicePixels="True">
-											<Border.Width>
-												<MultiBinding Converter="{StaticResource zoomMathDayLittleWindowWidth}">
-													<Binding ElementName="ic_months" Path="ActualWidth"/>
-													<Binding Path="DayZoom"/>
-													<Binding Path="HourZoom"/>
-												</MultiBinding>
-											</Border.Width>
-											<Border.Margin>
-												<MultiBinding Converter="{StaticResource zoomMathDayLittleWindowMargin}">
-													<Binding Path="HoursPassed"/>
-													<Binding Path="DayZoom"/>
-												</MultiBinding>
-											</Border.Margin>
-										</Border>
-									</Grid>
-								</ControlTemplate>
-							</ItemsControl.Template>
-						</ItemsControl>
-						<ItemsControl Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Hours}" Name="ic_hours" ClipToBounds="True">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<Canvas ClipToBounds="True"/>
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Border Height="40" Width="{Binding ElementName=ppTable, Path=DataContext.HourZoom}" ClipToBounds="True"
-									    BorderThickness="1,0,0,0" BorderBrush="{StaticResource HeaderBorderBrush}" SnapsToDevicePixels="True">
-										<Border.Margin>
-											<MultiBinding Converter="{StaticResource gridColumnToMargin}">
-												<Binding Path="ColumnIndex"/>
+									<Grid Background="{Binding Color, Converter={StaticResource colorFixer}}">
+										<Grid.Width>
+											<MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
+												<Binding Path="Start"/>
+												<Binding Path="End"/>
 												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
 											</MultiBinding>
-										</Border.Margin>
-										<Border.Background>
-											<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemBackgroundConverter}, ConverterParameter=Hour}"/>
-										</Border.Background>
-										<StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Left">
-											<StackPanel.LayoutTransform>
-												<RotateTransform Angle="270"/>
-											</StackPanel.LayoutTransform>
-											<TextBlock Text="{Binding Text}" TextAlignment="Left" Margin="2,0,0,0">
-												<TextBlock.Foreground>
-													<SolidColorBrush Color="{Binding Data, Converter={StaticResource timeRollItemForegroundConverter}, ConverterParameter=Hour}"/>
-												</TextBlock.Foreground>
-											</TextBlock>
-											<TextBlock Text="{Binding DateText}" TextAlignment="Left" Foreground="Silver" Margin="5,0,0,0"/>
-										</StackPanel>
-									</Border>
+										</Grid.Width>
+										<Grid.Margin>
+											<MultiBinding Converter="{StaticResource StartToMarginConverter}">
+												<Binding Path="Start"/>
+												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+											</MultiBinding>
+										</Grid.Margin>
+										<Grid.Height>
+											<MultiBinding Converter="{StaticResource sumOfThree}">
+												<Binding ElementName="shiftsAndBreaksPart1" Path="ActualHeight"/>
+												<Binding ElementName="shiftsAndBreaksPart2" Path="ActualHeight"/>
+												<Binding ElementName="shiftsAndBreaksPart3" Path="ActualHeight"/>
+											</MultiBinding>
+										</Grid.Height>
+									</Grid>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 							<ItemsControl.Template>
 								<ControlTemplate>
-									<Border BorderThickness="0,1,0,0" ClipToBounds="True" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
-										<ItemsPresenter ClipToBounds="True" MouseDown="hoursBarMouseDown">
+									<Border SnapsToDevicePixels="True">
+										<ItemsPresenter>
 											<ItemsPresenter.Margin>
 												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
 													<Binding Path="HoursPassed"/>
@@ -798,53 +696,43 @@
 								</ControlTemplate>
 							</ItemsControl.Template>
 						</ItemsControl>
-						<!-- Shifts and Break hours -->
-						<ItemsControl Grid.Row="4" Grid.RowSpan="2" Grid.Column="1" ItemsSource="{Binding ShiftsAndBreaks}" Name="ic_shiftsAndBreaks" ClipToBounds="True" IsHitTestVisible="False">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<Canvas ClipToBounds="True"/>
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
+
+						<!-- first column of Stations-->
+						<ItemsControl Grid.Row="6" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" IsHitTestVisible="False">
+							<ItemsControl.Effect>
+								<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="White"/>
+							</ItemsControl.Effect>
+							<!--PPTable ItemTemplate-->
 							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<DockPanel ClipToBounds="True" SnapsToDevicePixels="True">
-										<DockPanel.Width>
-											<MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
-												<Binding Path="StartSeconds"/>
-												<Binding Path="EndSeconds"/>
-												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-											</MultiBinding>
-										</DockPanel.Width>
-										<DockPanel.Margin>
-											<MultiBinding Converter="{StaticResource StartToMarginConverter}">
-												<Binding Path="StartSeconds"/>
-												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-											</MultiBinding>
-										</DockPanel.Margin>
-										<Border DockPanel.Dock="Top" Height="40" Background="{Binding Color, Converter={StaticResource colorFixer}}"/>
-										<Border Opacity="0.2" Background="{Binding Color, Converter={StaticResource colorFixer}}"
-                                    BorderBrush="#3FFF" BorderThickness="1,0,0,0"/>
+								<DataTemplate DataType="{x:Type vm:StationVm}">
+									<DockPanel VerticalAlignment="Stretch" Height="42">
+										<Border Background="{StaticResource HeaderBackground}" DockPanel.Dock="Left" Width="{StaticResource StationOrActivityHeaderWidth}"
+									    BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,1,1">
+											<TextBlock TextWrapping="Wrap" Text="{Binding Text}" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+										</Border>
+										<Border BorderThickness="0,0,0,1">
+											<Border.BorderBrush>
+												<LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,0" EndPoint="16,0" MappingMode="Absolute">
+													<GradientStop Color="Transparent" Offset="0"/>
+													<GradientStop Color="Transparent" Offset="0.39"/>
+													<GradientStop Color="{StaticResource HighlightColor}" Offset="0.4"/>
+													<GradientStop Color="{StaticResource HighlightColor}" Offset="1"/>
+												</LinearGradientBrush>
+											</Border.BorderBrush>
+										</Border>
 									</DockPanel>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
+
+							<!--Stations Template-->
 							<ItemsControl.Template>
 								<ControlTemplate>
-									<Border ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True" IsHitTestVisible="False">
-										<ItemsPresenter ClipToBounds="True">
-											<ItemsPresenter.Margin>
-												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-													<Binding Path="HoursPassed"/>
-													<Binding Path="HourZoom"/>
-													<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-												</MultiBinding>
-											</ItemsPresenter.Margin>
-										</ItemsPresenter>
+									<Border BorderThickness="0,2" BorderBrush="{StaticResource HeaderBorderBrush}">
+										<ItemsPresenter/>
 									</Border>
 								</ControlTemplate>
 							</ItemsControl.Template>
 						</ItemsControl>
-
-
 						<!-- first column of Activities -->
 						<DockPanel Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
 							<Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
@@ -902,6 +790,266 @@
 								</ItemsControl.Template>
 							</ItemsControl>
 						</DockPanel>
+						
+						<!-- Month-Day-Hour Sliders-->
+						<ItemsControl Grid.Row="2" Grid.Column="1" SizeChanged="Grid_SizeChanged" ItemsSource="{Binding Months}" Name="ic_months">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Grid customControls:GridHelper.ColumnCount="12" customControls:GridHelper.RowCount="1"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<ToggleButton BorderBrush="{StaticResource HeaderBorderBrush}" IsChecked="{Binding IsSelected}" SnapsToDevicePixels="True">
+										<ToggleButton.Width>
+											<MultiBinding Converter="{StaticResource aCrossBDividebByC}">
+												<Binding Path="NumOfDays"/>
+												<Binding ElementName="ic_months" Path="ActualWidth"/>
+												<Binding ElementName="ppTable" Path="DataContext.DaysInYear"/>
+											</MultiBinding>
+										</ToggleButton.Width>
+										<TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+									</ToggleButton>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.ItemContainerStyle>
+								<Style TargetType="ContentPresenter">
+									<Setter Property="Grid.Column" Value="{Binding ColumnIndex}"/>
+								</Style>
+							</ItemsControl.ItemContainerStyle>
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Grid>
+										<Border BorderThickness="0,1,0,0" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
+											<ItemsPresenter/>
+										</Border>
+									</Grid>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+						<ItemsControl Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Days}" ClipToBounds="True">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Grid customControls:GridHelper.ColumnCount="{Binding DaysInYear}" customControls:GridHelper.RowCount="1"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Border Width="{Binding ElementName=ppTable, Path=DataContext.DayZoom}" SnapsToDevicePixels="True"
+											Background="{Binding Color, Converter={StaticResource colorFixer}}">
+										<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+											<TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2,0"
+													   Foreground="WhiteSmoke"/>
+											<TextBlock Text="{Binding DayOfWeek}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2,-4,2,2"
+													   Foreground="Gray"/>
+										</StackPanel>
+									</Border>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.ItemContainerStyle>
+								<Style TargetType="ContentPresenter">
+									<Setter Property="Grid.Column" Value="{Binding ColumnIndex}"/>
+								</Style>
+							</ItemsControl.ItemContainerStyle>
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Grid>
+										<Border BorderThickness="0,1,0,0" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
+											<ItemsPresenter ClipToBounds="True"/>
+										</Border>
+										<Border Cursor="ScrollWE" BorderThickness="1" CornerRadius="2" HorizontalAlignment="Left" ClipToBounds="True"
+									    Background="{StaticResource SlideWindowBackground}" BorderBrush="{StaticResource SlideWindowBorder}"
+									    MouseDown="dayLittleWindowMouseDown" Name="daysLittleWindow" SnapsToDevicePixels="True">
+											<Border.Width>
+												<MultiBinding Converter="{StaticResource zoomMathDayLittleWindowWidth}">
+													<Binding ElementName="ic_months" Path="ActualWidth"/>
+													<Binding Path="DayZoom"/>
+													<Binding Path="HourZoom"/>
+												</MultiBinding>
+											</Border.Width>
+											<Border.Margin>
+												<MultiBinding Converter="{StaticResource zoomMathDayLittleWindowMargin}">
+													<Binding Path="HoursPassed"/>
+													<Binding Path="DayZoom"/>
+												</MultiBinding>
+											</Border.Margin>
+										</Border>
+									</Grid>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+						<ItemsControl Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Hours}" Name="ic_hours" ClipToBounds="True">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Canvas ClipToBounds="True"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<DataTemplate.Resources>
+										<Style TargetType="Rectangle">
+											<Setter Property="Fill" Value="{StaticResource HeaderBackground}"/>
+											<Setter Property="Width" Value="2"/>
+											<Setter Property="Margin" Value="-1,0"/>
+											<Setter Property="HorizontalAlignment" Value="Left"/>
+											<Setter Property="VerticalAlignment" Value="Bottom"/>
+										</Style>
+									</DataTemplate.Resources>
+									<Border Height="40" Width="{Binding ElementName=ppTable, Path=DataContext.HourZoom}" SnapsToDevicePixels="True"
+											Background="{StaticResource HeaderBorderBrush}">
+										<Border.Margin>
+											<MultiBinding Converter="{StaticResource gridColumnToMargin}">
+												<Binding Path="ColumnIndex"/>
+												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+											</MultiBinding>
+										</Border.Margin>
+										<Grid>
+											<UniformGrid Rows="1" Columns="4" VerticalAlignment="Bottom">
+												<Rectangle Height="40"/>
+												<Rectangle Height="5" Visibility="{Binding ElementName=ppTable, Path=DataContext.HourZoom, Converter={StaticResource hideIfSmallerThan40}}"/>
+												<Rectangle Height="10" Visibility="{Binding ElementName=ppTable, Path=DataContext.HourZoom, Converter={StaticResource hideIfSmallerThan20}}"/>
+												<Rectangle Height="5" Visibility="{Binding ElementName=ppTable, Path=DataContext.HourZoom, Converter={StaticResource hideIfSmallerThan40}}"/>
+											</UniformGrid>
+											<StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Left">
+												<StackPanel.LayoutTransform>
+													<RotateTransform Angle="270"/>
+												</StackPanel.LayoutTransform>
+												<TextBlock Text="{Binding Text}" TextAlignment="Left" Margin="2,0,0,0" 
+													   Foreground="WhiteSmoke"/>
+												<TextBlock Text="{Binding DateText}" TextAlignment="Left" Margin="5,0,0,0"
+													   Foreground="Gray"/>
+											</StackPanel>
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Border BorderThickness="0,1,0,0" ClipToBounds="True" BorderBrush="Silver" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
+										<ItemsPresenter ClipToBounds="True" MouseDown="hoursBarMouseDown">
+											<ItemsPresenter.Margin>
+												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+													<Binding Path="HoursPassed"/>
+													<Binding Path="HourZoom"/>
+													<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+												</MultiBinding>
+											</ItemsPresenter.Margin>
+										</ItemsPresenter>
+									</Border>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+						<ItemsControl Grid.Row="5" Grid.RowSpan="2" Grid.Column="1" ItemsSource="{Binding Hours}" ClipToBounds="True" IsHitTestVisible="False">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Canvas ClipToBounds="True"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<DataTemplate.Resources>
+										<Style TargetType="Rectangle">
+											<Setter Property="Fill" Value="{StaticResource VagueBorderBrush}"/>
+											<Setter Property="Width" Value="2"/>
+											<Setter Property="Margin" Value="-1,0"/>
+											<Setter Property="HorizontalAlignment" Value="Left"/>
+											<Setter Property="VerticalAlignment" Value="Top"/>
+										</Style>
+									</DataTemplate.Resources>
+									<UniformGrid Rows="1" Columns="4">
+										<UniformGrid.Margin>
+											<MultiBinding Converter="{StaticResource gridColumnToMargin}">
+												<Binding Path="ColumnIndex"/>
+												<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+											</MultiBinding>
+										</UniformGrid.Margin>
+										<Rectangle Height="500"/>
+										<Rectangle Visibility="{Binding ElementName=ppTable, Path=DataContext.HourZoom, Converter={StaticResource hideIfSmallerThan40}}"/>
+										<Rectangle Visibility="{Binding ElementName=ppTable, Path=DataContext.HourZoom, Converter={StaticResource hideIfSmallerThan20}}"/>
+										<Rectangle Visibility="{Binding ElementName=ppTable, Path=DataContext.HourZoom, Converter={StaticResource hideIfSmallerThan40}}"/>
+									</UniformGrid>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Border BorderThickness="0,1,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
+										<ItemsPresenter>
+											<ItemsPresenter.Margin>
+												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+													<Binding Path="HoursPassed"/>
+													<Binding Path="HourZoom"/>
+													<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+												</MultiBinding>
+											</ItemsPresenter.Margin>
+										</ItemsPresenter>
+									</Border>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+						
+						
+						<!-- RowsOfItems(Blocks,NPTs) ItemsControl -->
+						<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}">
+							<ItemsControl.Effect>
+								<DropShadowEffect Opacity="0.3" ShadowDepth="0" Color="White"/>
+							</ItemsControl.Effect>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate DataType="{x:Type vm:StationVm}">
+									<Canvas Height="42">
+
+										<!-- Blocks ItemsControl -->
+										<ItemsControl ItemsSource="{Binding Blocks}" Height="42">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate DataType="{x:Type vm:BlockVm}">
+													<Canvas>
+														<local:Block DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
+													</Canvas>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<Canvas/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+
+										<!-- NPTs ItemsControl -->
+										<ItemsControl ItemsSource="{Binding NPTs}" Height="42">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate DataType="{x:Type vm:NPTVm}">
+													<Canvas>
+														<local:Setup DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
+													</Canvas>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<Canvas/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+									</Canvas>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+
+							<!-- RowsOfItems Template -->
+							<ItemsControl.Template>
+								<ControlTemplate>
+									<Grid ClipToBounds="True">
+										<ItemsPresenter>
+											<ItemsPresenter.Margin>
+												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+													<Binding Path="HoursPassed"/>
+													<Binding Path="HourZoom"/>
+													<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+												</MultiBinding>
+											</ItemsPresenter.Margin>
+										</ItemsPresenter>
+									</Grid>
+								</ControlTemplate>
+							</ItemsControl.Template>
+						</ItemsControl>
+
 						<!--RowsOfActivity ItemsControl & ExceptionBalloons, Durations, TP, G1 (other columns of process report) -->
 						<DockPanel Grid.Row="5" Grid.Column="1" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
 							<!-- & Durations, TPs, G1s -->
@@ -1076,109 +1224,7 @@
 								</ItemsControl>
 							</Grid>
 						</DockPanel>
-
-						
-						<!-- first column of Stations-->
-						<ItemsControl Grid.Row="6" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" IsHitTestVisible="False">
-							<ItemsControl.Effect>
-								<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="White"/>
-							</ItemsControl.Effect>
-							<!--PPTable ItemTemplate-->
-							<ItemsControl.ItemTemplate>
-								<DataTemplate DataType="{x:Type vm:StationVm}">
-									<DockPanel VerticalAlignment="Stretch" Height="42">
-										<Border Background="{StaticResource HeaderBackground}" DockPanel.Dock="Left" Width="{StaticResource StationOrActivityHeaderWidth}"
-									    BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1,0,1,1">
-											<TextBlock TextWrapping="Wrap" Text="{Binding Text}" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-										</Border>
-										<Border BorderThickness="0,0,0,1">
-											<Border.BorderBrush>
-												<LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,0" EndPoint="16,0" MappingMode="Absolute">
-													<GradientStop Color="Transparent" Offset="0"/>
-													<GradientStop Color="Transparent" Offset="0.39"/>
-													<GradientStop Color="{StaticResource HighlightColor}" Offset="0.4"/>
-													<GradientStop Color="{StaticResource HighlightColor}" Offset="1"/>
-												</LinearGradientBrush>
-											</Border.BorderBrush>
-										</Border>
-									</DockPanel>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-
-							<!--Stations Template-->
-							<ItemsControl.Template>
-								<ControlTemplate>
-									<Border BorderThickness="0,2" BorderBrush="{StaticResource HeaderBorderBrush}">
-										<ItemsPresenter/>
-									</Border>
-								</ControlTemplate>
-							</ItemsControl.Template>
-						</ItemsControl>
-						<!-- ************************************************************************************** -->
-						<!-- ***************************** tasks, blocks, setups here ***************************** -->
-						<!-- ************************************************************************************** -->
-						<!-- RowsOfItems(Blocks,NPTs) ItemsControl -->
-						<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}">
-							<ItemsControl.Effect>
-								<DropShadowEffect Opacity="0.3" ShadowDepth="0" Color="White"/>
-							</ItemsControl.Effect>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate DataType="{x:Type vm:StationVm}">
-									<Canvas Height="42">
-
-										<!-- Blocks ItemsControl -->
-										<ItemsControl ItemsSource="{Binding Blocks}" Height="42">
-											<ItemsControl.ItemTemplate>
-												<DataTemplate DataType="{x:Type vm:BlockVm}">
-													<Canvas>
-														<local:Block DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
-													</Canvas>
-												</DataTemplate>
-											</ItemsControl.ItemTemplate>
-											<ItemsControl.ItemsPanel>
-												<ItemsPanelTemplate>
-													<Canvas/>
-												</ItemsPanelTemplate>
-											</ItemsControl.ItemsPanel>
-										</ItemsControl>
-
-										<!-- NPTs ItemsControl -->
-										<ItemsControl ItemsSource="{Binding NPTs}" Height="42">
-											<ItemsControl.ItemTemplate>
-												<DataTemplate DataType="{x:Type vm:NPTVm}">
-													<Canvas>
-														<local:Setup DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
-													</Canvas>
-												</DataTemplate>
-											</ItemsControl.ItemTemplate>
-											<ItemsControl.ItemsPanel>
-												<ItemsPanelTemplate>
-													<Canvas/>
-												</ItemsPanelTemplate>
-											</ItemsControl.ItemsPanel>
-										</ItemsControl>
-									</Canvas>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-
-							<!-- RowsOfItems Template -->
-							<ItemsControl.Template>
-								<ControlTemplate>
-									<Grid ClipToBounds="True">
-										<ItemsPresenter>
-											<ItemsPresenter.Margin>
-												<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-													<Binding Path="HoursPassed"/>
-													<Binding Path="HourZoom"/>
-													<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-												</MultiBinding>
-											</ItemsPresenter.Margin>
-										</ItemsPresenter>
-									</Grid>
-								</ControlTemplate>
-							</ItemsControl.Template>
-						</ItemsControl>
-
+					
 						<!-- ExceptionTooltips for Tasks,NPTs -->
 						<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}" ClipToBounds="False">
 							<ItemsControl.ItemTemplate>

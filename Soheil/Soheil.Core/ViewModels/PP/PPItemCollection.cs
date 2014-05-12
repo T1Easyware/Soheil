@@ -18,33 +18,29 @@ namespace Soheil.Core.ViewModels.PP
 	/// <para>This class also provide add/remove/find methods that directly target Blocks and Npts regardless of their station</para>
 	/// </summary>
 	/// <remarks>Only those items in each station are shown that are within the timeline range</remarks>
-	public class PPItemCollection : ObservableCollection<StationVm>
+	public class PPItemCollection : ObservableCollection<StationVm>, IDisposable
 	{
+		#region Events
+		/// <summary>
+		/// Occurs when a new block is added to collection
+		/// </summary>
+		public event Action<BlockVm> BlockAdded;
+		/// <summary>
+		/// Occurs when a block is removed from this collection. parameter is blockId
+		/// </summary>
+		public event Action<int> BlockRemoved;
+		/// <summary>
+		/// Occurs when an npt is removed from this collection. parameter is nptId
+		/// </summary>
+		public event Action<int> NptRemoved;
+		#endregion
 
 		#region Members, props, consts
 		public PPTableVm PPTable { get; private set; }
+		public PPItemManager Manager { get; private set; }
 
 		Dal.SoheilEdmContext _uow;
 		DataServices.BlockDataService _blockDataService;
-
-		System.ComponentModel.BackgroundWorker _backgroundWorker;
-
-		DateTime _rangeStart;
-		DateTime _rangeEnd;
-
-		private object _lockObject;
-		/// <summary>
-		/// Number of milliseconds to sleep when loading each item
-		/// </summary>
-		private const int _workerSleepTime = 40;
-		/// <summary>
-		/// Number of hours to add to the startRange when loading items
-		/// </summary>
-		private const int _startHourMargin = -1;
-		/// <summary>
-		/// Number of hours to add to the endRange when loading items
-		/// </summary>
-		private const int _endHourMargin = 3; 
 
 		/// <summary>
 		/// Gets the ViewMode of this Vm or sets it for this Vm and all its blocks
@@ -67,19 +63,6 @@ namespace Soheil.Core.ViewModels.PP
 		private PPViewMode _viewMode;
 		#endregion
 
-		#region Events
-		public event Action<BlockVm> BlockAdded;
-		/// <summary>
-		/// Occurs when a block is removed from this collection. parameter is blockId
-		/// </summary>
-		public event Action<int> BlockRemoved;
-		/// <summary>
-		/// Occurs when an npt is removed from this collection. parameter is nptId
-		/// </summary>
-		public event Action<int> NptRemoved;
-		#endregion
-
-		#region Ctor, Parallel loading
 		/// <summary>
 		/// Creates an instance of PPItemCollection
 		/// </summary>
@@ -88,197 +71,35 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			PPTable = parent;
 			ViewMode = PPViewMode.Simple;
-			_lockObject = new Object();
-		}
 
-		/// <summary>
-		/// Reloads all blocks and Npts within the specified range
-		/// <para>Any items that partially fall into the range are also included</para>
-		/// </summary>
-		/// <param name="rangeStart">start of the timeline range</param>
-		/// <param name="rangeEnd">end of the timeline range</param>
-		public void FetchRange(DateTime rangeStart, DateTime rangeEnd)
-		{
-			_rangeStart = rangeStart;
-			_rangeEnd = rangeEnd;
-			Reload();
-		}
-		/// <summary>
-		/// Reloads all visible items by creating a background worker
-		/// <para>Timeline range is equal to values specified by last call of FetchRange</para>
-		/// </summary>
-		/// <remarks>This method uses a background worker to load items asynchronously</remarks>
-		public void Reload()
-		{
-			_uow = new Dal.SoheilEdmContext();
-			_blockDataService = new DataServices.BlockDataService(_uow);
+			//manager
+			Manager = new PPItemManager(parent.Dispatcher);
 
-			if(_backgroundWorker!=null)
+			Manager.BlockAdded += item =>
 			{
-				_backgroundWorker.CancelAsync();
-				//return;timers? see _backgroundWorker_Disposed
-			}
-			_backgroundWorker = new System.ComponentModel.BackgroundWorker
-			{
-				WorkerReportsProgress = true,
-				WorkerSupportsCancellation = true,
+				var vm = AddItem(item);
+				vm.ViewMode = ViewMode;
 			};
-			_backgroundWorker.DoWork += _backgroundWorker_DoWork;
-			_backgroundWorker.ProgressChanged += _backgroundWorker_ProgressChanged;
-			_backgroundWorker.RunWorkerCompleted += _backgroundWorker_RunWorkerCompleted;
-			_backgroundWorker.Disposed += _backgroundWorker_Disposed;
-			_backgroundWorker.RunWorkerAsync();
+			Manager.BlockRemoved += item =>
+			{
+				//keep updated with _lastBlockIds
+				RemoveItem(item.Model);
+			};
+			Manager.NptAdded += item =>
+			{
+				var vm = AddNPT(item.Id);
+				vm.ViewMode = ViewMode;
+			};
+			Manager.NptRemoved += item =>
+			{
+				RemoveItem(item.Model as Model.Setup);
+			};
 		}
-
-		/// <summary>
-		/// BackgroundWorker used in Reload (or FetchRange) method uses this method to load items from database
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void _backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+		public void Dispose()
 		{
-			//cancel the worker if needed
-			System.ComponentModel.BackgroundWorker worker = sender as System.ComponentModel.BackgroundWorker;
-			if (worker.CancellationPending == true)
-			{
-				e.Cancel = true;
-				return;
-			}
-
-			bool acquiredLock = false;
-			try
-			{
-				//enter worker's critical segment
-				System.Threading.Monitor.TryEnter(_lockObject, 2000, ref acquiredLock);
-				if (acquiredLock)
-				{
-					//load blocks within the modified range
-					var rangeStart = _rangeStart.AddHours(_startHourMargin);
-					var rangeEnd = _rangeEnd.AddHours(_endHourMargin);
-					var blockIds = new DataServices.BlockDataService(_uow).GetIdsInRange(rangeStart, rangeEnd).ToArray();
-
-					//change the background worker's progress for each block in the range
-					foreach (var blockId in blockIds)
-					{
-						bool err = true;
-						while (err)
-							try
-							{
-								System.Threading.Thread.Sleep(_workerSleepTime);
-								//load full data
-								var data = new BlockFullData(blockId);
-								//load vm thru worker
-								worker.ReportProgress(1, data);
-								err = false;
-							}
-							catch { }
-					}
-
-					//load npt Ids within the modified range
-					var nptIds = new DataServices.NPTDataService(_uow).GetIdsInRange(rangeStart, rangeEnd).ToArray();
-
-					//change the background worker's progress for each npt in the range
-					foreach (var nptId in nptIds)
-					{
-						System.Threading.Thread.Sleep(_workerSleepTime);
-						worker.ReportProgress(2, nptId);
-					}
-				}
-			}
-			finally
-			{
-				if (acquiredLock)
-				{
-					System.Threading.Monitor.Exit(_lockObject);
-				}
-			}
+			if (Manager != null)
+				Manager.Dispose();
 		}
-
-		/// <summary>
-		/// BackgroundWorker used in Reload (or FetchRange) method uses this method to add items to Vm
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void _backgroundWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
-		{
-			//tries 3 times if error occurs
-			int tries = 3;
-			while (true)
-			{
-				try
-				{
-					//add blocks to Vm within range
-					if (e.ProgressPercentage == 1)
-					{
-						var data = e.UserState as BlockFullData;
-						if (BlockFullData.IsNull(data)) return;
-						var vm = AddItem(data);
-					}
-					//add npts to Vm within range
-					else if (e.ProgressPercentage == 2)
-					{
-						var nptId = (int)e.UserState;
-						var vm = AddNPT(nptId);
-						vm.ViewMode = ViewMode;
-					}
-
-					//end if it was successful
-					return;
-				}
-				catch
-				{
-					//try again if error occured
-					if (--tries < 0) return;
-				}
-			}
-		}
-
-		/// <summary>
-		/// BackgroundWorker used in Reload (or FetchRange) method uses this method in the end to remove extra items
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void _backgroundWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
-		{
-			//Remove outside-the-window items
-			if (!e.Cancelled)
-			{
-				var rangeStart = _rangeStart.AddHours(_startHourMargin);
-				var rangeEnd = _rangeEnd.AddHours(_endHourMargin);
-
-				int count = this.Count;
-				for (int i = 0; i < count; i++)
-				{
-					//remove outside-the-window npts
-					var removeNptList = this[i].NPTs.Where(x =>
-						x.StartDateTime.AddSeconds(x.DurationSeconds) < rangeStart ||
-						x.StartDateTime > rangeEnd).ToArray();
-					foreach (var npt in removeNptList)
-					{
-						this[i].NPTs.Remove(npt);
-					}
-					//remove outside-the-window blocks
-					var removeList = this[i].Blocks.Where(x =>
-						x.StartDateTime.AddSeconds(x.DurationSeconds) < rangeStart ||
-						x.StartDateTime > rangeEnd).ToArray();
-					foreach (var block in removeList)
-					{
-						this[i].Blocks.Remove(block);
-					}
-				}
-			}
-
-			//dispose the worker
-			System.ComponentModel.BackgroundWorker worker = sender as System.ComponentModel.BackgroundWorker;
-			worker.Dispose();
-		}
-
-		void _backgroundWorker_Disposed(object sender, EventArgs e)
-		{
-			_backgroundWorker = null;
-		}
-
-		#endregion
 
 		#region Task Operations
 		/// <summary>
@@ -301,7 +122,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// </remarks>
 		/// <param name="data">full data fetched from database, UOW of which will be Block's</param>
 		/// <returns></returns>
-		public BlockVm AddItem(BlockFullData data)
+		public BlockVm AddItem(PPItemBlock data)
 		{
 			try
 			{
@@ -326,6 +147,7 @@ namespace Soheil.Core.ViewModels.PP
 
 		/// <summary>
 		/// Removes a blockVm from this collection based on its Id
+		/// <para>***DELETES FROM DATABASE***</para>
 		/// </summary>
 		/// <param name="vm">vm of block to remove (Id and RowIndex are used)</param>
 		public void RemoveItem(BlockVm vm)
@@ -333,11 +155,24 @@ namespace Soheil.Core.ViewModels.PP
 			if (vm == null) return;
 			try
 			{
+				//remove from database
 				_blockDataService.DeleteModel(vm.Model);
-				if (BlockRemoved != null) BlockRemoved(vm.Id);
+
+				//remove from vm
 				this[vm.RowIndex].Blocks.RemoveWhere(x => x.Id == vm.Id);
+
+				//deselect selected block
+				if (BlockRemoved != null) BlockRemoved(vm.Id);
 			}
 			catch (Exception ex) { vm.Message.AddEmbeddedException(ex.Message); }
+		}
+		public void RemoveItem(Model.Block model)
+		{
+			//remove from vm
+			this[model.StateStation.Station.Index].Blocks.RemoveWhere(x => x.Id == model.Id);
+
+			//deselect selected block
+			if (BlockRemoved != null) BlockRemoved(model.Id);
 		}
 
 		#endregion
@@ -380,12 +215,27 @@ namespace Soheil.Core.ViewModels.PP
 		/// Removes a nptVm from this collection based on its Id
 		/// </summary>
 		/// <param name="vm">vm of npt to remove (Id and RowIndex are used)</param>
-		public void RemoveNPT(NPTVm vm)
+		public void RemoveItem(NPTVm vm)
 		{
 			try
 			{
-				if (vm != null && NptRemoved != null) NptRemoved(vm.Id); 
+				//remove from vm
 				this[vm.RowIndex].NPTs.RemoveWhere(x => x.Id == vm.Id);
+
+				//deselect selected npt
+				if (vm != null && NptRemoved != null) NptRemoved(vm.Id);
+			}
+			catch { }
+		}
+		public void RemoveItem(Model.Setup model)
+		{
+			try
+			{
+				//remove from vm
+				this[model.Warmup.Station.Index].NPTs.RemoveWhere(x => x.Id == model.Id);
+
+				//deselect selected npt
+				if (model != null && NptRemoved != null) NptRemoved(model.Id);
 			}
 			catch { }
 		}
@@ -406,7 +256,7 @@ namespace Soheil.Core.ViewModels.PP
 				var result = await Task.Run(() => tmp.InsertSetupBeforeBlock(id));
 
 				//in case of error callback with result
-				if (result.IsSaved) Reload();
+				if (result.IsSaved) Manager.ForceReload();
 				else vm.InsertSetupBeforeCallback(result);
 			});
 			vm.DeleteItemCommand = new Commands.Command(o =>

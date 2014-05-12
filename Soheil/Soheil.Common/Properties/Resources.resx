@@ -795,4 +795,13 @@
   <data name="txtQuarterHour" xml:space="preserve">
     <value>ربع ساعت</value>
   </data>
+  <data name="txtMergingStrategy" xml:space="preserve">
+    <value>رفتار شیفت ناقص</value>
+  </data>
+  <data name="ttMergingStrategy" xml:space="preserve">
+    <value>آخرین شیفت این برنامه زمانی (درست به هنگام فرارسیدن برنامه بعدی) ممکن است ناقص بماند. رفتار این شیفت مطابق گزینه انتخاب شده خواهد بود. گزینه ها: Incomplete: ناقص بماند، WithLastShift: جزوی از شیفت قبل خود محسوب شود، Closed: تعطیل در نظر گرفته شود</value>
+  </data>
+  <data name="txtSelectWorkProfile" xml:space="preserve">
+    <value>ساعت کاری مطابق:</value>
+  </data>
 </root>

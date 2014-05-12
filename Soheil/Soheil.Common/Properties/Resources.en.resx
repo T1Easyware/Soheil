@@ -790,4 +790,13 @@
   <data name="txtQuarterHour" xml:space="preserve">
     <value>Qurater Hour</value>
   </data>
+  <data name="txtMergingStrategy" xml:space="preserve">
+    <value>Imperfect shift behavior</value>
+  </data>
+  <data name="ttMergingStrategy" xml:space="preserve">
+    <value>The last shift of this plan (exactly when next plan emerges) might be imperfect. It will behave as the selected choice. Choices are: Incomplete: remain imperfect, WithLastShift: merge with its previous shift, Closed: consider closed</value>
+  </data>
+  <data name="txtSelectWorkProfile" xml:space="preserve">
+    <value>Select Working hours:</value>
+  </data>
 </root>

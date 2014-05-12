@@ -1133,6 +1133,7 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="StartSeconds" Type="int" Nullable="false" DefaultValue="0" />
     <Property Name="EndSeconds" Type="int" Nullable="false" DefaultValue="0" />
+    <Property Name="IsOpen" Type="bit" Nullable="false" />
     <Property Name="WorkDay_Id" Type="int" Nullable="false" />
     <Property Name="WorkShiftPrototype_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -3928,6 +3929,7 @@
           <NavigationProperty Name="WorkBreaks" Relationship="SoheilEdm.WorkShiftWorkBreak" FromRole="WorkShift" ToRole="WorkBreak" />
           <NavigationProperty Name="WorkDay" Relationship="SoheilEdm.WorkDayWorkShift" FromRole="WorkShift" ToRole="WorkDay" />
           <NavigationProperty Name="WorkShiftPrototype" Relationship="SoheilEdm.WorkShiftPrototypeWorkShift" FromRole="WorkShift" ToRole="WorkShiftPrototype" />
+          <Property Name="IsOpen" Type="Boolean" Nullable="false" DefaultValue="True" />
         </EntityType>
         <EntityType Name="WorkBreak">
           <Key>
@@ -4791,6 +4793,7 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="StartSeconds" ColumnName="StartSeconds" />
           <ScalarProperty Name="EndSeconds" ColumnName="EndSeconds" />
+          <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

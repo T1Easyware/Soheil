@@ -17,12 +17,12 @@ namespace Soheil.Core.ViewModels.PP
 	/// <summary>
 	/// ViewModel for PPTable
 	/// </summary>
-	public class PPTableVm : DependencyObject, ISingularList
+	public class PPTableVm : DependencyObject, ISingularList, IDisposable
 	{
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 		public AccessType Access { get; private set; }
-		private static readonly object _LOCK = new object();
 
+		private bool _suppressUpdateRange = true;
 
 
 		#region Ctor, Init and Load
@@ -35,6 +35,11 @@ namespace Soheil.Core.ViewModels.PP
 			Access = access;
 			initializeCommands();
 			initializeEditors();
+		}
+		public void Dispose()
+		{
+			if (PPItems != null)
+				PPItems.Dispose();
 		}
 
 		/// <summary>
@@ -101,9 +106,9 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		System.Threading.Timer _initialTimer;
 		/// <summary>
-		/// A constant value (10) for Intervals of _initialTimer
+		/// A constant value (40) for Delay of _initialTimer
 		/// </summary>
-		const int _initialTimerInterval = 10;
+		const int _initialTimerInterval = 40;
 		/// <summary>
 		/// Resets the timeline to Now, loads PPItems in range and loads Stations
 		/// <para>This method is using _initialTimer so its body will be run with a 10ms delay</para>
@@ -116,6 +121,8 @@ namespace Soheil.Core.ViewModels.PP
 			_initialTimer = new System.Threading.Timer(new System.Threading.TimerCallback
 				(t => Dispatcher.Invoke(() =>
 				{
+					_suppressUpdateRange = true;
+
 					//initialize DateTimes
 					var currentDate = Arash.PersianDate.Today.ToDateTime();
 					var startDate = currentDate.GetNorooz();
@@ -128,6 +135,28 @@ namespace Soheil.Core.ViewModels.PP
 
 					//initialize PPItems
 					PPItems = new PPItemCollection(this);
+					PPItems.Manager.DayColorsUpdated += (startingDate, colors) =>
+					{
+						//refetch it, if selected month is changed after fetch
+						if (SelectedMonth.Data != startingDate)
+						{
+							PPItems.Manager.FetchDayColorsOfMonth(SelectedMonth.Data);
+							return;
+						}
+						//colorize days
+						for (int i = 0; i < colors.Length; i++)
+						{
+							Days[i].Color = colors[i];
+						}
+					};
+					PPItems.Manager.WorkTimeAdded += item =>
+					{
+						var vms = Soheil.Core.ViewModels.OrganizationCalendar.WorkTimeRangeVm.CreateAuto(item);
+						foreach (var vm in vms)
+						{
+							ShiftsAndBreaks.Add(vm);
+						}
+					};
 					PPItems.BlockAdded += vm =>
 					{
 						initializeCommands(vm);
@@ -166,54 +195,27 @@ namespace Soheil.Core.ViewModels.PP
 					}
 
 					//Loads PPItems
+					_suppressUpdateRange = false;
 					GoToNowCommand.Execute(null);
 					BackupZoom();
 				})), null, _initialTimerInterval, System.Threading.Timeout.Infinite);
 		}
 
+
 		/// <summary>
-		/// This timer only runs when AlwaysLoadTasks is set to true
+		/// When set to true, PPItems.Manager will refresh PPItems automatically
 		/// </summary>
-		System.Timers.Timer _periodicTimer;
-		/// <summary>
-		/// A constant value (5000) for Intervals of _periodicTimer
-		/// </summary>
-		const int _periodicTimerInterval = 5000;
-		/// <summary>
-		/// When set to true, _periodicTimer will safely Reload PPItems in 5s intervals
-		/// </summary>
-		public bool AlwaysLoadTasks
+		public bool AutoRefresh
 		{
-			get { return (bool)GetValue(AlwaysLoadTasksProperty); }
-			set { SetValue(AlwaysLoadTasksProperty, value); }
+			get { return (bool)GetValue(AutoRefreshProperty); }
+			set { SetValue(AutoRefreshProperty, value); }
 		}
-		public static readonly DependencyProperty AlwaysLoadTasksProperty =
-			DependencyProperty.Register("AlwaysLoadTasks", typeof(bool), typeof(PPTableVm),
-			new UIPropertyMetadata(false, (d, e) =>
+		public static readonly DependencyProperty AutoRefreshProperty =
+			DependencyProperty.Register("AutoRefresh", typeof(bool), typeof(PPTableVm),
+			new UIPropertyMetadata(true, (d, e) =>
 			{
 				var vm = (PPTableVm)d;
-				if ((bool)e.NewValue)
-				{
-					//Initialize the timer
-					if (vm._periodicTimer == null)
-					{
-						vm._periodicTimer = new System.Timers.Timer(_periodicTimerInterval);
-
-						//add an inline event handler for the timer to safely Reload PPItems
-						vm._periodicTimer.Elapsed += ((a, b) =>
-						{
-							try { vm.Dispatcher.Invoke(() => vm.PPItems.Reload()); }
-							catch { }
-						});
-					}
-					//Start the timer
-					vm._periodicTimer.Start();
-				}
-				else if (vm._periodicTimer != null)
-				{
-					//Stops the timer
-					vm._periodicTimer.Stop();
-				}
+				vm.PPItems.Manager.IsAutoRefresh = (bool)e.NewValue;
 			}));
 
 		/// <summary>
@@ -225,48 +227,16 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="loadTasksAsWell">Load PP Items (setups, tasks, ...) while loading timeline</param>
 		public void UpdateRange(bool loadItemsAsWell)
 		{
-			if (System.Threading.Monitor.TryEnter(_LOCK, 2000))
-			{
-				try
-				{
-					//finds start and end of the visible range in PPTable
-					var start = SelectedMonth.Data.AddHours(HoursPassed);
-					var end = start.AddHours(GridWidth / HourZoom);
+			//finds start and end of the visible range in PPTable
+			var start = SelectedMonth.Data.AddHours(HoursPassed);
+			var end = start.AddHours(GridWidth / HourZoom);
 
-					//Loads hours items
-					Hours.FetchRange(start, end);
+			//Loads hours items
+			Hours.FetchRange(start, end);
 
-					//Loads work profile data
-					updateShiftsAndBreaks(start, end);
-
-					//Loads PPItems
-					if (loadItemsAsWell || AlwaysLoadTasks)
-						PPItems.FetchRange(start, end);
-				}
-				finally
-				{
-					System.Threading.Monitor.Exit(_LOCK);
-				}
-			}
-		}
-		/// <summary>
-		/// updates all shifts and breaks within specified range
-		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="end"></param>
-		private void updateShiftsAndBreaks(DateTime start, DateTime end)
-		{
-			ShiftsAndBreaks.Clear();
-			using (var ds = new DataServices.WorkProfilePlanDataService())
-			{
-				var list = ds.GetShiftsAndBreaksInRange(start, end);
-				foreach (var item in list)
-				{
-					var vm = Soheil.Core.ViewModels.OrganizationCalendar.WorkTimeRangeVm.CreateAuto(item);
-					if (vm != null)
-						ShiftsAndBreaks.Add(vm);
-				}
-			}
+			//Loads PPItems
+			if (loadItemsAsWell || AutoRefresh)
+				PPItems.Manager.AutoFetchRange(start, end);
 		}
 		#endregion
 
@@ -454,10 +424,12 @@ namespace Soheil.Core.ViewModels.PP
 
 				//reloads the days collection according to DateTime of selected month
 				vm.Days.Reload(val.Data);
+				vm.PPItems.Manager.FetchDayColorsOfMonth(val.Data);
 
 				//changes the DayZoom to match the number of days in the current month
 				vm.DayZoom = vm.GridWidth / val.NumOfDays;
-				vm.UpdateRange(true);
+				if (!vm._suppressUpdateRange)
+					vm.UpdateRange(true);
 			}));
 
 		#endregion
@@ -1011,6 +983,8 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty ShowInsertSetupButtonProperty =
 			DependencyProperty.Register("ShowInsertSetupButton", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(false));
 		#endregion
+
+
 
 	}
 }

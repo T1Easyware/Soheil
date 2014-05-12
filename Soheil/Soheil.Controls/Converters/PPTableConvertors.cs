@@ -25,72 +25,6 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
-	public class TimeRollItemBackgroundConverter : IValueConverter
-	{
-		readonly Color HEADER = Color.FromArgb(255, 0, 180, 230);
-		readonly Color NIGHT = Color.FromArgb(31, 0, 0, 0);
-		readonly Color DAY = Color.FromArgb(31, 255, 255, 255);
-		readonly Color NORMAL_DAY = Color.FromArgb(31, 0, 0, 0);
-		readonly Color THURSDAY = Color.FromArgb(31, 127, 127, 127);
-		readonly Color FRIDAY = Color.FromArgb(31, 255, 255, 255);
-		readonly Color EVENSEASON = Color.FromArgb(31, 255, 255, 255);
-		readonly Color ODDSEASON = Color.FromArgb(31, 0, 0, 0);
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			var dt = (DateTime)value;
-			switch ((string)parameter)
-			{
-				case "Hour":
-					if (dt.Hour == 0) return HEADER;
-					return (dt.Hour < 7 || dt.Hour > 18) ? NIGHT : DAY;
-				case "Day":
-					if (dt.GetPersianDayOfWeek() == PersianDayOfWeek.جمعه) return FRIDAY;
-					if (dt.GetPersianDayOfWeek() == PersianDayOfWeek.پنجشنبه) return THURSDAY;
-					return NORMAL_DAY;
-				case "Month":
-					return (int)dt.GetPersianMonth() % 2 == 0 ? EVENSEASON : ODDSEASON;
-				default:
-					return Brushes.Green;
-			}
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
-	public class TimeRollItemForegroundConverter : IValueConverter
-	{
-		readonly Color NIGHT = Color.FromRgb(127, 255, 255);
-		readonly Color DAY = Color.FromRgb(255, 255, 127);
-		readonly Color NORMAL_DAY = Colors.Silver;
-		readonly Color THURSDAY = Color.FromRgb(220, 196, 127);
-		readonly Color FRIDAY = Color.FromRgb(255, 127, 127);
-		readonly Color EVENSEASON = Colors.Silver;
-		readonly Color ODDSEASON = Colors.Silver;
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			var dt = (DateTime)value;
-			switch ((string)parameter)
-			{
-				case "Hour":
-					return (dt.Hour < 7 || dt.Hour > 18) ? NIGHT : DAY;
-				case "Day":
-					if (dt.GetPersianDayOfWeek() == PersianDayOfWeek.جمعه) return FRIDAY;
-					if (dt.GetPersianDayOfWeek() == PersianDayOfWeek.پنجشنبه) return THURSDAY;
-					return NORMAL_DAY;
-				case "Month":
-					return (int)dt.GetPersianMonth() % 2 == 0 ? EVENSEASON : ODDSEASON;
-				default:
-					return Brushes.Green;
-			}
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
 
 	public class TaskProgressColorConverter : IMultiValueConverter
 	{
@@ -148,6 +82,8 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+
+
 	public class HasErrorToShadowColor : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -407,10 +343,13 @@ namespace Soheil.Controls.Converters.PP
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return 0d;
-			var start = (DateTime)values[0];
-			var end = (DateTime)values[1];
 			var oneHourWidth = (double)values[2];
-			return end.Subtract(start).TotalSeconds * oneHourWidth / 3600;
+			//if (values[0].GetType() == typeof(DateTime))
+				return ((DateTime)values[1]).Subtract((DateTime)values[0]).TotalSeconds * oneHourWidth / 3600;
+			/*else if (values[0].GetType() == typeof(int))
+				return ((int)values[1] - (int)values[0]) * oneHourWidth / 3600;
+			else
+				return ((double)values[1] - (double)values[0]) * oneHourWidth / 3600;*/
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -423,9 +362,12 @@ namespace Soheil.Controls.Converters.PP
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return 0d;
-			var start = (DateTime)values[0];
 			var oneHourWidth = (double)values[1];
-			return (start.Ticks / TimeSpan.TicksPerSecond) * oneHourWidth / 3600;
+			return new Thickness(
+				(
+					(((DateTime)values[0]).GetPersianDayOfYear() * 24) + 
+					((DateTime)values[0]).TimeOfDay.TotalHours
+				) * oneHourWidth, 0, 0, 0);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -450,6 +392,35 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+
+	public class HideIfSmallerThan20 : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (value == DependencyProperty.UnsetValue) return Visibility.Collapsed;
+			return (double)value < 20 ? Visibility.Collapsed : Visibility.Visible;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+	public class HideIfSmallerThan40 : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (value == DependencyProperty.UnsetValue) return Visibility.Collapsed;
+			return (double)value < 40 ? Visibility.Collapsed : Visibility.Visible;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+
 
 	#endregion
 
@@ -743,6 +714,24 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+
+	public class SumOfThree : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if(values[0] != DependencyProperty.UnsetValue && values[1] != DependencyProperty.UnsetValue&&values[2] != DependencyProperty.UnsetValue)
+			{
+				return (double)values[0] + (double)values[1] + (double)values[2];
+			}
+			return 0;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 
 	public class FloatMultiplier : IValueConverter
 	{

@@ -41,7 +41,7 @@
 					<Canvas>
 						<!--whole shift-->
 						<Canvas>
-							<Border Height="3" IsHitTestVisible="False" Background="{Binding Prototype.SelectedColor.Color, Converter={StaticResource colorFixer}}"
+							<Border Height="3" Background="White"
 									Margin="{Binding StartSeconds, Converter={StaticResource ShiftStartSecondsToMargin}, ConverterParameter=W}">
 								<Border.Width>
 									<MultiBinding Converter="{StaticResource ShiftDurationToWidth}">

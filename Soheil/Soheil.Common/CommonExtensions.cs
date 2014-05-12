@@ -50,6 +50,11 @@ namespace Soheil.Common
 		{
 			return (PersianShortMonth)_persianCalendar.GetMonth(dateTime);
 		}
+		/// <summary>
+		/// returns one-biased index
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
 		public static int GetPersianDayOfMonth(this DateTime dateTime)
 		{
 			return _persianCalendar.GetDayOfMonth(dateTime);
@@ -58,6 +63,11 @@ namespace Soheil.Common
 		{
 			return (PersianDayOfWeek)(((int)dateTime.DayOfWeek + 1) % 7);
 		}
+		/// <summary>
+		/// returns one-biased index
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
 		public static int GetPersianDayOfYear(this DateTime dateTime)
 		{
 			return _persianCalendar.GetDayOfYear(dateTime);

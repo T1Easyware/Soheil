@@ -15,10 +15,14 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			Model = model;
 			StartSeconds = model.StartSeconds;
 			EndSeconds = model.EndSeconds;
+			_freezeSeconds = false;
 		}
 
 		public Model.WorkBreak Model { get; private set; }
 		public int Id { get { return Model.Id; } }
+
+		private bool _freezeSeconds = true;
+
 		//StartSeconds Dependency Property
 		public int StartSeconds
 		{
@@ -37,6 +41,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				var vm = (WorkBreakVm)d;
 				var val = (int)v;
 				val = SoheilFunctions.RoundFiveMinutes(val);
+				if (vm._freezeSeconds) return val;
 				if (val > vm.EndSeconds) return vm.EndSeconds;
 				return val;
 			}));
@@ -58,6 +63,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				var vm = (WorkBreakVm)d;
 				var val = (int)v;
 				val = SoheilFunctions.RoundFiveMinutes(val);
+				if (vm._freezeSeconds) return val;
 				if (val < vm.StartSeconds) return vm.StartSeconds;
 				return val;
 			}));

@@ -9,6 +9,7 @@ using Soheil.Model;
 using Soheil.Dal;
 using Soheil.Common;
 using Soheil.Core.Base;
+using System.Windows.Media;
 
 namespace Soheil.Core.DataServices
 {
@@ -190,9 +191,7 @@ namespace Soheil.Core.DataServices
 
 		internal List<WorkProfilePlan> GetInRange(DateTime startDate, DateTime endDate)
 		{
-			var plans = workProfilePlanRepository.Find(x =>
-				(startDate <= x.StartDate && x.StartDate < endDate) ||
-				(startDate < x.EndDate && x.EndDate <= endDate),
+			var plans = workProfilePlanRepository.Find(x => !(x.EndDate < startDate || x.StartDate > endDate),
 				"WorkProfile",
 				"WorkProfile.WorkDays",
 				"WorkProfile.WorkDays.WorkShifts",
@@ -221,6 +220,7 @@ namespace Soheil.Core.DataServices
 			return (BusinessDayType)states.Min();
 		}
 
+
         /// <summary>
         /// Returns every day of the given range [start,end)
 		/// <para>where value of each day is its effective BusinessDayStates considering Holidays</para>
@@ -228,7 +228,7 @@ namespace Soheil.Core.DataServices
         /// </summary>
         /// <param name="startDate">Included start date</param>
         /// <param name="endDate">Excluded end date</param>
-        /// <returns>an array of BusinessDayType each element for one day</returns>
+        /// <returns>an array of BusinessDayTypes, each element for one day</returns>
 		internal List<BusinessDayType> GetBusinessDayStatesInRange(DateTime startDate, DateTime endDate)
 		{
 			var plans = GetInRange(startDate, endDate);
@@ -240,24 +240,51 @@ namespace Soheil.Core.DataServices
 			}
 			return list;
 		}
-
-		internal List<object> GetShiftsAndBreaksInRange(DateTime startDate, DateTime endDate)
+		/// <summary>
+        /// Returns every day of the given range [start,end)
+		/// <para>where value of each day is its effective color considering Holidays</para>
+		/// <para>Priority of states are as follows: Closed, Special1, Special2, Special3, HalfClosed, Open</para>
+        /// </summary>
+        /// <param name="startDate">Included start date</param>
+        /// <param name="endDate">Excluded end date</param>
+        /// <returns>an array of colors, each element for one day</returns>
+		internal List<Color> GetBusinessDayColorsInRange(DateTime startDate, DateTime endDate)
 		{
-			startDate = startDate.Date;
-			endDate = endDate.Date.AddDays(1);
-			List<object> list = new List<object>();
-			var plans = GetInRange(startDate, endDate);
+			var plans = GetInRange(startDate, endDate).OrderByDescending(x => x.ModifiedDate);
+			List<Color> list = new List<Color>();
 			for (DateTime date = startDate; date < endDate; date = date.AddDays(1))
 			{
-				var plan = plans.OrderBy(x => x.ModifiedDate).LastOrDefault(x => x.StartDate <= date && date < x.EndDate);
+				var plan = plans.FirstOrDefault(x => x.StartDate <= date && date < x.EndDate);
+				list.Add(WorkDay.GetColorByNr((int)GetEffectiveBizState(date, plan)));
+			}
+			return list;
+		}
+		
+		/// <summary>
+		/// Gets a list of active profile Shifts with their actual day start in the given time range
+		/// </summary>
+		/// <param name="startDate">start of this date - 2 days is considered</param>
+		/// <param name="endDate">start of this date + 2 days is considered</param>
+		/// <returns>Returns a list of Tuple&lt;<see cref="Soheil.Model.WorkShift"/>, DateTime&gt;</returns>
+		public List<Tuple<WorkShift, DateTime>> GetShiftsInRange(DateTime startDate, DateTime endDate)
+		{
+			List<Tuple<WorkShift, DateTime>> list = new List<Tuple<WorkShift, DateTime>>();
+
+			startDate = startDate.Date.AddDays(-2);
+			endDate = endDate.Date.AddDays(2);
+			var plans = GetInRange(startDate, endDate).OrderByDescending(x => x.ModifiedDate);
+			
+			for (DateTime date = startDate; date < endDate; date = date.AddDays(1))
+			{
+				var plan = plans.FirstOrDefault(x => x.StartDate <= date && date < x.EndDate);
+
 				var bizState = GetEffectiveBizState(date, plan);
 				if (bizState != BusinessDayType.None)
 				{
 					var day = plan.WorkProfile.WorkDays.First(x => x.BusinessState == bizState);
 					foreach (var shift in day.WorkShifts)
 					{
-						list.Add(shift);
-						list.AddRange(shift.WorkBreaks);
+						list.Add(new Tuple<WorkShift, DateTime>(shift, date));
 					}
 				}
 			}

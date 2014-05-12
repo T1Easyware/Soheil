@@ -26,7 +26,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// Gets Id property of the model representing this ViewModel
 		/// </summary>
 		public override int Id { get { return Model.Id; } }
-		Soheil.Core.PP.BlockFullData _fullData;
+		Soheil.Core.PP.PPItemBlock _fullData;
 
 		#region Ctor, reload
 		/// <summary>
@@ -35,7 +35,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <remarks>commands must be set after creating a block</remarks>
 		/// <param name="model"></param>
 		/// <param name="parent"></param>
-        public BlockVm(Soheil.Core.PP.BlockFullData data, PPItemCollection parent)
+        public BlockVm(Soheil.Core.PP.PPItemBlock data, PPItemCollection parent)
 			: base()
 		{
 			UOW = data.UOW;

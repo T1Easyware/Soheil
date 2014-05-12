@@ -141,7 +141,7 @@ namespace Soheil.Core.ViewModels.PP
 				try
 				{
 					new DataServices.NPTDataService().DeleteModel(Id);
-					Parent.RemoveNPT(this);
+					Parent.RemoveItem(this);
 				}
 				catch (Exception exp)
 				{

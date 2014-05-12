@@ -28,8 +28,39 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			BusinessState = model.BusinessState;
 			foreach (var workShift in model.WorkShifts)
 			{
-				Shifts.Add(new WorkShiftVm(workShift, prototypes.First(x => x.Id == workShift.WorkShiftPrototype.Id)));
+				var shift = new WorkShiftVm(workShift, prototypes.First(x => x.Id == workShift.WorkShiftPrototype.Id));
+				shift.IsOpenChanged += newVal => updateThreeStateIsOpen();
+				Shifts.Add(shift);
 			}
+
+			Shifts.CollectionChanged += (s, e) =>
+			{
+				if (e.NewItems != null)
+					foreach (WorkShiftVm shift in e.NewItems)
+					{
+						_model.WorkShifts.Add(shift.Model);
+						shift.IsOpenChanged += newVal => updateThreeStateIsOpen();
+					}
+				if (e.OldItems != null)
+					foreach (WorkShiftVm shift in e.OldItems)
+					{
+						_model.WorkShifts.Remove(shift.Model);
+					}
+				updateThreeStateIsOpen();
+			};
+
+			ToggleIsOpenCommand = new Commands.Command(o =>
+			{
+				if (Shifts.Any(x => !x.IsOpen))
+					foreach (var shift in Shifts)
+						shift.IsOpen = true;
+				else
+					foreach (var shift in Shifts)
+						shift.IsOpen = false;
+				updateThreeStateIsOpen();
+			});
+
+			updateThreeStateIsOpen();
 		}
 
 		private Model.WorkDay _model;
@@ -38,6 +69,12 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		/// Gets the Id of this WorkDay
 		/// </summary>
 		public int Id { get { return _model.Id; } }
+
+		/// <summary>
+		/// Gets a bindable collection for WorkShifts in this WorkDay (equal to number of shift allowed in prototype)
+		/// </summary>
+		public ObservableCollection<WorkShiftVm> Shifts { get { return _shifts; } }
+		private ObservableCollection<WorkShiftVm> _shifts = new ObservableCollection<WorkShiftVm>();
 		
 		/// <summary>
 		/// Gets or sets the bindable name of this WorkDay
@@ -92,9 +129,29 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			}));
 
 		/// <summary>
-		/// Gets a bindable collection for WorkShifts in this WorkDay (equal to number of shift allowed in prototype)
+		/// Gets or sets a bindable command that toggles value of IsOpen in all shifts of this work day
 		/// </summary>
-		public ObservableCollection<WorkShiftVm> Shifts { get { return _shifts; } }
-		private ObservableCollection<WorkShiftVm> _shifts = new ObservableCollection<WorkShiftVm>();
+		public Commands.Command ToggleIsOpenCommand
+		{
+			get { return (Commands.Command)GetValue(ToggleIsOpenCommandProperty); }
+			set { SetValue(ToggleIsOpenCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ToggleIsOpenCommandProperty =
+			DependencyProperty.Register("ToggleIsOpenCommand", typeof(Commands.Command), typeof(WorkDayVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets a dependency property that indicates the IsOpen state of this work day
+		/// <para>0:close, 1:open, 2:none</para>
+		/// </summary>
+		public static readonly DependencyProperty ThreeStateIsOpenProperty =
+			DependencyProperty.Register("ThreeStateIsOpen", typeof(int), typeof(WorkDayVm), new UIPropertyMetadata(1));
+		/// <summary>
+		/// Updates the effective value of 3-State variable 'IsOpen' (it's removed! look for ThreeStateIsOpenProperty)
+		/// </summary>
+		private void updateThreeStateIsOpen()
+		{
+			if (_model.WorkShifts.All(x => x.IsOpen)) SetValue(ThreeStateIsOpenProperty, 1);
+			else if (_model.WorkShifts.Any(x => x.IsOpen)) SetValue(ThreeStateIsOpenProperty, 2);
+			else SetValue(ThreeStateIsOpenProperty, 0);
+		}
 	}
 }

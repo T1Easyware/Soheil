@@ -51,7 +51,11 @@ namespace Soheil.Model
 		public static WorkDay CreateDefault(WorkProfile parent, WorkShiftPrototype proto, BusinessDayType state)
 		{
 			var model = new WorkDay();
-			model.WorkShifts.Add(WorkShift.CreateDefault(model, proto));
+			
+			var shift = WorkShift.CreateDefault(model, proto);
+			shift.IsOpen = (state == BusinessDayType.Open || state == BusinessDayType.HalfClosed);
+			model.WorkShifts.Add(shift);
+
 			model.Name = GetNameByNr((int)state);
 			model.Color = GetColorByNr((int)state);
 			model.BusinessState = state;

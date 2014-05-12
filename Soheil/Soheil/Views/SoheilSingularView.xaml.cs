@@ -185,13 +185,17 @@ namespace Soheil.Views
 		private FrameworkElement ic_months;
 		#endregion
 
-		#region ppTable_Loaded_1, Grid_SizeChanged
-		private void ppTable_Loaded_1(object sender, RoutedEventArgs e)
+		#region ppTable_Loaded, Grid_SizeChanged
+		private void ppTable_Loaded(object sender, RoutedEventArgs e)
 		{
 			ic_months = (ItemsControl)(sender as FrameworkElement).FindChild("ic_months");
 
 			PPTableVm.UpdateWidths();
 			PPTableVm.ResetTimeLine();
+		}
+		private void ppTable_Unloaded(object sender, RoutedEventArgs e)
+		{
+			sender.GetDataContext<PPTableVm>().Dispose();
 		}
 		private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
@@ -352,10 +356,7 @@ namespace Soheil.Views
 		}
 		#endregion
 
-
-
         #endregion
-
 		#endregion
 	}
 }
