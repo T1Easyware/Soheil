@@ -1,0 +1,412 @@
+﻿<UserControl x:Class="Soheil.Views.PP.TaskEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core" 
+             xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Editor;assembly=Soheil.Core" 
+             xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+             xmlns:fpcView="clr-namespace:Soheil.Views.Fpc" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="800" FlowDirection="RightToLeft">
+	<UserControl.Resources>
+
+		<!-- general operator -->
+		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="allOperatorsTemplate">
+			<Button Height="25" Name="btn" HorizontalAlignment="Stretch" Click="SelectOperator" Margin="0"
+					IsEnabled="{Binding IsSelected, Converter={StaticResource inverter}}" Padding="0">
+				<Button.Visibility>
+					<MultiBinding Converter="{StaticResource filterMaker}">
+						<Binding Path="Code"/>
+						<Binding Path="Name"/>
+						<Binding ElementName="filterText" Path="Text"/>
+					</MultiBinding>
+				</Button.Visibility>
+				<WrapPanel HorizontalAlignment="Left" TextBlock.Foreground="Black">
+					<TextBlock Name="txtCode" Text="{Binding Code}" Foreground="Gray"/>
+					<TextBlock Text="{Binding EffectiveSkill}" Foreground="#099"/>
+					<TextBlock Name="txtName" Text="{Binding Name}" Foreground="DimGray"/>
+				</WrapPanel>
+			</Button>
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding IsSelected}" Value="True">
+					<Setter TargetName="txtCode" Property="Foreground" Value="LightGray"/>
+					<Setter TargetName="txtName" Property="Foreground" Value="Black"/>
+				</DataTrigger>
+				<Trigger SourceName="btn" Property="Visibility" Value="Hidden">
+					<Trigger.EnterActions>
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.5">
+								<DoubleAnimation 
+									Storyboard.TargetName="btn" 
+									Storyboard.TargetProperty="Height" 
+									To="0" Duration="0:0:0.5"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</Trigger.EnterActions>
+					<Trigger.ExitActions>
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.5">
+								<DoubleAnimation 
+									Storyboard.TargetName="btn" 
+									Storyboard.TargetProperty="Height" 
+									To="25" Duration="0:0:0.5"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</Trigger.ExitActions>
+				</Trigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
+		<!-- selected operator -->
+		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="selectedOperatorsTemplate">
+			<StackPanel Name="root">
+				<Button Height="25" Name="btn_deselect" HorizontalAlignment="Stretch" Click="DeselectOperator" Margin="0" Padding="0"
+					Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}">
+					<WrapPanel HorizontalAlignment="Left">
+						<TextBlock Text="{Binding Code}" Foreground="Gray"/>
+						<TextBlock Text="{Binding EffectiveSkill}" Foreground="#099"/>
+						<TextBlock Text="{Binding Name}" Foreground="DimGray"/>
+						<TextBlock Text="{Binding Role, Converter={StaticResource operatorRoleTextConverter}}" Foreground="#099"/>
+					</WrapPanel>
+				</Button>
+				<StackPanel Name="rolesPanel" Height="0">
+					<Border BorderThickness="1,0,1,1" CornerRadius="0,0,5,5" Margin="0,0,0,2"
+						Background="Silver" BorderBrush="DimGray"
+						HorizontalAlignment="Center">
+						<WrapPanel>
+							<ToggleButton IsChecked="{Binding Role, Converter={StaticResource operatorRoleIsValue}, ConverterParameter=0}" MinWidth="55" Content="اصلی"/>
+							<ToggleButton IsChecked="{Binding Role, Converter={StaticResource operatorRoleIsValue}, ConverterParameter=1}" MinWidth="55" Content="جایگزین"/>
+							<ToggleButton IsChecked="{Binding Role, Converter={StaticResource operatorRoleIsValue}, ConverterParameter=2}" MinWidth="55" Content="کمکی"/>
+						</WrapPanel>
+					</Border>
+				</StackPanel>
+			</StackPanel>
+			<DataTemplate.Triggers>
+				<EventTrigger SourceName="root" RoutedEvent="MouseEnter">
+					<BeginStoryboard>
+						<Storyboard Duration="0:0:0.2">
+							<DoubleAnimation 
+									Storyboard.TargetName="rolesPanel" 
+									Storyboard.TargetProperty="Height" 
+									To="25" Duration="0:0:0.2"/>
+						</Storyboard>
+					</BeginStoryboard>
+				</EventTrigger>
+				<EventTrigger SourceName="root" RoutedEvent="MouseLeave">
+					<BeginStoryboard>
+						<Storyboard Duration="0:0:0.2">
+							<DoubleAnimation 
+									Storyboard.TargetName="rolesPanel" 
+									Storyboard.TargetProperty="Height" 
+									To="0" Duration="0:0:0.2"/>
+						</Storyboard>
+					</BeginStoryboard>
+				</EventTrigger>
+				<Trigger SourceName="btn_deselect" Property="Visibility" Value="Hidden">
+					<Setter TargetName="rolesPanel" Property="Height" Value="0"/>
+					<Trigger.EnterActions>
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.5">
+								<DoubleAnimation 
+										Storyboard.TargetName="btn_deselect" 
+										Storyboard.TargetProperty="Height" 
+										To="0" Duration="0:0:0.5"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</Trigger.EnterActions>
+					<Trigger.ExitActions>
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.5">
+								<DoubleAnimation 
+										Storyboard.TargetName="btn_deselect" 
+										Storyboard.TargetProperty="Height" 
+										To="25" Duration="0:0:0.5"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</Trigger.ExitActions>
+				</Trigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
+
+		<!-- activity -->
+		<DataTemplate DataType="{x:Type ppevm:ProcessEditorVm}" x:Key="activityTabTemplate">
+			<Border Background="{StaticResource activityBackBrush}">
+				<DockPanel MinHeight="150">
+					<!-- Machines Border -->
+					<Border DockPanel.Dock="Left" BorderBrush="DimGray" CornerRadius="3" BorderThickness="1" Background="#B0B05F" Margin="4">
+						<DockPanel>
+							<Border DockPanel.Dock="Top" BorderBrush="DimGray" CornerRadius="3,3,0,0" BorderThickness="0,0,0,1" Background="#444427">
+								<TextBlock Text="دستگاههای استفاده شده" Margin="1" HorizontalAlignment="Center" Foreground="Silver"/>
+							</Border>
+							<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+								<ItemsControl ItemsSource="{Binding MachineList}" Margin="2">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate DataType="{x:Type ppevm:PPEditorMachine}">
+											<ToggleButton IsChecked="{Binding IsUsed}" IsEnabled="{Binding CanBeUsed}">
+												<ToggleButton.ToolTip>
+													<StackPanel>
+														<TextBlock Text="این ماشین در صورت استفاده از نفرساعت دیگری موجود می باشد" Visibility="{Binding CanBeUsed, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+														<TextBlock Text="این ماشین در این فعالیت استفاده می شود" Visibility="{Binding IsUsed, Converter={StaticResource booleanToVisibilityConverter}}"/>
+														<TextBlock Text="این ماشین در این فعالیت استفاده نمی شود" Visibility="{Binding IsUsed, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+													</StackPanel>
+												</ToggleButton.ToolTip>
+												<WrapPanel>
+													<TextBlock Text="{Binding Code}" Foreground="Gray"/>
+													<TextBlock Text="{Binding Name}" Margin="10,0,10,0"/>
+												</WrapPanel>
+											</ToggleButton>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</ScrollViewer>
+						</DockPanel>
+					</Border>
+					<!-- Operators Border -->
+					<Border BorderBrush="DimGray" BorderThickness="1" CornerRadius="3" Background="#618BC9" Margin="4">
+						<DockPanel>
+							<Border DockPanel.Dock="Top" BorderBrush="DimGray" CornerRadius="3,3,0,0" BorderThickness="0,0,0,1" Background="#232E40">
+								<TextBlock Text="اپراتورهای استفاده شده" Margin="1" HorizontalAlignment="Center" Foreground="Silver"/>
+							</Border>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="4"/>
+									<ColumnDefinition Width="*"/>
+								</Grid.ColumnDefinitions>
+								<DockPanel>
+									<DockPanel DockPanel.Dock="Top">
+										<TextBlock DockPanel.Dock="Left" Text="جستجو" VerticalAlignment="Center" Margin="2"/>
+										<TextBox Name="filterText" Margin="2"/>
+									</DockPanel>
+									<ScrollViewer Margin="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+										<ItemsControl ItemsSource="{Binding OperatorList}" ItemTemplate="{StaticResource allOperatorsTemplate}" HorizontalContentAlignment="Stretch"/>
+									</ScrollViewer>
+								</DockPanel>
+								<GridSplitter Grid.Column="1" Width="4" Background="#F7BD" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns"/>
+								<DockPanel Grid.Column="2">
+									<DockPanel DockPanel.Dock="Top">
+										<TextBlock DockPanel.Dock="Left" Text="نفرساعت استاندارد = " VerticalAlignment="Center" Margin="2"/>
+										<TextBlock Text="{Binding ManHour}" VerticalAlignment="Center" Margin="2"/>
+									</DockPanel>
+									<ScrollViewer Margin="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" MaxHeight="175" VerticalAlignment="Top">
+										<ItemsControl ItemsSource="{Binding OperatorList}" ItemTemplate="{StaticResource selectedOperatorsTemplate}" HorizontalContentAlignment="Stretch" VerticalAlignment="Top" VerticalContentAlignment="Top"/>
+									</ScrollViewer>
+								</DockPanel>
+							</Grid>
+						</DockPanel>
+					</Border>
+				</DockPanel>
+			</Border>
+		</DataTemplate>
+	</UserControl.Resources>
+
+
+
+	<!--..................-->
+	<!-- TaskEditor Panel -->
+	<!--..................-->
+
+
+	<!-- a Task (Portion of a block) -->
+	<Grid Background="Silver" x:Name="root">
+		<Grid.Effect>
+			<DropShadowEffect ShadowDepth="0"/>
+		</Grid.Effect>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<!-- Processes and TPs (Bottom first column) -->
+		<DockPanel>
+			<!-- TP -->
+			<DockPanel DockPanel.Dock="Top">
+				<Border DockPanel.Dock="Left" BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffHeaderBackground}" BorderThickness="1" CornerRadius="5,0,0,5" Height="{Binding ElementName=durationContents, Path=ActualHeight}" Margin="2,2,0,2">
+					<TextBlock Text="{Loc PPE_DurationOrTP}" Style="{StaticResource VerticalHeader}"/>
+				</Border>
+				<Border BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffInsideBackground}" CornerRadius="0,5,5,0" BorderThickness="1" Margin="0,2,4,2" x:Name="durationContents">
+					<StackPanel>
+						<WrapPanel>
+							<TextBlock Text="{Loc PPE_TaskTP}" VerticalAlignment="Center" Foreground="#8FF"/>
+							<TextBox Text="{Binding TaskTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" FlowDirection="LeftToRight"/>
+						</WrapPanel>
+						<RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
+							<WrapPanel>
+								<TextBlock Text="{Loc PPE_SameTimeForActivites}" VerticalAlignment="Center"/>
+								<CustomControls:TimeBox Time="{Binding SameTimeForActivities, Mode=TwoWay}" IsReadOnly="{Binding IsSameTimeForActivitiesSelected, Converter={StaticResource inverter}}"/>
+								<WrapPanel Style="{StaticResource Panel3DEffectStyle}">
+									<Button Content="{Loc txtOneHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
+										<Button.CommandParameter>
+											<sys:Int32>60</sys:Int32>
+										</Button.CommandParameter>
+									</Button>
+									<Button Content="{Loc txtHalfHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
+										<Button.CommandParameter>
+											<sys:Int32>30</sys:Int32>
+										</Button.CommandParameter>
+									</Button>
+									<Button Content="{Loc txtQuarterHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
+										<Button.CommandParameter>
+											<sys:Int32>15</sys:Int32>
+										</Button.CommandParameter>
+									</Button>
+								</WrapPanel>
+							</WrapPanel>
+						</RadioButton>
+						<RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
+							<WrapPanel>
+								<TextBlock Text="{Loc PPE_SameQtyForActivites}" VerticalAlignment="Center"/>
+								<TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>
+							</WrapPanel>
+						</RadioButton>
+						<RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsDeferToActivitiesSelected}" x:Name="deferToProcessRadioButton">
+							<WrapPanel Height="20">
+								<TextBlock Text="{Loc PPE_DeferToActivites}" VerticalAlignment="Center"/>
+							</WrapPanel>
+						</RadioButton>
+					</StackPanel>
+				</Border>
+			</DockPanel>
+			<!-- Activities DataGrid -->
+			<TextBlock DockPanel.Dock="Top" Text="{Loc txtActivities}"/>
+			<DataGrid Margin="4" ItemsSource="{Binding ProcessList}" Padding="4" VerticalAlignment="Top" AutoGenerateColumns="False"
+                              SelectedItem="{Binding SelectedProcess}"
+                              RowDetailsVisibilityMode="VisibleWhenSelected">
+				<DataGrid.Columns>
+					<DataGridTextColumn IsReadOnly="True" Binding="{Binding Name}" Header="{Loc txtActivity}"/>
+					<DataGridTemplateColumn Header="{Loc txtManHours}">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<DockPanel>
+									<Image Style="{StaticResource Error16Image}" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" ToolTip="{Binding Message.FullExceptionText}"/>
+									<Image Style="{StaticResource Warning16Image}" Visibility="{Binding SelectedChoice.OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" 
+												   ToolTip="تعداد اپراتورهای تخصیص داده شده برابر با نفرساعت این فعالیت نمی باشد"/>
+									<ItemsControl ItemsSource="{Binding Choices}">
+										<ItemsControl.ItemTemplate>
+											<DataTemplate>
+												<Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="2" Margin="1">
+													<Border.Background>
+														<MultiBinding Converter="{StaticResource isEqualToBrushConverter}">
+															<Binding Path="Parent.SelectedChoice"/>
+															<Binding Path="."/>
+															<MultiBinding.ConverterParameter>
+																<x:Array Type="Brush">
+																	<SolidColorBrush Color="#088" />
+																	<SolidColorBrush Color="Silver"/>
+																</x:Array>
+															</MultiBinding.ConverterParameter>
+														</MultiBinding>
+													</Border.Background>
+													<TextBlock Text="{Binding ManHour}"/>
+													<Border.ToolTip>
+														<!--loc farsi intended layout:-->
+														<!--نفرساعت       |         2-->
+														<UniformGrid Rows="2" Columns="2">
+															<TextBlock Text="{Loc txtManHour}" Foreground="Gray"/>
+															<TextBlock Text="{Binding ManHour}" FlowDirection="LeftToRight"/>
+															<TextBlock Text="{Loc txtCycleTimeSec}" Foreground="Gray"/>
+															<TextBlock Text="{Binding CycleTime}" FlowDirection="LeftToRight"/>
+														</UniformGrid>
+													</Border.ToolTip>
+												</Border>
+											</DataTemplate>
+										</ItemsControl.ItemTemplate>
+										<ItemsControl.ItemsPanel>
+											<ItemsPanelTemplate>
+												<UniformGrid Rows="1"/>
+											</ItemsPanelTemplate>
+										</ItemsControl.ItemsPanel>
+									</ItemsControl>
+								</DockPanel>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTemplateColumn Width="80" Header="{Loc txtTargetPoint}">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding TargetPoint}"/>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+						<DataGridTemplateColumn.CellEditingTemplate>
+							<DataTemplate>
+								<TextBox Text="{Binding TargetPoint}" IsReadOnly="{Binding ElementName=deferToProcessRadioButton, Path=IsChecked, Converter={StaticResource inverter}}"
+													ToolTip="برای تغییر دستی مقدار هدف، بایستی مقادیر فعالیتها مستقل باشند"/>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellEditingTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTemplateColumn Width="100" Header="{Loc txtDuration}">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight"/>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+						<DataGridTemplateColumn.CellEditingTemplate>
+							<DataTemplate>
+								<CustomControls:TimeBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding ElementName=deferToProcessRadioButton, Path=IsChecked, Converter={StaticResource inverter}}"
+													ToolTip="برای تغییر دستی مدت فعالیت، بایستی مقادیر فعالیتها مستقل باشند"/>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellEditingTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTemplateColumn Header="{Loc txtOperators}">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<ItemsControl ItemsSource="{Binding OperatorList}">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Name}" Margin="5,0" Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}"/>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+									<ItemsControl.ItemsPanel>
+										<ItemsPanelTemplate>
+											<WrapPanel/>
+										</ItemsPanelTemplate>
+									</ItemsControl.ItemsPanel>
+								</ItemsControl>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+				</DataGrid.Columns>
+				<DataGrid.RowDetailsTemplate>
+					<DataTemplate>
+						<WrapPanel Background="Silver" TextBlock.Foreground="Black">
+							<DockPanel>
+								<TextBlock Text="{Loc txtOperators}" Foreground="Gray"/>
+								<TextBlock Text="{Binding SelectedOperatorsCount}" Margin="5,0,10,0"/>
+							</DockPanel>
+							<DockPanel>
+								<TextBlock Text="{Loc txtCycleTime}" Foreground="Gray"/>
+								<TextBlock Text="{Binding SelectedChoice.CycleTime}" Margin="2,0,10,0"/>
+							</DockPanel>
+							<DockPanel>
+								<TextBlock Text="{Loc txtDuration}" Foreground="Gray"/>
+								<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="5,0,0,0"/>
+							</DockPanel>
+							<WrapPanel Style="{StaticResource Panel3DEffectStyle}">
+								<Button Content="{Loc txtOneHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
+									<Button.CommandParameter>
+										<sys:Int32>60</sys:Int32>
+									</Button.CommandParameter>
+								</Button>
+								<Button Content="{Loc txtHalfHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
+									<Button.CommandParameter>
+										<sys:Int32>30</sys:Int32>
+									</Button.CommandParameter>
+								</Button>
+								<Button Content="{Loc txtQuarterHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
+									<Button.CommandParameter>
+										<sys:Int32>15</sys:Int32>
+									</Button.CommandParameter>
+								</Button>
+							</WrapPanel>
+						</WrapPanel>
+					</DataTemplate>
+				</DataGrid.RowDetailsTemplate>
+			</DataGrid>
+		</DockPanel>
+		<GridSplitter Width="5"/>
+		<!-- machines and operators (Bottom 2nd column) -->
+		<ContentPresenter Content="{Binding SelectedProcess}" ContentTemplate="{StaticResource activityTabTemplate}" Grid.Column="1"/>
+	</Grid>
+
+</UserControl>

@@ -95,6 +95,26 @@ WHERE block.Id = @id";
 			_blockRepository.Delete(entity);
 			context.Commit();
 		}
+		/// <summary>
+		/// Delete a block with all its reports. No questions asked!
+		/// </summary>
+		/// <param name="model"></param>
+		public void DeleteModelRecursive(Block model)
+		{
+			var taskDataService = new TaskDataService(context);
+			var taskReportDataService = new TaskReportDataService(context);
+			var entity = _blockRepository.Single(x => x.Id == model.Id);
+			foreach (var task in entity.Tasks.ToArray())
+			{
+				foreach (var taskReport in task.TaskReports.ToArray())
+				{
+					taskReportDataService.DeleteModel(taskReport);
+				}
+				taskDataService.DeleteModel(task);
+			}
+			_blockRepository.Delete(entity);
+			context.Commit();
+		}
 
 		public void AttachModel(Block model)
 		{

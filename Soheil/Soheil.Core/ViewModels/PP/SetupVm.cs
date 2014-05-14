@@ -27,6 +27,10 @@ namespace Soheil.Core.ViewModels.PP
 			reloadFromModel();
 			initializeCommands();
 		}
+		public override void Reload(PPItemNpt item)
+		{
+			reloadFromModel();//???
+		}
 		void reloadFromModel()
 		{
 			//update model from database with new UOW

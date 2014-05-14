@@ -39,9 +39,6 @@ namespace Soheil.Core.ViewModels.PP
 		public PPTableVm PPTable { get; private set; }
 		public PPItemManager Manager { get; private set; }
 
-		Dal.SoheilEdmContext _uow;
-		DataServices.BlockDataService _blockDataService;
-
 		/// <summary>
 		/// Gets the ViewMode of this Vm or sets it for this Vm and all its blocks
 		/// </summary>
@@ -71,7 +68,7 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			PPTable = parent;
 			ViewMode = PPViewMode.Simple;
-
+			
 			//manager
 			Manager = new PPItemManager(parent.Dispatcher);
 
@@ -79,6 +76,14 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				var vm = AddItem(item);
 				vm.ViewMode = ViewMode;
+			};
+			Manager.BlockUpdated += item =>
+			{
+				var vm = this[item.Model.StateStation.Station.Index].Blocks.FirstOrDefault(x => x.Id == item.Id);
+				if (vm != null)
+				{
+					vm.Reload(item);
+				}
 			};
 			Manager.BlockRemoved += item =>
 			{
@@ -89,6 +94,18 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				var vm = AddNPT(item.Id);
 				vm.ViewMode = ViewMode;
+			};
+			Manager.NptUpdated += item =>
+			{
+				var model = item.Model as Model.Setup;
+				if (model != null)
+				{
+					var vm = this[model.Warmup.Station.Index].NPTs.FirstOrDefault(x => x.Id == item.Id);
+					if(vm!=null)
+					{
+						vm.Reload(item);
+					}
+				}
 			};
 			Manager.NptRemoved += item =>
 			{
@@ -147,7 +164,6 @@ namespace Soheil.Core.ViewModels.PP
 
 		/// <summary>
 		/// Removes a blockVm from this collection based on its Id
-		/// <para>***DELETES FROM DATABASE***</para>
 		/// </summary>
 		/// <param name="vm">vm of block to remove (Id and RowIndex are used)</param>
 		public void RemoveItem(BlockVm vm)
@@ -155,9 +171,6 @@ namespace Soheil.Core.ViewModels.PP
 			if (vm == null) return;
 			try
 			{
-				//remove from database
-				_blockDataService.DeleteModel(vm.Model);
-
 				//remove from vm
 				this[vm.RowIndex].Blocks.RemoveWhere(x => x.Id == vm.Id);
 
@@ -250,10 +263,9 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			vm.InsertSetupBefore = new Commands.Command(async o =>
 			{
-				//the following part is async version of "var result = tmp.InsertSetupBeforeTask(Id)"
-				var tmp = _blockDataService;
+				//the following part is async version of "var result = ds.InsertSetupBeforeTask(Id)"
 				var id = vm.Id;
-				var result = await Task.Run(() => tmp.InsertSetupBeforeBlock(id));
+				var result = await Task.Run(() => new DataServices.BlockDataService().InsertSetupBeforeBlock(id));
 
 				//in case of error callback with result
 				if (result.IsSaved) Manager.ForceReload();
@@ -261,8 +273,27 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			vm.DeleteItemCommand = new Commands.Command(o =>
 			{
-				try { RemoveItem(vm); }
-				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				lock (Manager)
+				{
+					try
+					{
+						new DataServices.BlockDataService().DeleteModel(vm.Model);
+						RemoveItem(vm);
+					}
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				}
+			});
+			vm.DeleteBlockWithReportsCommand = new Commands.Command(o =>
+			{
+				lock (Manager)
+				{
+					try
+					{
+						new DataServices.BlockDataService().DeleteModelRecursive(vm.Model);
+						RemoveItem(vm);
+					}
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
+				}
 			});
 		}
 		#endregion

@@ -1,0 +1,160 @@
+﻿<UserControl x:Class="Soheil.Views.PP.PlanEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core" 
+             xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Editor;assembly=Soheil.Core" 
+             xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+			 xmlns:local="clr-namespace:Soheil.Views.PP"
+             xmlns:fpcView="clr-namespace:Soheil.Views.Fpc" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="700" FlowDirection="RightToLeft">
+	<UserControl.Resources>
+		<HierarchicalDataTemplate ItemsSource="{Binding Products}" DataType="{x:Type vm:ProductGroupVm}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="10"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<TextBlock Text="{Binding Name}"/>
+				<TextBlock Text="{Binding Code}" Grid.Column="2" Foreground="Gray"/>
+			</Grid>
+		</HierarchicalDataTemplate>
+		<DataTemplate DataType="{x:Type vm:ProductVm}">
+			<Grid MouseDown="Product_MouseDown">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="15"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="10"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Rectangle Margin="2">
+					<Rectangle.Fill>
+						<SolidColorBrush Color="{Binding Color}"/>
+					</Rectangle.Fill>
+				</Rectangle>
+				<TextBlock Text="{Binding Name}" Grid.Column="1"/>
+				<TextBlock Text="{Binding Code}" Grid.Column="3" Foreground="Gray"/>
+			</Grid>
+		</DataTemplate>
+
+		<!-- states list -->
+		<DataTemplate x:Key="blockItemTemplate" DataType="{x:Type ppevm:BlockEditorVm}">
+			<DockPanel MouseDown="blockListItem_MouseDown">
+				<Border Margin="2" Width="15" DockPanel.Dock="Left" VerticalAlignment="Stretch" Background="{Binding State.ProductRework.Product.Color, Converter={StaticResource colorFixer}}"/>
+				<Button Name="deleteButton" Command="{Binding DeleteBlockFromList}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext}" DockPanel.Dock="Right" VerticalAlignment="Bottom" Opacity="0">
+					<Image Style="{StaticResource Delete16Image}"/>
+				</Button>
+				<TextBlock Text="{Binding State.ProductRework.Product.Name}" DockPanel.Dock="Top"/>
+				<TextBlock Text="{Binding State.Name}" DockPanel.Dock="Left"/>
+				<TextBlock Text="{Binding State.Code}" Foreground="Gray" Margin="5,0,0,0"/>
+				<DockPanel.Triggers>
+					<EventTrigger RoutedEvent="Mouse.MouseEnter">
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.2">
+								<DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="deleteButton" Storyboard.TargetProperty="Opacity" To="1"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+					<EventTrigger RoutedEvent="Mouse.MouseLeave">
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.75">
+								<DoubleAnimation Duration="0:0:0.75" Storyboard.TargetName="deleteButton" Storyboard.TargetProperty="Opacity" To="0"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+				</DockPanel.Triggers>
+			</DockPanel>
+		</DataTemplate>
+	</UserControl.Resources>
+
+	<DockPanel>
+		<DockPanel.Effect>
+			<DropShadowEffect ShadowDepth="0" BlurRadius="6"/>
+		</DockPanel.Effect>
+		<!-- select product and state(block) -->
+		<Border DockPanel.Dock="Left" Margin="5,5,0,5" BorderBrush="{StaticResource HeaderBorderBrush}" BorderThickness="1" CornerRadius="1">
+			<DockPanel>
+				<TextBlock Text="محصول را انتخاب کنید" DockPanel.Dock="Top" Foreground="Silver"/>
+				<TreeView DockPanel.Dock="Top"
+						  ItemsSource="{Binding ProductGroups}" 
+						  MinHeight="100" 
+						  Background="{StaticResource HeaderLightBackground}"
+						  SelectedItemChanged="Product_SelectionChanged">
+				</TreeView>
+				<TextBlock Text="مرحله تولید را انتخاب کنید" DockPanel.Dock="Top" Foreground="Silver"/>
+				<ListBox ItemsSource="{Binding BlockList}" 
+						 ItemTemplate="{StaticResource blockItemTemplate}" 
+						 Background="{StaticResource HeaderLightBackground}"
+						 SelectedItem="{Binding SelectedBlock}"
+						 MinHeight="100">
+					<ListBox.ItemContainerStyle>
+						<Style TargetType="ListBoxItem">
+							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+							<Style.Triggers>
+								<Trigger Property="IsSelected" Value="False">
+									<Setter Property="Opacity" Value="0.5"/>
+									<Setter Property="TextBlock.Foreground" Value="White"/>
+								</Trigger>
+							</Style.Triggers>
+						</Style>
+					</ListBox.ItemContainerStyle>
+				</ListBox>
+			</DockPanel>
+		</Border>
+		<!-- top header (selected state as blocklist item) -->
+		<Border DockPanel.Dock="Top" Margin="5" BorderThickness="1" CornerRadius="1" Height="45" Padding="5"
+				Background="{StaticResource HeaderLightBackground}" BorderBrush="{StaticResource HeaderBorderBrush}">
+			<DockPanel LastChildFill="False">
+				<TextBlock Text="{Binding SelectedProduct.Name}" DockPanel.Dock="Left" Margin="2" Foreground="White" VerticalAlignment="Center"/>
+				<TextBlock Text="{Binding SelectedProduct.Code}" DockPanel.Dock="Left" Margin="2" Foreground="Gray" VerticalAlignment="Center"/>
+				<Rectangle Width="10" Height="10" Margin="2" VerticalAlignment="Center">
+					<Rectangle.Fill>
+						<SolidColorBrush Color="{Binding SelectedProduct.Color}"/>
+					</Rectangle.Fill>
+				</Rectangle>
+				<!-- station -->
+				<DockPanel DockPanel.Dock="Right" VerticalAlignment="Center"
+						   Visibility="{Binding Path=SelectedBlock, Converter={StaticResource isNotNullToVisibility}}">
+					<TextBlock Text="{Loc txtStation}" Foreground="Silver" VerticalAlignment="Center"/>
+					<ComboBox ItemsSource="{Binding SelectedBlock.State.StateStationList}"
+                                  DisplayMemberPath="Name" MinWidth="120"
+                                  SelectedItem="{Binding SelectedStateStation}"/>
+					<Border BorderBrush="#F80" BorderThickness="1" CornerRadius="1" TextBlock.FontSize="10" DataContext="{Binding SelectedBlock}">
+						<Border.Visibility>
+							<MultiBinding Converter="{StaticResource isEqualToInvisibilityConverter2}">
+								<Binding Path="StateStation"/>
+								<Binding Path="SelectedStateStation"/>
+							</MultiBinding>
+						</Border.Visibility>
+						<Grid>
+							<DockPanel Visibility="{Binding StateStation, Converter={StaticResource isNotNullToVisibility}}">
+								<Button DockPanel.Dock="Left" Content="تغییر ایستگاه" Command="{Binding ChangeStationCommand}"/>
+								<Button TextBlock.FontSize="8" DockPanel.Dock="Right" Content="انصراف از تغییر ایستگاه" Command="{Binding DontChangeStationCommand}" VerticalAlignment="Center"/>
+								<TextBlock Text="باعث از بین رفتن اطلاعات این برنامه میشود" Foreground="Orange" VerticalAlignment="Center"/>
+							</DockPanel>
+							<Button Content="انتخاب ایستگاه" Command="{Binding ChangeStationCommand}" Visibility="{Binding StateStation, Converter={StaticResource isNullToVisibility}}"/>
+						</Grid>
+					</Border>
+				</DockPanel>
+			</DockPanel>
+		</Border>
+		<!-- workspace -->
+		<Border BorderBrush="{StaticResource HeaderBorderBrush}" Background="{StaticResource HeaderLightBackground}"
+				BorderThickness="1" CornerRadius="1" Padding="1" Margin="5,0,5,5">
+			<Grid>
+				<!-- fpc viewer -->
+				<Grid Visibility="{Binding FpcViewer, Converter={StaticResource isNotNullToVisibility}}">
+					<fpcView:FpcStateView DataContext="{Binding FpcViewer}"/>
+				</Grid>
+				<!-- Block editor -->
+				<local:BlockEditor Visibility="{Binding SelectedBlock, Converter={StaticResource isNotNullToVisibility}}"/>
+			</Grid>
+		</Border>
+	</DockPanel>
+
+</UserControl>

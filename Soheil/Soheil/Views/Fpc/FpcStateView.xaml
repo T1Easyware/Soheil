@@ -8,21 +8,11 @@
 			 MouseMove="Area_MouseMove" MouseUp="Area_MouseUp">
 	<Grid Background="{StaticResource fpcBackBrush}">
 		<Border BorderBrush="WhiteSmoke" BorderThickness="1" CornerRadius="0,0,1,1" ClipToBounds="True">
-			<Canvas TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea"
+			<Canvas Style="{StaticResource GrabCanvasStyle}" TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea"
 					HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown" MouseWheel="DrawingArea_MouseWheel">
 				<Canvas.LayoutTransform>
 					<ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>
 				</Canvas.LayoutTransform>
-				<Canvas.Style>
-					<Style TargetType="Canvas">
-						<Setter Property="Cursor" Value="/Images/openhand.cur"/>
-						<Style.Triggers>
-							<Trigger Property="IsMouseCaptured" Value="True">
-								<Setter Property="Cursor" Value="/Images/closehand.cur"/>
-							</Trigger>
-						</Style.Triggers>
-					</Style>
-				</Canvas.Style>
 
 				<ItemsControl Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Cursor="Arrow"
 					ItemsSource="{Binding Connectors}"

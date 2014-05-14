@@ -47,7 +47,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		void initializeEditors()
 		{
-			TaskEditor = new TaskEditorVm();
+			TaskEditor = new PlanEditorVm();
 			TaskEditor.RefreshPPItems += () => UpdateRange(true);
 			/*refresh is enough.
 			 * TaskEditor.BlockAdded += model => PPItems.AddItem(model);
@@ -157,6 +157,18 @@ namespace Soheil.Core.ViewModels.PP
 							ShiftsAndBreaks.Add(vm);
 						}
 					};
+					PPItems.Manager.WorkTimeRemoved += item =>
+					{
+						var vms = ShiftsAndBreaks.Where(x => x.IsShift && x.Start == item.Start).ToArray();
+						foreach (var vm in vms)
+						{
+							foreach (var breakVm in vm.Children)
+							{
+								ShiftsAndBreaks.Remove(breakVm);
+							}
+							ShiftsAndBreaks.Remove(vm);
+						}
+					};
 					PPItems.BlockAdded += vm =>
 					{
 						initializeCommands(vm);
@@ -171,6 +183,7 @@ namespace Soheil.Core.ViewModels.PP
 						if (SelectedNPT != null && SelectedNPT.Id == id)
 							SelectedNPT = null;
 					};
+
 
 					//Initialize stations
 					var stationModels = new DataServices.StationDataService().GetActives().OrderBy(x => x.Index);
@@ -244,13 +257,13 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Gets bindable ViewModel for TaskEditor
 		/// </summary>
-		public TaskEditorVm TaskEditor
+		public PlanEditorVm TaskEditor
 		{
-			get { return (TaskEditorVm)GetValue(TaskEditorProperty); }
+			get { return (PlanEditorVm)GetValue(TaskEditorProperty); }
 			private set { SetValue(TaskEditorProperty, value); }
 		}
 		public static readonly DependencyProperty TaskEditorProperty =
-			DependencyProperty.Register("TaskEditor", typeof(TaskEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("TaskEditor", typeof(PlanEditorVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets bindable ViewModel for JobEditor
@@ -280,33 +293,14 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="job"></param>
 		public void RemoveBlocks(JobVm job)
 		{
-			foreach (var station in PPItems.ToList())
+			foreach (var station in PPItems.ToArray())
 			{
 				foreach (var block in station.Blocks.ToArray())
 				{
 					//check if this block in this station is part of the given Job
 					if (block.Job != null && block.Job.Id == job.Id)
 					{
-						try
-						{
-							//remove the block from database and ViewModel
-							PPItems.RemoveItem(block);
-						}
-						catch (Soheil.Common.SoheilException.RoutedException exp)
-						{
-							if (exp.Target is Model.Task)
-							{
-								block.TaskList.First(x => x.Id == ((Task)exp.Target).Id).Message.AddEmbeddedException(exp.Message);
-							}
-							else// if (exp.Target is Model.Block)
-							{
-								block.Message.AddEmbeddedException(exp.Message);
-							}
-						}
-						catch (Exception exp)
-						{
-							block.Message.AddEmbeddedException(exp.Message);
-						}
+						block.DeleteItemCommand.Execute(null);
 					}
 				}
 			}
@@ -773,7 +767,7 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
-					var ppeBlock = new Editor.PPEditorBlock(vm.Model);
+					var ppeBlock = new Editor.BlockEditorVm(vm.Model);
 					TaskEditor.BlockList.Add(ppeBlock);
 					TaskEditor.SelectedBlock = ppeBlock;
 				}
@@ -821,15 +815,22 @@ namespace Soheil.Core.ViewModels.PP
 
 			vm.DeleteJobCommand = new Commands.Command(o =>
 			{
-				try { RemoveBlocks(vm.Job); }
-				catch (RoutedException exp)
+				lock (PPItems.Manager)
 				{
-					if (exp.Target is TaskVm)
-						(exp.Target as TaskVm).Message.AddEmbeddedException(exp.Message);
-					else //if(exp.Target is BlockVm)
-						vm.Message.AddEmbeddedException(exp.Message);
+					try
+					{
+						new DataServices.JobDataService().DeleteModel(vm.Job.Model);
+						RemoveBlocks(vm.Job);
+					}
+					catch (RoutedException exp)
+					{
+						if (exp.Target is TaskVm)
+							(exp.Target as TaskVm).Message.AddEmbeddedException(exp.Message);
+						else //if(exp.Target is BlockVm)
+							vm.Message.AddEmbeddedException(exp.Message);
+					}
+					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 				}
-				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 			}, () => { return vm.Job != null; });
 			//report
 			vm.EditReportCommand = new Commands.Command(o =>
@@ -840,17 +841,6 @@ namespace Soheil.Core.ViewModels.PP
 					SelectedBlock = vm;
 				}
 				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
-			});
-			vm.DeleteBlockWithReportsCommand = new Commands.Command(o =>
-			{
-				foreach (var task in vm.TaskList)
-				{
-					foreach (var taskReport in task.TaskReports.OfType<Soheil.Core.ViewModels.PP.Report.TaskReportVm>())
-					{
-						taskReport.TaskReportDataService.DeleteById(taskReport.Id);
-					}
-				}
-				vm.ReloadReports();
 			});
 			//EditReportCommand reloads *ALL* reports for its block 
 			vm.TaskList.CollectionChanged += (s, e) =>

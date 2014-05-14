@@ -149,6 +149,9 @@
     <Compile Include="Views\PP\Block.xaml.cs">
       <DependentUpon>Block.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PP\BlockEditor.xaml.cs">
+      <DependentUpon>BlockEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\GridHelper.cs" />
     <Compile Include="Views\PP\JobList.xaml.cs">
       <DependentUpon>JobList.xaml</DependentUpon>
@@ -162,9 +165,6 @@
     <Compile Include="Views\PP\PPJobEditor.xaml.cs">
       <DependentUpon>PPJobEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PP\PPTaskEditor.xaml.cs">
-      <DependentUpon>PPTaskEditor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PP\ProcessReportBuilder.xaml.cs">
       <DependentUpon>ProcessReportBuilder.xaml</DependentUpon>
     </Compile>
@@ -173,6 +173,12 @@
     </Compile>
     <Compile Include="Views\PP\Setup.xaml.cs">
       <DependentUpon>Setup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\PlanEditor.xaml.cs">
+      <DependentUpon>PlanEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\TaskEditor.xaml.cs">
+      <DependentUpon>TaskEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\TaskReportBuilder.xaml.cs">
       <DependentUpon>TaskReportBuilder.xaml</DependentUpon>
@@ -256,6 +262,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PP\BlockEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PP\JobList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -272,10 +282,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PP\PPTaskEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\PP\ProcessReportBuilder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -285,6 +291,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PP\Setup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\PlanEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\TaskEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

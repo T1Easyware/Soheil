@@ -7,20 +7,15 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
-	public class PPEditorTaskHolder : DependencyObject
+	public class TaskEditorHolderVm : DependencyObject
 	{
-		public PPEditorTaskHolder(PPEditorBlock parent)
+		public event Action TaskCreated;
+
+		public TaskEditorHolderVm()
 		{
 			CreateNewTaskCommand = new Commands.Command(o =>
 			{
-				try
-				{
-					parent.InsertTask();
-				}
-				catch (Soheil.Common.SoheilException.RoutedException ex)
-				{
-					parent.Message.AddEmbeddedException(ex.Message);
-				}
+				if (TaskCreated != null) TaskCreated();
 			});
 		}
 		//CreateNewTaskCommand Dependency Property
@@ -30,6 +25,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(CreateNewTaskCommandProperty, value); }
 		}
 		public static readonly DependencyProperty CreateNewTaskCommandProperty =
-			DependencyProperty.Register("CreateNewTaskCommand", typeof(Commands.Command), typeof(PPEditorTaskHolder), new UIPropertyMetadata(null));
+			DependencyProperty.Register("CreateNewTaskCommand", typeof(Commands.Command), typeof(TaskEditorHolderVm), new UIPropertyMetadata(null));
 	}
 }

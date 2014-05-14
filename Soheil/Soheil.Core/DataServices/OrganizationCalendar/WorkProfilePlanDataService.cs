@@ -263,15 +263,12 @@ namespace Soheil.Core.DataServices
 		/// <summary>
 		/// Gets a list of active profile Shifts with their actual day start in the given time range
 		/// </summary>
-		/// <param name="startDate">start of this date - 2 days is considered</param>
-		/// <param name="endDate">start of this date + 2 days is considered</param>
+		/// <param name="startDate">this date&Time is considered</param>
+		/// <param name="endDate">this date&Time is considered</param>
 		/// <returns>Returns a list of Tuple&lt;<see cref="Soheil.Model.WorkShift"/>, DateTime&gt;</returns>
 		public List<Tuple<WorkShift, DateTime>> GetShiftsInRange(DateTime startDate, DateTime endDate)
 		{
 			List<Tuple<WorkShift, DateTime>> list = new List<Tuple<WorkShift, DateTime>>();
-
-			startDate = startDate.Date.AddDays(-2);
-			endDate = endDate.Date.AddDays(2);
 			var plans = GetInRange(startDate, endDate).OrderByDescending(x => x.ModifiedDate);
 			
 			for (DateTime date = startDate; date < endDate; date = date.AddDays(1))

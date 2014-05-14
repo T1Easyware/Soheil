@@ -1042,11 +1042,11 @@
                                Height="13"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               Source="\Images\normalMinimize.bmp" />
+                               Source="/Soheil.Controls;component/Images/normalMinimize.bmp" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="Image" Property="Source" Value="\Images\highlightedMinimize.bmp" />
+							<Setter TargetName="Image" Property="Source" Value="/Soheil.Controls;component/Images/highlightedMinimize.bmp" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true" />
                     </ControlTemplate.Triggers>
@@ -1066,11 +1066,11 @@
                                Height="13"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               Source="\Images\normalMaximize.bmp" />
+                               Source="/Soheil.Controls;component/Images/normalMaximize.bmp" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="Image" Property="Source" Value="\Images\highlightedMaximize.bmp" />
+							<Setter TargetName="Image" Property="Source" Value="/Soheil.Controls;component/Images/highlightedMaximize.bmp" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true" />
                     </ControlTemplate.Triggers>
@@ -2599,6 +2599,28 @@
         </Setter>
     </Style>
 
+
+	<!-- Canvas with grab cursor -->
+	<Style x:Key="GrabCanvasStyle" TargetType="Canvas">
+		<Setter Property="Cursor" Value="/Soheil.Controls;component/Images/openhand.cur"/>
+		<Style.Triggers>
+			<Trigger Property="IsMouseCaptured" Value="True">
+				<Setter Property="Cursor" Value="/Soheil.Controls;component/Images/closehand.cur"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<!-- Vertical textblock as header-->
+	<Style TargetType="TextBlock" x:Key="VerticalHeader">
+		<Setter Property="TextAlignment" Value="Center"/>
+		<Setter Property="TextWrapping" Value="Wrap"/>
+		<Setter Property="FontSize" Value="9"/>
+		<Setter Property="LayoutTransform">
+			<Setter.Value>
+				<RotateTransform Angle="90"/>
+			</Setter.Value>
+		</Setter>
+	</Style>
 
 	<Style x:Key="TextBlock3DTextStyle" TargetType="TextBlock">
 		<Setter Property="FontSize" Value="10"/>

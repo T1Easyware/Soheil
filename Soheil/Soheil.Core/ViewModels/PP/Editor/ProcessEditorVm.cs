@@ -2,31 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Collections.ObjectModel;
 using Soheil.Common.SoheilException;
 
-/* process	p1		->	ssa1  -> a1
- * 
- * activity a1		->	ssa1 (ManHour = 1) choice 1
- *						ssa2 (ManHour = 2) choice 2
- *						ssa2 (ManHour = 3) choice 3
- * 
- * PPEditorProcess	->	ssaGroup1 (ssa1, ssa2, ssa3)
- * 
- */
-
 namespace Soheil.Core.ViewModels.PP.Editor
 {
+
+	/* process	p1		->	ssa1  -> a1
+	 * 
+	 * activity a1		->	ssa1 (ManHour = 1) choice 1
+	 *						ssa2 (ManHour = 2) choice 2
+	 *						ssa2 (ManHour = 3) choice 3
+	 * 
+	 * PPEditorProcess	->	ssaGroup1 (ssa1, ssa2, ssa3)
+	 * 
+	 */
+
 	/// <summary>
 	/// Does not have duration (it should be automatically calculated from tp*ct)
 	/// </summary>
-	public class PPEditorProcess : DependencyObject
+	public class ProcessEditorVm : DependencyObject
 	{
-        IEnumerable<Model.StateStationActivity> _ssaGroup;
+		IEnumerable<Model.StateStationActivity> _ssaGroup;
 
-        Dal.SoheilEdmContext _uow;
+		Dal.SoheilEdmContext _uow;
 
 		/// <summary>
 		/// Gets the process model
@@ -50,12 +50,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public event Action<int, int> ProcessDurationChanged;
 
 		#region Ctor
-        /// <summary>
+		/// <summary>
 		/// Creates an instance of PPEditorProcess with given model within the given PPEditorTask
-        /// <para>Updates its choices and operators and machines as well</para>
-        /// </summary>
-        /// <param name="model"></param>
-		public PPEditorProcess(Model.Process model, Dal.SoheilEdmContext uow, IGrouping<int, Model.StateStationActivity> ssaGroup = null)
+		/// <para>Updates its choices and operators and machines as well</para>
+		/// </summary>
+		/// <param name="model"></param>
+		public ProcessEditorVm(Model.Process model, Dal.SoheilEdmContext uow, IGrouping<int, Model.StateStationActivity> ssaGroup = null)
 		{
 			HoldEvents = true;
 
@@ -104,7 +104,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			foreach (var operatorVm in operatorVms.OrderByDescending(x => x.EffectiveSkill))
 			{
 				OperatorList.Add(operatorVm);
-			} 
+			}
 			#endregion
 
 			#region Load machines
@@ -122,7 +122,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						MachineList.Add(machineVm);
 					}
 				}
-			} 
+			}
 			#endregion
 
 			#region Select the right choice
@@ -158,7 +158,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(NameProperty, value); }
 		}
 		public static readonly DependencyProperty NameProperty =
-			DependencyProperty.Register("Name", typeof(string), typeof(PPEditorProcess), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Name", typeof(string), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets a bindable value for target point of this process
 		/// <para>Changing this value updates DurationSeconds and model's TargetCount and fires ProcessTargetPointChanged event</para>
@@ -169,10 +169,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(TargetPointProperty, value); }
 		}
 		public static readonly DependencyProperty TargetPointProperty =
-			DependencyProperty.Register("TargetPoint", typeof(int), typeof(PPEditorProcess),
+			DependencyProperty.Register("TargetPoint", typeof(int), typeof(ProcessEditorVm),
 			new UIPropertyMetadata(0, (d, e) =>
 			{
-				var vm = (PPEditorProcess)d;
+				var vm = (ProcessEditorVm)d;
 				var val = (int)e.NewValue;
 				vm.Model.TargetCount = val;
 
@@ -197,10 +197,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(DurationSecondsProperty, value); }
 		}
 		public static readonly DependencyProperty DurationSecondsProperty =
-			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(PPEditorProcess),
+			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(ProcessEditorVm),
 			new UIPropertyMetadata(0, (d, e) =>
 			{
-				var vm = (PPEditorProcess)d;
+				var vm = (ProcessEditorVm)d;
 				var val = (int)e.NewValue;
 
 				//update TargetPoint
@@ -241,10 +241,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SelectedOperatorsCountProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedOperatorsCountProperty =
-			DependencyProperty.Register("SelectedOperatorsCount", typeof(int), typeof(PPEditorProcess),
+			DependencyProperty.Register("SelectedOperatorsCount", typeof(int), typeof(ProcessEditorVm),
 			new UIPropertyMetadata(0, (d, e) =>
 			{
-				var vm = (PPEditorProcess)d;
+				var vm = (ProcessEditorVm)d;
 				var val = (int)e.NewValue;
 				vm.SelectedChoice = vm.Choices.FirstOrDefault(x => x.ManHour == val);
 			}));
@@ -257,7 +257,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(MessageProperty, value); }
 		}
 		public static readonly DependencyProperty MessageProperty =
-			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(PPEditorProcess), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets a bindable collection of choices (StateStationActivities) of this process
@@ -275,10 +275,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SelectedChoiceProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedChoiceProperty =
-			DependencyProperty.Register("SelectedChoice", typeof(PPEditorActivityChoice), typeof(PPEditorProcess),
+			DependencyProperty.Register("SelectedChoice", typeof(PPEditorActivityChoice), typeof(ProcessEditorVm),
 			new UIPropertyMetadata(null, (d, e) =>
 			{
-				var vm = d as PPEditorProcess;
+				var vm = d as ProcessEditorVm;
 				var newVal = e.NewValue as PPEditorActivityChoice;
 				var oldVal = e.OldValue as PPEditorActivityChoice;
 				vm.choiceIsChanged(oldVal, newVal);
@@ -305,7 +305,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				Model.StateStationActivity = newVal.Model;
 				Message.ResetEmbeddedException();
 				//compare manhour of selected choice with number of assigned operators
-				SelectedChoice.OperatorCountError = ((int)Math.Ceiling(newVal.ManHour) != OperatorList.Count(x=>x.IsSelected));
+				SelectedChoice.OperatorCountError = ((int)Math.Ceiling(newVal.ManHour) != OperatorList.Count(x => x.IsSelected));
 
 				//Update Machines according to the choice
 				foreach (var machineVm in MachineList)
@@ -328,6 +328,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SetDurationMinutesCommandProperty, value); }
 		}
 		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
-			DependencyProperty.Register("SetDurationMinutesCommand", typeof(Commands.Command), typeof(PPEditorProcess), new UIPropertyMetadata(null));
+			DependencyProperty.Register("SetDurationMinutesCommand", typeof(Commands.Command), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
+
 	}
 }

@@ -104,7 +104,8 @@
 	<Color x:Key="HighlightColor">#40FF</Color>
 	<SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource HighlightColor}" />
 	<SolidColorBrush x:Key="HeaderBorderBrush" Color="#6066" />
-	<SolidColorBrush x:Key="HeaderBackground" Color="#A4AA" />
+	<SolidColorBrush x:Key="HeaderBackground" Color="#C022" />
+	<SolidColorBrush x:Key="HeaderLightBackground" Color="#1044" />
 	<SolidColorBrush x:Key="VagueBorderBrush" Color="#34AA" />
 	<SolidColorBrush x:Key="GlyphBrush" Color="#444" />
 

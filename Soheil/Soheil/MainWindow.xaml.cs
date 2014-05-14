@@ -71,6 +71,8 @@ namespace Soheil
             // temp
             Login(null);
             //.
+
+			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
         }
 
         public ISplitList SplitList { get; set; }

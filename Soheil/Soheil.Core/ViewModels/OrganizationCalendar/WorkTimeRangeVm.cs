@@ -15,19 +15,33 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 	/// </summary>
 	public class WorkTimeRangeVm : DependencyObject
 	{
+		public int Id { get; protected set; }
+		public bool IsShift { get; protected set; }
+		public ICollection<WorkTimeRangeVm> Children { get; protected set; }
+
 		/// <summary>
 		/// Creates multiple instances of <see cref="PPItemWorkTime"/> for given shift and its breaks
 		/// </summary>
 		/// <param name="item"></param>
-		/// <returns></returns>
+		/// <returns>
+		/// a collection of vms for this shift and its breaks
+		/// <para>returns empty if current shift is not open</para></returns>
 		public static IEnumerable<WorkTimeRangeVm> CreateAuto(Soheil.Core.PP.PPItemWorkTime item)
 		{
 			List<WorkTimeRangeVm> list = new List<WorkTimeRangeVm>();
-			list.Add(new WorkTimeRangeVm(item.Model, item.DayStart));
-			foreach (var wbreak in item.Model.WorkBreaks)
+			
+			if (item.Model.IsOpen)
 			{
-				list.Add(new WorkTimeRangeVm(wbreak, item.DayStart));
+				var shiftVm = new WorkTimeRangeVm(item.Model, item.DayStart);
+				list.Add(shiftVm);
+				foreach (var wbreak in item.Model.WorkBreaks)
+				{
+					var breakVm = new WorkTimeRangeVm(wbreak, item.DayStart);
+					shiftVm.Children.Add(breakVm);
+					list.Add(breakVm);
+				}
 			}
+
 			return list;
 		}
 		/// <summary>
@@ -39,7 +53,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			Start = offset.AddSeconds(shift.StartSeconds);
 			End = offset.AddSeconds(shift.EndSeconds);
 			Color = shift.WorkShiftPrototype.Color;
-			IsOpen = shift.IsOpen;
+			Id = shift.Id;
+			Children = new List<WorkTimeRangeVm>();
+			IsShift = true;
 		}
 		/// <summary>
 		/// Creates an instance of WorkTimeRangeVm for the given <see cref="Soheil.Model.WorkBreak"/>
@@ -50,7 +66,8 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			Start = offset.AddSeconds(wbreak.StartSeconds);
 			End = offset.AddSeconds(wbreak.EndSeconds);
 			Color = DefaultColors.WorkBreak;
-			IsOpen = false;
+			Id = wbreak.Id;
+			IsShift = false;
 		}
 
 
@@ -85,15 +102,5 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		}
 		public static readonly DependencyProperty ColorProperty =
 			DependencyProperty.Register("Color", typeof(Color), typeof(WorkTimeRangeVm), new UIPropertyMetadata(Colors.Transparent));
-		/// <summary>
-		/// Gets or sets a bindable value that indicates whether this range is open for business
-		/// </summary>
-		public bool IsOpen
-		{
-			get { return (bool)GetValue(IsOpenProperty); }
-			set { SetValue(IsOpenProperty, value); }
-		}
-		public static readonly DependencyProperty IsOpenProperty =
-			DependencyProperty.Register("IsOpen", typeof(bool), typeof(WorkTimeRangeVm), new UIPropertyMetadata(true));
 	}
 }

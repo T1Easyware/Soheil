@@ -643,12 +643,6 @@
   <data name="PPE_SameTimeForActivites" xml:space="preserve">
     <value>Same Duration for all Activities</value>
   </data>
-  <data name="PPE_StartOfNextHour" xml:space="preserve">
-    <value>Beginning of next hour</value>
-  </data>
-  <data name="PPE_StartOfNextHourTooltip" xml:space="preserve">
-    <value>Next hour from now (not the entered time)</value>
-  </data>
   <data name="PPE_SumOfTP" xml:space="preserve">
     <value>Sum of all Target points</value>
   </data>
@@ -798,5 +792,8 @@
   </data>
   <data name="txtSelectWorkProfile" xml:space="preserve">
     <value>Select Working hours:</value>
+  </data>
+  <data name="txtStation" xml:space="preserve">
+    <value>Station</value>
   </data>
 </root>

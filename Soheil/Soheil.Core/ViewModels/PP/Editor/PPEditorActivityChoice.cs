@@ -32,7 +32,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="parent"></param>
-		public PPEditorActivityChoice(Model.StateStationActivity model, PPEditorProcess parent)
+		public PPEditorActivityChoice(Model.StateStationActivity model, ProcessEditorVm parent)
 		{
 			Model = model;
 			SetValue(ParentProperty, parent);
@@ -44,7 +44,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// Dependency property for parent used in xaml to compare this choice with selected choice
 		/// </summary>
 		public static readonly DependencyProperty ParentProperty =
-			DependencyProperty.Register("Parent", typeof(PPEditorProcess), typeof(PPEditorActivityChoice), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Parent", typeof(ProcessEditorVm), typeof(PPEditorActivityChoice), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets or sets the bindable CycleTime of this choice

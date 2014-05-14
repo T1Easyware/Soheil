@@ -630,7 +630,7 @@
 										HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20"
 										DataContext="{Binding JobEditor}"/>
 						<!--Task Editor-->
-						<local:PPTaskEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskEditorPanel" Height="0"
+						<local:PlanEditor Grid.ColumnSpan="2" Grid.Row="1" x:Name="taskEditorPanel" Height="0"
 										HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20"
 										DataContext="{Binding TaskEditor}"/>
 						<!-- NPT Editor-->
@@ -734,7 +734,7 @@
 							</ItemsControl.Template>
 						</ItemsControl>
 						<!-- first column of Activities -->
-						<DockPanel Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
+						<DockPanel Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}" TextBlock.FontSize="10">
 							<Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
 								<TextBlock Text="مدت زمان" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 							</Border>
@@ -888,7 +888,7 @@
 								<DataTemplate>
 									<DataTemplate.Resources>
 										<Style TargetType="Rectangle">
-											<Setter Property="Fill" Value="{StaticResource HeaderBackground}"/>
+											<Setter Property="Fill" Value="#A4AA"/>
 											<Setter Property="Width" Value="2"/>
 											<Setter Property="Margin" Value="-1,0"/>
 											<Setter Property="HorizontalAlignment" Value="Left"/>

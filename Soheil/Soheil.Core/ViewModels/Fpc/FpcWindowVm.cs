@@ -129,27 +129,47 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 
 		/// <summary>
+		/// Updates ViewModel by the given product's active fpc
+		/// </summary>
+		/// <param name="productId"></param>
+		public void ChangeFpcByProductId(int productId)
+		{
+			//clear all fpc data from the view model and reload stations and activities
+			ResetFPC(); 
+			//set model
+			Model = fpcDataService.GetActiveForProduct(productId);
+			//update view model from model
+			ChangeFpcByModel();
+		}
+
+		/// <summary>
 		/// Updates the ViewModel to FPC Model with the given Id
 		/// </summary>
 		/// <param name="id">The id of the FPC Model which is used for updating the FpcWindowVm</param>
-		public void ChangeFpc(int id)
+		public void ChangeFpcByFpcId(int fpcId)
 		{
 			//clear all fpc data from the view model and reloads stations and activities
 			ResetFPC();
-
-			//get model
-			var model = fpcDataService.GetSingle(id);
+			//set model
+			Model = fpcDataService.GetSingle(fpcId);
+			//update view model from model
+			ChangeFpcByModel();
+		}
+		/// <summary>
+		/// Updates ViewModel from Model
+		/// </summary>
+		public void ChangeFpcByModel()
+		{
 			try
 			{
 				//-----------
 				//load basics
 				//-----------
-				Model = model;
-				IsDefault = model.IsDefault;
-				Product = new ProductVm(model.Product);
+				IsDefault = Model.IsDefault;
+				Product = new ProductVm(Model.Product);
 
 				//load all product reworks
-				var productReworkModels = fpcDataService.GetProductReworks(model, includeMainProduct: false);
+				var productReworkModels = fpcDataService.GetProductReworks(Model, includeMainProduct: false);
 				ProductReworks.Clear();
 				foreach (var prodrew in productReworkModels)
 				{
@@ -159,7 +179,7 @@ namespace Soheil.Core.ViewModels.Fpc
 				//-----------
 				//load states
 				//-----------
-				fpcDataService.CorrectFPCStates(model);
+				fpcDataService.CorrectFPCStates(Model);
 				//reload states
 				var states = fpcDataService.stateDataService.GetStatesByFpcId(Id);
 				//show all states
@@ -989,5 +1009,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 		}
 		#endregion
+
+
 	}
 }

@@ -12,7 +12,7 @@ namespace Soheil.Common
 		public static readonly Color WorkBreak = Color.FromArgb(50, 200, 40, 40);
 		public static class Day
 		{
-			public readonly static Color Open = Color.FromArgb(50, 255, 255, 255);
+			public readonly static Color Open = Color.FromArgb(50, 0, 30, 15);
 			public readonly static Color HalfClosed = Color.FromArgb(50, 200, 200, 127);
 			public readonly static Color Closed = Color.FromArgb(50, 255, 127, 127);
 			public readonly static Color SpecialDay1 = Color.FromArgb(50, 255, 127, 255);

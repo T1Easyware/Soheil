@@ -54,6 +54,15 @@ namespace Soheil.Core.ViewModels.PP
 			load();
 		}
 		/// <summary>
+		/// Reloads current blocks full data updating the current UOW
+		/// </summary>
+		public void Reload(Soheil.Core.PP.PPItemBlock fullData)
+		{
+			UOW = fullData.UOW;
+			_fullData = fullData;
+			load();
+		}
+		/// <summary>
 		/// Loads everything from _fullData (everything until Task)
 		/// </summary>
 		private void load()

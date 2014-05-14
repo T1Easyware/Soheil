@@ -22,6 +22,8 @@ namespace Soheil.Core.ViewModels.PP
 			initializeCommands();
 		}
 
+		public abstract void Reload(PPItemNpt item);
+
 		//StartDate Dependency Property
 		public DateTime StartDate
 		{
@@ -83,5 +85,6 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty SaveCommandProperty =
 			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(NPTVm), new UIPropertyMetadata(null)); 
 		#endregion
+
 	}
 }

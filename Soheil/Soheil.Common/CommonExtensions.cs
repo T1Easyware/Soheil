@@ -59,6 +59,11 @@ namespace Soheil.Common
 		{
 			return _persianCalendar.GetDayOfMonth(dateTime);
 		}
+		/// <summary>
+		/// PersianDayOfWeek Enum is zero-biased
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
 		public static PersianDayOfWeek GetPersianDayOfWeek(this DateTime dateTime)
 		{
 			return (PersianDayOfWeek)(((int)dateTime.DayOfWeek + 1) % 7);
@@ -98,40 +103,6 @@ namespace Soheil.Common
 			return (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) < 128;
 		}
 		public static Point SubtractPoint(this Point first, Point second) { return new Point(first.X - second.X, first.Y - second.Y); }
-		#endregion
-
-		#region Thread & Dispatcher
-		public static void ForceQuit(this System.Threading.Thread thread)
-		{
-			if (thread != null)
-			{
-				if (thread.IsAlive)
-					thread.Abort();
-				else if (thread.ThreadState == System.Threading.ThreadState.WaitSleepJoin)
-					thread.Abort();
-			}
-		}
-
-		public static void InvokeInBackground(this Dispatcher dispatcher, Action action)
-		{
-			dispatcher.Invoke(action, DispatcherPriority.Background);
-		}
-		public static void InvokeInBackground<T>(this Dispatcher dispatcher, Action<T> action, T param1)
-		{
-			dispatcher.Invoke(action, DispatcherPriority.Background, param1);
-		}
-		public static DispatcherOperation BeginInBackground(this Dispatcher dispatcher, Action action)
-		{
-			return dispatcher.BeginInvoke(action, DispatcherPriority.Background, null);
-		}
-		public static DispatcherOperation BeginInBackground(this Dispatcher dispatcher, Action<int> action, int param1)
-		{
-			return dispatcher.BeginInvoke(action, DispatcherPriority.Background, param1);
-		}
-		public static DispatcherOperation BeginInBackground(this Dispatcher dispatcher, Action<int, DateTime, DateTime> action, int param1, DateTime param2, DateTime param3)
-		{
-			return dispatcher.BeginInvoke(action, DispatcherPriority.Background, param1, param2, param3);
-		}
 		#endregion
 
 		#region Collection

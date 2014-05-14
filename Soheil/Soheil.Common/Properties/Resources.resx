@@ -648,12 +648,6 @@
   <data name="PPE_SameTimeForActivites" xml:space="preserve">
     <value>مدت تولید مساوی برای فعالیتها</value>
   </data>
-  <data name="PPE_StartOfNextHour" xml:space="preserve">
-    <value>ابتدای ساعت بعد</value>
-  </data>
-  <data name="PPE_StartOfNextHourTooltip" xml:space="preserve">
-    <value>ساعت بعد از الان (زمان وارد شده مد نظر نمی باشد)</value>
-  </data>
   <data name="PPE_SumOfTP" xml:space="preserve">
     <value>مجموع کل هدف</value>
   </data>
@@ -803,5 +797,8 @@
   </data>
   <data name="txtSelectWorkProfile" xml:space="preserve">
     <value>ساعت کاری مطابق:</value>
+  </data>
+  <data name="txtStation" xml:space="preserve">
+    <value>ایستگاه</value>
   </data>
 </root>

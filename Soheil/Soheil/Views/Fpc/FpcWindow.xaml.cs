@@ -50,7 +50,7 @@ namespace Soheil.Views.Fpc
 				var view = d as FpcWindow;
 				var val = e.NewValue as Core.ViewModels.FpcVm;
 				if (val == null) return;
-				view.VM.ChangeFpc(val.Id);
+				view.VM.ChangeFpcByFpcId(val.Id);
 			}));
 		#endregion
 

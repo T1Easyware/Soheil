@@ -365,8 +365,11 @@ namespace Soheil.Controls.Converters.PP
 			var oneHourWidth = (double)values[1];
 			return new Thickness(
 				(
-					(((DateTime)values[0]).GetPersianDayOfYear() * 24) + 
-					((DateTime)values[0]).TimeOfDay.TotalHours
+					(((DateTime)values[0]).GetPersianDayOfYear() * 24)
+					+ 
+					((DateTime)values[0]).TimeOfDay.TotalHours 
+					- 
+					24
 				) * oneHourWidth, 0, 0, 0);
 		}
 

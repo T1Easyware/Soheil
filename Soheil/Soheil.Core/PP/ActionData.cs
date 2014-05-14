@@ -18,14 +18,21 @@ namespace Soheil.Core.PP
 		internal DateTime End { get; private set; }
 
 		/// <summary>
-		/// Specifies whether the item with the given range fits (or partially fits) in the range specifed by this ActionData
+		/// Specifies whether the PPItemBase fits (or partially fits) in the range specifed by this ActionData
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="end"></param>
 		/// <returns></returns>
-		public bool IsInRange(DateTime itemStart, DateTime itemEnd)
+		public bool IsInRange(PPItemBase item)
 		{
-			return !(itemEnd > Start || itemStart < End);
+			return !(item.End < Start || item.Start > End);
+		}
+		public bool IsValidRange()
+		{
+			return !(Start == DateTime.MinValue 
+				|| Start == DateTime.MaxValue 
+				|| End == DateTime.MinValue 
+				|| End == DateTime.MaxValue);
 		}
 	}
 }

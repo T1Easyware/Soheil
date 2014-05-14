@@ -502,24 +502,6 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ابتدای ساعت بعد.
-        /// </summary>
-        public static string PPE_StartOfNextHour {
-            get {
-                return ResourceManager.GetString("PPE_StartOfNextHour", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ساعت بعد از الان (زمان وارد شده مد نظر نمی باشد).
-        /// </summary>
-        public static string PPE_StartOfNextHourTooltip {
-            get {
-                return ResourceManager.GetString("PPE_StartOfNextHourTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ابتدای ساعت.
         /// </summary>
         public static string PPE_StartOfThisHour {
@@ -1911,6 +1893,15 @@ namespace Soheil.Common.Properties {
         public static string txtStartTime {
             get {
                 return ResourceManager.GetString("txtStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ایستگاه.
+        /// </summary>
+        public static string txtStation {
+            get {
+                return ResourceManager.GetString("txtStation", resourceCulture);
             }
         }
         
