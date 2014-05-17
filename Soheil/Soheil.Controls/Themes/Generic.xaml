@@ -363,8 +363,8 @@ TargetType="{x:Type Button}">
         </Setter>
     </Style>
 
-	
-    <Style TargetType="{x:Type CustomControls:TimeBox}">
+
+	<Style TargetType="{x:Type CustomControls:TimeBox}">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type CustomControls:TimeBox}">
@@ -377,6 +377,60 @@ TargetType="{x:Type Button}">
 							<Setter Property="Height" Value="22"/>
 							<Setter Property="VerticalAlignment" Value="Center"/>
 							<Setter Property="Foreground" Value="White"/>
+							<Setter Property="ToolTip">
+								<Setter.Value>
+									<StackPanel FlowDirection="LeftToRight" Orientation="Horizontal">
+										<MenuItem Header="Until work break" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource DurationFillToEnd}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>0</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="15 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource DurationQuarterHour}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>15</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="30 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource DurationHalfHour}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>30</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="45 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource Duration3QuratersHour}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>45</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="1 Hour" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource Duration1Hour}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>60</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="2 Hours" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource Duration2Hours}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>120</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+									</StackPanel>
+								</Setter.Value>
+							</Setter>
 							<Setter Property="Template">
 								<Setter.Value>
 									<ControlTemplate TargetType="{x:Type TextBoxBase}">
@@ -479,53 +533,5 @@ TargetType="{x:Type Button}">
 			</Setter.Value>
 		</Setter>
 	</Style>
-
-
-    <Style TargetType="{x:Type CustomControls:DurationToolbox}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type CustomControls:DurationToolbox}">
-                    <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal">
-                        <Button ToolTip="Until work break" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:DurationToolbox}}}" Style="{StaticResource SmallButtonStyle}">
-                            <Image Style="{StaticResource DurationFillToEnd}"/>
-                            <Button.CommandParameter>
-                                <sys:Int32>0</sys:Int32>
-                            </Button.CommandParameter>
-                        </Button>
-                        <Button ToolTip="15 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:DurationToolbox}}}" Style="{StaticResource SmallButtonStyle}">
-                            <Image Style="{StaticResource DurationQuarterHour}"/>
-                            <Button.CommandParameter>
-                                <sys:Int32>15</sys:Int32>
-                            </Button.CommandParameter>
-                        </Button>
-                        <Button ToolTip="30 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:DurationToolbox}}}" Style="{StaticResource SmallButtonStyle}">
-                            <Image Style="{StaticResource DurationHalfHour}"/>
-                            <Button.CommandParameter>
-                                <sys:Int32>30</sys:Int32>
-                            </Button.CommandParameter>
-                        </Button>
-                        <Button ToolTip="45 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:DurationToolbox}}}" Style="{StaticResource SmallButtonStyle}">
-                            <Image Style="{StaticResource Duration3QuratersHour}"/>
-                            <Button.CommandParameter>
-                                <sys:Int32>45</sys:Int32>
-                            </Button.CommandParameter>
-                        </Button>
-                        <Button ToolTip="1 Hour" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:DurationToolbox}}}" Style="{StaticResource SmallButtonStyle}">
-                            <Image Style="{StaticResource Duration1Hour}"/>
-                            <Button.CommandParameter>
-                                <sys:Int32>60</sys:Int32>
-                            </Button.CommandParameter>
-                        </Button>
-                        <Button ToolTip="2 Hours" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:DurationToolbox}}}" Style="{StaticResource SmallButtonStyle}">
-                            <Image Style="{StaticResource Duration2Hours}"/>
-                            <Button.CommandParameter>
-                                <sys:Int32>120</sys:Int32>
-                            </Button.CommandParameter>
-                        </Button>
-                    </StackPanel>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
 </ResourceDictionary>

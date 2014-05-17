@@ -50,6 +50,24 @@ namespace Soheil.Core.PP
 		Thread _qThread;
 		Dispatcher _dispatcher;
 		bool _qThreadAlive = true;
+		bool _pause = false;
+
+		/// <summary>
+		/// Pauses or unpauses the thread
+		/// </summary>
+		public bool Pause
+		{
+			get { return _pause; }
+			set
+			{
+				if (!_qThreadAlive && value)
+				{
+					_qThread.Abort();
+					_qThread.Start();
+				}
+				_qThreadAlive = value;
+			}
+		}
 
 		Stack<Task> _qLoad;
 		Action<object> _actionLoadWorkTimes;
@@ -649,5 +667,6 @@ namespace Soheil.Core.PP
 			#endregion
 		}
 		#endregion
+
 	}
 }

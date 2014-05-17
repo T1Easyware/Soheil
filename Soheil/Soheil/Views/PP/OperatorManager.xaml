@@ -5,7 +5,7 @@
 			 xmlns:local="clr-namespace:Soheil.Views.PP"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" FlowDirection="RightToLeft"
-             d:DesignHeight="300" d:DesignWidth="400">
+             d:DesignHeight="300" d:DesignWidth="500">
 	<UserControl.Resources>
 		<Style x:Key="columnStyle" TargetType="Border">
 			<Setter Property="MinWidth" Value="100"/>
@@ -31,7 +31,7 @@
 				<Button Opacity="0" 
 						Command="{Binding ProcessOperatorCommand}" 
 						CommandParameter="{Binding Path=DataContext.SelectedProcess,
-							RelativeSource={RelativeSource AncestorType={x:Type local:OperatorManager}}}">
+							RelativeSource={RelativeSource AncestorType={x:Type local:TaskEditor}}}">
 					<Button.Triggers>
 						<EventTrigger RoutedEvent="MouseEnter">
 							<BeginStoryboard>
@@ -53,6 +53,7 @@
 					<TextBlock Text="{Binding Name}" DockPanel.Dock="Top"/>
 					<Image Visibility="{Binding IsInTask, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTaskImage}" DockPanel.Dock="Right"/>
 					<Image Visibility="{Binding IsInProcess, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInProcessImage}" DockPanel.Dock="Right"/>
+					<Image Visibility="{Binding IsInTimeRange, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInProcessImage}" DockPanel.Dock="Right"/>
 					<TextBlock Text="{Binding Iluo}" FontWeight="Bold" Margin="5,0"/>
 					<TextBlock Text="{Binding Code}" Foreground="Gray"/>
 				</DockPanel>

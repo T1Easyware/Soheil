@@ -31,6 +31,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			IsSelected = true;
 		}
+		public OperatorEditorVm(Model.Operator model)
+			: base(model)
+		{
+
+		}
 
 		#endregion
 

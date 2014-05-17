@@ -34,7 +34,7 @@
                 <DockPanel>
                     <CustomControls:TimeBox DurationSeconds="{Binding DurationSeconds}" DockPanel.Dock="Bottom" x:Name="ptimebox"/>
                     <TextBox Text="{Binding TargetPoint}" DockPanel.Dock="Bottom" VerticalAlignment="Center" ToolTip="{Loc txtTargetPoint}"/>
-                    <TextBox Text="{Binding Name}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </DockPanel>
             </DockPanel>
 

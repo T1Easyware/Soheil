@@ -137,7 +137,6 @@
     <Compile Include="CustomControls\ColorPicker\ColorUtils.cs" />
     <Compile Include="CustomControls\ColorPicker\HsvControl.cs" />
     <Compile Include="CustomControls\ColorPicker\SpectrumSlider.cs" />
-    <Compile Include="CustomControls\DurationToolbox.cs" />
     <Compile Include="CustomControls\FrameworkElementAdorner.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="CustomControls\GridLengthAnimation.cs" />

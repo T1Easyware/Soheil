@@ -44,6 +44,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			Model = model;
 			_uow = uow;
             initializeCommands();
+			OperatorManager = new OperatorManagerVm(_uow);
 
 			StartDate = model.StartDateTime.Date;
 			StartTime = model.StartDateTime.TimeOfDay;
@@ -177,8 +178,23 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsSelectedProperty, value); }
 		}
 		public static readonly DependencyProperty IsSelectedProperty =
-			DependencyProperty.Register("IsSelected", typeof(bool), typeof(TaskEditorVm), new UIPropertyMetadata(true));
-		
+			DependencyProperty.Register("IsSelected", typeof(bool), typeof(TaskEditorVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				(d.GetValue(OperatorManagerProperty) as OperatorManagerVm).
+					Refresh(d as TaskEditorVm);
+			}));
+
+		/// <summary>
+		/// Gets or sets the bindable operator manager to manager operators of this task
+		/// </summary>
+		public OperatorManagerVm OperatorManager
+		{
+			get { return (OperatorManagerVm)GetValue(OperatorManagerProperty); }
+			set { SetValue(OperatorManagerProperty, value); }
+		}
+		public static readonly DependencyProperty OperatorManagerProperty =
+			DependencyProperty.Register("OperatorManager", typeof(OperatorManagerVm), typeof(TaskEditorVm), new UIPropertyMetadata(null));
 
 		#region Process
 		/// <summary>

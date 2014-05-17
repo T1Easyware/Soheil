@@ -255,7 +255,7 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Editors
 		/// <summary>
-		/// Gets bindable ViewModel for TaskEditor
+		/// Gets bindable ViewModel for PlanEditor
 		/// </summary>
 		public PlanEditorVm TaskEditor
 		{
@@ -704,9 +704,11 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				JobEditor.IsVisible = false;
 				TaskEditor.IsVisible = !TaskEditor.IsVisible;
+				PPItems.Manager.Pause = TaskEditor.IsVisible;
 			});
 			CleanAddBlockCommand = new Commands.Command(o =>
 			{
+				PPItems.Manager.Pause = true;
 				TaskEditor.IsVisible = true;
 				JobEditor.IsVisible = false;
 				TaskEditor.Reset();
@@ -715,9 +717,11 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				TaskEditor.IsVisible = false;
 				JobEditor.IsVisible = !JobEditor.IsVisible;
+				PPItems.Manager.Pause = JobEditor.IsVisible;
 			});
 			CleanAddJobCommand = new Commands.Command(o =>
 			{
+				PPItems.Manager.Pause = true;
 				JobEditor.IsVisible = true;
 				TaskEditor.IsVisible = false;
 				JobEditor.Reset();

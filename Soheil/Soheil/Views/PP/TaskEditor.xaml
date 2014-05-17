@@ -221,7 +221,6 @@
 		</Grid.ColumnDefinitions>
         
         <DockPanel MinWidth="400" MaxWidth="600">
-            <!-- TP -->
             <!-- toolbar -->
             <Grid DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
@@ -230,16 +229,19 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Text="23" ToolTip="{Loc PPE_TaskTP}" MinWidth="60" TextAlignment="Right" VerticalAlignment="Center"/>
+				<!-- TP -->
+				<TextBox Grid.Column="0" Text="23" ToolTip="{Loc PPE_TaskTP}" MinWidth="60" TextAlignment="Right" VerticalAlignment="Center"/>
                 <Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
-                <ToggleButton Grid.Column="1" IsChecked="{Binding IsSameQtyForActivitiesSelected}"
+				<!-- same qty -->
+				<ToggleButton Grid.Column="1" IsChecked="{Binding IsSameQtyForActivitiesSelected}"
                               ToolTip="{Loc PPE_SameQtyForActivites}">
                     <DockPanel>
                         <Image Style="{StaticResource QuantityImage}" Margin="5,0" IsHitTestVisible="False"/>
                         <TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="50"/>
                     </DockPanel>
                 </ToggleButton>
-                <ToggleButton Grid.Column="2" IsChecked="{Binding IsSameTimeForActivitiesSelected}"
+				<!-- same time -->
+				<ToggleButton Grid.Column="2" IsChecked="{Binding IsSameTimeForActivitiesSelected}"
                               ToolTip="{Loc PPE_SameTimeForActivites}">
                     <WrapPanel>
 						<Image Style="{StaticResource DurationImage}" Margin="5,0" IsHitTestVisible="False"/>
@@ -247,7 +249,8 @@
                         <!--CustomControls:DurationToolbox DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="5,0" TimeBox="{Binding ElementName=timebox}"/-->
                     </WrapPanel>
                 </ToggleButton>
-                <ToggleButton Grid.Column="3" IsChecked="{Binding IsDeferToActivitiesSelected}"
+				<!-- defer -->
+				<ToggleButton Grid.Column="3" IsChecked="{Binding IsDeferToActivitiesSelected}"
                               ToolTip="{Loc PPE_DeferToActivites}">
                     <WrapPanel>
 						<Image Style="{StaticResource IndependentTPImage}" Margin="5,0" IsHitTestVisible="False"/>
@@ -274,7 +277,7 @@
             </ListBox>
         </DockPanel>
 		<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-			<local:OperatorManager DataContext="{Binding}"/>
+			<local:OperatorManager DataContext="{Binding OperatorManager}"/>
 		</ScrollViewer>
 		<!-- Processes and TPs (Bottom first column) -->
 		<DockPanel Visibility="Collapsed">

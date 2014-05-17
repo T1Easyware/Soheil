@@ -46,6 +46,10 @@ namespace Soheil.Controls.CustomControls
 	/// </summary>
 	public class TimeBox : Control
 	{
+		public TimeBox()
+		{
+			SetDurationMinutesCommand = new CustomCommand(this);
+		}
 		static TimeBox()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TimeBox), new FrameworkPropertyMetadata(typeof(TimeBox)));
@@ -164,5 +168,33 @@ namespace Soheil.Controls.CustomControls
 		}
 		public static readonly DependencyProperty IsReadOnlyProperty =
 			DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(TimeBox), new UIPropertyMetadata(false));
+
+		public ICommand SetDurationMinutesCommand
+		{
+			get { return (ICommand)GetValue(SetDurationMinutesCommandProperty); }
+			set { SetValue(SetDurationMinutesCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
+			DependencyProperty.Register("SetDurationMinutesCommand", typeof(ICommand), typeof(DurationToolbox), new PropertyMetadata(null));
+		public class CustomCommand : ICommand
+		{
+			public bool CanExecute(object parameter)
+			{
+				return !_tb.IsReadOnly;
+			}
+			public void Changed() { if (CanExecuteChanged != null) CanExecuteChanged(this, new EventArgs()); }
+			public event EventHandler CanExecuteChanged;
+			public void Execute(object parameter)
+			{
+				if (_tb == null) return;
+				if (_tb.IsReadOnly) return;
+				_tb.DurationSeconds = (int)parameter;
+			}
+			TimeBox _tb;
+			public CustomCommand(TimeBox tb)
+			{
+				_tb = tb;
+			}
+		}
 	}
 }
