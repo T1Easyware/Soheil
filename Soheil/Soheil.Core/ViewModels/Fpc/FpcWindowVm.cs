@@ -68,19 +68,6 @@ namespace Soheil.Core.ViewModels.Fpc
 			initStates();
 			IsReadonly = isReadonly;
 		}
-		/// <summary>
-		/// Creates an instance of FpcWindowVm with the given Unit of work
-		/// </summary>
-		/// <param name="uow"></param>
-		/// <param name="isReadonly">optional parameter to make the viewmodel readonly</param>
-		public FpcWindowVm(Dal.SoheilEdmContext uow, bool isReadonly = false)
-			: base()
-		{
-			_uow = uow;
-			initCommands();
-			initStates();
-			IsReadonly = isReadonly;
-		}
 
 		/// <summary>
 		/// Initializes States and Connectors collections to automatically do some stuff for FpcWindowVm

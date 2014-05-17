@@ -18,13 +18,14 @@ namespace Soheil.Core.ViewModels.PP
 		/// Use this constructor to create an operator outside a process
 		/// </summary>
 		/// <param name="model"></param>
-		protected OperatorVm(Model.Operator model, Model.StateStationActivity ssa)
+		protected OperatorVm(Model.Operator model, Model.StateStationActivity ssa = null)
 		{
 			OperatorModel = model;
 			Name = model.Name;
 			Code = model.Code;
 
-			Update(ssa);
+			if (ssa != null)
+				Update(ssa);
 		}
 		/// <summary>
 		/// Use this constructor to create an operator inside a process
@@ -35,21 +36,16 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			Role = model.Role;
 		}
-		public OperatorVm(Model.Operator model)
-		{
-			OperatorModel = model;
-			Name = model.Name;
-			Code = model.Code;
-		}
+
 		public void Update(Model.StateStationActivity ssa)
 		{
 			//find special skill
 			var productRework = ssa.StateStation.State.OnProductRework;
-			var specialSkill = productRework.ProductActivitySkills.FirstOrDefault(skill => skill.ActivitySkill.Operator.Id == model.Id);
+			var specialSkill = productRework.ProductActivitySkills.FirstOrDefault(skill => skill.ActivitySkill.Operator.Id == ssa.Id);
 
 			//find general skill
 			var activity = ssa.Activity;
-			var generalSkill = activity.ActivitySkills.FirstOrDefault(skill => skill.Operator.Id == model.Id);
+			var generalSkill = activity.ActivitySkills.FirstOrDefault(skill => skill.Operator.Id == ssa.Id);
 
 			//set skill propdps
 			if (generalSkill == null)

@@ -143,5 +143,49 @@ namespace Soheil.Core.DataServices
                 context.Commit();
                 ActivityRemoved(this, new ModelRemovedEventArgs(id));
         }
-    }
+
+		/// <summary>
+		/// Returns working status of an operator relative to the given process and time range
+		/// </summary>
+		/// <param name="model">model of operator to use</param>
+		/// <param name="process">model of process to compare with (can't be null)</param>
+		/// <param name="start">start of range of time in which availability of operator is evaluated</param>
+		/// <param name="end">end of range of time in which availability of operator is evaluated</param>
+		/// <returns>bool[3] => [0]:IsSelected in process, [1]:IsInTask (other processes of task) [2]:IsInTimeRange (other tasks or stations)</returns>
+		public bool[] GetOperatorStatus(Model.Operator model, Model.Process process, DateTime start, DateTime end)
+		{
+			var procOpers = model.ProcessOperators.Where(x =>
+				x.Process.Task.StartDateTime < end &&
+				x.Process.Task.EndDateTime > start);
+
+			return new bool[]{
+				procOpers.Any(x => x.Process.Id == process.Id),
+				procOpers.Any(x => 
+					x.Process.Task.Id == process.Task.Id
+					&& x.Process.Id != process.Id),
+				procOpers.Any(x => x.Process.Task.Block.StateStation.Station.Id != process.Task.Block.StateStation.Station.Id),
+			};
+		}
+
+		/// <summary>
+		/// Returns working status of an operator relative to the given process and time range
+		/// </summary>
+		/// <param name="model">model of operator to use</param>
+		/// <param name="process">model of task to compare with (can't be null)</param>
+		/// <param name="start">start of range of time in which availability of operator is evaluated</param>
+		/// <param name="end">end of range of time in which availability of operator is evaluated</param>
+		/// <returns>bool[3] => [0]:IsSelected in process, [1]:IsInTask (other processes of task) [2]:IsInTimeRange (other tasks or stations)</returns>
+		public bool[] GetOperatorStatus(Model.Operator model, Model.Task task, DateTime start, DateTime end)
+		{
+			var procOpers = model.ProcessOperators.Where(x =>
+				x.Process.Task.StartDateTime < end &&
+				x.Process.Task.EndDateTime > start);
+
+			return new bool[]{
+				false,
+				procOpers.Any(x => x.Process.Task.Id == task.Id),
+				procOpers.Any(x => x.Process.Task.Block.StateStation.Station.Id != task.Block.StateStation.Station.Id),
+			};
+		}
+	}
 }

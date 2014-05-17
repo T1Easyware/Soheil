@@ -377,10 +377,10 @@ TargetType="{x:Type Button}">
 							<Setter Property="Height" Value="22"/>
 							<Setter Property="VerticalAlignment" Value="Center"/>
 							<Setter Property="Foreground" Value="White"/>
-							<Setter Property="ToolTip">
+							<!--Setter Property="ContextMenu">
 								<Setter.Value>
-									<StackPanel FlowDirection="LeftToRight" Orientation="Horizontal">
-										<MenuItem Header="Until work break" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+									<ContextMenu FlowDirection="LeftToRight">
+										<MenuItem Header="Until work break" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
 											<MenuItem.Icon>
 												<Image Style="{StaticResource DurationFillToEnd}"/>
 											</MenuItem.Icon>
@@ -388,7 +388,7 @@ TargetType="{x:Type Button}">
 												<sys:Int32>0</sys:Int32>
 											</MenuItem.CommandParameter>
 										</MenuItem>
-										<MenuItem Header="15 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+										<MenuItem Header="15 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
 											<MenuItem.Icon>
 												<Image Style="{StaticResource DurationQuarterHour}"/>
 											</MenuItem.Icon>
@@ -396,7 +396,7 @@ TargetType="{x:Type Button}">
 												<sys:Int32>15</sys:Int32>
 											</MenuItem.CommandParameter>
 										</MenuItem>
-										<MenuItem Header="30 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+										<MenuItem Header="30 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
 											<MenuItem.Icon>
 												<Image Style="{StaticResource DurationHalfHour}"/>
 											</MenuItem.Icon>
@@ -404,7 +404,7 @@ TargetType="{x:Type Button}">
 												<sys:Int32>30</sys:Int32>
 											</MenuItem.CommandParameter>
 										</MenuItem>
-										<MenuItem Header="45 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+										<MenuItem Header="45 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
 											<MenuItem.Icon>
 												<Image Style="{StaticResource Duration3QuratersHour}"/>
 											</MenuItem.Icon>
@@ -412,7 +412,7 @@ TargetType="{x:Type Button}">
 												<sys:Int32>45</sys:Int32>
 											</MenuItem.CommandParameter>
 										</MenuItem>
-										<MenuItem Header="1 Hour" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+										<MenuItem Header="1 Hour" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
 											<MenuItem.Icon>
 												<Image Style="{StaticResource Duration1Hour}"/>
 											</MenuItem.Icon>
@@ -420,7 +420,7 @@ TargetType="{x:Type Button}">
 												<sys:Int32>60</sys:Int32>
 											</MenuItem.CommandParameter>
 										</MenuItem>
-										<MenuItem Header="2 Hours" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}" Style="{StaticResource SmallButtonStyle}">
+										<MenuItem Header="2 Hours" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
 											<MenuItem.Icon>
 												<Image Style="{StaticResource Duration2Hours}"/>
 											</MenuItem.Icon>
@@ -428,9 +428,9 @@ TargetType="{x:Type Button}">
 												<sys:Int32>120</sys:Int32>
 											</MenuItem.CommandParameter>
 										</MenuItem>
-									</StackPanel>
+									</ContextMenu>
 								</Setter.Value>
-							</Setter>
+							</-->
 							<Setter Property="Template">
 								<Setter.Value>
 									<ControlTemplate TargetType="{x:Type TextBoxBase}">

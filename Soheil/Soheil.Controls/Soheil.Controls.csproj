@@ -540,6 +540,9 @@
     <Resource Include="Images\PP\operatorInProcess.png" />
     <Resource Include="Images\PP\operatorInTask.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\operatorInTimeRange.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

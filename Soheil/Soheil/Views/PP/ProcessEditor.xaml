@@ -6,12 +6,15 @@
              xmlns:local="clr-namespace:Soheil.Views.PP"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" Background="#234"
+             mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="500" MinWidth="400" MaxWidth="600">
     <UserControl.Resources>
     </UserControl.Resources>
 
-    <Border CornerRadius="10" BorderBrush="#EEE" BorderThickness="5" Margin="4" Background="Transparent">
+    <Border CornerRadius="10" BorderBrush="#DFFF" BorderThickness="5" Margin="4" Background="#B234">
+		<Border.Effect>
+			<DropShadowEffect ShadowDepth="2" BlurRadius="3"/>
+		</Border.Effect>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
@@ -25,16 +28,12 @@
                 <DockPanel DockPanel.Dock="Left">
                     <Image Style="{StaticResource DurationImage}" DockPanel.Dock="Bottom" Margin="2,3"/>
                     <Image Style="{StaticResource QuantityImage}" DockPanel.Dock="Bottom" Margin="2,3"/>
-                    <Image Style="{StaticResource ActivityImage}">
-                        <Image.Effect>
-                            <DropShadowEffect Color="White" BlurRadius="1" ShadowDepth="0" Opacity="1"/>
-                        </Image.Effect>
-                    </Image>
-                </DockPanel>
+					<Image Style="{StaticResource ActivityImage}" Width="24"/>
+				</DockPanel>
                 <DockPanel>
                     <CustomControls:TimeBox DurationSeconds="{Binding DurationSeconds}" DockPanel.Dock="Bottom" x:Name="ptimebox"/>
                     <TextBox Text="{Binding TargetPoint}" DockPanel.Dock="Bottom" VerticalAlignment="Center" ToolTip="{Loc txtTargetPoint}"/>
-                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                 </DockPanel>
             </DockPanel>
 
@@ -115,8 +114,19 @@
                         <Setter Property="ToolTip">
                             <Setter.Value>
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Name}"/>
-                                    <TextBlock Text="Not available with current ManHour" Visibility="{Binding CanBeUsed, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+									<ToggleButton IsChecked="{Binding IsUsed}" IsEnabled="{Binding CanBeUsed}">
+										<ToggleButton.ToolTip>
+											<StackPanel>
+												<TextBlock Text="این ماشین در صورت استفاده از نفرساعت دیگری موجود می باشد" Visibility="{Binding CanBeUsed, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+												<TextBlock Text="این ماشین در این فعالیت استفاده می شود" Visibility="{Binding IsUsed, Converter={StaticResource booleanToVisibilityConverter}}"/>
+												<TextBlock Text="این ماشین در این فعالیت استفاده نمی شود" Visibility="{Binding IsUsed, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+											</StackPanel>
+										</ToggleButton.ToolTip>
+										<WrapPanel>
+											<TextBlock Text="{Binding Code}" Foreground="Gray"/>
+											<TextBlock Text="{Binding Name}" Margin="10,0,10,0"/>
+										</WrapPanel>
+									</ToggleButton>
                                 </StackPanel>
                             </Setter.Value>
                         </Setter>

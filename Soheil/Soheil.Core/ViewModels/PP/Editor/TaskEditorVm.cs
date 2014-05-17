@@ -45,6 +45,27 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			_uow = uow;
             initializeCommands();
 			OperatorManager = new OperatorManagerVm(_uow);
+			OperatorManager.SelectionChanged += (operatorVm, isSelected, role) =>
+			{
+				if (SelectedProcess == null) return;
+				if (isSelected)
+				{
+					SelectedProcess.Model.ProcessOperators.Add(new Model.ProcessOperator
+					{
+						Process = SelectedProcess.Model,
+						Operator = operatorVm.OperatorModel,
+						Role = role,
+						Code = model.Code + operatorVm.Code,
+					});
+					SelectedProcess.SelectedOperatorsCount++;
+				}
+				else
+				{
+					var po = SelectedProcess.Model.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operatorVm.OperatorId);
+					if (po != null) SelectedProcess.Model.ProcessOperators.Remove(po);
+					SelectedProcess.SelectedOperatorsCount--;
+				}
+			};
 
 			StartDate = model.StartDateTime.Date;
 			StartTime = model.StartDateTime.TimeOfDay;
@@ -179,7 +200,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty IsSelectedProperty =
 			DependencyProperty.Register("IsSelected", typeof(bool), typeof(TaskEditorVm),
-			new UIPropertyMetadata(true, (d, e) =>
+			new UIPropertyMetadata(false, (d, e) =>
 			{
 				(d.GetValue(OperatorManagerProperty) as OperatorManagerVm).
 					Refresh(d as TaskEditorVm);
@@ -212,7 +233,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(SelectedProcessProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedProcessProperty =
-			DependencyProperty.Register("SelectedProcess", typeof(ProcessEditorVm), typeof(TaskEditorVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("SelectedProcess", typeof(ProcessEditorVm), typeof(TaskEditorVm),
+			new UIPropertyMetadata(null, (d, e) =>
+			{
+				var vm = (TaskEditorVm)d;
+				vm.OperatorManager.Refresh((ProcessEditorVm)e.NewValue);
+			}));
 		#endregion
 
 

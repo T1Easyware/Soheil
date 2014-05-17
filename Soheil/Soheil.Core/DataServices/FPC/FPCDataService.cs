@@ -298,9 +298,11 @@ namespace Soheil.Core.DataServices
 		internal void CorrectFPCStates(Model.FPC model)
 		{
 			//stateDataService.AddModel does not need commit but it has
+			var corrected = false;
 
 			//add start state
 			if (!model.States.Any(x => x.StateTypeNr == (int)StateType.Start))
+			{
 				stateDataService.AddModel(new State
 				{
 					FPC = model,
@@ -310,8 +312,11 @@ namespace Soheil.Core.DataServices
 					Code = "",
 					StateType = StateType.Start
 				});
+				corrected = true;
+			}
 			//add final state
 			if (!model.States.Any(x => x.StateType == StateType.Final))
+			{
 				stateDataService.AddModel(new State
 				{
 					FPC = model,
@@ -321,9 +326,12 @@ namespace Soheil.Core.DataServices
 					Code = "",
 					StateType = StateType.Final
 				});
+				corrected = true;
+			}
 
 			//add rework states for the newly added productReworks
-			if (!model.Product.ProductReworks.Any(x=>x.Rework == null))
+			if (!model.Product.ProductReworks.Any(x => x.Rework == null))
+			{
 				model.Product.ProductReworks.Add(
 					new ProductRework
 					{
@@ -333,6 +341,8 @@ namespace Soheil.Core.DataServices
 						Rework = null,
 						ModifiedBy = LoginInfo.Id,
 					});
+				corrected = true;
+			}
 
 			int reworkStateCounter = 0;
 			foreach (var productRework in model.Product.ProductReworks.Where(x => x.Rework != null))
@@ -352,6 +362,7 @@ namespace Soheil.Core.DataServices
 						OnProductRework = productRework,
 						StateType = StateType.Rework,
 					});
+					corrected = true;
 				}
 				reworkStateCounter++;
 			}
@@ -364,7 +375,7 @@ namespace Soheil.Core.DataServices
 				state.OnProductRework = model.Product.ProductReworks.First(x => x.Rework == null);
 			}
 			//...
-			context.Commit();
+			if(corrected) context.Commit();
 		}
 	}
 }

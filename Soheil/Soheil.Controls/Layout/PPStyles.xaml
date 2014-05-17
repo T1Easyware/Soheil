@@ -2,6 +2,53 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+	<Style x:Key="SmallButtonStyle" TargetType="Button">
+		<Setter Property="OverridesDefaultStyle" Value="True"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<Button Command="{TemplateBinding Command}"
+                            CommandParameter="{TemplateBinding CommandParameter}"
+                            Content="{TemplateBinding Content}"
+                            ToolTip="{TemplateBinding ToolTip}"
+                            Margin="-2" Background="Transparent" Opacity="0.5">
+						<Button.Triggers>
+							<EventTrigger RoutedEvent="MouseEnter">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:0.1">
+										<DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" To="1"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+							<EventTrigger RoutedEvent="MouseLeave">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:0.1">
+										<DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" To="0.5"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+							<EventTrigger RoutedEvent="MouseDown">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:0.1">
+										<ColorAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#4AA"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+							<EventTrigger RoutedEvent="MouseUp">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:0.1">
+										<ColorAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="Transparent"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+						</Button.Triggers>
+					</Button>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+
 	<ControlTemplate TargetType="ContentControl" x:Key="hoverStyle">
 		<Border BorderBrush="#4FFF" BorderThickness="0,1,1,0" Padding="0" Margin="0">
 			<Border.Background>

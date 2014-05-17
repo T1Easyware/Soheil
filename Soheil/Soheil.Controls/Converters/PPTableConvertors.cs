@@ -459,6 +459,26 @@ namespace Soheil.Controls.Converters.PP
 			return (OperatorRole)System.Convert.ToInt32(parameter);
 		}
 	}
+	public class OperatorFilter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue)
+				return Visibility.Collapsed;
+			string query = (string)values[0];
+			string code = (string)values[1];
+			string name = (string)values[1];
+			return (string.IsNullOrWhiteSpace(query) || name.Contains(query) || code.StartsWith(query)) ?
+				Visibility.Visible : Visibility.Collapsed;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+
 
 	/// <summary>
 	/// First binding is Code (match if starts with query)

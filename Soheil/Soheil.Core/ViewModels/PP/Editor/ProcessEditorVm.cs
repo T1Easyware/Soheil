@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Collections.ObjectModel;
 using Soheil.Common.SoheilException;
+using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
@@ -32,6 +33,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// Gets the process model
 		/// </summary>
 		public Model.Process Model { get; protected set; }
+		/// <summary>
+		/// Gets the first StateStationActivity in choices
+		/// </summary>
+		public Model.StateStationActivity SampleSSA { get; protected set; }
 
 		/// <summary>
 		/// Use this event to notify Task about changes to ActivityChoice of this Process
@@ -75,37 +80,26 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				Message.AddEmbeddedException("فعالیتی وجود ندارد");
 				return;
 			}
-			//set sampleSSA (this SSA is used for operators skills) see ctor in Soheil.Core.ViewModels.PP.OperatorVm
-			var sampleSSA = _ssaGroup.First();
-			Name = sampleSSA.Activity.Name;
+
+			//set sampleSSA
+			SampleSSA = _ssaGroup.First();
+			Name = SampleSSA.Activity.Name;
 
 			//Add Choices
 			foreach (var choice in _ssaGroup.OrderBy(ssa => ssa.ManHour))
 			{
 				Choices.Add(new PPEditorActivityChoice(choice, this));
 			}
+
+			//select the right choice based on ManHour
+			SelectedOperatorsCount = model.ProcessOperators.Count;
+			if (model.StateStationActivity != null)
+			{
+				//select the right choice based on model.StateStationActivity.Id
+				SelectedChoice = Choices.FirstOrDefault(x => x.StateStationActivityId == model.StateStationActivity.Id);
+			}
 			#endregion
 
-			#region Load operators
-			//Find all Operators
-			var allOperatorModels = new DataServices.OperatorDataService(_uow).GetActives();
-			var operatorVms = new List<OperatorEditorVm>();
-			foreach (var operatorModel in allOperatorModels)
-			{
-				var operatorVm = new OperatorEditorVm(operatorModel, sampleSSA);
-				//set IsSelected of operator
-				operatorVm.IsSelected = model.ProcessOperators.Any(po => po.Operator.Id == operatorModel.Id);
-				//add event handler to update SelectedOperatorsCount
-				//(event handler is set after IsSelected is set, so remember to set SelectedOperatorsCount manually)
-				operatorVm.SelectedOperatorsChanged += () => SelectedOperatorsCount = OperatorList.Count(x => x.IsSelected);
-				operatorVms.Add(operatorVm);
-			}
-			//Add Operators
-			foreach (var operatorVm in operatorVms.OrderByDescending(x => x.EffectiveSkill))
-			{
-				OperatorList.Add(operatorVm);
-			}
-			#endregion
 
 			#region Load machines
 			//Find all valid Machines for the whole ssaGroup
@@ -125,15 +119,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}
 			#endregion
 
-			#region Select the right choice
-			//select the right choice based on ManHour
-			SelectedOperatorsCount = model.ProcessOperators.Count;
-			if (model.StateStationActivity != null)
-			{
-				//select the right choice based on model.StateStationActivity.Id
-				SelectedChoice = Choices.FirstOrDefault(x => x.StateStationActivityId == model.StateStationActivity.Id);
-			}
-			#endregion
 
 			TargetPoint = model.TargetCount;
 			HoldEvents = false;
@@ -215,7 +200,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		#endregion
 
-		#region Operators and machines
 		/// <summary>
 		/// Gets a collection of machines that are in at least one choice of this process
 		/// <para>Selected machines have IsUsed = true</para>
@@ -223,12 +207,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		public ObservableCollection<MachineEditorVm> MachineList { get { return _machineList; } }
 		private ObservableCollection<MachineEditorVm> _machineList = new ObservableCollection<MachineEditorVm>();
-		/// <summary>
-		/// Gets a collection of all operators
-		/// <para>Selected operators have IsSelected = true</para>
-		/// </summary>
-		public ObservableCollection<OperatorEditorVm> OperatorList { get { return _operatorList; } }
-		private ObservableCollection<OperatorEditorVm> _operatorList = new ObservableCollection<OperatorEditorVm>();
 		/// <summary>
 		/// Gets or sets the bindable number of used operators in this process
 		/// </summary>
@@ -245,16 +223,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var val = (int)e.NewValue;
 				vm.SelectedChoice = vm.Choices.FirstOrDefault(x => x.ManHour == val);
 			}));
-		#endregion
 
-		//Message Dependency Property
-		public EmbeddedException Message
-		{
-			get { return (EmbeddedException)GetValue(MessageProperty); }
-			set { SetValue(MessageProperty, value); }
-		}
-		public static readonly DependencyProperty MessageProperty =
-			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets a bindable collection of choices (StateStationActivities) of this process
@@ -302,7 +271,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				Model.StateStationActivity = newVal.Model;
 				Message.ResetEmbeddedException();
 				//compare manhour of selected choice with number of assigned operators
-				SelectedChoice.OperatorCountError = ((int)Math.Ceiling(newVal.ManHour) != OperatorList.Count(x => x.IsSelected));
+				SelectedChoice.OperatorCountError = ((int)Math.Ceiling(newVal.ManHour) != Model.ProcessOperators.Count);
 
 				//Update Machines according to the choice
 				foreach (var machineVm in MachineList)
@@ -315,5 +284,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (ActivityChoiceChanged != null)
 				ActivityChoiceChanged(oldVal, newVal);
 		}
+
+		//Message Dependency Property
+		public EmbeddedException Message
+		{
+			get { return (EmbeddedException)GetValue(MessageProperty); }
+			set { SetValue(MessageProperty, value); }
+		}
+		public static readonly DependencyProperty MessageProperty =
+			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
+
 	}
 }

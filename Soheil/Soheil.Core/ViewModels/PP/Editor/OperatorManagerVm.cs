@@ -10,14 +10,29 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class OperatorManagerVm : DependencyObject
 	{
+		public event Action<OperatorEditorVm, bool, Soheil.Common.OperatorRole> SelectionChanged;
+
 		Dal.SoheilEdmContext _uow;
 		DataServices.OperatorDataService _operatorDataService;
 
 		public OperatorManagerVm(Dal.SoheilEdmContext uow)
 		{
 			_uow = uow;
-			_operatorDataService = new DataServices.OperatorDataService(_uow);
 
+			//get all operators and convert them to VM
+			_operatorDataService = new DataServices.OperatorDataService(_uow);
+			var allOperators = _operatorDataService.GetActives();
+			foreach (var oper in allOperators)
+			{
+				var operVm = new OperatorEditorVm(oper);
+				operVm.SelectedOperatorsChanged += (isSelected, role) =>
+				{
+					if (SelectionChanged != null) SelectionChanged(operVm, isSelected, role);
+				};
+				OperatorsList.Add(operVm);
+			}
+
+			//init commands
 			ClearSearchCommand = new Commands.Command(textBox =>
 			{
 				if (textBox is System.Windows.Controls.TextBox)
@@ -29,30 +44,60 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 
 		}
-		public void Refresh(TaskEditorVm parent)
+		public async void Refresh(TaskEditorVm parent)
 		{
-			var allOperators = _operatorDataService.GetActives();
-			foreach (var oper in allOperators)
+			foreach (var operVm in OperatorsList)
 			{
-				var procOpers = oper.ProcessOperators.Where(x =>
-					x.Process.Task.StartDateTime < parent.Model.EndDateTime &&
-					x.Process.Task.EndDateTime < parent.Model.StartDateTime);
-				if (procOpers.Any(x => x.Process.Task.Id == parent.Model.Id))
+				bool[] result;
+				var operModel = operVm.OperatorModel;
+				var processModel = parent.SelectedProcess == null ? null : parent.SelectedProcess.Model;
+				var taskModel = parent.Model;
+				var start = parent.Model.StartDateTime;
+				var end = parent.Model.EndDateTime;
+				//set process
+				if (parent.SelectedProcess == null)
 				{
-
+					result = await Task.Run(() =>
+						_operatorDataService.GetOperatorStatus(operModel, processModel, start, end));
 				}
+				//set task
+				else
+				{
+					result = await Task.Run(() =>
+						_operatorDataService.GetOperatorStatus(operModel, taskModel, start, end));
+				}
+
+				operVm.IsSelected = result[0];
+				operVm.IsInTask = result[1];
+				operVm.IsInTimeRange = result[2];
 			}
 		}
+		public void Refresh(ProcessEditorVm parent)
+		{
+			foreach (var operVm in OperatorsList)
+			{
+				var procOpers = operVm.OperatorModel.ProcessOperators.Where(x =>
+					x.Process.Task.StartDateTime < parent.Model.Task.EndDateTime &&
+					x.Process.Task.EndDateTime > parent.Model.Task.StartDateTime);
 
+				operVm.IsSelected = procOpers.Any(x =>
+					x.Process.Id == parent.Model.Id);
+				operVm.IsInTask = procOpers.Any(x => 
+					x.Process.Task.Id == parent.Model.Task.Id
+					&& x.Process.Id != parent.Model.Id);
+			}
+
+			OperatorsSelectedList.Clear();
+			foreach (var procOper in parent.Model.ProcessOperators)
+			{
+				OperatorsSelectedList.Add(new OperatorEditorVm(procOper));
+			}
+		}
 		#region Operators Lists
-		public ObservableCollection<ProcessEditorVm> OperatorsIdleList { get { return _operatorsIdleList; } }
-		private ObservableCollection<ProcessEditorVm> _operatorsIdleList = new ObservableCollection<ProcessEditorVm>();
-		public ObservableCollection<ProcessEditorVm> OperatorsMainList { get { return _operatorsMainList; } }
-		private ObservableCollection<ProcessEditorVm> _operatorsMainList = new ObservableCollection<ProcessEditorVm>();
-		public ObservableCollection<ProcessEditorVm> OperatorsSubsList { get { return _operatorsSubsList; } }
-		private ObservableCollection<ProcessEditorVm> _operatorsSubsList = new ObservableCollection<ProcessEditorVm>();
-		public ObservableCollection<ProcessEditorVm> OperatorsAuxList { get { return _operatorsAuxList; } }
-		private ObservableCollection<ProcessEditorVm> _operatorsAuxList = new ObservableCollection<ProcessEditorVm>();
+		public ObservableCollection<OperatorEditorVm> OperatorsList { get { return _operatorsList; } }
+		private ObservableCollection<OperatorEditorVm> _operatorsList = new ObservableCollection<OperatorEditorVm>();
+		public ObservableCollection<OperatorEditorVm> OperatorsSelectedList { get { return _operatorsSelectedList; } }
+		private ObservableCollection<OperatorEditorVm> _operatorsSelectedList = new ObservableCollection<OperatorEditorVm>();
 		#endregion
 
 
@@ -76,9 +121,5 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty RefreshCommandProperty =
 			DependencyProperty.Register("RefreshCommand", typeof(Commands.Command), typeof(OperatorManagerVm), new PropertyMetadata(null));
-
-
-
-
 	}
 }

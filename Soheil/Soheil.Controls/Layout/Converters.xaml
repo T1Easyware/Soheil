@@ -83,6 +83,7 @@
 
 	<ppconv:OperatorRoleTextConverter x:Key="operatorRoleTextConverter"/>
 	<ppconv:OperatorRoleIsValue x:Key="operatorRoleIsValue"/>
+	<ppconv:OperatorFilter x:Key="OperatorFilter"/>
 	<ppconv:FilterMaker x:Key="filterMaker"/>
 	
 	<ppconv:TimeSpanToStringConverter x:Key="timeSpanToStringConverter"/>

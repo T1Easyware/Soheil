@@ -282,46 +282,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 							}
 						}
 						#endregion
-						#region process operators
-						//delete ProcessOperator models that aren't in Vm
-						foreach (var poModel in processModel.ProcessOperators.ToArray())
-						{
-							if(!validProcessVm.OperatorList.Any(x=>
-								x.IsSelected &&
-								x.OperatorId == poModel.Operator.Id))
-							{
-								processModel.ProcessOperators.Remove(poModel);
-								processOperatorRepository.Delete(poModel);
-							}
-						}
-						//add or update ProcessOperator models that are in Vm
-						foreach (var operatorVm in validProcessVm.OperatorList.Where(x => x.IsSelected))
-						{
-							//find operatorVm in processModel's ProcessOperators
-							var poModel = processModel.ProcessOperators.FirstOrDefault(po => po.Operator.Id == operatorVm.OperatorId);
-							if (poModel != null)
-							{
-								//if operatorVm is already in process model's ProcessOperators
-								//	update its role
-								poModel.Role = operatorVm.Role;
-							}
-							else
-							{
-								//if operatorVm is not in process model's ProcessOperators
-								//	create a new SelectedMachine model
-								poModel = new Model.ProcessOperator
-								{
-									Process = processModel,
-									Operator = operatorRepository.Single(x => x.Id == operatorVm.OperatorId),
-									Role = operatorVm.Role,
-									Code = processModel.Code + operatorVm.Code,
-								};
-								//add SelectedMachine
-								processOperatorRepository.Add(poModel);
-								processModel.ProcessOperators.Add(poModel);
-							}
-						}
-						#endregion
 
 						//[↔]
 						if (validProcessVm.SelectedChoice.StateStationActivityId != processModel.StateStationActivity.Id)
@@ -370,22 +330,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 							}
 						}
 						#endregion
-						#region add process operators
-						foreach (var operatorVm in validProcessVm.OperatorList.Where(x => x.IsSelected))
-						{
-							//create a new SelectedMachine model
-							var poModel = new Model.ProcessOperator
-							{
-								Process = processModel,
-								Operator = operatorRepository.Single(x => x.Id == operatorVm.OperatorId),
-								Role = operatorVm.Role,
-								Code = processModel.Code + operatorVm.Code,
-							};
-							//add SelectedMachine
-							processOperatorRepository.Add(poModel);
-							processModel.ProcessOperators.Add(poModel);
-						}
-						#endregion
+
 						//add Process
 						processRepository.Add(processModel);
 						taskVm.Model.Processes.Add(processModel);

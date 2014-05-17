@@ -175,7 +175,7 @@ namespace Soheil.Controls.CustomControls
 			set { SetValue(SetDurationMinutesCommandProperty, value); }
 		}
 		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
-			DependencyProperty.Register("SetDurationMinutesCommand", typeof(ICommand), typeof(DurationToolbox), new PropertyMetadata(null));
+			DependencyProperty.Register("SetDurationMinutesCommand", typeof(ICommand), typeof(TimeBox), new PropertyMetadata(null));
 		public class CustomCommand : ICommand
 		{
 			public bool CanExecute(object parameter)

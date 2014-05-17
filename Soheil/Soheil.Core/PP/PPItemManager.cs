@@ -49,7 +49,7 @@ namespace Soheil.Core.PP
 
 		Thread _qThread;
 		Dispatcher _dispatcher;
-		bool _qThreadAlive = true;
+		bool _qThreadAlive = false;
 		bool _pause = false;
 
 		/// <summary>
@@ -62,7 +62,11 @@ namespace Soheil.Core.PP
 			{
 				if (!_qThreadAlive && value)
 				{
-					_qThread.Abort();
+					if (_qThread != null)
+						if (_qThread.IsAlive)
+							_qThread.Abort();
+					_qThread = new Thread(_threadStart);
+					_qThread.IsBackground = true;
 					_qThread.Start();
 				}
 				_qThreadAlive = value;
@@ -121,6 +125,69 @@ namespace Soheil.Core.PP
 		public void ForceReload()
 		{
 
+		}
+
+		void _threadStart()
+		{
+			int flag = 1;
+			while (_qThreadAlive)
+			{
+				Thread.Sleep(50);
+
+				int tries = 0;
+				while ((tries < 100 || _qLoad.Any()) && _qThreadAlive)
+				{
+					if (_qLoad.Any())
+					{
+						Thread.Sleep(10);
+
+						//load
+						var task = _qLoad.Pop();
+						task.Start();
+						task.Wait();
+						tries = 0;
+					}
+					else
+					{
+						Thread.Sleep(101);
+						tries++;
+					}
+				}
+
+				while (IsAutoRefresh && !_qLoad.Any() && _qThreadAlive)
+				{
+					Thread.Sleep(500);
+
+					//update/delete
+					flag = (flag + 1) % 5;
+					if (flag == 0)
+					{
+						Task.Factory.StartNew(_actionUpdateBlock, new ActionData(_lastStart, _lastEnd)).Wait();
+						continue;
+					}
+					if (flag == 1)
+					{
+						Task.Factory.StartNew(_actionUpdateNpt, new ActionData(_lastStart, _lastEnd)).Wait();
+						continue;
+					}
+					if (flag == 2)
+					{
+						Task.Factory.StartNew(_actionDeleteBlock, new ActionData(_lastStart, _lastEnd)).Wait();
+						continue;
+					}
+					if (flag == 3)
+					{
+						Task.Factory.StartNew(_actionDeleteNpt, new ActionData(_lastStart, _lastEnd)).Wait();
+						continue;
+					}
+					if (flag == 4)
+					{
+						Task.Factory.StartNew(_actionDeleteWorkTimes, new ActionData(_lastStart, _lastEnd)).Wait();
+						continue;
+					}
+				}
+				flag = 1;
+			}
 		}
 
 		#region Exit
@@ -243,71 +310,8 @@ namespace Soheil.Core.PP
 		{
 			#region Queue Timer
 			_qLoad = new Stack<Task>();
-
-			_qThread = new Thread(o =>
-			{
-				int flag = 1;
-				while (_qThreadAlive)
-				{
-					Thread.Sleep(50);
-
-					int tries = 0;
-					while ((tries < 100 || _qLoad.Any()) && _qThreadAlive)
-					{
-						if (_qLoad.Any())
-						{
-							Thread.Sleep(10);
-
-							//load
-							var task = _qLoad.Pop();
-							task.Start();
-							task.Wait();
-							tries = 0;
-						}
-						else
-						{
-							Thread.Sleep(101);
-							tries++;
-						}
-					}
-
-					while (IsAutoRefresh && !_qLoad.Any() && _qThreadAlive)
-					{
-						Thread.Sleep(500);
-
-						//update/delete
-						flag = (flag + 1) % 5;
-						if (flag == 0)
-						{
-							Task.Factory.StartNew(_actionUpdateBlock, new ActionData(_lastStart, _lastEnd)).Wait();
-							continue;
-						}
-						if (flag == 1)
-						{
-							Task.Factory.StartNew(_actionUpdateNpt, new ActionData(_lastStart, _lastEnd)).Wait();
-							continue;
-						}
-						if (flag == 2)
-						{
-							Task.Factory.StartNew(_actionDeleteBlock, new ActionData(_lastStart, _lastEnd)).Wait();
-							continue;
-						}
-						if (flag == 3)
-						{
-							Task.Factory.StartNew(_actionDeleteNpt, new ActionData(_lastStart, _lastEnd)).Wait();
-							continue;
-						}
-						if (flag == 4)
-						{
-							Task.Factory.StartNew(_actionDeleteWorkTimes, new ActionData(_lastStart, _lastEnd)).Wait();
-							continue;
-						}
-					}
-					flag = 1;
-				}
-			});
-			_qThread.IsBackground = true;
-			_qThread.Start();
+			//start the thread
+			Pause = false;
 			#endregion
 
 			#region Load Actions
