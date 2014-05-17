@@ -24,6 +24,25 @@ namespace Soheil.Core.ViewModels.PP
 			Name = model.Name;
 			Code = model.Code;
 
+			Update(ssa);
+		}
+		/// <summary>
+		/// Use this constructor to create an operator inside a process
+		/// </summary>
+		/// <param name="model"></param>
+		protected OperatorVm(Model.ProcessOperator model)
+			:this(model.Operator, model.Process.StateStationActivity)
+		{
+			Role = model.Role;
+		}
+		public OperatorVm(Model.Operator model)
+		{
+			OperatorModel = model;
+			Name = model.Name;
+			Code = model.Code;
+		}
+		public void Update(Model.StateStationActivity ssa)
+		{
 			//find special skill
 			var productRework = ssa.StateStation.State.OnProductRework;
 			var specialSkill = productRework.ProductActivitySkills.FirstOrDefault(skill => skill.ActivitySkill.Operator.Id == model.Id);
@@ -51,21 +70,6 @@ namespace Soheil.Core.ViewModels.PP
 				SpecialSkill = specialSkill.Iluo;
 				EffectiveSkill = specialSkill.Iluo;
 			}
-		}
-		/// <summary>
-		/// Use this constructor to create an operator inside a process
-		/// </summary>
-		/// <param name="model"></param>
-		protected OperatorVm(Model.ProcessOperator model)
-			:this(model.Operator, model.Process.StateStationActivity)
-		{
-			Role = model.Role;
-		}
-		public OperatorVm(Model.Operator model)
-		{
-			OperatorModel = model;
-			Name = model.Name;
-			Code = model.Code;
 		}
 		#endregion
 

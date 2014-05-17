@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="Soheil.Views.PP.OperatorManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:local="clr-namespace:Soheil.Views.PP"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" FlowDirection="RightToLeft"
+             d:DesignHeight="300" d:DesignWidth="400">
+	<UserControl.Resources>
+		<Style x:Key="columnStyle" TargetType="Border">
+			<Setter Property="MinWidth" Value="100"/>
+			<Setter Property="BorderBrush" Value="DimGray"/>
+			<Setter Property="CornerRadius" Value="3"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Margin" Value="1"/>
+			<Setter Property="Background" Value="#EEE"/>
+		</Style>
+		<Style x:Key="columnHeaderStyle" TargetType="Border">
+			<Setter Property="BorderBrush" Value="DimGray"/>
+			<Setter Property="CornerRadius" Value="3,3,0,0"/>
+			<Setter Property="BorderThickness" Value="0,0,0,1"/>
+			<Setter Property="Margin" Value="2"/>
+			<Setter Property="DockPanel.Dock" Value="Top"/>
+			<Setter Property="Background" Value="#888"/>
+		</Style>
+		
+		
+		<DataTemplate x:Key="commonOperatorTemplate">
+			<Grid Margin="0,25" VerticalAlignment="Top" Height="32" DockPanel.Dock="Top" Background="#5FFF"
+				  Visibility="{Binding }">
+				<Button Opacity="0" 
+						Command="{Binding ProcessOperatorCommand}" 
+						CommandParameter="{Binding Path=DataContext.SelectedProcess,
+							RelativeSource={RelativeSource AncestorType={x:Type local:OperatorManager}}}">
+					<Button.Triggers>
+						<EventTrigger RoutedEvent="MouseEnter">
+							<BeginStoryboard>
+								<Storyboard Duration="0:0:0.1">
+									<DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" To="1"/>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+						<EventTrigger RoutedEvent="MouseLeave">
+							<BeginStoryboard>
+								<Storyboard Duration="0:0:0.2">
+									<DoubleAnimation Duration="0:0:0.2" Storyboard.TargetProperty="Opacity" To="0"/>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+					</Button.Triggers>
+				</Button>
+				<DockPanel IsHitTestVisible="False">
+					<TextBlock Text="{Binding Name}" DockPanel.Dock="Top"/>
+					<Image Visibility="{Binding IsInTask, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTaskImage}" DockPanel.Dock="Right"/>
+					<Image Visibility="{Binding IsInProcess, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInProcessImage}" DockPanel.Dock="Right"/>
+					<TextBlock Text="{Binding Iluo}" FontWeight="Bold" Margin="5,0"/>
+					<TextBlock Text="{Binding Code}" Foreground="Gray"/>
+				</DockPanel>
+			</Grid>
+		</DataTemplate>
+	</UserControl.Resources>
+	
+	<DockPanel>
+		<WrapPanel DockPanel.Dock="Top">
+			<TextBox MinWidth="100" x:Name="searchQuery"/>
+			<Button Style="{StaticResource SmallButtonStyle}" Command="{Binding ClearSearchCommand}" CommandParameter="{Binding ElementName=searchQuery}" Margin="-22,0,0,0">
+				<Image Style="{StaticResource Delete16Image}"/>
+			</Button>
+			<Button Style="{StaticResource SmallButtonStyle}" Command="{Binding RefreshCommand}">
+				<Image Style="{StaticResource Undo16Image}"/>
+			</Button>
+		</WrapPanel>
+		<StackPanel Orientation="Horizontal">
+			<Border Style="{StaticResource columnStyle}">
+				<DockPanel>
+					<Border Style="{StaticResource columnHeaderStyle}">
+						<TextBlock Text="بیکار" Margin="1" HorizontalAlignment="Center" Foreground="Silver"/>
+					</Border>
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<ItemsControl ItemsSource="{Binding OperatorsIdleList}" ItemTemplate="{StaticResource commonOperatorTemplate}" Margin="2"/>
+					</ScrollViewer>
+				</DockPanel>
+			</Border>
+			<Border Style="{StaticResource columnStyle}">
+				<DockPanel>
+					<Border Style="{StaticResource columnHeaderStyle}">
+						<TextBlock Text="اصلی" Margin="1" HorizontalAlignment="Center" Foreground="Silver"/>
+					</Border>
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<ItemsControl ItemsSource="{Binding OperatorsMainList}" ItemTemplate="{StaticResource commonOperatorTemplate}" Margin="2"/>
+					</ScrollViewer>
+				</DockPanel>
+			</Border>
+			<Border Style="{StaticResource columnStyle}">
+				<DockPanel>
+					<Border Style="{StaticResource columnHeaderStyle}">
+						<TextBlock Text="جایگزین" Margin="1" HorizontalAlignment="Center" Foreground="Silver"/>
+					</Border>
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<ItemsControl ItemsSource="{Binding OperatorsSubsList}" ItemTemplate="{StaticResource commonOperatorTemplate}" Margin="2"/>
+					</ScrollViewer>
+				</DockPanel>
+			</Border>
+			<Border Style="{StaticResource columnStyle}">
+				<DockPanel>
+					<Border Style="{StaticResource columnHeaderStyle}">
+						<TextBlock Text="کمکی" Margin="1" HorizontalAlignment="Center" Foreground="Silver"/>
+					</Border>
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<ItemsControl ItemsSource="{Binding OperatorsAuxList}" ItemTemplate="{StaticResource commonOperatorTemplate}" Margin="2"/>
+					</ScrollViewer>
+				</DockPanel>
+			</Border>
+		</StackPanel>
+	</DockPanel>
+</UserControl>
