@@ -231,14 +231,14 @@ namespace Soheil.Core.PP
 				int flag = 1;
 				while (_qThreadAlive)
 				{
-					Thread.Sleep(1);
+					Thread.Sleep(50);
 
 					int tries = 0;
 					while ((tries < 100 || _qLoad.Any()) && _qThreadAlive)
 					{
 						if (_qLoad.Any())
 						{
-							Thread.Sleep(1);
+							Thread.Sleep(10);
 
 							//load
 							var task = _qLoad.Pop();
@@ -248,14 +248,14 @@ namespace Soheil.Core.PP
 						}
 						else
 						{
-							Thread.Sleep(11);
+							Thread.Sleep(101);
 							tries++;
 						}
 					}
 
 					while (IsAutoRefresh && !_qLoad.Any() && _qThreadAlive)
 					{
-						Thread.Sleep(1);
+						Thread.Sleep(500);
 
 						//update/delete
 						flag = (flag + 1) % 5;

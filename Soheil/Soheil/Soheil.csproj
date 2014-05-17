@@ -162,8 +162,14 @@
     <Compile Include="Views\PP\NptReportBuilder.xaml.cs">
       <DependentUpon>NptReportBuilder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PP\OperatorManager.xaml.cs">
+      <DependentUpon>OperatorManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\PPJobEditor.xaml.cs">
       <DependentUpon>PPJobEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\ProcessEditor.xaml.cs">
+      <DependentUpon>ProcessEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\ProcessReportBuilder.xaml.cs">
       <DependentUpon>ProcessReportBuilder.xaml</DependentUpon>
@@ -278,7 +284,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PP\OperatorManager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PP\PPJobEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\ProcessEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

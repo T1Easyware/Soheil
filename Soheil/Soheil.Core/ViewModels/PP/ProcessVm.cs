@@ -13,13 +13,13 @@ namespace Soheil.Core.ViewModels.PP
 	{
 		public ProcessVm(
 			Model.StateStationActivity ssaModel,
-			IList<PPEditorOperator> operators,
+			IList<OperatorEditorVm> operators,
 			IList<Model.ProcessOperator> usedOperators)
 			: this(ssaModel)
 		{
 			foreach (var ssam in ssaModel.StateStationActivityMachines)
 			{
-				Machines.Add(new PPEditorMachine(ssam));
+				Machines.Add(new MachineEditorVm(ssam));
 			}
 			foreach (var oper in operators)
 			{
@@ -53,11 +53,11 @@ namespace Soheil.Core.ViewModels.PP
 		public int ProcessId { get; set; }
 
 		//Machines Observable Collection
-		private ObservableCollection<PPEditorMachine> _machines = new ObservableCollection<PPEditorMachine>();
-		public ObservableCollection<PPEditorMachine> Machines { get { return _machines; } }
+		private ObservableCollection<MachineEditorVm> _machines = new ObservableCollection<MachineEditorVm>();
+		public ObservableCollection<MachineEditorVm> Machines { get { return _machines; } }
 		//Operators Observable Collection
-		private ObservableCollection<PPEditorOperator> _operators = new ObservableCollection<PPEditorOperator>();
-		public ObservableCollection<PPEditorOperator> Operators { get { return _operators; } }
+		private ObservableCollection<OperatorEditorVm> _operators = new ObservableCollection<OperatorEditorVm>();
+		public ObservableCollection<OperatorEditorVm> Operators { get { return _operators; } }
 
 		//TargetCount Dependency Property
 		public int TargetCount

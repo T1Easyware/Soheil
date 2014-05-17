@@ -104,7 +104,8 @@
     <Compile Include="PP\PPItemNpt.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs" />
     <Compile Include="ViewModels\PP\Editor\BlockEditorVm.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorOperator.cs" />
+    <Compile Include="ViewModels\PP\Editor\OperatorEditorVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\OperatorManagerVm.cs" />
     <Compile Include="ViewModels\PP\Editor\PlanEditorVm.cs" />
     <Compile Include="ViewModels\PP\Editor\ProcessEditorVm.cs" />
     <Compile Include="ViewModels\PP\Editor\TaskEditorVm.cs" />
@@ -231,7 +232,7 @@
     <Compile Include="ViewModels\PP\Timeline\DaySlideItemVm.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorJob.cs" />
     <Compile Include="ViewModels\PP\Editor\JobEditorVm.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorMachine.cs" />
+    <Compile Include="ViewModels\PP\Editor\MachineEditorVm.cs" />
     <Compile Include="ViewModels\PP\Report\OperatorReportVm.cs" />
     <Compile Include="ViewModels\PP\Timeline\HourSlideItemVm.cs" />
     <Compile Include="ViewModels\PP\MachineVm.cs" />

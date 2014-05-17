@@ -89,10 +89,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			#region Load operators
 			//Find all Operators
 			var allOperatorModels = new DataServices.OperatorDataService(_uow).GetActives();
-			var operatorVms = new List<PPEditorOperator>();
+			var operatorVms = new List<OperatorEditorVm>();
 			foreach (var operatorModel in allOperatorModels)
 			{
-				var operatorVm = new PPEditorOperator(operatorModel, sampleSSA);
+				var operatorVm = new OperatorEditorVm(operatorModel, sampleSSA);
 				//set IsSelected of operator
 				operatorVm.IsSelected = model.ProcessOperators.Any(po => po.Operator.Id == operatorModel.Id);
 				//add event handler to update SelectedOperatorsCount
@@ -116,7 +116,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					if (!MachineList.Any(x => x.MachineId == ssam.Machine.Id))
 					{
 						//add the unique machines to MachineList
-						var machineVm = new PPEditorMachine(ssam.Machine);
+						var machineVm = new MachineEditorVm(ssam.Machine);
 						//select it if it is in SelectedMachines of process model
 						machineVm.IsUsed = model.SelectedMachines.Any(x => x.StateStationActivityMachine.Machine.Id == machineVm.MachineId);
 						MachineList.Add(machineVm);
@@ -137,9 +137,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			TargetPoint = model.TargetCount;
 			HoldEvents = false;
-
-			//Set the command
-			SetDurationMinutesCommand = new Commands.Command(min => DurationSeconds = (int)min * 60);
 		}
 		#endregion
 
@@ -224,14 +221,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <para>Selected machines have IsUsed = true</para>
 		/// <para>Machines in the selected choice have CanBeUsed = true</para>
 		/// </summary>
-		public ObservableCollection<PPEditorMachine> MachineList { get { return _machineList; } }
-		private ObservableCollection<PPEditorMachine> _machineList = new ObservableCollection<PPEditorMachine>();
+		public ObservableCollection<MachineEditorVm> MachineList { get { return _machineList; } }
+		private ObservableCollection<MachineEditorVm> _machineList = new ObservableCollection<MachineEditorVm>();
 		/// <summary>
 		/// Gets a collection of all operators
 		/// <para>Selected operators have IsSelected = true</para>
 		/// </summary>
-		public ObservableCollection<PPEditorOperator> OperatorList { get { return _operatorList; } }
-		private ObservableCollection<PPEditorOperator> _operatorList = new ObservableCollection<PPEditorOperator>();
+		public ObservableCollection<OperatorEditorVm> OperatorList { get { return _operatorList; } }
+		private ObservableCollection<OperatorEditorVm> _operatorList = new ObservableCollection<OperatorEditorVm>();
 		/// <summary>
 		/// Gets or sets the bindable number of used operators in this process
 		/// </summary>
@@ -318,17 +315,5 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (ActivityChoiceChanged != null)
 				ActivityChoiceChanged(oldVal, newVal);
 		}
-
-		/// <summary>
-		/// Gets or sets a bindable command which sets duration to 'minutes' specified as parameter
-		/// </summary>
-		public Commands.Command SetDurationMinutesCommand
-		{
-			get { return (Commands.Command)GetValue(SetDurationMinutesCommandProperty); }
-			set { SetValue(SetDurationMinutesCommandProperty, value); }
-		}
-		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
-			DependencyProperty.Register("SetDurationMinutesCommand", typeof(Commands.Command), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
-
 	}
 }

@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core" 
              xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Editor;assembly=Soheil.Core" 
              xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
+             xmlns:local="clr-namespace:Soheil.Views.PP" 
              xmlns:sys="clr-namespace:System;assembly=mscorlib" 
              xmlns:fpcView="clr-namespace:Soheil.Views.Fpc" 
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -14,7 +15,7 @@
 	<UserControl.Resources>
 
 		<!-- general operator -->
-		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="allOperatorsTemplate">
+		<DataTemplate DataType="{x:Type ppevm:OperatorEditorVm}" x:Key="allOperatorsTemplate">
 			<Button Height="25" Name="btn" HorizontalAlignment="Stretch" Click="SelectOperator" Margin="0"
 					IsEnabled="{Binding IsSelected, Converter={StaticResource inverter}}" Padding="0">
 				<Button.Visibility>
@@ -60,7 +61,7 @@
 			</DataTemplate.Triggers>
 		</DataTemplate>
 		<!-- selected operator -->
-		<DataTemplate DataType="{x:Type ppevm:PPEditorOperator}" x:Key="selectedOperatorsTemplate">
+		<DataTemplate DataType="{x:Type ppevm:OperatorEditorVm}" x:Key="selectedOperatorsTemplate">
 			<StackPanel Name="root">
 				<Button Height="25" Name="btn_deselect" HorizontalAlignment="Stretch" Click="DeselectOperator" Margin="0" Padding="0"
 					Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}">
@@ -215,60 +216,68 @@
 			<DropShadowEffect ShadowDepth="0"/>
 		</Grid.Effect>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
+        
+        <DockPanel MinWidth="400" MaxWidth="600">
+            <!-- TP -->
+            <!-- toolbar -->
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="23" ToolTip="{Loc PPE_TaskTP}" MinWidth="60" TextAlignment="Right" VerticalAlignment="Center"/>
+                <Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
+                <ToggleButton Grid.Column="1" IsChecked="{Binding IsSameQtyForActivitiesSelected}"
+                              ToolTip="{Loc PPE_SameQtyForActivites}">
+                    <DockPanel>
+                        <Image Style="{StaticResource QuantityImage}" Margin="5,0" IsHitTestVisible="False"/>
+                        <TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="50"/>
+                    </DockPanel>
+                </ToggleButton>
+                <ToggleButton Grid.Column="2" IsChecked="{Binding IsSameTimeForActivitiesSelected}"
+                              ToolTip="{Loc PPE_SameTimeForActivites}">
+                    <WrapPanel>
+						<Image Style="{StaticResource DurationImage}" Margin="5,0" IsHitTestVisible="False"/>
+                        <CustomControls:TimeBox Time="{Binding SameTimeForActivities, Mode=TwoWay}" IsReadOnly="{Binding IsSameTimeForActivitiesSelected, Converter={StaticResource inverter}}" x:Name="timebox"/>
+                        <!--CustomControls:DurationToolbox DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="5,0" TimeBox="{Binding ElementName=timebox}"/-->
+                    </WrapPanel>
+                </ToggleButton>
+                <ToggleButton Grid.Column="3" IsChecked="{Binding IsDeferToActivitiesSelected}"
+                              ToolTip="{Loc PPE_DeferToActivites}">
+                    <WrapPanel>
+						<Image Style="{StaticResource IndependentTPImage}" Margin="5,0" IsHitTestVisible="False"/>
+                    </WrapPanel>
+                </ToggleButton>
+            </Grid>
+            <!-- Activities DataGrid -->
+            <ListBox ItemsSource="{Binding ProcessList}" Background="#1000" Margin="2"
+                     SelectedItem="{Binding SelectedProcess}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Style.Triggers>
+                            <Trigger Property="Selector.IsSelected" Value="True">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <local:ProcessEditor DataContext="{Binding}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+		<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+			<local:OperatorManager DataContext="{Binding}"/>
+		</ScrollViewer>
 		<!-- Processes and TPs (Bottom first column) -->
-		<DockPanel>
-			<!-- TP -->
-			<DockPanel DockPanel.Dock="Top">
-				<Border DockPanel.Dock="Left" BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffHeaderBackground}" BorderThickness="1" CornerRadius="5,0,0,5" Height="{Binding ElementName=durationContents, Path=ActualHeight}" Margin="2,2,0,2">
-					<TextBlock Text="{Loc PPE_DurationOrTP}" Style="{StaticResource VerticalHeader}"/>
-				</Border>
-				<Border BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffInsideBackground}" CornerRadius="0,5,5,0" BorderThickness="1" Margin="0,2,4,2" x:Name="durationContents">
-					<StackPanel>
-						<WrapPanel>
-							<TextBlock Text="{Loc PPE_TaskTP}" VerticalAlignment="Center" Foreground="#8FF"/>
-							<TextBox Text="{Binding TaskTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" FlowDirection="LeftToRight"/>
-						</WrapPanel>
-						<RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameTimeForActivitiesSelected}">
-							<WrapPanel>
-								<TextBlock Text="{Loc PPE_SameTimeForActivites}" VerticalAlignment="Center"/>
-								<CustomControls:TimeBox Time="{Binding SameTimeForActivities, Mode=TwoWay}" IsReadOnly="{Binding IsSameTimeForActivitiesSelected, Converter={StaticResource inverter}}"/>
-								<WrapPanel Style="{StaticResource Panel3DEffectStyle}">
-									<Button Content="{Loc txtOneHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
-										<Button.CommandParameter>
-											<sys:Int32>60</sys:Int32>
-										</Button.CommandParameter>
-									</Button>
-									<Button Content="{Loc txtHalfHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
-										<Button.CommandParameter>
-											<sys:Int32>30</sys:Int32>
-										</Button.CommandParameter>
-									</Button>
-									<Button Content="{Loc txtQuarterHour}" Command="{Binding SetDurationMinutesCommand}" Style="{StaticResource Button3DTextStyle}">
-										<Button.CommandParameter>
-											<sys:Int32>15</sys:Int32>
-										</Button.CommandParameter>
-									</Button>
-								</WrapPanel>
-							</WrapPanel>
-						</RadioButton>
-						<RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsSameQtyForActivitiesSelected}">
-							<WrapPanel>
-								<TextBlock Text="{Loc PPE_SameQtyForActivites}" VerticalAlignment="Center"/>
-								<TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>
-							</WrapPanel>
-						</RadioButton>
-						<RadioButton Margin="1" GroupName="actmode" IsChecked="{Binding IsDeferToActivitiesSelected}" x:Name="deferToProcessRadioButton">
-							<WrapPanel Height="20">
-								<TextBlock Text="{Loc PPE_DeferToActivites}" VerticalAlignment="Center"/>
-							</WrapPanel>
-						</RadioButton>
-					</StackPanel>
-				</Border>
-			</DockPanel>
-			<!-- Activities DataGrid -->
+		<DockPanel Visibility="Collapsed">
 			<TextBlock DockPanel.Dock="Top" Text="{Loc txtActivities}"/>
 			<DataGrid Margin="4" ItemsSource="{Binding ProcessList}" Padding="4" VerticalAlignment="Top" AutoGenerateColumns="False"
                               SelectedItem="{Binding SelectedProcess}"
@@ -404,9 +413,7 @@
 				</DataGrid.RowDetailsTemplate>
 			</DataGrid>
 		</DockPanel>
-		<GridSplitter Width="5"/>
 		<!-- machines and operators (Bottom 2nd column) -->
-		<ContentPresenter Content="{Binding SelectedProcess}" ContentTemplate="{StaticResource activityTabTemplate}" Grid.Column="1"/>
 	</Grid>
 
 </UserControl>

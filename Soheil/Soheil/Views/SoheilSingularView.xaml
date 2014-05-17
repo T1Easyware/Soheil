@@ -442,7 +442,7 @@
 									</StackPanel>
 								</Button.ToolTip>
 							</Button>
-							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.SaveAllCommand}">
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding TaskEditor.SaveAllAndExitCommand}">
 								<DockPanel>
 									<Image DockPanel.Dock="Left" Style="{StaticResource SaveWipeUpImage}"/>
 									<TextBlock Text="Save &amp; Exit" Style="{StaticResource TextBlock3DTextStyle}"/>
@@ -1278,17 +1278,17 @@
                 <DataTrigger Binding="{Binding TaskEditor.IsVisible}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
-                            <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
+                            <Storyboard Duration="0:0:0.8" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
-                                <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="420"/>
+                                <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" BeginTime="0:0:0.5" Duration="0:0:0.3" To="420"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
                         <BeginStoryboard>
-                            <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
+                            <Storyboard Duration="0:0:0.7" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="taskEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
-                                <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
+                                <DoubleAnimation Storyboard.TargetName="taskEditorToolbarButtons" Storyboard.TargetProperty="Width" BeginTime="0:0:0.5" Duration="0:0:0.2" To="0"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
@@ -1298,17 +1298,17 @@
 				<DataTrigger Binding="{Binding JobEditor.IsVisible}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
-                            <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
+                            <Storyboard Duration="0:0:0.8" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="jobEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
-                                <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="280"/>
+                                <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" BeginTime="0:0:0.5" Duration="0:0:0.3" To="280"/>
 							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
                         <BeginStoryboard>
-                            <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
+                            <Storyboard Duration="0:0:0.7" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="jobEditorPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
-                                <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
+                                <DoubleAnimation Storyboard.TargetName="jobEditorToolbarButtons" Storyboard.TargetProperty="Width" BeginTime="0:0:0.5" Duration="0:0:0.2" To="0"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
@@ -1372,17 +1372,17 @@
 				<DataTrigger Binding="{Binding CurrentProcessReportBuilder.IsSelected}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard>
-                            <Storyboard Duration="0:0:0.3" DecelerationRatio="1">
+                            <Storyboard Duration="0:0:0.8" DecelerationRatio="1">
 								<DoubleAnimation Storyboard.TargetName="processReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.3" To="600"/>
-								<DoubleAnimation Storyboard.TargetName="processReportBuilderToolbar" Storyboard.TargetProperty="Width" Duration="0:0:0.3" To="250"/>
+                                <DoubleAnimation Storyboard.TargetName="processReportBuilderToolbar" Storyboard.TargetProperty="Width" BeginTime="0:0:0.5"  Duration="0:0:0.3" To="250"/>
 							</Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
                         <BeginStoryboard>
-                            <Storyboard Duration="0:0:0.2" DecelerationRatio="1">
+                            <Storyboard Duration="0:0:0.7" DecelerationRatio="1">
                                 <DoubleAnimation Storyboard.TargetName="processReportBuilderPanel" Storyboard.TargetProperty="Height" Duration="0:0:0.2" To="0"/>
-								<DoubleAnimation Storyboard.TargetName="processReportBuilderToolbar" Storyboard.TargetProperty="Width" Duration="0:0:0.2" To="0"/>
+                                <DoubleAnimation Storyboard.TargetName="processReportBuilderToolbar" Storyboard.TargetProperty="Width" BeginTime="0:0:0.5" Duration="0:0:0.2" To="0"/>
 							</Storyboard>
 						</BeginStoryboard>
                     </DataTrigger.ExitActions>

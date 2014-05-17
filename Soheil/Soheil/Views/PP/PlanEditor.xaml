@@ -11,7 +11,7 @@
 			 xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="700" FlowDirection="RightToLeft">
+             d:DesignHeight="600" d:DesignWidth="700" FlowDirection="RightToLeft">
 	<UserControl.Resources>
 		<HierarchicalDataTemplate ItemsSource="{Binding Products}" DataType="{x:Type vm:ProductGroupVm}">
 			<Grid>
@@ -72,7 +72,7 @@
 		</DataTemplate>
 	</UserControl.Resources>
 
-	<DockPanel>
+    <DockPanel  Height="600">
 		<DockPanel.Effect>
 			<DropShadowEffect ShadowDepth="0" BlurRadius="6"/>
 		</DockPanel.Effect>
@@ -118,13 +118,13 @@
 					</Rectangle.Fill>
 				</Rectangle>
 				<!-- station -->
-				<DockPanel DockPanel.Dock="Right" VerticalAlignment="Center"
-						   Visibility="{Binding Path=SelectedBlock, Converter={StaticResource isNotNullToVisibility}}">
+                <DockPanel DockPanel.Dock="Right" VerticalAlignment="Center"  DataContext="{Binding SelectedBlock}"
+						   Visibility="{Binding Path=., Converter={StaticResource isNotNullToVisibility}}">
 					<TextBlock Text="{Loc txtStation}" Foreground="Silver" VerticalAlignment="Center"/>
-					<ComboBox ItemsSource="{Binding SelectedBlock.State.StateStationList}"
-                                  DisplayMemberPath="Name" MinWidth="120"
-                                  SelectedItem="{Binding SelectedStateStation}"/>
-					<Border BorderBrush="#F80" BorderThickness="1" CornerRadius="1" TextBlock.FontSize="10" DataContext="{Binding SelectedBlock}">
+					<ComboBox ItemsSource="{Binding State.StateStationList}"
+                              DisplayMemberPath="Name" MinWidth="120"
+                              SelectedItem="{Binding SelectedStateStation}"/>
+					<Border BorderBrush="#F80" BorderThickness="1" CornerRadius="1" TextBlock.FontSize="10">
 						<Border.Visibility>
 							<MultiBinding Converter="{StaticResource isEqualToInvisibilityConverter2}">
 								<Binding Path="StateStation"/>

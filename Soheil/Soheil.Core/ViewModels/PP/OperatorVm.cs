@@ -61,7 +61,12 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			Role = model.Role;
 		}
-
+		public OperatorVm(Model.Operator model)
+		{
+			OperatorModel = model;
+			Name = model.Name;
+			Code = model.Code;
+		}
 		#endregion
 
 

@@ -10,8 +10,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class TaskEditorVm : DependencyObject
 	{
+		/// <summary>
+		/// Gets the Task model
+		/// </summary>
 		internal Model.Task Model { get; private set; }
-		public int TaskId { get { return Model.Id; } }
+
 		Dal.SoheilEdmContext _uow;
 
 		/// <summary>
@@ -178,11 +181,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		
 
 		#region Process
-		//ProcessList Observable Collection
+		/// <summary>
+		/// Gets a bindable collection of processes in this task
+		/// </summary>
 		public ObservableCollection<ProcessEditorVm> ProcessList { get { return _processList; } }
 		private ObservableCollection<ProcessEditorVm> _processList = new ObservableCollection<ProcessEditorVm>();
 		
-		//SelectedProcess Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable process which is selected in the current task
+		/// </summary>
 		public ProcessEditorVm SelectedProcess
 		{
 			get { return (ProcessEditorVm)GetValue(SelectedProcessProperty); }
@@ -442,7 +449,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		#endregion
 
-		
 
 		#region Commands
 		void initializeCommands()
@@ -457,7 +463,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				if (DeleteTaskConfirmed != null) DeleteTaskConfirmed();
 			});
 			CancelDeleteTaskCommand = new Commands.Command(o => IsDeleteTaskMessageVisible = false);
-			SetDurationMinutesCommand = new Commands.Command(min => SameTimeForActivities = TimeSpan.FromMinutes(Convert.ToDouble(min)));
+			//SetDurationMinutesCommand = new Commands.Command(min => SameTimeForActivities = TimeSpan.FromMinutes(Convert.ToDouble(min)));
 		}
 		//DeleteTaskCommand Dependency Property
 		public Commands.Command DeleteTaskCommand
@@ -491,17 +497,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty CancelDeleteTaskCommandProperty =
 			DependencyProperty.Register("CancelDeleteTaskCommand", typeof(Commands.Command), typeof(TaskEditorVm), new UIPropertyMetadata(null));
-		/// <summary>
-		/// Gets or sets a bindable command which sets duration to 'minutes' specified as parameter
-		/// </summary>
-		public Commands.Command SetDurationMinutesCommand
-		{
-			get { return (Commands.Command)GetValue(SetDurationMinutesCommandProperty); }
-			set { SetValue(SetDurationMinutesCommandProperty, value); }
-		}
-		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
-			DependencyProperty.Register("SetDurationMinutesCommand", typeof(Commands.Command), typeof(TaskEditorVm), new UIPropertyMetadata(null));
-
 		#endregion
 
 	}
