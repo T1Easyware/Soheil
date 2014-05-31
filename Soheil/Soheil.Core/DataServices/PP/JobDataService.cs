@@ -64,7 +64,7 @@ namespace Soheil.Core.DataServices
 			var ent = _jobRepository.FirstOrDefault(x => x.Id == model.Id);
 			if (ent == null) return;
 			_jobRepository.Delete(ent);
-			context.SaveChanges();
+			context.Commit();
 		}
 		public void DeleteModel(int jobId)
 		{
@@ -202,7 +202,7 @@ namespace Soheil.Core.DataServices
 			{
 				setupDs.AddModelBySmart(item, context);
 			}
-			context.SaveChanges();
+			context.Commit();
 			/*foreach (var kvJM in lkvJobModels)
 			{
 				kvJM.Key.Id = kvJM.Value.Id;

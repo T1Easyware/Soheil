@@ -648,12 +648,6 @@
   <data name="PPE_SameTimeForActivites" xml:space="preserve">
     <value>مدت تولید مساوی برای فعالیتها</value>
   </data>
-  <data name="PPE_StartOfNextHour" xml:space="preserve">
-    <value>ابتدای ساعت بعد</value>
-  </data>
-  <data name="PPE_StartOfNextHourTooltip" xml:space="preserve">
-    <value>ساعت بعد از الان (زمان وارد شده مد نظر نمی باشد)</value>
-  </data>
   <data name="PPE_SumOfTP" xml:space="preserve">
     <value>مجموع کل هدف</value>
   </data>
@@ -738,25 +732,73 @@
   <data name="txtUnitCost" xml:space="preserve">
     <value>هزینه واحد :</value>
   </data>
-  <data name="msgDeleteConfirm" xml:space="preserve">
-    <value>این آیتم حذف شود؟</value>
+  <data name="txtIncludeAll" xml:space="preserve">
+    <value>افزودن همه</value>
   </data>
-  <data name="txtDefectionTime" xml:space="preserve">
-    <value>زمان تولید معیوب</value>
+  <data name="txtInUse" xml:space="preserve">
+    <value>در حال استفاده</value>
   </data>
-  <data name="txtOperationReports" xml:space="preserve">
-    <value>گزارش عملکرد اپراتورها</value>
+  <data name="txtOther" xml:space="preserve">
+    <value>سایر</value>
   </data>
-  <data name="txtPrint" xml:space="preserve">
-    <value>چاپ</value>
+  <data name="ttBlock" xml:space="preserve">
+    <value>Task</value>
   </data>
-  <data name="txtProductionTime" xml:space="preserve">
-    <value>زمان تولید سالم</value>
+  <data name="ttTask" xml:space="preserve">
+    <value>بخشی از Task</value>
+  </data>
+  <data name="ttHasJob" xml:space="preserve">
+    <value>جزئی از Job</value>
+  </data>
+  <data name="ttReportCompleted" xml:space="preserve">
+    <value>گزارش کامل است</value>
+  </data>
+  <data name="ttReportFillPercent" xml:space="preserve">
+    <value>درصد تکمیل گزارش</value>
+  </data>
+  <data name="txtProducedG1" xml:space="preserve">
+    <value>تولید سالم</value>
+  </data>
+  <data name="txtIsDefection" xml:space="preserve">
+    <value>ضایعات است</value>
+  </data>
+  <data name="txtIsG2" xml:space="preserve">
+    <value>خروجی درجه 2 است</value>
+  </data>
+  <data name="txtStationIndex" xml:space="preserve">
+    <value>ترتیب ایستگاه</value>
+  </data>
+  <data name="PPE_PreviousHour" xml:space="preserve">
+    <value>ساعت -1</value>
+  </data>
+  <data name="PPE_StartOfThisHour" xml:space="preserve">
+    <value>ابتدای ساعت</value>
+  </data>
+  <data name="PPE_StartOfThisHourTooltip" xml:space="preserve">
+    <value>ابتدای همین ساعت (زمان وارد شده مد نظر نمی باشد)</value>
+  </data>
+  <data name="ttCode" xml:space="preserve">
+    <value>کد</value>
+  </data>
+  <data name="txtHalfHour" xml:space="preserve">
+    <value>نیم ساعت</value>
+  </data>
+  <data name="txtOneHour" xml:space="preserve">
+    <value>یک ساعت</value>
+  </data>
+  <data name="txtQuarterHour" xml:space="preserve">
+    <value>ربع ساعت</value>
+  </data>
+  <data name="txtMergingStrategy" xml:space="preserve">
+    <value>رفتار شیفت ناقص</value>
+  </data>
+  <data name="ttMergingStrategy" xml:space="preserve">
+    <value>آخرین شیفت این برنامه زمانی (درست به هنگام فرارسیدن برنامه بعدی) ممکن است ناقص بماند. رفتار این شیفت مطابق گزینه انتخاب شده خواهد بود. گزینه ها: Incomplete: ناقص بماند، WithLastShift: جزوی از شیفت قبل خود محسوب شود، Closed: تعطیل در نظر گرفته شود</value>
+  </data>
+  <data name="txtSelectWorkProfile" xml:space="preserve">
+    <value>ساعت کاری مطابق:</value>
   </data>
   <data name="txtStation" xml:space="preserve">
     <value>ایستگاه</value>
-  </data>
-  <data name="txtStoppageTime" xml:space="preserve">
-    <value>زمان توقفات</value>
   </data>
 </root>

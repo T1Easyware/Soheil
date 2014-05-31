@@ -27,7 +27,7 @@ namespace Soheil.Core.DataServices
 						ToProductRework = new Repository<ProductRework>(context).Single(x => x.Id == source.ToProductRework.Id),
 					};
 				model.Seconds = value;
-				context.SaveChanges();
+				context.Commit();
 				return model;
 			}
 		}
@@ -65,7 +65,7 @@ namespace Soheil.Core.DataServices
 						FromProductRework = new Repository<ProductRework>(context).Single(x => x.Id == fromPRId),
 						ToProductRework = new Repository<ProductRework>(context).Single(x => x.Id == toPRId),
 					};
-				context.SaveChanges();
+				context.Commit();
 			}
 			return model;
 		}
@@ -82,7 +82,7 @@ namespace Soheil.Core.DataServices
 						ToProductRework = new Repository<ProductRework>(context).Single(x => x.Id == toPRId),
 					};
 				model.Seconds = value;
-				context.SaveChanges();
+				context.Commit();
 				return model;
 			}
 		}
@@ -105,7 +105,7 @@ namespace Soheil.Core.DataServices
 						Seconds = 0
 					};
 					changeoverRepos.Add(model);
-					context.SaveChanges();
+					context.Commit();
 				}
 				return model;
 			}

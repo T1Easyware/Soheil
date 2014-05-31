@@ -335,6 +335,10 @@ namespace Soheil.Model
 
 	public partial class StateStationActivity
 	{
+		/// <summary>
+		/// Gets a collection of StateStationActivities with same Activity
+		/// </summary>
+		/// <returns></returns>
 		public IEnumerable<StateStationActivity> GetIdenticals()
 		{
 			return StateStation.StateStationActivities.Where(x => x.Activity.Id == Activity.Id).OrderBy(x => x.ManHour);
@@ -352,6 +356,11 @@ namespace Soheil.Model
 
 	public partial class StationMachine
 	{
+		public Status RecordStatus
+		{
+			get { return (Common.Status)this.Status; }
+			set { this.Status = (byte)value; }
+		}
 	}
 
 	public partial class StoppageReport
@@ -398,11 +407,52 @@ namespace Soheil.Model
 			}
 		}
 	}
+	/// <summary>
+	/// Gets a value indicating that whether report is empty
+	/// </summary>
 	public partial class TaskReport
 	{
-
+		public bool IsEmpty
+		{
+			get
+			{
+				return
+					TaskProducedG1 == 0 && (
+					!ProcessReports.Any() ||
+					ProcessReports.All(x => x.IsEmpty));
+			}
+		}
 	}
-
+	public partial class Process
+	{
+		/// <summary>
+		/// Gets a value indicating that whether no valid (non-empty) reports exist in this process
+		/// </summary>
+		public bool IsReportEmpty
+		{
+			get
+			{
+				return !ProcessReports.Any()
+					|| ProcessReports.All(x => x.IsEmpty);
+			}
+		}
+	}
+	/// <summary>
+	/// Gets a value indicating that whether report is empty
+	/// </summary>
+	public partial class ProcessReport
+	{
+		public bool IsEmpty
+		{
+			get
+			{
+				return
+					ProducedG1 == 0 &&
+					!DefectionReports.Any() &&
+					!StoppageReports.Any();
+			}
+		}
+	}
 	public partial class User
 	{
 		//public Status RecordStatus

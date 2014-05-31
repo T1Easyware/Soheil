@@ -46,7 +46,7 @@ namespace Soheil.Core.DataServices
 		{
 				var repository = new Repository<NonProductiveTask>(context);
 				repository.Add(model);
-				context.SaveChanges();
+				context.Commit();
 			return 1;
 		}
 
@@ -56,7 +56,7 @@ namespace Soheil.Core.DataServices
 				var entity = repository.FirstOrDefault(x => x.Id == model.Id);
 				if (entity == null) AddModel(model);
 				else repository.Add(model);
-				context.SaveChanges();
+				context.Commit();
 		}
 
 		public void DeleteModel(NonProductiveTask model)
@@ -64,14 +64,14 @@ namespace Soheil.Core.DataServices
 				var repository = new Repository<NonProductiveTask>(context);
 				var entity = repository.FirstOrDefault(x => x.Id == model.Id);
 				if (entity != null) repository.Delete(entity);
-				context.SaveChanges();
+				context.Commit();
 		}
 		public void DeleteModel(int id)
 		{
 				var repository = new Repository<NonProductiveTask>(context);
 				var entity = repository.FirstOrDefault(x => x.Id == id);
 				if (entity != null) repository.Delete(entity);
-				context.SaveChanges();
+				context.Commit();
 		}
 
 		public void AttachModel(NonProductiveTask model)
@@ -81,21 +81,39 @@ namespace Soheil.Core.DataServices
 		#endregion
 
 		/// <summary>
-		/// Returns all NonProductiveTask which are completely or partially inside the given range
+		/// Returns all NonProductiveTask Ids which are completely or partially inside the given range
 		/// <para>NonProductiveTask touching the range from outside are not counted</para>
 		/// </summary>
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, DateTime endDate)
+		public IEnumerable<int> GetIdsInRange(DateTime startDate, DateTime endDate)
 		{
 			return _nptRepository.Find(x =>
 				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
 				||
 				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
 				||
-				(x.StartDateTime <= startDate && x.EndDateTime >= endDate),
-				y => y.StartDateTime);
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate))
+				.OrderBy(y => y.StartDateTime).Select(x => x.Id);
+		}
+		/// <summary>
+		/// Returns all NonProductiveTask which are completely or partially inside the given range
+		/// <para>NonProductiveTask touching the range from outside are not counted</para>
+		/// </summary>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
+		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, DateTime endDate, int StationId)
+		{
+			var list = _nptRepository.Find(x =>
+				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+				||
+				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
+				||
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate));
+			//???
+			return list.OfType<Setup>().Where(x => x.Warmup.Station.Id == StationId).OrderBy(x => x.StartDateTime);
 		}
 
 		public IEnumerable<NonProductiveTask> GetInRange(DateTime startDate, int stationId)
@@ -108,36 +126,6 @@ namespace Soheil.Core.DataServices
 				.OrderBy(y => y.StartDateTime));//???
 			return entityList;
 		}
-
-		/// <summary>
-		/// Returns a value indicating whether or not this npt still exists
-		/// </summary>
-		/// <param name="vm"></param>
-		/// <returns></returns>
-		internal bool UpdateViewModel(ViewModels.PP.NPTVm vm)
-		{
-			var model = _nptRepository.FirstOrDefault(x => x.Id == vm.Id);
-			if (model == null) return false;
-			vm.StartDateTime = model.StartDateTime;
-			vm.DurationSeconds = model.DurationSeconds;
-			if (vm is ViewModels.PP.SetupVm && model is Setup)
-				updateViewModel(vm as ViewModels.PP.SetupVm, model as Setup);
-			else//???
-				return false;
-			return true;
-		}
-		private void updateViewModel(ViewModels.PP.SetupVm vm, Setup model)
-		{
-			vm.ChangeoverId = model.Changeover.Id;
-			vm.ChangeoverSeconds = model.Changeover.Seconds;
-
-			vm.WarmupId = model.Warmup.Id;
-			vm.WarmupSeconds = model.Warmup.Seconds;
-
-			vm.FromProduct = new ViewModels.PP.ProductReworkVm(model.Changeover.FromProductRework);
-			vm.ToProduct = new ViewModels.PP.ProductReworkVm(model.Changeover.ToProductRework);
-		}
-
 
 		internal int AddModel(PP.Smart.SmartRange setup)
 		{

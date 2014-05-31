@@ -1,191 +1,119 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    x:Class="Soheil.Views.Fpc.Toolbox"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:core="clr-namespace:Soheil.Core.Fpc;assembly=Soheil.Core"
-					xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core">
+﻿<UserControl x:Class="Soheil.Views.Fpc.Toolbox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:core="clr-namespace:Soheil.Core.Fpc;assembly=Soheil.Core"
+			 xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
+			 d:DesignHeight="300" d:DesignWidth="300">
+	
+	<UserControl.Resources>
+		
+		<core:ToolboxItemTemplateSelector x:Key="toolboxItemTemplateSelector"/>
+		
+		<!--toolbox items-->
+		<DataTemplate x:Key="stationToolboxItemTemplate" DataType="{x:Type vm:StationVm}">
+			<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Station_DragCompleted">
+				<Thumb.Template>
+					<ControlTemplate>
+						<Border Style="{StaticResource toolboxItemBorderStyle}">
+							<TextBlock Text="{Binding Name}" Foreground="White"/>
+						</Border>
+					</ControlTemplate>
+				</Thumb.Template>
+			</Thumb>
+		</DataTemplate>
 
-	<core:ToolboxItemTemplateSelector x:Key="toolboxItemTemplateSelector"/>
+		<DataTemplate x:Key="activityToolboxItemTemplate" DataType="{x:Type vm:ActivityVm}">
+			<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Activity_DragCompleted"
+			   Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
+				<Thumb.Template>
+					<ControlTemplate>
+						<Border Style="{StaticResource toolboxItemBorderStyle}">
+							<TextBlock Text="{Binding Name}" Foreground="White"/>
+						</Border>
+					</ControlTemplate>
+				</Thumb.Template>
+			</Thumb>
+		</DataTemplate>
 
-	<Style x:Key="toolboxBorderStyle" TargetType="{x:Type Border}">
-		<Setter Property="BorderBrush" Value="#88FFFFFF"/>
-		<Setter Property="BorderThickness" Value="2"/>
-		<Setter Property="CornerRadius" Value="2"/>
-		<Setter Property="Margin" Value="4"/>
-		<Setter Property="Padding" Value="2"/>
-	</Style>
+		<DataTemplate x:Key="machineToolboxItemTemplate" DataType="{x:Type vm:MachineVm}">
+			<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Machine_DragCompleted"
+			   Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
+				<Thumb.Template>
+					<ControlTemplate>
+						<Border Style="{StaticResource toolboxItemBorderStyle}">
+							<DockPanel LastChildFill="False">
+								<TextBlock Text="{Binding Name}" Foreground="White" DockPanel.Dock="Left"/>
+								<TextBlock Text="{Binding Code}" Foreground="Silver" TextAlignment="Left" DockPanel.Dock="Right"/>
+							</DockPanel>
+						</Border>
+					</ControlTemplate>
+				</Thumb.Template>
+			</Thumb>
+		</DataTemplate>
 
-	<Style x:Key="toolboxGroupBorderStyle" TargetType="{x:Type Border}">
-		<Style.Triggers>
-			<EventTrigger RoutedEvent="MouseEnter">
-				<BeginStoryboard>
-					<Storyboard>
-						<DoubleAnimation Storyboard.TargetProperty="Opacity" 
-										To="1" Duration="0:0:0.1"/>
-					</Storyboard>
-				</BeginStoryboard>
-			</EventTrigger>
-			<EventTrigger RoutedEvent="MouseLeave">
-				<BeginStoryboard>
-					<Storyboard>
-						<DoubleAnimation Storyboard.TargetProperty="Opacity" 
-										To="0.5" Duration="0:0:1"/>
-					</Storyboard>
-				</BeginStoryboard>
-			</EventTrigger>
-		</Style.Triggers>
-		<Setter Property="BorderBrush" Value="#14AAFFE0"/>
-		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="Opacity" Value="0.5"/>
-		<Setter Property="CornerRadius" Value="2"/>
-		<Setter Property="Margin" Value="2"/>
-		<Setter Property="Padding" Value="2"/>
-	</Style>
-
-	<Style x:Key="toolboxItemBorderStyle" TargetType="{x:Type Border}">
-		<Style.Triggers>
-			<EventTrigger RoutedEvent="MouseEnter">
-				<BeginStoryboard>
-					<Storyboard>
-						<ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-										To="#88AAFFE0" Duration="0:0:0.1"/>
-					</Storyboard>
-				</BeginStoryboard>
-			</EventTrigger>
-			<EventTrigger RoutedEvent="MouseLeave">
-				<BeginStoryboard>
-					<Storyboard>
-						<ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-										To="#44224466" Duration="0:0:1"/>
-					</Storyboard>
-				</BeginStoryboard>
-			</EventTrigger>
-		</Style.Triggers>
-		<Setter Property="Opacity" Value="1"/>
-		<Setter Property="BorderBrush" Value="#44FFFFFF"/>
-		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="CornerRadius" Value="1"/>
-		<Setter Property="Background" Value="#4455"/>
-		<Setter Property="Margin" Value="2"/>
-		<Setter Property="Padding" Value="2"/>
-	</Style>
-
-	<!--dragging toolbox items-->
-	<DataTemplate x:Key="dragToolboxItemTemplate" DataType="{x:Type vm:ToolboxItemVm}">
-		<Border Style="{StaticResource toolboxBorderStyle}" MinHeight="20" MinWidth="80"
-				Margin="{Binding Location}" Visibility="{Binding Converter={StaticResource nullToInvisibilityConverter}}">
-			<DockPanel>
-				<TextBlock Text="{Binding Text}" Foreground="#88FFFFFF"/>
-				<Ellipse DockPanel.Dock="Right" Margin="5" Name="indicatorBullet"
-							Width="5" Height="5" Fill="#FF6644"/>
-				<Canvas/>
-			</DockPanel>
-		</Border>
-		<DataTemplate.Triggers>
-			<DataTrigger Binding="{Binding CanDrop}" Value="True">
-				<Setter TargetName="indicatorBullet" Property="Fill" Value="#44FF66"/>
-			</DataTrigger>
-		</DataTemplate.Triggers>
-	</DataTemplate>
-
-	<!--toolbox items-->
-	<DataTemplate x:Key="stationToolboxItemTemplate" DataType="{x:Type vm:StationVm}">
-		<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Station_DragCompleted">
-			<Thumb.Template>
-				<ControlTemplate>
-					<Border Style="{StaticResource toolboxItemBorderStyle}">
+		<!--toolbox groups-->
+		<DataTemplate x:Key="activityGroupToolboxItemTemplate" DataType="{x:Type vm:ActivityGroupVm}">
+			<Border Style="{StaticResource toolboxGroupBorderStyle}">
+				<Expander IsExpanded="{Binding IsExpanded}">
+					<Expander.Header>
 						<TextBlock Text="{Binding Name}" Foreground="White"/>
-					</Border>
-				</ControlTemplate>
-			</Thumb.Template>
-		</Thumb>
-	</DataTemplate>
-
-	<DataTemplate x:Key="activityToolboxItemTemplate" DataType="{x:Type vm:ActivityVm}">
-		<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Activity_DragCompleted">
-			<Thumb.Template>
-				<ControlTemplate>
-					<Border Style="{StaticResource toolboxItemBorderStyle}">
-						<TextBlock Text="{Binding Name}" Foreground="White"/>
-					</Border>
-				</ControlTemplate>
-			</Thumb.Template>
-		</Thumb>
-	</DataTemplate>
-
-	<DataTemplate x:Key="machineToolboxItemTemplate" DataType="{x:Type vm:MachineVm}">
-		<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Machine_DragCompleted">
-			<Thumb.Template>
-				<ControlTemplate>
-					<Border Style="{StaticResource toolboxItemBorderStyle}">
-						<TextBlock Text="{Binding Name}" Foreground="White"/>
-					</Border>
-				</ControlTemplate>
-			</Thumb.Template>
-		</Thumb>
-	</DataTemplate>
-
-	<!--toolbox groups-->
-	<DataTemplate x:Key="activityGroupToolboxItemTemplate" DataType="{x:Type vm:ActivityGroupVm}">
-        <Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8443">
-            <Expander>
-				<Expander.Header>
-					<TextBlock Text="{Binding Name}" Foreground="White"/>
-				</Expander.Header>
-				<ItemsControl ItemsSource="{Binding Activities}"
+					</Expander.Header>
+					<ItemsControl ItemsSource="{Binding Activities}"
 							  ItemTemplate="{StaticResource activityToolboxItemTemplate}"/>
-			</Expander>
-		</Border>
-	</DataTemplate>
+				</Expander>
+			</Border>
+		</DataTemplate>
 
-	<DataTemplate x:Key="machineFamilyToolboxItemTemplate" DataType="{x:Type vm:MachineFamilyVm}">
-        <Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8345">
-            <Expander>
-				<Expander.Header>
-					<TextBlock Text="{Binding Name}" Foreground="White"/>
-				</Expander.Header>
-				<ItemsControl ItemsSource="{Binding Machines}"
+		<DataTemplate x:Key="machineFamilyToolboxItemTemplate" DataType="{x:Type vm:MachineFamilyVm}">
+			<Border Style="{StaticResource toolboxGroupBorderStyle}">
+				<Expander IsExpanded="{Binding IsExpanded}">
+					<Expander.Header>
+						<TextBlock Text="{Binding Name}" Foreground="White"/>
+					</Expander.Header>
+					<ItemsControl ItemsSource="{Binding Machines}"
 							  ItemTemplate="{StaticResource machineToolboxItemTemplate}"/>
+				</Expander>
+			</Border>
+		</DataTemplate>
+	</UserControl.Resources>
+	
+	
+
+	<WrapPanel Orientation="Vertical">
+		<Border Style="{StaticResource toolboxBorderStyle}" Background="#86B9">
+			<Expander IsExpanded="True" Header=" ایستگاه ها ">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<Border Style="{StaticResource toolboxGroupBorderStyle}">
+						<ItemsControl ItemsSource="{Binding Stations}"
+											ItemTemplate="{StaticResource stationToolboxItemTemplate}"/>
+					</Border>
+				</ScrollViewer>
 			</Expander>
 		</Border>
-	</DataTemplate>
-
-	<!--toolbox area-->
-	<DataTemplate x:Key="toolboxArea" DataType="{x:Type vm:FpcWindowVm}">
-		<WrapPanel Orientation="Vertical">
-			<Border Style="{StaticResource toolboxBorderStyle}" Background="#8777">
+		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8C86">
+			<Expander IsExpanded="True" Header=" فعالیت ها ">
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<TextBlock Text="ایستگاه ها"/>
-						<Expander>
-							<Expander.Header>
-								<TextBlock Text="همه ایستگاه ها" Foreground="White"/>
-							</Expander.Header>
-                            <Border Style="{StaticResource toolboxGroupBorderStyle}" Background="#8333">
-                                <ItemsControl ItemsSource="{Binding Stations}"
-											  ItemTemplate="{StaticResource stationToolboxItemTemplate}"/>
-							</Border>
-						</Expander>
-					</StackPanel>
-				</ScrollViewer>
-			</Border>
-            <Border Style="{StaticResource toolboxBorderStyle}" Background="#8998">
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-					<StackPanel>
-						<TextBlock Text="فعالیت ها"/>
+						<TextBox Text="{Binding ActivityQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
 						<ItemsControl ItemsSource="{Binding ActivityGroups}"
 									  ItemTemplate="{StaticResource activityGroupToolboxItemTemplate}"/>
 					</StackPanel>
 				</ScrollViewer>
-			</Border>
-            <Border Style="{StaticResource toolboxBorderStyle}" Background="#88AB">
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+			</Expander>
+		</Border>
+		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8BC8">
+			<Expander IsExpanded="True" Header=" ماشین ها ">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<TextBlock Text=" ماشین ها"/>
+						<TextBox Text="{Binding MachineQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
 						<ItemsControl ItemsSource="{Binding MachineFamilies}"
 									  ItemTemplate="{StaticResource machineFamilyToolboxItemTemplate}"/>
 					</StackPanel>
 				</ScrollViewer>
-			</Border>
-		</WrapPanel>
-	</DataTemplate>
-</ResourceDictionary>
+			</Expander>
+		</Border>
+	</WrapPanel>
+</UserControl>

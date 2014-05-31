@@ -13,11 +13,5 @@ namespace Soheil.Views.Fpc
 		{
 			InitializeComponent();
 		}
-		private void DeleteConnectorButton_Click(object sender, RoutedEventArgs e)
-		{
-			var conn = (sender as FrameworkElement).DataContext as ConnectorVm;
-			if (conn == null) return;
-			conn.Start.ParentWindowVm.Connectors.Remove(conn);
-		}
 	}
 }

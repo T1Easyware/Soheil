@@ -36,7 +36,7 @@ namespace Soheil.Core.DataServices
 						Station = new Repository<Station>(context).Single(x => x.Id == source.Station.Id),
 					};
 				model.Seconds = seconds;
-				context.SaveChanges();
+				context.Commit();
 				return model;
 			}
 		}
@@ -54,7 +54,7 @@ namespace Soheil.Core.DataServices
 						ProductRework = new Repository<ProductRework>(context).Single(x => x.Id == targetPRId),
 					};
 				model.Seconds = seconds;
-				context.SaveChanges();
+				context.Commit();
 				return model;
 			}
 		}
@@ -74,7 +74,7 @@ namespace Soheil.Core.DataServices
 							Station = new Repository<Station>(context).FirstOrDefault(x => x.Id == stationId),
 						};
 					warmupRepos.Add(model);
-					context.SaveChanges();
+					context.Commit();
 				}
 				return model;
 			}

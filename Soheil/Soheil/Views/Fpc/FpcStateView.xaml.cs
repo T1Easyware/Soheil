@@ -45,6 +45,11 @@ namespace Soheil.Views.Fpc
 				DrawingArea.CaptureMouse();
 			}
 		}
+		private void DrawingArea_MouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			VM.Zoom += (e.Delta > 0) ? 0.1 : -0.1;
+			e.Handled = true;
+		}
 
 		private void Area_MouseUp(object sender, MouseButtonEventArgs e)
 		{

@@ -17,17 +17,27 @@ namespace Soheil.Core.ViewModels.Fpc
 			get { return Model == null ? "" : Model.Name; }
 			set { Model.Name = value; OnPropertyChanged("Name"); }
 		}
+		public string Code
+		{
+			get { return Model == null ? "" : Model.Code; }
+		}
 		
+		/// <summary>
+		/// Creates an instance of StationVm filled with its active StationMachines
+		/// </summary>
+		/// <param name="model"></param>
 		public StationVm(Model.Station model)
 		{
 			Model = model;
-			foreach (var sm in model.StationMachines)
+			foreach (var sm in model.StationMachines.Where(x => x.Status == (int)Common.Status.Active))
 			{
 				StationMachines.Add(new StationMachineVm(sm, this));
 			}
 		}
-		//Station-Machines Observable Collection
-		private ObservableCollection<StationMachineVm> _stationMachines = new ObservableCollection<StationMachineVm>();
+		/// <summary>
+		/// A bindable collection of active StationMachines that are associated with this Station
+		/// </summary>
 		public ObservableCollection<StationMachineVm> StationMachines { get { return _stationMachines; } }
+		private ObservableCollection<StationMachineVm> _stationMachines = new ObservableCollection<StationMachineVm>();
 	}
 }

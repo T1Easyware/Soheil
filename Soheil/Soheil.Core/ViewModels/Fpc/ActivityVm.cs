@@ -31,5 +31,13 @@ namespace Soheil.Core.ViewModels.Fpc
 		public static readonly DependencyProperty GroupProperty =
 			DependencyProperty.Register("Group", typeof(ActivityGroupVm), typeof(ActivityVm), new UIPropertyMetadata(null));
 
+		//IsVisible Dependency Property
+		public bool IsVisible
+		{
+			get { return (bool)GetValue(IsVisibleProperty); }
+			set { SetValue(IsVisibleProperty, value); }
+		}
+		public static readonly DependencyProperty IsVisibleProperty =
+			DependencyProperty.Register("IsVisible", typeof(bool), typeof(ActivityVm), new UIPropertyMetadata(true));
 	}
 }

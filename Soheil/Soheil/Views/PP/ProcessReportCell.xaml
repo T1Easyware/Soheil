@@ -62,13 +62,11 @@
 				<ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource tooltip}"/>
 			</StackPanel>
 		</Border.ToolTip>
-		<Border.Effect>
-			<DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
-		</Border.Effect>
 		<Border.ContextMenu>
 			<ContextMenu FlowDirection="RightToLeft">
-				<MenuItem Header="ریست نمودن گزارش فعالیت" Command="{Binding DeleteProcessReportCommand}"/>
-				<MenuItem Header="حذف گزارش بازه (گزارش فعالیتهای این بازه)" Command="{Binding DeleteTaskReportCommand}"/>
+				<MenuItem Header="افزودن گزارش بازه ای" Command="{Binding OpenReportRangeCommand}"/>
+				<MenuItem Header="حذف گزارش فعالیت" Command="{Binding DeleteProcessReportCommand}"/>
+				<MenuItem Header="حذف گزارش بازه" Command="{Binding DeleteTaskReportCommand}"/>
 			</ContextMenu>
 		</Border.ContextMenu>
 
@@ -104,7 +102,7 @@
 													</Border>
 												</Grid>
 											</DockPanel>
-											<Button x:Name="button" Opacity="0" Command="{Binding OpenCommand}">
+											<Button x:Name="button" Opacity="0" Command="{Binding OpenReportCommand}">
 												<Image Style="{StaticResource EditReportImage}"/>
 												<Button.ToolTip>
 													<StackPanel>
@@ -147,7 +145,16 @@
 													<TextBlock Text="فاقد گزارش"/>
 												</Border>
 											</DockPanel>
-											<Border Background="#5555"/>
+											<Button x:Name="button" Opacity="0" Command="{Binding OpenReportCommand}">
+												<Image Style="{StaticResource EditReportImage}"/>
+												<Button.ToolTip>
+													<StackPanel>
+														<TextBlock Text="افزودن گزارش" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14" Margin="5"/>
+														<TextBlock Text="برای گزارش بازه زمانی کوچکتر راست کلیک کنید" HorizontalAlignment="Center" FontSize="10" Margin="2" Foreground="DimGray"/>
+														<ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource tooltip}"/>
+													</StackPanel>
+												</Button.ToolTip>
+											</Button>
 											<Grid.Triggers>
 												<EventTrigger RoutedEvent="MouseEnter">
 													<BeginStoryboard>

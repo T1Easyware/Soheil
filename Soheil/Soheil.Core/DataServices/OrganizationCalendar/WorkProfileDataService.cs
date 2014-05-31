@@ -71,7 +71,7 @@ namespace Soheil.Core.DataServices
 
 		public void UpdateModel(WorkProfile model)
 		{
-			context.SaveChanges();
+			context.Commit();
 			//var workProfileRepository = new Repository<WorkProfile>(context);
 			//WorkProfile entity = workProfileRepository.Single(x => x.Id == model.Id);
 			/*entity.Name = model.Name;
@@ -165,7 +165,8 @@ namespace Soheil.Core.DataServices
 
 		public void AttachModel(WorkProfile model)
 		{
-			throw new NotImplementedException();
+			workProfileRepository.Add(model);
+			context.Commit();
 		}
 		
 		/// <summary>
@@ -183,13 +184,13 @@ namespace Soheil.Core.DataServices
 				"WorkDays.WorkShifts.WorkShiftPrototype",
 				"WorkDays.WorkShifts.WorkBreaks");
 			var clone = cloneModel(model);
-			context.SaveChanges();
+			context.Commit();
 			return clone;
 		}
 		public /*override*/ WorkProfile Clone(WorkProfile model)
 		{
 			var clone = cloneModel(model);
-			context.SaveChanges();
+			context.Commit();
 			return clone;
 		}
 
@@ -233,6 +234,7 @@ namespace Soheil.Core.DataServices
 						WorkShiftPrototype = clone.WorkShiftPrototypes.First(x => x.Index == workShiftModel.WorkShiftPrototype.Index),
 						StartSeconds = workShiftModel.StartSeconds,
 						EndSeconds = workShiftModel.EndSeconds,
+						IsOpen = workShiftModel.IsOpen,
 					};
 					foreach (var workBreakModel in workShiftModel.WorkBreaks.ToArray())
 					{
@@ -249,27 +251,6 @@ namespace Soheil.Core.DataServices
 			if (WorkProfileAdded != null)
 				WorkProfileAdded(this, new ModelAddedEventArgs<WorkProfile>(clone));
 			return clone;
-		}
-
-		internal void Postpone(WorkProfile model)
-		{
-			context.PostponeChanges(model);
-			foreach (var proto in model.WorkShiftPrototypes)
-			{
-				context.PostponeChanges(proto);
-				foreach (var shift in proto.WorkShifts)
-				{
-					context.PostponeChanges(shift);
-					foreach (var wbreak in shift.WorkBreaks)
-					{
-						context.PostponeChanges(wbreak);
-					}
-				}
-			}
-			foreach (var day in model.WorkDays)
-			{
-				context.PostponeChanges(day);
-			}
 		}
 	}
 }

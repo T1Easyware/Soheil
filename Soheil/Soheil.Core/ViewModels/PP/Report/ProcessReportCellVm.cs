@@ -9,10 +9,11 @@ using System.Windows;
 using Soheil.Common;
 using Soheil.Common.SoheilException;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class ProcessReportCellVm : PPItemVm
 	{
+		public Dal.SoheilEdmContext UOW { get; protected set; }
 		DataServices.ProcessReportDataService _processReportDataService;
 		DataServices.TaskReportDataService _taskReportDataService;
 		Model.ProcessReport _model;
@@ -30,12 +31,16 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="taskReport">column of the viewModel cell within the report grid</param>
 		/// <param name="processReportRow">row of the viewModel cell within the report grid</param>
 		public ProcessReportCellVm(Model.ProcessReport model, TaskReportBaseVm taskReport, ProcessReportRowVm processReportRow)
+			:base()
 		{
 			ParentRow = processReportRow;
+			RowIndex = ParentRow.Index;
 			ParentColumn = taskReport;
 			_model = model;
-			_processReportDataService = processReportRow.Parent.ProcessReportDataService;
-			_taskReportDataService = processReportRow.Parent.TaskReportDataService;
+
+			UOW = taskReport.UOW;
+			_processReportDataService = new DataServices.ProcessReportDataService(UOW);
+			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
 
 			if (model == null)
 			{
@@ -59,9 +64,16 @@ namespace Soheil.Core.ViewModels.PP
 			else
 				DurationSeconds = tmp;
 			//by updating StartDateTime (while DurationSeconds is updated before) EndDateTime gets updated correctly
+			StartDateTimeChanged += newVal =>
+			{
+				StartDate = newVal.Date;
+				StartTime = newVal.TimeOfDay;
+				SetValue(StartDateTimeProperty, newVal);
+				SetValue(EndDateTimeProperty, newVal.AddSeconds(DurationSeconds));
+			};
 			StartDateTime = taskReport.StartDateTime;
 
-	
+			OperatorReports = new OperatorReportCollection(this);
 			DefectionReports = new DefectionReportCollection(this);
 			StoppageReports = new StoppageReportCollection(this);
 
@@ -73,6 +85,12 @@ namespace Soheil.Core.ViewModels.PP
 		public void LoadInnerData()
 		{
 			_model = _processReportDataService.GetSingleFull(Id);
+			_processReportDataService.CorrectOperatorReports(_model);
+			OperatorReports.Reset();
+			foreach (var opr in _model.ProcessOperatorReports)
+			{
+				OperatorReports.Add(new OperatorReportVm(opr));
+			}
 			DefectionReports.Reset();
 			foreach (var def in _model.DefectionReports)
 			{
@@ -144,22 +162,40 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessReportCellVm), new UIPropertyMetadata(TimeSpan.Zero));
-		public override DateTime StartDateTime
-		{
-			get { return StartDate.Add(StartTime); }
-			set
-			{
-				StartDate = value.Date;
-				StartTime = value.TimeOfDay;
-				SetValue(StartDateTimeProperty, value);
-				SetValue(EndDateTimeProperty, value.AddSeconds(DurationSeconds));
-			}
-		}
+
 		/// <summary>
 		/// Don't manually change the value of this property
 		/// </summary>
 		public static readonly DependencyProperty EndDateTimeProperty =
 			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(ProcessReportCellVm), new UIPropertyMetadata(DateTime.Now));
+		#endregion
+
+		#region Operator,Defection,Stoppage
+		//OperatorReports Dependency Property
+		public OperatorReportCollection OperatorReports
+		{
+			get { return (OperatorReportCollection)GetValue(OperatorReportsProperty); }
+			set { SetValue(OperatorReportsProperty, value); }
+		}
+		public static readonly DependencyProperty OperatorReportsProperty =
+			DependencyProperty.Register("OperatorReports", typeof(OperatorReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+		//DefectionReports Dependency Property
+		public DefectionReportCollection DefectionReports
+		{
+			get { return (DefectionReportCollection)GetValue(DefectionReportsProperty); }
+			set { SetValue(DefectionReportsProperty, value); }
+		}
+		public static readonly DependencyProperty DefectionReportsProperty =
+			DependencyProperty.Register("DefectionReports", typeof(DefectionReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+		//StoppageReports Dependency Property
+		public StoppageReportCollection StoppageReports
+		{
+			get { return (StoppageReportCollection)GetValue(StoppageReportsProperty); }
+			set { SetValue(StoppageReportsProperty, value); }
+		}
+		public static readonly DependencyProperty StoppageReportsProperty =
+			DependencyProperty.Register("StoppageReports", typeof(StoppageReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+
 		#endregion
 
 		#region Other Members
@@ -182,42 +218,40 @@ namespace Soheil.Core.ViewModels.PP
 				else
 					vm.ParentRow.Parent.CurrentProcessReportBuilder = null;
 			}));
-		//DefectionReports Dependency Property
-		public DefectionReportCollection DefectionReports
-		{
-			get { return (DefectionReportCollection)GetValue(DefectionReportsProperty); }
-			set { SetValue(DefectionReportsProperty, value); }
-		}
-		public static readonly DependencyProperty DefectionReportsProperty =
-			DependencyProperty.Register("DefectionReports", typeof(DefectionReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
-		//StoppageReports Dependency Property
-		public StoppageReportCollection StoppageReports
-		{
-			get { return (StoppageReportCollection)GetValue(StoppageReportsProperty); }
-			set { SetValue(StoppageReportsProperty, value); }
-		}
-		public static readonly DependencyProperty StoppageReportsProperty =
-			DependencyProperty.Register("StoppageReports", typeof(StoppageReportCollection), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
-
 		#endregion
+
 
 		#region Commands
 		void initializeCommands()
 		{
-			OpenCommand = new Commands.Command(o =>
+			OpenReportCommand = new Commands.Command(o =>
 			{
 				if (ViewMode == PPViewMode.Simple) IsSelected = true;
 				else if(ViewMode == PPViewMode.Empty)
 				{
-					//create task report column???
+					var holder = ParentColumn as TaskReportHolderVm;
+					if (holder != null) holder.OpenReportCommand.Execute(o);
 				}
+			});
+			OpenReportRangeCommand = new Commands.Command(o =>
+			{
+				TaskReportHolderVm holder = ParentColumn as TaskReportHolderVm;
+				if (holder == null)
+				{
+					int idx = ParentColumn.Task.TaskReports.IndexOf(ParentColumn);
+					holder = ParentColumn.Task.TaskReports.Skip(idx + 1).FirstOrDefault(x => x is TaskReportHolderVm) as TaskReportHolderVm;
+				}
+				if (holder == null)
+					holder = ParentColumn.Task.TaskReports.LastOrDefault(x => x is TaskReportHolderVm) as TaskReportHolderVm;
+				if (holder != null)
+					holder.IsSelected = true;
 			});
 			CloseCommand = new Commands.Command(o => { IsSelected = false; });
 			SaveCommand = new Commands.Command(o =>
 			{
 				Save();
 				IsSelected = false;
-				ParentRow.Parent.SelectedBlock.BlockReport.ReloadProcessReportRows();
+				ParentColumn.Task.ReloadTaskReports(true);
 			});
 			DeleteTaskReportCommand = new Commands.Command(o =>
 			{
@@ -229,8 +263,7 @@ namespace Soheil.Core.ViewModels.PP
 						if (realTaskReport != null)
 						{
 							_taskReportDataService.DeleteById(realTaskReport.Id);
-							realTaskReport.Task.ReloadTaskReports();
-							ParentRow.Parent.SelectedBlock.BlockReport.ReloadProcessReportRows();
+							realTaskReport.Task.ReloadTaskReports(true);
 						}
 					}
 					else
@@ -247,8 +280,8 @@ namespace Soheil.Core.ViewModels.PP
 				{
 					_processReportDataService.ResetById(Id,
 						_model.Process.TargetCount
-						- ParentRow.ProcessReportCells.Where(y => y.Id != -1).Sum(x => x.ProcessReportTargetPoint));
-					ParentColumn.Task.Block.BlockReport.ReloadProcessReportRows();
+						- ParentRow.ProcessReportCells.Where(y => y.Id != Id).Sum(x => x.ProcessReportTargetPoint));
+					ParentColumn.Task.Block.ReloadReports();
 				}
 				catch
 				{
@@ -257,14 +290,22 @@ namespace Soheil.Core.ViewModels.PP
 			});
 		}
 
-		//OpenCommand Dependency Property
-		public Commands.Command OpenCommand
+		//OpenReportCommand Dependency Property
+		public Commands.Command OpenReportCommand
 		{
-			get { return (Commands.Command)GetValue(OpenCommandProperty); }
-			set { SetValue(OpenCommandProperty, value); }
+			get { return (Commands.Command)GetValue(OpenReportCommandProperty); }
+			set { SetValue(OpenReportCommandProperty, value); }
 		}
-		public static readonly DependencyProperty OpenCommandProperty =
-			DependencyProperty.Register("OpenCommand", typeof(Commands.Command), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty OpenReportCommandProperty =
+			DependencyProperty.Register("OpenReportCommand", typeof(Commands.Command), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
+		//OpenReportRangeCommand Dependency Property
+		public Commands.Command OpenReportRangeCommand
+		{
+			get { return (Commands.Command)GetValue(OpenReportRangeCommandProperty); }
+			set { SetValue(OpenReportRangeCommandProperty, value); }
+		}
+		public static readonly DependencyProperty OpenReportRangeCommandProperty =
+			DependencyProperty.Register("OpenReportRangeCommand", typeof(Commands.Command), typeof(ProcessReportCellVm), new UIPropertyMetadata(null));
 		//SaveCommand Dependency Property
 		public Commands.Command SaveCommand
 		{

@@ -107,34 +107,38 @@ namespace Soheil.Core.DataServices
 			context.Commit();
 		}
 
+		/// <summary>
+		/// Deletes a state with its children and connectors
+		/// </summary>
+		/// <param name="model"></param>
 		public void DeleteModel(State model)
 		{
-			if (model != null)
+			//Delete tree
+			foreach (var ss in model.StateStations.ToArray())
 			{
-				//Delete tree
-				foreach (var ss in model.StateStations.ToArray())
+				foreach (var ssa in ss.StateStationActivities.ToArray())
 				{
-					foreach (var ssa in ss.StateStationActivities.ToArray())
+					foreach (var ssam in ssa.StateStationActivityMachines.ToArray())
 					{
-						foreach (var ssam in ssa.StateStationActivityMachines.ToArray())
-						{
-							ssa.StateStationActivityMachines.Remove(ssam);
-						}
-						ss.StateStationActivities.Remove(ssa);
+						ssa.StateStationActivityMachines.Remove(ssam);
+						_stateStationActivityMachineRepository.Delete(ssam);
 					}
-					model.StateStations.Remove(ss);
+					ss.StateStationActivities.Remove(ssa);
+					_stateStationActivityRepository.Delete(ssa);
 				}
-				//Delete connectors
-				Repository<Connector> connectorRepository = new Repository<Connector>(context);
-				var connectors = connectorRepository.Find(x => x.StartState.Id == model.Id || x.EndState.Id == model.Id).ToArray();
-				foreach (var connector in connectors)
-				{
-					connectorRepository.Delete(connector);
-				}
-				//Delete State
-				//model.FPC.States.Remove(model);
-				_stateRepository.Delete(model);
+				model.StateStations.Remove(ss);
+				_stateStationRepository.Delete(ss);
 			}
+			//Delete connectors
+			Repository<Connector> connectorRepository = new Repository<Connector>(context);
+			var connectors = connectorRepository.Find(x => x.StartState.Id == model.Id || x.EndState.Id == model.Id).ToArray();
+			foreach (var connector in connectors)
+			{
+				connectorRepository.Delete(connector);
+			}
+			//Delete State
+			model.FPC.States.Remove(model);
+			_stateRepository.Delete(model);
 			context.Commit();
 		}
 
@@ -174,11 +178,11 @@ namespace Soheil.Core.DataServices
 					Name = viewModel.Name,
 					X = (float)viewModel.Location.X,
 					Y = (float)viewModel.Location.Y,
-					FPC = fpcRepository.FirstOrDefault(x => x.Id == viewModel.FPC.Id),
+					FPC = fpcRepository.FirstOrDefault(x => x.Id == viewModel.ParentWindowVm.Id),
 					StateType = viewModel.StateType,
 					OnProductRework = viewModel.StateType == StateType.Mid || viewModel.StateType == StateType.Rework ?
 						(viewModel.ProductRework == null
-							? prRepository.FirstOrDefault(x => x.Product.Id == viewModel.FPC.Product.Id && x.Rework == null)
+							? prRepository.FirstOrDefault(x => x.Product.Id == viewModel.ParentWindowVm.Product.Id && x.Rework == null)
 							: prRepository.FirstOrDefault(x => x.Id == viewModel.ProductRework.Id)
 						) : null
 				};

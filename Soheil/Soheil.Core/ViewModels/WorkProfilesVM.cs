@@ -20,7 +20,7 @@ namespace Soheil.Core.ViewModels
 			var viewModels = new ObservableCollection<WorkProfileVm>();
 			foreach (var model in WorkProfileDataService.GetAll())
 			{
-				viewModels.Add(new WorkProfileVm(model, Access, WorkProfileDataService));
+				viewModels.Add(new WorkProfileVm(model, Access));
 			}
 			Items = new ListCollectionView(viewModels);
 
@@ -87,16 +87,12 @@ namespace Soheil.Core.ViewModels
 
 		public override void Reset(object oldVm)
 		{
-			var vm = oldVm as WorkProfileVm;
-			if (vm != null)
-			{
-				vm.Reset();
-			}
+			//
 		}
 
 		private void OnWorkProfileAdded(object sender, ModelAddedEventArgs<WorkProfile> e)
 		{
-			var newVm = new WorkProfileVm(e.NewModel, Access, WorkProfileDataService);
+			var newVm = new WorkProfileVm(e.NewModel, Access);
 			Items.AddNewItem(newVm);
 			Items.CommitNew();
 			CurrentContent = newVm;
@@ -108,7 +104,7 @@ namespace Soheil.Core.ViewModels
         {
 			var viewModel = original as WorkProfileVm;
 			var model = WorkProfileDataService.CloneModelById(viewModel.Id);
-			return new WorkProfileVm(model, Access, WorkProfileDataService);
+			return new WorkProfileVm(model, Access);
         }
         #endregion
 	}

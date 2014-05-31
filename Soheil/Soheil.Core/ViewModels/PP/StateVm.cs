@@ -49,7 +49,7 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("ProductRework", typeof(ProductReworkVm), typeof(StateVm), new UIPropertyMetadata(null));
 
 		//StateStationList Observable Collection
-		private ObservableCollection<StateStationVm> _stateStationList = new ObservableCollection<StateStationVm>();
 		public ObservableCollection<StateStationVm> StateStationList { get { return _stateStationList; } }
+		private ObservableCollection<StateStationVm> _stateStationList = new ObservableCollection<StateStationVm>();
 	}
 }

@@ -19,7 +19,7 @@ namespace Soheil
                 new FrameworkPropertyMetadata(
                     XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
         }
-		static string folder = Path.Combine("%appdata%", "Soheil");
+		static string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Soheil");
 
 		protected override void OnStartup(StartupEventArgs e)
 		{

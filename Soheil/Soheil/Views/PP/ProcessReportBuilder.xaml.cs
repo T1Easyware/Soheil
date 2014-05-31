@@ -30,15 +30,15 @@ namespace Soheil.Views.PP
 		{
 			if (e.AddedItems.Count == 1)
 			{
-				sender.GetDataContext<DefectionReportVm>().ProductDefection.SelectedItem = (e.AddedItems[0] as FilterableItemVm);
+				sender.GetDataContext<Core.ViewModels.PP.Report.DefectionReportVm>().ProductDefection.SelectedItem = (e.AddedItems[0] as FilterableItemVm);
 			}
 			else
-				sender.GetDataContext<DefectionReportVm>().ProductDefection.SelectedItem = null;
+				sender.GetDataContext<Core.ViewModels.PP.Report.DefectionReportVm>().ProductDefection.SelectedItem = null;
 		}
 
 		private void CausesSelectedCode_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			var vm = sender.GetDataContext<StoppageReportVm>();
+			var vm = sender.GetDataContext<Core.ViewModels.PP.Report.StoppageReportVm>();
 			var val = (sender as TextBox).Text;
 			if (string.IsNullOrWhiteSpace(val)) vm.StoppageLevels.FilterBoxes[0].SelectedItem = null;
 			if (val.Length >= 2)

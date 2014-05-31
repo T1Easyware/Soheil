@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class TaskReportVm : TaskReportBaseVm
 	{
-		public TaskReportVm(PPTaskVm parent, Model.TaskReport model)
+		public TaskReportVm(TaskVm parent, Model.TaskReport model)
 			: base(parent)
 		{
 			if (model != null)
@@ -37,7 +37,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// TaskReport Id
 		/// </summary>
-		public int Id { get; set; }
+		public int Id { get; protected set; }
 
 
 		#region Count
@@ -99,14 +99,14 @@ namespace Soheil.Core.ViewModels.PP
 		#region Commands
 		void initializeCommands()
 		{
-			OpenCommand = new Commands.Command(o =>
+			OpenReportCommand = new Commands.Command(o =>
 			{
-				//Task.Block.Parent.PPTable.CurrentTaskReportBuilder = new TaskReportHolderVm(Task,blah,blah)
+				//Task.Block.Parent.PPTable.CurrentTaskReportBuilder = new TaskReportHolderVm(Task, 0, 0);
 			});
 			DeleteCommand = new Commands.Command(o =>
 			{
 				TaskReportDataService.DeleteById(Id);
-				Task.ReloadTaskReports();
+				Task.ReloadTaskReports(true);
 			});
 		}
 		//DeleteCommand Dependency Property

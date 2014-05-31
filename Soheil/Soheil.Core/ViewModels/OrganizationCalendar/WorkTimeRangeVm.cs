@@ -1,4 +1,5 @@
-﻿using Soheil.Model;
+﻿using Soheil.Common;
+using Soheil.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,44 +10,91 @@ using System.Windows.Media;
 
 namespace Soheil.Core.ViewModels.OrganizationCalendar
 {
+	/// <summary>
+	/// ViewModel for a <see cref="Soheil.Model.WorkShift"/> or a <see cref="Soheil.Model.WorkBreak"/> presented as a range of time 
+	/// </summary>
 	public class WorkTimeRangeVm : DependencyObject
 	{
-		public static WorkTimeRangeVm CreateAuto(object item)
+		public int Id { get; protected set; }
+		public bool IsShift { get; protected set; }
+		public ICollection<WorkTimeRangeVm> Children { get; protected set; }
+
+		/// <summary>
+		/// Creates multiple instances of <see cref="PPItemWorkTime"/> for given shift and its breaks
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns>
+		/// a collection of vms for this shift and its breaks
+		/// <para>returns empty if current shift is not open</para></returns>
+		public static IEnumerable<WorkTimeRangeVm> CreateAuto(Soheil.Core.PP.PPItemWorkTime item)
 		{
-			if (item is WorkShift) return new WorkTimeRangeVm(item as WorkShift);
-			if (item is WorkBreak) return new WorkTimeRangeVm(item as WorkBreak);
-			return null;
+			List<WorkTimeRangeVm> list = new List<WorkTimeRangeVm>();
+			
+			if (item.Model.IsOpen)
+			{
+				var shiftVm = new WorkTimeRangeVm(item.Model, item.DayStart);
+				list.Add(shiftVm);
+				foreach (var wbreak in item.Model.WorkBreaks)
+				{
+					var breakVm = new WorkTimeRangeVm(wbreak, item.DayStart);
+					shiftVm.Children.Add(breakVm);
+					list.Add(breakVm);
+				}
+			}
+
+			return list;
 		}
-		public WorkTimeRangeVm(WorkShift shift)
+		/// <summary>
+		/// Creates an instance of WorkTimeRangeVm for the given <see cref="Soheil.Model.WorkShift"/>
+		/// </summary>
+		/// <param name="shift"></param>
+		protected WorkTimeRangeVm(WorkShift shift, DateTime offset)
 		{
-			StartSeconds = shift.StartSeconds;
-			EndSeconds = shift.EndSeconds;
+			Start = offset.AddSeconds(shift.StartSeconds);
+			End = offset.AddSeconds(shift.EndSeconds);
 			Color = shift.WorkShiftPrototype.Color;
+			Id = shift.Id;
+			Children = new List<WorkTimeRangeVm>();
+			IsShift = true;
 		}
-		public WorkTimeRangeVm(WorkBreak wbreak)
+		/// <summary>
+		/// Creates an instance of WorkTimeRangeVm for the given <see cref="Soheil.Model.WorkBreak"/>
+		/// </summary>
+		/// <param name="wbreak"></param>
+		protected WorkTimeRangeVm(WorkBreak wbreak, DateTime offset)
 		{
-			StartSeconds = wbreak.StartSeconds;
-			EndSeconds = wbreak.EndSeconds;
-			Color = Color.FromArgb(75, 200, 50, 50);
+			Start = offset.AddSeconds(wbreak.StartSeconds);
+			End = offset.AddSeconds(wbreak.EndSeconds);
+			Color = DefaultColors.WorkBreak;
+			Id = wbreak.Id;
+			IsShift = false;
 		}
 
-		//StartSeconds Dependency Property
-		public int StartSeconds
+
+		/// <summary>
+		/// Gets or sets a bindable value for start of this time range
+		/// </summary>
+		public DateTime Start
 		{
-			get { return (int)GetValue(StartSecondsProperty); }
-			set { SetValue(StartSecondsProperty, value); }
+			get { return (DateTime)GetValue(StartProperty); }
+			set { SetValue(StartProperty, value); }
 		}
-		public static readonly DependencyProperty StartSecondsProperty =
-			DependencyProperty.Register("StartSeconds", typeof(int), typeof(WorkTimeRangeVm), new UIPropertyMetadata(0));
-		//EndSeconds Dependency Property
-		public int EndSeconds
+		public static readonly DependencyProperty StartProperty =
+			DependencyProperty.Register("Start", typeof(DateTime), typeof(WorkTimeRangeVm), new UIPropertyMetadata(DateTime.Now));
+		/// <summary>
+		/// Gets or sets a bindable value for end of this time range
+		/// </summary>
+		public DateTime End
 		{
-			get { return (int)GetValue(EndSecondsProperty); }
-			set { SetValue(EndSecondsProperty, value); }
+			get { return (DateTime)GetValue(EndProperty); }
+			set { SetValue(EndProperty, value); }
 		}
-		public static readonly DependencyProperty EndSecondsProperty =
-			DependencyProperty.Register("EndSeconds", typeof(int), typeof(WorkTimeRangeVm), new UIPropertyMetadata(0));
-		//Color Dependency Property
+		public static readonly DependencyProperty EndProperty =
+			DependencyProperty.Register("End", typeof(DateTime), typeof(WorkTimeRangeVm), new UIPropertyMetadata(DateTime.Now));
+
+		/// <summary>
+		/// Gets or sets a bindable value for color of this range
+		/// </summary>
 		public Color Color
 		{
 			get { return (Color)GetValue(ColorProperty); }

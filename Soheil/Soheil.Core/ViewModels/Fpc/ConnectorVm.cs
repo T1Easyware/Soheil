@@ -11,12 +11,24 @@ namespace Soheil.Core.ViewModels.Fpc
 		public Model.Connector Model { get; protected set; }
 		public override int Id { get { return Model == null ? -1 : Model.Id; } }
 
-		public ConnectorVm(Model.Connector model, StateVm start, StateVm end, bool isLoose = false)
+		/// <summary>
+		/// Occurs when a connector is manually deleted
+		/// </summary>
+		public event Action ConnectorRemoved;
+
+		public ConnectorVm(Model.Connector model, StateVm start, StateVm end, DataServices.ConnectorDataService connectorDataService, bool isLoose = false)
 		{
 			Model = model;
 			Start = start;
 			End = end;
 			IsLoose = isLoose;
+			DeleteCommand = new Commands.Command(o =>
+			{
+				if(Model != null)
+					connectorDataService.DeleteModel(Model);
+				if (ConnectorRemoved != null) 
+					ConnectorRemoved();
+			});
 		}
 		//Start Dependency Property
 		public StateVm Start
@@ -42,5 +54,14 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty IsLooseProperty =
 			DependencyProperty.Register("IsLoose", typeof(bool), typeof(ConnectorVm), new UIPropertyMetadata(false));
+
+		//DeleteCommand Dependency Property
+		public Commands.Command DeleteCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(ConnectorVm), new UIPropertyMetadata(null));
 	}
 }

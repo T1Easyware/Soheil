@@ -14,7 +14,7 @@ namespace Soheil.Core.ViewModels.PP
 	public class JobProductVm : ProductVm
 	{
 		/// <summary>
-		/// Creates an instance of this vm with given model, parent and data service
+		/// Creates an instance of JobProductVm with given model, parent and data service
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="parentVm"></param>
@@ -26,7 +26,7 @@ namespace Soheil.Core.ViewModels.PP
 				(vm =>
 					{
 						var job = Soheil.Core.ViewModels.PP.Editor.PPEditorJob.CreateForProduct(model, jobDataService);
-						((Soheil.Core.ViewModels.PP.Editor.PPJobEditorVm)vm).JobList.Add(job);
+						((Soheil.Core.ViewModels.PP.Editor.JobEditorVm)vm).JobList.Add(job);
 					}
 				);
 		}

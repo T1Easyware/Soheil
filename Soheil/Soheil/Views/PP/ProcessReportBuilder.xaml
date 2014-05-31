@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
              xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core" 
+			 xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
@@ -17,11 +18,35 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
+
+				<DockPanel>
+					<!-- main buttons -->
+					<TextBlock DockPanel.Dock="Left" Text="نام محصول: "/>
+					<Rectangle Width="16" Height="16" DockPanel.Dock="Left" Margin="2">
+						<Rectangle.Fill>
+							<SolidColorBrush Color="{Binding Parent.Process.Task.ProductColor}"/>
+						</Rectangle.Fill>
+					</Rectangle>
+					<TextBlock DockPanel.Dock="Left" Text="{Binding ParentColumn.Task.Block.ProductName}"/>
+					<TextBlock DockPanel.Dock="Left" Text="     نام فعالیت: "/>
+					<TextBlock Text="{Binding ParentRow.StateStationActivity.Activity.Name}"/>
+				</DockPanel>
+
+				<DockPanel Grid.Row="1" LastChildFill="False">
+					<TextBlock DockPanel.Dock="Left" Text="مقدار هدف فعالیت" VerticalAlignment="Center"/>
+					<TextBox DockPanel.Dock="Left" Text="{Binding ProcessReportTargetPoint}" VerticalAlignment="Center" MinWidth="60"/>
+					<Canvas Width="20"/>
+					<TextBlock DockPanel.Dock="Left" Text="زمان شروع گزارش" VerticalAlignment="Center"/>
+					<cal:PersianDatePicker DockPanel.Dock="Left" SelectedDate="{Binding StartDate}" IsEnabled="False"/>
+					<TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" IsReadOnly="True" FlowDirection="LeftToRight"/>
+				</DockPanel>
 
 				<DockPanel LastChildFill="False" Grid.RowSpan="2" HorizontalAlignment="Right">
 					<Button DockPanel.Dock="Right" Command="{Binding SaveCommand}">
@@ -38,45 +63,116 @@
 					</Button>
 				</DockPanel>
 
-				<DockPanel>
-					<!-- main buttons -->
-					<TextBlock DockPanel.Dock="Left" Text="نام محصول: "/>
-					<Rectangle Width="16" Height="16" DockPanel.Dock="Left" Margin="2">
-						<Rectangle.Fill>
-							<SolidColorBrush Color="{Binding Parent.Process.Task.ProductColor}"/>
-						</Rectangle.Fill>
-					</Rectangle>
-					<TextBlock DockPanel.Dock="Left" Text="{Binding Parent.Process.Task.ProductName}"/>
-					<TextBlock DockPanel.Dock="Left" Text="     نام فعالیت: "/>
-					<TextBlock Text="{Binding Parent.Process.StateStationActivity.Activity.Name}"/>
-				</DockPanel>
-
-				<DockPanel Grid.Row="1" LastChildFill="False">
-					<TextBlock DockPanel.Dock="Left" Text="مقدار هدف فعالیت" VerticalAlignment="Center"/>
-					<TextBox DockPanel.Dock="Left" Text="{Binding ProcessReportTargetPoint}" VerticalAlignment="Center" MinWidth="60"/>
-					<TextBlock DockPanel.Dock="Left" Text="تولید سالم" VerticalAlignment="Center" Foreground="#8FC"/>
-					<TextBox DockPanel.Dock="Left" Text="{Binding ProducedG1}" VerticalAlignment="Center" MinWidth="60"/>
-					<TextBlock DockPanel.Dock="Left" Text="زمان شروع گزارش" VerticalAlignment="Center"/>
-					<cal:PersianDatePicker DockPanel.Dock="Left" SelectedDate="{Binding StartDate}" IsEnabled="False"/>
-					<TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" IsReadOnly="True" FlowDirection="LeftToRight"/>
-				</DockPanel>
+				<!-- Operator produced G1 -->
+				<Border Grid.Row="2" BorderBrush="#088" Background="#6AA"
+										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
+					<TextBlock Text="خروجی تفکیک شده (تولید سالم هر اپراتور)" Foreground="Black" Margin="2,2,2,0"/>
+				</Border>
+				<Border Grid.Row="3" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+					<DockPanel>
+						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White" Height="25">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="30"/>
+								<ColumnDefinition Width="60"/>
+								<ColumnDefinition Width="2*"/>
+								<ColumnDefinition Width="60"/>
+								<ColumnDefinition Width="80"/>
+								<ColumnDefinition Width="1*"/>
+							</Grid.ColumnDefinitions>
+							<ContentControl Template="{StaticResource hoverStyle}">
+								<TextBlock Text="R" TextAlignment="Center" HorizontalAlignment="Center"/>
+							</ContentControl>
+							<ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
+								<TextBlock Text="کد اپراتور" TextAlignment="Center" HorizontalAlignment="Center"/>
+							</ContentControl>
+							<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
+								<TextBlock Text="نام اپراتور" TextAlignment="Center" HorizontalAlignment="Center"/>
+							</ContentControl>
+							<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
+								<TextBlock Text="نقش" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
+							</ContentControl>
+							<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
+								<TextBlock Text="سطح مهارت" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
+							</ContentControl>
+							<ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
+								<TextBlock Text="تعداد تولید سالم" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
+							</ContentControl>
+						</Grid>
+						<Grid DockPanel.Dock="Bottom" TextBlock.Foreground="Silver">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="30"/>
+								<ColumnDefinition Width="60"/>
+								<ColumnDefinition Width="2*"/>
+								<ColumnDefinition Width="60"/>
+								<ColumnDefinition Width="80"/>
+								<ColumnDefinition Width="1*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
+							<TextBlock Margin="2" Grid.Column="6" Text="{Binding ProducedG1}" TextAlignment="Center" HorizontalAlignment="Center"/>
+						</Grid>
+						<!-- operator report List -->
+						<ItemsControl ItemsSource="{Binding OperatorReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Grid Background="#222" TextBlock.Foreground="Silver">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="30"/>
+											<ColumnDefinition Width="60"/>
+											<ColumnDefinition Width="2*"/>
+											<ColumnDefinition Width="60"/>
+											<ColumnDefinition Width="80"/>
+											<ColumnDefinition Width="1*"/>
+										</Grid.ColumnDefinitions>
+										<ContentControl Template="{StaticResource hoverStyle}">
+											<TextBlock Text="{Binding Index}" TextAlignment="Center" HorizontalAlignment="Center"/>
+										</ContentControl>
+										<ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
+											<TextBlock Text="{Binding Code}" TextAlignment="Center" HorizontalAlignment="Center"/>
+										</ContentControl>
+										<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
+											<TextBlock Text="{Binding Name}" TextAlignment="Center" HorizontalAlignment="Center"/>
+										</ContentControl>
+										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
+											<TextBlock Text="{Binding Role, Converter={StaticResource operatorRoleTextConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+										</ContentControl>
+										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
+											<TextBlock Text="{Binding EffectiveSkill}" TextAlignment="Center" HorizontalAlignment="Center">
+												<TextBlock.ToolTip>
+													<UniformGrid>
+														<TextBlock Text="سطح مهارت کلی"/>
+														<TextBlock Text="{Binding GeneralSkill}"/>
+														<TextBlock Text="سطح مهارت تخصصی"/>
+														<TextBlock Text="{Binding SpecialSkill}"/>
+													</UniformGrid>
+												</TextBlock.ToolTip>												
+											</TextBlock>
+										</ContentControl>
+										<ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
+											<TextBox Text="{Binding ProducedG1, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+										</ContentControl>
+									</Grid>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</DockPanel>
+				</Border>
 
 				<!-- Defections -->
-				<Border Grid.Row="2" BorderBrush="#088" Background="#6AA"
+				<Border Grid.Row="4" BorderBrush="#088" Background="#6AA"
 										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
 					<TextBlock Text="گزارش کیفی (ضایعات)" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
-				<Border Grid.Row="3" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+				<Border Grid.Row="5" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="30"/>
 								<ColumnDefinition Width="40"/>
 								<ColumnDefinition Width="150"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
@@ -112,10 +208,10 @@
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="180"/>
 								<ColumnDefinition Width="40"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
@@ -126,9 +222,9 @@
 								</DockPanel>
 							</Button>
 							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
-							<TextBlock Margin="2" Grid.Column="2" Text="{Binding DefectionReports.SumOfLostTime, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding DefectionReports.SumOfLostTime}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="3" Text="{Binding DefectionReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
-							<TextBlock Margin="2" Grid.Column="5" Text="{Binding DefectionReports.SumOfTimeEquivalent, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding DefectionReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding DefectionReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- Defections List -->
@@ -140,10 +236,10 @@
 											<ColumnDefinition Width="30"/>
 											<ColumnDefinition Width="40"/>
 											<ColumnDefinition Width="150"/>
-											<ColumnDefinition Width="75"/>
+											<ColumnDefinition Width="100"/>
+											<ColumnDefinition Width="70"/>
 											<ColumnDefinition Width="50"/>
-											<ColumnDefinition Width="50"/>
-											<ColumnDefinition Width="75"/>
+											<ColumnDefinition Width="100"/>
 											<ColumnDefinition Width="50"/>
 											<ColumnDefinition Width="*"/>
 										</Grid.ColumnDefinitions>
@@ -172,7 +268,7 @@
 											</DockPanel>
 										</ContentControl>
 										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-											<TextBox Text="{Binding LostSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<CustomControls:TimeBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
 											<TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -181,7 +277,7 @@
 											<CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
 										</ContentControl>
 										<ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-											<TextBlock Text="{Binding TimeEquivalent, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<CustomControls:TimeBox DurationSeconds="{Binding TimeEquivalent, Mode=TwoWay}" IsReadOnly="True"/>
 										</ContentControl>
 										<ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding QuantityEquivalent}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -243,21 +339,21 @@
 				</Border>
 
 				<!-- Stoppage -->
-				<Border Grid.Row="4" BorderBrush="#088" Background="#6AA"
+				<Border Grid.Row="6" BorderBrush="#088" Background="#6AA"
 										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
 					<TextBlock Text="گزارش توقفات" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
-				<Border Grid.Row="5" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+				<Border Grid.Row="7" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="30"/>
 								<ColumnDefinition Width="160"/>
 								<ColumnDefinition Width="30"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
@@ -296,10 +392,10 @@
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="180"/>
 								<ColumnDefinition Width="40"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="75"/>
+								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
@@ -311,8 +407,9 @@
 							</Button>
 							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
 							<TextBlock Margin="2" Grid.Column="2" Text="{Binding StoppageReports.SumOfLostTime, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding StoppageReports.SumOfLostTime}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="3" Text="{Binding StoppageReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
-							<TextBlock Margin="2" Grid.Column="5" Text="{Binding StoppageReports.SumOfTimeEquivalent, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding StoppageReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding StoppageReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- Stoppages List -->
@@ -324,10 +421,10 @@
 											<ColumnDefinition Width="30"/>
 											<ColumnDefinition Width="160"/>
 											<ColumnDefinition Width="30"/>
-											<ColumnDefinition Width="75"/>
+											<ColumnDefinition Width="100"/>
+											<ColumnDefinition Width="70"/>
 											<ColumnDefinition Width="50"/>
-											<ColumnDefinition Width="50"/>
-											<ColumnDefinition Width="75"/>
+											<ColumnDefinition Width="100"/>
 											<ColumnDefinition Width="50"/>
 											<ColumnDefinition Width="*"/>
 										</Grid.ColumnDefinitions>
@@ -362,7 +459,7 @@
 											<TextBox Text="{Binding SelectedCode}" TextChanged="CausesSelectedCode_TextChanged" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="25"/>
 										</ContentControl>
 										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-											<TextBox Text="{Binding LostSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<CustomControls:TimeBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
 											<TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -371,7 +468,7 @@
 											<CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
 										</ContentControl>
 										<ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-											<TextBlock Text="{Binding TimeEquivalent, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center"/>
+											<CustomControls:TimeBox DurationSeconds="{Binding TimeEquivalent, Mode=TwoWay}" IsReadOnly="True"/>
 										</ContentControl>
 										<ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding QuantityEquivalent}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>

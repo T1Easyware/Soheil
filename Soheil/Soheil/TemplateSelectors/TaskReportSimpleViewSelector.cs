@@ -16,11 +16,11 @@ namespace Soheil.TemplateSelectors
 
 		public override DataTemplate SelectTemplate(object item, DependencyObject container)
 		{
-			if(item is TaskReportHolderVm)
+			if (item is Core.ViewModels.PP.Report.TaskReportHolderVm)
 				return TaskReportHolderTemplate;
-			if (item is TaskReportVm)
+			if (item is Core.ViewModels.PP.Report.TaskReportVm)
 			{
-				if ((item as TaskReportVm).ProducedG1 == 0)
+				if ((item as Core.ViewModels.PP.Report.TaskReportVm).ProducedG1 == 0)
 					return EmptyTaskReportTemplate;
 				return TaskReportTemplate;
 			}

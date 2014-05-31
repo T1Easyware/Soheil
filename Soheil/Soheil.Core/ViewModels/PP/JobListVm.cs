@@ -18,15 +18,13 @@ namespace Soheil.Core.ViewModels.PP
 		/// Occurs when a job is selected
 		/// </summary>
 		public event Action<JobListItemVm> JobSelected;
-		DataServices.JobDataService _jobDataService;
 
 		/// <summary>
 		/// Creates an instance of JobListVm and sets the date range
 		/// </summary>
 		/// <param name="jobDataService">data service to use in this vm</param>
-		public JobListVm(DataServices.JobDataService jobDataService)
+		public JobListVm()
 		{
-			_jobDataService = jobDataService;
 			initializeCommands();
 
 			//reset dates
@@ -40,13 +38,16 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		void reloadJobs()
 		{
-			var jobs = _jobDataService.GetInRange(StartDate, EndDate, ByDefinition);
-			Jobs.Clear();
-			foreach (var job in jobs)
+			using (var uow = new Dal.SoheilEdmContext())
 			{
-				var jobItemVm = new JobListItemVm(job);
-				Jobs.Add(jobItemVm);
-				jobItemVm.JobSelected += id => { if (JobSelected != null) JobSelected(jobItemVm); };
+				var jobs = new DataServices.JobDataService(uow).GetInRange(StartDate, EndDate, ByDefinition);
+				Jobs.Clear();
+				foreach (var job in jobs)
+				{
+					var jobItemVm = new JobListItemVm(job);
+					Jobs.Add(jobItemVm);
+					jobItemVm.JobSelected += id => { if (JobSelected != null) JobSelected(jobItemVm); };
+				}
 			}
 		}
 

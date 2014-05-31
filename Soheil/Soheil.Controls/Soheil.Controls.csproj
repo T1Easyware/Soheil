@@ -55,6 +55,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External Assemblies\System.Windows.Interactivity.dll</HintPath>
@@ -145,6 +146,7 @@
     <Compile Include="CustomControls\OverlayMessageBox.xaml.cs">
       <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\TimeBox.cs" />
     <Compile Include="DataGridRowDeleting.cs" />
     <Compile Include="DataGridTextSearch.cs" />
     <Compile Include="Layout\PPStyles.xaml.cs">
@@ -504,6 +506,44 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\error16.png" />
+    <Resource Include="Images\warning16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fpc\locationLocked.png" />
+    <Resource Include="Images\Fpc\locationUnlocked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\closehand.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\openhand.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\duration.png" />
+    <Resource Include="Images\PP\quantity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\pp_2Hours.png" />
+    <Resource Include="Images\PP\pp_3quarters.png" />
+    <Resource Include="Images\PP\pp_half.png" />
+    <Resource Include="Images\PP\pp_oneHour.png" />
+    <Resource Include="Images\PP\pp_quarter.png" />
+    <Resource Include="Images\PP\pp_untilEnd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\pp_independent.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\operatorInProcess.png" />
+    <Resource Include="Images\PP\operatorInTask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\operatorInTimeRange.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

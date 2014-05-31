@@ -29,9 +29,9 @@ namespace Soheil.Views.PP
 		{
 			InitializeComponent();
 		}
-		public PPJobEditorVm VM
+		public JobEditorVm VM
 		{
-			get { return (PPJobEditorVm)DataContext; }
+			get { return (JobEditorVm)DataContext; }
 			set { DataContext = value; }
 		}
 		#endregion

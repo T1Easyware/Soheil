@@ -107,11 +107,6 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
             SaveCommand = new Command(Save, CanSave);
         }
 
-        internal void Reset()
-        {
-            HolidayDataService.Postpone(_model);
-        }
-
         public override void Save(object param)
         {
             HolidayDataService.UpdateModel(_model);

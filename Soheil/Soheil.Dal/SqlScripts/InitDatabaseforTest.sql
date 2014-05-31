@@ -1,4 +1,5 @@
 ﻿use SoheilDb
+
 SET IDENTITY_INSERT dbo.ProductGroups ON
 insert into dbo.ProductGroups (Id, Code, Name, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
 (1, 'PG1', N'زانویی', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
@@ -531,22 +532,22 @@ insert into dbo.Connectors (Id, StartState_Id, EndState_Id) values
 SET IDENTITY_INSERT dbo.Connectors OFF
 
 SET IDENTITY_INSERT dbo.StationMachines ON
-insert into dbo.StationMachines (Id, Station_Id, Machine_Id) values 
-(1, 1, 1),
-(2, 2, 2),
-(3, 3, 3),
-(4, 4, 4),
-(5, 5, 5),
-(6, 6, 6),
-(7, 7, 7),
-(8, 8, 8),
-(9, 9, 9),
-(10, 9, 10),
-(11, 9, 11),
-(12, 1, 2),
-(13, 1, 3),
-(14, 2, 3),
-(15, 2, 4);
+insert into dbo.StationMachines (Id, Station_Id, Machine_Id, [Status]) values 
+(1, 1, 1, 1),
+(2, 2, 2, 1),
+(3, 3, 3, 1),
+(4, 4, 4, 1),
+(5, 5, 5, 1),
+(6, 6, 6, 1),
+(7, 7, 7, 1),
+(8, 8, 8, 1),
+(9, 9, 9, 1),
+(10, 9, 10, 1),
+(11, 9, 11, 1),
+(12, 1, 2, 1),
+(13, 1, 3, 1),
+(14, 2, 3, 1),
+(15, 2, 4, 1);
 SET IDENTITY_INSERT dbo.StationMachines OFF
 
 SET IDENTITY_INSERT dbo.StateStations ON
@@ -811,56 +812,56 @@ SET IDENTITY_INSERT dbo.StateStationActivityMachines OFF
 
 SET IDENTITY_INSERT dbo.Causes ON
 insert into dbo.Causes (Id, [Level], Name, Code, Parent_Id, CreatedDate, ModifiedDate, [Status], ModifiedBy) values 
-('1','0',N'فنی','0', NULL, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('2','0',N'پرسنلی','1', NULL, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('3','0',N'سایر','99', NULL, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('1','0','Cause','0', NULL, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('2','1',N'فنی','0', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('3','1',N'پرسنلی','1', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('4','1',N'سایر','99', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 --فنی
-('4','1',N'برق','0', '1', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('5','1',N'دستگاه','1', '1', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('6','1',N'مواد','2', '1', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('7','1',N'سایر','99', '1', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('5','2',N'برق','0', '2', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('6','2',N'دستگاه','1', '2', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('7','2',N'مواد','2', '2', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 --پرسنلی
-('8','1',N'خطای اپراتور','0', '2', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('9','1',N'خود اپراتور','1', '2', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('8','2',N'خطای اپراتور','0', '3', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('9','2',N'خود اپراتور','1', '3', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 --سایر
-('10','1',N'اجتماعی','0', '3', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('11','1',N'سیاسی اقتصادی','1', '3', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('12','1',N'علمی فرهنگی هنری','2', '3', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('10','2',N'اجتماعی','0', '4', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('11','2',N'سیاسی اقتصادی','1', '4', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('12','2',N'علمی فرهنگی هنری','2', '4', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 
 --فنی
-('13','2',N'قطعی برق','0', '4', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('14','2',N'وصلی برق','1', '4', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('15','2',N'قطع و وصل برق','2', '4', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('16','2',N'نوسانات برق','3', '4', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('17','2',N'برق گرفتگی','4', '4', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('13','3',N'قطعی برق','0', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('14','3',N'وصلی برق','1', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('15','3',N'قطع و وصل برق','2', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('16','3',N'نوسانات برق','3', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('17','3',N'برق گرفتگی','4', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 
-('18','2',N'خرابی دستگاه','0', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('19','2',N'گیر کردن دست اپراتور در دستگاه','1', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('20','2',N'روغنکاری','2', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('21','2',N'پنچری','3', '5', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('18','3',N'خرابی دستگاه','0', '6', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('19','3',N'گیر کردن دست اپراتور در دستگاه','1', '6', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('20','3',N'روغنکاری','2', '6', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('21','3',N'پنچری','3', '6', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 
-('22','2',N'مواد بد','0', '6', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('23','2',N'ذغال بد','1', '6', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('24','2',N'رفیق بد','2', '6', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('22','3',N'مواد بد','0', '7', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('23','3',N'ذغال بد','1', '7', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('24','3',N'رفیق بد','2', '7', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 
-('25','2',N'فلان','0', '7', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('25','3',N'فلان','0', '7', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 
 --پرسنلی
-('26','2',N'کم اشتهایی','0', '8', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('27','2',N'اسهال','1', '8', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('28','2',N'بواسیر','2', '8', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('26','3',N'کم اشتهایی','0', '8', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('27','3',N'اسهال','1', '8', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('28','3',N'بواسیر','2', '8', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 
-('29','2',N'مشکلات شخصیتی','0', '9', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('30','2',N'تغذیه دوران کودکی','1', '9', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('31','2',N'محل تولد','2', '9', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('29','3',N'مشکلات شخصیتی','0', '9', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('30','3',N'تغذیه دوران کودکی','1', '9', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('31','3',N'محل تولد','2', '9', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 
-('32','2',N'فقر','0', '10', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('33','2',N'فحشا','1', '10', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('34','2',N'رانت خواری','10', '11', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('35','2',N'بگم بگم بازی','11', '11', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('36','2',N'تراکم','12', '11', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('37','2',N'پسا پست مدرنسیم','20', '12', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-('38','2',N'تنهایی انسان در عصر ماشینی','21', '12', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
+('32','3',N'فقر','0', '10', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('33','3',N'فحشا','1', '10', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('34','3',N'رانت خواری','10', '11', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('35','3',N'بگم بگم بازی','11', '11', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('36','3',N'تراکم','12', '11', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('37','3',N'پسا پست مدرنسیم','20', '12', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+('38','3',N'تنهایی انسان در عصر ماشینی','21', '12', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
 SET IDENTITY_INSERT dbo.Causes OFF
 
 --SET IDENTITY_INSERT dbo.xxxxxx ON

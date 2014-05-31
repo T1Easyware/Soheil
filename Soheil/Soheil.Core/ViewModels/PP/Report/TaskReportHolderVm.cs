@@ -4,25 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class TaskReportHolderVm : TaskReportBaseVm
 	{
-		int _sumOfDurations;
-		int _sumOfTargetPoints;
+		DateTime _start;
+		int _durationSeconds;
+		int _guessedTP;
+
 		public event Action<TaskReportHolderVm> RequestForChangeOfCurrentTaskReportBuilder;
 
-		public TaskReportHolderVm(PPTaskVm parent, int sumOfDurations, int sumOfTargetPoints)
+		public TaskReportHolderVm(TaskVm parent, DateTime start, int durationSeconds, int guessedTP)
 			: base(parent)
 		{
 			Task = parent;
-			_sumOfDurations = sumOfDurations;
-			_sumOfTargetPoints = sumOfTargetPoints;
+			_start = start;
+			_durationSeconds = durationSeconds;
+			_guessedTP = guessedTP;
 
-			TargetPoint = parent.TaskTargetPoint - sumOfTargetPoints;
-			DurationSeconds = parent.DurationSeconds - sumOfDurations;
-			StartDateTime = parent.StartDateTime.AddSeconds(sumOfDurations);
-			EndDateTime = parent.StartDateTime.AddSeconds(parent.DurationSeconds);
+			TargetPoint = guessedTP;
+			DurationSeconds = durationSeconds;
+			StartDateTime = start;
+			EndDateTime = start.AddSeconds(durationSeconds);
 			
 			CanUserEditTaskTPAndG1 = false;
 			initializeCommands();
@@ -75,7 +78,7 @@ namespace Soheil.Core.ViewModels.PP
 		void initializeCommands()
 		{
 			//AddAndOpenCommand
-			OpenCommand = new Commands.Command(o =>
+			OpenReportCommand = new Commands.Command(o =>
 			{
 				var model = new Model.TaskReport();
 				model.ReportDurationSeconds = DurationSeconds;
@@ -89,8 +92,7 @@ namespace Soheil.Core.ViewModels.PP
 				}
 				else
 				{
-					Task.ReloadTaskReports();
-					Task.ReloadAllProcessReports();
+					Task.Block.ReloadReports();
 					IsSelected = false;
 				}
 			});
@@ -104,20 +106,24 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			AutoFillCommand = new Commands.Command(o =>
 			{
-				StartDateTime = Task.StartDateTime.AddSeconds(_sumOfDurations);
-				EndDateTime = Task.StartDateTime.AddSeconds(Task.DurationSeconds);
-				DurationSeconds = Task.DurationSeconds - _sumOfDurations;
-				TargetPoint = Task.TaskTargetPoint - _sumOfTargetPoints;
+				StartDateTime = _start;
+				EndDateTime = _start.AddSeconds(_durationSeconds);
+				DurationSeconds = _durationSeconds;
+				TargetPoint = _guessedTP;
 			});
 			AutoFindTargetPoint = new Commands.Command(o =>
 			{
-				if (Task.DurationSeconds - _sumOfDurations - DurationSeconds == 0)
-					TargetPoint = Task.TaskTargetPoint - _sumOfTargetPoints;
+				if (_durationSeconds == DurationSeconds)
+					TargetPoint = _guessedTP;
 				else
-					TargetPoint = (int)Math.Round(
-						(Task.TaskTargetPoint - _sumOfTargetPoints) * (float)DurationSeconds 
-						/ 
-						(Task.DurationSeconds - _sumOfDurations));
+					TargetPoint = (int)Math.Round(_guessedTP * DurationSeconds / (float)_durationSeconds);
+			});
+			AutoFindDuration = new Commands.Command(o =>
+			{
+				if (TargetPoint == _guessedTP)
+					DurationSeconds = _durationSeconds;
+				else
+					DurationSeconds = (int)Math.Round(_durationSeconds * TargetPoint / (float)_guessedTP);
 			});
 		}
 		//FocusCommand Dependency Property
@@ -152,6 +158,14 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty AutoFindTargetPointProperty =
 			DependencyProperty.Register("AutoFindTargetPoint", typeof(Commands.Command), typeof(TaskReportHolderVm), new UIPropertyMetadata(null));
+		//AutoFindDuration Dependency Property
+		public Commands.Command AutoFindDuration
+		{
+			get { return (Commands.Command)GetValue(AutoFindDurationProperty); }
+			set { SetValue(AutoFindDurationProperty, value); }
+		}
+		public static readonly DependencyProperty AutoFindDurationProperty =
+			DependencyProperty.Register("AutoFindDuration", typeof(Commands.Command), typeof(TaskReportHolderVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

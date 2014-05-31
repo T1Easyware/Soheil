@@ -7,15 +7,24 @@ using System.Threading.Tasks;
 using System.Windows;
 using Soheil.Common;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class BlockReportVm : DependencyObject
 	{
-		public DataServices.ProcessReportDataService ProcessReportDataService { get { return Block.Parent.PPTable.ProcessReportDataService; } }
-		public DataServices.TaskDataService TaskDataService { get { return Block.Parent.PPTable.TaskDataService; } }
+		public Dal.SoheilEdmContext UOW { get; protected set; }
+		DataServices.TaskDataService TaskDataService;
+		DataServices.ProcessReportDataService ProcessReportDataService;
+
+		/// <summary>
+		/// Creates a report for the given block, fills all process reports
+		/// </summary>
+		/// <param name="block"></param>
 		public BlockReportVm(BlockVm block)
 		{
 			Block = block;
+			UOW = block.UOW;
+			TaskDataService = new DataServices.TaskDataService(UOW);
+			ProcessReportDataService = new DataServices.ProcessReportDataService(UOW);
 			ReloadProcessReportRows();
 		}
 		//Block Dependency Property
@@ -59,9 +68,10 @@ namespace Soheil.Core.ViewModels.PP
 				}
 			}
 
-			//removes duplicate SSAs from ssaModels
+			//find distince SSAs from ssaModels
 			ssaModels = ssaModels.DistinctBy(x => x.Id).OrderBy(x => x.Activity.Id).ThenBy(x => x.ManHour).ToList();
 
+			//add process report rows
 			foreach (var ssa in ssaModels)
 			{
 				//SSAList (finally add ssaVm to SSAList)
@@ -78,7 +88,7 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				if (taskReport is TaskReportVm)
 				{
-					var processReportModels = ProcessReportDataService.GetProcessReports((taskReport as TaskReportVm).Task.Id);
+					var processReportModels = ProcessReportDataService.GetProcessReports((taskReport as TaskReportVm).Id);
                     foreach (var processReportModel in processReportModels)
                     {
                         var row = ProcessReportRows.First(x => x.StateStationActivity.Id == processReportModel.Process.StateStationActivity.Id);

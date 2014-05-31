@@ -30,6 +30,7 @@ namespace Soheil.Core.ViewModels
             _model = entity;
             StationId = entity.Station.Id;
             MachineId = entity.Machine.Id;
+			//Status = entity.RecordStatus;
             StationName = entity.Station.Name;
             StationCode = entity.Station.Code;
             MachineName = entity.Machine.Name;
@@ -61,6 +62,17 @@ namespace Soheil.Core.ViewModels
             get { return _model.Id; } set{}
         }
 
+		/// <summary>
+		/// Gets or sets the record status and Updates the database entity if possible.
+		/// </summary>
+		/// <value>
+		/// The status of this object in database.
+		/// </value>
+		public Status Status
+		{
+			get { return _model.RecordStatus; }
+			set { _model.RecordStatus = value; OnPropertyChanged("Status"); if (CanSave()) Save(null); }
+		}
 
         public int StationId { get; set; }
         public int MachineId { get; set; }

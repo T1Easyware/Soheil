@@ -103,11 +103,7 @@ namespace Soheil.Core.ViewModels
 
 		public override void Reset(object oldVm)
 		{
-            var vm = oldVm as HolidayVm;
-			if (vm != null)
-			{
-				vm.Reset();
-			}
+			//
 		}
 
         private void OnHolidayAdded(object sender, ModelAddedEventArgs<Holiday> e)

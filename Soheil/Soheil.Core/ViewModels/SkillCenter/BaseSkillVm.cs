@@ -18,7 +18,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		public event Action<BaseSkillVm> IluoChanged;
 
 		/// <summary>
-		/// Creates an instance of this Vm and initializes the commands
+		/// Initializes an instance of BaseSkillVm (initializes the commands)
 		/// </summary>
 		protected BaseSkillVm()
 		{

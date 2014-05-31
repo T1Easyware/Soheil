@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="BindingProxy.cs" />
     <Compile Include="CustomDataGridDocumentPaginator.cs" />
+    <Compile Include="CommitNotifier.cs" />
     <Compile Include="DefaultColors.cs" />
     <Compile Include="SoheilHelpers.cs" />
     <Compile Include="SoheilException\DependencyMessageBox.cs" />

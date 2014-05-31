@@ -214,38 +214,6 @@ namespace Soheil.Model
         }
         private ICollection<Cost> _costs;
     
-        public virtual ICollection<OperatorProcessReport> OperatorProcessReports
-        {
-            get
-            {
-                if (_operatorProcessReports == null)
-                {
-                    var newCollection = new FixupCollection<OperatorProcessReport>();
-                    newCollection.CollectionChanged += FixupOperatorProcessReports;
-                    _operatorProcessReports = newCollection;
-                }
-                return _operatorProcessReports;
-            }
-            set
-            {
-                if (!ReferenceEquals(_operatorProcessReports, value))
-                {
-                    var previousValue = _operatorProcessReports as FixupCollection<OperatorProcessReport>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupOperatorProcessReports;
-                    }
-                    _operatorProcessReports = value;
-                    var newValue = value as FixupCollection<OperatorProcessReport>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupOperatorProcessReports;
-                    }
-                }
-            }
-        }
-        private ICollection<OperatorProcessReport> _operatorProcessReports;
-    
         public virtual PersonalSkill PersonalSkill
         {
             get { return _personalSkill; }
@@ -421,28 +389,6 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (Cost item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Operator, this))
-                    {
-                        item.Operator = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupOperatorProcessReports(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (OperatorProcessReport item in e.NewItems)
-                {
-                    item.Operator = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (OperatorProcessReport item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Operator, this))
                     {

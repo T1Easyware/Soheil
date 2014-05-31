@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:ppconv="clr-namespace:Soheil.Controls.Converters.PP"
+					xmlns:Converters="clr-namespace:Soheil.Controls.Converters"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:sys="clr-namespace:System;assembly=mscorlib"
 					>
@@ -19,7 +20,13 @@
 	<sys:Double x:Key="shadowOpacity">0.3</sys:Double>
 
 
-
+	<Converters:ColorToRgbBrush x:Key="ColorToRgbBrush"/>
+	<Converters:ShiftStartSecondsToMargin x:Key="ShiftStartSecondsToMargin"/>
+	<Converters:ShiftEndSecondsToMargin x:Key="ShiftEndSecondsToMargin"/>
+	<Converters:ShiftDurationToWidth x:Key="ShiftDurationToWidth"/>
+	<Converters:ShiftBreakDurationToEndMargin x:Key="ShiftBreakDurationToEndMargin"/>
+	<Converters:ShiftBreakDurationToWidth x:Key="ShiftBreakDurationToWidth"/>
+	<Converters:WorkShiftSecondsToString x:Key="WorkShiftSecondsToString"/>
 
 
 
@@ -40,12 +47,15 @@
 	<ppconv:IsEqualToInvisibilityConverter2 x:Key="isEqualToInvisibilityConverter2"/>
 	<ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
 
+
+	<ppconv:SumOfThree x:Key="sumOfThree"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier2"/>
 	<ppconv:DoubleMultiplier2 x:Key="doubleMultiplier2"/>
 	<ppconv:IntX7Converter x:Key="intX7Converter"/>
 	<ppconv:DoubleMultiplierToThickness x:Key="doubleMultiplierToThickness"/>
 	<ppconv:ACrossBDividebByC x:Key="aCrossBDividebByC"/>
+	<ppconv:LogarithmicSlider x:Key="logarithmicSlider"/>
 
 	<ppconv:PortionToStarConverter x:Key="portionToStarConverter"/>
 	<ppconv:TaskReportMargin x:Key="taskReportMargin"/>
@@ -55,13 +65,14 @@
 	<ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
 	<ppconv:StartEndToWidthConverter x:Key="StartEndToWidthConverter"/>
 	<ppconv:StartToMarginConverter x:Key="StartToMarginConverter"/>
+	<ppconv:BalloonVerticalMargin x:Key="balloonVerticalMargin"/>
+	<ppconv:HideIfSmallerThan20 x:Key="hideIfSmallerThan20"/>
+	<ppconv:HideIfSmallerThan40 x:Key="hideIfSmallerThan40"/>
 	<ppconv:testConverter x:Key="testConverter"/>
-
+	
 	<ppconv:IsEqualToBrushConverter x:Key="isEqualToBrushConverter"/>
 	<ppconv:ColorFixer x:Key="colorFixer"/>
 	<ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>
-	<ppconv:TimeRollItemBackgroundConverter x:Key="timeRollItemBackgroundConverter"/>
-	<ppconv:TimeRollItemForegroundConverter x:Key="timeRollItemForegroundConverter"/>
 	<ppconv:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>
 	<ppconv:OpaqueIfPositiveInt x:Key="opaqueIfPositiveInt"/>
 	<ppconv:HasErrorToShadowColor x:Key="hasErrorToShadowColor"/>
@@ -73,15 +84,18 @@
 
 	<ppconv:OperatorRoleTextConverter x:Key="operatorRoleTextConverter"/>
 	<ppconv:OperatorRoleIsValue x:Key="operatorRoleIsValue"/>
+	<ppconv:OperatorFilter x:Key="OperatorFilter"/>
 	<ppconv:FilterMaker x:Key="filterMaker"/>
-
+	
 	<ppconv:TimeSpanToStringConverter x:Key="timeSpanToStringConverter"/>
+	<ppconv:FullTimeSpanToStringConverter x:Key="fullTimeSpanToStringConverter"/>
 	<ppconv:SecondsToStringConverter x:Key="secondsToStringConverter"/>
 	<ppconv:CycleTimeToStringConverter x:Key="cycleTimeToStringConverter"/>
 	<ppconv:DateToLocalStringConverter x:Key="dateToLocalStringConverter"/>
 	<ppconv:DateToTimeStringConverter x:Key="dateToTimeStringConverter"/>
 	<ppconv:DateToPersianDateConverter x:Key="dateToPersianDateConverter"/>
-
+	<ppconv:DateTimeToCompactConverter x:Key="dateTimeToCompactConverter"/>
+	
 	<SolidColorBrush x:Key="stationBorderBrush" Color="Silver"/>
 	<SolidColorBrush x:Key="activityBorderBrush" Color="Silver"/>
 	<SolidColorBrush x:Key="activityBackBrush" Color="#677"/>
@@ -91,8 +105,10 @@
 
 	<Color x:Key="HighlightColor">#40FF</Color>
 	<SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource HighlightColor}" />
-	<SolidColorBrush x:Key="HeaderBackground" Color="#A012" />
-	<SolidColorBrush x:Key="HeaderBorderBrush" Color="#6044" />
+	<SolidColorBrush x:Key="HeaderBorderBrush" Color="#6066" />
+	<SolidColorBrush x:Key="HeaderBackground" Color="#C022" />
+	<SolidColorBrush x:Key="HeaderLightBackground" Color="#1044" />
+	<SolidColorBrush x:Key="VagueBorderBrush" Color="#34AA" />
 	<SolidColorBrush x:Key="GlyphBrush" Color="#444" />
 
 

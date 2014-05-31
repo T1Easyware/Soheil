@@ -9,12 +9,12 @@
     <ResourceDictionary Source="/Soheil.Controls;component/Layout/Styles.xaml" />
     <ResourceDictionary Source="/Soheil.Controls;component/Layout/ExpressionDark.xaml" />
     <ResourceDictionary>
-      <ObjectDataProvider x:Key="AlignmentValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
-        <ObjectDataProvider.MethodParameters>
-          <x:Type TypeName="Common:Status" />
-        </ObjectDataProvider.MethodParameters>
-      </ObjectDataProvider>
-</ResourceDictionary>
+            <ObjectDataProvider x:Key="AlignmentValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="Common:Status" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+        </ResourceDictionary>
   </ResourceDictionary.MergedDictionaries>
 
   <!--  Chrome Tab Panel  -->
@@ -420,4 +420,176 @@ TargetType="{x:Type Button}">
             </Setter.Value>
         </Setter>
     </Style>
+
+
+	<Style TargetType="{x:Type CustomControls:TimeBox}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type CustomControls:TimeBox}">
+					<ControlTemplate.Resources>
+						<Style x:Key="TimeComponents" TargetType="{x:Type TextBox}">
+							<Setter Property="SnapsToDevicePixels" Value="True" />
+							<Setter Property="OverridesDefaultStyle" Value="True" />
+							<Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle"/>
+							<Setter Property="MinWidth" Value="22"/>
+							<Setter Property="Height" Value="22"/>
+							<Setter Property="VerticalAlignment" Value="Center"/>
+							<Setter Property="Foreground" Value="White"/>
+							<!--Setter Property="ContextMenu">
+								<Setter.Value>
+									<ContextMenu FlowDirection="LeftToRight">
+										<MenuItem Header="Until work break" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource DurationFillToEnd}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>0</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="15 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource DurationQuarterHour}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>15</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="30 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource DurationHalfHour}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>30</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="45 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource Duration3QuratersHour}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>45</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="1 Hour" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource Duration1Hour}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>60</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+										<MenuItem Header="2 Hours" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
+											<MenuItem.Icon>
+												<Image Style="{StaticResource Duration2Hours}"/>
+											</MenuItem.Icon>
+											<MenuItem.CommandParameter>
+												<sys:Int32>120</sys:Int32>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+									</ContextMenu>
+								</Setter.Value>
+							</-->
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="{x:Type TextBoxBase}">
+										<Border Name="Border" CornerRadius="2" Padding="2" BorderThickness="1">
+											<Border.Background>
+												<SolidColorBrush Color="#4088"/>
+											</Border.Background>
+											<Border.BorderBrush>
+												<SolidColorBrush Color="#8088"/>
+											</Border.BorderBrush>
+											<VisualStateManager.VisualStateGroups>
+												<VisualStateGroup x:Name="CommonStates">
+													<VisualState x:Name="Normal"/>
+													<VisualState x:Name="Disabled">
+														<Storyboard>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="Transparent"/>
+															</ColorAnimationUsingKeyFrames>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="Transparent"/>
+															</ColorAnimationUsingKeyFrames>
+														</Storyboard>
+													</VisualState>
+													<VisualState x:Name="ReadOnly">
+														<Storyboard>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="Transparent" />
+															</ColorAnimationUsingKeyFrames>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="Transparent" />
+															</ColorAnimationUsingKeyFrames>
+														</Storyboard>
+													</VisualState>
+													<VisualState x:Name="MouseOver">
+														<Storyboard>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="#88FF"/>
+															</ColorAnimationUsingKeyFrames>
+														</Storyboard>
+													</VisualState>
+													<VisualState x:Name="Focused">
+														<Storyboard>
+															<ColorAnimationUsingKeyFrames 
+														Storyboard.TargetName="Border"
+														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+																<EasingColorKeyFrame KeyTime="0" Value="#C8FF"/>
+															</ColorAnimationUsingKeyFrames>
+														</Storyboard>
+													</VisualState>
+												</VisualStateGroup>
+											</VisualStateManager.VisualStateGroups>
+											<ScrollViewer Margin="0" x:Name="PART_ContentHost"/>
+										</Border>
+										<ControlTemplate.Triggers>
+											<Trigger Property="IsReadOnly" Value="True">
+												<Setter Property="Foreground">
+													<Setter.Value>
+														<SolidColorBrush Color="Gray"/>
+													</Setter.Value>
+												</Setter>
+											</Trigger>
+											<Trigger Property="IsFocused" Value="True">
+												<Setter Property="Foreground">
+													<Setter.Value>
+														<SolidColorBrush Color="Black"/>
+													</Setter.Value>
+												</Setter>
+											</Trigger>
+										</ControlTemplate.Triggers>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</ControlTemplate.Resources>
+					<Grid FlowDirection="LeftToRight">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Hour, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center"/>
+						<TextBlock Text=":" VerticalAlignment="Center" Grid.Column="1"/>
+						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Minute, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center" Grid.Column="2"/>
+						<TextBlock Text=":" VerticalAlignment="Center" Grid.Column="3"/>
+						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Second, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center" Grid.Column="4"/>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 </ResourceDictionary>

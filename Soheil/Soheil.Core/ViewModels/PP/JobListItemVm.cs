@@ -12,7 +12,7 @@ namespace Soheil.Core.ViewModels.PP
 	/// <summary>
 	/// View model for a selectable item in a <see cref="JobListVm"/>
 	/// </summary>
-	public class JobListItemVm : PPJobVm
+	public class JobListItemVm : JobVm
 	{
 		/// <summary>
 		/// Occurs when this item is selected
@@ -20,10 +20,11 @@ namespace Soheil.Core.ViewModels.PP
 		public event Action<int> JobSelected;
 
 		/// <summary>
-		/// Creates an instance of this vm with the given model
+		/// Creates an instance of JobListItemVm with the given model
 		/// </summary>
 		/// <param name="model">Product rework and Blocks in this job model are used</param>
-		public JobListItemVm(Model.Job model): base(model)
+		public JobListItemVm(Model.Job model)
+			: base(model)
 		{
 			initializeCommands();
 

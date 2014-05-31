@@ -35,7 +35,7 @@ namespace Soheil.Core.ViewModels
             ActivityCode = entity.Activity.Code;
             OperatorName = entity.Operator.Name;
             OperatorCode = entity.Operator.Code;
-            SkillPoint = (ILUO)entity.IluoNr;
+            //SkillPoint = (ILUO)entity.IluoNr;
         }
 
         private void InitializeData(ActivitySkillDataService dataService)
@@ -72,7 +72,7 @@ namespace Soheil.Core.ViewModels
         public ILUO SkillPoint
         {
             get { return (ILUO)_model.IluoNr; }
-            set { _model.IluoNr = (byte)value; OnPropertyChanged("SkillPoint"); }
+			set { _model.IluoNr = (byte)value; OnPropertyChanged("SkillPoint"); if (CanSave()) Save(null); }
         }
 
         public int ActivityId { get; set; }

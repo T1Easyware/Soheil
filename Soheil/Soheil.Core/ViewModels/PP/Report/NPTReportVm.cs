@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace Soheil.Core.ViewModels.PP
+namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class NPTReportVm : DependencyObject
 	{
@@ -76,7 +76,7 @@ namespace Soheil.Core.ViewModels.PP
 					if (!vm.ByEndDate)
 						vm.EndDateTime = vm.StartDateTime.AddSeconds((int)e.NewValue);
 				}
-				d.SetValue(DurationProperty, new TimeSpan((int)e.NewValue * TimeSpan.TicksPerSecond));
+				d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue));
 			}));
 		//Duration Dependency Property
 		public static readonly DependencyProperty DurationProperty =

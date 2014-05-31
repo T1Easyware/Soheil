@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
+        xmlns:Common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
         xmlns:Soheil="clr-namespace:Soheil"
         Title="MasterPages" FontFamily="Monaco"
         Width="800"
@@ -237,10 +238,10 @@
                                   VerticalAlignment="Stretch"
                                   Background="{StaticResource DefaultSelectionBrush}" />
                     <!--  SubMenu  -->
-                    <ContentControl x:Name="quickAccessSubMenu"
-                                    Grid.Column="3"
-                                    FlowDirection="RightToLeft" />
-                    <!-- login panel -->
+					          <ContentControl x:Name="quickAccessSubMenu"
+                                              Grid.Column="3"
+                                              FlowDirection="RightToLeft" />
+					          <!-- login panel -->
                     <Menu  Grid.Column="2" Margin="50,-5,0,0" Background="Transparent" Height="25">
                         <MenuItem Foreground="{StaticResource TextBrush}" Header="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=LoginHeader}" Height="25">
                             <WrapPanel>
@@ -483,7 +484,35 @@
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
-                </Grid>
+
+					<!-- save -->
+					<ContentPresenter Grid.Column="3" HorizontalAlignment="Left" Content="{Binding ., Source={x:Static Common:CommitNotifier.Singleton}}">
+						<ContentPresenter.ContentTemplate>
+							<DataTemplate>
+								<WrapPanel Visibility="{Binding IsCommit, Converter={StaticResource booleanToVisibilityConverter}}" Margin="10,0">
+									<TextBlock Text="{Loc ModificationStatus_Saved}" Foreground="#6BB" FontWeight="Bold" VerticalAlignment="Center"/>
+									<Image Style="{StaticResource Save24Image}" VerticalAlignment="Center" Margin="10,0"/>
+									<WrapPanel.Effect>
+										<DropShadowEffect BlurRadius="2" Color="#AFC" ShadowDepth="0"/>
+									</WrapPanel.Effect>
+								</WrapPanel>
+								<DataTemplate.Triggers>
+									<DataTrigger Binding="{Binding IsCommit}" Value="True">
+										<DataTrigger.EnterActions>
+											<BeginStoryboard>
+												<Storyboard Duration="0:0:3">
+													<DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" BeginTime="0:0:0" Duration="0:0:0.5"/>
+													<DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" BeginTime="0:0:2" Duration="0:0:1"/>
+												</Storyboard>
+											</BeginStoryboard>
+										</DataTrigger.EnterActions>
+									</DataTrigger>
+								</DataTemplate.Triggers>
+							</DataTemplate>
+						</ContentPresenter.ContentTemplate>
+					</ContentPresenter>
+
+				</Grid>
             </DockPanel>
             <CustomControls:ChromeTabControl x:Name="chrometabs">
                 <CustomControls:ChromeTabItem Header="{Loc txtStartPage}" />

@@ -18,7 +18,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		public Model.ProductActivitySkill Model { get; protected set; }
 
 		/// <summary>
-		/// Creates an instance of this Vm with the given model and initializes the commands
+		/// Creates an instance of ProductReworkActivitySkillVm with the given model and initializes the commands
 		/// </summary>
 		/// <param name="model">Model and its ILUO value are used</param>
 		public ProductReworkActivitySkillVm(Model.ProductActivitySkill model)

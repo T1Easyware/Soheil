@@ -245,7 +245,7 @@ namespace Soheil.Core.DataServices
 			var reworkRepository = new Repository<Rework>(context);
 			Product currentProduct = _productRepository.Single(product => product.Id == productId);
 			Rework newRework = reworkRepository.Single(rework => rework.Id == reworkId);
-			if (currentProduct.ProductReworks.Any(productRework => productRework.Product.Id == productId && productRework.Rework.Id == reworkId))
+			if (currentProduct.ProductReworks.Any(productRework => productRework.Product.Id == productId && productRework.Rework!=null && productRework.Rework.Id == reworkId))
 			{
 				return;
 			}
@@ -260,11 +260,33 @@ namespace Soheil.Core.DataServices
 			var productReworkRepository = new Repository<ProductRework>(context);
 			Product currentProduct = _productRepository.Single(product => product.Id == productId);
 			ProductRework currentProductRework =
-				currentProduct.ProductReworks.First(
+				currentProduct.ProductReworks.FirstOrDefault(
 					productRework =>
 					productRework.Product.Id == productId && productRework.Id == reworkId);
+			if (currentProductRework == null)
+				return;//??? because currentProduct.ProductReworks.FirstOrDefault
+			//and that happens when you can't delete it
+			
 			int id = currentProductRework.Id;
 			productReworkRepository.Delete(currentProductRework);
+
+			//correct states
+			var stateRepository = new Repository<State>(context);
+			var connectorRepository = new Repository<Connector>(context);
+			int reworkStateTypeNr = (int)StateType.Rework;
+			if (stateRepository.Exists(x => x.OnProductRework.Id == id && x.StateTypeNr != reworkStateTypeNr))
+				return;
+				//???throw new Soheil.Common.SoheilException.SoheilExceptionBase("Can't delete rework because of FPC", Common.SoheilException.ExceptionLevel.Error);
+
+			var states = stateRepository.Find(x => x.OnProductRework.Id == id && x.StateTypeNr == reworkStateTypeNr);
+			foreach (var state in states.ToArray())
+			{
+				foreach (var conn in state.InConnectors.ToArray())
+					connectorRepository.Delete(conn);
+				foreach (var conn in state.OutConnectors.ToArray())
+					connectorRepository.Delete(conn);
+				stateRepository.Delete(state);
+			}
 			context.Commit();
 			ReworkRemoved(this, new ModelRemovedEventArgs(id));
 		}

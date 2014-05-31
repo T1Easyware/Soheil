@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.DayOfWeekVm">
+    <Position X="3.75" Y="7" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AACAAIoAAAAAAAAAAAAgAgQAAAABAAAAABAEhAAgAAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\DayOfWeekVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.HolidayVm">
+    <Position X="0.5" Y="0.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAECAIAAAAAAAAACAgAAAgQSAAAAAAgBAAgAAAAAAAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\HolidayVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.ShiftColorVm">
+    <Position X="4" Y="5.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAQAAAABAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\ShiftColorVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.WorkBreakVm">
+    <Position X="13" Y="8" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAgEAAIAAAAAAAAAAAAACAAgAAgAAQAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\WorkBreakVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.WorkDayVm">
+    <Position X="8.75" Y="8" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAECAAgAAAAAAAgAAgAAAAQAAQABAAAAAACAgAAAAAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\WorkDayVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.WorkProfileInfo">
+    <Position X="8.25" Y="2.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAgAAAAACAAAAAEAAAQAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\WorkProfileInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.WorkProfilePlanVm">
+    <Position X="6.25" Y="0.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACCIAAAACAQgAAAgAAAgQiAoAAAAgAAggAAEAAAIA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\WorkProfilePlanVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.WorkProfileVm">
+    <Position X="6" Y="5.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACmoEAIAQFCAIAEkEAAqQCAgAAQggAAggAAIAAAQA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\WorkProfileVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.WorkShiftPrototypeVm">
+    <Position X="8.5" Y="5.25" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ACACAAiAAAAAAAAAAgAAAAQAAAAAAAAAAAEAAAQAAAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\WorkShiftPrototypeVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.WorkShiftVm">
+    <Position X="11" Y="8" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAQAAEAAAAAgAAAoEEAAAAQAAAAAAAAQAAAgAAQAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\WorkShiftVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soheil.Core.ViewModels.OrganizationCalendar.WorkTimeRangeVm">
+    <Position X="4.25" Y="1.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAIAAAAAAAAABAIAAAAAAggAAQAA=</HashCode>
+      <FileName>ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Cambria" Size="9" />
+</ClassDiagram>

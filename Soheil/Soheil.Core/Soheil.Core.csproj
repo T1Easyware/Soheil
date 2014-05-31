@@ -99,16 +99,32 @@
     <Compile Include="Fpc\StateTemplateSelector.cs" />
     <Compile Include="Interfaces\IBarChartViewer.cs" />
     <Compile Include="Interfaces\IReportBarVm.cs" />
+<<<<<<< HEAD
     <Compile Include="PP\BlockFullData.cs" />
     <Compile Include="Reports\OperatorBarInfo.cs" />
     <Compile Include="Reports\OperatorBarProvider.cs" />
     <Compile Include="Reports\OperatorBarSlideProvider.cs" />
     <Compile Include="ViewModels\Reports\OprDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />
+=======
+    <Compile Include="PP\ActionData.cs" />
+    <Compile Include="PP\PPItemBlock.cs" />
+    <Compile Include="PP\PPItemBase.cs" />
+    <Compile Include="PP\PPItemNpt.cs" />
+    <Compile Include="ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\BlockEditorVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\OperatorEditorVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\OperatorManagerVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\PlanEditorVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\ProcessEditorVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\TaskEditorVm.cs" />
+    <Compile Include="ViewModels\PP\OperatorVm.cs" />
+    <Compile Include="ViewModels\PP\Report\OperatorReportCollection.cs" />
+>>>>>>> 7c77c322912abfa6abab961b63421081afbd2d18
     <Compile Include="ViewModels\PP\Timeline\HourCollection.cs" />
     <Compile Include="PP\Smart\SmartPlanner.cs" />
     <Compile Include="PP\Smart\SmartSpace.cs" />
-    <Compile Include="PP\TaskManager.cs" />
+    <Compile Include="PP\PPItemManager.cs" />
     <Compile Include="LoginInfo.cs" />
     <Compile Include="Reports\ActualCostBarProvider.cs" />
     <Compile Include="Reports\ActualCostBarSlideProvider.cs" />
@@ -128,11 +144,10 @@
     <Compile Include="ViewModels\OrganizationCalendar\WorkProfileVm.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\WorkShiftPrototypeVm.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\WorkShiftVm.cs" />
-    <Compile Include="ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs" />
+    <Compile Include="PP\PPItemWorkTime.cs" />
     <Compile Include="ViewModels\HolidaysVM.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorActivityChoice.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorBlock.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorTaskHolder.cs" />
+    <Compile Include="ViewModels\PP\Editor\TaskEditorHolder.cs" />
     <Compile Include="ViewModels\PP\BlockVm.cs" />
     <Compile Include="ViewModels\PP\JobListItemVm.cs" />
     <Compile Include="ViewModels\PP\JobListVm.cs" />
@@ -191,7 +206,6 @@
     <Compile Include="ViewModels\PP\PPItemCollection.cs" />
     <Compile Include="Virtualizing\VirtualizingCollection.cs" />
     <Compile Include="Interfaces\ISingularList.cs" />
-    <Compile Include="PP\ShiftManager.cs" />
     <Compile Include="PP\Smart\SmartJob.cs" />
     <Compile Include="PP\Smart\SmartLayer.cs" />
     <Compile Include="PP\Smart\SmartManager.cs" />
@@ -208,12 +222,11 @@
     <Compile Include="ViewModels\Fpc\ActivityVm.cs" />
     <Compile Include="ViewModels\Fpc\ConnectorVm.cs" />
     <Compile Include="ViewModels\Fpc\DragTarget.cs" />
-    <Compile Include="ViewModels\Fpc\FpcVm.cs" />
     <Compile Include="ViewModels\Fpc\FpcWindowVm.cs" />
     <Compile Include="ViewModels\Fpc\MachineFamilyVm.cs" />
     <Compile Include="ViewModels\Fpc\MachineVm.cs" />
     <Compile Include="ViewModels\Fpc\ProductVm.cs" />
-    <Compile Include="ViewModels\Fpc\ReworkVm.cs" />
+    <Compile Include="ViewModels\Fpc\ProductReworkVm.cs" />
     <Compile Include="ViewModels\Fpc\StateConfigVm.cs" />
     <Compile Include="ViewModels\Fpc\StateStationActivityMachineVm.cs" />
     <Compile Include="ViewModels\Fpc\StateStationActivityVm.cs" />
@@ -230,19 +243,16 @@
     <Compile Include="ViewModels\PP\ActivityVm.cs" />
     <Compile Include="ViewModels\PP\Timeline\DaySlideItemVm.cs" />
     <Compile Include="ViewModels\PP\Editor\PPEditorJob.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPJobEditorVm.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorProcess.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorMachine.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorOperator.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorTask.cs" />
+    <Compile Include="ViewModels\PP\Editor\JobEditorVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\MachineEditorVm.cs" />
+    <Compile Include="ViewModels\PP\Report\OperatorReportVm.cs" />
     <Compile Include="ViewModels\PP\Timeline\HourSlideItemVm.cs" />
     <Compile Include="ViewModels\PP\MachineVm.cs" />
     <Compile Include="ViewModels\PP\Timeline\MonthSlideItemVm.cs" />
-    <Compile Include="ViewModels\PP\PPJobVm.cs" />
+    <Compile Include="ViewModels\PP\JobVm.cs" />
     <Compile Include="ViewModels\PP\PPTableVm.cs" />
-    <Compile Include="ViewModels\PP\PPStationVm.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPTaskEditorVm.cs" />
-    <Compile Include="ViewModels\PP\PPTaskVm.cs" />
+    <Compile Include="ViewModels\PP\StationVm.cs" />
+    <Compile Include="ViewModels\PP\TaskVm.cs" />
     <Compile Include="ViewModels\PP\ProcessVm.cs" />
     <Compile Include="ViewModels\PP\ProductGroupVm.cs" />
     <Compile Include="ViewModels\PP\ProductReworkVm.cs" />
@@ -425,6 +435,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Interfaces\BaseAndInterfaceDiagram.cd" />
+    <None Include="ViewModels\OrganizationCalendar\ClassDiagram1.cd" />
     <None Include="ViewModels\PP\_PPClassDiagram.cd" />
     <None Include="ViewModels\SkillCenter\_SkillCenterClassDiagram.cd" />
   </ItemGroup>

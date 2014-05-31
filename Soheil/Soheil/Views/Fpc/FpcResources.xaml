@@ -7,7 +7,7 @@
 
 	<comm:BindingProxy x:Key="root" Data="{Binding}"/>
 	<format:SafeRound1FloatConverter x:Key="round1Converter"/>
-	
+
 	<core:ConnectorLocationConverter x:Key="connectorLocationConverter"/>
 	<core:ConnectorAngleConverter x:Key="connectorAngleConverter"/>
 	<core:ConnectorLengthConverter x:Key="connectorLengthConverter"/>

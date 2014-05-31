@@ -43,6 +43,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>S.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -137,8 +140,17 @@
     <Compile Include="Views\Fpc\Toolbox.xaml.cs">
       <DependentUpon>Toolbox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\OrganizationCalendar\ShiftBoundary.xaml.cs">
+      <DependentUpon>ShiftBoundary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OrganizationCalendar\WorkDayLine.xaml.cs">
+      <DependentUpon>WorkDayLine.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\Block.xaml.cs">
       <DependentUpon>Block.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\BlockEditor.xaml.cs">
+      <DependentUpon>BlockEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\GridHelper.cs" />
     <Compile Include="Views\PP\JobList.xaml.cs">
@@ -150,11 +162,14 @@
     <Compile Include="Views\PP\NptReportBuilder.xaml.cs">
       <DependentUpon>NptReportBuilder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PP\OperatorManager.xaml.cs">
+      <DependentUpon>OperatorManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\PPJobEditor.xaml.cs">
       <DependentUpon>PPJobEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PP\PPTaskEditor.xaml.cs">
-      <DependentUpon>PPTaskEditor.xaml</DependentUpon>
+    <Compile Include="Views\PP\ProcessEditor.xaml.cs">
+      <DependentUpon>ProcessEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\ProcessReportBuilder.xaml.cs">
       <DependentUpon>ProcessReportBuilder.xaml</DependentUpon>
@@ -164,6 +179,12 @@
     </Compile>
     <Compile Include="Views\PP\Setup.xaml.cs">
       <DependentUpon>Setup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\PlanEditor.xaml.cs">
+      <DependentUpon>PlanEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PP\TaskEditor.xaml.cs">
+      <DependentUpon>TaskEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\TaskReportBuilder.xaml.cs">
       <DependentUpon>TaskReportBuilder.xaml</DependentUpon>
@@ -231,7 +252,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Fpc\ToolboxDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OrganizationCalendar\ShiftBoundary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OrganizationCalendar\WorkDayLine.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PP\Block.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\BlockEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -247,11 +284,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PP\OperatorManager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PP\PPJobEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PP\PPTaskEditor.xaml">
+    <Page Include="Views\PP\ProcessEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -264,6 +305,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PP\Setup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\PlanEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PP\TaskEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -331,6 +380,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="S.ico" />
     <Content Include="Images\closehand.cur">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

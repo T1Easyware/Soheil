@@ -113,7 +113,7 @@ namespace Soheil.Core.ViewModels
         }
 
 	    /// <summary>
-	    /// Initializes a new instance of the <see cref="ProductVM"/> class from the model.
+		/// Initializes a new instance of the <see cref="FpcVm"/> class from the model.
 	    /// </summary>
 	    /// <param name="entity">The model.</param>
 	    /// <param name="groupItems">The group view models.</param>

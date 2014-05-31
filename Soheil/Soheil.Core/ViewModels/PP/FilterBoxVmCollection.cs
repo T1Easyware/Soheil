@@ -15,7 +15,7 @@ namespace Soheil.Core.ViewModels.PP
 	public class FilterBoxVmCollection : DependencyObject
 	{
 		/// <summary>
-		/// Creates an instance of this vm to be used as a collection of guilty operators
+		/// Creates an instance of FilterBoxVmCollection to be used as a collection of guilty operators
 		/// </summary>
 		/// <param name="operatorIds">collection of operator Ids that are guilty by default</param>
 		/// <returns></returns>
@@ -58,18 +58,18 @@ namespace Soheil.Core.ViewModels.PP
 			FilterBoxes.Add(FilterBoxVm.CreateForGuiltyOperators(this, selectedId, operatorVms));
 		}
 		/// <summary>
-		/// Creates an instance of this vm to be used as a collection of stoppage reports (cause)
+		/// Creates an instance of FilterBoxVmCollection to be used as a collection of stoppage reports (cause)
 		/// </summary>
 		/// <param name="parent">Instance of <see cref="StoppageReportVm"/> that has this collection</param>
 		/// <param name="selectedIds">default cause Ids (must be like: {level1Id, level2Id, level3Id})</param>
 		/// <returns></returns>
-		public static FilterBoxVmCollection CreateForStoppageReport(StoppageReportVm parent, int[] selectedIds)
+		public static FilterBoxVmCollection CreateForStoppageReport(Report.StoppageReportVm parent, int[] selectedIds)
 		{
 			var vm = new FilterBoxVmCollection();
 
 			//find causes and create FilterBoxVm instances for each level
 			var causeDs = new DataServices.CauseDataService();
-			var causeL1Models = causeDs.GetActives().Where(x => x.Level == 0).ToArray();
+			var causeL1Models = causeDs.GetRoot().Children.ToArray();
 			var causeL3Box = FilterBoxVm.CreateForCause(null);
 			var causeL2Box = FilterBoxVm.CreateForCause(causeL3Box);
 			var causeL1Box = FilterBoxVm.CreateForCause(causeL2Box, causeL1Models);

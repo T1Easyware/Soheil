@@ -50,7 +50,7 @@ namespace Soheil.Views.Fpc
 				var view = d as FpcWindow;
 				var val = e.NewValue as Core.ViewModels.FpcVm;
 				if (val == null) return;
-				view.VM.ChangeFpc(val.Id);
+				view.VM.ChangeFpcByFpcId(val.Id);
 			}));
 		#endregion
 
@@ -69,12 +69,23 @@ namespace Soheil.Views.Fpc
 		[System.Diagnostics.DebuggerStepThrough]
 		private void Area_MouseMove(object sender, MouseEventArgs e)
 		{
+			if (DrawingArea.IsMouseCaptured)
+			{
+				var pt = e.GetPosition(this);
+				var x = pt.X - _backDragStartPt.X;
+				if (x > 0) x = 0;
+				var y = pt.Y - _backDragStartPt.Y;
+				if (y > 0) y = 0;
+				DrawingArea.Margin = new Thickness(x, y, 0, 0);
+				return;
+			}
+
 			if (VM != null)
 				//perform drag mechanism
-				if (VM.DragTarget != null)
+				if (VM.DragTarget != null && !VM.IsLocationsLocked)
 					VM.DragTarget.Location = new Vector(
-							e.GetPosition(DrawingArea).X - VM.RelativeDragPoint.X,
-							e.GetPosition(DrawingArea).Y - VM.RelativeDragPoint.Y);
+							e.GetPosition(DrawingArea).X - VM.RelativeDragPoint.X * VM.Zoom,
+							e.GetPosition(DrawingArea).Y - VM.RelativeDragPoint.Y * VM.Zoom);
 		}
 
 		private void ShadowToggleButton_Checked(object sender, RoutedEventArgs e)
@@ -97,5 +108,22 @@ namespace Soheil.Views.Fpc
 				}
 		} 
 		#endregion
+
+		Point _backDragStartPt;
+		private void DrawingArea_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			if (DrawingArea.IsMouseDirectlyOver)
+			{
+				_backDragStartPt = e.GetPosition(this);
+				_backDragStartPt.Offset(-DrawingArea.Margin.Left, -DrawingArea.Margin.Top);
+				DrawingArea.CaptureMouse();
+			}
+		}
+
+		private void DrawingArea_MouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			VM.Zoom += (e.Delta > 0) ? 0.1 : -0.1;
+			e.Handled = true;
+		}
 	}
 }

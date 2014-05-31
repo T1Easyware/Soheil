@@ -20,7 +20,7 @@
 			<Binding ElementName="root" Path="PPTable.HourZoom"/>
 		</MultiBinding>
 	</UserControl.Width>
-	<Border BorderBrush="Black" ClipToBounds="True" BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="40" Margin="0,1">
+	<Border BorderBrush="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}" ClipToBounds="True" BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="40" Margin="0,1">
 		<Border.Background>
 			<LinearGradientBrush  StartPoint="0,0.25" EndPoint="1,0.75">
 				<GradientStop Color="{Binding FromProduct.Product.Color}" Offset="0"/>
@@ -50,13 +50,13 @@
 				<Separator/>
 				<WrapPanel>
 					<TextBlock Text="از محصول: " Foreground="DarkGray"/>
-					<Image Style="{StaticResource ReworkImage}" Visibility="{Binding FromProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+					<Image Style="{StaticResource ReworkImage}" Visibility="{Binding FromProduct.Rework.IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
 					<Rectangle Fill="{Binding FromProduct.Product.Color}" Width="15"/>
 					<TextBlock Text="{Binding FromProduct.Name}" TextWrapping="Wrap"/>
 				</WrapPanel>
 				<WrapPanel>
 					<TextBlock Text="به محصول: " Foreground="DarkGray"/>
-					<Image Style="{StaticResource ReworkImage}" Visibility="{Binding ToProduct.Rework, Converter={StaticResource isNotNullToVisibility}}"/>
+					<Image Style="{StaticResource ReworkImage}" Visibility="{Binding ToProduct.Rework.IsRework, Converter={StaticResource booleanToVisibilityConverter}}"/>
 					<Rectangle Fill="{Binding ToProduct.Product.Color}" Width="15"/>
 					<TextBlock Text="{Binding ToProduct.Name}" TextWrapping="Wrap"/>
 				</WrapPanel>
@@ -77,57 +77,57 @@
 				<MenuItem Header="حذف راه اندازی" Command="{Binding DeleteItemCommand}"/>
 			</ContextMenu>
 		</Border.ContextMenu>
-		<Border.Effect>
-			<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}"/>
-		</Border.Effect>
-
-		<!-- main contents -->
-		<!-- Style & Triggers for different view modes -->
-		<Control>
-			<Control.Style>
-				<Style TargetType="Control">
-					<Style.Triggers>
-						<!-- NPT Simple View -->
-						<DataTrigger Binding="{Binding ViewMode}" Value="Simple">
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate>
-										<Image Style="{StaticResource SetupImage}"/>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</DataTrigger>
-						<!-- NPT Report Simple View -->
-						<DataTrigger Binding="{Binding ViewMode}" Value="ReportSimple">
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="{x:Type Control}">
-										<Grid>
-											<!-- Overlay button to add report -->
-											<Button x:Name="addbutton" Opacity="0" HorizontalAlignment="Left" Margin="0" ToolTip="ایجاد گزارش"
+		
+		
+		<Grid>
+			<!-- lines -->
+			<Rectangle>
+				<Rectangle.Fill>
+					<DrawingBrush Stretch="Fill">
+						<DrawingBrush.Drawing>
+							<DrawingGroup>
+								<DrawingGroup.Children>
+									<GeometryDrawing Geometry="M 0 10 L 10 10 M 0 20 L 10 20 M 0 30 L 10 30 M 0 40 L 10 40 M 0 50 L 10 50 M 0 60 L 10 60">
+										<GeometryDrawing.Pen>
+											<Pen Thickness="1" Brush="#5000"/>
+										</GeometryDrawing.Pen>
+									</GeometryDrawing>
+								</DrawingGroup.Children>
+							</DrawingGroup>
+						</DrawingBrush.Drawing>
+					</DrawingBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<!-- main contents -->
+			<!-- Style & Triggers for different view modes -->
+			<Control>
+				<Control.Style>
+					<Style TargetType="Control">
+						<Style.Triggers>
+							<!-- NPT Simple View -->
+							<DataTrigger Binding="{Binding ViewMode}" Value="Simple">
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate>
+											<Image Style="{StaticResource SetupImage}"/>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</DataTrigger>
+							<!-- NPT Report Simple View -->
+							<DataTrigger Binding="{Binding ViewMode}" Value="ReportSimple">
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate TargetType="{x:Type Control}">
+											<Grid>
+												<!-- Overlay button to add report -->
+												<Button x:Name="addbutton" Opacity="0" HorizontalAlignment="Left" Margin="0" ToolTip="ایجاد گزارش"
 											    Command="{Binding EditReportCommand}" 
 											    Visibility="{Binding Report, Converter={StaticResource isNullToVisibility}}">
-												<StackPanel>
-													<Image Style="{StaticResource AddReportImage}"/>
-													<Border Background="#4FFF" HorizontalAlignment="Stretch">
-														<TextBlock Text="فاقد گزارش"/>
-													</Border>
-												</StackPanel>
-												<Button.Width>
-													<MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
-														<Binding Path="Duration"/>
-														<Binding ElementName="root" Path="PPTable.HourZoom"/>
-													</MultiBinding>
-												</Button.Width>
-											</Button>
-											<!-- Has Reports -->
-											<Grid Visibility="{Binding Report, Converter={StaticResource isNotNullToVisibility}}">
-												<Button x:Name="editbutton" Opacity="0" HorizontalAlignment="Left" Margin="0" ToolTip="مشاهده/ویرایش گزارش"
-													Command="{Binding EditReportCommand}">
 													<StackPanel>
-														<Image Style="{StaticResource ViewReportImage}"/>
+														<Image Style="{StaticResource AddReportImage}"/>
 														<Border Background="#4FFF" HorizontalAlignment="Stretch">
-															<TextBlock Text="{Binding Report.DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+															<TextBlock Text="فاقد گزارش"/>
 														</Border>
 													</StackPanel>
 													<Button.Width>
@@ -137,47 +137,66 @@
 														</MultiBinding>
 													</Button.Width>
 												</Button>
+												<!-- Has Reports -->
+												<Grid Visibility="{Binding Report, Converter={StaticResource isNotNullToVisibility}}">
+													<Button x:Name="editbutton" Opacity="0" HorizontalAlignment="Left" Margin="0" ToolTip="مشاهده/ویرایش گزارش"
+													Command="{Binding EditReportCommand}">
+														<StackPanel>
+															<Image Style="{StaticResource ViewReportImage}"/>
+															<Border Background="#4FFF" HorizontalAlignment="Stretch">
+																<TextBlock Text="{Binding Report.DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+															</Border>
+														</StackPanel>
+														<Button.Width>
+															<MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
+																<Binding Path="Duration"/>
+																<Binding ElementName="root" Path="PPTable.HourZoom"/>
+															</MultiBinding>
+														</Button.Width>
+													</Button>
+												</Grid>
+												<Grid.Triggers>
+													<EventTrigger RoutedEvent="MouseEnter">
+														<BeginStoryboard>
+															<Storyboard Duration="0:0:0.2">
+																<DoubleAnimation Storyboard.TargetName="addbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.8"/>
+															</Storyboard>
+														</BeginStoryboard>
+													</EventTrigger>
+													<EventTrigger RoutedEvent="MouseLeave">
+														<BeginStoryboard>
+															<Storyboard Duration="0:0:0.7">
+																<DoubleAnimation Storyboard.TargetName="addbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
+															</Storyboard>
+														</BeginStoryboard>
+													</EventTrigger>
+													<EventTrigger RoutedEvent="MouseEnter">
+														<BeginStoryboard>
+															<Storyboard Duration="0:0:0.2">
+																<DoubleAnimation Storyboard.TargetName="editbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.8"/>
+															</Storyboard>
+														</BeginStoryboard>
+													</EventTrigger>
+													<EventTrigger RoutedEvent="MouseLeave">
+														<BeginStoryboard>
+															<Storyboard Duration="0:0:0.7">
+																<DoubleAnimation Storyboard.TargetName="editbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
+															</Storyboard>
+														</BeginStoryboard>
+													</EventTrigger>
+												</Grid.Triggers>
 											</Grid>
-											<Grid.Triggers>
-												<EventTrigger RoutedEvent="MouseEnter">
-													<BeginStoryboard>
-														<Storyboard Duration="0:0:0.2">
-															<DoubleAnimation Storyboard.TargetName="addbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.8"/>
-														</Storyboard>
-													</BeginStoryboard>
-												</EventTrigger>
-												<EventTrigger RoutedEvent="MouseLeave">
-													<BeginStoryboard>
-														<Storyboard Duration="0:0:0.7">
-															<DoubleAnimation Storyboard.TargetName="addbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
-														</Storyboard>
-													</BeginStoryboard>
-												</EventTrigger>
-												<EventTrigger RoutedEvent="MouseEnter">
-													<BeginStoryboard>
-														<Storyboard Duration="0:0:0.2">
-															<DoubleAnimation Storyboard.TargetName="editbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.8"/>
-														</Storyboard>
-													</BeginStoryboard>
-												</EventTrigger>
-												<EventTrigger RoutedEvent="MouseLeave">
-													<BeginStoryboard>
-														<Storyboard Duration="0:0:0.7">
-															<DoubleAnimation Storyboard.TargetName="editbutton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
-														</Storyboard>
-													</BeginStoryboard>
-												</EventTrigger>
-											</Grid.Triggers>
-										</Grid>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</Control.Style>
-		</Control>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</Control.Style>
+			</Control>
+		</Grid>
 
+		
 		<!-- Style & Triggers for edit mode -->
 		<Border.Style>
 			<Style TargetType="Border">

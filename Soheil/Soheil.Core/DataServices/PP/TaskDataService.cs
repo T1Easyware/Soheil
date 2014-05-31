@@ -21,6 +21,7 @@ namespace Soheil.Core.DataServices
 		Repository<Process> _processRepository;
 		Repository<ProcessOperator> _processOperatorRepository;
 		Repository<SelectedMachine> _selectedMachineRepository;
+		ProcessReportDataService _processReportDataService;
 
 		public event EventHandler<ModelAddedEventArgs<Task>> TaskAdded;
 		public event EventHandler<ModelUpdatedEventArgs<Task>> TaskUpdated;
@@ -40,6 +41,7 @@ namespace Soheil.Core.DataServices
 			_processRepository = new Repository<Process>(context);
 			_processOperatorRepository = new Repository<ProcessOperator>(context);
 			_selectedMachineRepository = new Repository<SelectedMachine>(context);
+			_processReportDataService = new ProcessReportDataService(context);
 		}
 
 
@@ -95,13 +97,6 @@ namespace Soheil.Core.DataServices
 			throw new NotImplementedException();
 		}
 
-		public void DeleteModel(int taskId)
-		{
-			var model = _taskRepository.FirstOrDefault(x => x.Id == taskId);
-			if (model == null) throw new Exception("Already deleted.");
-			DeleteModel(model);
-			context.Commit();
-		}
 		/// <summary>
 		/// No commit
 		/// </summary>
@@ -109,50 +104,64 @@ namespace Soheil.Core.DataServices
 		/// <param name="context"></param>
 		public void DeleteModel(Task model)
 		{
-			if(!_taskRepository.Exists(x => x.Id == model.Id))
+			var entity = _taskRepository.Single(x => x.Id == model.Id);
+			if (entity == null)
 			{
 				//not saved at all (just remove it from its parent)
 				model.Block.Tasks.Remove(model);
 				return;
 			}
 
-			if (_taskReportRepository.Find(x => x.Task.Id == model.Id).Any(x=>x.ProcessReports.Count > 0))
+			if (_taskReportRepository.Find(x => x.Task.Id == entity.Id).Any(x => x.ProcessReports.Count > 0))
 			{
-				var xx = _taskReportRepository.Find(x => x.Task.Id == model.Id);
-				var xxx = xx.First(x=>x.ProcessReports.Count > 0);
-				 throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
+				var taskReportEntity = _taskReportRepository.Find(x => x.Task.Id == entity.Id);
+				if (taskReportEntity.Any(x => x.ProcessReports.Count > 0))
+					throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
 			}
 
 			var taskReportDs = new TaskReportDataService(context);
-			foreach (var taskReportEnt in model.TaskReports)
+			foreach (var taskReportEnt in entity.TaskReports)
 			{
 				taskReportDs.DeleteModel(taskReportEnt);
 			}
-			foreach (var process in model.Processes.ToList())
+			foreach (var process in entity.Processes.ToList())
 			{
 				DeleteModel(process);
 			}
-			_taskRepository.Delete(model);
+			model.Block.Tasks.Remove(model);
+			_taskRepository.Delete(entity);
+			context.Commit();
 		}
 		//Recursive (sm & po)
 		internal void DeleteModel(Process process)
 		{
-			foreach (var po in process.ProcessOperators.ToList())
+			process.Task.Processes.Remove(process);
+			foreach (var po in process.ProcessOperators.ToArray())
 			{
 				DeleteModel(po);
 			}
-			foreach (var sm in process.SelectedMachines.ToList())
+			foreach (var sm in process.SelectedMachines.ToArray())
 			{
 				DeleteModel(sm);
 			}
+			if (process.IsReportEmpty)
+			{
+				foreach (var processReport in process.ProcessReports.ToArray())
+				{
+					_processReportDataService.DeleteModel(processReport);
+				}
+			}
 			_processRepository.Delete(process);
 		}
+
 		internal void DeleteModel(SelectedMachine sm)
 		{
+			sm.Process.SelectedMachines.Remove(sm);
 			_selectedMachineRepository.Delete(sm);
 		}
 		internal void DeleteModel(ProcessOperator po)
 		{
+			po.Process.ProcessOperators.Remove(po);
 			_processOperatorRepository.Delete(po);
 		}
 
@@ -203,7 +212,7 @@ namespace Soheil.Core.DataServices
 		public KeyValuePair<int, TimeSpan> GetSumOfReportedData(int taskId)
 		{
 			int healthy = 0;
-			TimeSpan duration = new TimeSpan();
+			TimeSpan duration = TimeSpan.Zero;
 			Task entity = _taskRepository.First(x => x.Id == taskId);
 			foreach (var processEntity in entity.Processes)
 			{
@@ -214,7 +223,7 @@ namespace Soheil.Core.DataServices
 			}
 			foreach (var taskReportEntity in entity.TaskReports)
 			{
-				duration.Add(new TimeSpan(taskReportEntity.ReportDurationSeconds * TimeSpan.TicksPerSecond));
+				duration.Add(TimeSpan.FromSeconds(taskReportEntity.ReportDurationSeconds));
 			}
 			return new KeyValuePair<int, TimeSpan>(healthy, duration);
 		}

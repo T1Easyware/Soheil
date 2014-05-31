@@ -12,21 +12,42 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class SetupVm : NPTVm
 	{
-		public DataServices.NPTDataService NPTDataService { get { return Parent.NPTDataService; } }
 		public int ChangeoverId { get; set; }
 		public int WarmupId { get; set; }
-
-		internal Model.Setup SetupModel { get { return _model as Model.Setup; } }
+		public Model.Setup Model { get; protected set; }
+		public override int Id { get { return Model.Id; } }
+		private int _id;
 
 		#region Ctor
-		public SetupVm(Model.Setup model, PPItemCollection parent) 
-			: base(model, parent)
+		public SetupVm(int setupId, PPItemCollection parent) 
+			: base(parent)
 		{
-			StartDateTime = model.StartDateTime;
-			DurationSeconds = model.DurationSeconds;
-			RowIndex = model.Warmup.Station.Index;
-
+			UOW = new Dal.SoheilEdmContext();
+			_id = setupId;
+			reloadFromModel();
 			initializeCommands();
+		}
+		public override void Reload(PPItemNpt item)
+		{
+			reloadFromModel();//???
+		}
+		void reloadFromModel()
+		{
+			//update model from database with new UOW
+			Model = new Dal.Repository<Model.Setup>(UOW).Single(x => x.Id == _id);
+
+			StartDateTime = Model.StartDateTime;
+			DurationSeconds = Model.DurationSeconds;
+			RowIndex = Model.Warmup.Station.Index;
+
+			ChangeoverId = Model.Changeover.Id;
+			ChangeoverSeconds = Model.Changeover.Seconds;
+
+			WarmupId = Model.Warmup.Id;
+			WarmupSeconds = Model.Warmup.Seconds;
+
+			FromProduct = new ViewModels.PP.ProductReworkVm(Model.Changeover.FromProductRework);
+			ToProduct = new ViewModels.PP.ProductReworkVm(Model.Changeover.ToProductRework);
 		}
 		#endregion
 
@@ -69,13 +90,13 @@ namespace Soheil.Core.ViewModels.PP
 		#region Commands
 		DateTime? earliestTime()
 		{
-			var prev = Parent.PPTable.BlockDataService.FindPreviousBlock(SetupModel.Warmup.Station.Id, StartDateTime);
+			var prev = new DataServices.BlockDataService(UOW).FindPreviousBlock(Model.Warmup.Station.Id, StartDateTime);
 			if (prev.Item1 != null) return prev.Item1.EndDateTime;
 			return null;
 		}
 		DateTime? lastestTime()
 		{
-			var next = Parent.PPTable.BlockDataService.FindNextBlock(SetupModel.Warmup.Station.Id, StartDateTime.AddSeconds(1));
+			var next = new DataServices.BlockDataService(UOW).FindNextBlock(Model.Warmup.Station.Id, StartDateTime.AddSeconds(1));
 			if (next.Item1 != null) return next.Item1.StartDateTime.AddSeconds(-DurationSeconds);
 			return null;
 		}
@@ -99,11 +120,11 @@ namespace Soheil.Core.ViewModels.PP
 				}
 				else
 				{
-					SetupModel.StartDateTime = StartDateTime;
-					NPTDataService.UpdateViewModel(this);
+					Model.StartDateTime = StartDateTime;
+					reloadFromModel();
 				}
 			});
-			CancelCommand = new Commands.Command(o => { StartDateTime = SetupModel.StartDateTime; IsEditMode = false; });
+			CancelCommand = new Commands.Command(o => { StartDateTime = Model.StartDateTime; IsEditMode = false; });
 			SetToEarliestTimeCommand = new Commands.Command(o =>
 			{
 				var dt = earliestTime();
@@ -123,8 +144,8 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
-					NPTDataService.DeleteModel(Id);
-					Parent.RemoveNPT(this);
+					new DataServices.NPTDataService().DeleteModel(Id);
+					Parent.RemoveItem(this);
 				}
 				catch (Exception exp)
 				{

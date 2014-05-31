@@ -121,7 +121,7 @@ namespace Soheil.Core.DataServices
 		{
 			model.ModifiedDate = DateTime.Now;
 			model.ModifiedBy = LoginInfo.Id;
-			context.SaveChanges();
+			context.Commit();
 		} 
 		#endregion
 
@@ -204,29 +204,72 @@ namespace Soheil.Core.DataServices
 			return clone;
 		}
 
+		/// <summary>
+		/// Change the IsDefault value of the specified FPC to newValue
+		/// <para>If set to true, undefaults the previously default fpcs</para>
+		/// <para>If set to false, tries to make another fpc default</para>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="newValue"></param>
 		internal void ChangeDefault(FPC model, bool newValue)
 		{
 			if (model.IsDefault == newValue)
 				return;
 
-			var otherModels = _fpcRepository.Find(x => x.Product.Id == model.Product.Id && x.Id != model.Id);
 			if (newValue)
 			{
-				otherModels.Select(x => x.IsDefault = false);
+				// undefault the previously default fpcs
+				var otherModels = _fpcRepository.Find(x => 
+					x.IsDefault && 
+					x.Product.Id == model.Product.Id && 
+					x.Id != model.Id);
+				foreach (var otherModel in otherModels)
+				{
+					otherModel.IsDefault = false;
+				}
+
+				//apply the new value to the specified fpc (parameter)
 				model.IsDefault = true;
 			}
 			else
 			{
+				// try to make another fpc default
+				var otherModels = _fpcRepository.Find(x =>
+					x.Product.Id == model.Product.Id &&
+					x.Id != model.Id);
+
+				//if not the only fpc
 				if (otherModels.Any())
 				{
-					otherModels.First().IsDefault = true;
+					//finds another default fpc
+					bool found = false;
+					foreach (var otherModel in otherModels)
+					{
+						if (!found && otherModel.IsDefault)
+						{
+							found = true;
+						}
+						else
+						{
+							otherModel.IsDefault = false;
+						}
+					}
+
+					//if no other default fpc, make the first one default
+					if (!found)
+					{
+						otherModels.First().IsDefault = true;
+					}
+
+					//apply the new value to the specified fpc (parameter)
 					model.IsDefault = false;
 				}
 				else
+					//if no other fpc available, throw
 					throw new Exception("این تنها FPC برای این محصول است.\nلذا به ناچار همین FPC پیش فرض است");
 			}
 
-			context.SaveChanges();
+			context.Commit();
 		}
 
 		public IEnumerable<ProductRework> GetProductReworks(FPC model, bool includeMainProduct)
@@ -255,32 +298,40 @@ namespace Soheil.Core.DataServices
 		internal void CorrectFPCStates(Model.FPC model)
 		{
 			//stateDataService.AddModel does not need commit but it has
+			var corrected = false;
 
 			//add start state
 			if (!model.States.Any(x => x.StateTypeNr == (int)StateType.Start))
+			{
 				stateDataService.AddModel(new State
 				{
 					FPC = model,
-					X = 50,
-					Y = 50,
+					X = 400,
+					Y = 100,
 					Name = "شروع",
 					Code = "",
 					StateType = StateType.Start
 				});
+				corrected = true;
+			}
 			//add final state
 			if (!model.States.Any(x => x.StateType == StateType.Final))
+			{
 				stateDataService.AddModel(new State
 				{
 					FPC = model,
-					X = 300,
-					Y = 50,
+					X = 50,
+					Y = 100,
 					Name = "محصول نهایی",
 					Code = "",
 					StateType = StateType.Final
 				});
+				corrected = true;
+			}
 
 			//add rework states for the newly added productReworks
-			if (!model.Product.ProductReworks.Any(x=>x.Rework == null))
+			if (!model.Product.ProductReworks.Any(x => x.Rework == null))
+			{
 				model.Product.ProductReworks.Add(
 					new ProductRework
 					{
@@ -290,9 +341,10 @@ namespace Soheil.Core.DataServices
 						Rework = null,
 						ModifiedBy = LoginInfo.Id,
 					});
+				corrected = true;
+			}
 
 			int reworkStateCounter = 0;
-			var rnd = new Random();
 			foreach (var productRework in model.Product.ProductReworks.Where(x => x.Rework != null))
 			{
 				if (!model.States.Any(x =>
@@ -303,14 +355,16 @@ namespace Soheil.Core.DataServices
 					stateDataService.AddModel(new State
 					{
 						FPC = model,
-						X = (++reworkStateCounter) * 50 + rnd.Next(-20, 20),
-						Y = reworkStateCounter * 50 + 200 + rnd.Next(-20, 20),
+						X = 20,
+						Y = reworkStateCounter * 35 + 500,
 						Name = productRework.Name,
 						Code = productRework.Code,
 						OnProductRework = productRework,
 						StateType = StateType.Rework,
 					});
+					corrected = true;
 				}
+				reworkStateCounter++;
 			}
 			//set pr of a state to mainPR if it's null
 			var states = model.States.Where(x =>
@@ -321,7 +375,7 @@ namespace Soheil.Core.DataServices
 				state.OnProductRework = model.Product.ProductReworks.First(x => x.Rework == null);
 			}
 			//...
-			context.SaveChanges();
+			if(corrected) context.Commit();
 		}
 	}
 }

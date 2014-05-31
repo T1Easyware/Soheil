@@ -65,6 +65,7 @@ namespace Soheil.Core.DataServices
 		public void DeleteModel(TaskReport model)
 		{
 			var processReportDataService = new ProcessReportDataService(context);
+			var processOperatorReportRepository = new Repository<ProcessOperatorReport>(context);
 			var defectionReportRepository = new Repository<DefectionReport>(context);
 			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
 			var stoppageReportRepository = new Repository<StoppageReport>(context);
@@ -75,6 +76,7 @@ namespace Soheil.Core.DataServices
 				processReportDataService.ClearModel(
 					processReportModel,
 					_processReportRepository,
+					processOperatorReportRepository,
 					defectionReportRepository,
 					operatorDefectionReportRepository,
 					stoppageReportRepository,
@@ -104,6 +106,8 @@ namespace Soheil.Core.DataServices
             foreach (var process in task.Processes)
 			{
 				int remainingPRTP = process.TargetCount - process.ProcessReports.Sum(x => x.ProcessReportTargetPoint);
+				if (remainingPRTP <= 0) continue;
+
 				int guessedPRTP = (int)(report.ReportDurationSeconds / process.StateStationActivity.CycleTime);
 				if (remainingPRTP < guessedPRTP) guessedPRTP = remainingPRTP;
                 report.ProcessReports.Add(new ProcessReport
@@ -114,7 +118,7 @@ namespace Soheil.Core.DataServices
 				});
 			}
             task.TaskReports.Add(report);
-			context.SaveChanges();
+			context.Commit();
             return report;
 		}
 
@@ -128,8 +132,8 @@ namespace Soheil.Core.DataServices
 		internal void DeleteById(int Id)
 		{
 			var model = _taskReportRepository.Single(x => x.Id == Id);
-			DeleteModel(model);//???
-			context.SaveChanges();
+			DeleteModel(model);
+			context.Commit();
 		}
 
 		/// <summary>
@@ -157,14 +161,14 @@ namespace Soheil.Core.DataServices
 		{
 			var model = _taskReportRepository.FirstOrDefault(x => x.Id == Id);
 			model.TaskProducedG1 = g1;
-			context.SaveChanges();
+			context.Commit();
 		}
 
 		internal void UpdateTargetPoint(int Id, int tp)
 		{
 			var model = _taskReportRepository.FirstOrDefault(x => x.Id == Id, "Task");
 			model.Task.TaskTargetPoint = tp;
-			context.SaveChanges();
+			context.Commit();
 		}
 	}
 }

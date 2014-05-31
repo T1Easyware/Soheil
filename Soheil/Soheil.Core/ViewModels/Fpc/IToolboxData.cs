@@ -8,6 +8,9 @@ using System.Windows;
 
 namespace Soheil.Core.ViewModels.Fpc
 {
+	/// <summary>
+	/// Interface for toolbox item or group, which contains Id and Name
+	/// </summary>
 	public interface IToolboxData
 	{
 		int Id { get; }

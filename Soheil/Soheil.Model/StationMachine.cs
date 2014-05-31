@@ -24,6 +24,13 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual byte Status
+        {
+            get { return _status; }
+            set { _status = value; }
+        }
+        private byte _status = 1;
 
         #endregion
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Soheil.Common;
+using System.Windows.Media;
 
 namespace Soheil.Core.ViewModels.PP.Timeline
 {
@@ -30,6 +31,15 @@ namespace Soheil.Core.ViewModels.PP.Timeline
 		}
 		public static readonly DependencyProperty DataProperty =
 			DependencyProperty.Register("Data", typeof(DateTime), typeof(DaySlideItemVm), new UIPropertyMetadata(default(DateTime)));
+
+		//Color Dependency Property
+		public Color Color
+		{
+			get { return (Color)GetValue(ColorProperty); }
+			set { SetValue(ColorProperty, value); }
+		}
+		public static readonly DependencyProperty ColorProperty =
+			DependencyProperty.Register("Color", typeof(Color), typeof(DaySlideItemVm), new UIPropertyMetadata(Colors.Gray));
 		/// <summary>
 		/// Gets a bindable Text to show in GUI as the DayOfMonth
 		/// </summary>

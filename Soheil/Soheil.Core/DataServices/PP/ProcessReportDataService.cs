@@ -50,7 +50,26 @@ namespace Soheil.Core.DataServices
 
 		public void DeleteModel(ProcessReport model)
 		{
-			throw new NotImplementedException();
+			var processReportRepository = new Repository<ProcessReport>(context);
+			var processReportDataService = new ProcessReportDataService(context);
+			var processOperatorReportRepository = new Repository<ProcessOperatorReport>(context);
+			var defectionReportRepository = new Repository<DefectionReport>(context);
+			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
+			var stoppageReportRepository = new Repository<StoppageReport>(context);
+			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
+			processReportDataService.ClearModel(
+				model,
+				processReportRepository,
+				processOperatorReportRepository,
+				defectionReportRepository,
+				operatorDefectionReportRepository,
+				stoppageReportRepository,
+				operatorStoppageReportRepository,
+				context);
+
+			model.Process.ProcessReports.Remove(model);
+			_processReportRepository.Delete(model);
+			context.Commit();
 		}
 
 		public void AttachModel(ProcessReport model)
@@ -62,19 +81,33 @@ namespace Soheil.Core.DataServices
 		{
 			if (id < 1) return null;
 			return _processReportRepository.FirstOrDefault(x => x.Id == id,
-					"Process",
 					"Process.StateStationActivity",
+					"ProcessOperatorReports.ProcessOperator.Operator",
 					"StoppageReports",
-					"StoppageReports.Cause",
-					"StoppageReports.Cause.Parent",
 					"StoppageReports.Cause.Parent.Parent",
-					"StoppageReports.OperatorStoppageReports",
 					"StoppageReports.OperatorStoppageReports.Operator",
-					"DefectionReports",
-					"DefectionReports.OperatorDefectionReports",
 					"DefectionReports.OperatorDefectionReports.Operator",
-					"DefectionReports.ProductDefection",
 					"DefectionReports.ProductDefection.Defection");
+		}
+		/// <summary>
+		/// Adds missing ProcessOperatorReports to the ProcessReport's ProcessOperatorReport collection
+		/// </summary>
+		/// <param name="model"></param>
+		public void CorrectOperatorReports(ProcessReport model)
+		{
+			foreach (var processOperator in model.Process.ProcessOperators)
+			{
+				if (!model.ProcessOperatorReports.Any(x => x.ProcessOperator.Id == processOperator.Id))
+				{
+					processOperator.ProcessOperatorReports.Add(new ProcessOperatorReport
+					{
+						ProcessReport = model,
+						ProcessOperator = processOperator,
+						OperatorProducedG1 = 0,
+						ModifiedBy = LoginInfo.Id,
+					});
+				}
+			}
 		}
 
 		public ProcessReport GetByTaskReportIdAndProcessId(int taskReportId, int processId)
@@ -83,12 +116,12 @@ namespace Soheil.Core.DataServices
 					x => x.Process.Id == processId && x.TaskReport.Id == taskReportId);
 		}
 
-		internal IEnumerable<ProcessReport> GetProcessReports(int taskId)
+		internal IEnumerable<ProcessReport> GetProcessReports(int taskReportId)
 		{
-			return _processReportRepository.Find(x => x.TaskReport.Task.Id == taskId);
+			return _processReportRepository.Find(x => x.TaskReport.Id == taskReportId);
 		}
 
-		public void Save(ViewModels.PP.ProcessReportCellVm vm)
+		public void Save(ViewModels.PP.Report.ProcessReportCellVm vm)
 		{
 			var productDefectionRepository = new Repository<ProductDefection>(context);
 			var causeRepository = new Repository<Cause>(context);
@@ -189,7 +222,7 @@ namespace Soheil.Core.DataServices
 				.Sum(s =>
 					s.CountEquivalence));
 			var g1 = model.TaskReport.TaskReportTargetPoint - (int)(stoppages + defections);
-			var vmvm = vm.ParentColumn as Soheil.Core.ViewModels.PP.TaskReportVm;
+			var vmvm = vm.ParentColumn as ViewModels.PP.Report.TaskReportVm;
 			if (vmvm != null) vmvm.ProducedG1 = g1;
 			model.TaskReport.TaskProducedG1 = g1;
 
@@ -203,27 +236,26 @@ namespace Soheil.Core.DataServices
 		/// <param name="newTargetPoint">new automatically calculated targetpoint</param>
 		internal void ResetById(int id, int newTargetPoint)
 		{
-			using (var context = new SoheilEdmContext())
-			{
-				var processReportRepository = new Repository<ProcessReport>(context);
-				var processReportDataService = new ProcessReportDataService(context);
-				var defectionReportRepository = new Repository<DefectionReport>(context);
-				var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
-				var stoppageReportRepository = new Repository<StoppageReport>(context);
-				var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
-				var model = processReportRepository.Single(x => x.Id == id);
-				processReportDataService.ClearModel(
-					model,
-					processReportRepository,
-					defectionReportRepository,
-					operatorDefectionReportRepository,
-					stoppageReportRepository,
-					operatorStoppageReportRepository,
-					context);
-				model.ProcessReportTargetPoint = newTargetPoint;
-				model.ProducedG1 = 0;
-				context.SaveChanges();
-			}
+			var processReportRepository = new Repository<ProcessReport>(context);
+			var processReportDataService = new ProcessReportDataService(context);
+			var processOperatorReportRepository = new Repository<ProcessOperatorReport>(context);
+			var defectionReportRepository = new Repository<DefectionReport>(context);
+			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
+			var stoppageReportRepository = new Repository<StoppageReport>(context);
+			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
+			var model = processReportRepository.Single(x => x.Id == id);
+			processReportDataService.ClearModel(
+				model,
+				processReportRepository,
+				processOperatorReportRepository,
+				defectionReportRepository,
+				operatorDefectionReportRepository,
+				stoppageReportRepository,
+				operatorStoppageReportRepository,
+				context);
+			model.ProcessReportTargetPoint = newTargetPoint;
+			model.ProducedG1 = 0;
+			context.Commit();
 		}
 
 		/// <summary>
@@ -237,29 +269,35 @@ namespace Soheil.Core.DataServices
 		/// <param name="operatorStoppageReportRepository"></param>
 		/// <param name="context"></param>
 		internal void ClearModel(
-			ProcessReport processReportModel, 
-			Repository<ProcessReport> processReportRepository, 
+			ProcessReport processReportModel,
+			Repository<ProcessReport> processReportRepository,
+			Repository<ProcessOperatorReport> processOperatorReportRepository, 
 			Repository<DefectionReport> defectionReportRepository, 
 			Repository<OperatorDefectionReport> operatorDefectionReportRepository, 
 			Repository<StoppageReport> stoppageReportRepository, 
 			Repository<OperatorStoppageReport> operatorStoppageReportRepository, 
 			SoheilEdmContext context)
 		{
+			var operatorReports = processReportModel.ProcessOperatorReports.ToArray();
+			foreach (var operatorReport in operatorReports)
+			{
+				processOperatorReportRepository.Delete(operatorReport);
+			}
 			var defectionReports = processReportModel.DefectionReports.ToArray();
 			foreach (var defectionReportModel in defectionReports)
 			{
-				defectionReportRepository.Delete(defectionReportModel);
 				var operatorDefectionReports = defectionReportModel.OperatorDefectionReports.ToArray();
 				foreach (var operatorDefectionReportModel in operatorDefectionReports)
 					operatorDefectionReportRepository.Delete(operatorDefectionReportModel);
+				defectionReportRepository.Delete(defectionReportModel);
 			}
 			var stoppageReports = processReportModel.StoppageReports.ToArray();
 			foreach (var stoppageReportModel in stoppageReports)
 			{
-				stoppageReportRepository.Delete(stoppageReportModel);
 				var operatorStoppageReports = stoppageReportModel.OperatorStoppageReports.ToArray();
 				foreach (var operatorStoppageReportModel in operatorStoppageReports)
 					operatorStoppageReportRepository.Delete(operatorStoppageReportModel);
+				stoppageReportRepository.Delete(stoppageReportModel);
 			}
 		}
 

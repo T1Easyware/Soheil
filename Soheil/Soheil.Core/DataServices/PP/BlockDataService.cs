@@ -57,7 +57,7 @@ WHERE block.Id = @id";
 				"Job",
 				"Tasks.Processes.ProcessReports",
 				"Tasks.Processes.SelectedMachines",
-				"Tasks.TaskReports.ProcessReports.OperatorProcessReports.Operator",
+				"Tasks.TaskReports.ProcessReports.ProcessOperatorReports.ProcessOperator.Operator",
 				"Tasks.TaskReports.ProcessReports.DefectionReports",
 				"Tasks.TaskReports.ProcessReports.StoppageReports"
 				);
@@ -87,11 +87,33 @@ WHERE block.Id = @id";
 		public void DeleteModel(Block model)
 		{
 			var taskDataService = new TaskDataService(context);
-			foreach (var task in model.Tasks.ToArray())
+			var entity = _blockRepository.Single(x => x.Id == model.Id);
+			foreach (var task in entity.Tasks.ToArray())
 			{
 				taskDataService.DeleteModel(task);
 			}
-			_blockRepository.Delete(model);
+			_blockRepository.Delete(entity);
+			context.Commit();
+		}
+		/// <summary>
+		/// Delete a block with all its reports. No questions asked!
+		/// </summary>
+		/// <param name="model"></param>
+		public void DeleteModelRecursive(Block model)
+		{
+			var taskDataService = new TaskDataService(context);
+			var taskReportDataService = new TaskReportDataService(context);
+			var entity = _blockRepository.Single(x => x.Id == model.Id);
+			foreach (var task in entity.Tasks.ToArray())
+			{
+				foreach (var taskReport in task.TaskReports.ToArray())
+				{
+					taskReportDataService.DeleteModel(taskReport);
+				}
+				taskDataService.DeleteModel(task);
+			}
+			_blockRepository.Delete(entity);
+			context.Commit();
 		}
 
 		public void AttachModel(Block model)
@@ -107,15 +129,17 @@ WHERE block.Id = @id";
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public IEnumerable<Block> GetInRange(DateTime startDate, DateTime endDate)
+		public IEnumerable<Block> GetInRange(DateTime startDate, DateTime endDate, int stationId)
 		{
 			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
-			return _blockRepository.Find(x =>
-				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
+			return _blockRepository.Find(x => 
+				x.StateStation.Station.Id == stationId 
+				&&
+				((x.StartDateTime < endDate && x.StartDateTime >= startDate)
 				||
 				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
 				||
-				(x.StartDateTime <= startDate && x.EndDateTime >= endDate), 
+				(x.StartDateTime <= startDate && x.EndDateTime >= endDate)), 
 				y => y.StartDateTime);
 		}
 
@@ -129,14 +153,9 @@ WHERE block.Id = @id";
 		public IEnumerable<int> GetIdsInRange(DateTime startDate, DateTime endDate)
 		{
 			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
-			return _blockRepository.Find(x =>
-				(x.StartDateTime < endDate && x.StartDateTime >= startDate)
-				||
-				(x.EndDateTime <= endDate && x.EndDateTime > startDate)
-				||
-				(x.StartDateTime <= startDate && x.EndDateTime >= endDate),
-				y => y.StartDateTime)
-				
+			return _blockRepository
+				.Find(x => !(x.EndDateTime <= startDate || x.StartDateTime >= endDate))
+				.OrderBy(y => y.StartDateTime)
 				.Select(x => x.Id);
 		}
 
@@ -197,13 +216,6 @@ WHERE block.Id = @id";
 				task.StartDateTime = time;
 				time = time.AddSeconds(task.DurationSeconds);
 				task.EndDateTime = time;
-
-				//fix processes
-				var emptyProcesses = task.Processes.Where(x => x.TargetCount == 0).ToArray();
-				foreach (var emptyProcess in emptyProcesses)
-				{
-					task.Processes.Remove(emptyProcess);
-				}
 
 				var invalidProcessGroup = task.Processes.GroupBy(p => p.StateStationActivity.Activity.Id).FirstOrDefault(ag => ag.Count() > 1);
 				if (invalidProcessGroup != null)
@@ -400,11 +412,11 @@ WHERE block.Id = @id";
 		/// </summary>
 		/// <param name="vm"></param>
 		/// <returns></returns>
-		internal bool UpdateViewModel(ViewModels.PP.PPTaskVm vm)
+		internal bool UpdateViewModel(ViewModels.PP.TaskVm vm)
 		{
 			var model = _taskRepository.FirstOrDefault(x => x.Id == vm.Id);
 			if (model == null) return false;
-			vm.Job = new ViewModels.PP.PPJobVm(model.Job);
+			vm.Job = new ViewModels.PP.JobVm(model.Job);
 			vm.ProductCode = model.StateStation.State.FPC.Product.Code;
 			vm.ProductName = model.StateStation.State.FPC.Product.Name;
 			vm.ProductColor = model.StateStation.State.FPC.Product.Color;
@@ -576,7 +588,7 @@ WHERE block.Id = @id";
 					Seconds = 0
 				};
 				changeoverRepository.Add(changeover);
-				context.SaveChanges();
+				context.Commit();
 				/*if (result != null)
 				{
 					result.Errors.Add(new Pair<InsertSetupBeforeTaskErrors.ErrorSource, string, int>(
@@ -638,7 +650,7 @@ WHERE block.Id = @id";
 					Seconds = 0
 				};
 				warmupRepository.Add(warmup);
-				context.SaveChanges();
+				context.Commit();
 				/*if (result != null)
 				{
 					result.Errors.Add(new Pair<InsertSetupBeforeTaskErrors.ErrorSource, string, int>(
@@ -779,7 +791,7 @@ WHERE block.Id = @id";
 						"زمان کل برابر با صفر است، لذا راه اندازی افزوده نشد",
 						0));
 					result.IsSaved = needToDeletePreviousSetup;
-					if (needToDeletePreviousSetup) context.SaveChanges();
+					if (needToDeletePreviousSetup) context.Commit();
 					return result;
 				}
 
@@ -805,7 +817,7 @@ WHERE block.Id = @id";
 					movingSetup.EndDateTime = movingSetup.EndDateTime.AddSeconds(delaySeconds);
 				}
 				//etc...
-				context.SaveChanges();
+				context.Commit();
 				result.IsSaved = true;
 			}
 			catch (Exception exp)

@@ -14,7 +14,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 	public class ProductReworkVm : BaseTreeItemVm
 	{
 		/// <summary>
-		/// Creates an instance of this Vm with the given model
+		/// Creates an instance of ProductReworkVm with the given model
 		/// </summary>
 		/// <param name="model">Id, Name, Code and Rework of this model are used</param>
 		/// <remarks>If rework is null, Name will be Main and Code will be model's Code

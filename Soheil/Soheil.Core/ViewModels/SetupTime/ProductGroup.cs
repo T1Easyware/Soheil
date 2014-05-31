@@ -14,7 +14,7 @@ namespace Soheil.Core.ViewModels.SetupTime
 		public const double HeaderRowHeight = 25d;
 		public const double HeaderColumnWidth = 25d;
 		public const double RowHeight = 25d;
-		public const double ColumnWidth = 50d;
+		public const double ColumnWidth = 75d;
 		public readonly Station Station;
 
 		public ProductGroup(Model.ProductGroup model, Station parentVm, bool isRowHeader)

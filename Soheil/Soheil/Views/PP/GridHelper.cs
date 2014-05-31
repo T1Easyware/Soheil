@@ -23,17 +23,17 @@ namespace Soheil.Views.PP
 		/// </summary>
 		public static readonly DependencyProperty AllColumnsProperty =
 			DependencyProperty.RegisterAttached(
-				"AllColumns", typeof(IEnumerable<TaskReportVm>), typeof(GridHelper),
+				"AllColumns", typeof(IEnumerable<Core.ViewModels.PP.Report.TaskReportVm>), typeof(GridHelper),
 				new PropertyMetadata(null, AllColumnsChanged));
 
 		// Get
-		public static IEnumerable<TaskReportVm> GetAllColumns(DependencyObject obj)
+		public static IEnumerable<Core.ViewModels.PP.Report.TaskReportVm> GetAllColumns(DependencyObject obj)
 		{
-			return (IEnumerable<TaskReportVm>)obj.GetValue(AllColumnsProperty);
+			return (IEnumerable<Core.ViewModels.PP.Report.TaskReportVm>)obj.GetValue(AllColumnsProperty);
 		}
 
 		// Set
-		public static void SetAllColumns(DependencyObject obj, IEnumerable<TaskReportVm> value)
+		public static void SetAllColumns(DependencyObject obj, IEnumerable<Core.ViewModels.PP.Report.TaskReportVm> value)
 		{
 			obj.SetValue(AllColumnsProperty, value);
 		}
@@ -80,7 +80,7 @@ namespace Soheil.Views.PP
 		}
 
 		// Set
-		public static void SetAllRows(DependencyObject obj, IEnumerable<PPStationVm> value)
+		public static void SetAllRows(DependencyObject obj, IEnumerable<StationVm> value)
 		{
 			obj.SetValue(AllRowsProperty, value);
 		}

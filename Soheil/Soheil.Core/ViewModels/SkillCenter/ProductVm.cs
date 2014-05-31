@@ -20,7 +20,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 	public class ProductVm : BaseTreeItemVm
 	{
 		/// <summary>
-		/// Creates an instance of this Vm with the given model and fills it with its underlying ProductReworks
+		/// Creates an instance of ProductVm with the given model and fills it with its underlying ProductReworks
 		/// </summary>
 		/// <param name="model">Id, Name, Code, Color and underlying ProductReworks of the model are used</param>
 		public ProductVm(Model.Product model)

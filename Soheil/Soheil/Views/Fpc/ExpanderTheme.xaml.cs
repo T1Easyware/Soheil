@@ -16,7 +16,6 @@ namespace Soheil.Views.Fpc
 		{
 			var vm = (sender as Button).Tag as TreeItemVm;
 			vm.Delete();
-			vm.Change();
 		}
 	}
 }

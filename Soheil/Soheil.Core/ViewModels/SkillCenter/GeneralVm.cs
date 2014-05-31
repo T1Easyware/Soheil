@@ -14,7 +14,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 	public class GeneralVm : BaseTreeItemVm
 	{
 		/// <summary>
-		/// Creates an instance of this Vm with Id=-100
+		/// Creates an instance of GeneralVm with Id=-100
 		/// </summary>
 		public GeneralVm()
 		{

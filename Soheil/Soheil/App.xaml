@@ -13,7 +13,7 @@
 				<ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/PPStyles.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\FpcResources.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\ExpanderTheme.xaml"/>
-				<ResourceDictionary Source="Views\Fpc\ToolBox.xaml"/>
+				<ResourceDictionary Source="Views\Fpc\ToolboxDictionary.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\MidStateConfig.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\States.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\Connector.xaml"/>

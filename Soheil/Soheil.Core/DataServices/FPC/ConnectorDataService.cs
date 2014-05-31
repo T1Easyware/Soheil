@@ -15,6 +15,7 @@ namespace Soheil.Core.DataServices
 	{
 		Repository<Connector> _connectorRepository;
 		FPCDataService _parentDataService;
+
 		internal ConnectorDataService(SoheilEdmContext context, FPCDataService parentDataService)
 		{
 			this.context = context;
@@ -43,6 +44,7 @@ namespace Soheil.Core.DataServices
 				EndState = endStateModel
 			};
 			_connectorRepository.Add(connectorModel);
+			context.Commit();
 		}
 
 		#region IDataService
@@ -82,6 +84,7 @@ namespace Soheil.Core.DataServices
 		public void DeleteModel(Connector model)
 		{
 			_connectorRepository.Delete(model);
+			context.Commit();
 		}
 
 		public void AttachModel(Connector model)

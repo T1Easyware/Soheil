@@ -10,122 +10,111 @@ using Soheil.Model;
 
 namespace Soheil.Core.DataServices
 {
-    public class CauseDataService : RecursiveDataServiceBase, IDataService<Cause>
-    {
-        #region IDataService<Cause> Members
+	public class CauseDataService : RecursiveDataServiceBase, IDataService<Cause>
+	{
+		Repository<Cause> _causeRepository;
 
-        public Cause GetSingle(int id)
-        {
-            Cause entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var causeRepository = new Repository<Cause>(context);
-                entity = causeRepository.FirstOrDefault(cause => cause.Id == id, "Parent", "Children");
-            }
-            return entity;
-        }
+		public CauseDataService()
+			: this(new SoheilEdmContext())
+		{
+		}
+		public CauseDataService(SoheilEdmContext context)
+		{
+			this.context = context;
+			_causeRepository = new Repository<Cause>(context);
+		}
 
-        public ObservableCollection<Cause> GetAll()
-        {
-            ObservableCollection<Cause> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Cause>(context);
-                IEnumerable<Cause> entityList = repository.Find(cause=> cause.Status != (decimal)Status.Deleted, "Children");
-                models = new ObservableCollection<Cause>(entityList);
-            }
-            return models;
-        }
+		#region IDataService<Cause> Members
 
-        public ObservableCollection<Cause> GetActives()
-        {
-            ObservableCollection<Cause> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Cause>(context);
-                IEnumerable<Cause> entityList = repository.Find(cause => cause.Status == (decimal)Status.Active, "Children");
-                models = new ObservableCollection<Cause>(entityList);
-            }
-            return models;
-        }
+		public Cause GetSingle(int id)
+		{
+			Cause entity;
+			entity = _causeRepository.FirstOrDefault(cause => cause.Id == id, "Parent", "Children");
+			return entity;
+		}
 
-        public int AddModel(Cause model)
-        {
-            int id;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Cause>(context);
-                repository.Add(model);
-                context.Commit();
-                if (CauseAdded != null)
-                    CauseAdded(this, new ModelAddedEventArgs<Cause>(model));
-                id = model.Id;
-            }
-            return id;
-        }
+		public ObservableCollection<Cause> GetAll()
+		{
+			ObservableCollection<Cause> models;
+			IEnumerable<Cause> entityList = _causeRepository.Find(cause => cause.Status != (decimal)Status.Deleted, "Children");
+			models = new ObservableCollection<Cause>(entityList);
+			return models;
+		}
 
-        public int AddModel(Cause model, int parentId)
-        {
-            int id;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Cause>(context);
-                var parent = repository.FirstOrDefault(cause => cause.Id == parentId);
-                model.Parent = parent;
-                parent.Children.Add(model);
-                context.Commit();
-                if (CauseAdded != null)
-                    CauseAdded(this, new ModelAddedEventArgs<Cause>(model));
-                id = model.Id;
-            }
-            return id;
-        }
+		public ObservableCollection<Cause> GetActives()
+		{
+			ObservableCollection<Cause> models;
+			IEnumerable<Cause> entityList = _causeRepository.Find(cause => cause.Status == (decimal)Status.Active, "Children");
+			models = new ObservableCollection<Cause>(entityList);
+			return models;
+		}
 
-        public void UpdateModel(Cause model)
-        {
-            using (var context = new SoheilEdmContext())
-            {
-                var causeRepository = new Repository<Cause>(context);
-                Cause entity = causeRepository.Single(cause => cause.Id == model.Id);
+		public Cause GetRoot()
+		{
+			return _causeRepository.FirstOrDefault(x => x.Level == 0, "Children.Children.Children");
+		}
 
-                entity.Code = model.Code;
-                entity.Name = model.Name;
-                context.Commit();
-            }
-        }
+		public int AddModel(Cause model)
+		{
+			int id;
+			_causeRepository.Add(model);
+			context.Commit();
+			if (CauseAdded != null)
+				CauseAdded(this, new ModelAddedEventArgs<Cause>(model));
+			id = model.Id;
+			return id;
+		}
 
-        public void DeleteModel(Cause model)
-        {
-        }
+		public int AddModel(Cause model, int parentId)
+		{
+			int id;
+			var parent = _causeRepository.FirstOrDefault(cause => cause.Id == parentId);
+			model.Parent = parent;
+			parent.Children.Add(model);
+			context.Commit();
+			if (CauseAdded != null)
+				CauseAdded(this, new ModelAddedEventArgs<Cause>(model));
+			id = model.Id;
+			return id;
+		}
 
-        public void AttachModel(Cause model)
-        {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Cause>(context);
-                if (repository.Exists(cause => cause.Id == model.Id))
-                {
-                    UpdateModel(model);
-                }
-                else
-                {
-                    AddModel(model);
-                }
-            }
-        }
+		public void UpdateModel(Cause model)
+		{
+			Cause entity = _causeRepository.Single(cause => cause.Id == model.Id);
 
-        #endregion
+			entity.Code = model.Code;
+			entity.Name = model.Name;
+			context.Commit();
+		}
 
-        public event EventHandler<ModelAddedEventArgs<Cause>> CauseAdded;
+		public void DeleteModel(Cause model)
+		{
+		}
 
-        #region Overrides of RecursiveDataServiceBase
+		public void AttachModel(Cause model)
+		{
+			if (_causeRepository.Exists(cause => cause.Id == model.Id))
+			{
+				UpdateModel(model);
+			}
+			else
+			{
+				AddModel(model);
+			}
+		}
 
-        public override ObservableCollection<IEntityNode> GetChildren(int id)
-        {
-            //var allNodes = GetAll();
-            //return GetChildrenNodes(allNodes,GetSingle(id));
-            return null;
-        }
-        #endregion
-    }
+		#endregion
+
+		public event EventHandler<ModelAddedEventArgs<Cause>> CauseAdded;
+
+		#region Overrides of RecursiveDataServiceBase
+
+		public override ObservableCollection<IEntityNode> GetChildren(int id)
+		{
+			//var allNodes = GetAll();
+			//return GetChildrenNodes(allNodes,GetSingle(id));
+			return null;
+		}
+		#endregion
+	}
 }

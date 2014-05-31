@@ -84,8 +84,8 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
         }
 
         //Profiles Observable Collection
-        private ObservableCollection<WorkProfileInfo> _profiles = new ObservableCollection<WorkProfileInfo>();
-        public ObservableCollection<WorkProfileInfo> Profiles { get { return _profiles; } }
+		public ObservableCollection<WorkProfileInfo> Profiles { get { return _profiles; } }
+		private ObservableCollection<WorkProfileInfo> _profiles = new ObservableCollection<WorkProfileInfo>();
 
         #endregion
 
@@ -130,11 +130,6 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
             if (_model != null)
                 if (_model.WorkProfile != null)
                     SelectedProfile = Profiles.FirstOrDefault(x => x.Id == _model.WorkProfile.Id);
-        }
-
-        internal void Reset()
-        {
-            WorkProfilePlanDataService.Postpone(_model);
         }
 
         public override void Save(object param)

@@ -13,8 +13,8 @@ namespace Soheil.Controls.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			if((string)parameter == "Below")
-				return new Thickness(((int)value - Soheil.Common.SoheilConstants.EDITOR_START_SECONDS) / 60 - 10, 40, 0, 0);
+			if(parameter!=null)
+				return new Thickness(((int)value - Soheil.Common.SoheilConstants.EDITOR_START_SECONDS) / 60, 28, 0, 0);
 			return new Thickness(((int)value - Soheil.Common.SoheilConstants.EDITOR_START_SECONDS) / 60, 5, 0, 0);
 		}
 
@@ -27,8 +27,6 @@ namespace Soheil.Controls.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			if ((string)parameter == "Below")
-				return new Thickness(((int)value - Soheil.Common.SoheilConstants.EDITOR_START_SECONDS) / 60 - 30, 40, 0, 0);
 			return new Thickness(((int)value - Soheil.Common.SoheilConstants.EDITOR_START_SECONDS) / 60 - 20, 5, 0, 0);
 		}
 

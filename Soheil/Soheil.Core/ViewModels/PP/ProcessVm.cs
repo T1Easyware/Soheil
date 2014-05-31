@@ -13,13 +13,13 @@ namespace Soheil.Core.ViewModels.PP
 	{
 		public ProcessVm(
 			Model.StateStationActivity ssaModel,
-			IList<PPEditorOperator> operators,
+			IList<OperatorEditorVm> operators,
 			IList<Model.ProcessOperator> usedOperators)
 			: this(ssaModel)
 		{
 			foreach (var ssam in ssaModel.StateStationActivityMachines)
 			{
-				Machines.Add(new PPEditorMachine(ssam));
+				Machines.Add(new MachineEditorVm(ssam));
 			}
 			foreach (var oper in operators)
 			{
@@ -40,7 +40,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// If you use this constructor, you can't use Machines or Operators
 		/// </summary>
 		/// <param name="model"></param>
-		public ProcessVm(Model.Process model, PPTaskVm task)
+		public ProcessVm(Model.Process model, TaskVm task)
 			: this(model.StateStationActivity)
 		{
 			TargetCount = model.TargetCount;
@@ -53,11 +53,11 @@ namespace Soheil.Core.ViewModels.PP
 		public int ProcessId { get; set; }
 
 		//Machines Observable Collection
-		private ObservableCollection<PPEditorMachine> _machines = new ObservableCollection<PPEditorMachine>();
-		public ObservableCollection<PPEditorMachine> Machines { get { return _machines; } }
+		private ObservableCollection<MachineEditorVm> _machines = new ObservableCollection<MachineEditorVm>();
+		public ObservableCollection<MachineEditorVm> Machines { get { return _machines; } }
 		//Operators Observable Collection
-		private ObservableCollection<PPEditorOperator> _operators = new ObservableCollection<PPEditorOperator>();
-		public ObservableCollection<PPEditorOperator> Operators { get { return _operators; } }
+		private ObservableCollection<OperatorEditorVm> _operators = new ObservableCollection<OperatorEditorVm>();
+		public ObservableCollection<OperatorEditorVm> Operators { get { return _operators; } }
 
 		//TargetCount Dependency Property
 		public int TargetCount
@@ -78,13 +78,13 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("StateStationActivity", typeof(StateStationActivityVm), typeof(ProcessVm), new UIPropertyMetadata(null));
 
 		//Task Dependency Property
-		public PPTaskVm Task
+		public TaskVm Task
 		{
-			get { return (PPTaskVm)GetValue(TaskProperty); }
+			get { return (TaskVm)GetValue(TaskProperty); }
 			set { SetValue(TaskProperty, value); }
 		}
 		public static readonly DependencyProperty TaskProperty =
-			DependencyProperty.Register("Task", typeof(PPTaskVm), typeof(ProcessVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Task", typeof(TaskVm), typeof(ProcessVm), new UIPropertyMetadata(null));
 
 		//IsExpanded Dependency Property
 		public event EventHandler<ProcessVm> IsExpandedCallback;

@@ -9,24 +9,52 @@ using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.OrganizationCalendar
 {
+	/// <summary>
+	/// ViewModel for a day of persian week
+	/// </summary>
 	public class DayOfWeekVm : DependencyObject
 	{
+		/// <summary>
+		/// Occurs when this day of week changes its openness state of business
+		/// </summary>
+		public event Action<int, BusinessDayType> BusinessStateChanged;
+		/// <summary>
+		/// Occurs when this day of week changes its IsWeekStart value
+		/// </summary>
+		public event Action<int, bool> WeekStartChanged;
+	
+		/// <summary>
+		/// Creates an instance of DayOfWeekVm with the given openness state
+		/// </summary>
+		/// <param name="index">indicates which day of week this is</param>
+		/// <param name="dayStateVm">openness state of this day of week</param>
 		public DayOfWeekVm(int index, WorkDayVm dayStateVm)
 		{
 			DayOfWeek = index;
 			Name = ((PersianDayOfWeek)index).ToString();
 			SelectedDayStateVm = dayStateVm;
 		}
-		public int DayOfWeek { get; set; }
-		//Name Dependency Property
+		
+		/// <summary>
+		/// Gets the day of week (zero-biased index)
+		/// </summary>
+		public int DayOfWeek { get; private set; }
+
+		/// <summary>
+		/// Gets the bindable text for name of this day
+		/// </summary>
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
+			private set { SetValue(NameProperty, value); }
 		}
 		public static readonly DependencyProperty NameProperty =
 			DependencyProperty.Register("Name", typeof(string), typeof(DayOfWeekVm), new UIPropertyMetadata(null));
-		//IsWeekStart Dependency Property
+		
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this day starts the week
+		/// <para>Changing this value fires WeekStartChanged event</para>
+		/// </summary>
 		public bool IsWeekStart
 		{
 			get { return (bool)GetValue(IsWeekStartProperty); }
@@ -39,12 +67,12 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				var vm = (DayOfWeekVm)d;
 				var val = (bool)e.NewValue;
 				if (vm.WeekStartChanged != null)
-					vm.WeekStartChanged(vm, new PropertyChangedEventArgs(vm.DayOfWeek, val));
-
+					vm.WeekStartChanged(vm.DayOfWeek, val);
 			}));
 
-		#region State and Color
-		//State Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for openness state of business for this day of week
+		/// </summary>
 		public BusinessDayType State
 		{
 			get { return (BusinessDayType)GetValue(StateProperty); }
@@ -56,11 +84,14 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			{
 				var vm = (DayOfWeekVm)d;
 				var val = (BusinessDayType)e.NewValue;
-				vm.Color = Model.WorkDay.GetColorByNr((int)e.NewValue);
+				//vm.Color = Model.WorkDay.GetColorByNr((int)e.NewValue);
 				if (vm.BusinessStateChanged != null)
-					vm.BusinessStateChanged(vm, new PropertyChangedEventArgs(vm.DayOfWeek, val));
+					vm.BusinessStateChanged(vm.DayOfWeek, val);
 			}));
-		//SelectedDayStateVm Dependency Property
+		
+		/// <summary>
+		/// Gets or sets a bindable value for an instance of WorkDay representing the openness state of business of this day of week
+		/// </summary>
 		public WorkDayVm SelectedDayStateVm
 		{
 			get { return (WorkDayVm)GetValue(SelectedDayStateVmProperty); }
@@ -75,38 +106,5 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				if (val == null) return;
 				vm.State = val.BusinessState;
 			}));
-		//Color Dependency Property
-		public Color Color
-		{
-			get { return (Color)GetValue(ColorProperty); }
-			set { SetValue(ColorProperty, value); }
-		}
-		public static readonly DependencyProperty ColorProperty =
-			DependencyProperty.Register("Color", typeof(Color), typeof(DayOfWeekVm), new UIPropertyMetadata(Colors.Transparent)); 
-		#endregion
-
-
-		#region Event stuff
-		public event EventHandler<PropertyChangedEventArgs> BusinessStateChanged;
-		public event EventHandler<PropertyChangedEventArgs> WeekStartChanged;
-		
-		public class PropertyChangedEventArgs : EventArgs
-		{
-			public PropertyChangedEventArgs(int dayIndex, BusinessDayType newState)
-			{
-				Index = dayIndex;
-				State = newState;
-			}
-			public PropertyChangedEventArgs(int newWeekStart, bool isWeekStart)
-			{
-				Index = newWeekStart;
-				IsWeekStart = isWeekStart;
-			}
-
-			public bool IsWeekStart { get; private set; }
-			public int Index { get; private set; }
-			public BusinessDayType State { get; private set; }
-		} 
-		#endregion
 	}
 }

@@ -183,45 +183,33 @@ namespace Soheil.Views
 		#region Members
 		SliderType _sliderType = SliderType.none;
 		private FrameworkElement ic_months;
-		private ScrollViewer _stationsScrollbar;
-		private ScrollViewer _activitiesScrollbar;
 		#endregion
 
-		#region Load/Unload PPTable/TaskReport
-		private void ppTable_Loaded_1(object sender, RoutedEventArgs e)
+		#region ppTable_Loaded, Grid_SizeChanged
+		private void ppTable_Loaded(object sender, RoutedEventArgs e)
 		{
 			ic_months = (ItemsControl)(sender as FrameworkElement).FindChild("ic_months");
-
-			ItemsControl ic_stations = (ItemsControl)(sender as FrameworkElement).FindChild("ic_stations");
-			_stationsScrollbar = (ScrollViewer)ic_stations.Template.FindName("sv_stations", ic_stations);
-			ItemsControl ic_activities = (ItemsControl)(sender as FrameworkElement).FindChild("ic_activities");
-			_activitiesScrollbar = (ScrollViewer)ic_activities.Template.FindName("sv_activities", ic_activities);
 
 			PPTableVm.UpdateWidths();
 			PPTableVm.ResetTimeLine();
 		}
+		private void ppTable_Unloaded(object sender, RoutedEventArgs e)
+		{
+			sender.GetDataContext<PPTableVm>().Dispose();
+		}
+		private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			PPTableVm.GridWidth = ((FrameworkElement)sender).ActualWidth - 20;
+			PPTableVm.UpdateWidths();
+		} 
 		#endregion
 
 		#region Scroll and Zoom
 
 		#region Mouse Down
-		private void monthBarItemClick(object sender, MouseButtonEventArgs e)
-		{
-
-		}
-		private void daysBarMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			_sliderType = SliderType.daysBar;
-			pptableCommonMouseDown(sender, e);
-		}
 		private void hoursBarMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			_sliderType = SliderType.hoursBar;
-			pptableCommonMouseDown(sender, e);
-		}
-		private void monthLittleWindowMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			_sliderType = SliderType.monthsLittleWindow;
 			pptableCommonMouseDown(sender, e);
 		}
 		private void dayLittleWindowMouseDown(object sender, MouseButtonEventArgs e)
@@ -238,7 +226,6 @@ namespace Soheil.Views
 			_prevX = e.GetPosition(ic_months).X;
 			_mouseIsUp = false;
 		}
-		Point _dragStartPoint;
 		#endregion
 
 		#region Mouse Move/Up
@@ -369,28 +356,7 @@ namespace Soheil.Views
 		}
 		#endregion
 
-		#region Misc
-		private void tasksScrolled(object sender, ScrollChangedEventArgs e)
-		{
-			if (_stationsScrollbar != null)
-				_stationsScrollbar.ScrollToVerticalOffset(e.VerticalOffset);
-			PPTableVm.VerticalScreenOffset = e.VerticalOffset;
-		}
-		private void detailedReportsScrolled(object sender, ScrollChangedEventArgs e)
-		{
-			if (_activitiesScrollbar != null)
-				_activitiesScrollbar.ScrollToVerticalOffset(e.VerticalOffset);
-			PPTableVm.VerticalScreenOffset = e.VerticalOffset;
-		}
-		private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
-		{
-			PPTableVm.GridWidth = ((FrameworkElement)sender).ActualWidth - 20;
-			PPTableVm.UpdateWidths();
-		} 
-		#endregion
-
         #endregion
-
 		#endregion
 
         #region OperatorsReport

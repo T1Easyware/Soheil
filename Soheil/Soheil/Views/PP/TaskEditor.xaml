@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="Soheil.Views.PP.TaskEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core" 
+             xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Editor;assembly=Soheil.Core" 
+             xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
+             xmlns:local="clr-namespace:Soheil.Views.PP" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+             xmlns:fpcView="clr-namespace:Soheil.Views.Fpc" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="800" FlowDirection="RightToLeft">
+	
+	<Grid Background="Silver" x:Name="root">
+		<Grid.Effect>
+			<DropShadowEffect ShadowDepth="0"/>
+		</Grid.Effect>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+        
+        <DockPanel MinWidth="400" MaxWidth="600">
+            <!-- toolbar -->
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+				<!-- TP -->
+				<TextBox Grid.Column="0" Text="23" ToolTip="{Loc PPE_TaskTP}" MinWidth="60" TextAlignment="Right" VerticalAlignment="Center"/>
+                <Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
+				<!-- same qty -->
+				<ToggleButton Grid.Column="1" IsChecked="{Binding IsSameQtyForActivitiesSelected}"
+                              ToolTip="{Loc PPE_SameQtyForActivites}">
+                    <DockPanel>
+                        <Image Style="{StaticResource QuantityImage}" Margin="5,0" IsHitTestVisible="False"/>
+                        <TextBox IsEnabled="{Binding IsSameQtyForActivitiesSelected}" Text="{Binding SameQtyForActivities, UpdateSourceTrigger=PropertyChanged}" MinWidth="50"/>
+                    </DockPanel>
+                </ToggleButton>
+				<!-- same time -->
+				<ToggleButton Grid.Column="2" IsChecked="{Binding IsSameTimeForActivitiesSelected}"
+                              ToolTip="{Loc PPE_SameTimeForActivites}">
+                    <WrapPanel>
+						<Image Style="{StaticResource DurationImage}" Margin="5,0" IsHitTestVisible="False"/>
+                        <CustomControls:TimeBox Time="{Binding SameTimeForActivities, Mode=TwoWay}" IsReadOnly="{Binding IsSameTimeForActivitiesSelected, Converter={StaticResource inverter}}"/>
+                    </WrapPanel>
+                </ToggleButton>
+				<!-- defer -->
+				<ToggleButton Grid.Column="3" IsChecked="{Binding IsDeferToActivitiesSelected}"
+                              ToolTip="{Loc PPE_DeferToActivites}">
+                    <WrapPanel>
+						<Image Style="{StaticResource IndependentTPImage}" Margin="5,0" IsHitTestVisible="False"/>
+                    </WrapPanel>
+                </ToggleButton>
+            </Grid>
+            <!-- Process List -->
+            <ListBox ItemsSource="{Binding ProcessList}" Background="#1000" Margin="2"
+                     SelectedItem="{Binding SelectedProcess}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Style.Triggers>
+                            <Trigger Property="Selector.IsSelected" Value="False">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <local:ProcessEditor DataContext="{Binding}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+		<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+			<local:OperatorManager DataContext="{Binding OperatorManager}"/>
+		</ScrollViewer>
+	</Grid>
+
+</UserControl>

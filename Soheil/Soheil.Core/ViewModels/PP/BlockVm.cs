@@ -26,58 +26,107 @@ namespace Soheil.Core.ViewModels.PP
 		/// Gets Id property of the model representing this ViewModel
 		/// </summary>
 		public override int Id { get { return Model.Id; } }
+		Soheil.Core.PP.PPItemBlock _fullData;
 
 		#region Ctor, reload
 		/// <summary>
-		/// Creates an instance of BlockVm with the given model, parent and station index
+		/// Creates an instance of BlockVm with the given model
 		/// </summary>
 		/// <remarks>commands must be set after creating a block</remarks>
 		/// <param name="model"></param>
 		/// <param name="parent"></param>
-		/// <param name="stationIndex"></param>
-        public BlockVm(Model.Block model, PPItemCollection parent, int stationIndex)
+        public BlockVm(Soheil.Core.PP.PPItemBlock data, PPItemCollection parent)
+			: base()
 		{
-			Model = model;
-            Parent = parent;
-			RowIndex = stationIndex;
-			StartDateTime = model.StartDateTime;
-			DurationSeconds = model.DurationSeconds;
+			UOW = data.UOW;
+			Parent = parent;
+			_fullData = data;
+			this.ViewModeChanged += v => ShowTasks = v == PPViewMode.Report;
+			load();
 		}
 
 		/// <summary>
-		/// Reloads current blocks full data with the given <see cref="Soheil.Core.PP.BlockFullData"/>
+		/// Reloads current blocks full data keeping the current UOW
 		/// </summary>
-		/// <param name="data">An instance of <see cref="Soheil.Core.PP.BlockFullData"/> filled with required data</param>
-		public void Reload(Soheil.Core.PP.BlockFullData data)
+		public void Reload()
 		{
-			Model = data.Model;
+			_fullData.Reload();
+			load();
+		}
+		/// <summary>
+		/// Reloads current blocks full data updating the current UOW
+		/// </summary>
+		public void Reload(Soheil.Core.PP.PPItemBlock fullData)
+		{
+			UOW = fullData.UOW;
+			_fullData = fullData;
+			load();
+		}
+		/// <summary>
+		/// Loads everything from _fullData (everything until Task)
+		/// </summary>
+		private void load()
+		{
+			Model = _fullData.Model;
+
+			RowIndex = Model.StateStation.Station.Index;
+			StartDateTime = Model.StartDateTime;
+			DurationSeconds = Model.DurationSeconds;
 
 			//Product and State
-			ProductId = data.Model.StateStation.State.FPC.Product.Id;
-			ProductCode = data.Model.StateStation.State.FPC.Product.Code;
-			ProductName = data.Model.StateStation.State.FPC.Product.Name;
-			ProductColor = data.Model.StateStation.State.FPC.Product.Color;
-			StateCode = data.Model.StateStation.State.Code;
-			IsRework = data.Model.StateStation.State.IsReworkState == Bool3.True;
+			ProductId = Model.StateStation.State.FPC.Product.Id;
+			ProductCode = Model.StateStation.State.FPC.Product.Code;
+			ProductName = Model.StateStation.State.FPC.Product.Name;
+			ProductColor = Model.StateStation.State.FPC.Product.Color;
+			StateCode = Model.StateStation.State.Code;
+			IsRework = Model.StateStation.State.IsReworkState == Bool3.True;
 			
 			//Block background texts
-			BlockTargetPoint = data.Model.BlockTargetPoint;
-			BlockProducedG1 = data.ReportData[0];
-			ReportFillPercent = string.Format("{0:D2}%", data.ReportData[1]);
-			IsReportFilled = (data.ReportData[1] >= 100);
+			BlockTargetPoint = Model.BlockTargetPoint;
+			BlockProducedG1 = _fullData.ReportData[0];
+			ReportFillPercent = string.Format("{0:D2}%", _fullData.ReportData[1]);
+			IsReportFilled = (_fullData.ReportData[1] >= 100);
 			
 			//Navigation
 			//specify the job (if not null)
-			if (data.Model.Job != null)
+			if (Model.Job != null)
 			{
-				Job = new PPJobVm(data.Model.Job);
+				Job = new JobVm(Model.Job);
 			}
-			//add Tasks
-			foreach (var task in data.Model.Tasks)
+			/*foreach (var task in Model.Tasks)
 			{
-				TaskList.Add(new PPTaskVm(task, this));
+				TaskList.Add(new TaskVm(task, this));
+			}*/
+		}
+		private void reloadTasks()
+		{
+			TaskList.Clear();
+			if (Model != null)
+			{
+				//add Tasks
+				foreach (var task in Model.Tasks)
+				{
+					TaskList.Add(new TaskVm(task, this));
+				}
 			}
 		}
+		/// <summary>
+		/// Reloads (or Creates) all task reports and process reports for this block
+		/// </summary>
+		public void ReloadReports()
+		{
+			//create/reload task reports
+			foreach (var task in TaskList)
+			{
+				task.ReloadTaskReports(false);
+			}
+			//create/reload process reports
+			if (BlockReport == null)
+				BlockReport = new Report.BlockReportVm(this);
+			else
+				BlockReport.ReloadProcessReportRows();
+		}
+
 		#endregion
 
 		#region Properties
@@ -201,34 +250,49 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Gets a bindable collection of tasks inside this Block
 		/// </summary>
-		public ObservableCollection<PPTaskVm> TaskList { get { return _taskList; } }
-		private ObservableCollection<PPTaskVm> _taskList = new ObservableCollection<PPTaskVm>();
+		public ObservableCollection<TaskVm> TaskList { get { return _taskList; } }
+		private ObservableCollection<TaskVm> _taskList = new ObservableCollection<TaskVm>();
 
 		/// <summary>
 		/// Gets or sets a bindable value for the Job associated with this Block
 		/// <para>If this task does not belong to any Job, this value is null</para>
 		/// </summary>
-		public PPJobVm Job
+		public JobVm Job
 		{
-			get { return (PPJobVm)GetValue(JobProperty); }
+			get { return (JobVm)GetValue(JobProperty); }
 			set { SetValue(JobProperty, value); }
 		}
 		public static readonly DependencyProperty JobProperty =
-			DependencyProperty.Register("Job", typeof(PPJobVm), typeof(BlockVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Job", typeof(JobVm), typeof(BlockVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets or sets a bindable value for the report of this Block
 		/// </summary>
-		public BlockReportVm BlockReport
+		public Report.BlockReportVm BlockReport
 		{
-			get { return (BlockReportVm)GetValue(BlockReportProperty); }
+			get { return (Report.BlockReportVm)GetValue(BlockReportProperty); }
 			set { SetValue(BlockReportProperty, value); }
 		}
 		public static readonly DependencyProperty BlockReportProperty =
-			DependencyProperty.Register("BlockReport", typeof(BlockReportVm), typeof(BlockVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("BlockReport", typeof(Report.BlockReportVm), typeof(BlockVm), new UIPropertyMetadata(null));
 		#endregion
 
 		#region Other Props
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this block shows its tasks
+		/// </summary>
+		public bool ShowTasks
+		{
+			get { return (bool)GetValue(ShowTasksProperty); }
+			set { SetValue(ShowTasksProperty, value); }
+		}
+		public static readonly DependencyProperty ShowTasksProperty =
+			DependencyProperty.Register("ShowTasks", typeof(bool), typeof(BlockVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				if ((bool)e.NewValue)
+					((BlockVm)d).reloadTasks();
+			}));
 		/// <summary>
 		/// Gets a bindable value that indicates if a new Setup can be added before this Block
 		/// </summary>
@@ -348,6 +412,16 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DeleteJobCommandProperty =
 			DependencyProperty.Register("DeleteJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable command to delete a block with all its tasks and reports
+		/// </summary>
+		public Commands.Command DeleteBlockWithReportsCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteBlockWithReportsCommandProperty); }
+			set { SetValue(DeleteBlockWithReportsCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteBlockWithReportsCommandProperty =
+			DependencyProperty.Register("DeleteBlockWithReportsCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets a bindable command to insert a setup before this Block
 		/// </summary>

@@ -19,7 +19,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 	public class ProductGroupVm : BaseTreeItemVm
 	{
 		/// <summary>
-		/// Creates an instance of this Vm with the given model and fills it with its underlying Products recursively
+		/// Creates an instance of ProductGroupVm with the given model and fills it with its underlying Products recursively
 		/// </summary>
 		/// <param name="model">Id, Name, Code and underlying Products of the model are used</param>
 		public ProductGroupVm(Model.ProductGroup model)

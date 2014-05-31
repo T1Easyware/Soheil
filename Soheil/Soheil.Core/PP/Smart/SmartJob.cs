@@ -134,12 +134,24 @@ namespace Soheil.Core.PP.Smart
 						Layers.Remove(currentLayer);
 						return true;
 					}
-				throw new SoheilExceptionBase(
-					string.Format(
-						"FPC {0} در مسیر تولید {1} به مرحله نهایی ختم نمی شود", 
-						_fpcModel.Product.Name, 
-						veryStartState.OnProductRework.Rework == null ? "اصلی" : veryStartState.OnProductRework.Name),
-					ExceptionLevel.Warning, "مسیریابی خودکار FPC");
+
+				if (veryStartState.OnProductRework == null
+					|| veryStartState.OnProductRework.Rework == null)
+				{
+					throw new SoheilExceptionBase(
+						string.Format("FPC {0} در مسیر تولید اصلی به مرحله نهایی ختم نمی شود", _fpcModel.Product.Name),
+						ExceptionLevel.Warning, "مسیریابی خودکار FPC");
+				}
+				else if (veryStartState.OutConnectors.Any())
+				{
+					throw new SoheilExceptionBase(
+						string.Format(
+							"FPC {0} پس از گذر از {1} به مرحله نهایی ختم نمی شود",
+							_fpcModel.Product.Name,
+							veryStartState.OnProductRework.Name),
+						ExceptionLevel.Warning, "مسیریابی خودکار FPC");
+				}
+				return true;
 			}
 
 			//Remove duplicate steps (present in nextLayer) from nextLayer
