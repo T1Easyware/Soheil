@@ -9,7 +9,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class DefectionStoppageCollectionBase : DependencyObject
 	{
-		public ProcessReportCellVm Parent { get; set; }
+		public ProcessReportVm Parent { get; protected set; }
 		public virtual void UpdateParentSumOfCount(int newValue) { }
 		public virtual void Reset()
 		{

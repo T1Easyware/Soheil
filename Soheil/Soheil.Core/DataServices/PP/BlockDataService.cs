@@ -39,14 +39,7 @@ namespace Soheil.Core.DataServices
 		{
 			return _blockRepository.Single(x => x.Id == id);
 		}
-/*		public Block GetSingleFull(int id)
-		{
-			string qstr = 
-@"SELECT VALUE block FROM AdventureWorksEntities.Blocks
-WHERE block.Id = @id";
-			var query = context.CreateQuery<Block>(qstr, new System.Data.Objects.ObjectParameter("id", id));
-			return query.FirstOrDefault();
-		}*/
+
 		public Block GetSingleFull(int id)
 		{
 			return _blockRepository.Single(x => x.Id == id,
@@ -57,9 +50,9 @@ WHERE block.Id = @id";
 				"Job",
 				"Tasks.Processes.ProcessReports",
 				"Tasks.Processes.SelectedMachines",
-				"Tasks.TaskReports.ProcessReports.ProcessOperatorReports.ProcessOperator.Operator",
-				"Tasks.TaskReports.ProcessReports.DefectionReports",
-				"Tasks.TaskReports.ProcessReports.StoppageReports"
+				"Tasks.Processes.ProcessReports.ProcessOperatorReports.ProcessOperator.Operator",
+				"Tasks.Processes.ProcessReports.DefectionReports",
+				"Tasks.Processes.ProcessReports.StoppageReports"
 				);
 		}
 
@@ -173,12 +166,6 @@ WHERE block.Id = @id";
 			return _blockRepository.Find(x => x.Job != null && x.Job.Id == jobId).ToList();
 		}
 
-		internal void DeleteModelById(int blockId)
-		{
-			DeleteModel(_blockRepository.Single(x => x.Id == blockId));
-			context.Commit();
-		}
-
 		/// <summary>
 		/// Get infos of all taskReports associated with the given block
 		/// <para>The info includes: the sum of TaskProducedG1's, % of reported targetpoints</para>
@@ -217,265 +204,29 @@ WHERE block.Id = @id";
 				time = time.AddSeconds(task.DurationSeconds);
 				task.EndDateTime = time;
 
-				var invalidProcessGroup = task.Processes.GroupBy(p => p.StateStationActivity.Activity.Id).FirstOrDefault(ag => ag.Count() > 1);
-				if (invalidProcessGroup != null)
-					throw new Soheil.Common.SoheilException.RoutedException(
-						"یک فعالیت نمی تواند بیش از یک بار استفاده شود",
-						Common.SoheilException.ExceptionLevel.Error,
-						invalidProcessGroup.First());
+				foreach (var process in task.Processes.ToArray())
+				{
+					if (process.TargetCount == 0 || process.StateStationActivity == null)
+					{
+						task.Processes.Remove(process);
+						new Repository<Process>(context).Delete(process);
+					}
+					else if (!process.StateStationActivity.IsMany)
+					{
+						if (task.Processes.Any(p =>
+							p != process &&
+							p.StateStationActivity.Id == process.StateStationActivity.Id &&
+							((p.EndDateTime > process.StartDateTime && p.EndDateTime <= process.EndDateTime)||
+							(p.StartDateTime >= process.StartDateTime && p.StartDateTime < process.EndDateTime))))
+							throw new Soheil.Common.SoheilException.RoutedException(
+								string.Format("فعالیت {0} نمی تواند بیش از یک بار استفاده شود", process.StateStationActivity.Activity.Name),
+								Common.SoheilException.ExceptionLevel.Error,
+								process);
+					}
+				}
 			}
 			context.Commit();
 		}
-
-/*		internal void AttachModelFromVm(PPEditorTask vm)
-		{
-			Task oldModel = null;
-			var model = _taskRepository.FirstOrDefault(x => x.Id == vm.TaskId);
-			if (model == null)
-			{
-				model = new Model.Task();
-				model.Block.StateStation = new Repository<StateStation>(context).FirstOrDefault(
-					x => x.State.Id == vm.Block.StateId && x.Station.Id == vm.Block.StationId);
-			}
-			else
-			{
-				//oldModel stores only those properties which can help PPEditor find and remove the corresponding old VM
-				oldModel = new Task
-				{
-					Id = model.Id,
-					StartDateTime = model.StartDateTime,
-					DurationSeconds = model.DurationSeconds,
-					EndDateTime = model.StartDateTime.AddSeconds(model.DurationSeconds),
-				};
-			}
-
-			//find and update start
-			var startDT = (vm.IsAutoStart) ?
-				DateTime.Now :
-				vm.StartDate.Date.AddTicks(vm.StartTime.Ticks);
-			var smartManager = new PP.Smart.SmartManager(this, new NPTDataService(context));
-
-			if (model.Block.StateStation.State.OnProductRework == null)
-				throw new Exception("نیاز به بازنگری تنظیمات این مرحله از FPC وجود دارد\nدوباره کاری نامشخص است");
-
-			var seq = smartManager.FindNextFreeSpace(
-				vm.StationId, model.StateStation.State.OnProductRework.Id, startDT, model.DurationSeconds);
-			var taskseq = seq.FirstOrDefault(x => x.Type == PP.Smart.SmartRange.RangeType.NewTask);
-			model.StartDateTime = taskseq.StartDT;
-
-			//update duration, end & taskTP
-			model.DurationSeconds = (int)Math.Ceiling(vm.ActivityList.Max(x => x.CycleTime * x.TargetPoint));
-			model.EndDateTime = model.StartDateTime.AddSeconds(model.DurationSeconds);
-			model.TaskTargetPoint = vm.TaskTargetPoint;
-
-			//inspect processes
-			foreach (var processVm in vm.ActivityList)
-			{
-				Process processModel = null;
-				if (processVm.ProcessId > 0)
-					processModel = model.Processes.FirstOrDefault(x => x.Id == processVm.ProcessId);
-				if (processModel == null)
-				{
-					#region ======[ New Task ]======
-					processModel = new Process();
-					processModel.Task = model;
-					processModel.TargetCount = processVm.TargetPoint;
-					processModel.StateStationActivity = model.StateStation.StateStationActivities.FirstOrDefault(
-						x => x.Activity.Id == processVm.ActivityId);
-					//	processModel.Code = string.Format("{0}/{1}", processModel.StateStationActivity.Activity.Code, model.Id);
-					#region Add Machines
-					foreach (var machineVm in processVm.MachineList)
-					{
-						var selectedMachineModel = new SelectedMachine
-						{
-							Process = processModel,
-							StateStationActivityMachine = processModel.StateStationActivity.StateStationActivityMachines.FirstOrDefault(
-							x => x.Machine.Id == machineVm.MachineId),
-						};
-						processModel.SelectedMachines.Add(selectedMachineModel);
-					}
-					#endregion
-					#region Add operator
-					foreach (var operatorVm in processVm.OperatorList.Where(x => x.IsSelected))
-					{
-						var processOperatorModel = new ProcessOperator
-						{
-							Process = processModel,
-							Code = operatorVm.Code,
-							Role = operatorVm.Role,
-							Operator = new Repository<Operator>(context).FirstOrDefault(x => x.Id == operatorVm.OperatorId)
-						};
-					}
-					#endregion
-					model.Processes.Add(processModel);
-					#endregion
-				}
-				else
-				{
-					#region ======[ Edit Task ]======
-					processModel.TargetCount = processVm.TargetPoint;
-					//inspect Machines
-					foreach (var ssamModel in processModel.StateStationActivity.StateStationActivityMachines)
-					{
-						var machineVm = processVm.MachineList
-							.FirstOrDefault(x => x.MachineId == ssamModel.Machine.Id);
-						SelectedMachine selectedMachineModel = null;
-						if (machineVm.SelectedMachineId > 0)
-							selectedMachineModel = processModel.SelectedMachines
-								.FirstOrDefault(x => x.StateStationActivityMachine.Machine.Id == machineVm.MachineId);
-						if (machineVm != null)
-						{
-							//ssam should be in selectedMachines (if it is not, add it)
-							if (selectedMachineModel == null)
-								processModel.SelectedMachines.Add(new SelectedMachine
-								{
-									Process = processModel,
-									StateStationActivityMachine = ssamModel,
-								});
-						}
-						else
-						{
-							//ssam should NOT be in selectedMachines (if it is, remove it)
-							if (selectedMachineModel != null)
-							{
-								processModel.SelectedMachines.Remove(selectedMachineModel);
-								new Repository<SelectedMachine>(context).Delete(selectedMachineModel);
-							}
-						}
-					}
-
-					//inspect processOperators
-					foreach (var operatorVm in processVm.OperatorList)
-					{
-						var processOperatorModel = processModel.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operatorVm.OperatorId);
-						if (operatorVm.IsSelected)
-						{
-							//operator should be in processOperators (if it is not, add it)
-							if (processOperatorModel == null)
-								processModel.ProcessOperators.Add(new ProcessOperator
-								{
-									Operator = new Repository<Operator>(context).FirstOrDefault(x => x.Id == operatorVm.OperatorId),
-									Process = processModel,
-									Role = operatorVm.Role,
-								});
-							else
-								//just update role
-								processOperatorModel.Role = operatorVm.Role;
-						}
-						else
-						{
-							//operator should NOT be in processOperators (if it is, remove it)
-							if (processOperatorModel != null)
-							{
-								processModel.ProcessOperators.Remove(processOperatorModel);
-								new Repository<ProcessOperator>(context).Delete(processOperatorModel);
-							}
-						}
-					}
-					#endregion
-				}
-			}
-
-			if (!_taskRepository.Exists(x => x.Id == model.Id))
-				_taskRepository.Add(model);
-
-			//update other items of the seq
-			var setupDs = new SetupDataService();
-			foreach (var item in seq.Where(x => x.Type == PP.Smart.SmartRange.RangeType.DeleteSetup))
-			{
-				setupDs.DeleteModelById(item.SetupId, context);
-			}
-			foreach (var item in seq.Where(x => x.Type == PP.Smart.SmartRange.RangeType.NewSetup))
-			{
-				setupDs.AddModelBySmart(item, context);
-			}
-
-			//save and ...
-			context.Commit();
-
-			UpdateVmIdRecursive(vm, model);
-
-			if (oldModel == null)
-			{
-				if (TaskAdded != null)
-					TaskAdded(this, new ModelAddedEventArgs<Task>(model));
-			}
-			else
-			{
-				if (TaskUpdated != null)
-					TaskUpdated(this, new ModelUpdatedEventArgs<Task>(model, oldModel));
-			}
-		}
-
-		/// <summary>
-		/// Returns a value indicating whether or not this task still exists
-		/// </summary>
-		/// <param name="vm"></param>
-		/// <returns></returns>
-		internal bool UpdateViewModel(ViewModels.PP.TaskVm vm)
-		{
-			var model = _taskRepository.FirstOrDefault(x => x.Id == vm.Id);
-			if (model == null) return false;
-			vm.Job = new ViewModels.PP.JobVm(model.Job);
-			vm.ProductCode = model.StateStation.State.FPC.Product.Code;
-			vm.ProductName = model.StateStation.State.FPC.Product.Name;
-			vm.ProductColor = model.StateStation.State.FPC.Product.Color;
-			vm.IsRework = model.IsRework;
-			vm.StateCode = model.StateStation.State.Code;
-			vm.StartDateTime = model.StartDateTime;
-			vm.DurationSeconds = model.DurationSeconds;
-
-			//check canAddSetupBefore status
-			var prev = findPreviousPPItem(
-				_taskRepository,
-				_nptRepository,
-				model.StateStation.Station.Id,
-				model.StartDateTime);
-
-			if (prev.Value1 == null)
-				vm.CanAddSetupBefore = true;//if no tasks before then can add setup
-			else
-			{
-				if (prev.Value2 == null)
-				{
-					//if prev task is same => can't add setup
-					//if prev task differs => can add setup
-					vm.CanAddSetupBefore =
-						prev.Value1.StateStation.State.OnProductRework.Id
-						!= model.StateStation.State.OnProductRework.Id;
-				}
-				else
-				{
-					//if prev setup's 'to' is same => can't add setup
-					//if prev setup is going to a different PR => can add setup
-					vm.CanAddSetupBefore =
-						prev.Value2.Changeover.ToProductRework.Id
-						!= model.StateStation.State.OnProductRework.Id;
-				}
-			}
-			return true;
-		}
-
-		private void UpdateVmIdRecursive(ViewModels.PP.Editor.PPEditorTask vm, Model.Task model)
-		{
-			vm.TaskId = model.Id;
-			foreach (var processModel in model.Processes)
-			{
-				var act = vm.ActivityList.FirstOrDefault(x => x.ActivityId == processModel.StateStationActivity.Activity.Id);
-				act.StateStationActivityId = processModel.StateStationActivity.Id;
-				act.ProcessId = processModel.Id;
-				foreach (var processOperatorModel in processModel.ProcessOperators)
-				{
-					var oper = act.OperatorList.FirstOrDefault(x => x.OperatorId == processOperatorModel.Operator.Id);
-					oper.ProcessOperatorId = processOperatorModel.Id;
-				}
-				foreach (var selectedMachineModel in processModel.SelectedMachines)
-				{
-					var mac = act.MachineList.FirstOrDefault(x => x.MachineId == selectedMachineModel.StateStationActivityMachine.Machine.Id);
-					mac.SelectedMachineId = selectedMachineModel.Id;
-				}
-			}
-		}*/
 
 		#region NPT
 		/// <summary>

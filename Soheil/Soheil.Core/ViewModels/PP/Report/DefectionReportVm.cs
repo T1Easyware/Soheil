@@ -9,23 +9,20 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class DefectionReportVm : DependencyObject
 	{
+		public Model.DefectionReport Model { get; protected set; }
+		readonly DefectionReportCollection Parent;
+
 		public DefectionReportVm(DefectionReportCollection parent, Model.DefectionReport model)
 		{
 			Index = parent.Parent.DefectionReports.List.Count + 1;
 			Parent = parent;
 			ProductDefection = FilterBoxVm.CreateForProductDefections(
-				model == null ? -1 : (model.ProductDefection == null ? -1 : model.ProductDefection.Id), 
-				parent.Parent.ParentColumn.Task.Block.ProductId);
-			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(
-				model == null ? null : model.OperatorDefectionReports.Select(x=>x.Operator.Id));
-			if (model != null)
-			{
-				AffectsTaskReport = model.AffectsTaskReport;
-				Id = model.Id;
-				LostSeconds = model.LostTime;
-				LostCount = model.LostCount;
-			}
-			else Id = -1;
+				model.ProductDefection == null ? -1 : model.ProductDefection.Id, 
+				model.ProcessReport.Process.StateStationActivity.StateStation.State.FPC.Product.Id);
+			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorDefectionReports.Select(x=>x.Operator.Id));
+			AffectsTaskReport = model.AffectsTaskReport;
+			LostSeconds = model.LostTime;
+			LostCount = model.LostCount;
 			DeleteCommand = new Commands.Command(o => 
 			{
 				Parent.SumOfLostCount -= LostCount;
@@ -40,11 +37,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 			});
 		}
 
-		/// <summary>
-		/// DefectionReport Id
-		/// </summary>
-		public int Id { get; set; }
-		public DefectionReportCollection Parent { get; set; }
 
 		//Index Dependency Property
 		public int Index
@@ -97,7 +89,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			}));
 		private void updateEquivalents(int secs, int counts)
 		{
-			float ct = Parent.Parent.ParentRow.StateStationActivity.CycleTime;
+			float ct = this.Model.ProcessReport.Process.StateStationActivity.CycleTime;
 			TimeEquivalent = (int)(secs + counts * ct);
 			QuantityEquivalent = (int)(counts + secs / ct);
 		}

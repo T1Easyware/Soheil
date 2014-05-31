@@ -199,8 +199,11 @@ namespace Soheil.Views
 		}
 		private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			PPTableVm.GridWidth = ((FrameworkElement)sender).ActualWidth - 20;
-			PPTableVm.UpdateWidths();
+			if (e.WidthChanged)
+			{
+				PPTableVm.GridWidth = ((FrameworkElement)sender).ActualWidth - 20;
+				PPTableVm.UpdateWidths();
+			}
 		} 
 		#endregion
 

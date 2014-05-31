@@ -115,7 +115,6 @@
     <Compile Include="TemplateSelectors\NavigationItemSelector.cs" />
     <Compile Include="TemplateSelectors\SplitViewListSelector.cs" />
     <Compile Include="TemplateSelectors\SplitViewSubContentSelector.cs" />
-    <Compile Include="TemplateSelectors\TaskReportSimpleViewSelector.cs" />
     <Compile Include="Views\AboutSoheil.xaml.cs">
       <DependentUpon>AboutSoheil.xaml</DependentUpon>
     </Compile>
@@ -171,11 +170,14 @@
     <Compile Include="Views\PP\ProcessEditor.xaml.cs">
       <DependentUpon>ProcessEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PP\ProcessReport.xaml.cs">
+      <DependentUpon>ProcessReport.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\ProcessReportBuilder.xaml.cs">
       <DependentUpon>ProcessReportBuilder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PP\ProcessReportCell.xaml.cs">
-      <DependentUpon>ProcessReportCell.xaml</DependentUpon>
+    <Compile Include="Views\PP\Process.xaml.cs">
+      <DependentUpon>Process.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PP\Setup.xaml.cs">
       <DependentUpon>Setup.xaml</DependentUpon>
@@ -183,11 +185,8 @@
     <Compile Include="Views\PP\PlanEditor.xaml.cs">
       <DependentUpon>PlanEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PP\TaskEditor.xaml.cs">
-      <DependentUpon>TaskEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PP\TaskReportBuilder.xaml.cs">
-      <DependentUpon>TaskReportBuilder.xaml</DependentUpon>
+    <Compile Include="Views\PP\TaskReport.xaml.cs">
+      <DependentUpon>TaskReport.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SetupTime\Converters.cs" />
     <Compile Include="Views\SetupTime\GridHelper.cs" />
@@ -225,10 +224,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Fpc\ExpanderTheme.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Fpc\FpcResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -296,11 +291,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PP\ProcessReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PP\ProcessReportBuilder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PP\ProcessReportCell.xaml">
+    <Page Include="Views\PP\Process.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -312,11 +311,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PP\TaskEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PP\TaskReportBuilder.xaml">
+    <Page Include="Views\PP\TaskReport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -354,6 +349,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="App.config">
       <SubType>

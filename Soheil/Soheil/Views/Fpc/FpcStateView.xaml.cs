@@ -60,6 +60,7 @@ namespace Soheil.Views.Fpc
 			if (VM.DragTarget != null) VM.ReleaseDragAt(e.GetPosition(DrawingArea));
 		}
 
+		[System.Diagnostics.DebuggerStepThrough]
 		private void Area_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (DrawingArea.IsMouseCaptured)

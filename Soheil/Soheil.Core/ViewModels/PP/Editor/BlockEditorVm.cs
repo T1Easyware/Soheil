@@ -15,366 +15,248 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		public event Action<Model.Block> BlockAdded;
 
-		public DataServices.TaskDataService TaskDataService { get; private set; }
-		public DataServices.BlockDataService BlockDataService { get; private set; }
+		DataServices.BlockDataService _blockDataService;
 
 		Dal.SoheilEdmContext _uow;
 
-		#region Ctor and methods
+
+		#region Ctor & init
 		/// <summary>
 		/// Creates an instance of BlockEditor viewModel for an existing block model
 		/// <para>Each instance has an exclusive uow</para>
 		/// </summary>
-		/// <param name="blockModel">block containing some (or no) tasks to edit</param>
+		/// <param name="blockModel">block containing some (or no) tasks to edit (must be obtained from the same context)</param>
 		public BlockEditorVm(Model.Block blockModel)
 		{
-			initMembers();
-			initializeCommands();
-			
+			_uow = new Dal.SoheilEdmContext();
+			_blockDataService = new DataServices.BlockDataService(_uow);
+			Message = new Common.SoheilException.EmbeddedException();
+
 			//change context graph
-			Model = BlockDataService.GetSingle(blockModel.Id);
+			Model = _blockDataService.GetSingle(blockModel.Id);
 			State = new StateVm(Model.StateStation.State);
 			StateStation = State.StateStationList.First(x => x.StateStationId == Model.StateStation.Id);
             SelectedStateStation = StateStation;
 			StartDate = Model.StartDateTime.Date;
 			StartTime = Model.StartDateTime.TimeOfDay;
 
-			//Tasks
-			foreach (var task in Model.Tasks)
-				TaskList.Add(new TaskEditorVm(task, _uow));
-			AppendHolder();
+			initOperatorManager();
+			initTask();
+			initializeCommands();
 		}
 		/// <summary>
 		/// Creates an instance of BlockEditor viewModel for an existing fpcState model
 		/// </summary>
-		/// <param name="stateModel">state model to create a block</param>
+		/// <param name="stateModel">state model to create a block (can be obtained from a different context)</param>
 		public BlockEditorVm(Model.State stateModel)
 		{
-			initMembers();
-			initializeCommands();
+			_uow = new Dal.SoheilEdmContext();
+			_blockDataService = new DataServices.BlockDataService(_uow);
+			Message = new Common.SoheilException.EmbeddedException();
 
 			var stateEntity = new Soheil.Core.DataServices.StateDataService(_uow).GetSingle(stateModel.Id);
 			State = new StateVm(stateEntity);
 			SelectedStateStation = State.StateStationList.FirstOrDefault();
-			Model = new Model.Block
-			{
-				StateStation = SelectedStateStation.Model,
-				StartDateTime = DateTime.Now,
-			};
-			StartDate = DateTime.Now.Date;
-			StartTime = DateTime.Now.TimeOfDay;
 
-			//Tasks
-			AppendHolder();
+			initOperatorManager();
+			initializeCommands();
 		}
 
-		protected void AppendHolder()
+		void initOperatorManager()
 		{
-			var holder = new TaskEditorHolderVm();
-			holder.TaskCreated += () =>
-			{
-				try
-				{
-					InsertTask();
-				}
-				catch (Soheil.Common.SoheilException.RoutedException ex)
-				{
-					Message.AddEmbeddedException(ex.Message);
-				}
-			};
-			TaskList.Add(holder);
-
+			OperatorManager = new OperatorManagerVm(_uow);
+			//update operators quicklist (readonly list inside a process rectangle)
+			//also update SelectedOperatorsCount of a process
+			OperatorManager.SelectionChanged += OperatorManager_SelectionChanged;
 		}
 
-		/// <summary>
-		/// Creates DataServices and sets event handlers for tasks
-		/// </summary>
-		void initMembers()
+		void initTask()
 		{
-			//DS
-			_uow = new Dal.SoheilEdmContext();
-			TaskDataService = new DataServices.TaskDataService(_uow);
-			BlockDataService = new DataServices.BlockDataService(_uow);
-			//TaskList
-			TaskList.CollectionChanged += (s, e) =>
-			{
-				if (e.NewItems != null) foreach (var item in e.NewItems.OfType<TaskEditorVm>())
-				{
-					item.TaskDurationChanged += (d1, d2) => Duration += (d2 - d1);
-					item.TaskTargetPointChanged += (t1, t2) => BlockTargetPoint = TaskList.OfType<TaskEditorVm>().Sum(x => x.TaskTargetPoint);
-					item.DeleteTaskConfirmed += () =>
-					{
-						try
-						{
-							TaskDataService.DeleteModel(item.Model);
-							TaskList.Remove(this);
-						}
-						catch (Exception ex)
-						{
-							Message.AddEmbeddedException(ex.Message);
-						}
-					};
-					Duration += TimeSpan.FromSeconds(item.DurationSeconds);
-					BlockTargetPoint += item.TaskTargetPoint;
-				}
-				if (e.OldItems != null) foreach (var item in e.OldItems.OfType<TaskEditorVm>())
-				{
-					item.ForceCalculateDuration();
-					Duration -= TimeSpan.FromSeconds(item.DurationSeconds);
-					BlockTargetPoint -= item.TaskTargetPoint;
-				}
-			};
-			//Errors
-			Message = new Common.SoheilException.EmbeddedException();	
-		}
+			OperatorManager.Block = Model;
 
-		/// <summary>
-		/// Resets all tasks within this block (tries not to delete anything)
-		/// <para>Reseting a task causes its processes to be corrected</para>
-		/// <para>If no tasks in this block create one</para>
-		/// </summary>
-		internal void Reset()
-		{
-			foreach (var task in TaskList.OfType<TaskEditorVm>())
+			if (!Model.Tasks.Any())
 			{
-				task.RebuildProcesses();
+				Model.Tasks.Add(new Model.Task
+				{
+					Block = Model,
+					StartDateTime = Model.StartDateTime,
+					EndDateTime = Model.EndDateTime,
+					DurationSeconds = Model.DurationSeconds,
+					TaskTargetPoint = Model.BlockTargetPoint,
+					Code = Model.Code,
+					ModifiedBy = Model.ModifiedBy,
+				});
 			}
-			if (!TaskList.OfType<TaskEditorVm>().Any())
-				InsertTask();
+
+			//add event handlers to ActivityList
+			foreach (var group in Model.StateStation.StateStationActivities.GroupBy(x => x.Activity))
+			{
+				var activityVm = new ActivityEditorVm(Model.Tasks.First(), _uow, group);
+
+				//refresh operator manager upon selecting a process
+				activityVm.Selected += Activity_Selected;
+
+				//update times of Block when times of a process changed
+				activityVm.TimesChanged += Activity_TimesChanged;
+
+				//update process Tp and duration upon changing choice
+				activityVm.SelectedChoiceChanged += activityVm_SelectedChoiceChanged;
+
+				ActivityList.Add(activityVm);
+			}
+
+			OperatorManager.refresh();
 		}
 
-		/// <summary>
-		/// Creates a tasks and adds it to the end of tasks
-		/// </summary>
-		internal void InsertTask()
+		void activityVm_SelectedChoiceChanged(ProcessEditorVm processVm, ChoiceEditorVm newChoice)
 		{
-			//make sure stateStation is specified
-			if (SelectedStateStation == null)
-				throw new Soheil.Common.SoheilException.SoheilExceptionBase(
-					"ایستگاه انتخاب نشده است",
-					Common.SoheilException.ExceptionLevel.Warning);
+			if (newChoice == null) return;
 
-			var last = TaskList.OfType<TaskEditorVm>().LastOrDefault();
-			var startDt = (last == null) ? StartDate.Add(StartTime) : last.EndDateTime;
-
-			//create a new task model after last one
-			var taskModel = new Model.Task
+			if (IsTargetPointFixed)
 			{
-				Block = Model,
-				Code = string.Format("{0}{1:D2}", Model.Code, TaskList.Count),
-				DurationSeconds = 0,
-				StartDateTime = startDt,
-				EndDateTime = startDt,
-				TaskTargetPoint = 0,
-			};
-			//add it to block
-			Model.Tasks.Add(taskModel);
-
-			//create and add the VM to TaskList
-			TaskList.Insert(TaskList.Any() ? TaskList.Count - 1 : 0, new TaskEditorVm(taskModel, _uow));
-			last = TaskList.OfType<TaskEditorVm>().LastOrDefault();
-
-			//select the new task
-			//the selection works fine as long as a selector is used in view (TabControl has a selector)
-			if (last != null) 
-				last.IsSelected = true;
+				processVm.TargetPoint = 0;
+				processVm.TargetPoint = FixedTargetPoint;
+			}
+			else if (IsDurationFixed)
+			{
+				processVm.DurationSeconds = 0;
+				processVm.DurationSeconds = FixedDurationSeconds;
+			}
+			else if (IsDeferred)
+			{
+				//set target point
+				if (processVm.DurationSeconds > 0)
+					processVm.TargetPoint = (int)(processVm.DurationSeconds / newChoice.CycleTime);
+				//or set duration seconds
+				else
+					processVm.DurationSeconds = (int)(processVm.TargetPoint * newChoice.CycleTime);
+			}
 		}
+		#endregion
 
-
-
-		/// <summary>
-		/// Corrects block processes (use this before save)
-		/// </summary>
-		void correctBlock()
+		#region Event Handlers
+		//Selection is for user selection only (not automatic selection)
+		void OperatorManager_SelectionChanged(OperatorEditorVm vm, bool isSelected, bool updateCount)
 		{
-			//processes don't follow the JIT model attachment strategy
-			//so we need to manually attach or remove their models prior to Save.
-			var processRepository = new Dal.Repository<Model.Process>(_uow);
-			var operatorRepository = new Dal.Repository<Model.Operator>(_uow);
-			var processOperatorRepository = new Dal.Repository<Model.ProcessOperator>(_uow);
-			var selectedMachineRepository = new Soheil.Dal.Repository<Model.SelectedMachine>(_uow);
-
-			foreach (var taskVm in TaskList.OfType<TaskEditorVm>())
+			//update quick list
+			var activityVm = ActivityList.FirstOrDefault(x => x.Id == OperatorManager.Activity.Id);
+			if (activityVm != null)
 			{
-				/* SSA of each process model can be converted to another SSA (with same activity) when ManHour changes
-				 * 
-				 *				ProcessModel	validProcessVm				change
-				 *				ssa#			ssa# of selected choice
-				 * process1		1				1							= same
-				 * process2		2				22							↔ changed
-				 * process3		3											x deleted
-				 * process4						4							* new
-				 * process5													= same
-				 * 
-				*/
-
-				//Some (or all) of processes have (SelectedChoice!=null) and (TargetPoint>0)
-				//these are validProcessVms and will have a process in model
-				//other processes won't
-				var validProcessVms = taskVm.ProcessList.Where(procVm => procVm.SelectedChoice != null && procVm.TargetPoint > 0);
-				//existingProcesses is a list of all process models in database
-				var existingProcesses = taskVm.Model.Processes.ToArray();
-
-				//update existing process models that are in validProcessVms
-				//otherwise delete them
-				foreach (var processModel in existingProcesses)
+				var processVm = activityVm.ProcessList.FirstOrDefault(x => x.Model == OperatorManager.Process);
+				if (processVm != null)
 				{
-					//find the validProcessVm for this process model
-					ProcessEditorVm validProcessVm = null;
-					//if current process does not have SSA it means it's not saved yet
-					if (processModel.StateStationActivity != null)
-						validProcessVms.FirstOrDefault(x =>
-							x.SelectedChoice.ActivityId == processModel.StateStationActivity.Activity.Id);
-
-					if (validProcessVm == null)
+					if (isSelected)
 					{
-						#region [x]
-						//if no validProcessVm found delete the process model
-						TaskDataService.DeleteModel(processModel); 
-						#endregion
+						if (!processVm.SelectedOperators.Any(x => x.OperatorId == vm.OperatorId))
+							processVm.SelectedOperators.Add(vm);
 					}
 					else
 					{
-						//if a validProcessVm is found for this process model
-						//	update its things
-						processModel.TargetCount = validProcessVm.TargetPoint;
-						#region selected machines
-						//delete SelectedMachine models that aren't in Vm
-						foreach (var smModel in processModel.SelectedMachines.ToArray())
-						{
-							if (!validProcessVm.MachineList.Any(x =>
-								x.CanBeUsed && 
-								x.IsUsed && 
-								x.MachineId == smModel.StateStationActivityMachine.Machine.Id))
-							{
-								processModel.SelectedMachines.Remove(smModel);
-								selectedMachineRepository.Delete(smModel);
-							}
-						}
-						//add or update SelectedMachine models that are in Vm
-						foreach (var machineVm in validProcessVm.MachineList.Where(x => x.CanBeUsed && x.IsUsed))
-						{
-							//find the SSAM model that matches both machineVm and SSA
-							var ssamModel = processModel.StateStationActivity.StateStationActivityMachines.FirstOrDefault(x => x.Machine.Id == machineVm.MachineId);
-							//if SSAM is not available it must be a mistake, skip it
-							if (ssamModel == null) continue;
-
-							//find machineVm in processModel's SelectedMachines
-							var smModel = processModel.SelectedMachines.FirstOrDefault(po => po.StateStationActivityMachine.Machine.Id == machineVm.MachineId);
-							if (smModel != null)
-							{
-								//if machineVm is already in process model's SelectedMachines
-								//	update its SSAM (not necessary if SSA is the same[=], but just in case, we set it again)
-								smModel.StateStationActivityMachine = ssamModel;
-							}
-							else
-							{
-								//if machineVm is not in process model's SelectedMachines
-								//	create a new SelectedMachine model
-								smModel = new Model.SelectedMachine
-								{
-									Process = processModel,
-									StateStationActivityMachine = ssamModel,
-								};
-								//add SelectedMachine
-								selectedMachineRepository.Add(smModel);
-								processModel.SelectedMachines.Add(smModel);
-							}
-						}
-						#endregion
-
-						//[↔]
-						if (validProcessVm.SelectedChoice.StateStationActivityId != processModel.StateStationActivity.Id)
-						{
-							//if validProcessVm has a different SSA from its original model's SSA
-							//	update its SSA
-							processModel.StateStationActivity = TaskDataService.GetStateStationActivity(validProcessVm.SelectedChoice.StateStationActivityId);
-						}
-						//else [=]
+						var operVm = processVm.SelectedOperators.FirstOrDefault(x => x.OperatorId == vm.OperatorId);
+						if (operVm != null)
+							processVm.SelectedOperators.Remove(operVm);
 					}
 				}
-
-				#region [*]
-				//add validProcessVms to model that aren't in process models
-				foreach (var validProcessVm in validProcessVms)
-				{
-					//if validProcessVm is not found among process models create a new model
-					if (!taskVm.Model.Processes.Any(x => x.StateStationActivity.Activity.Id == validProcessVm.SelectedChoice.ActivityId))
-					{
-						var ssaModel = TaskDataService.GetStateStationActivity(validProcessVm.SelectedChoice.StateStationActivityId);
-						//create a new Process model
-						var processModel = new Model.Process
-						{
-							Task = taskVm.Model,
-							StateStationActivity = ssaModel,
-							TargetCount = validProcessVm.TargetPoint,
-							Code = taskVm.Model.Code + "." + ssaModel.Activity.Code,
-						};
-						#region add selected machines
-						foreach (var machineVm in validProcessVm.MachineList.Where(x => x.CanBeUsed && x.IsUsed))
-						{
-							//find the SSAM model
-							var ssamModel = processModel.StateStationActivity.StateStationActivityMachines.FirstOrDefault(x => x.Machine.Id == machineVm.MachineId);
-
-							if (ssamModel != null)
-							{
-								//create a new SelectedMachine model
-								var smModel = new Model.SelectedMachine
-								{
-									Process = processModel,
-									StateStationActivityMachine = ssamModel,
-								};
-								//add SelectedMachine
-								selectedMachineRepository.Add(smModel);
-								processModel.SelectedMachines.Add(smModel);
-							}
-						}
-						#endregion
-
-						//add Process
-						processRepository.Add(processModel);
-						taskVm.Model.Processes.Add(processModel);
-					}
-				} 
-				#endregion
-
-				//correct task times
-				taskVm.ForceCalculateDuration();
 			}
-			//correct block times
-			Model.StartDateTime = StartDate.Add(StartTime);
-			Model.DurationSeconds = TaskList.OfType<TaskEditorVm>().Sum(t => t.DurationSeconds);
-			Model.EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);
 		}
 
+		void Activity_Selected(ProcessEditorVm processVm)
+		{
+			foreach (var activity in ActivityList)
+			{
+				foreach (var process in activity.ProcessList)
+				{
+					if (process != processVm) process.IsSelected = false;
+				}
+			}
+			OperatorManager.Refresh(processVm);
+		}
+		void Activity_TimesChanged(ProcessEditorVm process, DateTime start, DateTime end)
+		{
+			if (start < Model.StartDateTime)
+			{
+				var diff = process.Model.StartDateTime - start;
+
+				process.HoldEvents = true;
+				process.StartTime = Model.StartDateTime.TimeOfDay;
+				process.HoldEvents = false;
+
+				process.EndTime = process.EndTime.Add(diff);
+				//changing EndTime fires this event handler again
+			}
+			else//if start is wrong don't do the following
+			{
+				var max = ActivityList.Where(a => a.ProcessList.Any())
+					.Max(a => a.ProcessList.Max(p => p.Date.Add(p.EndTime)));
+				EndDate = max.Date;
+				EndTime = max.TimeOfDay;
+				Model.EndDateTime = max;
+				Duration = Model.EndDateTime - Model.StartDateTime;
+			}
+			OperatorManager.refresh();
+		}
+		void StartChanged(DateTime start)
+		{
+			Model.StartDateTime = start;
+
+			var end = start.AddSeconds(Model.DurationSeconds);
+			EndDate = end.Date;
+			EndTime = end.TimeOfDay;
+
+			var task = Model.Tasks.FirstOrDefault();//??? for 1 task only
+			if (task != null)
+			{
+				task.StartDateTime = start;
+			}
+		}
+		#endregion
+
+		#region Methods (Save)
 		/// <summary>
 		/// Saves this block and also finds the best empty space if needed
 		/// </summary>
 		internal void Save()
 		{
-			correctBlock();
+			var task = Model.Tasks.FirstOrDefault();
+			if (task == null) throw new Exception("No task is created");
 
+			#region correct machines
+
+			#endregion
+
+			#region Evaluate times and space
 			var nptDs = new DataServices.NPTDataService(_uow);
+
+			//recalc Start/End/Duration
+			if (task.Processes.Any(x => x.StartDateTime < Model.StartDateTime))
+				throw new Exception("Start time of a process is wrong.");
+			Model.EndDateTime = task.Processes.Max(x => x.EndDateTime);
+			Model.DurationSeconds = (int)(Model.EndDateTime - Model.StartDateTime).TotalSeconds;
+
+			task.StartDateTime = Model.StartDateTime;
+			task.EndDateTime = Model.EndDateTime;
+			task.DurationSeconds = Model.DurationSeconds;
 
 			//check if it fits
 			bool wasAutoStart = IsAutoStart;
+			bool fits = true;
 			if (!IsAutoStart)
 			{
-				var inRangeBlocks = BlockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
+				var inRangeBlocks = _blockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
 				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
 
 				//if not fit, make it auto start
 				if (inRangeBlocks.Any() || inRangeNPTs.Any())
-					IsAutoStart = true;
+					fits = false;
 			}
 
 			//check if should use auto start
-			if (IsAutoStart)
+			if (IsAutoStart || !fits)
 			{
 				// Updates the start datetime of this block to fit the first empty space
-				Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(BlockDataService, nptDs);
+				Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(_blockDataService, nptDs);
 				var seq = sman.FindNextFreeSpace(
-					StationId, 
+					StationId,
 					State.ProductRework.Id,
 					!wasAutoStart ? StartDate.Add(StartTime) : DateTime.Now, //put it after specifed time if it wasn't auto start
 					(int)Duration.TotalSeconds);
@@ -384,40 +266,26 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 				if (!sman.SaveSetups(seq))
 					Message.AddEmbeddedException("Some setups could not be added. check setup times table.");
-			}
+			} 
+			#endregion
 
-			BlockDataService.SaveBlock(Model);
+			_blockDataService.SaveBlock(Model);
 			if (BlockAdded != null) BlockAdded(Model);
 		}
 
-		/*public bool ValidateTimeRange(Model.Task taskModel)
-		{
-			var tasks = _model.Tasks.ToList();
-			int idx = tasks.IndexOf(taskModel);
-			if (idx == -1) 
-				throw new Soheil.Common.SoheilException.SoheilExceptionBase(
-					"Task cannot be found. Please reload the data.", 
-					Common.SoheilException.ExceptionLevel.Warning);
-			if(idx > 0)
-			{
-				return taskModel.StartDateTime == tasks[idx - 1].EndDateTime;
-			}
-			if(idx < tasks.Count- 1)
-			{
-				return taskModel.EndDateTime == tasks[idx + 1].StartDateTime;
-			}
-			return true;
-		}*/
 		#endregion
 
+		#region Properties
 		/// <summary>
-		/// Gets a bindable collection of Tasks (<see cref="PPEditorTaskHolder"/>) in this block including the <see cref="PPEditorTaskHolder"/>
+		/// Gets a collection of ActivityEditorVms that contains all processes of this block
 		/// </summary>
-		public ObservableCollection<DependencyObject> TaskList { get { return _taskList; } }
-		private ObservableCollection<DependencyObject> _taskList = new ObservableCollection<DependencyObject>();
+		public ObservableCollection<ActivityEditorVm> ActivityList { get { return _activityList; } }
+		private ObservableCollection<ActivityEditorVm> _activityList = new ObservableCollection<ActivityEditorVm>();
 
 
-		#region Fpc links
+		/// <summary>
+		/// Gets or sets the bindable State for this block
+		/// </summary>
 		public StateVm State
 		{
 			get { return (StateVm)GetValue(StateProperty); }
@@ -445,6 +313,48 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SelectedStateStationProperty =
 			DependencyProperty.Register("SelectedStateStation", typeof(StateStationVm), typeof(BlockEditorVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets the bindable auto-calculate TargetPoint of this block
+		/// <para>Changing this value causes change to TargetPoint of model</para>
+		/// </summary>
+		public int BlockTargetPoint
+		{
+			get { return (int)GetValue(BlockTargetPointProperty); }
+			set { SetValue(BlockTargetPointProperty, value); }
+		}
+		public static readonly DependencyProperty BlockTargetPointProperty =
+			DependencyProperty.Register("BlockTargetPoint", typeof(int), typeof(BlockEditorVm),
+			new UIPropertyMetadata(0, (d, e) =>
+			{
+				var vm = (BlockEditorVm)d;
+				vm.Model.BlockTargetPoint = (int)(e.NewValue);
+				if (vm.Model.Tasks.Any())
+					vm.Model.Tasks.First().TaskTargetPoint = (int)(e.NewValue);
+			}));
+
+		/// <summary>
+		/// Gets or sets the bindable viewModel for Operators system
+		/// </summary>
+		public OperatorManagerVm OperatorManager
+		{
+			get { return (OperatorManagerVm)GetValue(OperatorManagerProperty); }
+			set { SetValue(OperatorManagerProperty, value); }
+		}
+		public static readonly DependencyProperty OperatorManagerProperty =
+			DependencyProperty.Register("OperatorManager", typeof(OperatorManagerVm), typeof(BlockEditorVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets the bindable message box
+		/// </summary>
+		public Soheil.Common.SoheilException.EmbeddedException Message
+		{
+			get { return (Soheil.Common.SoheilException.EmbeddedException)GetValue(MessageProperty); }
+			set { SetValue(MessageProperty, value); }
+		}
+		public static readonly DependencyProperty MessageProperty =
+			DependencyProperty.Register("Message", typeof(Soheil.Common.SoheilException.EmbeddedException), typeof(BlockEditorVm), new UIPropertyMetadata(null));
+
 		#endregion
 
 		#region Date & Time
@@ -471,7 +381,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}));
 		/// <summary>
 		/// Gets or sets the bindable StartDate manually defined for this block
-		/// <para>Changing the value causes change to EndDate and EndTime of ViewModel</para>
+		/// <para>Changing the value causes change to StartDateTime of block model and task model</para>
 		/// </summary>
 		public DateTime StartDate
 		{
@@ -480,18 +390,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty StartDateProperty =
 			DependencyProperty.Register("StartDate", typeof(DateTime), typeof(BlockEditorVm),
-			new UIPropertyMetadata(DateTime.Now, (d, e) =>
+			new UIPropertyMetadata(DateTime.Now.Date, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
 				var val = (DateTime)e.NewValue;
-				DateTime start = val.Add(vm.StartTime);
-				DateTime end = start.AddSeconds(vm.TaskList.OfType<TaskEditorVm>().Sum(x => x.DurationSeconds));
-				vm.EndDate = end.Date;
-				vm.EndTime = end.TimeOfDay;
+				vm.StartChanged(val.Add(vm.StartTime));
 			}));
+
 		/// <summary>
 		/// Gets or sets the bindable StartTime manually defined for this block
-		/// <para>Changing the value causes change to EndDate and EndTime of ViewModel</para>
+		/// <para>Changing the value causes change to StartDateTime of block model and task model</para>
 		/// </summary>
 		public TimeSpan StartTime
 		{
@@ -500,15 +408,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(BlockEditorVm),
-			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
+			new UIPropertyMetadata(DateTime.Now.TimeOfDay, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
 				var val = (TimeSpan)e.NewValue;
-				DateTime start = vm.StartDate.Add(val);
-				DateTime end = start.AddSeconds(vm.TaskList.OfType<TaskEditorVm>().Sum(x => x.DurationSeconds));
-				vm.EndDate = end.Date;
-				vm.EndTime = end.TimeOfDay;
+				vm.StartChanged(vm.StartDate.Add(val));
 			}));
+
+
 
 		//AutoStartDateTime Dependency Property
 		public DateTime AutoStartDateTime
@@ -532,6 +439,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		/// <summary>
 		/// Gets or sets the bindable auto-calculated EndDate of this block
+		/// <para>Changing the value causes change to EndDateTime of block model and task model</para>
 		/// </summary>
 		public DateTime EndDate
 		{
@@ -539,9 +447,19 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(EndDateProperty, value); }
 		}
 		public static readonly DependencyProperty EndDateProperty =
-			DependencyProperty.Register("EndDate", typeof(DateTime), typeof(BlockEditorVm), new UIPropertyMetadata(DateTime.Now));
+			DependencyProperty.Register("EndDate", typeof(DateTime), typeof(BlockEditorVm),
+			new UIPropertyMetadata(DateTime.Now, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				var val = (DateTime)e.NewValue;
+				vm.Model.EndDateTime = val.Add(vm.EndTime);
+
+				var task = vm.Model.Tasks.FirstOrDefault();
+				if (task != null) task.EndDateTime = vm.Model.EndDateTime;
+			}));
 		/// <summary>
 		/// Gets or sets the bindable auto-calculated EndTime of this block
+		/// <para>Changing the value causes change to EndDateTime of block model and task model</para>
 		/// </summary>
 		public TimeSpan EndTime
 		{
@@ -549,10 +467,20 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(EndTimeProperty, value); }
 		}
 		public static readonly DependencyProperty EndTimeProperty =
-			DependencyProperty.Register("EndTime", typeof(TimeSpan), typeof(BlockEditorVm), new UIPropertyMetadata(TimeSpan.Zero));
+			DependencyProperty.Register("EndTime", typeof(TimeSpan), typeof(BlockEditorVm),
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				var val = (TimeSpan)e.NewValue;
+				vm.Model.EndDateTime = vm.EndDate.Add(val);
+
+				var task = vm.Model.Tasks.FirstOrDefault();
+				if (task != null) task.EndDateTime = vm.Model.EndDateTime;
+			}));
+
 		/// <summary>
 		/// Gets or sets the bindable auto-calculated Duration of this block
-		/// <para>Changing the value causes change to Duration of model and EndDate and EndTime of ViewModel</para>
+		/// <para>Changing the value causes change to Duration of block model and task model</para>
 		/// </summary>
 		public TimeSpan Duration
 		{
@@ -563,47 +491,107 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(BlockEditorVm),
 			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
-				var vm = (BlockEditorVm)d;
+				var vm = d as BlockEditorVm;
 				var val = (TimeSpan)e.NewValue;
 				vm.Model.DurationSeconds = (int)val.TotalSeconds;
-				DateTime end ;
-				if(vm.IsAutoStart)
-				{
-					end = vm.AutoStartDateTime.Add(val);
-				}
-				else
-				{
-					end = vm.StartDate.Add(vm.StartTime).Add(val);
-				}
-				vm.EndDate = end.Date;
-				vm.EndTime = end.TimeOfDay;
+
+				var task = vm.Model.Tasks.FirstOrDefault();
+				if (task != null) task.DurationSeconds = vm.Model.DurationSeconds;
 			}));
-		#endregion
-
-		#region other
-		/// <summary>
-		/// Gets or sets the bindable auto-calculate TargetPoint of this block
-		/// <para>Changing this value causes change to TargetPoint of model</para>
-		/// </summary>
-		public int BlockTargetPoint
+		
+		//IsTargetPointFixed Dependency Property
+		public bool IsTargetPointFixed
 		{
-			get { return (int)GetValue(BlockTargetPointProperty); }
-			set { SetValue(BlockTargetPointProperty, value); }
+			get { return (bool)GetValue(IsTargetPointFixedProperty); }
+			set { SetValue(IsTargetPointFixedProperty, value); }
 		}
-		public static readonly DependencyProperty BlockTargetPointProperty =
-			DependencyProperty.Register("BlockTargetPoint", typeof(int), typeof(BlockEditorVm),
-			new UIPropertyMetadata(0, (d, e) => ((BlockEditorVm)d).Model.BlockTargetPoint = (int)(e.NewValue)));
-
-		/// <summary>
-		/// Gets or sets the bindable message box
-		/// </summary>
-		public Soheil.Common.SoheilException.EmbeddedException Message
+		public static readonly DependencyProperty IsTargetPointFixedProperty =
+			DependencyProperty.Register("IsTargetPointFixed", typeof(bool), typeof(BlockEditorVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				if ((bool)e.NewValue)
+				{
+					vm.IsDurationFixed = false;
+					vm.IsDeferred = false;
+				}
+			}));
+		//IsDurationFixed Dependency Property
+		public bool IsDurationFixed
 		{
-			get { return (Soheil.Common.SoheilException.EmbeddedException)GetValue(MessageProperty); }
-			set { SetValue(MessageProperty, value); }
+			get { return (bool)GetValue(IsDurationFixedProperty); }
+			set { SetValue(IsDurationFixedProperty, value); }
 		}
-		public static readonly DependencyProperty MessageProperty =
-			DependencyProperty.Register("Message", typeof(Soheil.Common.SoheilException.EmbeddedException), typeof(BlockEditorVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty IsDurationFixedProperty =
+			DependencyProperty.Register("IsDurationFixed", typeof(bool), typeof(BlockEditorVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				if ((bool)e.NewValue)
+				{
+					vm.IsTargetPointFixed = false;
+					vm.IsDeferred = false;
+				}
+			}));
+		//IsDeferred Dependency Property
+		public bool IsDeferred
+		{
+			get { return (bool)GetValue(IsDeferredProperty); }
+			set { SetValue(IsDeferredProperty, value); }
+		}
+		public static readonly DependencyProperty IsDeferredProperty =
+			DependencyProperty.Register("IsDeferred", typeof(bool), typeof(BlockEditorVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				if ((bool)e.NewValue)
+				{
+					vm.IsTargetPointFixed = false;
+					vm.IsDurationFixed = false;
+				}
+			}));
+		//FixedTargetPoint Dependency Property
+		public int FixedTargetPoint
+		{
+			get { return (int)GetValue(FixedTargetPointProperty); }
+			set { SetValue(FixedTargetPointProperty, value); }
+		}
+		public static readonly DependencyProperty FixedTargetPointProperty =
+			DependencyProperty.Register("FixedTargetPoint", typeof(int), typeof(BlockEditorVm),
+			new UIPropertyMetadata(0, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				var val = (int)e.NewValue;
+				vm.IsTargetPointFixed = true;
+				foreach (var activity in vm.ActivityList)
+				{
+					foreach (var process in activity.ProcessList)
+					{
+						process.TargetPoint = val;
+					}
+				}
+			}));
+		//FixedDuration Dependency Property
+		public int FixedDurationSeconds
+		{
+			get { return (int)GetValue(FixedDurationSecondsProperty); }
+			set { SetValue(FixedDurationSecondsProperty, value); }
+		}
+		public static readonly DependencyProperty FixedDurationSecondsProperty =
+			DependencyProperty.Register("FixedDurationSeconds", typeof(int), typeof(BlockEditorVm),
+			new UIPropertyMetadata(0, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				var val = (int)e.NewValue;
+				vm.IsDurationFixed = true;
+				foreach (var activity in vm.ActivityList)
+				{
+					foreach (var process in activity.ProcessList)
+					{
+						process.DurationSeconds = val;
+					}
+				}
+			}));
 		#endregion
 
 
@@ -612,9 +600,22 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			ChangeStationCommand = new Commands.Command(o =>
 			{
+				if (Model != null)
+					try { _blockDataService.DeleteModelRecursive(Model); }
+					catch { }
+				ActivityList.Clear();
+
 				StateStation = SelectedStateStation;
-				Model.StateStation = SelectedStateStation.Model;
-				Reset();
+				Model = new Model.Block
+				{
+					Code = StateStation.Code,
+					StateStation = StateStation.Model,
+					StartDateTime = DateTime.Now,
+					EndDateTime = DateTime.Now,
+					DurationSeconds = 0,
+					ModifiedBy = LoginInfo.Id,
+				};
+				initTask();
 			});
 			DontChangeStationCommand = new Commands.Command(o =>
 			{

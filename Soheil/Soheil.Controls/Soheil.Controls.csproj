@@ -137,6 +137,7 @@
     <Compile Include="CustomControls\ColorPicker\ColorUtils.cs" />
     <Compile Include="CustomControls\ColorPicker\HsvControl.cs" />
     <Compile Include="CustomControls\ColorPicker\SpectrumSlider.cs" />
+    <Compile Include="CustomControls\DurationBox.cs" />
     <Compile Include="CustomControls\FrameworkElementAdorner.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="CustomControls\GridLengthAnimation.cs" />
@@ -526,22 +527,25 @@
     <Resource Include="Images\PP\quantity.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PP\pp_2Hours.png" />
-    <Resource Include="Images\PP\pp_3quarters.png" />
-    <Resource Include="Images\PP\pp_half.png" />
-    <Resource Include="Images\PP\pp_oneHour.png" />
-    <Resource Include="Images\PP\pp_quarter.png" />
-    <Resource Include="Images\PP\pp_untilEnd.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\PP\pp_independent.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\PP\operatorInProcess.png" />
     <Resource Include="Images\PP\operatorInTask.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PP\operatorInTimeRange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\pp_+1.png" />
+    <Resource Include="Images\PP\pp_-1.png" />
+    <Resource Include="Images\PP\pp_2Hours.png" />
+    <Resource Include="Images\PP\pp_30Minutes.png" />
+    <Resource Include="Images\PP\pp_3quarters.png" />
+    <Resource Include="Images\PP\pp_5minutes.png" />
+    <Resource Include="Images\PP\pp_half.png" />
+    <Resource Include="Images\PP\pp_independent.png" />
+    <Resource Include="Images\PP\pp_oneHour.png" />
+    <Resource Include="Images\PP\pp_quarter.png" />
+    <Resource Include="Images\PP\pp_startOfHour.png" />
+    <Resource Include="Images\PP\pp_untilEnd.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

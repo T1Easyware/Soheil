@@ -126,6 +126,7 @@ namespace Soheil.Core.ViewModels.Fpc
 						Container = stateStation,
 						ManHour = ssa.ManHour,
 						CycleTime = ssa.CycleTime,
+						IsMany = ssa.IsMany,
 						Containment = new ActivityVm(ssa.Activity, null),
 						//CreatedDate
 						//ModifiedBy

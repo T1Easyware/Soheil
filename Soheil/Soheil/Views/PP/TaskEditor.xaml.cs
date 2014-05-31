@@ -26,18 +26,5 @@ namespace Soheil.Views.PP
 		{
 			InitializeComponent();
 		}
-
-		#region operator click and today etc
-		private void SelectOperator(object sender, RoutedEventArgs e)
-		{
-			var vm = sender.GetDataContext<OperatorEditorVm>();
-			vm.IsSelected = true;
-		}
-		private void DeselectOperator(object sender, RoutedEventArgs e)
-		{
-			var vm = sender.GetDataContext<OperatorEditorVm>();
-			vm.IsSelected = false;
-		}
-		#endregion
 	}
 }

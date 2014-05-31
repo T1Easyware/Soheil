@@ -98,7 +98,7 @@ namespace Soheil.Core.ViewModels.PP
 				TaskList.Add(new TaskVm(task, this));
 			}*/
 		}
-		private void reloadTasks()
+		private void reloadTasks()///??? later on add processes too
 		{
 			TaskList.Clear();
 			if (Model != null)
@@ -106,7 +106,7 @@ namespace Soheil.Core.ViewModels.PP
 				//add Tasks
 				foreach (var task in Model.Tasks)
 				{
-					TaskList.Add(new TaskVm(task, this));
+					TaskList.Add(new TaskVm(task, UOW));
 				}
 			}
 		}
@@ -412,6 +412,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DeleteJobCommandProperty =
 			DependencyProperty.Register("DeleteJobCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
+
 		/// <summary>
 		/// Gets or sets a bindable command to delete a block with all its tasks and reports
 		/// </summary>

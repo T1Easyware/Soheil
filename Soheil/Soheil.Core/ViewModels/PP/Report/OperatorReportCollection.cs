@@ -10,12 +10,12 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class OperatorReportCollection : DependencyObject
 	{
-		public OperatorReportCollection(ProcessReportCellVm parent)
+		public OperatorReportCollection(ProcessReportVm parent)
 		{
 			Parent = parent;
 		}
 
-		public ProcessReportCellVm Parent { get; private set; }
+		public ProcessReportVm Parent { get; private set; }
 
 		//List Observable Collection
 		public ObservableCollection<OperatorReportVm> List { get { return _list; } }

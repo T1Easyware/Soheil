@@ -11,11 +11,11 @@ using Soheil.Core.Base;
 
 namespace Soheil.Core.DataServices
 {
-    public class OperatorDataService : DataServiceBase, IDataService<Operator>
-    {
+	public class OperatorDataService : DataServiceBase, IDataService<Operator>
+	{
 		Repository<Operator> _operatorRepository;
 		public OperatorDataService()
-			:this(new SoheilEdmContext())
+			: this(new SoheilEdmContext())
 		{
 
 		}
@@ -25,78 +25,78 @@ namespace Soheil.Core.DataServices
 			_operatorRepository = new Repository<Operator>(context);
 		}
 
-        #region IDataService<Operator> Members
+		#region IDataService<Operator> Members
 
-        public Operator GetSingle(int id)
-        {
+		public Operator GetSingle(int id)
+		{
 			return _operatorRepository.Single(opr => opr.Id == id);
-        }
+		}
 
-        public ObservableCollection<Operator> GetAll()
-        {
-                IEnumerable<Operator> entityList = _operatorRepository.Find(opr=> opr.Status != (decimal)Status.Deleted);
-                return new ObservableCollection<Operator>(entityList);
-        }
+		public ObservableCollection<Operator> GetAll()
+		{
+			IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status != (decimal)Status.Deleted);
+			return new ObservableCollection<Operator>(entityList);
+		}
 
-        public ObservableCollection<Operator> GetActives()
-        {
-                IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active);
-                return new ObservableCollection<Operator>(entityList);
-        }
+		public ObservableCollection<Operator> GetActives()
+		{
+			IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active);
+			return new ObservableCollection<Operator>(entityList);
+		}
 
-        public ObservableCollection<Operator> GetActives(SoheilEntityType linkType, int linkId = 0)
-        {
-            if (linkType == SoheilEntityType.Activities)
-            {
-                    IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active && opr.ActivitySkills.All(item=> item.Activity.Id != linkId));
-                    return new ObservableCollection<Operator>(entityList);
-            }
-            return GetActives();
-        }
+		public ObservableCollection<Operator> GetActives(SoheilEntityType linkType, int linkId = 0)
+		{
+			if (linkType == SoheilEntityType.Activities)
+			{
+				IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active && opr.ActivitySkills.All(item => item.Activity.Id != linkId));
+				return new ObservableCollection<Operator>(entityList);
+			}
+			return GetActives();
+		}
 
-        public int AddModel(Operator model)
-        {
-                _operatorRepository.Add(model);
-                context.Commit();
-                if (OperatorAdded != null)
-                    OperatorAdded(this, new ModelAddedEventArgs<Operator>(model));
-                return model.Id;
-        }
+		public int AddModel(Operator model)
+		{
+			_operatorRepository.Add(model);
+			context.Commit();
+			if (OperatorAdded != null)
+				OperatorAdded(this, new ModelAddedEventArgs<Operator>(model));
+			return model.Id;
+		}
 
-        public void UpdateModel(Operator model)
-        {
-                Operator entity = _operatorRepository.Single(opr => opr.Id == model.Id);
+		public void UpdateModel(Operator model)
+		{
+			Operator entity = _operatorRepository.Single(opr => opr.Id == model.Id);
 
-                entity.Code = model.Code;
-                entity.Name = model.Name;
-                entity.Status = model.Status;
-                entity.CreatedDate = model.CreatedDate;
-                entity.ModifiedBy = LoginInfo.Id;
-                entity.ModifiedDate = DateTime.Now;
-                context.Commit();
-        }
+			entity.Code = model.Code;
+			entity.Name = model.Name;
+			entity.Status = model.Status;
+			entity.CreatedDate = model.CreatedDate;
+			entity.ModifiedBy = LoginInfo.Id;
+			entity.ModifiedDate = DateTime.Now;
+			context.Commit();
+		}
 
-        public void DeleteModel(Operator model)
-        {
-        }
+		public void DeleteModel(Operator model)
+		{
+		}
 
-        public void AttachModel(Operator model)
-        {
-                if (_operatorRepository.Exists(opr => opr.Id == model.Id))
-                {
-                    UpdateModel(model);
-                }
-                else
-                {
-                    AddModel(model);
-                }
-        }
+		public void AttachModel(Operator model)
+		{
+			if (_operatorRepository.Exists(opr => opr.Id == model.Id))
+			{
+				UpdateModel(model);
+			}
+			else
+			{
+				AddModel(model);
+			}
+		}
 
-        #endregion
+		#endregion
 
-        public event EventHandler<ModelAddedEventArgs<Operator>> OperatorAdded;
+		public event EventHandler<ModelAddedEventArgs<Operator>> OperatorAdded;
 		public event EventHandler<ModelAddedEventArgs<ActivitySkill>> ActivityAdded;
-        public event EventHandler<ModelRemovedEventArgs> ActivityRemoved;
+		public event EventHandler<ModelRemovedEventArgs> ActivityRemoved;
 
 
 		public ObservableCollection<ActivitySkill> GetActivities(int oprId)
@@ -108,62 +108,60 @@ namespace Soheil.Core.DataServices
 				entity.ActivitySkills.Where(item => item.Activity.Status == (decimal)Status.Active).ToList());
 		}
 
-        public void AddActivity(int oprId, int activityId)
-        {
-                var operatorRepository = new Repository<Activity>(context);
-                Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
-                Activity newActivity = operatorRepository.Single(opr => opr.Id == activityId);
-				if (currentOperator.ActivitySkills.Any(oprActivity => oprActivity.Operator.Id == oprId && oprActivity.Activity.Id == activityId))
-                {
-                    return;
-                }
-				var newGeneralActivitySkill = new ActivitySkill
-				{
-					Activity = newActivity,
-					Operator = currentOperator,
-					CreatedDate = DateTime.Now,
-					ModifiedDate = DateTime.Now,
-					ModifiedBy = LoginInfo.Id,
-				};
-				currentOperator.ActivitySkills.Add(newGeneralActivitySkill);
-                context.Commit();
-                ActivityAdded(this, new ModelAddedEventArgs<ActivitySkill>(newGeneralActivitySkill));
-        }
+		public void AddActivity(int oprId, int activityId)
+		{
+			var operatorRepository = new Repository<Activity>(context);
+			Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
+			Activity newActivity = operatorRepository.Single(opr => opr.Id == activityId);
+			if (currentOperator.ActivitySkills.Any(oprActivity => oprActivity.Operator.Id == oprId && oprActivity.Activity.Id == activityId))
+			{
+				return;
+			}
+			var newGeneralActivitySkill = new ActivitySkill
+			{
+				Activity = newActivity,
+				Operator = currentOperator,
+				CreatedDate = DateTime.Now,
+				ModifiedDate = DateTime.Now,
+				ModifiedBy = LoginInfo.Id,
+			};
+			currentOperator.ActivitySkills.Add(newGeneralActivitySkill);
+			context.Commit();
+			ActivityAdded(this, new ModelAddedEventArgs<ActivitySkill>(newGeneralActivitySkill));
+		}
 
-        public void RemoveActivity(int oprId, int activityId)
-        {
-                var oprActivityRepository = new Repository<ActivitySkill>(context);
-                Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
-                ActivitySkill currentGeneralActivitySkill =
-					currentOperator.ActivitySkills.First(
-                        oprActivity =>
-                        oprActivity.Operator.Id == oprId && oprActivity.Id == activityId);
-                int id = currentGeneralActivitySkill.Id;
-                oprActivityRepository.Delete(currentGeneralActivitySkill);
-                context.Commit();
-                ActivityRemoved(this, new ModelRemovedEventArgs(id));
-        }
+		public void RemoveActivity(int oprId, int activityId)
+		{
+			var oprActivityRepository = new Repository<ActivitySkill>(context);
+			Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
+			ActivitySkill currentGeneralActivitySkill =
+				currentOperator.ActivitySkills.First(
+					oprActivity =>
+					oprActivity.Operator.Id == oprId && oprActivity.Id == activityId);
+			int id = currentGeneralActivitySkill.Id;
+			oprActivityRepository.Delete(currentGeneralActivitySkill);
+			context.Commit();
+			ActivityRemoved(this, new ModelRemovedEventArgs(id));
+		}
 
 		/// <summary>
 		/// Returns working status of an operator relative to the given process and time range
 		/// </summary>
 		/// <param name="model">model of operator to use</param>
 		/// <param name="process">model of process to compare with (can't be null)</param>
-		/// <param name="start">start of range of time in which availability of operator is evaluated</param>
-		/// <param name="end">end of range of time in which availability of operator is evaluated</param>
 		/// <returns>bool[3] => [0]:IsSelected in process, [1]:IsInTask (other processes of task) [2]:IsInTimeRange (other tasks or stations)</returns>
-		public bool[] GetOperatorStatus(Model.Operator model, Model.Process process, DateTime start, DateTime end)
+		public bool[] GetOperatorStatus(Model.Operator model, Model.Process process)
 		{
 			var procOpers = model.ProcessOperators.Where(x =>
-				x.Process.Task.StartDateTime < end &&
-				x.Process.Task.EndDateTime > start);
+				x.Process.Task.StartDateTime < process.EndDateTime &&
+				x.Process.Task.EndDateTime > process.StartDateTime);
 
 			return new bool[]{
-				procOpers.Any(x => x.Process.Id == process.Id),
-				procOpers.Any(x => 
-					x.Process.Task.Id == process.Task.Id
-					&& x.Process.Id != process.Id),
-				procOpers.Any(x => x.Process.Task.Block.StateStation.Station.Id != process.Task.Block.StateStation.Station.Id),
+				process.ProcessOperators.Any(x => x.Operator.Id == model.Id),
+				process.Task.Processes.Any(p => 
+					p != process &&
+					p.ProcessOperators.Any(po => po.Operator.Id == model.Id)),
+				procOpers.Any(x => x.Process.Task != process.Task),
 			};
 		}
 
@@ -172,19 +170,16 @@ namespace Soheil.Core.DataServices
 		/// </summary>
 		/// <param name="model">model of operator to use</param>
 		/// <param name="process">model of task to compare with (can't be null)</param>
-		/// <param name="start">start of range of time in which availability of operator is evaluated</param>
-		/// <param name="end">end of range of time in which availability of operator is evaluated</param>
 		/// <returns>bool[3] => [0]:IsSelected in process, [1]:IsInTask (other processes of task) [2]:IsInTimeRange (other tasks or stations)</returns>
-		public bool[] GetOperatorStatus(Model.Operator model, Model.Task task, DateTime start, DateTime end)
+		public bool[] GetOperatorStatus(Model.Operator model, Model.Task task)
 		{
-			var procOpers = model.ProcessOperators.Where(x =>
-				x.Process.Task.StartDateTime < end &&
-				x.Process.Task.EndDateTime > start);
-
 			return new bool[]{
 				false,
-				procOpers.Any(x => x.Process.Task.Id == task.Id),
-				procOpers.Any(x => x.Process.Task.Block.StateStation.Station.Id != task.Block.StateStation.Station.Id),
+				task.Processes.Any(p => p.ProcessOperators.Any(po => po.Operator.Id == model.Id)),
+				model.ProcessOperators.Any(x =>
+					x.Process.Task != task &&
+					x.Process.Task.StartDateTime < task.EndDateTime &&
+					x.Process.Task.EndDateTime > task.StartDateTime),
 			};
 		}
 	}

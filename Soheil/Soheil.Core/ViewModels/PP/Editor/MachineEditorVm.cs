@@ -12,28 +12,41 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	{
 		public int MachineId { get; protected set; }
 
+		IGrouping<Model.Machine, Model.StateStationActivityMachine> _group;
+
 		#region Ctor
 		/// <summary>
-		/// 
+		/// Creates a selected machine
 		/// </summary>
-		/// <param name="model"></param>
-		public MachineEditorVm(Model.StateStationActivityMachine ssamModel)
+		/// <param name="smModel"></param>
+		public MachineEditorVm(Model.SelectedMachine smModel)
 		{
-			Name = ssamModel.Machine.Name;
-			Code = ssamModel.Machine.Code;
-			IsUsed = ssamModel.IsFixed;
+			Name = smModel.StateStationActivityMachine.Machine.Name;
+			Code = smModel.StateStationActivityMachine.Machine.Code;
+			IsUsed = true;
+			CanBeUsed = true;
 		}
-		public MachineEditorVm(Model.Machine machineModel)
+		/// <summary>
+		/// Create a machine with the given SSAM Group
+		/// </summary>
+		/// <param name="machine"></param>
+		public MachineEditorVm(IGrouping<Model.Machine, Model.StateStationActivityMachine> machine)
 		{
-			MachineId = machineModel.Id;
-			Name = machineModel.Name;
-			Code = machineModel.Code;
+			_group = machine;
+			MachineId = machine.Key.Id;
+			Name = machine.Key.Name;
+			Code = machine.Key.Code;
+		}
+
+		public void Revalidate(Model.Process process)
+		{
+			CanBeUsed = _group.Any(x => x.StateStationActivity.Id == process.StateStationActivity.Id);
+			IsUsed = process.SelectedMachines.Any(x => x.StateStationActivityMachine.Machine.Id == MachineId);
 		}
 		#endregion
 
 
 		#region DpProps
-		//Name Dependency Property
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
@@ -41,7 +54,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty NameProperty =
 			DependencyProperty.Register("Name", typeof(string), typeof(MachineEditorVm), new UIPropertyMetadata(null));
-		//Code Dependency Property
 		public string Code
 		{
 			get { return (string)GetValue(CodeProperty); }
@@ -49,7 +61,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty CodeProperty =
 			DependencyProperty.Register("Code", typeof(string), typeof(MachineEditorVm), new UIPropertyMetadata(null));
-		//IsUsed Dependency Property
 		public bool IsUsed
 		{
 			get { return (bool)GetValue(IsUsedProperty); }
@@ -57,7 +68,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty IsUsedProperty =
 			DependencyProperty.Register("IsUsed", typeof(bool), typeof(MachineEditorVm), new UIPropertyMetadata(false));
-		//CanBeUsed Dependency Property
 		public bool CanBeUsed
 		{
 			get { return (bool)GetValue(CanBeUsedProperty); }

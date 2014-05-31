@@ -25,6 +25,18 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class BooleanToBrushConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (bool)value ? ((Brush[])parameter)[0] : ((Brush[])parameter)[1];
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 	public class TaskProgressColorConverter : IMultiValueConverter
 	{
@@ -294,6 +306,22 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class ProcessBorderMarginConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return new Thickness();
+			var startDt = (DateTime)values[0];
+			var oneHourWidth = (double)values[1];
+			var rowIndex = (int)values[2];
+			return new Thickness(startDt.Subtract(startDt.GetNorooz()).TotalHours * oneHourWidth, rowIndex * 42 + 1, 0, 1);
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 	public class PPTaskBorderHeightConverter : IMultiValueConverter
 	{
@@ -467,7 +495,7 @@ namespace Soheil.Controls.Converters.PP
 				return Visibility.Collapsed;
 			string query = (string)values[0];
 			string code = (string)values[1];
-			string name = (string)values[1];
+			string name = (string)values[2];
 			return (string.IsNullOrWhiteSpace(query) || name.Contains(query) || code.StartsWith(query)) ?
 				Visibility.Visible : Visibility.Collapsed;
 		}
@@ -742,9 +770,9 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			if(values[0] != DependencyProperty.UnsetValue && values[1] != DependencyProperty.UnsetValue&&values[2] != DependencyProperty.UnsetValue)
+			if (values[0] != DependencyProperty.UnsetValue && values[1] != DependencyProperty.UnsetValue && values[2] != DependencyProperty.UnsetValue && values[3] != DependencyProperty.UnsetValue)
 			{
-				return (double)values[0] + (double)values[1] + (double)values[2];
+				return (double)values[0] + (double)values[1] + (double)values[2] + (double)values[3];
 			}
 			return 0;
 		}

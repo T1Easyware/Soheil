@@ -110,18 +110,7 @@ namespace Soheil.Core.DataServices
 			}
 		}
 
-		public ProcessReport GetByTaskReportIdAndProcessId(int taskReportId, int processId)
-		{
-				return _processReportRepository.FirstOrDefault(
-					x => x.Process.Id == processId && x.TaskReport.Id == taskReportId);
-		}
-
-		internal IEnumerable<ProcessReport> GetProcessReports(int taskReportId)
-		{
-			return _processReportRepository.Find(x => x.TaskReport.Id == taskReportId);
-		}
-
-		public void Save(ViewModels.PP.Report.ProcessReportCellVm vm)
+		public void Save(ViewModels.PP.Report.ProcessReportVm vm)
 		{
 			var productDefectionRepository = new Repository<ProductDefection>(context);
 			var causeRepository = new Repository<Cause>(context);
@@ -144,7 +133,6 @@ namespace Soheil.Core.DataServices
 				model.Process = new Repository<Process>(context).FirstOrDefault(x => x.Id == vm.ProcessId);
 				model.ProducedG1 = vm.ProducedG1;
 				model.ProcessReportTargetPoint = vm.ProcessReportTargetPoint;
-				model.TaskReport = new Repository<TaskReport>(context).FirstOrDefault(x => x.Id == vm.ParentColumn.Task.Id);
 			}
 
 			//delete defectionReports and their children
@@ -209,22 +197,6 @@ namespace Soheil.Core.DataServices
 				}
 				model.StoppageReports.Add(stoppageReportModel);
 			}
-
-			//correct task report produced G1 value
-			var defections = model.TaskReport.ProcessReports.Sum(x =>
-				x.DefectionReports.Where(d =>
-					d.AffectsTaskReport)
-				.Sum(d =>
-					d.CountEquivalence));
-			var stoppages = model.TaskReport.ProcessReports.Sum(x =>
-				x.StoppageReports.Where(s =>
-					s.AffectsTaskReport)
-				.Sum(s =>
-					s.CountEquivalence));
-			var g1 = model.TaskReport.TaskReportTargetPoint - (int)(stoppages + defections);
-			var vmvm = vm.ParentColumn as ViewModels.PP.Report.TaskReportVm;
-			if (vmvm != null) vmvm.ProducedG1 = g1;
-			model.TaskReport.TaskProducedG1 = g1;
 
 			context.Commit();
 		}

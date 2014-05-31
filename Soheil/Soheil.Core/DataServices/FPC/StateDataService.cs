@@ -207,6 +207,7 @@ namespace Soheil.Core.DataServices
 								StateStation = stateStation,
 								ManHour = ssa.ManHour,
 								CycleTime = ssa.CycleTime,
+								IsMany = ssa.IsMany,
 								Activity = activityRepository.FirstOrDefault(x => x.Id == ssa.Containment.Id),
 								//CreatedDate
 								//ModifiedBy
@@ -466,6 +467,7 @@ namespace Soheil.Core.DataServices
 						StateStation = cloneSS,
 						Activity = ssa.Activity,
 						ManHour = ssa.ManHour,
+						IsMany = ssa.IsMany,
 						CycleTime = ssa.CycleTime,
 					};
 					foreach (var ssam in ssa.StateStationActivityMachines)

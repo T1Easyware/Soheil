@@ -60,7 +60,7 @@ namespace Soheil.Core.ViewModels.PP
 			};*/
 
 			JobEditor = new JobEditorVm();
-			TaskEditor.RefreshPPItems += () => UpdateRange(true);
+			JobEditor.RefreshPPItems += () => UpdateRange(true);
 			/*refresh is enough.
 			 *JobEditor.JobAdded += model =>
 			{
@@ -626,28 +626,6 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("SelectedNPT", typeof(NPTVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 
 		/// <summary>
-		/// Gets or sets the current TaskReportBuilder
-		/// <para>Automatically deselects other ReportBuilders if set (to an object)</para>
-		/// <para>Does not do that via binding</para>
-		/// </summary>
-		public Report.TaskReportHolderVm CurrentTaskReportBuilder
-		{
-			get { return (Report.TaskReportHolderVm)GetValue(CurrentTaskReportBuilderProperty); }
-			set
-			{
-				if (value != null)
-				{
-					if (CurrentProcessReportBuilder != null)
-						CurrentProcessReportBuilder.IsSelected = false;
-					if (CurrentNPTReportBuilder != null)
-						CurrentNPTReportBuilder.IsSelected = false;
-				}
-				SetValue(CurrentTaskReportBuilderProperty, value);
-			}
-		}
-		public static readonly DependencyProperty CurrentTaskReportBuilderProperty =
-			DependencyProperty.Register("CurrentTaskReportBuilder", typeof(Report.TaskReportHolderVm), typeof(PPTableVm), new UIPropertyMetadata(null));
-		/// <summary>
 		/// Gets or sets the current NPTReportBuilder
 		/// <para>Automatically deselects other ReportBuilders if set (to an object)</para>
 		/// <para>Does not do that via binding</para>
@@ -661,8 +639,8 @@ namespace Soheil.Core.ViewModels.PP
 				{
 					if (CurrentProcessReportBuilder != null)
 						CurrentProcessReportBuilder.IsSelected = false;
-					if (CurrentTaskReportBuilder != null)
-						CurrentTaskReportBuilder.IsSelected = false;
+					if (CurrentNPTReportBuilder != null)
+						CurrentNPTReportBuilder.IsSelected = false;
 				}
 				SetValue(CurrentNPTReportBuilderProperty, value);
 			}
@@ -674,23 +652,23 @@ namespace Soheil.Core.ViewModels.PP
 		/// <para>Automatically deselects other ReportBuilders if set (to an object)</para>
 		/// <para>Does not do that via binding</para>
 		/// </summary>
-		public Report.ProcessReportCellVm CurrentProcessReportBuilder
+		public Report.ProcessReportVm CurrentProcessReportBuilder
 		{
-			get { return (Report.ProcessReportCellVm)GetValue(CurrentProcessReportBuilderProperty); }
+			get { return (Report.ProcessReportVm)GetValue(CurrentProcessReportBuilderProperty); }
 			set
 			{
 				if (value != null)
 				{
 					if (CurrentNPTReportBuilder != null)
 						CurrentNPTReportBuilder.IsSelected = false;
-					if (CurrentTaskReportBuilder != null)
-						CurrentTaskReportBuilder.IsSelected = false;
+					if(CurrentProcessReportBuilder != null)
+						CurrentProcessReportBuilder.IsSelected = false;
 				}
 				SetValue(CurrentProcessReportBuilderProperty, value);
 			}
 		}
 		public static readonly DependencyProperty CurrentProcessReportBuilderProperty =
-			DependencyProperty.Register("CurrentProcessReportBuilder", typeof(Report.ProcessReportCellVm), typeof(PPTableVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("CurrentProcessReportBuilder", typeof(Report.ProcessReportVm), typeof(PPTableVm), new UIPropertyMetadata(null));
 		#endregion
 
 		#region Commands
@@ -836,6 +814,7 @@ namespace Soheil.Core.ViewModels.PP
 					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 				}
 			}, () => { return vm.Job != null; });
+
 			//report
 			vm.EditReportCommand = new Commands.Command(o =>
 			{

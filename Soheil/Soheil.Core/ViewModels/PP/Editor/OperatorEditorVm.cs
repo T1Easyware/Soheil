@@ -12,8 +12,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	{
 		/// <summary>
 		/// Occurs when this operator is selected/deselected
+		/// <para>params: operator, IsSelected, value that indicates whether to update SelectedOperatorCount</para>
 		/// </summary>
-		public event Action<bool, OperatorRole> SelectedOperatorsChanged;
+		public event Action<OperatorEditorVm, bool, bool> SelectedOperatorChanged;
 		
 		#region Ctor
 		/// <summary>
@@ -37,9 +38,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			initializeCommands();
 		}
 
+		bool _changeOperatorCount = false;
 		void initializeCommands()
 		{
-			SelectCommand = new Commands.Command(o => IsSelected = true);
+			SelectCommand = new Commands.Command(o =>
+			{
+				_changeOperatorCount = true;
+				IsSelected = !IsSelected;
+				_changeOperatorCount = false;
+			});
 		}
 
 		#endregion
@@ -57,8 +64,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(false, (d, e) =>
 			{
 				var vm = (OperatorEditorVm)d;
-				if (vm.SelectedOperatorsChanged != null)
-					vm.SelectedOperatorsChanged((bool)e.NewValue, vm.Role);
+				if (vm.SelectedOperatorChanged != null)
+					vm.SelectedOperatorChanged(vm, (bool)e.NewValue, vm._changeOperatorCount);
 			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates whether this operator is (also) in other processes of this task

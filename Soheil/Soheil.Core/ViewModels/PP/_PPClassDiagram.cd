@@ -377,17 +377,17 @@
       <FileName>ViewModels\PP\StateVm.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorActivityChoice">
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.ChoiceEditorVm">
     <Position X="35.25" Y="8.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
       <HashCode>AAAAAQAAAAAAAEAAAAAAQIAIQAAAAAAAAAoAAIAAAAA=</HashCode>
-      <FileName>ViewModels\PP\Editor\PPEditorActivityChoice.cs</FileName>
+      <FileName>ViewModels\PP\Editor\ChoiceEditorVm.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorBlock">
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.BlockEditorVm">
     <Position X="29.5" Y="0.5" Width="2.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -407,7 +407,7 @@
       <FileName>ViewModels\PP\Editor\PPEditorJob.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorMachine">
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.MachineEditorVm">
     <Position X="32.75" Y="16.75" Width="2.75" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -427,7 +427,7 @@
       <FileName>ViewModels\PP\Report\OperatorReportVm.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorProcess">
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.ProcessEditorVm">
     <Position X="32.75" Y="8.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -437,7 +437,7 @@
       <FileName>ViewModels\PP\Editor\PPEditorProcess.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorTask">
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.TaskEditorVm">
     <Position X="29.5" Y="8.5" Width="3" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -447,7 +447,7 @@
       <FileName>ViewModels\PP\Editor\PPEditorTask.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Soheil.Core.ViewModels.PP.Editor.PPEditorTaskHolder">
+  <Class Name="Soheil.Core.ViewModels.PP.Editor.TaskEditorHolder">
     <Position X="27" Y="8.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />

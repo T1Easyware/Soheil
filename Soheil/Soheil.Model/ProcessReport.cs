@@ -49,6 +49,24 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual System.DateTime EndDateTime
+        {
+            get;
+            set;
+        }
+    
+        public virtual System.DateTime StartDateTime
+        {
+            get;
+            set;
+        }
+    
+        public virtual int DurationSeconds
+        {
+            get;
+            set;
+        }
 
         #endregion
 
@@ -85,21 +103,6 @@ namespace Soheil.Model
             }
         }
         private ICollection<StoppageReport> _stoppageReports;
-    
-        public virtual TaskReport TaskReport
-        {
-            get { return _taskReport; }
-            set
-            {
-                if (!ReferenceEquals(_taskReport, value))
-                {
-                    var previousValue = _taskReport;
-                    _taskReport = value;
-                    FixupTaskReport(previousValue);
-                }
-            }
-        }
-        private TaskReport _taskReport;
     
         public virtual ICollection<DefectionReport> DefectionReports
         {
@@ -183,22 +186,6 @@ namespace Soheil.Model
         #endregion
 
         #region Association Fixup
-    
-        private void FixupTaskReport(TaskReport previousValue)
-        {
-            if (previousValue != null && previousValue.ProcessReports.Contains(this))
-            {
-                previousValue.ProcessReports.Remove(this);
-            }
-    
-            if (TaskReport != null)
-            {
-                if (!TaskReport.ProcessReports.Contains(this))
-                {
-                    TaskReport.ProcessReports.Add(this);
-                }
-            }
-        }
     
         private void FixupProcess(Process previousValue)
         {

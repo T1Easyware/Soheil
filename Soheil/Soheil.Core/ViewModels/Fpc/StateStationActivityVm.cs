@@ -65,6 +65,21 @@ namespace Soheil.Core.ViewModels.Fpc
 					((StateStationActivityVm)d).Model.ManHour = (float)e.NewValue;
 					StateVm.AnyPropertyChangedCallback(d, e);
 				}));
+		/// <summary>
+		/// Gets or sets a bindable value for IsMany
+		/// </summary>
+		public bool IsMany
+		{
+			get { return (bool)GetValue(IsManyProperty); }
+			set { SetValue(IsManyProperty, value); }
+		}
+		public static readonly DependencyProperty IsManyProperty =
+			DependencyProperty.Register("IsMany", typeof(bool), typeof(StateStationActivityVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				((StateStationActivityVm)d).Model.IsMany = (bool)e.NewValue;
+				StateVm.AnyPropertyChangedCallback(d, e);
+			}));
 
 		/// <summary>
 		/// Gets or sets Container of this StateStationActivity (cast to StateStationVm)

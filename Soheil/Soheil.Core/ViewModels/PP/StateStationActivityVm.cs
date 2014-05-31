@@ -13,6 +13,7 @@ namespace Soheil.Core.ViewModels.PP
 			Id = model.Id;
 			CycleTime = model.CycleTime;
 			ManHour = model.ManHour;
+			IsMany = model.IsMany;
 			Activity = new ActivityVm(model.Activity);
 		}
 		public int Id { get; set; }
@@ -32,6 +33,14 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty ManHourProperty =
 			DependencyProperty.Register("ManHour", typeof(float), typeof(StateStationActivityVm), new UIPropertyMetadata(1f));
+		//IsMany Dependency Property
+		public bool IsMany
+		{
+			get { return (bool)GetValue(IsManyProperty); }
+			set { SetValue(IsManyProperty, value); }
+		}
+		public static readonly DependencyProperty IsManyProperty =
+			DependencyProperty.Register("IsMany", typeof(bool), typeof(StateStationActivityVm), new UIPropertyMetadata(false));
 		//Activity Dependency Property
 		public ActivityVm Activity
 		{
