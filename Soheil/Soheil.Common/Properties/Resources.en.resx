@@ -733,4 +733,25 @@
   <data name="txtUnitCost" xml:space="preserve">
     <value>Unit Cost:</value>
   </data>
+  <data name="msgDeleteConfirm" xml:space="preserve">
+    <value>Confirm to delete  item?</value>
+  </data>
+  <data name="txtDefectionTime" xml:space="preserve">
+    <value>Defection time</value>
+  </data>
+  <data name="txtOperationReports" xml:space="preserve">
+    <value>Operators Efficiency Report</value>
+  </data>
+  <data name="txtPrint" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="txtProductionTime" xml:space="preserve">
+    <value>Production time</value>
+  </data>
+  <data name="txtStation" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="txtStoppageTime" xml:space="preserve">
+    <value>Stoppage time</value>
+  </data>
 </root>

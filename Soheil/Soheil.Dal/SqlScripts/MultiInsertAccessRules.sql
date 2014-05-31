@@ -44,10 +44,11 @@ INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 	(34,'4','txtReports',1),
 		(35,'41','txtCostReports',34),
 		(36,'42','txtActualCostReports',34),
-	(37,'5','txtOptions',1),
-		(38,'51','txtSettings',37),
-		(39,'52','txtHelp',37),
-		(40,'53','txtAbout',37);
+		(37,'43','txtOperationReports',34),
+	(38,'5','txtOptions',1),
+		(39,'51','txtSettings',37),
+		(40,'52','txtHelp',37),
+		(41,'53','txtAbout',37);
 
 
 

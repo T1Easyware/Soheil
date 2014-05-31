@@ -9,8 +9,9 @@
 	<SolidColorBrush x:Key="cyanBrush" Color="#40BCBC"/>
 	<SolidColorBrush x:Key="greenBrush" Color="#40BC40"/>
 	<SolidColorBrush x:Key="blueBrush" Color="#4040BC"/>
-	<SolidColorBrush x:Key="redBrush" Color="#BC4040"/>
-	<Border x:Key="fpcBackBrushVisual" BorderBrush="#5FFF" BorderThickness="0.1" Width="64" Height="64"/>
+    <SolidColorBrush x:Key="redBrush" Color="#BC4040"/>
+
+    <Border x:Key="fpcBackBrushVisual" BorderBrush="#5FFF" BorderThickness="0.1" Width="64" Height="64"/>
 	<VisualBrush x:Key="fpcBackBrush" Viewport="0,0,64,64" TileMode="Tile" ViewportUnits="Absolute" Visual="{StaticResource fpcBackBrushVisual}"/>
 
 

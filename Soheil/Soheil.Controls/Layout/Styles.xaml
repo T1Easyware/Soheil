@@ -21,6 +21,8 @@
             <Sys:Double x:Key="noGap">10</Sys:Double>
             <Sys:Double x:Key="listWidth">140</Sys:Double>
             <Sys:Double x:Key="halfWidth">65</Sys:Double>
+            <Sys:Double x:Key="groupBoxHGap">25</Sys:Double>
+            <Sys:Double x:Key="groupBoxVGap">60</Sys:Double>
             <Sys:Double x:Key="detailGap">10</Sys:Double>
             <Sys:Double x:Key="barHeight">50</Sys:Double>
             <Sys:Double x:Key="IdxBtnNormalWidth">10</Sys:Double>
@@ -1593,6 +1595,69 @@
         <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
     </Style>
 
+    <!--  Soheil GroupBox  -->
+    <Style x:Key="SoheilGroupBox" TargetType="{x:Type GroupBox}">
+        <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="{StaticResource detailMargin}" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
+        <Setter Property="Foreground" Value="{StaticResource BlueSelectedBrush}"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="tahoma" />
+        <Setter Property="Width">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource SizeConverter}">
+                    <MultiBinding.Bindings>
+                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Control}" />
+                        <Binding Source="{StaticResource groupBoxHGap}" />
+                    </MultiBinding.Bindings>
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Height">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource SizeConverter}">
+                    <MultiBinding.Bindings>
+                        <Binding Path="ActualHeight" RelativeSource="{RelativeSource AncestorType=Control}" />
+                        <Binding Source="{StaticResource groupBoxVGap}" />
+                    </MultiBinding.Bindings>
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type GroupBox}">
+                    <Grid SnapsToDevicePixels="true">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Header" Grid.Column="0" Grid.Row="0" Padding="3" Background="{StaticResource ThemeMediumBrush}" 
+                                CornerRadius="4,4,0,0" BorderBrush="{StaticResource ThemeDarkBrush}" BorderThickness="1,1,1,0">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentSource="Header" 
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <Border x:Name="Container" Grid.Column="0" Grid.Row="1" Padding="3" CornerRadius="0,0,4,4" 
+                                Background="Transparent" BorderBrush="{StaticResource ThemeLightBrush}" 
+                                BorderThickness="1,1,1,1">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="Header" Property="Background" Value="{StaticResource ThemeDarkBrush}"/>
+                            <Setter TargetName="Container" Property="Background" Value="{StaticResource DisabledBackground}"/>
+                            <Setter Property="Foreground" Value="{StaticResource NormalOuterBorder}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--  Soheil Content GroupBox  -->
     <Style x:Key="SoheilContentGroupBox" TargetType="{x:Type GroupBox}">
         <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
@@ -1728,6 +1793,7 @@
         </Setter>
     </Style>
 
+    
     <!--  Soheil DetailListView Border  -->
     <Style x:Key="SoheilDetailListViewBorder" BasedOn="{StaticResource SoheilContentGroupBox}" TargetType="{x:Type GroupBox}">
         <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
@@ -1893,6 +1959,14 @@
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
     </Style>
 
+    <!--  Soheil InfoBox TextBlock  -->
+    <Style x:Key="InfoBoxHeader" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontFamily" Value="tahoma" />
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+    </Style>
+    
     <!--  Soheil OrganizationChartNode TreeViewItem  -->
     <Style x:Key="OrgChartNode" TargetType="TreeViewItem">
         <Style.Resources>

@@ -145,6 +145,9 @@ namespace Soheil.Core.Base
         public static readonly DependencyProperty SaveCommandProperty =
             DependencyProperty.Register("SaveCommand", typeof(Command), typeof(EntityObjectBase), new PropertyMetadata(default(Command)));
 
+        public static readonly DependencyProperty DeleteCommandProperty =
+            DependencyProperty.Register("DeleteCommand", typeof(Command), typeof(EntityObjectBase), new PropertyMetadata(default(Command)));
+
         public Command SaveCommand
         {
             get { return (Command)GetValue(SaveCommandProperty); }
@@ -155,6 +158,21 @@ namespace Soheil.Core.Base
         {
         }
         public virtual bool CanSave()
+        {
+            return (Access & AccessType.Update) == AccessType.Update;
+        }
+
+        public Command DeleteCommand
+        {
+            get { return (Command)GetValue(DeleteCommandProperty); }
+            set { SetValue(DeleteCommandProperty, value); }
+        }
+
+        public virtual void Delete(object param)
+        {
+        }
+
+        public virtual bool CanDelete()
         {
             return (Access & AccessType.Update) == AccessType.Update;
         }

@@ -129,6 +129,8 @@ namespace Soheil.Core.ViewModels
             return AllDataValid() && base.CanSave();
         }
 
+
+
         #endregion
 
         #region Static Methods

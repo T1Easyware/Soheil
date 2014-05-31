@@ -118,7 +118,7 @@ namespace Soheil.Core.ViewModels.Reports
             LittleWindowWidth = 20;
             int intervalCount = GetIntervalCount(barInfo);
 
-            BarSlides = new VirtualizingCollection<CostBarSlideItemVm>(new ActualCostBarSlideProvider(intervalCount), 6);
+            BarSlides = new VirtualizingCollection<BarSlideItemVm>(new ActualCostBarSlideProvider(intervalCount), 6);
 
             var barProvider = new ActualCostBarProvider(intervalCount, 600, CurrentType, CurrentInterval, DataService, barInfo);
             Bars = new VirtualizingCollection<CostBarVm>(barProvider, 12);
@@ -201,13 +201,13 @@ namespace Soheil.Core.ViewModels.Reports
 
 		#region Slide
 
-        public IList<CostBarSlideItemVm> BarSlides
+        public IList<BarSlideItemVm> BarSlides
 		{
-            get { return (IList<CostBarSlideItemVm>)GetValue(BarSlidesProperty); }
+            get { return (IList<BarSlideItemVm>)GetValue(BarSlidesProperty); }
 			set { SetValue(BarSlidesProperty, value); }
 		}
 		public static readonly DependencyProperty BarSlidesProperty =
-            DependencyProperty.Register("BarSlides", typeof(IList<CostBarSlideItemVm>), typeof(ActualCostReportsVm), new UIPropertyMetadata(null));
+            DependencyProperty.Register("BarSlides", typeof(IList<BarSlideItemVm>), typeof(ActualCostReportsVm), new UIPropertyMetadata(null));
 
 		public double BarWidth
 		{

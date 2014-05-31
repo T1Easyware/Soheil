@@ -150,6 +150,11 @@ namespace Soheil.Core.ViewModels
             Mode = ModificationStatus.Saved;
         }
 
+        public override void Delete(object param)
+        {
+            _model.Status = (byte) Status.Deleted; ProductDataService.AttachModel(_model, SelectedGroupVM.Id);
+        }
+
         public override bool CanSave()
         {
             return AllDataValid() && base.CanSave();

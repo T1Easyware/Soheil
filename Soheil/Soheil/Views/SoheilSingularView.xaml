@@ -17,6 +17,7 @@
              xmlns:MultipleCommands="clr-namespace:Soheil.Core.Commands.MultipleCommands;assembly=Soheil.Core"
              xmlns:Virtualizing="clr-namespace:Soheil.Core.Virtualizing;assembly=Soheil.Core"
              xmlns:Reports="clr-namespace:Soheil.Core.ViewModels.Reports;assembly=Soheil.Core"
+             xmlns:persianDateControls="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"
              Mc:Ignorable="D">
     <UserControl.Resources>
         <SolidColorBrush x:Key="ClickedTransparent" Color="#3000" />
@@ -2126,12 +2127,461 @@
             </Border>
         </DataTemplate>
 
+        <!-- 5.3. Operation Reports -->
+        <DataTemplate x:Key="OperationReportTemplate" DataType="Reports:OperatorReportsVm">
+            <DataTemplate.Resources>
+                <LinearGradientBrush x:Key="SlideWindowBackground" StartPoint="0,0" EndPoint="1,0.001">
+                    <GradientBrush.GradientStops>
+                        <GradientStopCollection>
+                            <GradientStop Color="White" Offset="0" />
+                            <GradientStop Color="#6FFF" Offset="0.5" />
+                            <GradientStop Color="#1FFF" Offset="0.6" />
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </GradientStopCollection>
+                    </GradientBrush.GradientStops>
+                </LinearGradientBrush>
+                <SolidColorBrush x:Key="l1Brush" Color="#0091B0"/>
+                <SolidColorBrush x:Key="l2Brush" Color="#D95A00"/>
+                <SolidColorBrush x:Key="l3Brush" Color="#AC0404"/>
+                <SolidColorBrush x:Key="e1Brush" Color="#2DBAD8"/>
+                <SolidColorBrush x:Key="e2Brush" Color="#F47F2D"/>
+                <SolidColorBrush x:Key="e3Brush" Color="#D41D1D"/>
+                <LinearGradientBrush x:Key="SlideWindowBorder" StartPoint="0,0" EndPoint="0,1">
+                    <GradientBrush.GradientStops>
+                        <GradientStopCollection>
+                            <GradientStop Color="#FFF" Offset="0.0"/>
+                            <GradientStop Color="#CCC" Offset="1.0"/>
+                        </GradientStopCollection>
+                    </GradientBrush.GradientStops>
+                </LinearGradientBrush>
+                <ObjectDataProvider x:Key="CostTypes"
+                                    MethodName="GetValues"
+                                    ObjectType="{x:Type System:Enum}">
+                    <ObjectDataProvider.MethodParameters>
+                        <x:Type TypeName="Common:CostType" />
+                    </ObjectDataProvider.MethodParameters>
+                </ObjectDataProvider>
+                <ObjectDataProvider x:Key="IndexIntervals"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+                    <ObjectDataProvider.MethodParameters>
+                        <x:Type TypeName="Common:DateTimeIntervals" />
+                    </ObjectDataProvider.MethodParameters>
+                </ObjectDataProvider>
+                <!--Slider Repeat Button-->
+                <Style x:Key="ScrollBarLineButton" TargetType="{x:Type RepeatButton}">
+                    <Setter Property="SnapsToDevicePixels" Value="True"/>
+                    <Setter Property="OverridesDefaultStyle" Value="true"/>
+                    <Setter Property="Focusable" Value="false"/>
+                    <Setter Property="Width" Value="40"/>
+                    <Setter Property="Delay" Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                <Rectangle Name="Border" Fill="Transparent"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter TargetName="Border" Property="Fill" Value="{StaticResource ShadowTransparent}" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="true">
+                                        <Setter TargetName="Border" Property="Fill" Value="{StaticResource ClickedTransparent}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <!--Slider Template-->
+                <ControlTemplate x:Key="SliderTemplate" TargetType="{x:Type ScrollViewer}">
+                    <Grid Background="{TemplateBinding Background}" Height="600" >
+                        <ScrollContentPresenter 
+					x:Name="PART_ScrollContentPresenter" 
+					CanContentScroll="True"
+					CanHorizontallyScroll="True" 
+					ContentTemplate="{TemplateBinding ContentTemplate}"
+					Content="{TemplateBinding Content}"
+					Margin="{TemplateBinding Padding}"/>
+                        <ScrollBar
+					x:Name="PART_HorizontalScrollBar" 
+                    VerticalAlignment="Bottom"
+					AutomationProperties.AutomationId="HorizontalScrollBar" 
+					Maximum="{TemplateBinding ScrollableWidth}" 
+					Minimum="0" 
+					Orientation="Horizontal"
+					Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" 
+					Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+					ViewportSize="{TemplateBinding ViewportWidth}">
+                            <ScrollBar.Template>
+                                <ControlTemplate TargetType="ScrollBar">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition MaxWidth="40"/>
+                                            <ColumnDefinition Width="0.00001*"/>
+                                            <ColumnDefinition MaxWidth="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.ColumnSpan="3" Background="#01000000" />
+                                        <!--Little Window-->
+                                        <Border
+									Grid.Column="1"
+									Cursor="ScrollWE"
+									Background="{StaticResource SlideWindowBackground}"
+									BorderBrush="{StaticResource SlideWindowBorder}"
+									BorderThickness="2"
+									CornerRadius="2"
+									HorizontalAlignment="Center"
+									Margin="0,-2"
+									Width="{Binding RelativeSource={RelativeSource AncestorType=Virtualizing:DateTimeScrollViewer}, Path=LittleWindowWidth}">
+                                        </Border>
+                                        <!--Transparent Bar-->
+                                        <Rectangle
+									Grid.Column="1" 
+									Margin="-1"
+									Cursor="/Images/openhand.cur"
+									Fill="Transparent"
+									MouseMove="AreaMouseMove" MouseUp="AreaMouseUp"
+									MouseDown="RectangleMouseDown"/>
+                                        <!-- << | >> -->
+                                        <RepeatButton
+									Grid.Column="0"
+									Cursor="ScrollW" 
+									Style="{StaticResource ScrollBarLineButton}"
+									Click="RepeatButtonLClick"/>
+                                        <RepeatButton
+									Grid.Column="3"
+									Cursor="ScrollE" 
+									Style="{StaticResource ScrollBarLineButton}"
+									Click="RepeatButtonRClick"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </ScrollBar.Template>
+                        </ScrollBar>
+                    </Grid>
+                </ControlTemplate>
+            </DataTemplate.Resources>
+            <Border DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}" Style="{StaticResource SoheilSingularViewBorder}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel D:DataContext="{D:DesignInstance Reports:OperationReportsVm}">
+                    <Border DockPanel.Dock="Top">
+                        <DockPanel>
+                            <WrapPanel Height="25" DockPanel.Dock="Left">
+                                <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtStartDate}" />
+                                <persianDateControls:PersianDatePicker Margin="5,0,5,0" SelectedDate="{Binding StartDate}" SelectedDateChanged="OnSelectedDateChanged"/>
+                                <TextBlock Margin="25,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtEndDate}" />
+                                <persianDateControls:PersianDatePicker Margin="5,0,5,0" SelectedDate="{Binding EndDate}" SelectedDateChanged="OnSelectedDateChanged"/>
+                            </WrapPanel>
+                            <WrapPanel DockPanel.Dock="Right">
+                                <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtProductionTime}" />
+                                <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l1Brush}"/>
+                                <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtDefectionTime}" />
+                                <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l2Brush}"/>
+                                <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtStoppageTime}" />
+                                <Rectangle Margin="5,2,50,0" Width="15" Fill="{StaticResource l3Brush}"/>
+                            </WrapPanel>
+                            <Canvas/>
+                        </DockPanel>
+                    </Border>
+                    <DockPanel DockPanel.Dock="Bottom">
+                        <!-- operatorProcessReport -->
+                        <DockPanel DockPanel.Dock="Left" 
+                                   DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}"
+                                   Visibility="{Binding OprVisibility}">
+                            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel.OperatorProcessReport}"
+                                      Style="{StaticResource SoheilGroupBox}" Header="{Binding Title}" DockPanel.Dock="Top">
+                                <DataGrid x:Name="dataGrid" 
+                                      FlowDirection="RightToLeft"
+                                      IsSynchronizedWithCurrentItem="True"
+                                      AutoGeneratingColumn="OnAutoGeneratingColumn"
+                                      SelectionMode="Single"
+                                      ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView},
+                                                            Path=ViewModel.OperatorProcessReport.Details,
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                      VirtualizingStackPanel.IsVirtualizing="False"
+                                      ScrollViewer.CanContentScroll="False" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="{x:Type DataGridRow}">
+                                        <Setter Property="Background" Value="{StaticResource ThemeDarkBrush}" />
+                                        <Setter Property="SnapsToDevicePixels" Value="true" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type DataGridRow}">
+                                                    <Border x:Name="DGR_Border" Background="{StaticResource ThemeDarkBrush}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" SnapsToDevicePixels="True">
+                                                        <SelectiveScrollingGrid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
 
-		
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="*" />
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
+                                                            <Rectangle x:Name="BackgroundRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource ThemeDarkBrush}" Opacity="1" />
+                                                            <Rectangle x:Name="SelectedRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource BackgroundSelected}" Opacity="0" />
+                                                            <Rectangle x:Name="HoverRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource BorderBrushSelected}" Opacity="0" />
+                                                            <DataGridRowHeader Grid.RowSpan="2"
+                                 SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical"/>
+                                                            <DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}"
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                            <DataGridDetailsPresenter x:Name="DetailsPresenter" Grid.Row="1" Grid.Column="1" 
+                                                                        SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding                                                                                 RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                                        Path=AreRowDetailsFrozen,
+                                                                        Converter={x:Static DataGrid.RowDetailsScrollingConverter},
+                                                                        ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}}"
+                                                                        Visibility="{TemplateBinding DetailsVisibility}">
+                                                            </DataGridDetailsPresenter>
+                                                            <Rectangle x:Name="BottomGridLine" Grid.Row="2" Grid.Column="1" Height="1" HorizontalAlignment="Stretch" />
+                                                        </SelectiveScrollingGrid>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Trigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
+                                                        Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.EnterActions>
+                                                            <Trigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
+                                                   Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.ExitActions>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Resources>
+                                    <Common:BindingProxy x:Key="Proxy" Data="{Binding}" />
+                                </DataGrid.Resources>
+                            </DataGrid>
+                            </GroupBox>
+                            <Border Style="{StaticResource SoheilDarkCoverBorder}" DockPanel.Dock="Bottom">
+                                <WrapPanel Height="40">
+                                    <Button Content="{Loc txtPrint}" Command="{Binding PrintCommand}" CommandParameter="{Binding ElementName=dataGrid}"/>
+                                    <Button Content="{Loc txtBack}" Command="{Binding NavigateBackCommand}"/>
+                                </WrapPanel>
+                            </Border>
+                            <Canvas/>
+                        </DockPanel>
+                        <!-- operatorsReport -->
+                        <DockPanel DockPanel.Dock="Right" >
+                            <DockPanel.Resources>
+                                <Common:BindingProxy x:Key="Proxy" Data="{Binding ScaleHeight}" />
+                            </DockPanel.Resources>
+                            <DockPanel Width="50" DockPanel.Dock="Right">
+                                <Button DockPanel.Dock="Bottom" Margin="2" Height="18" Command="{Binding NavigateBackCommand}" Content="←"></Button>
+                                <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding Scales}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource EntryBoxHeader}" 
+                                                       Height="{Binding Source={StaticResource Proxy}, Path=Data}" Width="50" Text="{Binding}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </DockPanel>
+                            <Border>
+                                <Grid x:Name="adornedControl" >
+                                    <Grid.Resources>
+                                        <Common:BindingProxy x:Key="Proxy" Data="{Binding}" />
+                                    </Grid.Resources>
+                                    <ItemsControl x:Name="_ScaleLines" 
+                                                        ItemsSource="{Binding ScaleLines}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <UniformGrid Rows="2" Columns="1" Height="{Binding Source={StaticResource Proxy}, Path=Data.ScaleHeight}">
+                                                    <Canvas Background="{StaticResource ThemeDarkBrush}" />
+                                                    <Canvas Background="{StaticResource ThemeMediumBrush}" />
+                                                </UniformGrid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <ItemsControl x:Name="_slider"
+					                    ItemsSource="{Binding Bars}"
+                                        MouseMove="AreaMouseMove" MouseUp="AreaMouseUp"
+                                        FlowDirection="LeftToRight"              
+                                        VerticalAlignment="Bottom"
+					                    VirtualizingPanel.ScrollUnit="Pixel"
+					                    VirtualizingPanel.IsVirtualizing="True"
+                                        VirtualizingPanel.VirtualizationMode="Recycling"
+                                        ScrollViewer.IsDeferredScrollingEnabled="True"
+					                    ScrollViewer.CanContentScroll="True">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="Reports:OperatorBarVm">
+                                                <Grid Width="80">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*"/>
+                                                        <RowDefinition Height="30"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="20"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock HorizontalAlignment="Center" Text="{Binding Tip}" Foreground="{StaticResource TextBrush}" Grid.Row="1" Margin="1"/>
+                                                    <StackPanel Grid.Row="2"  >
+                                                        <ItemsControl x:Name="indexBtns" Height="0" HorizontalAlignment="Center"
+                                                                      ItemsSource="{Binding MenuItems}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Button Content="{Binding Text}"
+                                                                            Background="{Binding Color}"
+                                                                            Style="{StaticResource IndexButton}"
+                                                                            Command= "{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}"
+                                                                            CommandParameter="{Binding }" />
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <StackPanel Orientation="Horizontal"/>
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                        </ItemsControl>
+                                                        <ToggleButton x:Name="_bar" 
+                                                                      Style="{StaticResource SimpleBar}" 
+                                                                      Height="0" >
+                                                        </ToggleButton>
+                                                        <ToggleButton Margin="5,0,5,0" Command="{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}"
+                                                                      CommandParameter="{Binding }">
+                                                            <ToggleButton.Template>
+                                                                 <ControlTemplate>
+                                                                    <Grid>
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*"/>
+                                                                                <ColumnDefinition Width="15"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <Grid.RowDefinitions>
+                                                                                <RowDefinition Height="*"/>
+                                                                                <RowDefinition Height="*"/>
+                                                                                <RowDefinition Height="*"/>
+                                                                            </Grid.RowDefinitions>
+                                                                            <TextBlock x:Name="Color3" Height="{Binding Value3}" Background="{StaticResource l3Brush}" Text="{Binding Tip3}" 
+                                                                                       TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="0"/>
+                                                                            <Rectangle x:Name="Bar3" Height="{Binding Value3}" Fill="{StaticResource e3Brush}" Grid.Column="1" Grid.Row="0"/>
+                                                                            <TextBlock x:Name="Color2" Height="{Binding Value2}" Background="{StaticResource l2Brush}" Text="{Binding Tip2}" 
+                                                                                       TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="1"/>
+                                                                            <Rectangle x:Name="Bar2" Height="{Binding Value2}" Fill="{StaticResource e2Brush}" Grid.Column="1" Grid.Row="1"/>
+                                                                            <TextBlock x:Name="Color1" Height="{Binding Value1}" Background="{StaticResource l1Brush}" Text="{Binding Tip1}" 
+                                                                                       TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="2"/>
+                                                                            <Rectangle x:Name="Bar1" Height="{Binding Value1}" Fill="{StaticResource e1Brush}" Grid.Column="1" Grid.Row="2"/>
+                                                                        </Grid>
+                                                                        <Grid x:Name="Shade" Background="White" Opacity="0">
+                                                                            <Grid.Effect>
+                                                                                <DropShadowEffect x:Name="Effect"
+                                                                                    ShadowDepth="0"
+                                                                                    Color= "White"
+                                                                                    Opacity="0"
+                                                                                    BlurRadius="20"/>
+                                                                            </Grid.Effect>
+                                                                        </Grid>
+                                                                        <VisualStateManager.VisualStateGroups>
+                                                                            <VisualStateGroup x:Name="CommonStates">
+                                                                                <VisualStateGroup.Transitions>
+                                                                                    <VisualTransition To="MouseOver" GeneratedDuration="0:0:0.2"/>
+                                                                                    <VisualTransition To="Pressed" GeneratedDuration="0:0:0.2"/>
+                                                                                </VisualStateGroup.Transitions>
+                                                                                <VisualState x:Name="Normal" />
+                                                                                <VisualState x:Name="MouseOver">
+                                                                                    <Storyboard>
+                                                                                        <DoubleAnimation Storyboard.TargetName="Shade" Storyboard.TargetProperty="Opacity" To="0.3" />
+                                                                                        <DoubleAnimation Storyboard.TargetName="Effect" Storyboard.TargetProperty="Opacity" To="0.5" />
+                                                                                    </Storyboard>
+                                                                                </VisualState>
+                                                                                <VisualState x:Name="Pressed">
+                                                                                    <Storyboard>
+                                                                                        <DoubleAnimation Storyboard.TargetName="Shade" Storyboard.TargetProperty="Opacity" To="0.6" />
+                                                                                        <DoubleAnimation Storyboard.TargetName="Effect" Storyboard.TargetProperty="Opacity" To="0.8" />
+                                                                                    </Storyboard>
+                                                                                </VisualState>
+                                                                            </VisualStateGroup>
+                                                                        </VisualStateManager.VisualStateGroups>
+                                                                    </Grid>
+                                                                </ControlTemplate>
+                                                            </ToggleButton.Template>
+                                                        </ToggleButton>
+                                                        <StackPanel.Triggers>
+                                                            <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="_bar">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="indexBtns" 
+                                                                                Storyboard.TargetProperty="Height">
+                                                                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="30" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                            <EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="_bar">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="indexBtns" 
+                                                                                Storyboard.TargetProperty="Height">
+                                                                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                        </StackPanel.Triggers>
+                                                    </StackPanel>
+                                                    <Border Grid.Row="3" BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1">
+                                                        <TextBlock Text="{Binding Header}" HorizontalAlignment="Center"
+                                                                   Foreground="{StaticResource TextBrush}" 
+                                                                   Background="{StaticResource ThemeDarkBrush}" />
+                                                    </Border>
+                                                    <Canvas Grid.Row="0"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.Template>
+                                            <ControlTemplate>
+                                                <Border>
+                                                    <Virtualizing:DateTimeScrollViewer 
+							                        HorizontalScrollBarVisibility="Visible" 
+                                                    VerticalScrollBarVisibility="Disabled"
+                                                    Behaviors:ScrollViewerBinding.HorizontalOffset="{Binding HorizontalOffset, Mode=TwoWay}"
+							                    
+							                        Padding="{TemplateBinding Control.Padding}"
+							                        Focusable="False"
+							                        OverridesDefaultStyle="True"
+							                        Template="{StaticResource SliderTemplate}">
+                                                        <ItemsPresenter SnapsToDevicePixels="True"/>
+                                                    </Virtualizing:DateTimeScrollViewer>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ItemsControl.Template>
+                                    </ItemsControl>
+                                </Grid>
+                            </Border>
+                        </DockPanel>
+                    </DockPanel>
+                </DockPanel>
+            </Border>
+        </DataTemplate>
+
         <!--................................................ 4.Options ...............................................-->
 
         <!-- 5.1. Settings and Configurations -->
-
 		
         <!-- 5.2. Help and Support  -->
 
@@ -2145,7 +2595,9 @@
 													SetupTimesVmTemplate="{StaticResource SetupTimesTemplate}"
 													SkillCenterVmTemplate="{StaticResource SkillCenterTemplate}"
 													CostReportsVmTemplate="{StaticResource CostReportTemplate}"
-													ActualCostReportsVmTemplate="{StaticResource ActualCostReportTemplate}"/>
+													ActualCostReportsVmTemplate="{StaticResource ActualCostReportTemplate}"
+													OperationReportsVmTemplate="{StaticResource OperationReportTemplate}"
+                                                    />
 	</UserControl.Resources>
     <Grid>
         <Border Height="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=ActualHeight}"

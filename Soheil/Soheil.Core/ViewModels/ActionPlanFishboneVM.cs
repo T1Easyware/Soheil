@@ -80,5 +80,7 @@ namespace Soheil.Core.ViewModels
         {
             return AllDataValid() && base.CanSave();
         }
+
+
     }
 }

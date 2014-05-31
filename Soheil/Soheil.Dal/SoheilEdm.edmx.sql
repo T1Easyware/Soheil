@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/02/2014 17:41:03
+-- Date Created: 05/23/2014 18:25:40
 -- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -744,6 +744,9 @@ CREATE TABLE [dbo].[Process] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Code] nvarchar(60)  NULL,
     [TargetCount] int  NOT NULL,
+    [DurationSeconds] int  NOT NULL,
+    [StartDateTime] datetime  NOT NULL,
+    [EndDateTime] datetime  NOT NULL,
     [Task_Id] int  NOT NULL,
     [StateStationActivity_Id] int  NOT NULL
 );
@@ -766,6 +769,9 @@ CREATE TABLE [dbo].[ProcessReports] (
     [ProducedG1] int  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [ProcessReportTargetPoint] int  NOT NULL,
+    [DurationSeconds] int  NOT NULL,
+    [StartDateTime] datetime  NOT NULL,
+    [EndDateTime] datetime  NOT NULL,
     [TaskReport_Id] int  NOT NULL,
     [Process_Id] int  NOT NULL
 );

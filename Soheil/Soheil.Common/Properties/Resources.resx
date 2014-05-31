@@ -738,4 +738,25 @@
   <data name="txtUnitCost" xml:space="preserve">
     <value>هزینه واحد :</value>
   </data>
+  <data name="msgDeleteConfirm" xml:space="preserve">
+    <value>این آیتم حذف شود؟</value>
+  </data>
+  <data name="txtDefectionTime" xml:space="preserve">
+    <value>زمان تولید معیوب</value>
+  </data>
+  <data name="txtOperationReports" xml:space="preserve">
+    <value>گزارش عملکرد اپراتورها</value>
+  </data>
+  <data name="txtPrint" xml:space="preserve">
+    <value>چاپ</value>
+  </data>
+  <data name="txtProductionTime" xml:space="preserve">
+    <value>زمان تولید سالم</value>
+  </data>
+  <data name="txtStation" xml:space="preserve">
+    <value>ایستگاه</value>
+  </data>
+  <data name="txtStoppageTime" xml:space="preserve">
+    <value>زمان توقفات</value>
+  </data>
 </root>

@@ -62,6 +62,8 @@ namespace Soheil.Views
                 var tmpl = (DataTemplate)FindResource("EmptyContentTemplate");
                 _itemContentView.ContentTemplate = tmpl;
             }
+
+                
             else if (ViewModel.CurrentContent is AccessRuleVM)
             {
                 var tmpl = (DataTemplate)FindResource("AccessRuleTemplate");
@@ -467,6 +469,22 @@ namespace Soheil.Views
                 {
                     ViewModel.CreateClone(_currentContent);
                 }
+                else if (e.Key == Key.Delete)
+                {
+                    if (ViewModel.CurrentContent.IsDeleting)
+                    {
+                        ((IEntityObject)ViewModel.Items.CurrentItem).Delete(null);
+                    }
+                    else
+                    {
+                        e.Handled = true;
+                        ViewModel.CurrentContent.IsDeleting = true;
+                    }
+                }
+                else if (e.Key == Key.Escape)
+                {
+                    ViewModel.CurrentContent.IsDeleting = false;
+                }
             }
         }
 
@@ -477,6 +495,13 @@ namespace Soheil.Views
 
         private void DataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (e != null && e.RemovedItems.Count > 0)
+            {
+                var item = e.RemovedItems[0] as ISplitContent;
+                if (item != null)
+                    item.IsDeleting = false;
+            }
+
             if (!_isSaving)
                 return;
 

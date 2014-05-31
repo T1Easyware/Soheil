@@ -124,6 +124,8 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
         {
             return AllDataValid() && base.CanSave();
         }
+
+
         #endregion
 
         #region Static Methods

@@ -22,5 +22,6 @@ namespace Soheil.Core.Base
         }
 
         public abstract int Id { get; set; }
+
     }
 }

@@ -49,6 +49,24 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual int DurationSeconds
+        {
+            get;
+            set;
+        }
+    
+        public virtual System.DateTime StartDateTime
+        {
+            get;
+            set;
+        }
+    
+        public virtual System.DateTime EndDateTime
+        {
+            get;
+            set;
+        }
 
         #endregion
 

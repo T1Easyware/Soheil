@@ -686,6 +686,9 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Code" Type="nvarchar" Nullable="true" MaxLength="60" />
     <Property Name="TargetCount" Type="int" Nullable="false" />
+    <Property Name="DurationSeconds" Type="int" Nullable="false" />
+    <Property Name="StartDateTime" Type="datetime" Nullable="false" />
+    <Property Name="EndDateTime" Type="datetime" Nullable="false" />
     <Property Name="Task_Id" Type="int" Nullable="false" />
     <Property Name="StateStationActivity_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -708,6 +711,9 @@
     <Property Name="ProducedG1" Type="int" Nullable="false" DefaultValue="0" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ProcessReportTargetPoint" Type="int" Nullable="false" />
+    <Property Name="DurationSeconds" Type="int" Nullable="false" />
+    <Property Name="StartDateTime" Type="datetime" Nullable="false" />
+    <Property Name="EndDateTime" Type="datetime" Nullable="false" />
     <Property Name="TaskReport_Id" Type="int" Nullable="false" />
     <Property Name="Process_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -3158,12 +3164,15 @@
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Code" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="TargetCount" Nullable="false" />
+          <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
+          <Property Name="StartDateTime" Type="DateTime" Nullable="false" Precision="3" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="EndDateTime" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="ProcessOperators" Relationship="SoheilEdm.ProcessProcessOperator" FromRole="Process" ToRole="ProcessOperator" />
           <NavigationProperty Name="SelectedMachines" Relationship="SoheilEdm.ProcessSelectedMachine" FromRole="Process" ToRole="SelectedMachine" />
           <NavigationProperty Name="Task" Relationship="SoheilEdm.TaskProcess" FromRole="Process" ToRole="Task" />
           <NavigationProperty Name="StateStationActivity" Relationship="SoheilEdm.StateStationActivityProcess" FromRole="Process" ToRole="StateStationActivity" />
           <NavigationProperty Name="ProcessReports" Relationship="SoheilEdm.ProcessProcessReport" FromRole="Process" ToRole="ProcessReport" />
-        </EntityType>
+          </EntityType>
         <EntityType Name="ProcessOperator">
           <Key>
             <PropertyRef Name="Id" />
@@ -3186,6 +3195,9 @@
           <NavigationProperty Name="TaskReport" Relationship="SoheilEdm.TaskReportProcessReport" FromRole="ProcessReport" ToRole="TaskReport" />
           <NavigationProperty Name="DefectionReports" Relationship="SoheilEdm.ProcessReportDefectionReport" FromRole="ProcessReport" ToRole="DefectionReport" />
           <Property Type="Int32" Name="ProcessReportTargetPoint" Nullable="false" />
+          <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
+          <Property Name="StartDateTime" Type="DateTime" Nullable="false" Precision="3" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="EndDateTime" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="OperatorProcessReports" Relationship="SoheilEdm.ProcessReportOperatorProcessReport" FromRole="ProcessReport" ToRole="OperatorProcessReport" />
           <NavigationProperty Name="Process" Relationship="SoheilEdm.ProcessProcessReport" FromRole="ProcessReport" ToRole="Process" />
         </EntityType>
@@ -4339,6 +4351,9 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Code" ColumnName="Code" />
           <ScalarProperty Name="TargetCount" ColumnName="TargetCount" />
+          <ScalarProperty Name="DurationSeconds" ColumnName="DurationSeconds" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4359,6 +4374,9 @@
           <ScalarProperty Name="ProducedG1" ColumnName="ProducedG1" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ProcessReportTargetPoint" ColumnName="ProcessReportTargetPoint" />
+          <ScalarProperty Name="DurationSeconds" ColumnName="DurationSeconds" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5891,12 +5909,15 @@
         <AssociationConnector ManuallyRouted="false" Association="SoheilEdm.StateStationActivityProcess">
         </AssociationConnector>
         <AssociationConnector Association="SoheilEdm.OperatorCost" ManuallyRouted="true" >
-          <ConnectorPoint PointX="47.168018316490326" PointY="32.691203613281246" />
-          <ConnectorPoint PointX="47.168018316490326" PointY="43.116648217623464" />
-          <ConnectorPoint PointX="8.1694077549094626" PointY="43.116648217623464" />
-          <ConnectorPoint PointX="8.1694077549094626" PointY="38.828268229166667" />
-          <ConnectorPoint PointX="8.171613937653758" PointY="38.828268229166667" />
-          <ConnectorPoint PointX="8.171613937653758" PointY="38.453268229166667" />
+          <ConnectorPoint PointX="46.28125" PointY="33.105205078125" />
+          <ConnectorPoint PointX="46.28125" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="36.177083333333336" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="36.010416666666664" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="31.083333333333332" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="30.916666666666668" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="13.270833333333334" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="13.104166666666666" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="10.625" PointY="37.629547526041662" />
         </AssociationConnector>
         <AssociationConnector Association="SoheilEdm.ProductDefectionDefectionReport" />
         <AssociationConnector Association="SoheilEdm.OperatorOperatorProcessReport" />

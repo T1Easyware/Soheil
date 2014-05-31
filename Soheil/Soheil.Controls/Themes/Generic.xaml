@@ -362,4 +362,62 @@ TargetType="{x:Type Button}">
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type CustomControls:MultiLevelBar}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CustomControls:MultiLevelBar}">
+                    <Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock x:Name="Color3" Height="{TemplateBinding Level3}" Background="{TemplateBinding BackColor3}" Text="{Binding RelativeSource={RelativeSource Self} ,Path=ActualHeight }" Grid.Column="0" Grid.Row="0"/>
+                            <Rectangle x:Name="Bar3" Height="{TemplateBinding Level3}" Fill="{TemplateBinding EffectColor3}" Grid.Column="1" Grid.Row="0"/>
+                            <TextBlock x:Name="Color2" Height="{TemplateBinding Level2}" Background="{TemplateBinding BackColor2}" Text="{TemplateBinding Level2}" Grid.Column="0" Grid.Row="1"/>
+                            <Rectangle x:Name="Bar2" Height="{TemplateBinding Level2}" Fill="{TemplateBinding EffectColor2}" Grid.Column="1" Grid.Row="1"/>
+                            <TextBlock x:Name="Color1" Height="{TemplateBinding Level1}" Background="{TemplateBinding BackColor1}" Text="{TemplateBinding Level1}" Grid.Column="0" Grid.Row="2"/>
+                            <Rectangle x:Name="Bar1" Height="{TemplateBinding Level1}" Fill="{TemplateBinding EffectColor1}" Grid.Column="1" Grid.Row="2"/>
+                        </Grid>
+                        <Grid x:Name="Shade" Background="White" Opacity="0">
+                            <Grid.Effect>
+                                <DropShadowEffect x:Name="Effect"
+                                    ShadowDepth="0"
+                                    Color= "White"
+                                    Opacity="0"
+                                    BlurRadius="20"/>
+                            </Grid.Effect>
+                        </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition To="MouseOver" GeneratedDuration="0:0:0.2"/>
+                                    <VisualTransition To="Pressed" GeneratedDuration="0:0:0.2"/>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Shade" Storyboard.TargetProperty="Opacity" To="0.3" />
+                                        <DoubleAnimation Storyboard.TargetName="Effect" Storyboard.TargetProperty="Opacity" To="0.5" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Shade" Storyboard.TargetProperty="Opacity" To="0.6" />
+                                        <DoubleAnimation Storyboard.TargetName="Effect" Storyboard.TargetProperty="Opacity" To="0.8" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
