@@ -26,6 +26,15 @@ namespace Soheil.Core.Base
             set { SetValue(IsLinkedProperty, value); }
         }
 
+        public static readonly DependencyProperty IsDeletingProperty =
+            DependencyProperty.Register("IsDeleting", typeof(bool), typeof(ItemContentViewModel), new PropertyMetadata(default(bool)));
+
+        public bool IsDeleting
+        {
+            get { return (bool)GetValue(IsDeletingProperty); }
+            set { SetValue(IsDeletingProperty, value); }
+        }
+
         private Visibility _visibility;
         public Visibility MainContentVisibility
         {
@@ -122,6 +131,7 @@ namespace Soheil.Core.Base
         public IEntityItem SelectedGroupVM { get; set; }
 
         public virtual string SearchItem { get; set; }
+
     }
 
 }

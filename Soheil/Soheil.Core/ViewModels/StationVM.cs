@@ -111,7 +111,10 @@ namespace Soheil.Core.ViewModels
             StationDataService.AttachModel(_model);
             _model = StationDataService.GetSingle(_model.Id); OnPropertyChanged("ModifiedBy");OnPropertyChanged("ModifiedDate");Mode = ModificationStatus.Saved;
         }
-
+        public override void Delete(object param)
+        {
+            _model.Status = (byte)Status.Deleted; StationDataService.AttachModel(_model);
+        }
         public override bool CanSave()
         {
             return AllDataValid() && base.CanSave();

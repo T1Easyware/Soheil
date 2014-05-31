@@ -366,6 +366,7 @@ namespace Soheil.Model
 	public partial class StoppageReport
 	{
 		public float CountEquivalence { get { return LostCount + LostTime / ProcessReport.Process.StateStationActivity.CycleTime; } }
+        public float TimeEquivalence { get { return CountEquivalence * ProcessReport.Process.StateStationActivity.CycleTime;} }
 	}
 
 	public partial class Task

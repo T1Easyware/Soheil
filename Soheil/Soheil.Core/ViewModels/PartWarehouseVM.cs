@@ -209,7 +209,10 @@ namespace Soheil.Core.ViewModels
             OnPropertyChanged("IsReadOnly");
             OnPropertyChanged("UnitCost");
         }
-
+        public override void Delete(object param)
+        {
+            _model.Status = (byte)Status.Deleted; PartWarehouseDataService.AttachModel(_model);
+        }
         public override bool CanSave()
         {
             return AllDataValid() && base.CanSave();

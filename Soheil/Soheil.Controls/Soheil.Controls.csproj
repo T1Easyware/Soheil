@@ -141,12 +141,14 @@
     <Compile Include="CustomControls\FrameworkElementAdorner.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="CustomControls\GridLengthAnimation.cs" />
+    <Compile Include="CustomControls\MultiLevelBar.cs" />
     <Compile Include="CustomControls\ImageRadioButton.cs" />
     <Compile Include="CustomControls\ImageButton.cs" />
     <Compile Include="CustomControls\OverlayMessageBox.xaml.cs">
       <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\TimeBox.cs" />
+    <Compile Include="DataGridRowDeleting.cs" />
     <Compile Include="DataGridTextSearch.cs" />
     <Compile Include="Layout\PPStyles.xaml.cs">
       <DependentUpon>PPStyles.xaml</DependentUpon>

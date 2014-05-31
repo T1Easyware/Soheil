@@ -412,6 +412,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to این آیتم حذف شود؟.
+        /// </summary>
+        public static string msgDeleteConfirm {
+            get {
+                return ResourceManager.GetString("msgDeleteConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to آیا این برنامه حذف شود؟.
         /// </summary>
         public static string msgDeleteTask {
@@ -993,6 +1002,15 @@ namespace Soheil.Common.Properties {
         public static string txtDefections {
             get {
                 return ResourceManager.GetString("txtDefections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to زمان تولید معیوب.
+        /// </summary>
+        public static string txtDefectionTime {
+            get {
+                return ResourceManager.GetString("txtDefectionTime", resourceCulture);
             }
         }
         
@@ -1600,6 +1618,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to زمان تولید سالم.
+        /// </summary>
+        public static string txtProductionTime {
+            get {
+                return ResourceManager.GetString("txtProductionTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to برنامه تولید.
         /// </summary>
         public static string txtProductPlan {
@@ -1956,6 +1983,15 @@ namespace Soheil.Common.Properties {
         public static string txtStockStatus {
             get {
                 return ResourceManager.GetString("txtStockStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to زمان توقفات.
+        /// </summary>
+        public static string txtStoppageTime {
+            get {
+                return ResourceManager.GetString("txtStoppageTime", resourceCulture);
             }
         }
         

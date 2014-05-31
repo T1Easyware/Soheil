@@ -21,5 +21,6 @@ namespace Soheil.Core.Base
             return Title + ": " + Id + "-" + ParentId;
         }
 
+ 
     }
 }

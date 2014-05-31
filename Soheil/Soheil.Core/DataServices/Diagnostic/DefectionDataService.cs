@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Configuration;
 using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
@@ -68,6 +69,7 @@ namespace Soheil.Core.DataServices
                 entity.CreatedDate = model.CreatedDate;
                 entity.ModifiedBy = LoginInfo.Id;
                 entity.ModifiedDate = DateTime.Now;
+                entity.Status = model.Status;
                 context.Commit();
             }
         }

@@ -253,6 +253,10 @@ namespace Soheil
                     SingularList = new ActualCostReportsVm(access);
                     chrometabs.AddTab(CreateSingularTab(type), true);
                     break;
+                case SoheilEntityType.OperationReportsSubMenu:
+                    SingularList = new OperationReportsVm(access);
+                    chrometabs.AddTab(CreateSingularTab(type), true);
+                    break;
                 case SoheilEntityType.OptionsMenu:
                     break;
                 case SoheilEntityType.SettingsSubMenu:

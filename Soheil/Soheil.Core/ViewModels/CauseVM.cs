@@ -129,6 +129,11 @@ namespace Soheil.Core.ViewModels
             return AllDataValid() && base.CanSave();
         }
 
+        public override void Delete(object param)
+        {
+            _model.Status = (byte) Status.Deleted; CauseDataService.AttachModel(_model);
+        }
+
         #endregion
 
         #region Static Method

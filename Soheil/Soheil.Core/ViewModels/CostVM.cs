@@ -315,6 +315,11 @@ namespace Soheil.Core.ViewModels
             return false;
         }
 
+        public override void Delete(object param)
+        {
+            _model.Status = (byte) Status.Deleted; CostDataService.AttachModel(_model);
+        }
+
         private void SetCostParams()
         {
             bool readonlyStatus = IsCostValueSet;

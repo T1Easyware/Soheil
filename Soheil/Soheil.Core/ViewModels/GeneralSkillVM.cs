@@ -107,7 +107,9 @@ namespace Soheil.Core.ViewModels
 			return AllDataValid() && base.CanSave();
 		}
 
-		#endregion
+
+
+	    #endregion
 
 		#region Static Methods
 		public static PersonalSkill CreateNew(GeneralSkillDataService dataService)

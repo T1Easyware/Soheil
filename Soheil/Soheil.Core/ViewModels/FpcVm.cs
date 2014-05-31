@@ -151,7 +151,13 @@ namespace Soheil.Core.ViewModels
         {
             return AllDataValid() && base.CanSave();
         }
-        #endregion
+
+	    public override void Delete(object param)
+	    {
+	        _model.Status = (byte) Status.Deleted; FPCDataService.AttachModel(_model);
+	    }
+
+	    #endregion
 
         #region Static Methods
         public static FPC CreateNew(FPCDataService dataService, int groupId)

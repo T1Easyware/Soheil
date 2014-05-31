@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Soheil.Common;
-using Soheil.Controls.CustomControls;
-using Soheil.Core.Index;
 using Soheil.Core.Interfaces;
 using Soheil.Core.ViewModels.Index;
 using Soheil.Core.ViewModels.Reports;
 using Soheil.Core.Virtualizing;
 using Soheil.Core.ViewModels.PP;
-using Soheil.Common.SoheilException;
 
 namespace Soheil.Views
 {
@@ -88,6 +84,10 @@ namespace Soheil.Views
                 if (ViewModel is ActualCostReportsVm)
                 {
                     return ViewModel as ActualCostReportsVm;
+                }
+                if (ViewModel is OperationReportsVm)
+                {
+                    return ViewModel as OperationReportsVm;
                 }
                 return null;
             }
@@ -361,5 +361,27 @@ namespace Soheil.Views
 
         #endregion
 		#endregion
-	}
+
+        #region OperatorsReport
+
+        private static readonly List<string> _columnHeaders = new List<string> { "Date", "Product", "Station", "Activity", "TargetPoint", "ProductionTime", "DefectionTime", "StoppageTime"};
+
+        private void OnSelectedDateChanged(object sender, RoutedEventArgs e)
+        {
+            ((OperationReportsVm)ViewModel).InitializeProviders(null);
+        }
+
+        private void OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (_columnHeaders.Contains(e.Column.Header.ToString()))
+            {
+                e.Column.Header = Common.Properties.Resources.ResourceManager.GetString("txt" + e.Column.Header);
+            }
+            else
+            {
+                e.Cancel = true;
+            }
+        }
+        #endregion
+    }
 }

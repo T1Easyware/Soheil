@@ -166,6 +166,7 @@ namespace Soheil.Common
         ReportsMenu = 4,
         CostReportsSubMenu = 41,
         ActualCostReportsSubMenu = 42,
+        OperationReportsSubMenu = 43,
         OptionsMenu = 5,
         SettingsSubMenu = 51,
         HelpSubMenu = 52,

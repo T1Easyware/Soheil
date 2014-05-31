@@ -144,6 +144,12 @@ namespace Soheil.Core.ViewModels
         {
             return AllDataValid() && base.CanSave();
         }
+
+        public override void Delete(object param)
+        {
+            _model.Status = (byte) Status.Deleted; ActivityDataService.AttachModel(_model, SelectedGroupVM.Id);
+        }
+
         public override void ViewItemLink(object param)
         {
             var relationIndex = Convert.ToInt32(param);

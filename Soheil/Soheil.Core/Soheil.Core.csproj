@@ -74,12 +74,13 @@
     <Compile Include="Base\ItemContentViewModel.cs" />
     <Compile Include="Base\ItemRelationDetailViewModel.cs" />
     <Compile Include="ColumnInfo.cs" />
-    <Compile Include="DataServices\CostCenter\ActualCostReportDataService.cs" />
+    <Compile Include="DataServices\Reports\ActualCostReportDataService.cs" />
     <Compile Include="DataServices\OrganizationCalendar\HolidayDataService.cs" />
     <Compile Include="DataServices\OrganizationCalendar\WorkProfilePlanDataService.cs" />
     <Compile Include="DataServices\PP\BlockDataService.cs" />
+    <Compile Include="DataServices\Reports\OperatorReportDataService.cs" />
     <Compile Include="DataServices\SetupTime\SetupDataService.cs" />
-    <Compile Include="DataServices\CostCenter\CostReportDataService.cs" />
+    <Compile Include="DataServices\Reports\CostReportDataService.cs" />
     <Compile Include="DataServices\SetupTime\ChangeoverDataService.cs" />
     <Compile Include="DataServices\Index\IndexDataService.cs" />
     <Compile Include="DataServices\FPC\FPCDataService.cs" />
@@ -98,6 +99,14 @@
     <Compile Include="Fpc\StateTemplateSelector.cs" />
     <Compile Include="Interfaces\IBarChartViewer.cs" />
     <Compile Include="Interfaces\IReportBarVm.cs" />
+<<<<<<< HEAD
+    <Compile Include="PP\BlockFullData.cs" />
+    <Compile Include="Reports\OperatorBarInfo.cs" />
+    <Compile Include="Reports\OperatorBarProvider.cs" />
+    <Compile Include="Reports\OperatorBarSlideProvider.cs" />
+    <Compile Include="ViewModels\Reports\OprDetailVM.cs" />
+    <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />
+=======
     <Compile Include="PP\ActionData.cs" />
     <Compile Include="PP\PPItemBlock.cs" />
     <Compile Include="PP\PPItemBase.cs" />
@@ -147,6 +156,8 @@
     <Compile Include="ViewModels\PP\JobProductGroupVm.cs" />
     <Compile Include="ViewModels\PP\Report\BlockReportVm.cs" />
     <Compile Include="ViewModels\PP\StateVm.cs" />
+    <Compile Include="ViewModels\Reports\OperationReportsVm.cs" />
+    <Compile Include="ViewModels\Reports\OperatorBarVm.cs" />
     <Compile Include="ViewModels\SkillCenter\ActivityGroupColumnVm.cs" />
     <Compile Include="ViewModels\SkillCenter\ActivityColumnVm.cs" />
     <Compile Include="ViewModels\SkillCenter\BaseTreeItemVm.cs" />
@@ -184,7 +195,7 @@
     <Compile Include="ViewModels\PP\Report\StoppageReportVm.cs" />
     <Compile Include="ViewModels\PP\Report\TaskReportVm.cs" />
     <Compile Include="ViewModels\Reports\ActualCostReportsVm.cs" />
-    <Compile Include="ViewModels\Reports\CostBarSlideItemVm.cs" />
+    <Compile Include="ViewModels\Reports\BarSlideItemVm.cs" />
     <Compile Include="ViewModels\Reports\CostBarVm.cs" />
     <Compile Include="ViewModels\Reports\CostReportsVm.cs" />
     <Compile Include="Virtualizing\DateTimeScrollViewer.cs" />

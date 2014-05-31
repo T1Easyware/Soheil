@@ -5,7 +5,7 @@ using Soheil.Core.Virtualizing;
 
 namespace Soheil.Core.Reports
 {
-	public class CostBarSlideProvider : IItemsProvider<CostBarSlideItemVm>
+	public class CostBarSlideProvider : IItemsProvider<BarSlideItemVm>
     {
 
         private readonly int _count;
@@ -20,12 +20,12 @@ namespace Soheil.Core.Reports
             return _count;
 	    }
 
-	    public IList<CostBarSlideItemVm> FetchRange(int startCost, int count)
+	    public IList<BarSlideItemVm> FetchRange(int startCost, int count)
         {
-			var list = new List<CostBarSlideItemVm>();
+			var list = new List<BarSlideItemVm>();
             for( int i=startCost; i<startCost+count; i++ )
             {
-                //var item = new CostBarSlideItemVm(CommonExtensions.PersianCalendar.AddMonths(IndicesVm.StartingPoint, i));
+                //var item = new BarSlideItemVm(CommonExtensions.PersianCalendar.AddMonths(IndicesVm.StartingPoint, i));
                 //list.Add(item);
             }
             return list;

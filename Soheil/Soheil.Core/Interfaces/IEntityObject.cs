@@ -13,5 +13,11 @@ namespace Soheil.Core.Interfaces
         void Save(object param);
 
         bool CanSave();
+
+        Command DeleteCommand { get; set; }
+
+        void Delete(object param);
+
+        bool CanDelete();
     }
 }
