@@ -99,14 +99,11 @@
     <Compile Include="Fpc\StateTemplateSelector.cs" />
     <Compile Include="Interfaces\IBarChartViewer.cs" />
     <Compile Include="Interfaces\IReportBarVm.cs" />
-<<<<<<< HEAD
-    <Compile Include="PP\BlockFullData.cs" />
     <Compile Include="Reports\OperatorBarInfo.cs" />
     <Compile Include="Reports\OperatorBarProvider.cs" />
     <Compile Include="Reports\OperatorBarSlideProvider.cs" />
     <Compile Include="ViewModels\Reports\OprDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />
-=======
     <Compile Include="PP\ActionData.cs" />
     <Compile Include="PP\PPItemBlock.cs" />
     <Compile Include="PP\PPItemBase.cs" />
@@ -437,6 +434,7 @@
     <None Include="ViewModels\OrganizationCalendar\ClassDiagram1.cd" />
     <None Include="ViewModels\PP\Editor\seqDiag_ProcessEditor.sequencediagram" />
     <None Include="ViewModels\PP\Editor\seqDiag_Editor.sequencediagram" />
+    <None Include="ViewModels\PP\Report\seqDiag_ProcessReport.sequencediagram" />
     <None Include="ViewModels\PP\_PPClassDiagram.cd" />
     <None Include="ViewModels\SkillCenter\_SkillCenterClassDiagram.cd" />
   </ItemGroup>
@@ -446,6 +444,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ViewModels\PP\Editor\seqDiag_Editor.sequencediagram.layout">
       <DependentUpon>seqDiag_Editor.sequencediagram</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewModels\PP\Report\seqDiag_ProcessReport.sequencediagram.layout">
+      <DependentUpon>seqDiag_ProcessReport.sequencediagram</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -371,16 +371,19 @@ namespace Soheil.Model
 
 	public partial class Task
 	{
-		public DateTimeOffset Duration
-		{
-			get { return new DateTimeOffset(DurationSeconds * 1000, new TimeSpan(0)); }
-			set { DurationSeconds = (int)(value.Ticks / 1000); }
-		}
 		public bool IsRework
 		{
 			get
 			{
 				return Block.StateStation.State.OnProductRework.Rework != null;
+			}
+		}
+		public bool IsReportEmpty
+		{
+			get
+			{
+				return !TaskReports.Any() &&
+					Processes.All(x => x.IsReportEmpty);
 			}
 		}
 	}

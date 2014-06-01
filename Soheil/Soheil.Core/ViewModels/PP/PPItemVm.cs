@@ -24,7 +24,9 @@ namespace Soheil.Core.ViewModels.PP
 		public event Action<int> DurationSecondsChanged;
 		protected PPItemVm() { Message = new EmbeddedException(); }
 
-		//Message Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable error message
+		/// </summary>
 		public EmbeddedException Message
 		{
 			get { return (EmbeddedException)GetValue(MessageProperty); }
@@ -35,6 +37,9 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Members
 
+		/// <summary>
+		/// Gets the unit of work
+		/// </summary>
 		public Dal.SoheilEdmContext UOW { get; protected set; }
 
 		/// <summary>
@@ -49,7 +54,9 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		public abstract int Id { get; }
 
-		//StartDateTime Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable Start dateTime
+		/// </summary>
 		public DateTime StartDateTime
 		{
 			get { return (DateTime)GetValue(StartDateTimeProperty); }
@@ -59,21 +66,25 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("StartDateTime", typeof(DateTime), typeof(PPItemVm),
 			new UIPropertyMetadata(DateTime.Now, (d, e) => 
 			{ if (((PPItemVm)d).StartDateTimeChanged != null) ((PPItemVm)d).StartDateTimeChanged((DateTime)e.NewValue); }));
-		//DurationSeconds Dependency Property
-		public static readonly DependencyProperty DurationProperty =
-			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPItemVm), new UIPropertyMetadata(TimeSpan.Zero));
+		/// <summary>
+		/// Gets or sets the bindable duration seconds
+		/// </summary>
 		public int DurationSeconds
 		{
 			get { return (int)GetValue(DurationSecondsProperty); }
 			set { SetValue(DurationSecondsProperty, value); }
 		}
+		public static readonly DependencyProperty DurationProperty =
+			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(PPItemVm), new UIPropertyMetadata(TimeSpan.Zero));
 		public static readonly DependencyProperty DurationSecondsProperty =
 			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(PPItemVm),
 			new UIPropertyMetadata(0, (d, e) =>{
 				d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue));
 				if (((PPItemVm)d).DurationSecondsChanged != null) ((PPItemVm)d).DurationSecondsChanged((int)e.NewValue);
 			}));
-		//ViewMode Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable view mode
+		/// </summary>
 		public PPViewMode ViewMode
 		{
 			get { return (PPViewMode)GetValue(ViewModeProperty); }
@@ -85,7 +96,9 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region Commands
-		//EditItemCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command that edits the report
+		/// </summary>
 		public Commands.Command EditItemCommand
 		{
 			get { return (Commands.Command)GetValue(EditItemCommandProperty); }
@@ -103,7 +116,9 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty EditReportCommandProperty =
 			DependencyProperty.Register("EditReportCommand", typeof(Commands.Command), typeof(PPItemVm), new UIPropertyMetadata(null));
-		//DeleteItemCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command that deletes the report
+		/// </summary>
 		public Commands.Command DeleteItemCommand
 		{
 			get { return (Commands.Command)GetValue(DeleteTaskCommandProperty); }

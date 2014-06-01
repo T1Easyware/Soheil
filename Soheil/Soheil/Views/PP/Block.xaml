@@ -84,9 +84,11 @@
 			<Binding ElementName="root" Path="PPTable.HourZoom"/>
 		</MultiBinding>
 	</UserControl.Width>
+	
+	
 	<Border Background="{Binding ProductColor, Converter={StaticResource colorFixer}}" BorderBrush="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}" BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="40" Margin="0,1"
 			ToolTipService.ShowDuration="60000" ToolTipService.InitialShowDelay="100" ToolTipService.HasDropShadow="True">
-		
+
 		<!-- RightClick menu -->
 		<Border.ContextMenu>
 			<ContextMenu FlowDirection="RightToLeft">
@@ -211,6 +213,18 @@
 		
 		<!-- main content -->
 		<Grid ClipToBounds="False" TextBlock.Foreground="{Binding ForeColor}">
+			<Rectangle Width="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=ActualWidth}">
+				<Rectangle.Fill>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+						<GradientStop Color="Transparent" Offset="-.5"/>
+						<GradientStop Color="#9FFF" Offset="-.4"/>
+						<GradientStop Color="Transparent" Offset=".5"/>
+						<GradientStop Color="#9FFF" Offset="1.4"/>
+						<GradientStop Color="Transparent" Offset="1.5"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			
 			<!-- block background texts -->
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" ClipToBounds="True">
 				<DockPanel Visibility="{Binding IsReportFilled, Converter={StaticResource booleanToInvisibilityConverter}}" Margin="0,0,2,0">
@@ -433,7 +447,9 @@
 						<DataTrigger.EnterActions>
 							<BeginStoryboard x:Name="bsb">
 								<Storyboard>
-									<DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.5" Duration="0:0:0.5" AutoReverse="True" RepeatBehavior="Forever"/>
+									<DoubleAnimation Storyboard.TargetProperty="Border.Contents[0].Rectangle.Fill.GradientStops[1].Offset" From="-.4" To="1.4" Duration="0:0:1" AutoReverse="False" RepeatBehavior="Forever"/>
+									<ColorAnimation  Storyboard.TargetProperty="Border.Contents[0].Rectangle.Fill.GradientStops[2].Color"  From="Transparent" To="#BFFF" Duration="0:0:.5" AutoReverse="True" RepeatBehavior="Forever"/>
+									<DoubleAnimation Storyboard.TargetProperty="Border.Contents[0].Rectangle.Fill.GradientStops[3].Offset" From="1.4" To="-.4" Duration="0:0:1" AutoReverse="False" RepeatBehavior="Forever"/>
 								</Storyboard>
 							</BeginStoryboard>
 						</DataTrigger.EnterActions>

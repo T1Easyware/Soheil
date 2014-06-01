@@ -18,9 +18,8 @@
   </ResourceDictionary.MergedDictionaries>
 
   <!--  Chrome Tab Panel  -->
-  <Style
-x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type CustomControls:ChromeTabPanel}, ResourceId=addButtonStyle}"
-TargetType="{x:Type Button}">
+  <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type CustomControls:ChromeTabPanel}, ResourceId=addButtonStyle}"
+		TargetType="{x:Type Button}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
@@ -362,11 +361,6 @@ TargetType="{x:Type Button}">
             </Setter.Value>
         </Setter>
     </Style>
-<<<<<<< .mine
-
-=======
-
->>>>>>> .theirs
     <Style TargetType="{x:Type CustomControls:MultiLevelBar}">
         <Setter Property="Template">
             <Setter.Value>
@@ -424,181 +418,6 @@ TargetType="{x:Type Button}">
             </Setter.Value>
         </Setter>
     </Style>
-<<<<<<< .mine
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
-
 
 	<Style TargetType="{x:Type CustomControls:TimeBox}">
 		<Setter Property="Template">
@@ -769,6 +588,4 @@ TargetType="{x:Type Button}">
 			</Setter.Value>
 		</Setter>
 	</Style>
-
->>>>>>> .theirs
 </ResourceDictionary>

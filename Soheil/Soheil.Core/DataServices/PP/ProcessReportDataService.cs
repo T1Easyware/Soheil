@@ -125,14 +125,14 @@ namespace Soheil.Core.DataServices
 			{
 				//overwrite ProcessReport
 				model.ProducedG1 = vm.ProducedG1;
-				model.ProcessReportTargetPoint = vm.ProcessReportTargetPoint;
+				model.ProcessReportTargetPoint = vm.TargetPoint;
 			}
 			else
 			{
 				//add ProcessReport
 				model.Process = new Repository<Process>(context).FirstOrDefault(x => x.Id == vm.ProcessId);
 				model.ProducedG1 = vm.ProducedG1;
-				model.ProcessReportTargetPoint = vm.ProcessReportTargetPoint;
+				model.ProcessReportTargetPoint = vm.TargetPoint;
 			}
 
 			//delete defectionReports and their children
