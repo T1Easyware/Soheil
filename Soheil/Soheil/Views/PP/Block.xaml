@@ -87,7 +87,7 @@
 	
 	
 	<Border Background="{Binding ProductColor, Converter={StaticResource colorFixer}}" BorderBrush="{Binding Message.HasException, Converter={StaticResource hasErrorToShadowColor}}" BorderThickness="1" CornerRadius="2" VerticalAlignment="Stretch" Height="40" Margin="0,1"
-			ToolTipService.ShowDuration="60000" ToolTipService.InitialShowDelay="100" ToolTipService.HasDropShadow="True">
+			ToolTipService.ShowDuration="60000" ToolTipService.InitialShowDelay="100" ToolTipService.HasDropShadow="True" Tag="{Binding ElementName=lgb}">
 
 		<!-- RightClick menu -->
 		<Border.ContextMenu>
@@ -215,7 +215,7 @@
 		<Grid ClipToBounds="False" TextBlock.Foreground="{Binding ForeColor}">
 			<Rectangle Width="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=ActualWidth}">
 				<Rectangle.Fill>
-					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0" x:Name="lgb">
 						<GradientStop Color="Transparent" Offset="-.5"/>
 						<GradientStop Color="#9FFF" Offset="-.4"/>
 						<GradientStop Color="Transparent" Offset=".5"/>
@@ -447,9 +447,9 @@
 						<DataTrigger.EnterActions>
 							<BeginStoryboard x:Name="bsb">
 								<Storyboard>
-									<DoubleAnimation Storyboard.TargetProperty="Border.Contents[0].Rectangle.Fill.GradientStops[1].Offset" From="-.4" To="1.4" Duration="0:0:1" AutoReverse="False" RepeatBehavior="Forever"/>
-									<ColorAnimation  Storyboard.TargetProperty="Border.Contents[0].Rectangle.Fill.GradientStops[2].Color"  From="Transparent" To="#BFFF" Duration="0:0:.5" AutoReverse="True" RepeatBehavior="Forever"/>
-									<DoubleAnimation Storyboard.TargetProperty="Border.Contents[0].Rectangle.Fill.GradientStops[3].Offset" From="1.4" To="-.4" Duration="0:0:1" AutoReverse="False" RepeatBehavior="Forever"/>
+									<DoubleAnimation Storyboard.TargetProperty="Tag.GradientStops[1].Offset" From="-.4" To="1.4" Duration="0:0:1" AutoReverse="False" RepeatBehavior="Forever"/>
+									<ColorAnimation  Storyboard.TargetProperty="Tag.GradientStops[2].Color"  From="Transparent" To="#BFFF" Duration="0:0:.5" AutoReverse="True" RepeatBehavior="Forever"/>
+									<DoubleAnimation Storyboard.TargetProperty="Tag.GradientStops[3].Offset" From="1.4" To="-.4" Duration="0:0:1" AutoReverse="False" RepeatBehavior="Forever"/>
 								</Storyboard>
 							</BeginStoryboard>
 						</DataTrigger.EnterActions>

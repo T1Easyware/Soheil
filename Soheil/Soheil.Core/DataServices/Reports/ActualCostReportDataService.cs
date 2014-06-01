@@ -118,7 +118,7 @@ namespace Soheil.Core.DataServices
                 // Products duration
                 var productDurationQuery = from index in indexList
                                            from taskReport in taskReportList.Where(tr => tr.Id == index.Value).DefaultIfEmpty()
-                                           from processReport in processReportList.Where(pr => pr.TaskReport != null && taskReport != null && pr.TaskReport.Id == taskReport.Id).DefaultIfEmpty()
+                                           from processReport in processReportList.Where(pr =>  taskReport != null ).DefaultIfEmpty()
                                            from process in processList.Where(p => processReport != null && processReport.Process != null && p.Id == processReport.Process.Id).DefaultIfEmpty()
                                            from processOpr in processOperatortList.Where(po => process != null && po.Process != null && po.Process.Id == process.Id).DefaultIfEmpty()
                                            from ssActivity in ssaList.Where(ssa => process != null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
@@ -435,7 +435,7 @@ namespace Soheil.Core.DataServices
 
                 // Products duration
                 var productDurationQuery = from taskReport in taskReportList
-                                           from processReport in processReportList.Where(pr => pr.TaskReport != null && taskReport != null && pr.TaskReport.Id == taskReport.Id).DefaultIfEmpty()
+                                           from processReport in processReportList.Where(pr =>  taskReport != null ).DefaultIfEmpty()
                                            from process in processList.Where(p => processReport != null && processReport.Process != null && p.Id == processReport.Process.Id).DefaultIfEmpty()
                                            from processOpr in processOperatortList.Where(po => process != null && po.Process != null && po.Process.Id == process.Id).DefaultIfEmpty()
                                            from ssActivity in ssaList.Where(ssa => process != null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()

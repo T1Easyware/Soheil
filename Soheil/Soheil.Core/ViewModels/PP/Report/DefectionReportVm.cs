@@ -14,6 +14,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		public DefectionReportVm(DefectionReportCollection parent, Model.DefectionReport model)
 		{
+			Model = model;
 			Index = parent.Parent.DefectionReports.List.Count + 1;
 			Parent = parent;
 			ProductDefection = FilterBoxVm.CreateForProductDefections(

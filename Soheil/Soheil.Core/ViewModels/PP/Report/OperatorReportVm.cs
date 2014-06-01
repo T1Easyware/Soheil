@@ -11,14 +11,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 	public class OperatorReportVm : OperatorVm
 	{
 		public event Action ProduceG1Changed;
-		public Model.ProcessOperatorReport Model { get; private set; }
+		public Model.OperatorProcessReport Model { get; private set; }
 
 		#region Ctor
 		/// <summary>
-		/// Use this constructor to use an existing ProcessOperatorReport
+		/// Use this constructor to use an existing OperatorProcessReport
 		/// </summary>
 		/// <param name="model">role and all skill related relations are used</param>
-		public OperatorReportVm(Model.ProcessOperatorReport model)
+		public OperatorReportVm(Model.OperatorProcessReport model)
 			:base(model.ProcessOperator)
 		{
 			Model = model;

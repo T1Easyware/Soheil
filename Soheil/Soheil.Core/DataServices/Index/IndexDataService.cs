@@ -155,7 +155,7 @@ namespace Soheil.Core.DataServices
                               let cycleTime = ssActivity == null ? 0 : ssActivity.CycleTime
                               let targetCount = process == null ? 0 : process.TargetCount
                               let prId = processReport == null? -1 : processReport.Id
-                              let trId = processReport == null ? -1 : (processReport.TaskReport == null ? -1 : processReport.TaskReport.Id)
+                              let trId = processReport == null ? -1 : (0)
                               select new { prId, trId, fValue = cycleTime * producedG1, bValue = cycleTime * targetCount };
 
                 var query = from index in indexList
@@ -220,7 +220,7 @@ namespace Soheil.Core.DataServices
 
                 var prQuery = from process in pQuery
                               from processReport in processReportList.Where(pr => process != null && pr.Process != null && pr.Process.Id == process.pId).DefaultIfEmpty()
-                              from taskReport in taskReportList.Where(tr=> tr.Id == processReport.TaskReport.Id && tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
+                              from taskReport in taskReportList.Where(tr=>  tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
                               let mId = process == null ? -1 : process.mId
                               let producedG1 = processReport == null ? 0 : processReport.ProducedG1
                               let cycleTime = process == null ? 0 : process.cycleTime
@@ -291,7 +291,7 @@ namespace Soheil.Core.DataServices
                               from process in processList.Where(pr => pr.StateStationActivity != null && ssActivity != null && pr.StateStationActivity.Id == ssActivity.Id).DefaultIfEmpty()
                               from processReport in processReportList
                               from defectionReport in defectionReportList.Where(dr => dr.ProcessReport != null && processReport != null && dr.ProcessReport.Id == processReport.Id).DefaultIfEmpty()
-                              let trId = processReport == null ? -1 : (processReport.TaskReport == null ? -1 : processReport.TaskReport.Id)
+                              let trId = processReport == null ? -1 : 0
                               let prId = processReport == null ? -1 : processReport.Id
                               let cycleTime = ssActivity == null ? 0 : ssActivity.CycleTime
                               let producedG1 = processReport == null ? 0 : processReport.ProducedG1
@@ -364,7 +364,7 @@ namespace Soheil.Core.DataServices
                                          let producedG1 = processReport == null ? 0 : processReport.ProducedG1
                                          let cycleTime = ssActivity == null ? 0 : ssActivity.CycleTime
                                          let prId = processReport == null ? -1 : processReport.Id
-                                         let trId = processReport == null ? -1 : (processReport.TaskReport == null ? -1 : processReport.TaskReport.Id)
+                                         let trId = processReport == null ? -1 : (0)
                                          select new { prId, trId, producedG1, cycleTime};
 
                 var query = from index in indexList
@@ -427,7 +427,7 @@ namespace Soheil.Core.DataServices
                                          let producedG1 = processReport == null ? 0 : processReport.ProducedG1
                                          let targetCount = process == null ? 0 : process.TargetCount
                                          let prId = processReport == null ? -1 : processReport.Id
-                                         let trId = processReport == null ? -1 : (processReport.TaskReport == null ? -1 : processReport.TaskReport.Id)
+                                         let trId = processReport == null ? -1 : (0)
                                          select new { prId, trId, producedG1, targetCount };
 
                 var query = from index in indexList
@@ -490,7 +490,7 @@ namespace Soheil.Core.DataServices
 
                 var productQuery = from process in processList
                                          from processReport in processReportList.Where(ssapr => ssapr.Process != null && process != null && ssapr.Process.Id == process.Id).DefaultIfEmpty()
-                                         from taskReport in taskReportList.Where(tr=> tr.Id == processReport.TaskReport.Id && tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
+                                         from taskReport in taskReportList.Where(tr=>  tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
                                          from ssActivity in ssaList.Where(ssa => process!= null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
                                          from activity in activityList.Where(a=> ssActivity != null && ssActivity.Activity != null && ssActivity.Activity.Id == a.Id).DefaultIfEmpty()
                                          from pOpr in processOperatortList.Where(po=> po.Process != null && process != null && po.Process.Id == process.Id).DefaultIfEmpty()
@@ -567,7 +567,7 @@ namespace Soheil.Core.DataServices
 
                 var stationQuery = from process in processList
                                    from processReport in processReportList.Where(ssapr => ssapr.Process != null && process != null && ssapr.Process.Id == process.Id).DefaultIfEmpty()
-                                   from taskReport in taskReportList.Where(tr => tr.Id == processReport.TaskReport.Id && tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
+                                   from taskReport in taskReportList.Where(tr =>  tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
                                    from ssActivity in ssaList.Where(ssa => process != null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
                                    from activity in activityList.Where(a => ssActivity != null && ssActivity.Activity != null && ssActivity.Activity.Id == a.Id).DefaultIfEmpty()
                                    from pOpr in processOperatortList.Where(po => po.Process != null && process != null && po.Process.Id == process.Id).DefaultIfEmpty()
@@ -644,7 +644,7 @@ namespace Soheil.Core.DataServices
 
                 var activityQuery = from process in processList
                                    from processReport in processReportList.Where(ssapr => ssapr.Process != null && process != null && ssapr.Process.Id == process.Id).DefaultIfEmpty()
-                                   from taskReport in taskReportList.Where(tr => tr.Id == processReport.TaskReport.Id && tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
+                                   from taskReport in taskReportList.Where(tr =>  tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
                                    from ssActivity in ssaList.Where(ssa => process != null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
                                    from pOpr in processOperatortList.Where(po => po.Process != null && process != null && po.Process.Id == process.Id).DefaultIfEmpty()
                                    from opr in operatorList.Where(o => pOpr != null && pOpr.Operator != null && pOpr.Operator.Id == o.Id).DefaultIfEmpty()
@@ -721,7 +721,7 @@ namespace Soheil.Core.DataServices
 
                 var operatorQuery = from process in processList
                                    from processReport in processReportList.Where(ssapr => ssapr.Process != null && process != null && ssapr.Process.Id == process.Id).DefaultIfEmpty()
-                                   from taskReport in taskReportList.Where(tr => tr.Id == processReport.TaskReport.Id && tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
+                                   from taskReport in taskReportList.Where(tr =>  tr.ReportStartDateTime >= indexInfo.StartDate && tr.ReportEndDateTime < indexInfo.EndDate).DefaultIfEmpty()
                                    from ssActivity in ssaList.Where(ssa => process != null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
                                    from activity in activityList.Where(a => ssActivity != null && ssActivity.Activity != null && ssActivity.Activity.Id == a.Id).DefaultIfEmpty()
                                    from pOpr in processOperatortList.Where(po => po.Process != null && process != null && po.Process.Id == process.Id).DefaultIfEmpty()

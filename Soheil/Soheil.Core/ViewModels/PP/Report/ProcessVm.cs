@@ -9,6 +9,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class ProcessVm : PPItemVm
 	{
+		public event Action LayoutChanged;
 		public Model.Process Model { get; protected set; }
 		public override int Id
 		{
@@ -86,7 +87,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 						//create process operators
 						foreach (var po in Model.ProcessOperators)
 						{
-							processReportModel.ProcessOperatorReports.Add(new Model.ProcessOperatorReport
+							processReportModel.OperatorProcessReports.Add(new Model.OperatorProcessReport
 							{
 								ProcessReport = processReportModel,
 								ProcessOperator = po,
@@ -124,7 +125,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 					//create process operators
 					foreach (var po in Model.ProcessOperators)
 					{
-						newModel.ProcessOperatorReports.Add(new Model.ProcessOperatorReport
+						newModel.OperatorProcessReports.Add(new Model.OperatorProcessReport
 						{
 							ProcessReport = newModel,
 							ProcessOperator = po,
@@ -136,6 +137,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 					//add to processReports
 					Model.ProcessReports.Add(newModel);
 				}
+
+				if (LayoutChanged != null)
+					LayoutChanged();
 			});
 		}
 
@@ -149,5 +153,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty FillEmptySpacesCommandProperty =
 			DependencyProperty.Register("FillEmptySpacesCommand", typeof(Commands.Command), typeof(ProcessVm), new UIPropertyMetadata(null));
+
 	}
 }

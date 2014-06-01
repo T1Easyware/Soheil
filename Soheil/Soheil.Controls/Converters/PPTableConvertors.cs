@@ -322,7 +322,23 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class ProcessReportBorderMarginConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return new Thickness();
+			var startDt = (DateTime)values[0];
+			var oneHourWidth = (double)values[1];
+			var processStartDt = (DateTime)values[2];
+			return new Thickness(startDt.Subtract(processStartDt).TotalHours * oneHourWidth, 1, 0, 1);
+		}
 
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+	
 	public class PPTaskBorderHeightConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace Soheil.Model
 {
-    public partial class ProcessOperatorReport
+    public partial class OperatorProcessReport
     {
         #region Primitive Properties
     
@@ -78,32 +78,32 @@ namespace Soheil.Model
     
         private void FixupProcessReport(ProcessReport previousValue)
         {
-            if (previousValue != null && previousValue.ProcessOperatorReports.Contains(this))
+            if (previousValue != null && previousValue.OperatorProcessReports.Contains(this))
             {
-                previousValue.ProcessOperatorReports.Remove(this);
+                previousValue.OperatorProcessReports.Remove(this);
             }
     
             if (ProcessReport != null)
             {
-                if (!ProcessReport.ProcessOperatorReports.Contains(this))
+                if (!ProcessReport.OperatorProcessReports.Contains(this))
                 {
-                    ProcessReport.ProcessOperatorReports.Add(this);
+                    ProcessReport.OperatorProcessReports.Add(this);
                 }
             }
         }
     
         private void FixupProcessOperator(ProcessOperator previousValue)
         {
-            if (previousValue != null && previousValue.ProcessOperatorReports.Contains(this))
+            if (previousValue != null && previousValue.OperatorProcessReports.Contains(this))
             {
-                previousValue.ProcessOperatorReports.Remove(this);
+                previousValue.OperatorProcessReports.Remove(this);
             }
     
             if (ProcessOperator != null)
             {
-                if (!ProcessOperator.ProcessOperatorReports.Contains(this))
+                if (!ProcessOperator.OperatorProcessReports.Contains(this))
                 {
-                    ProcessOperator.ProcessOperatorReports.Add(this);
+                    ProcessOperator.OperatorProcessReports.Add(this);
                 }
             }
         }

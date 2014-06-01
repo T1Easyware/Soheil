@@ -83,6 +83,7 @@
 	<ppconv:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
 	<ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
 	<ppconv:ProcessBorderMarginConverter x:Key="processBorderMarginConverter"/>
+	<ppconv:ProcessReportBorderMarginConverter x:Key="processReportBorderMarginConverter"/>
 	
 	<ppconv:StartEndToWidthConverter x:Key="StartEndToWidthConverter"/>
 	<ppconv:StartToMarginConverter x:Key="StartToMarginConverter"/>

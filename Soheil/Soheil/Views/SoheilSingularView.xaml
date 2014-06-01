@@ -676,7 +676,7 @@
 										<!-- Task range -->
 										<Border BorderBrush="Silver" BorderThickness="1,0,1,1" CornerRadius="0,0,3,3" 
 												Background="#8FF" x:Name="line" Height="15" Opacity="0.1"
-												ToolTip="برای پر کردن فضای خالی با گزارش بازه ای ایستگاه، کلیک کنید">
+												ToolTip="برای ایجاد گزارش بازه ای ایستگاه کلیک کنید">
 											<I:Interaction.Triggers>
 												<I:EventTrigger EventName="MouseDown">
 													<I:InvokeCommandAction Command="{Binding FillEmptySpacesCommand}"/>
@@ -1268,6 +1268,11 @@
 																	</Canvas>
 																</DataTemplate>
 															</ItemsControl.ItemTemplate>
+															<ItemsControl.ItemsPanel>
+																<ItemsPanelTemplate>
+																	<Canvas/>
+																</ItemsPanelTemplate>
+															</ItemsControl.ItemsPanel>
 														</ItemsControl>
 													</DataTemplate>
 												</ItemsControl.ItemTemplate>

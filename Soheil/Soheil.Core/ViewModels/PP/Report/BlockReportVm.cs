@@ -80,22 +80,35 @@ namespace Soheil.Core.ViewModels.PP.Report
 						if (rowVm == null) continue;
 						//create processVm
 						var processVm = new ProcessVm(process);
+						processVm.LayoutChanged += ReloadProcessReportRows;
 						rowVm.ProcessList.Add(processVm);
 						//load process reports
 						foreach (var processReport in process.ProcessReports.OrderBy(x => x.StartDateTime))
 						{
-							var processReportVm = new ProcessReportVm(processReport, rowVm);
+							var processReportVm = new ProcessReportVm(processReport);
 							//process report events
-							processReportVm.Refresh += ReloadProcessReportRows;
+							processReportVm.LayoutChanged += ReloadProcessReportRows;
 							processReportVm.ProcessReportSelected += vm =>
 							{
 								Block.Parent.PPTable.CurrentProcessReportBuilder = vm;
 							};
 
+							//correct next/previous links
+							processReportVm.PreviousReport = processVm.ProcessReportList.LastOrDefault();
+							if (processReportVm.PreviousReport != null)
+								processReportVm.PreviousReport.NextReport = processReportVm;
+
+							//add the report to its processVm
 							processVm.ProcessReportList.Add(processReportVm);
 						}
+					}
+				}
 
-						//put processes in order
+				//put processes in order
+				foreach (var activityVm in ActivityList)
+				{
+					foreach (var rowVm in activityVm.ProcessRowList)
+					{
 						rowVm.RearrangeRows();
 					}
 				}

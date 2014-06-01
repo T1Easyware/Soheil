@@ -22,53 +22,53 @@
 			<Binding ElementName="root" Path="PPTable.HourZoom"/>
 		</MultiBinding>
 	</UserControl.Width>
-	<Border Background="#1FFF">
-		<Border.Triggers>
-			<EventTrigger RoutedEvent="MouseEnter">
-				<BeginStoryboard>
-					<Storyboard Duration="0:0:0.2">
-						<ColorAnimation Storyboard.TargetProperty="Color" Duration="0:0:0.2" To="#6FFF"/>
-					</Storyboard>
-				</BeginStoryboard>
-			</EventTrigger>
-			<EventTrigger RoutedEvent="MouseLeave">
-				<BeginStoryboard>
-					<Storyboard Duration="0:0:0.3">
-						<ColorAnimation Storyboard.TargetProperty="Color" Duration="0:0:0.3" To="#1FFF"/>
-					</Storyboard>
-				</BeginStoryboard>
-			</EventTrigger>
-		</Border.Triggers>
-		<Grid>
-			<!-- process -->
-			<Border BorderThickness="1" BorderBrush="Black" CornerRadius="3" ToolTip="برای پر کردن فضای خالی با گزارش فعالیت، کلیک کنید">
-				<I:Interaction.Triggers>
-					<I:EventTrigger EventName="MouseDown">
-						<I:InvokeCommandAction Command="{Binding FillEmptySpacesCommand}"/>
-					</I:EventTrigger>
-				</I:Interaction.Triggers>
-				<Image Style="{StaticResource ProcessReportImage}"/>
-			</Border>
-			<!-- processReport -->
-			<ItemsControl ItemsSource="{Binding ProcessReportList}">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate DataType="{x:Type ppevm:ProcessReportVm}">
-						<local:ProcessReport DataContext="{Binding}" 
-											 PPTable="{Binding ElementName=root, Path=PPTable}"
-											 Process="{Binding ElementName=root, Path=DataContext}"/>
-						<DataTemplate.Triggers>
-							<DataTrigger Binding="{Binding IsSelected}" Value="True">
-								<Setter Property="Panel.ZIndex" Value="999"/>
-								<Setter Property="Effect">
-									<Setter.Value>
-										<DropShadowEffect BlurRadius="16" Opacity="1" ShadowDepth="0" Color="Yellow"/>
-									</Setter.Value>
-								</Setter>
-							</DataTrigger>
-						</DataTemplate.Triggers>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-		</Grid>
-	</Border>
+	<Grid Height="40">
+		<!-- process -->
+		<Border BorderThickness="1" Background="#3FFF" BorderBrush="Black" CornerRadius="3" ToolTip="برای ایجاد گزارش فعالیت کلیک کنید">
+			<Border.Triggers>
+				<EventTrigger RoutedEvent="MouseEnter">
+					<BeginStoryboard>
+						<Storyboard Duration="0:0:0.2">
+							<ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Duration="0:0:0.2" To="#8FFF"/>
+						</Storyboard>
+					</BeginStoryboard>
+				</EventTrigger>
+				<EventTrigger RoutedEvent="MouseLeave">
+					<BeginStoryboard>
+						<Storyboard Duration="0:0:0.3">
+							<ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Duration="0:0:0.3" To="#3FFF"/>
+						</Storyboard>
+					</BeginStoryboard>
+				</EventTrigger>
+			</Border.Triggers>
+			<I:Interaction.Triggers>
+				<I:EventTrigger EventName="MouseDown">
+					<I:InvokeCommandAction Command="{Binding FillEmptySpacesCommand}"/>
+				</I:EventTrigger>
+			</I:Interaction.Triggers>
+			<Image Style="{StaticResource ProcessReportImage}"/>
+		</Border>
+		<!-- processReport -->
+		<ItemsControl ItemsSource="{Binding ProcessReportList}" Height="40">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate DataType="{x:Type ppevm:ProcessReportVm}">
+					<Canvas>
+						<local:ProcessReport DataContext="{Binding}" Tag="{Binding ElementName=root}"
+							PPTable="{Binding ElementName=root, Path=PPTable}"
+							Process="{Binding ElementName=root, Path=DataContext}"/>
+					</Canvas>
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding IsSelected}" Value="True">
+							<Setter Property="Panel.ZIndex" Value="999"/>
+							<Setter Property="Effect">
+								<Setter.Value>
+									<DropShadowEffect BlurRadius="16" Opacity="1" ShadowDepth="0" Color="Yellow"/>
+								</Setter.Value>
+							</Setter>
+						</DataTrigger>
+					</DataTemplate.Triggers>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+	</Grid>
 </UserControl>
