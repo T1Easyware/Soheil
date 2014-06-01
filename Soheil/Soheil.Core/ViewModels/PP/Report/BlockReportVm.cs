@@ -36,73 +36,68 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public static readonly DependencyProperty BlockProperty =
 			DependencyProperty.Register("Block", typeof(BlockVm), typeof(BlockReportVm), new UIPropertyMetadata(null));
 
-		//SSAList Observable Collection
-		public ObservableCollection<StateStationActivityVm> SSAList { get { return _ssaList; } }
-		private ObservableCollection<StateStationActivityVm> _ssaList = new ObservableCollection<StateStationActivityVm>();
-
 		//ProcessReportRows Observable Collection
-		public ObservableCollection<ProcessReportRowVm> ProcessReportRows { get { return _processReportRows; } }
-		private ObservableCollection<ProcessReportRowVm> _processReportRows = new ObservableCollection<ProcessReportRowVm>();
+		public ObservableCollection<ActivityRowVm> ActivityList { get { return _activityList; } }
+		private ObservableCollection<ActivityRowVm> _activityList = new ObservableCollection<ActivityRowVm>();
 
 		//TaskReports Observable Collection
-		public ObservableCollection<TaskReportBaseVm> TaskReports { get { return _taskReport; } }
-		private ObservableCollection<TaskReportBaseVm> _taskReport = new ObservableCollection<TaskReportBaseVm>();
+		public ObservableCollection<TaskReportVm> TaskReports { get { return _taskReport; } }
+		private ObservableCollection<TaskReportVm> _taskReport = new ObservableCollection<TaskReportVm>();
 
+		/// <summary>
+		/// Reloads all activities, ssas and processReports for this block
+		/// </summary>
 		public void ReloadProcessReportRows()
 		{
 			TaskReports.Clear();
-			SSAList.Clear();
-			ProcessReportRows.Clear();
-			int index = 0;
+			ActivityList.Clear();
 
+			foreach (var ssaGroup in Block.Model.StateStation.StateStationActivities.GroupBy(x => x.Activity))
+			{
+				var activityVm = new ActivityRowVm(ssaGroup.Key);
+				ActivityList.Add(activityVm);
+			}
 			var ssaModels = new List<Model.StateStationActivity>();
 			foreach (var task in Block.TaskList.OrderBy(x => x.StartDateTime))
 			{
-				//SSAList (add ssas from processes of each task)
-				ssaModels.AddRange(TaskDataService.GetProcesses(task.Id).Select(x => x.StateStationActivity));
-
-				//TaskReports
+				//load TaskReports
 				foreach (var taskReport in task.TaskReports.OrderBy(x => x.StartDateTime))
 				{
 					TaskReports.Add(taskReport);
 				}
-			}
 
-			//find distince SSAs from ssaModels
-			ssaModels = ssaModels.DistinctBy(x => x.Id).OrderBy(x => x.Activity.Id).ThenBy(x => x.ManHour).ToList();
-
-			//add process report rows
-			foreach (var ssa in ssaModels)
-			{
-				//SSAList (finally add ssaVm to SSAList)
-				var ssaVm = new StateStationActivityVm(ssa);
-				SSAList.Add(ssaVm);
-				//ProcessReportRows
-				var processReportRow = new ProcessReportRowVm(Block.Parent.PPTable,  ssaVm, index);
-				index++;
-				ProcessReportRows.Add(processReportRow);
-			}
-
-			//ProcessReportRows
-			foreach (var taskReport in TaskReports)
-			{
-				if (taskReport is TaskReportVm)
+				//load ProcessReports
+				foreach (var processGroup in task.Model.Processes.GroupBy(x=>x.StateStationActivity.Activity))
 				{
-					var processReportModels = ProcessReportDataService.GetProcessReports((taskReport as TaskReportVm).Id);
-                    foreach (var processReportModel in processReportModels)
-                    {
-                        var row = ProcessReportRows.First(x => x.StateStationActivity.Id == processReportModel.Process.StateStationActivity.Id);
-                        row.ProcessReportCells.Add(new ProcessReportCellVm(processReportModel, taskReport, row));
-                    }
-				}
-				else//is holder
-				{
-					var processModels = TaskDataService.GetProcesses(taskReport.Task.Id);
-                    foreach (var processModel in processModels)
-                    {
-                        var row = ProcessReportRows.First(x => x.StateStationActivity.Id == processModel.StateStationActivity.Id);
-                        row.ProcessReportCells.Add(new ProcessReportCellVm(null, taskReport, row));
-                    }
+					//find activity
+					var activityVm = ActivityList.FirstOrDefault(x => x.Id == processGroup.Key.Id);
+					if (activityVm == null) continue;
+					//load processes
+					foreach (var process in processGroup)
+					{
+						//find ssa (row)
+						var rowVm = activityVm.ProcessRowList.FirstOrDefault(x => x.Id == process.StateStationActivity.Id);
+						if (rowVm == null) continue;
+						//create processVm
+						var processVm = new ProcessVm(process);
+						rowVm.ProcessList.Add(processVm);
+						//load process reports
+						foreach (var processReport in process.ProcessReports.OrderBy(x => x.StartDateTime))
+						{
+							var processReportVm = new ProcessReportVm(processReport, rowVm);
+							//process report events
+							processReportVm.Refresh += ReloadProcessReportRows;
+							processReportVm.ProcessReportSelected += vm =>
+							{
+								Block.Parent.PPTable.CurrentProcessReportBuilder = vm;
+							};
+
+							processVm.ProcessReportList.Add(processReportVm);
+						}
+
+						//put processes in order
+						rowVm.RearrangeRows();
+					}
 				}
 			}
 		}

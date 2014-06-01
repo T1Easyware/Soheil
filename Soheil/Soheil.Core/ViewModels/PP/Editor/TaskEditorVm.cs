@@ -45,26 +45,43 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			_uow = uow;
             initializeCommands();
 			OperatorManager = new OperatorManagerVm(_uow);
-			OperatorManager.SelectionChanged += (operatorVm, isSelected, role) =>
+
+			// Adds|Removes the selected|deselected operator in model
+			// Changes SelectedOperatorsCount in vm
+			OperatorManager.SelectionChanged += (operatorVm, isSelected, updateCount) =>
 			{
 				if (SelectedProcess == null) return;
 				if (isSelected)
 				{
-					SelectedProcess.Model.ProcessOperators.Add(new Model.ProcessOperator
-					{
-						Process = SelectedProcess.Model,
-						Operator = operatorVm.OperatorModel,
-						Role = role,
-						Code = model.Code + operatorVm.Code,
-					});
-					SelectedProcess.SelectedOperatorsCount++;
+					if (!SelectedProcess.Model.ProcessOperators.Any(x => x.Operator.Id == operatorVm.OperatorId))
+						SelectedProcess.Model.ProcessOperators.Add(new Model.ProcessOperator
+						{
+							Process = SelectedProcess.Model,
+							Operator = operatorVm.OperatorModel,
+							Role = operatorVm.Role,
+							Code = model.Code + operatorVm.Code,
+						});
+					if(updateCount)
+						SelectedProcess.SelectedOperatorsCount++;
 				}
 				else
 				{
 					var po = SelectedProcess.Model.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operatorVm.OperatorId);
 					if (po != null) SelectedProcess.Model.ProcessOperators.Remove(po);
-					SelectedProcess.SelectedOperatorsCount--;
+					if (updateCount)
+						SelectedProcess.SelectedOperatorsCount--;
 				}
+			};
+
+			//Updates Role in model
+			OperatorManager.RoleChanged += (operatorVm, role) =>
+			{
+				if (SelectedProcess == null) return;
+				var po = SelectedProcess.Model.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operatorVm.OperatorId);
+				if (po == null)
+					MessageBox.Show("Is not selected");
+				else
+					po.Role = role;
 			};
 
 			StartDate = model.StartDateTime.Date;
@@ -159,10 +176,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					}
 					else
 					{
-						if (processVm.TargetPoint > 0)
-							processVm.DurationSeconds = (int)Math.Floor(processVm.TargetPoint * newVal.CycleTime);
-						else if (processVm.DurationSeconds > 0)
+						if (processVm.DurationSeconds > 0)
 							processVm.TargetPoint = (int)Math.Floor(processVm.DurationSeconds / newVal.CycleTime);
+						else if (processVm.TargetPoint > 0)
+							processVm.DurationSeconds = (int)Math.Floor(processVm.TargetPoint * newVal.CycleTime);
 					}
 				};
 				processVm.ProcessTargetPointChanged += (oldVal, newVal) =>
@@ -190,23 +207,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		#endregion
 
 		/// <summary>
-		/// Gets or sets a bindable value that indicates whether this task is selected in the parent block
-		/// <remarks>If used with a Selector no need to deselect other tasks manually (i.e. in a tab control)</remarks>
-		/// </summary>
-		public bool IsSelected
-		{
-			get { return (bool)GetValue(IsSelectedProperty); }
-			set { SetValue(IsSelectedProperty, value); }
-		}
-		public static readonly DependencyProperty IsSelectedProperty =
-			DependencyProperty.Register("IsSelected", typeof(bool), typeof(TaskEditorVm),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				(d.GetValue(OperatorManagerProperty) as OperatorManagerVm).
-					Refresh(d as TaskEditorVm);
-			}));
-
-		/// <summary>
 		/// Gets or sets the bindable operator manager to manager operators of this task
 		/// </summary>
 		public OperatorManagerVm OperatorManager
@@ -223,7 +223,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		public ObservableCollection<ProcessEditorVm> ProcessList { get { return _processList; } }
 		private ObservableCollection<ProcessEditorVm> _processList = new ObservableCollection<ProcessEditorVm>();
-		
+		/// <summary>
+		/// Gets a bindable collection of activity choices
+		/// </summary>
+		public ObservableCollection<ActivityEditorVm> ActivityList { get { return _activityList; } }
+		private ObservableCollection<ActivityEditorVm> _activityList = new ObservableCollection<ActivityEditorVm>();
 		/// <summary>
 		/// Gets or sets the bindable process which is selected in the current task
 		/// </summary>
@@ -234,10 +238,36 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SelectedProcessProperty =
 			DependencyProperty.Register("SelectedProcess", typeof(ProcessEditorVm), typeof(TaskEditorVm),
-			new UIPropertyMetadata(null, (d, e) =>
+			new UIPropertyMetadata(null, async (d, e) =>
 			{
 				var vm = (TaskEditorVm)d;
-				vm.OperatorManager.Refresh((ProcessEditorVm)e.NewValue);
+				var val = (ProcessEditorVm)e.NewValue;
+
+				foreach (var operVm in vm.OperatorManager.OperatorsList)
+				{
+					bool[] result;
+					var operModel = operVm.OperatorModel;
+					var ds = vm.OperatorManager.OperatorDataService;
+
+					//set operator status by task only
+					if (val == null)
+					{
+						var taskModel = vm.Model;
+						result = await System.Threading.Tasks.Task.Run(() =>
+							ds.GetOperatorStatus(operModel, taskModel));
+					}
+					//set operator status by process (and task)
+					else
+					{
+						var processModel = val.Model;
+						result = await System.Threading.Tasks.Task.Run(() =>
+							ds.GetOperatorStatus(operModel, processModel));
+					}
+
+					operVm.IsSelected = result[0];
+					operVm.IsInTask = result[1];
+					operVm.IsInTimeRange = result[2];
+				}
 			}));
 		#endregion
 
@@ -353,7 +383,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty IsDeferToActivitiesSelectedProperty =
 			DependencyProperty.Register("IsDeferToActivitiesSelected", typeof(bool), typeof(TaskEditorVm),
-			new UIPropertyMetadata(false));
+			new UIPropertyMetadata(false, (d, e) => ((TaskEditorVm)d).isDeferToActivitiesSelectedChanged((bool)e.NewValue)));
 		//SameTimeForActivities Dependency Property
 		public TimeSpan SameTimeForActivities
 		{
@@ -418,6 +448,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			if (newVal)
 			{
+				IsSameQtyForActivitiesSelected = false;
+				IsDeferToActivitiesSelected = false;
+
 				foreach (var process in ProcessList)
 				{
 					process.HoldEvents = true;
@@ -457,6 +490,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			if (newVal)
 			{
+				IsSameTimeForActivitiesSelected = false;
+				IsDeferToActivitiesSelected = false;
+
 				if (TaskTargetPoint > 0)
 					SameQtyForActivities = TaskTargetPoint;
 				else
@@ -488,7 +524,18 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				TaskTargetPoint = newVal;
 			}
 		}
-
+		/// <summary>
+		/// Defers to each activity to decide its production qty or time
+		/// </summary>
+		/// <param name="newVal"></param>
+		void isDeferToActivitiesSelectedChanged(bool newVal)
+		{
+			if (newVal)
+			{
+				IsSameTimeForActivitiesSelected = false;
+				IsSameQtyForActivitiesSelected = false;
+			}
+		}
 		#endregion
 
 

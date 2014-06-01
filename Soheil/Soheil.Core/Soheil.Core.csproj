@@ -112,15 +112,17 @@
     <Compile Include="PP\PPItemBase.cs" />
     <Compile Include="PP\PPItemNpt.cs" />
     <Compile Include="ViewModels\OrganizationCalendar\WorkTimeRangeVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\ActivityEditorVm.cs" />
     <Compile Include="ViewModels\PP\Editor\BlockEditorVm.cs" />
+    <Compile Include="ViewModels\PP\Editor\MachineFamilyEditorVm.cs" />
     <Compile Include="ViewModels\PP\Editor\OperatorEditorVm.cs" />
     <Compile Include="ViewModels\PP\Editor\OperatorManagerVm.cs" />
     <Compile Include="ViewModels\PP\Editor\PlanEditorVm.cs" />
     <Compile Include="ViewModels\PP\Editor\ProcessEditorVm.cs" />
-    <Compile Include="ViewModels\PP\Editor\TaskEditorVm.cs" />
     <Compile Include="ViewModels\PP\OperatorVm.cs" />
+    <Compile Include="ViewModels\PP\Report\ActivityRowVm.cs" />
     <Compile Include="ViewModels\PP\Report\OperatorReportCollection.cs" />
->>>>>>> 7c77c322912abfa6abab961b63421081afbd2d18
+    <Compile Include="ViewModels\PP\Report\ProcessVm.cs" />
     <Compile Include="ViewModels\PP\Timeline\HourCollection.cs" />
     <Compile Include="PP\Smart\SmartPlanner.cs" />
     <Compile Include="PP\Smart\SmartSpace.cs" />
@@ -146,8 +148,7 @@
     <Compile Include="ViewModels\OrganizationCalendar\WorkShiftVm.cs" />
     <Compile Include="PP\PPItemWorkTime.cs" />
     <Compile Include="ViewModels\HolidaysVM.cs" />
-    <Compile Include="ViewModels\PP\Editor\PPEditorActivityChoice.cs" />
-    <Compile Include="ViewModels\PP\Editor\TaskEditorHolder.cs" />
+    <Compile Include="ViewModels\PP\Editor\ChoiceEditorVm.cs" />
     <Compile Include="ViewModels\PP\BlockVm.cs" />
     <Compile Include="ViewModels\PP\JobListItemVm.cs" />
     <Compile Include="ViewModels\PP\JobListVm.cs" />
@@ -187,13 +188,11 @@
     <Compile Include="ViewModels\PP\FilterBoxVmCollection.cs" />
     <Compile Include="ViewModels\PP\NPTVm.cs" />
     <Compile Include="ViewModels\PP\PPItemVm.cs" />
-    <Compile Include="ViewModels\PP\Report\ProcessReportCellVm.cs" />
-    <Compile Include="ViewModels\PP\Report\ProcessReportRowVm.cs" />
+    <Compile Include="ViewModels\PP\Report\ProcessReportVm.cs" />
+    <Compile Include="ViewModels\PP\Report\ProcessRowVm.cs" />
     <Compile Include="ViewModels\PP\SetupVm.cs" />
     <Compile Include="ViewModels\PP\Report\StoppageReportCollection.cs" />
     <Compile Include="ViewModels\PP\Report\StoppageReportVm.cs" />
-    <Compile Include="ViewModels\PP\Report\TaskReportBaseVm.cs" />
-    <Compile Include="ViewModels\PP\Report\TaskReportHolderVm.cs" />
     <Compile Include="ViewModels\PP\Report\TaskReportVm.cs" />
     <Compile Include="ViewModels\Reports\ActualCostReportsVm.cs" />
     <Compile Include="ViewModels\Reports\BarSlideItemVm.cs" />
@@ -436,10 +435,19 @@
     <None Include="App.config" />
     <None Include="Interfaces\BaseAndInterfaceDiagram.cd" />
     <None Include="ViewModels\OrganizationCalendar\ClassDiagram1.cd" />
+    <None Include="ViewModels\PP\Editor\seqDiag_ProcessEditor.sequencediagram" />
+    <None Include="ViewModels\PP\Editor\seqDiag_Editor.sequencediagram" />
     <None Include="ViewModels\PP\_PPClassDiagram.cd" />
     <None Include="ViewModels\SkillCenter\_SkillCenterClassDiagram.cd" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="ViewModels\PP\Editor\seqDiag_ProcessEditor.sequencediagram.layout">
+      <DependentUpon>seqDiag_ProcessEditor.sequencediagram</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewModels\PP\Editor\seqDiag_Editor.sequencediagram.layout">
+      <DependentUpon>seqDiag_Editor.sequencediagram</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

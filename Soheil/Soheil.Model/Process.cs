@@ -37,12 +37,6 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual int DurationSeconds
-        {
-            get;
-            set;
-        }
-    
         public virtual System.DateTime StartDateTime
         {
             get;
@@ -50,6 +44,12 @@ namespace Soheil.Model
         }
     
         public virtual System.DateTime EndDateTime
+        {
+            get;
+            set;
+        }
+    
+        public virtual int DurationSeconds
         {
             get;
             set;

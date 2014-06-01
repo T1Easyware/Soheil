@@ -2,13 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
-<<<<<<< HEAD
--- Date Created: 05/23/2014 18:25:40
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
-=======
--- Date Created: 05/10/2014 14:53:52
+-- Date Created: 05/27/2014 17:20:38
 -- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
->>>>>>> 7c77c322912abfa6abab961b63421081afbd2d18
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -22,206 +17,14 @@ GO
 -- Dropping existing FOREIGN KEY constraints
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[FK_AccessRuleAccessRule]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[AccessRules] DROP CONSTRAINT [FK_AccessRuleAccessRule];
-GO
-IF OBJECT_ID(N'[dbo].[FK_AccessRulePosition_AccessRule]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Position_AccessRules] DROP CONSTRAINT [FK_AccessRulePosition_AccessRule];
-GO
-IF OBJECT_ID(N'[dbo].[FK_AccessRuleUser_AccessRule]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[User_AccessRules] DROP CONSTRAINT [FK_AccessRuleUser_AccessRule];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ActionPlanDefectionReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[DefectionReports] DROP CONSTRAINT [FK_ActionPlanDefectionReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ActionPlanProductDefectionRoot_ActionPlan]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[FishboneNode_ActionPlan] DROP CONSTRAINT [FK_ActionPlanProductDefectionRoot_ActionPlan];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ActivityActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_ActivityActivitySkill];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ActivityCost]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_ActivityCost];
-GO
 IF OBJECT_ID(N'[dbo].[FK_ActivityGroupActivity]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Activities] DROP CONSTRAINT [FK_ActivityGroupActivity];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ActivitySkillProductActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ActivitySkillProductActivitySkill];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ActivityStateStationActivity]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StateStationActivities] DROP CONSTRAINT [FK_ActivityStateStationActivity];
-GO
-IF OBJECT_ID(N'[dbo].[FK_BlockTask]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_BlockTask];
-GO
-IF OBJECT_ID(N'[dbo].[FK_CauseCause]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Causes] DROP CONSTRAINT [FK_CauseCause];
-GO
-IF OBJECT_ID(N'[dbo].[FK_CauseStoppageReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StoppageReports] DROP CONSTRAINT [FK_CauseStoppageReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ChangeoverSetup]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[NonProductiveTasks_Setup] DROP CONSTRAINT [FK_ChangeoverSetup];
-GO
-IF OBJECT_ID(N'[dbo].[FK_CostCenterCost]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_CostCenterCost];
-GO
-IF OBJECT_ID(N'[dbo].[FK_DefectionProductDefection]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductDefections] DROP CONSTRAINT [FK_DefectionProductDefection];
-GO
-IF OBJECT_ID(N'[dbo].[FK_DefectionReportOperatorDefectionReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[OperatorDefectionReports] DROP CONSTRAINT [FK_DefectionReportOperatorDefectionReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_DefectionReportProductDefection_Root]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[FishboneNodes] DROP CONSTRAINT [FK_DefectionReportProductDefection_Root];
-GO
-IF OBJECT_ID(N'[dbo].[FK_Education_inherits_NonProductiveTask]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[NonProductiveTasks_Education] DROP CONSTRAINT [FK_Education_inherits_NonProductiveTask];
-GO
-IF OBJECT_ID(N'[dbo].[FK_EducationBlock]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_EducationBlock];
-GO
-IF OBJECT_ID(N'[dbo].[FK_EducationEducatingOperator]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[EducatingOperators] DROP CONSTRAINT [FK_EducationEducatingOperator];
-GO
-IF OBJECT_ID(N'[dbo].[FK_FPCJob]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Jobs] DROP CONSTRAINT [FK_FPCJob];
-GO
-IF OBJECT_ID(N'[dbo].[FK_FPCState]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[States] DROP CONSTRAINT [FK_FPCState];
-GO
-IF OBJECT_ID(N'[dbo].[FK_JobBlock]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_JobBlock];
-GO
-IF OBJECT_ID(N'[dbo].[FK_MachineCost]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_MachineCost];
 GO
 IF OBJECT_ID(N'[dbo].[FK_MachineFamilyMachine]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Machines] DROP CONSTRAINT [FK_MachineFamilyMachine];
 GO
-IF OBJECT_ID(N'[dbo].[FK_MachineStateStationActivityMachine]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StateStationActivityMachines] DROP CONSTRAINT [FK_MachineStateStationActivityMachine];
-GO
-IF OBJECT_ID(N'[dbo].[FK_MachineStationMachine]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StationMachines] DROP CONSTRAINT [FK_MachineStationMachine];
-GO
-IF OBJECT_ID(N'[dbo].[FK_NonProductiveTaskReportNonProductiveTask]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[NonProductiveTaskReports] DROP CONSTRAINT [FK_NonProductiveTaskReportNonProductiveTask];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_OperatorActivitySkill];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorCost]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_OperatorCost];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorEducatingOperator]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[EducatingOperators] DROP CONSTRAINT [FK_OperatorEducatingOperator];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorOperatorDefectionReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[OperatorDefectionReports] DROP CONSTRAINT [FK_OperatorOperatorDefectionReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorOperatorStoppageReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Operator_StoppageReports] DROP CONSTRAINT [FK_OperatorOperatorStoppageReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorPersonalSkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[PersonalSkills] DROP CONSTRAINT [FK_OperatorPersonalSkill];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OperatorProcessOperator]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProcessOperators] DROP CONSTRAINT [FK_OperatorProcessOperator];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OrganizationChart_PositionOrganizationChart_Position]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[OrganizationChart_Position] DROP CONSTRAINT [FK_OrganizationChart_PositionOrganizationChart_Position];
-GO
-IF OBJECT_ID(N'[dbo].[FK_OrganizationChartOrganizationChart_Position]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[OrganizationChart_Position] DROP CONSTRAINT [FK_OrganizationChartOrganizationChart_Position];
-GO
-IF OBJECT_ID(N'[dbo].[FK_PartsWarehouseCost]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_PartsWarehouseCost];
-GO
-IF OBJECT_ID(N'[dbo].[FK_PartsWarehouseGroupPartsWarehouse]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[PartWarehouses] DROP CONSTRAINT [FK_PartsWarehouseGroupPartsWarehouse];
-GO
-IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
-GO
-IF OBJECT_ID(N'[dbo].[FK_PositionOrganizationChart_Position]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[OrganizationChart_Position] DROP CONSTRAINT [FK_PositionOrganizationChart_Position];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessOperatorProcessOperatorReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProcessOperatorReports] DROP CONSTRAINT [FK_ProcessOperatorProcessOperatorReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessProcessOperator]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProcessOperators] DROP CONSTRAINT [FK_ProcessProcessOperator];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessProcessReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProcessReports] DROP CONSTRAINT [FK_ProcessProcessReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessReportDefectionReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[DefectionReports] DROP CONSTRAINT [FK_ProcessReportDefectionReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessReportProcessOperatorReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProcessOperatorReports] DROP CONSTRAINT [FK_ProcessReportProcessOperatorReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessReportStoppageReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StoppageReports] DROP CONSTRAINT [FK_ProcessReportStoppageReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProcessSelectedMachine]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[SelectedMachines] DROP CONSTRAINT [FK_ProcessSelectedMachine];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductDefection_RootProductDefection_Root]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[FishboneNodes] DROP CONSTRAINT [FK_ProductDefection_RootProductDefection_Root];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductDefection_RootProductDefectionRoot_ActionPlan]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[FishboneNode_ActionPlan] DROP CONSTRAINT [FK_ProductDefection_RootProductDefectionRoot_ActionPlan];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductDefectionDefectionReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[DefectionReports] DROP CONSTRAINT [FK_ProductDefectionDefectionReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductDefectionRoot]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Roots] DROP CONSTRAINT [FK_ProductDefectionRoot];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductFPC]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[FPCs] DROP CONSTRAINT [FK_ProductFPC];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductGroupProduct]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Products] DROP CONSTRAINT [FK_ProductGroupProduct];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductProduct]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Products] DROP CONSTRAINT [FK_ProductProduct];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductProductDefection]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductDefections] DROP CONSTRAINT [FK_ProductProductDefection];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductProductRework]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductReworks] DROP CONSTRAINT [FK_ProductProductRework];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductReworkChangeover]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Changeovers] DROP CONSTRAINT [FK_ProductReworkChangeover];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductReworkChangeover1]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Changeovers] DROP CONSTRAINT [FK_ProductReworkChangeover1];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductReworkJob]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Jobs] DROP CONSTRAINT [FK_ProductReworkJob];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductReworkProductActivitySkill]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ProductReworkProductActivitySkill];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductReworkState]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[States] DROP CONSTRAINT [FK_ProductReworkState];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ProductReworkWarmup]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Warmups] DROP CONSTRAINT [FK_ProductReworkWarmup];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ReworkProductRework]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProductReworks] DROP CONSTRAINT [FK_ReworkProductRework];
-GO
-IF OBJECT_ID(N'[dbo].[FK_RootProductDefection_Root]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[FishboneNodes] DROP CONSTRAINT [FK_RootProductDefection_Root];
-GO
-IF OBJECT_ID(N'[dbo].[FK_Setup_inherits_NonProductiveTask]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[NonProductiveTasks_Setup] DROP CONSTRAINT [FK_Setup_inherits_NonProductiveTask];
+IF OBJECT_ID(N'[dbo].[FK_StateStateStation]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StateStations] DROP CONSTRAINT [FK_StateStateStation];
 GO
 IF OBJECT_ID(N'[dbo].[FK_StateConnector]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Connectors] DROP CONSTRAINT [FK_StateConnector];
@@ -229,59 +32,14 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_StateConnector1]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Connectors] DROP CONSTRAINT [FK_StateConnector1];
 GO
-IF OBJECT_ID(N'[dbo].[FK_StateStateStation]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StateStations] DROP CONSTRAINT [FK_StateStateStation];
+IF OBJECT_ID(N'[dbo].[FK_ProductProductDefection]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductDefections] DROP CONSTRAINT [FK_ProductProductDefection];
 GO
-IF OBJECT_ID(N'[dbo].[FK_StateStationActivityMachineSelectedMachine]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[SelectedMachines] DROP CONSTRAINT [FK_StateStationActivityMachineSelectedMachine];
+IF OBJECT_ID(N'[dbo].[FK_DefectionProductDefection]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductDefections] DROP CONSTRAINT [FK_DefectionProductDefection];
 GO
-IF OBJECT_ID(N'[dbo].[FK_StateStationActivityProcess]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Process] DROP CONSTRAINT [FK_StateStationActivityProcess];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StateStationActivityStateStationActivityMachine]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StateStationActivityMachines] DROP CONSTRAINT [FK_StateStationActivityStateStationActivityMachine];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StateStationBlock]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_StateStationBlock];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StateStationStateStationActivity]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StateStationActivities] DROP CONSTRAINT [FK_StateStationStateStationActivity];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StationChangeover]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Changeovers] DROP CONSTRAINT [FK_StationChangeover];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StationCost]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_StationCost];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StationMachinePM]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_StationMachinePM];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StationStateStation]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StateStations] DROP CONSTRAINT [FK_StationStateStation];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StationStationMachine]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[StationMachines] DROP CONSTRAINT [FK_StationStationMachine];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StationTest]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[NonProductiveTasks_Test] DROP CONSTRAINT [FK_StationTest];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StationWarmup]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Warmups] DROP CONSTRAINT [FK_StationWarmup];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StoppageReportOperatorStoppageReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Operator_StoppageReports] DROP CONSTRAINT [FK_StoppageReportOperatorStoppageReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_TaskProcess]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Process] DROP CONSTRAINT [FK_TaskProcess];
-GO
-IF OBJECT_ID(N'[dbo].[FK_TaskReportProcessReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ProcessReports] DROP CONSTRAINT [FK_TaskReportProcessReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_TaskTaskReport]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[TaskReports] DROP CONSTRAINT [FK_TaskTaskReport];
-GO
-IF OBJECT_ID(N'[dbo].[FK_Test_inherits_NonProductiveTask]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[NonProductiveTasks_Test] DROP CONSTRAINT [FK_Test_inherits_NonProductiveTask];
+IF OBJECT_ID(N'[dbo].[FK_UserUser_UserGroup]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[User_Positions] DROP CONSTRAINT [FK_UserUser_UserGroup];
 GO
 IF OBJECT_ID(N'[dbo].[FK_UserGroupUser_UserGroup]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[User_Positions] DROP CONSTRAINT [FK_UserGroupUser_UserGroup];
@@ -292,11 +50,176 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_UserUser_AccessRule]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[User_AccessRules] DROP CONSTRAINT [FK_UserUser_AccessRule];
 GO
-IF OBJECT_ID(N'[dbo].[FK_UserUser_UserGroup]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[User_Positions] DROP CONSTRAINT [FK_UserUser_UserGroup];
+IF OBJECT_ID(N'[dbo].[FK_ProductGroupProduct]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Products] DROP CONSTRAINT [FK_ProductGroupProduct];
+GO
+IF OBJECT_ID(N'[dbo].[FK_PositionOrganizationChart_Position]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[OrganizationChart_Position] DROP CONSTRAINT [FK_PositionOrganizationChart_Position];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OrganizationChartOrganizationChart_Position]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[OrganizationChart_Position] DROP CONSTRAINT [FK_OrganizationChartOrganizationChart_Position];
+GO
+IF OBJECT_ID(N'[dbo].[FK_AccessRuleUser_AccessRule]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[User_AccessRules] DROP CONSTRAINT [FK_AccessRuleUser_AccessRule];
+GO
+IF OBJECT_ID(N'[dbo].[FK_AccessRulePosition_AccessRule]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Position_AccessRules] DROP CONSTRAINT [FK_AccessRulePosition_AccessRule];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OrganizationChart_PositionOrganizationChart_Position]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[OrganizationChart_Position] DROP CONSTRAINT [FK_OrganizationChart_PositionOrganizationChart_Position];
+GO
+IF OBJECT_ID(N'[dbo].[FK_AccessRuleAccessRule]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[AccessRules] DROP CONSTRAINT [FK_AccessRuleAccessRule];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductProduct]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Products] DROP CONSTRAINT [FK_ProductProduct];
+GO
+IF OBJECT_ID(N'[dbo].[FK_RootProductDefection_Root]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[FishboneNodes] DROP CONSTRAINT [FK_RootProductDefection_Root];
+GO
+IF OBJECT_ID(N'[dbo].[FK_DefectionReportProductDefection_Root]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[FishboneNodes] DROP CONSTRAINT [FK_DefectionReportProductDefection_Root];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductDefection_RootProductDefection_Root]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[FishboneNodes] DROP CONSTRAINT [FK_ProductDefection_RootProductDefection_Root];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ActionPlanProductDefectionRoot_ActionPlan]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[FishboneNode_ActionPlan] DROP CONSTRAINT [FK_ActionPlanProductDefectionRoot_ActionPlan];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductDefection_RootProductDefectionRoot_ActionPlan]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[FishboneNode_ActionPlan] DROP CONSTRAINT [FK_ProductDefection_RootProductDefectionRoot_ActionPlan];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MachineStationMachine]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StationMachines] DROP CONSTRAINT [FK_MachineStationMachine];
+GO
+IF OBJECT_ID(N'[dbo].[FK_FPCState]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[States] DROP CONSTRAINT [FK_FPCState];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductProductRework]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductReworks] DROP CONSTRAINT [FK_ProductProductRework];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ReworkProductRework]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductReworks] DROP CONSTRAINT [FK_ReworkProductRework];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ActionPlanDefectionReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[DefectionReports] DROP CONSTRAINT [FK_ActionPlanDefectionReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StateStationStateStationActivity]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StateStationActivities] DROP CONSTRAINT [FK_StateStationStateStationActivity];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StateStationActivityStateStationActivityMachine]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StateStationActivityMachines] DROP CONSTRAINT [FK_StateStationActivityStateStationActivityMachine];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MachineStateStationActivityMachine]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StateStationActivityMachines] DROP CONSTRAINT [FK_MachineStateStationActivityMachine];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StateStationActivityMachineSelectedMachine]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[SelectedMachines] DROP CONSTRAINT [FK_StateStationActivityMachineSelectedMachine];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessProcessOperator]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProcessOperators] DROP CONSTRAINT [FK_ProcessProcessOperator];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessSelectedMachine]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[SelectedMachines] DROP CONSTRAINT [FK_ProcessSelectedMachine];
+GO
+IF OBJECT_ID(N'[dbo].[FK_TaskProcess]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Process] DROP CONSTRAINT [FK_TaskProcess];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OperatorProcessOperator]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProcessOperators] DROP CONSTRAINT [FK_OperatorProcessOperator];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OperatorOperatorStoppageReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Operator_StoppageReports] DROP CONSTRAINT [FK_OperatorOperatorStoppageReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StoppageReportOperatorStoppageReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Operator_StoppageReports] DROP CONSTRAINT [FK_StoppageReportOperatorStoppageReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessReportStoppageReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StoppageReports] DROP CONSTRAINT [FK_ProcessReportStoppageReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_TaskTaskReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[TaskReports] DROP CONSTRAINT [FK_TaskTaskReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_TaskReportProcessReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProcessReports] DROP CONSTRAINT [FK_TaskReportProcessReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessReportDefectionReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[DefectionReports] DROP CONSTRAINT [FK_ProcessReportDefectionReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_DefectionReportOperatorDefectionReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[OperatorDefectionReports] DROP CONSTRAINT [FK_DefectionReportOperatorDefectionReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MachineCost]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_MachineCost];
+GO
+IF OBJECT_ID(N'[dbo].[FK_CostCenterCost]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_CostCenterCost];
+GO
+IF OBJECT_ID(N'[dbo].[FK_PartsWarehouseGroupPartsWarehouse]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[PartWarehouses] DROP CONSTRAINT [FK_PartsWarehouseGroupPartsWarehouse];
+GO
+IF OBJECT_ID(N'[dbo].[FK_PartsWarehouseCost]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_PartsWarehouseCost];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductDefectionRoot]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Roots] DROP CONSTRAINT [FK_ProductDefectionRoot];
+GO
+IF OBJECT_ID(N'[dbo].[FK_CauseStoppageReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StoppageReports] DROP CONSTRAINT [FK_CauseStoppageReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_CauseCause]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Causes] DROP CONSTRAINT [FK_CauseCause];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StationChangeover]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Changeovers] DROP CONSTRAINT [FK_StationChangeover];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StationWarmup]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Warmups] DROP CONSTRAINT [FK_StationWarmup];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkChangeover]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Changeovers] DROP CONSTRAINT [FK_ProductReworkChangeover];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkWarmup]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Warmups] DROP CONSTRAINT [FK_ProductReworkWarmup];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StationMachinePM]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_StationMachinePM];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OperatorEducatingOperator]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[EducatingOperators] DROP CONSTRAINT [FK_OperatorEducatingOperator];
+GO
+IF OBJECT_ID(N'[dbo].[FK_EducationEducatingOperator]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[EducatingOperators] DROP CONSTRAINT [FK_EducationEducatingOperator];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ChangeoverSetup]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[NonProductiveTasks_Setup] DROP CONSTRAINT [FK_ChangeoverSetup];
 GO
 IF OBJECT_ID(N'[dbo].[FK_WarmupSetup]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_Setup] DROP CONSTRAINT [FK_WarmupSetup];
+GO
+IF OBJECT_ID(N'[dbo].[FK_NonProductiveTaskReportNonProductiveTask]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[NonProductiveTaskReports] DROP CONSTRAINT [FK_NonProductiveTaskReportNonProductiveTask];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkJob]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Jobs] DROP CONSTRAINT [FK_ProductReworkJob];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductFPC]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[FPCs] DROP CONSTRAINT [FK_ProductFPC];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkState]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[States] DROP CONSTRAINT [FK_ProductReworkState];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StationStationMachine]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StationMachines] DROP CONSTRAINT [FK_StationStationMachine];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ActivityCost]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_ActivityCost];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkChangeover1]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Changeovers] DROP CONSTRAINT [FK_ProductReworkChangeover1];
+GO
+IF OBJECT_ID(N'[dbo].[FK_WorkShiftWorkBreak]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[WorkBreaks] DROP CONSTRAINT [FK_WorkShiftWorkBreak];
 GO
 IF OBJECT_ID(N'[dbo].[FK_WorkDayWorkShift]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[WorkShifts] DROP CONSTRAINT [FK_WorkDayWorkShift];
@@ -313,19 +236,112 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_WorkShiftPrototypeWorkShift]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[WorkShifts] DROP CONSTRAINT [FK_WorkShiftPrototypeWorkShift];
 GO
-IF OBJECT_ID(N'[dbo].[FK_WorkShiftWorkBreak]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[WorkBreaks] DROP CONSTRAINT [FK_WorkShiftWorkBreak];
+IF OBJECT_ID(N'[dbo].[FK_ActivityStateStationActivity]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StateStationActivities] DROP CONSTRAINT [FK_ActivityStateStationActivity];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StateStationActivityProcess]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Process] DROP CONSTRAINT [FK_StateStationActivityProcess];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OperatorCost]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_OperatorCost];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductDefectionDefectionReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[DefectionReports] DROP CONSTRAINT [FK_ProductDefectionDefectionReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OperatorPersonalSkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[PersonalSkills] DROP CONSTRAINT [FK_OperatorPersonalSkill];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OperatorOperatorDefectionReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[OperatorDefectionReports] DROP CONSTRAINT [FK_OperatorOperatorDefectionReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_FPCJob]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Jobs] DROP CONSTRAINT [FK_FPCJob];
+GO
+IF OBJECT_ID(N'[dbo].[FK_BlockTask]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_BlockTask];
+GO
+IF OBJECT_ID(N'[dbo].[FK_JobBlock]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_JobBlock];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StationCost]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Costs] DROP CONSTRAINT [FK_StationCost];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StationTest]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[NonProductiveTasks_Test] DROP CONSTRAINT [FK_StationTest];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessProcessReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProcessReports] DROP CONSTRAINT [FK_ProcessProcessReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StationStateStation]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[StateStations] DROP CONSTRAINT [FK_StationStateStation];
+GO
+IF OBJECT_ID(N'[dbo].[FK_EducationBlock]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_EducationBlock];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StateStationBlock]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Blocks] DROP CONSTRAINT [FK_StateStationBlock];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OperatorActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_OperatorActivitySkill];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ActivityActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ActivitySkills] DROP CONSTRAINT [FK_ActivityActivitySkill];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkProductActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ProductReworkProductActivitySkill];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ActivitySkillProductActivitySkill]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductActivitySkills] DROP CONSTRAINT [FK_ActivitySkillProductActivitySkill];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessReportProcessOperatorReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProcessOperatorReports] DROP CONSTRAINT [FK_ProcessReportProcessOperatorReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProcessOperatorProcessOperatorReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProcessOperatorReports] DROP CONSTRAINT [FK_ProcessOperatorProcessOperatorReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Education_inherits_NonProductiveTask]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[NonProductiveTasks_Education] DROP CONSTRAINT [FK_Education_inherits_NonProductiveTask];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Setup_inherits_NonProductiveTask]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[NonProductiveTasks_Setup] DROP CONSTRAINT [FK_Setup_inherits_NonProductiveTask];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Test_inherits_NonProductiveTask]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[NonProductiveTasks_Test] DROP CONSTRAINT [FK_Test_inherits_NonProductiveTask];
 GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[AccessRules]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[AccessRules];
+IF OBJECT_ID(N'[dbo].[Products]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Products];
 GO
-IF OBJECT_ID(N'[dbo].[ActionPlans]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ActionPlans];
+IF OBJECT_ID(N'[dbo].[FPCs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[FPCs];
+GO
+IF OBJECT_ID(N'[dbo].[ProductDefections]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ProductDefections];
+GO
+IF OBJECT_ID(N'[dbo].[Defections]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Defections];
+GO
+IF OBJECT_ID(N'[dbo].[Connectors]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Connectors];
+GO
+IF OBJECT_ID(N'[dbo].[Causes]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Causes];
+GO
+IF OBJECT_ID(N'[dbo].[DefectionReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[DefectionReports];
+GO
+IF OBJECT_ID(N'[dbo].[Stations]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Stations];
+GO
+IF OBJECT_ID(N'[dbo].[Tasks]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tasks];
 GO
 IF OBJECT_ID(N'[dbo].[Activities]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Activities];
@@ -333,113 +349,26 @@ GO
 IF OBJECT_ID(N'[dbo].[ActivityGroups]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ActivityGroups];
 GO
-IF OBJECT_ID(N'[dbo].[ActivitySkills]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ActivitySkills];
-GO
-IF OBJECT_ID(N'[dbo].[Blocks]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Blocks];
-GO
-IF OBJECT_ID(N'[dbo].[Causes]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Causes];
-GO
-IF OBJECT_ID(N'[dbo].[Changeovers]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Changeovers];
-GO
-IF OBJECT_ID(N'[dbo].[Connectors]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Connectors];
-GO
-IF OBJECT_ID(N'[dbo].[CostCenters]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[CostCenters];
-GO
-IF OBJECT_ID(N'[dbo].[Costs]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Costs];
-GO
-IF OBJECT_ID(N'[dbo].[DefectionReports]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[DefectionReports];
-GO
-IF OBJECT_ID(N'[dbo].[Defections]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Defections];
-GO
-IF OBJECT_ID(N'[dbo].[EducatingOperators]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[EducatingOperators];
-GO
-IF OBJECT_ID(N'[dbo].[FishboneNode_ActionPlan]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[FishboneNode_ActionPlan];
-GO
-IF OBJECT_ID(N'[dbo].[FishboneNodes]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[FishboneNodes];
-GO
-IF OBJECT_ID(N'[dbo].[FPCs]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[FPCs];
-GO
-IF OBJECT_ID(N'[dbo].[Holidays]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Holidays];
-GO
-IF OBJECT_ID(N'[dbo].[Jobs]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Jobs];
-GO
-IF OBJECT_ID(N'[dbo].[MachineFamilies]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[MachineFamilies];
-GO
-IF OBJECT_ID(N'[dbo].[Machines]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Machines];
-GO
-IF OBJECT_ID(N'[dbo].[NonProductiveTaskReports]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[NonProductiveTaskReports];
-GO
-IF OBJECT_ID(N'[dbo].[NonProductiveTasks]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[NonProductiveTasks];
-GO
-IF OBJECT_ID(N'[dbo].[NonProductiveTasks_Education]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[NonProductiveTasks_Education];
-GO
-IF OBJECT_ID(N'[dbo].[NonProductiveTasks_PM]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[NonProductiveTasks_PM];
-GO
-IF OBJECT_ID(N'[dbo].[NonProductiveTasks_Setup]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[NonProductiveTasks_Setup];
-GO
-IF OBJECT_ID(N'[dbo].[NonProductiveTasks_Test]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[NonProductiveTasks_Test];
-GO
-IF OBJECT_ID(N'[dbo].[ObjectiveFunctions]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ObjectiveFunctions];
-GO
-IF OBJECT_ID(N'[dbo].[Operator_StoppageReports]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Operator_StoppageReports];
-GO
-IF OBJECT_ID(N'[dbo].[OperatorDefectionReports]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[OperatorDefectionReports];
+IF OBJECT_ID(N'[dbo].[ProductActivitySkills]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ProductActivitySkills];
 GO
 IF OBJECT_ID(N'[dbo].[Operators]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Operators];
 GO
-IF OBJECT_ID(N'[dbo].[OrganizationChart_Position]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[OrganizationChart_Position];
+IF OBJECT_ID(N'[dbo].[Machines]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Machines];
 GO
-IF OBJECT_ID(N'[dbo].[OrganizationCharts]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[OrganizationCharts];
+IF OBJECT_ID(N'[dbo].[MachineFamilies]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MachineFamilies];
 GO
-IF OBJECT_ID(N'[dbo].[PartWarehouseGroups]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[PartWarehouseGroups];
+IF OBJECT_ID(N'[dbo].[States]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[States];
 GO
-IF OBJECT_ID(N'[dbo].[PartWarehouses]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[PartWarehouses];
-GO
-IF OBJECT_ID(N'[dbo].[PersonalSkills]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[PersonalSkills];
-GO
-IF OBJECT_ID(N'[dbo].[Position_AccessRules]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Position_AccessRules];
-GO
-IF OBJECT_ID(N'[dbo].[Positions]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Positions];
+IF OBJECT_ID(N'[dbo].[StateStations]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[StateStations];
 GO
 IF OBJECT_ID(N'[dbo].[Process]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Process];
-GO
-IF OBJECT_ID(N'[dbo].[ProcessOperatorReports]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ProcessOperatorReports];
 GO
 IF OBJECT_ID(N'[dbo].[ProcessOperators]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ProcessOperators];
@@ -447,32 +376,50 @@ GO
 IF OBJECT_ID(N'[dbo].[ProcessReports]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ProcessReports];
 GO
-IF OBJECT_ID(N'[dbo].[ProductActivitySkills]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ProductActivitySkills];
+IF OBJECT_ID(N'[dbo].[TaskReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[TaskReports];
 GO
-IF OBJECT_ID(N'[dbo].[ProductDefections]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ProductDefections];
+IF OBJECT_ID(N'[dbo].[StoppageReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[StoppageReports];
 GO
-IF OBJECT_ID(N'[dbo].[ProductGroups]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ProductGroups];
+IF OBJECT_ID(N'[dbo].[Operator_StoppageReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Operator_StoppageReports];
 GO
-IF OBJECT_ID(N'[dbo].[ProductReworks]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ProductReworks];
-GO
-IF OBJECT_ID(N'[dbo].[Products]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Products];
-GO
-IF OBJECT_ID(N'[dbo].[Reworks]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Reworks];
+IF OBJECT_ID(N'[dbo].[OperatorDefectionReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[OperatorDefectionReports];
 GO
 IF OBJECT_ID(N'[dbo].[Roots]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Roots];
 GO
-IF OBJECT_ID(N'[dbo].[SelectedMachines]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[SelectedMachines];
+IF OBJECT_ID(N'[dbo].[Reworks]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Reworks];
 GO
-IF OBJECT_ID(N'[dbo].[States]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[States];
+IF OBJECT_ID(N'[dbo].[ProductReworks]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ProductReworks];
+GO
+IF OBJECT_ID(N'[dbo].[PersonalSkills]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[PersonalSkills];
+GO
+IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Users];
+GO
+IF OBJECT_ID(N'[dbo].[AccessRules]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[AccessRules];
+GO
+IF OBJECT_ID(N'[dbo].[User_AccessRules]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[User_AccessRules];
+GO
+IF OBJECT_ID(N'[dbo].[Positions]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Positions];
+GO
+IF OBJECT_ID(N'[dbo].[User_Positions]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[User_Positions];
+GO
+IF OBJECT_ID(N'[dbo].[Position_AccessRules]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Position_AccessRules];
+GO
+IF OBJECT_ID(N'[dbo].[ProductGroups]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ProductGroups];
 GO
 IF OBJECT_ID(N'[dbo].[StateStationActivities]', 'U') IS NOT NULL
     DROP TABLE [dbo].[StateStationActivities];
@@ -480,53 +427,101 @@ GO
 IF OBJECT_ID(N'[dbo].[StateStationActivityMachines]', 'U') IS NOT NULL
     DROP TABLE [dbo].[StateStationActivityMachines];
 GO
-IF OBJECT_ID(N'[dbo].[StateStations]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[StateStations];
+IF OBJECT_ID(N'[dbo].[OrganizationCharts]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[OrganizationCharts];
+GO
+IF OBJECT_ID(N'[dbo].[OrganizationChart_Position]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[OrganizationChart_Position];
+GO
+IF OBJECT_ID(N'[dbo].[FishboneNodes]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[FishboneNodes];
+GO
+IF OBJECT_ID(N'[dbo].[ActionPlans]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ActionPlans];
+GO
+IF OBJECT_ID(N'[dbo].[FishboneNode_ActionPlan]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[FishboneNode_ActionPlan];
 GO
 IF OBJECT_ID(N'[dbo].[StationMachines]', 'U') IS NOT NULL
     DROP TABLE [dbo].[StationMachines];
 GO
-IF OBJECT_ID(N'[dbo].[Stations]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Stations];
+IF OBJECT_ID(N'[dbo].[SelectedMachines]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[SelectedMachines];
 GO
-IF OBJECT_ID(N'[dbo].[StoppageReports]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[StoppageReports];
+IF OBJECT_ID(N'[dbo].[Costs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Costs];
 GO
-IF OBJECT_ID(N'[dbo].[TaskReports]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[TaskReports];
+IF OBJECT_ID(N'[dbo].[CostCenters]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CostCenters];
 GO
-IF OBJECT_ID(N'[dbo].[Tasks]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Tasks];
+IF OBJECT_ID(N'[dbo].[PartWarehouses]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[PartWarehouses];
 GO
-IF OBJECT_ID(N'[dbo].[User_AccessRules]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[User_AccessRules];
-GO
-IF OBJECT_ID(N'[dbo].[User_Positions]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[User_Positions];
-GO
-IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Users];
+IF OBJECT_ID(N'[dbo].[PartWarehouseGroups]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[PartWarehouseGroups];
 GO
 IF OBJECT_ID(N'[dbo].[Warmups]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Warmups];
 GO
-IF OBJECT_ID(N'[dbo].[WorkBreaks]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[WorkBreaks];
+IF OBJECT_ID(N'[dbo].[Changeovers]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Changeovers];
 GO
-IF OBJECT_ID(N'[dbo].[WorkDays]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[WorkDays];
+IF OBJECT_ID(N'[dbo].[NonProductiveTasks]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[NonProductiveTasks];
 GO
-IF OBJECT_ID(N'[dbo].[WorkProfilePlans]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[WorkProfilePlans];
+IF OBJECT_ID(N'[dbo].[EducatingOperators]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[EducatingOperators];
+GO
+IF OBJECT_ID(N'[dbo].[NonProductiveTaskReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[NonProductiveTaskReports];
+GO
+IF OBJECT_ID(N'[dbo].[Jobs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Jobs];
+GO
+IF OBJECT_ID(N'[dbo].[ObjectiveFunctions]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ObjectiveFunctions];
 GO
 IF OBJECT_ID(N'[dbo].[WorkProfiles]', 'U') IS NOT NULL
     DROP TABLE [dbo].[WorkProfiles];
 GO
-IF OBJECT_ID(N'[dbo].[WorkShiftPrototypes]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[WorkShiftPrototypes];
+IF OBJECT_ID(N'[dbo].[WorkDays]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[WorkDays];
 GO
 IF OBJECT_ID(N'[dbo].[WorkShifts]', 'U') IS NOT NULL
     DROP TABLE [dbo].[WorkShifts];
+GO
+IF OBJECT_ID(N'[dbo].[WorkBreaks]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[WorkBreaks];
+GO
+IF OBJECT_ID(N'[dbo].[WorkProfilePlans]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[WorkProfilePlans];
+GO
+IF OBJECT_ID(N'[dbo].[Holidays]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Holidays];
+GO
+IF OBJECT_ID(N'[dbo].[WorkShiftPrototypes]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[WorkShiftPrototypes];
+GO
+IF OBJECT_ID(N'[dbo].[ProcessOperatorReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ProcessOperatorReports];
+GO
+IF OBJECT_ID(N'[dbo].[Blocks]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Blocks];
+GO
+IF OBJECT_ID(N'[dbo].[ActivitySkills]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ActivitySkills];
+GO
+IF OBJECT_ID(N'[dbo].[NonProductiveTasks_PM]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[NonProductiveTasks_PM];
+GO
+IF OBJECT_ID(N'[dbo].[NonProductiveTasks_Education]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[NonProductiveTasks_Education];
+GO
+IF OBJECT_ID(N'[dbo].[NonProductiveTasks_Setup]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[NonProductiveTasks_Setup];
+GO
+IF OBJECT_ID(N'[dbo].[NonProductiveTasks_Test]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[NonProductiveTasks_Test];
 GO
 
 -- --------------------------------------------------
@@ -749,9 +744,9 @@ CREATE TABLE [dbo].[Process] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Code] nvarchar(60)  NULL,
     [TargetCount] int  NOT NULL,
-    [DurationSeconds] int  NOT NULL,
     [StartDateTime] datetime  NOT NULL,
     [EndDateTime] datetime  NOT NULL,
+    [DurationSeconds] int  NOT NULL,
     [Task_Id] int  NOT NULL,
     [StateStationActivity_Id] int  NOT NULL
 );
@@ -774,10 +769,9 @@ CREATE TABLE [dbo].[ProcessReports] (
     [ProducedG1] int  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [ProcessReportTargetPoint] int  NOT NULL,
-    [DurationSeconds] int  NOT NULL,
-    [StartDateTime] datetime  NOT NULL,
     [EndDateTime] datetime  NOT NULL,
-    [TaskReport_Id] int  NOT NULL,
+    [StartDateTime] datetime  NOT NULL,
+    [DurationSeconds] int  NOT NULL,
     [Process_Id] int  NOT NULL
 );
 GO
@@ -964,6 +958,8 @@ CREATE TABLE [dbo].[StateStationActivities] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [CycleTime] real  NOT NULL,
     [ManHour] real  NOT NULL,
+    [IsMany] bit  NOT NULL,
+    [IsInJob] bit  NOT NULL,
     [StateStation_Id] int  NOT NULL,
     [Activity_Id] int  NOT NULL
 );
@@ -2312,20 +2308,6 @@ ADD CONSTRAINT [FK_TaskTaskReport]
 CREATE INDEX [IX_FK_TaskTaskReport]
 ON [dbo].[TaskReports]
     ([Task_Id]);
-GO
-
--- Creating foreign key on [TaskReport_Id] in table 'ProcessReports'
-ALTER TABLE [dbo].[ProcessReports]
-ADD CONSTRAINT [FK_TaskReportProcessReport]
-    FOREIGN KEY ([TaskReport_Id])
-    REFERENCES [dbo].[TaskReports]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_TaskReportProcessReport'
-CREATE INDEX [IX_FK_TaskReportProcessReport]
-ON [dbo].[ProcessReports]
-    ([TaskReport_Id]);
 GO
 
 -- Creating foreign key on [ProcessReport_Id] in table 'DefectionReports'

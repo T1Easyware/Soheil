@@ -204,7 +204,7 @@
 								<TextBlock Text="اپراتورهای مقصر" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
 							</ContentControl>
 						</Grid>
-						<Grid DockPanel.Dock="Bottom" TextBlock.Foreground="Silver">
+						<Grid DockPanel.Dock="Bottom" Background="#222" TextBlock.Foreground="Silver">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="180"/>
 								<ColumnDefinition Width="40"/>
@@ -406,7 +406,6 @@
 								</DockPanel>
 							</Button>
 							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
-							<TextBlock Margin="2" Grid.Column="2" Text="{Binding StoppageReports.SumOfLostTime, Converter={StaticResource secondsToStringConverter}}" TextAlignment="Center" HorizontalAlignment="Center"/>
 							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding StoppageReports.SumOfLostTime}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="3" Text="{Binding StoppageReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
 							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding StoppageReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>

@@ -112,12 +112,8 @@ namespace Soheil.Core.DataServices
 				return;
 			}
 
-			if (_taskReportRepository.Find(x => x.Task.Id == entity.Id).Any(x => x.ProcessReports.Count > 0))
-			{
-				var taskReportEntity = _taskReportRepository.Find(x => x.Task.Id == entity.Id);
-				if (taskReportEntity.Any(x => x.ProcessReports.Count > 0))
-					throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
-			}
+			if(model.Processes.Any(x=>x.ProcessReports.Any()))
+				throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
 
 			var taskReportDs = new TaskReportDataService(context);
 			foreach (var taskReportEnt in entity.TaskReports)

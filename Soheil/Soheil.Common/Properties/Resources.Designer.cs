@@ -513,18 +513,9 @@ namespace Soheil.Common.Properties {
         /// <summary>
         ///   Looks up a localized string similar to ابتدای ساعت.
         /// </summary>
-        public static string PPE_StartOfThisHour {
+        public static string PPE_StartOfHour {
             get {
-                return ResourceManager.GetString("PPE_StartOfThisHour", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ابتدای همین ساعت (زمان وارد شده مد نظر نمی باشد).
-        /// </summary>
-        public static string PPE_StartOfThisHourTooltip {
-            get {
-                return ResourceManager.GetString("PPE_StartOfThisHourTooltip", resourceCulture);
+                return ResourceManager.GetString("PPE_StartOfHour", resourceCulture);
             }
         }
         
@@ -1249,6 +1240,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to بیش از یکبار قابل استفاده است.
+        /// </summary>
+        public static string txtIsMany {
+            get {
+                return ResourceManager.GetString("txtIsMany", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ورود.
         /// </summary>
         public static string txtLogin {
@@ -1434,6 +1434,15 @@ namespace Soheil.Common.Properties {
         public static string txtOperators {
             get {
                 return ResourceManager.GetString("txtOperators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to تعداد اپراتورها.
+        /// </summary>
+        public static string txtOperatorsCount {
+            get {
+                return ResourceManager.GetString("txtOperatorsCount", resourceCulture);
             }
         }
         

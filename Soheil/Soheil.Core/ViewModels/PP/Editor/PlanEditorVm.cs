@@ -7,20 +7,30 @@ using System.Collections.ObjectModel;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
+	/// <summary>
+	/// ViewModel for PlanEditor
+	/// <para>Does not have a UnitOfWork</para>
+	/// </summary>
 	public class PlanEditorVm : DependencyObject
 	{
 		public event Action RefreshPPItems;
 
+		/// <summary>
+		/// Creates an empty PlanEditor with its default values and reloads products
+		/// </summary>
 		public PlanEditorVm()
 		{
 			Reset();
 		}
+
+		/// <summary>
+		/// Resets all information about this PlanEditor and reloads products
+		/// </summary>
 		public void Reset()
 		{
 			SelectedBlock = null;
 			SelectedProduct = null;
 			BlockList.Clear();
-			Message = new Common.SoheilException.EmbeddedException();
 
 			//initializeDataServices
 			var _productGroupDs = new DataServices.ProductGroupDataService();
@@ -35,9 +45,41 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			initializeCommands();
 		}
 
+		/// <summary>
+		/// Changes BlockList or SelectedBlock
+		/// </summary>
+		/// <param name="stateVm"></param>
+		void FpcViewer_SelectedStateChanged(Fpc.StateVm stateVm)
+		{
+			var block = BlockList.FirstOrDefault(x => x.StateId == stateVm.Id);
+			if (block == null)
+			{
+				//add to list
+				block = new BlockEditorVm(stateVm.Model);
+				BlockList.Add(block);
+			}
+			else
+				//exists, select it (double click kind of thing)
+				SelectedBlock = block;
+		}
+
+		/// <summary>
+		/// Removes a block from BlockList
+		/// </summary>
+		/// <param name="block"></param>
+		public void RemoveBlock(BlockEditorVm block)
+		{
+			if (SelectedBlock != null && SelectedBlock.StateId == block.StateId)
+			{
+				SelectedBlock = null;
+			}
+			BlockList.Remove(block);
+		}
 
 		#region Visual Properties
-		//IsVisible Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether the PlanEditor is visible
+		/// </summary>
 		public bool IsVisible
 		{
 			get { return (bool)GetValue(IsVisibleProperty); }
@@ -47,7 +89,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("IsVisible", typeof(bool), typeof(PlanEditorVm), new UIPropertyMetadata(false));
 
 
-		//FpcViewer Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for FpcWindow viewer (state selector)
+		/// </summary>
 		public Fpc.FpcWindowVm FpcViewer
 		{
 			get { return (Fpc.FpcWindowVm)GetValue(FpcViewerProperty); }
@@ -56,23 +100,41 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty FpcViewerProperty =
 			DependencyProperty.Register("FpcViewer", typeof(Fpc.FpcWindowVm), typeof(PlanEditorVm), new UIPropertyMetadata(null));
 
-
-		//Message Dependency Property
-		public Soheil.Common.SoheilException.EmbeddedException Message
+		/// <summary>
+		/// Gets or seta a bindable value that indicates whether the Machines are visible in Processes
+		/// </summary>
+		public bool ShowMachines
 		{
-			get { return (Soheil.Common.SoheilException.EmbeddedException)GetValue(MessageProperty); }
-			set { SetValue(MessageProperty, value); }
+			get { return (bool)GetValue(ShowMachinesProperty); }
+			set { SetValue(ShowMachinesProperty, value); }
 		}
-		public static readonly DependencyProperty MessageProperty =
-			DependencyProperty.Register("Message", typeof(Soheil.Common.SoheilException.EmbeddedException), typeof(PlanEditorVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ShowMachinesProperty =
+			DependencyProperty.Register("ShowMachines", typeof(bool), typeof(PlanEditorVm), new UIPropertyMetadata(true));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether the Operators are visible in Processes
+		/// </summary>
+		public bool ShowOperators
+		{
+			get { return (bool)GetValue(ShowOperatorsProperty); }
+			set { SetValue(ShowOperatorsProperty, value); }
+		}
+		public static readonly DependencyProperty ShowOperatorsProperty =
+			DependencyProperty.Register("ShowOperators", typeof(bool), typeof(PlanEditorVm), new UIPropertyMetadata(true));
+
 		#endregion
 
 		#region Products(groups) and Blocks(states)
-		//ProductGroups Observable Collection
+		/// <summary>
+		/// Gets a bindable collection for product groups (and products)
+		/// </summary>
 		public ObservableCollection<ProductGroupVm> ProductGroups { get { return _productGroups; } }
 		private ObservableCollection<ProductGroupVm> _productGroups = new ObservableCollection<ProductGroupVm>();
 
-		//SelectedProduct Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value for Selected Product inside ProductGroups
+		/// <para>Changing the value updates FpcViewer</para>
+		/// </summary>
 		public ProductVm SelectedProduct
 		{
 			get { return (ProductVm)GetValue(SelectedProductProperty); }
@@ -89,43 +151,29 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					vm.FpcViewer = null;
 				else
 				{
+					//hide BlockEditor
+					d.SetValue(SelectedBlockProperty, null);
+
 					//create new fpc vm
 					vm.FpcViewer = new Fpc.FpcWindowVm(true);
 					vm.FpcViewer.ChangeFpcByProductId(val.Id);
 
 					//change BlockList or SelectedBlock upon SelectedStateChanged event
-					vm.FpcViewer.SelectedStateChanged += stateVm =>
-					{
-						var block = vm.BlockList.FirstOrDefault(x => x.StateId == stateVm.Id);
-						if (block == null)
-						{
-							//add to list
-							block = new BlockEditorVm(stateVm.Model);
-							vm.BlockList.Add(block);
-						}
-						else
-							//exists, select it (double click kind of thing)
-							vm.SelectedBlock = block;
-					};
+					vm.FpcViewer.SelectedStateChanged += vm.FpcViewer_SelectedStateChanged;
 				}
 			}));
 
-		public void RemoveBlock(BlockEditorVm block)
-		{
-			if (SelectedBlock != null && SelectedBlock.StateId == block.StateId)
-			{
-				SelectedBlock = null;
-			}
-			BlockList.Remove(block);
-		}
 
-		//BlockList Observable Collection
+		/// <summary>
+		/// Gets a bindable collection of Blocks
+		/// </summary>
 		public ObservableCollection<BlockEditorVm> BlockList { get { return _blockList; } }
 		private ObservableCollection<BlockEditorVm> _blockList = new ObservableCollection<BlockEditorVm>();
 
 		/// <summary>
 		/// Gets or sets a bindable value to indicate which EditorBlock is currently selected in the TaskEditor
-		/// <para>Setting this value will hide fpc and if 1 station is available in state select it</para>
+		/// <para>Changing this value to a valid Block will hide fpc</para>
+		/// <para>If only one station is available in state, selects it</para>
 		/// </summary>
 		public BlockEditorVm SelectedBlock
 		{
@@ -140,8 +188,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var val = e.NewValue as BlockEditorVm;
 				if (val != null)
 				{
-					//hide fpc
-					vm.SelectedProduct = null;
+					//hide FpcViewer
+					d.SetValue(SelectedProductProperty, null);
 
 					//automatically select the only station
 					if (val.StateStation == null && val.State.StateStationList.Count == 1)
@@ -167,7 +215,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				}
 				catch (Exception exp)
 				{
-					Message.AddEmbeddedException(exp);
+					SelectedBlock.Message.AddEmbeddedException(exp);
 				}
 			});
 			ClearAllCommand = new Commands.Command(o =>
@@ -180,24 +228,21 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			});
 			SaveAllAndExitCommand = new Commands.Command(o =>
 			{
-				try
+				foreach (var block in BlockList)
 				{
-					foreach (var block in BlockList)
+					try
 					{
 						block.Save();
 						if (RefreshPPItems != null) RefreshPPItems();
 					}
-					Reset();
-					IsVisible = false;
+					catch (Exception exp)
+					{
+						block.Message.AddEmbeddedException(exp);
+						return;
+					}
 				}
-				catch (Exception exp)
-				{
-					Message.AddEmbeddedException(exp);
-				}
-			});
-			ResetCurrentBlockCommand = new Commands.Command(o =>
-			{
-				SelectedBlock.Reset();
+				Reset();
+				IsVisible = false;
 			});
 		}
 		//SaveCommand Dependency Property
@@ -232,14 +277,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SaveAllAndExitCommandProperty =
 			DependencyProperty.Register("SaveAllAndExitCommand", typeof(Commands.Command), typeof(PlanEditorVm), new UIPropertyMetadata(null));
-		//ResetCurrentBlockCommand Dependency Property
-		public Commands.Command ResetCurrentBlockCommand
-		{
-			get { return (Commands.Command)GetValue(ResetCurrentBlockCommandProperty); }
-			set { SetValue(ResetCurrentBlockCommandProperty, value); }
-		}
-		public static readonly DependencyProperty ResetCurrentBlockCommandProperty =
-			DependencyProperty.Register("ResetCurrentBlockCommand", typeof(Commands.Command), typeof(PlanEditorVm), new UIPropertyMetadata(null));
 		#endregion
 
 	}

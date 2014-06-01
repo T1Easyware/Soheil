@@ -8,17 +8,23 @@ using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PP
 {
-	public abstract class OperatorVm : DependencyObject
+	public class OperatorVm : DependencyObject
 	{
+		/// <summary>
+		/// Occurs when role of this operator is changed
+		/// </summary>
+		public event Action<OperatorVm, OperatorRole> OperatorRoleChanged;
+
+
 		internal Model.Operator OperatorModel { get; private set; }
 		public int OperatorId { get { return OperatorModel.Id; } }
 
 		#region Ctor
 		/// <summary>
-		/// Use this constructor to create an operator outside a process
+		/// Use this constructor to create an operator free of a process
 		/// </summary>
 		/// <param name="model"></param>
-		protected OperatorVm(Model.Operator model, Model.StateStationActivity ssa = null)
+		public OperatorVm(Model.Operator model, Model.StateStationActivity ssa = null)
 		{
 			OperatorModel = model;
 			Name = model.Name;
@@ -102,7 +108,13 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(RoleProperty, value); }
 		}
 		public static readonly DependencyProperty RoleProperty =
-			DependencyProperty.Register("Role", typeof(OperatorRole), typeof(OperatorVm), new UIPropertyMetadata(OperatorRole.Main));
+			DependencyProperty.Register("Role", typeof(OperatorRole), typeof(OperatorVm),
+			new UIPropertyMetadata(OperatorRole.Main, (d, e) =>
+			{
+				var vm = (OperatorVm)d;
+				if (vm.OperatorRoleChanged != null)
+					vm.OperatorRoleChanged(vm, (OperatorRole)e.NewValue);
+			}));
 
 		/// <summary>
 		/// Gets a bindable value for General skill level of this operator in the specified activity

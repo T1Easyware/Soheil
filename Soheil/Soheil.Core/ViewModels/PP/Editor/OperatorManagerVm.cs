@@ -10,95 +10,166 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class OperatorManagerVm : DependencyObject
 	{
-		public event Action<OperatorEditorVm, bool, Soheil.Common.OperatorRole> SelectionChanged;
+		/// <summary>
+		/// Occurs when any operator is selected/deselected
+		/// <para>first param: viewModel, second param: newValue for IsSelected, third param: value that indicates whether to update SelectedOperatorCount</para>
+		/// </summary>
+		public event Action<OperatorEditorVm, bool, bool> SelectionChanged;
 
+		#region Data
 		Dal.SoheilEdmContext _uow;
-		DataServices.OperatorDataService _operatorDataService;
+		public DataServices.OperatorDataService OperatorDataService { get; private set; }
+		/// <summary>
+		/// Gets or sets the working block of this manager (to find relative operators status)
+		/// </summary>
+		public Model.Block Block { get; set; }
+		/// <summary>
+		/// Gets the working Process of this manager (to find relative operators status)
+		/// </summary>
+		public Model.Process Process { get; protected set; }
+		/// <summary>
+		/// Gets the working Activity of this manager (to find relative operators status)
+		/// </summary>
+		public Model.Activity Activity { get; protected set; } 
+		#endregion
 
+		#region Ctor and init
 		public OperatorManagerVm(Dal.SoheilEdmContext uow)
 		{
 			_uow = uow;
 
-			//get all operators and convert them to VM
-			_operatorDataService = new DataServices.OperatorDataService(_uow);
-			var allOperators = _operatorDataService.GetActives();
+			#region get all operators and convert them to VM
+			OperatorDataService = new DataServices.OperatorDataService(_uow);
+			var allOperators = OperatorDataService.GetActives();
 			foreach (var oper in allOperators)
 			{
 				var operVm = new OperatorEditorVm(oper);
-				operVm.SelectedOperatorsChanged += (isSelected, role) =>
-				{
-					if (SelectionChanged != null) SelectionChanged(operVm, isSelected, role);
-				};
-				OperatorsList.Add(operVm);
-			}
 
-			//init commands
+				//Notify
+				// Add|Remove selected|deselected operator in vm
+				operVm.SelectedOperatorChanged += Operator_SelectedOperatorChanged;
+
+				//Updates role in uow
+				operVm.OperatorRoleChanged += Operator_RoleChanged;
+
+				OperatorsList.Add(operVm);
+			} 
+			#endregion
+
+			#region init commands
 			ClearSearchCommand = new Commands.Command(textBox =>
 			{
 				if (textBox is System.Windows.Controls.TextBox)
 					(textBox as System.Windows.Controls.TextBox).Clear();
 			});
-			RefreshCommand = new Commands.Command(o => Refresh());
-		}
-		public void Refresh()
-		{
 
+			RefreshCommand = new Commands.Command(o => refresh()); 
+			#endregion
 		}
-		public async void Refresh(TaskEditorVm parent)
+
+		/// <summary>
+		/// Updates Process and Activity and Refreshes operators status
+		/// </summary>
+		/// <param name="processVm"></param>
+		public void Refresh(ProcessEditorVm processVm)
 		{
-			foreach (var operVm in OperatorsList)
+			Process = processVm.Model;
+			Activity = processVm.ActivityModel;
+			refresh();
+		}
+		/// <summary>
+		/// Refreshes current process' operators status
+		/// </summary>
+		internal async void refresh()
+		{
+			foreach (var oper in OperatorsList)
 			{
-				bool[] result;
-				var operModel = operVm.OperatorModel;
-				var processModel = parent.SelectedProcess == null ? null : parent.SelectedProcess.Model;
-				var taskModel = parent.Model;
-				var start = parent.Model.StartDateTime;
-				var end = parent.Model.EndDateTime;
-				//set process
-				if (parent.SelectedProcess == null)
+				bool[] status;
+				var operModel = oper.OperatorModel;
+				if (Process == null)
 				{
-					result = await Task.Run(() =>
-						_operatorDataService.GetOperatorStatus(operModel, processModel, start, end));
+					status = await Task.Run(() => OperatorDataService.GetOperatorStatus(operModel, Block.Tasks.FirstOrDefault()));
 				}
-				//set task
 				else
 				{
-					result = await Task.Run(() =>
-						_operatorDataService.GetOperatorStatus(operModel, taskModel, start, end));
+					status = await Task.Run(() => OperatorDataService.GetOperatorStatus(operModel, Process));
 				}
-
-				operVm.IsSelected = result[0];
-				operVm.IsInTask = result[1];
-				operVm.IsInTimeRange = result[2];
+				oper.IsSelected = status[0];
+				oper.IsInTask = status[1];
+				oper.IsInTimeRange = status[2];
 			}
-		}
-		public void Refresh(ProcessEditorVm parent)
+		} 
+		#endregion
+
+		#region Event Handlers
+		void Operator_SelectedOperatorChanged(OperatorEditorVm operVm, bool isSelected, bool updateCount)
 		{
-			foreach (var operVm in OperatorsList)
+			if(Process == null || Activity == null || Block == null)
 			{
-				var procOpers = operVm.OperatorModel.ProcessOperators.Where(x =>
-					x.Process.Task.StartDateTime < parent.Model.Task.EndDateTime &&
-					x.Process.Task.EndDateTime > parent.Model.Task.StartDateTime);
-
-				operVm.IsSelected = procOpers.Any(x =>
-					x.Process.Id == parent.Model.Id);
-				operVm.IsInTask = procOpers.Any(x => 
-					x.Process.Task.Id == parent.Model.Task.Id
-					&& x.Process.Id != parent.Model.Id);
+				MessageBox.Show("ابتدا فعالیت را انتخاب کنید");
+				return;
 			}
 
-			OperatorsSelectedList.Clear();
-			foreach (var procOper in parent.Model.ProcessOperators)
+			//find ProcessOperator in uow
+			var poModel = Process.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operVm.OperatorId);
+			//add/remove them
+			if (poModel == null)
 			{
-				OperatorsSelectedList.Add(new OperatorEditorVm(procOper));
+				if (isSelected)
+				{
+					//if not exist but selected, add it to uow
+					poModel = new Model.ProcessOperator
+					{
+						Operator = operVm.OperatorModel,
+						Process = Process,
+						Code = Process.Code + operVm.Code,
+					};
+					Process.ProcessOperators.Add(poModel);
+				}
+			}
+			else
+			{
+				if (!isSelected)
+				{
+					//if exist but not selected, remove it from uow
+					Process.ProcessOperators.Remove(poModel);
+					new Dal.Repository<Model.ProcessOperator>(_uow).Delete(poModel);
+				}
+			}
+
+			//notify about selection (to update operators quicklist and SelectedOperatorsCount in process)
+			if (SelectionChanged != null)
+				SelectionChanged(operVm, isSelected, updateCount);
+
+			//update OperatorsSelectedList
+			if (isSelected)
+			{
+				OperatorsSelectedList.Add(operVm);
+			}
+			else
+			{
+				OperatorsSelectedList.Remove(operVm);
 			}
 		}
-		#region Operators Lists
+		void Operator_RoleChanged(OperatorVm operVm, Soheil.Common.OperatorRole role)
+		{
+			//find ProcessOperator in uow
+			var poModel = Process.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operVm.OperatorId);
+			if (poModel != null)
+			{
+				poModel.Role = role;
+			}
+			else
+			{
+				MessageBox.Show("Error: operator is not found");
+			}
+		} 
+		#endregion
+
 		public ObservableCollection<OperatorEditorVm> OperatorsList { get { return _operatorsList; } }
 		private ObservableCollection<OperatorEditorVm> _operatorsList = new ObservableCollection<OperatorEditorVm>();
 		public ObservableCollection<OperatorEditorVm> OperatorsSelectedList { get { return _operatorsSelectedList; } }
 		private ObservableCollection<OperatorEditorVm> _operatorsSelectedList = new ObservableCollection<OperatorEditorVm>();
-		#endregion
 
 
 		/// <summary>
@@ -121,5 +192,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty RefreshCommandProperty =
 			DependencyProperty.Register("RefreshCommand", typeof(Commands.Command), typeof(OperatorManagerVm), new PropertyMetadata(null));
+
 	}
 }

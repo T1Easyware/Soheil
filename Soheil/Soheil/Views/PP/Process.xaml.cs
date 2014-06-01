@@ -17,11 +17,11 @@ using System.Windows.Shapes;
 namespace Soheil.Views.PP
 {
 	/// <summary>
-	/// Interaction logic for ProcessReportCell.xaml (one Cell in PPTable with its insides)
+	/// Interaction logic for Process.xaml (one Cell in PPTable with its insides)
 	/// </summary>
-	public partial class ProcessReportCell : UserControl
+	public partial class Process : UserControl
 	{
-		public ProcessReportCell()
+		public Process()
 		{
 			InitializeComponent();
 		}
@@ -37,11 +37,7 @@ namespace Soheil.Views.PP
 			set { SetValue(PPTableProperty, value); }
 		}
 		public static readonly DependencyProperty PPTableProperty =
-			DependencyProperty.Register("PPTable", typeof(PPTableVm), typeof(ProcessReportCell), new UIPropertyMetadata(null));
+			DependencyProperty.Register("PPTable", typeof(PPTableVm), typeof(Process), new UIPropertyMetadata(null));
 
-		private void StackPanel_Loaded(object sender, RoutedEventArgs e)
-		{
-
-		}
 	}
 }

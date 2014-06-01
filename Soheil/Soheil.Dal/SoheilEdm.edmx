@@ -239,10 +239,6 @@
       <End Role="Task" EntitySet="Tasks" />
       <End Role="TaskReport" EntitySet="TaskReports" />
     </AssociationSet>
-    <AssociationSet Name="TaskReportProcessReport" Association="SoheilEdm.Store.TaskReportProcessReport">
-      <End Role="TaskReport" EntitySet="TaskReports" />
-      <End Role="ProcessReport" EntitySet="ProcessReports" />
-    </AssociationSet>
     <AssociationSet Name="ProcessReportDefectionReport" Association="SoheilEdm.Store.ProcessReportDefectionReport">
       <End Role="ProcessReport" EntitySet="ProcessReports" />
       <End Role="DefectionReport" EntitySet="DefectionReports" />
@@ -686,9 +682,9 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Code" Type="nvarchar" Nullable="true" MaxLength="60" />
     <Property Name="TargetCount" Type="int" Nullable="false" />
-    <Property Name="DurationSeconds" Type="int" Nullable="false" />
     <Property Name="StartDateTime" Type="datetime" Nullable="false" />
     <Property Name="EndDateTime" Type="datetime" Nullable="false" />
+    <Property Name="DurationSeconds" Type="int" Nullable="false" />
     <Property Name="Task_Id" Type="int" Nullable="false" />
     <Property Name="StateStationActivity_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -711,10 +707,9 @@
     <Property Name="ProducedG1" Type="int" Nullable="false" DefaultValue="0" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ProcessReportTargetPoint" Type="int" Nullable="false" />
-    <Property Name="DurationSeconds" Type="int" Nullable="false" />
-    <Property Name="StartDateTime" Type="datetime" Nullable="false" />
     <Property Name="EndDateTime" Type="datetime" Nullable="false" />
-    <Property Name="TaskReport_Id" Type="int" Nullable="false" />
+    <Property Name="StartDateTime" Type="datetime" Nullable="false" />
+    <Property Name="DurationSeconds" Type="int" Nullable="false" />
     <Property Name="Process_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="TaskReports">
@@ -901,6 +896,8 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="CycleTime" Type="real" Nullable="false" />
     <Property Name="ManHour" Type="real" Nullable="false" />
+    <Property Name="IsMany" Type="bit" Nullable="false" DefaultValue="true" />
+    <Property Name="IsInJob" Type="bit" Nullable="false" DefaultValue="true" />
     <Property Name="StateStation_Id" Type="int" Nullable="false" />
     <Property Name="Activity_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -1139,7 +1136,7 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="StartSeconds" Type="int" Nullable="false" DefaultValue="0" />
     <Property Name="EndSeconds" Type="int" Nullable="false" DefaultValue="0" />
-    <Property Name="IsOpen" Type="bit" Nullable="false" />
+    <Property Name="IsOpen" Type="bit" Nullable="false" DefaultValue="true" />
     <Property Name="WorkDay_Id" Type="int" Nullable="false" />
     <Property Name="WorkShiftPrototype_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -1742,18 +1739,6 @@
       </Principal>
       <Dependent Role="TaskReport">
         <PropertyRef Name="Task_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="TaskReportProcessReport">
-    <End Role="TaskReport" Type="SoheilEdm.Store.TaskReports" Multiplicity="1" />
-    <End Role="ProcessReport" Type="SoheilEdm.Store.ProcessReports" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="TaskReport">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="ProcessReport">
-        <PropertyRef Name="TaskReport_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2650,10 +2635,6 @@
             <End Role="Task" EntitySet="Tasks" />
             <End Role="TaskReport" EntitySet="TaskReports" />
           </AssociationSet>
-          <AssociationSet Name="TaskReportProcessReport" Association="SoheilEdm.TaskReportProcessReport">
-            <End Role="TaskReport" EntitySet="TaskReports" />
-            <End Role="ProcessReport" EntitySet="ProcessReports" />
-          </AssociationSet>
           <AssociationSet Name="ProcessReportDefectionReport" Association="SoheilEdm.ProcessReportDefectionReport">
             <End Role="ProcessReport" EntitySet="ProcessReports" />
             <End Role="DefectionReport" EntitySet="DefectionReports" />
@@ -3165,15 +3146,15 @@
           <Property Type="Int32" Name="Id" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Code" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="TargetCount" Nullable="false" />
-          <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
-          <Property Name="StartDateTime" Type="DateTime" Nullable="false" Precision="3" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Name="EndDateTime" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="ProcessOperators" Relationship="SoheilEdm.ProcessProcessOperator" FromRole="Process" ToRole="ProcessOperator" />
           <NavigationProperty Name="SelectedMachines" Relationship="SoheilEdm.ProcessSelectedMachine" FromRole="Process" ToRole="SelectedMachine" />
           <NavigationProperty Name="Task" Relationship="SoheilEdm.TaskProcess" FromRole="Process" ToRole="Task" />
           <NavigationProperty Name="StateStationActivity" Relationship="SoheilEdm.StateStationActivityProcess" FromRole="Process" ToRole="StateStationActivity" />
           <NavigationProperty Name="ProcessReports" Relationship="SoheilEdm.ProcessProcessReport" FromRole="Process" ToRole="ProcessReport" />
-          </EntityType>
+          <Property Name="StartDateTime" Type="DateTime" Nullable="false" />
+          <Property Name="EndDateTime" Type="DateTime" Nullable="false" />
+          <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
+        </EntityType>
         <EntityType Name="ProcessOperator">
           <Key>
             <PropertyRef Name="Id" />
@@ -3194,15 +3175,13 @@
           <Property Type="Int32" Name="ProducedG1" Nullable="false" DefaultValue="0" />
           <Property Type="Int32" Name="ModifiedBy" Nullable="false" />
           <NavigationProperty Name="StoppageReports" Relationship="SoheilEdm.ProcessReportStoppageReport" FromRole="ProcessReport" ToRole="StoppageReport" />
-          <NavigationProperty Name="TaskReport" Relationship="SoheilEdm.TaskReportProcessReport" FromRole="ProcessReport" ToRole="TaskReport" />
           <NavigationProperty Name="DefectionReports" Relationship="SoheilEdm.ProcessReportDefectionReport" FromRole="ProcessReport" ToRole="DefectionReport" />
           <Property Type="Int32" Name="ProcessReportTargetPoint" Nullable="false" />
-          <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
-          <Property Name="StartDateTime" Type="DateTime" Nullable="false" Precision="3" a:StoreGeneratedPattern="None" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Name="EndDateTime" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="OperatorProcessReports" Relationship="SoheilEdm.ProcessReportOperatorProcessReport" FromRole="ProcessReport" ToRole="OperatorProcessReport" />
           <NavigationProperty Name="Process" Relationship="SoheilEdm.ProcessProcessReport" FromRole="ProcessReport" ToRole="Process" />
           <NavigationProperty Name="ProcessOperatorReports" Relationship="SoheilEdm.ProcessReportProcessOperatorReport" FromRole="ProcessReport" ToRole="ProcessOperatorReport" />
+          <Property Name="EndDateTime" Type="DateTime" Nullable="false" />
+          <Property Name="StartDateTime" Type="DateTime" Nullable="false" />
+          <Property Name="DurationSeconds" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="TaskReport">
           <Key>
@@ -3215,7 +3194,6 @@
           <Property Type="DateTime" Name="ModifiedDate" Nullable="false" Precision="3" />
           <Property Type="DateTime" Name="CreatedDate" Nullable="false" Precision="3" />
           <NavigationProperty Name="Task" Relationship="SoheilEdm.TaskTaskReport" FromRole="TaskReport" ToRole="Task" />
-          <NavigationProperty Name="ProcessReports" Relationship="SoheilEdm.TaskReportProcessReport" FromRole="TaskReport" ToRole="ProcessReport" />
           <Property Type="DateTime" Name="ReportStartDateTime" Nullable="false" Precision="3" />
           <Property Type="Int32" Name="ReportDurationSeconds" Nullable="false" />
           <Property Type="Int32" Name="TaskProducedG1" Nullable="false" />
@@ -3463,6 +3441,8 @@
           <NavigationProperty Name="StateStationActivityMachines" Relationship="SoheilEdm.StateStationActivityStateStationActivityMachine" FromRole="StateStationActivity" ToRole="StateStationActivityMachine" />
           <NavigationProperty Name="Activity" Relationship="SoheilEdm.ActivityStateStationActivity" FromRole="StateStationActivity" ToRole="Activity" />
           <NavigationProperty Name="Processes" Relationship="SoheilEdm.StateStationActivityProcess" FromRole="StateStationActivity" ToRole="Process" />
+          <Property Name="IsMany" Type="Boolean" Nullable="false" DefaultValue="True" />
+          <Property Name="IsInJob" Type="Boolean" Nullable="false" DefaultValue="True" />
         </EntityType>
         <EntityType Name="StateStationActivityMachine">
           <Key>
@@ -3652,10 +3632,6 @@
         <Association Name="TaskTaskReport">
           <End Type="SoheilEdm.Task" Role="Task" Multiplicity="1" />
           <End Type="SoheilEdm.TaskReport" Role="TaskReport" Multiplicity="*" />
-        </Association>
-        <Association Name="TaskReportProcessReport">
-          <End Type="SoheilEdm.TaskReport" Role="TaskReport" Multiplicity="1" />
-          <End Type="SoheilEdm.ProcessReport" Role="ProcessReport" Multiplicity="*" />
         </Association>
         <Association Name="ProcessReportDefectionReport">
           <End Type="SoheilEdm.ProcessReport" Role="ProcessReport" Multiplicity="1" />
@@ -4356,9 +4332,9 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Code" ColumnName="Code" />
           <ScalarProperty Name="TargetCount" ColumnName="TargetCount" />
-          <ScalarProperty Name="DurationSeconds" ColumnName="DurationSeconds" />
           <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
           <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
+          <ScalarProperty Name="DurationSeconds" ColumnName="DurationSeconds" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4379,9 +4355,9 @@
           <ScalarProperty Name="ProducedG1" ColumnName="ProducedG1" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ProcessReportTargetPoint" ColumnName="ProcessReportTargetPoint" />
-          <ScalarProperty Name="DurationSeconds" ColumnName="DurationSeconds" />
-          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
           <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="DurationSeconds" ColumnName="DurationSeconds" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4565,6 +4541,8 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="CycleTime" ColumnName="CycleTime" />
           <ScalarProperty Name="ManHour" ColumnName="ManHour" />
+          <ScalarProperty Name="IsMany" ColumnName="IsMany" />
+          <ScalarProperty Name="IsInJob" ColumnName="IsInJob" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5229,14 +5207,6 @@
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
-    <AssociationSetMapping Name="TaskReportProcessReport" TypeName="SoheilEdm.TaskReportProcessReport" StoreEntitySet="ProcessReports">
-      <EndProperty Name="TaskReport">
-        <ScalarProperty Name="Id" ColumnName="TaskReport_Id" />
-      </EndProperty>
-      <EndProperty Name="ProcessReport">
-        <ScalarProperty Name="Id" ColumnName="Id" />
-      </EndProperty>
-    </AssociationSetMapping>
     <AssociationSetMapping Name="ProcessReportDefectionReport" TypeName="SoheilEdm.ProcessReportDefectionReport" StoreEntitySet="DefectionReports">
       <EndProperty Name="ProcessReport">
         <ScalarProperty Name="Id" ColumnName="ProcessReport_Id" />
@@ -5685,7 +5655,7 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="SoheilEdm" ZoomLevel="67" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+      <Diagram Name="SoheilEdm" ZoomLevel="41" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="5.25" PointX="16.5" PointY="11" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="20.25" PointY="15.625" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="35.875" PointY="13.25" Height="1.5956835937499996" FillColor="110, 100, 50" />
@@ -5852,7 +5822,6 @@
         <AssociationConnector Association="SoheilEdm.StoppageReportOperatorStoppageReport" />
         <AssociationConnector Association="SoheilEdm.ProcessReportStoppageReport" />
         <AssociationConnector Association="SoheilEdm.TaskTaskReport" />
-        <AssociationConnector Association="SoheilEdm.TaskReportProcessReport" />
         <AssociationConnector Association="SoheilEdm.ProcessReportDefectionReport" />
         <AssociationConnector Association="SoheilEdm.DefectionReportOperatorDefectionReport" />
         <EntityTypeShape EntityType="SoheilEdm.Cost" Width="3.875" PointX="6.75" PointY="35.25" FillColor="Orange" />
@@ -5916,15 +5885,15 @@
         <AssociationConnector ManuallyRouted="false" Association="SoheilEdm.StateStationActivityProcess">
         </AssociationConnector>
         <AssociationConnector Association="SoheilEdm.OperatorCost" ManuallyRouted="true" >
-          <ConnectorPoint PointX="46.28125" PointY="33.105205078125" />
-          <ConnectorPoint PointX="46.28125" PointY="37.629547526041662" />
-          <ConnectorPoint PointX="36.177083333333336" PointY="37.629547526041662" />
-          <ConnectorPoint PointX="36.010416666666664" PointY="37.629547526041662" />
-          <ConnectorPoint PointX="31.083333333333332" PointY="37.629547526041662" />
-          <ConnectorPoint PointX="30.916666666666668" PointY="37.629547526041662" />
-          <ConnectorPoint PointX="13.270833333333334" PointY="37.629547526041662" />
-          <ConnectorPoint PointX="13.104166666666666" PointY="37.629547526041662" />
-          <ConnectorPoint PointX="10.625" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="46.28125" PointY="32.518616536458332" />
+          <ConnectorPoint PointX="46.28125" PointY="37.491547037760412" />
+          <ConnectorPoint PointX="36.177083333333336" PointY="37.491547037760412" />
+          <ConnectorPoint PointX="36.010416666666664" PointY="37.491547037760412" />
+          <ConnectorPoint PointX="31.083333333333332" PointY="37.491547037760412" />
+          <ConnectorPoint PointX="30.916666666666668" PointY="37.491547037760412" />
+          <ConnectorPoint PointX="13.270833333333334" PointY="37.491547037760412" />
+          <ConnectorPoint PointX="13.104166666666666" PointY="37.491547037760412" />
+          <ConnectorPoint PointX="10.625" PointY="37.491547037760412" />
         </AssociationConnector>
         <AssociationConnector Association="SoheilEdm.ProductDefectionDefectionReport" />
         <AssociationConnector Association="SoheilEdm.OperatorPersonalSkill" />

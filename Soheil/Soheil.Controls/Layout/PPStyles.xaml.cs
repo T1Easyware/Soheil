@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using Soheil.Common;
 using System.Windows.Input;
 using Soheil.Common.SoheilException;
+using System.Windows.Controls;
 
 namespace Soheil.Controls.Layout
 {

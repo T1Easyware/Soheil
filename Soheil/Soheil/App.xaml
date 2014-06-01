@@ -11,7 +11,6 @@
 				<ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/Converters.xaml"/>
 				<ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/Images.xaml"/>
 				<ResourceDictionary Source="pack://application:,,,/Soheil.Controls;component/Layout/PPStyles.xaml"/>
-				<ResourceDictionary Source="Views\Fpc\FpcResources.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\ExpanderTheme.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\ToolboxDictionary.xaml"/>
 				<ResourceDictionary Source="Views\Fpc\MidStateConfig.xaml"/>

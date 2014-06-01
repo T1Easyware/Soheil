@@ -10,10 +10,15 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class StoppageReportCollection : DefectionStoppageCollectionBase
 	{
-		public StoppageReportCollection(ProcessReportCellVm parent)
+		public StoppageReportCollection(ProcessReportVm parent)
 		{
 			Parent = parent;
-			AddCommand = new Commands.Command(o => List.Add(new StoppageReportVm(this, null)));
+			AddCommand = new Commands.Command(o => List.Add(new StoppageReportVm(this, new Model.StoppageReport
+			{
+				ProcessReport = parent.Model,
+				Cause = null,
+				ModifiedBy = LoginInfo.Id,
+			})));
 		}
 
 		//List Observable Collection

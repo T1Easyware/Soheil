@@ -25,8 +25,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	/// </summary>
 	public class ProcessEditorVm : DependencyObject
 	{
-		IEnumerable<Model.StateStationActivity> _ssaGroup;
-
 		Dal.SoheilEdmContext _uow;
 
 		/// <summary>
@@ -34,116 +32,175 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		public Model.Process Model { get; protected set; }
 		/// <summary>
-		/// Gets the first StateStationActivity in choices
+		/// Gets the model for Activity (it is fixed unlike SSA)
 		/// </summary>
-		public Model.StateStationActivity SampleSSA { get; protected set; }
+		public Soheil.Model.Activity ActivityModel { get; protected set; }
 
 		/// <summary>
-		/// Use this event to notify Task about changes to ActivityChoice of this Process
-		/// <para>first arg is oldValue, seconds arg is NewValue</para>
+		/// Gets or sets a value that indicates whether this viewModel should prevent TargetPointChanged and DurationChanged events from firing
 		/// </summary>
-		public event Action<PPEditorActivityChoice, PPEditorActivityChoice> ActivityChoiceChanged;
-		/// <summary>
-		/// Occurs when TargetPoint of this Process is changed
-		/// <para>first arg is oldValue, seconds arg is NewValue</para>
-		/// </summary>
-		public event Action<int, int> ProcessTargetPointChanged;
+		public bool HoldEvents { get; set; }
+		//indicates whether this viewModel should prevent changing Model
+		bool _isInitializing;
+
 		/// <summary>
 		/// Occurs when DurationSeconds of this Process is changed
 		/// <para>first arg is oldValue, seconds arg is NewValue</para>
 		/// </summary>
-		public event Action<int, int> ProcessDurationChanged;
+		public event Action<ProcessEditorVm, DateTime, DateTime> TimesChanged;
+		/// <summary>
+		/// Occurs when number of selected operators is changed for this process (2nd Parameter=number of operators)
+		/// <para>This event should change SelectedChoice of this process</para>
+		/// </summary>
+		public event Action<ProcessEditorVm, int> SelectedOperatorsCountChanged;
+		/// <summary>
+		/// Occurs when this process is selected among other processes with same activity
+		/// </summary>
+		public event Action<ProcessEditorVm> Selected;
+		/// <summary>
+		/// Occurs when selected choice of SSAs for this Process is changed
+		/// <para>second parameter can be null</para>
+		/// </summary>
+		public event Action<ProcessEditorVm, ChoiceEditorVm> SelectedChoiceChanged;
 
-		#region Ctor
+
+		#region Ctor & choiceIsChanged
 		/// <summary>
 		/// Creates an instance of PPEditorProcess with given model within the given PPEditorTask
 		/// <para>Updates its choices and operators and machines as well</para>
 		/// </summary>
 		/// <param name="model"></param>
-		public ProcessEditorVm(Model.Process model, Dal.SoheilEdmContext uow, IGrouping<int, Model.StateStationActivity> ssaGroup = null)
+		public ProcessEditorVm(Model.Process model, Model.Activity activityModel, Dal.SoheilEdmContext uow)
 		{
-			HoldEvents = true;
+			_isInitializing = true;
 
-			Message = new Common.SoheilException.EmbeddedException();
-			Model = model;
+			#region Basic
 			_uow = uow;
-
-			#region Load name and choices
-			//find ssaGroup (same activity, different SSAs)
-			if (ssaGroup == null)
-				_ssaGroup = model.StateStationActivity.GetIdenticals();
-			else
-				_ssaGroup = ssaGroup;
-
-			if (!_ssaGroup.Any())
-			{
-				Message.AddEmbeddedException("فعالیتی وجود ندارد");
-				return;
-			}
-
-			//set sampleSSA
-			SampleSSA = _ssaGroup.First();
-			Name = SampleSSA.Activity.Name;
-
-			//Add Choices
-			foreach (var choice in _ssaGroup.OrderBy(ssa => ssa.ManHour))
-			{
-				Choices.Add(new PPEditorActivityChoice(choice, this));
-			}
-
-			//select the right choice based on ManHour
-			SelectedOperatorsCount = model.ProcessOperators.Count;
-			if (model.StateStationActivity != null)
-			{
-				//select the right choice based on model.StateStationActivity.Id
-				SelectedChoice = Choices.FirstOrDefault(x => x.StateStationActivityId == model.StateStationActivity.Id);
-			}
-			#endregion
-
-
-			#region Load machines
-			//Find all valid Machines for the whole ssaGroup
-			foreach (var ssa in _ssaGroup)
-			{
-				foreach (var ssam in ssa.StateStationActivityMachines)
-				{
-					if (!MachineList.Any(x => x.MachineId == ssam.Machine.Id))
-					{
-						//add the unique machines to MachineList
-						var machineVm = new MachineEditorVm(ssam.Machine);
-						//select it if it is in SelectedMachines of process model
-						machineVm.IsUsed = model.SelectedMachines.Any(x => x.StateStationActivityMachine.Machine.Id == machineVm.MachineId);
-						MachineList.Add(machineVm);
-					}
-				}
-			}
-			#endregion
-
+			Model = model;
+			ActivityModel = activityModel;
+			HasReport = Model.ProcessReports.Any();
+			Message = new Common.SoheilException.EmbeddedException();
 
 			TargetPoint = model.TargetCount;
-			HoldEvents = false;
+			DurationSeconds = model.DurationSeconds;
+
+			Date = model.Task.Block.StartDateTime.Date;
+			StartTime = model.StartDateTime.Subtract(Date);
+			EndTime = model.EndDateTime.Subtract(Date); 
+			#endregion
+
+			#region Machines
+			//SelectedMachines
+			foreach (var sm in model.SelectedMachines)
+			{
+				var machineVm = new MachineEditorVm(sm);
+				SelectedMachines.Add(machineVm);
+			}
+			NoSelectedMachines = !model.SelectedMachines.Any();
+			SelectedMachines.CollectionChanged += (s, e) => NoSelectedMachines = !SelectedMachines.Any();
+
+			//MachineFamilyList
+			ShowAllMachinesCommand = new Commands.Command(o =>
+			{
+				ShowAllMachines = true;
+				IsSelected = true;
+				MachineFamilyList.Clear();
+
+				//Load Model
+				var ssams = new List<Model.StateStationActivityMachine>();
+				foreach (var ssa in Model.StateStationActivity.StateStation.StateStationActivities)
+				{
+					ssams.AddRange(ssa.StateStationActivityMachines);
+				}
+				var machines = ssams.GroupBy(x => x.Machine);
+				var machineFamilies = machines.GroupBy(x => x.Key.MachineFamily);
+
+				//Create ViewModel
+				foreach (var machineFamily in machineFamilies)
+				{
+					var machineFamilyVm = new MachineFamilyEditorVm(machineFamily);
+					machineFamilyVm.Revalidate(Model);
+					MachineFamilyList.Add(machineFamilyVm);
+				}
+			}); 
+			#endregion
+
+			//set operators after those 2, because when choice is selected we expect to have valid information in this vm
+			#region Operators
+			//select the right choice based on ManHour
+			foreach (var oper in model.ProcessOperators)
+			{
+				SelectedOperators.Add(new OperatorVm(oper.Operator));
+			}
+			SelectedOperatorsCount = model.ProcessOperators.Count;
+			SelectedOperators.CollectionChanged += (s, e) => SelectedOperatorsCount = SelectedOperators.Count;
+			#endregion
+
+			//command
+			SelectCommand = new Commands.Command(o => IsSelected = true);
+
+			_isInitializing = false;
+		}
+
+		/// <summary>
+		/// Updates machines, model and operators and fires SelectedChoiceChanged event
+		/// </summary>
+		/// <param name="oldVal"></param>
+		/// <param name="newVal"></param>
+		private void choiceIsChanged(ChoiceEditorVm oldVal, ChoiceEditorVm newVal)
+		{
+			if (newVal == null)
+			{
+				//invalid choice
+				Model.StateStationActivity = null;
+				Message.AddEmbeddedException("نفرساعت مورد استفاده این فعالیت نامعتبر است");
+				OperatorCountError = true;
+
+				//Update Machines according to the choice
+				foreach (var machineFamilyVm in MachineFamilyList)
+				{
+					foreach (var machineVm in machineFamilyVm.MachineList)
+					{
+						machineVm.CanBeUsed = false;
+					}
+				}
+				foreach (var smVm in SelectedMachines)
+				{
+					smVm.CanBeUsed = false;
+				}
+			}
+			else
+			{
+				//valid choice
+				Model.StateStationActivity = newVal.Model;
+				Message.ResetEmbeddedException();
+
+				//compare manhour of selected choice with number of assigned operators
+				OperatorCountError = ((int)Math.Ceiling(newVal.ManHour) != Model.ProcessOperators.Count);
+
+				//Update Machines according to the choice
+				foreach (var machineFamilyVm in MachineFamilyList)
+				{
+					foreach (var machineVm in machineFamilyVm.MachineList)
+					{
+						machineVm.CanBeUsed = newVal.Model.StateStationActivityMachines.Any(ssam => ssam.Machine.Id == machineVm.MachineId);
+					}
+				}
+				foreach (var smVm in SelectedMachines)
+				{
+					smVm.CanBeUsed = newVal.Model.StateStationActivityMachines.Any(ssam => ssam.Machine.Id == smVm.MachineId);
+				}
+			}
+			//fire event
+			if (SelectedChoiceChanged != null)
+				SelectedChoiceChanged(this, newVal);
 		}
 		#endregion
 
-		#region Name, TP, Duration
-		/// <summary>
-		/// Gets or sets a value that indicates whether this viewModel should prevent TargetPointChanged and DurationChanged events from firing
-		/// </summary>
-		public bool HoldEvents { get; set; }
-
-		/// <summary>
-		/// Gets or sets a bindable text as the name of this process
-		/// </summary>
-		public string Name
-		{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
-		}
-		public static readonly DependencyProperty NameProperty =
-			DependencyProperty.Register("Name", typeof(string), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
+		#region TP & Time
 		/// <summary>
 		/// Gets or sets a bindable value for target point of this process
-		/// <para>Changing this value updates DurationSeconds and model's TargetCount and fires ProcessTargetPointChanged event</para>
+		/// <para>Changing this value updates DurationSeconds and model's TargetCount</para>
 		/// </summary>
 		public int TargetPoint
 		{
@@ -155,8 +212,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(0, (d, e) =>
 			{
 				var vm = (ProcessEditorVm)d;
+				if (vm._isInitializing) return;
+
+				//update model
 				var val = (int)e.NewValue;
 				vm.Model.TargetCount = val;
+
+				if (vm.HoldEvents) return;
 
 				//update DurationSeconds
 				if (vm.SelectedChoice != null)
@@ -165,10 +227,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					if (newDuration != vm.DurationSeconds)
 						vm.DurationSeconds = newDuration;
 				}
-
-				//fire event
-				if (!vm.HoldEvents && vm.ProcessTargetPointChanged != null)
-					vm.ProcessTargetPointChanged((int)e.OldValue, val);
 			}));
 		/// <summary>
 		/// Gets or sets a bindable value for duration seconds of this process
@@ -183,7 +241,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(0, (d, e) =>
 			{
 				var vm = (ProcessEditorVm)d;
+				if (vm._isInitializing) return;
+
+				//update model
 				var val = (int)e.NewValue;
+				vm.Model.DurationSeconds = val;
+				
+				if (vm.HoldEvents) return;
+
+				//update EndTime
+				vm.EndTime = vm.StartTime.Add(TimeSpan.FromSeconds(val));
 
 				//update TargetPoint
 				if (vm.SelectedChoice != null)
@@ -193,20 +260,83 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						vm.TargetPoint = newTargetPoint;
 				}
 
-				//fire event
-				if (!vm.HoldEvents && vm.ProcessDurationChanged != null)
-					vm.ProcessDurationChanged((int)e.OldValue, val);
 			}));
 
-		#endregion
+		/// <summary>
+		/// Gets or sets Date of this process (StartTime and EndTime are considered relative to this Date)
+		/// </summary>
+		public DateTime Date
+		{
+			get { return _date; }
+			set
+			{
+				_date = value;
+				if (!_isInitializing && Model != null)
+				{
+					Model.StartDateTime = value.Add(StartTime);
+					Model.EndDateTime = value.Add(EndTime);
+				}
+			}
+		}
+		DateTime _date;
 
 		/// <summary>
-		/// Gets a collection of machines that are in at least one choice of this process
-		/// <para>Selected machines have IsUsed = true</para>
-		/// <para>Machines in the selected choice have CanBeUsed = true</para>
+		/// Gets or sets a bindable value for starting timespan (offset from Date)
 		/// </summary>
-		public ObservableCollection<MachineEditorVm> MachineList { get { return _machineList; } }
-		private ObservableCollection<MachineEditorVm> _machineList = new ObservableCollection<MachineEditorVm>();
+		public TimeSpan StartTime
+		{
+			get { return (TimeSpan)GetValue(StartTimeProperty); }
+			set { SetValue(StartTimeProperty, value); }
+		}
+		public static readonly DependencyProperty StartTimeProperty =
+			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessEditorVm),
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
+			{
+				var vm = d as ProcessEditorVm;
+				if (vm._isInitializing) return;
+
+				//update model
+				vm.Model.StartDateTime = vm.Date.Add((TimeSpan)e.NewValue);
+
+				if (vm.HoldEvents) return;
+
+				//fire event
+				if (vm.TimesChanged != null)
+					vm.TimesChanged(vm, vm.Model.StartDateTime, vm.Model.EndDateTime);
+			}));
+		/// <summary>
+		/// Gets or sets a bindable value for ending timespan (offset from Date)
+		/// </summary>
+		public TimeSpan EndTime
+		{
+			get { return (TimeSpan)GetValue(EndTimeProperty); }
+			set { SetValue(EndTimeProperty, value); }
+		}
+		public static readonly DependencyProperty EndTimeProperty =
+			DependencyProperty.Register("EndTime", typeof(TimeSpan), typeof(ProcessEditorVm),
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
+			{
+				var vm = d as ProcessEditorVm;
+				if (vm._isInitializing) return;
+
+				//update model
+				vm.Model.EndDateTime = vm.Date.Add((TimeSpan)e.NewValue);
+
+				if (vm.HoldEvents) return;
+
+				//fire event
+				if (vm.TimesChanged != null)
+					vm.TimesChanged(vm, vm.Model.StartDateTime, vm.Model.EndDateTime);
+			}));
+		#endregion
+
+		#region Operators and Choice
+		/// <summary>
+		/// Gets a bindable collection of SelectedOperators for this process (AKA quicklist)
+		/// <para>Changing this collection has "NO" effect except for updating SelectedOperatorsCount</para>
+		/// </summary>
+		public ObservableCollection<OperatorVm> SelectedOperators { get { return _selectedOperators; } }
+		private ObservableCollection<OperatorVm> _selectedOperators = new ObservableCollection<OperatorVm>();
 		/// <summary>
 		/// Gets or sets the bindable number of used operators in this process
 		/// </summary>
@@ -220,72 +350,134 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(0, (d, e) =>
 			{
 				var vm = (ProcessEditorVm)d;
-				var val = (int)e.NewValue;
-				vm.SelectedChoice = vm.Choices.FirstOrDefault(x => x.ManHour == val);
+				if (vm.SelectedOperatorsCountChanged != null)
+					vm.SelectedOperatorsCountChanged(vm, (int)e.NewValue);
 			}));
-
-
-		/// <summary>
-		/// Gets a bindable collection of choices (StateStationActivities) of this process
-		/// <para>These choices all have the same Activity but different StateStationActivities (each of which has a unique ManHour)</para>
-		/// </summary>
-		public ObservableCollection<PPEditorActivityChoice> Choices { get { return _choices; } }
-		private ObservableCollection<PPEditorActivityChoice> _choices = new ObservableCollection<PPEditorActivityChoice>();
 		/// <summary>
 		/// Gets or sets a bindable value to represent the StateStationActivity compatible with the number of used operators
-		/// <para>Changing this value updates Model.StateStationActivity, valid machines vm and fires the ActivityChoiceChanged event</para>
+		/// <para>Changing this value updates Model.StateStationActivity and valid machines vm</para>
 		/// </summary>
-		public PPEditorActivityChoice SelectedChoice
+		public ChoiceEditorVm SelectedChoice
 		{
-			get { return (PPEditorActivityChoice)GetValue(SelectedChoiceProperty); }
+			get { return (ChoiceEditorVm)GetValue(SelectedChoiceProperty); }
 			set { SetValue(SelectedChoiceProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedChoiceProperty =
-			DependencyProperty.Register("SelectedChoice", typeof(PPEditorActivityChoice), typeof(ProcessEditorVm),
+			DependencyProperty.Register("SelectedChoice", typeof(ChoiceEditorVm), typeof(ProcessEditorVm),
 			new UIPropertyMetadata(null, (d, e) =>
 			{
 				var vm = d as ProcessEditorVm;
-				var newVal = e.NewValue as PPEditorActivityChoice;
-				var oldVal = e.OldValue as PPEditorActivityChoice;
+				var newVal = e.NewValue as ChoiceEditorVm;
+				var oldVal = e.OldValue as ChoiceEditorVm;
 				vm.choiceIsChanged(oldVal, newVal);
 			}));
-		private void choiceIsChanged(PPEditorActivityChoice oldVal, PPEditorActivityChoice newVal)
+		/// <summary>
+		/// Gets or sets a bindable value that indicate whether Manhour does not match the number of operators assigned to this choice
+		/// <para>This could be true when an auto planning considered this choice but not able to assign operators yet</para>
+		/// </summary>
+		public bool OperatorCountError
 		{
-			if (newVal == null)
-			{
-				//invalid choice
-				Model.StateStationActivity = null;
-				DurationSeconds = 0;
-				Message.AddEmbeddedException("نفرساعت مورد استفاده این فعالیت نامعتبر است");
-
-				//Update Machines according to the choice
-				foreach (var machineVm in MachineList)
-				{
-					machineVm.CanBeUsed = false;
-				}
-			}
-			else
-			{
-				//valid choice
-				//DurationSeconds will be set through ActivityChoiceChanged event
-				Model.StateStationActivity = newVal.Model;
-				Message.ResetEmbeddedException();
-				//compare manhour of selected choice with number of assigned operators
-				SelectedChoice.OperatorCountError = ((int)Math.Ceiling(newVal.ManHour) != Model.ProcessOperators.Count);
-
-				//Update Machines according to the choice
-				foreach (var machineVm in MachineList)
-				{
-					machineVm.CanBeUsed = newVal.Model.StateStationActivityMachines.Any(ssam => ssam.Machine.Id == machineVm.MachineId);
-				}
-			}
-
-			//fire the event
-			if (ActivityChoiceChanged != null)
-				ActivityChoiceChanged(oldVal, newVal);
+			get { return (bool)GetValue(OperatorCountErrorProperty); }
+			set { SetValue(OperatorCountErrorProperty, value); }
 		}
+		public static readonly DependencyProperty OperatorCountErrorProperty =
+			DependencyProperty.Register("OperatorCountError", typeof(bool), typeof(ProcessEditorVm), new UIPropertyMetadata(true));
+		#endregion
 
-		//Message Dependency Property
+		#region Machines
+		/// <summary>
+		/// Gets a collection of MachineFamilies that have at least one machine in at least one choice of this process
+		/// <para>Selected machines have IsUsed = true</para>
+		/// <para>Machines in the selected choice have CanBeUsed = true</para>
+		/// </summary>
+		public ObservableCollection<MachineFamilyEditorVm> MachineFamilyList { get { return _machineFamilyList; } }
+		private ObservableCollection<MachineFamilyEditorVm> _machineFamilyList = new ObservableCollection<MachineFamilyEditorVm>();
+
+		/// <summary>
+		/// Gets a bindable collection of SelectedMachines for this process
+		/// <para>Changing this collection has "NO" effect except for updating NoSelectedMachines</para>
+		/// </summary>
+		public ObservableCollection<MachineEditorVm> SelectedMachines { get { return _selectedMachines; } }
+		private ObservableCollection<MachineEditorVm> _selectedMachines = new ObservableCollection<MachineEditorVm>();
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this process no selected machines
+		/// </summary>
+		public bool NoSelectedMachines
+		{
+			get { return (bool)GetValue(NoSelectedMachinesProperty); }
+			set { SetValue(NoSelectedMachinesProperty, value); }
+		}
+		public static readonly DependencyProperty NoSelectedMachinesProperty =
+			DependencyProperty.Register("NoSelectedMachines", typeof(bool), typeof(ProcessEditorVm), new UIPropertyMetadata(true));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether all machines (families) are shown instead of selected machines
+		/// </summary>
+		public bool ShowAllMachines
+		{
+			get { return (bool)GetValue(ShowAllMachinesProperty); }
+			set { SetValue(ShowAllMachinesProperty, value); }
+		}
+		public static readonly DependencyProperty ShowAllMachinesProperty =
+			DependencyProperty.Register("ShowAllMachines", typeof(bool), typeof(ProcessEditorVm), new UIPropertyMetadata(false));
+
+		/// <summary>
+		/// Gets or sets a bindable command to show all machines (also selects the process)
+		/// </summary>
+		public Commands.Command ShowAllMachinesCommand
+		{
+			get { return (Commands.Command)GetValue(ShowAllMachinesCommandProperty); }
+			set { SetValue(ShowAllMachinesCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ShowAllMachinesCommandProperty =
+			DependencyProperty.Register("ShowAllMachinesCommand", typeof(Commands.Command), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
+
+
+		#endregion
+
+		#region Select, Report, Message
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this process is selected among all processes of the block
+		/// </summary>
+		public bool IsSelected
+		{
+			get { return (bool)GetValue(IsSelectedProperty); }
+			set { SetValue(IsSelectedProperty, value); }
+		}
+		public static readonly DependencyProperty IsSelectedProperty =
+			DependencyProperty.Register("IsSelected", typeof(bool), typeof(ProcessEditorVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = d as ProcessEditorVm;
+				if ((bool)e.NewValue)
+				{
+					if (vm.Selected != null)
+						vm.Selected(vm);
+				}
+			}));
+		//SelectCommand Dependency Property
+		public Commands.Command SelectCommand
+		{
+			get { return (Commands.Command)GetValue(SelectCommandProperty); }
+			set { SetValue(SelectCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SelectCommandProperty =
+			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether this process has reports
+		/// </summary>
+		public bool HasReport
+		{
+			get { return (bool)GetValue(HasReportProperty); }
+			set { SetValue(HasReportProperty, value); }
+		}
+		public static readonly DependencyProperty HasReportProperty =
+			DependencyProperty.Register("HasReport", typeof(bool), typeof(ProcessEditorVm), new UIPropertyMetadata(false));
+
+		/// <summary>
+		/// Gets or sets the bindable Error Message
+		/// </summary>
 		public EmbeddedException Message
 		{
 			get { return (EmbeddedException)GetValue(MessageProperty); }
@@ -293,6 +485,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty MessageProperty =
 			DependencyProperty.Register("Message", typeof(EmbeddedException), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
+
+		#endregion
 
 	}
 }

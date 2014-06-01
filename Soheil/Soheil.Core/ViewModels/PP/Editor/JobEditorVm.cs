@@ -12,12 +12,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	/// </summary>
 	public class JobEditorVm : DependencyObject
 	{
+		public event Action RefreshPPItems;
+
 		DataServices.ProductGroupDataService _productGroupDs;
 		DataServices.FPCDataService _fpcDs;
 		DataServices.JobDataService _jobDs;
+
 		Dal.SoheilEdmContext _uow;
-		public event Action RefreshPPTable;
-		const int x = 0;
+
+
 		public JobEditorVm()
 		{
 			initializeDataServices();
@@ -38,7 +41,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					foreach (var item in e.NewItems.OfType<PPEditorJob>())
 					{
 						item.JobDeleted += job => JobList.Remove(job);
-						item.RefreshPPTable += () => { if (RefreshPPTable != null) RefreshPPTable(); };
+						item.RefreshPPTable += () => { if (RefreshPPItems != null) RefreshPPItems(); };
 					}
 			};
 		}
@@ -104,8 +107,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				}
 				Reset();
 				IsVisible = false;
-				if (RefreshPPTable != null)
-					RefreshPPTable();
+				if (RefreshPPItems != null)
+					RefreshPPItems();
 			});
 			ClearAllCommand = new Commands.Command(o => Reset());
 			ExitCommand = new Commands.Command(o => IsVisible = false);
@@ -140,7 +143,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		internal void Append(JobVm Job)
 		{
 			var job = new Editor.PPEditorJob(Job.Model, _jobDs);
-			job.RefreshPPTable += () => { if (RefreshPPTable != null) RefreshPPTable(); };
+			job.RefreshPPTable += () => { if (RefreshPPItems != null) RefreshPPItems(); };
             JobList.Add(job);
 		}
 	}

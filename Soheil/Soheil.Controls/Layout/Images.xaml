@@ -102,6 +102,10 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Operator.png"/>
 		<Setter Property="Height" Value="15"/>
 	</Style>
+	<Style x:Key="MachineImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/Machinery.png"/>
+		<Setter Property="Height" Value="16"/>
+	</Style>
 	<Style x:Key="TargetPointImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/TargetPoint.png"/>
 		<Setter Property="Width" Value="11"/>
@@ -122,26 +126,46 @@
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/duration.png"/>
         <Setter Property="Width" Value="16"/>
     </Style>
-    <Style x:Key="Duration2Hours" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_2Hours.png"/>
-    </Style>
-    <Style x:Key="Duration1Hour" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_oneHour.png"/>
-    </Style>
-    <Style x:Key="Duration3QuratersHour" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_3quarters.png"/>
-    </Style>
-    <Style x:Key="DurationHalfHour" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_half.png"/>
-    </Style>
-    <Style x:Key="DurationQuarterHour" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_quarter.png"/>
-    </Style>
-    <Style x:Key="DurationFillToEnd" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_untilEnd.png"/>
-    </Style>
 
-    <Style x:Key="ActivityImage" TargetType="Image">
+
+	<Style x:Key="Duration2Hours" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_2Hours.png"/>
+	</Style>
+	<Style x:Key="Duration1Hour" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_oneHour.png"/>
+	</Style>
+	<Style x:Key="Duration3QuratersHour" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_3quarters.png"/>
+	</Style>
+	<Style x:Key="DurationHalfHour" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_half.png"/>
+	</Style>
+	<Style x:Key="DurationQuarterHour" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_quarter.png"/>
+	</Style>
+	<Style x:Key="DurationFillToEnd" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_untilEnd.png"/>
+	</Style>
+	<Style x:Key="TimeFirstEmptySpace" TargetType="Image" BasedOn="{StaticResource DurationFillToEnd}">
+		<Setter Property="FlowDirection" Value="RightToLeft"/>
+	</Style>
+	<Style x:Key="TimeNextHour" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_+1.png"/>
+	</Style>
+	<Style x:Key="TimeStartOfHour" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_startOfHour.png"/>
+	</Style>
+	<Style x:Key="TimePreviousHour" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_-1.png"/>
+	</Style>
+	<Style x:Key="TimeAddHalfHour" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_30Minutes.png"/>
+	</Style>
+	<Style x:Key="TimeAdd5Minutes" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_5minutes.png"/>
+	</Style>
+
+	<Style x:Key="ActivityImage" TargetType="Image">
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/activity.png"/>
     </Style>
 	<Style x:Key="OperatorInProcessImage" TargetType="Image">

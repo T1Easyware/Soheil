@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:local="clr-namespace:Soheil.Views.PP"
+             xmlns:I="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" FlowDirection="RightToLeft"
              d:DesignHeight="300" d:DesignWidth="700">
@@ -43,44 +44,45 @@
 		</Style>
 		
 		<DataTemplate x:Key="commonOperatorTemplate">
-			<Grid Margin="2" VerticalAlignment="Top" DockPanel.Dock="Top" Background="#7011">
-				<Grid.Visibility>
+			<DockPanel Background="#AAA" TextBlock.FontSize="12">
+				<DockPanel.Triggers>
+					<EventTrigger RoutedEvent="MouseEnter">
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.1">
+								<ColorAnimation Duration="0:0:0.1" Storyboard.TargetProperty="(DockPanel.Background).(SolidColorBrush.Color)" To="#488"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+					<EventTrigger RoutedEvent="MouseLeave">
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.2">
+								<ColorAnimation Duration="0:0:0.1" Storyboard.TargetProperty="(DockPanel.Background).(SolidColorBrush.Color)" To="#AAA"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+				</DockPanel.Triggers>
+				<DockPanel.Visibility>
 					<MultiBinding Converter="{StaticResource OperatorFilter}">
 						<Binding ElementName="searchQuery" Path="Text"/>
 						<Binding Path="Code"/>
 						<Binding Path="Name"/>
 					</MultiBinding>
-				</Grid.Visibility>
-				<Grid.Effect>
+				</DockPanel.Visibility>
+				<DockPanel.Effect>
 					<DropShadowEffect ShadowDepth="1" BlurRadius="3" Color="White"/>
-				</Grid.Effect>
-				<Button Opacity="0" Command="{Binding SelectCommand}" Margin="0,-1" Padding="0">
-					<Button.Triggers>
-						<EventTrigger RoutedEvent="MouseEnter">
-							<BeginStoryboard>
-								<Storyboard Duration="0:0:0.1">
-									<DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" To="1"/>
-								</Storyboard>
-							</BeginStoryboard>
-						</EventTrigger>
-						<EventTrigger RoutedEvent="MouseLeave">
-							<BeginStoryboard>
-								<Storyboard Duration="0:0:0.2">
-									<DoubleAnimation Duration="0:0:0.2" Storyboard.TargetProperty="Opacity" To="0"/>
-								</Storyboard>
-							</BeginStoryboard>
-						</EventTrigger>
-					</Button.Triggers>
-				</Button>
-				<DockPanel IsHitTestVisible="False" TextBlock.FontSize="12">
-					<TextBlock Text="{Binding EffectiveSkill}" FontWeight="Bold" Margin="5,0" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding Code}" Foreground="Gray" VerticalAlignment="Center"/>
-					<Image Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInProcessImage}" DockPanel.Dock="Right"/>
-					<Image Visibility="{Binding IsInTask, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTaskImage}" DockPanel.Dock="Right"/>
-					<Image Visibility="{Binding IsInTimeRange, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTimeRangeImage}" DockPanel.Dock="Right"/>
-				</DockPanel>
-			</Grid>
+				</DockPanel.Effect>
+				<I:Interaction.Triggers>
+					<I:EventTrigger EventName="MouseDown">
+						<I:InvokeCommandAction Command="{Binding SelectCommand}"/>
+					</I:EventTrigger>
+				</I:Interaction.Triggers>
+				<TextBlock Text="{Binding EffectiveSkill}" FontWeight="Bold" Margin="5,0" VerticalAlignment="Center"/>
+				<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+				<TextBlock Text="{Binding Code}" Foreground="Gray" VerticalAlignment="Center"/>
+				<Image Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInProcessImage}" DockPanel.Dock="Right"/>
+				<Image Visibility="{Binding IsInTask, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTaskImage}" DockPanel.Dock="Right"/>
+				<Image Visibility="{Binding IsInTimeRange, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTimeRangeImage}" DockPanel.Dock="Right"/>
+			</DockPanel>
 		</DataTemplate>
 		<DataTemplate x:Key="selectedOperatorTemplate">
 			<StackPanel>
@@ -139,7 +141,7 @@
 		<DockPanel MinWidth="200">
 			<Border DockPanel.Dock="Top" Style="{StaticResource extraStyle}">
 				<DockPanel>
-					<TextBlock Text="جستجو" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+					<TextBlock Text="جستجو" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,2,0" Foreground="#888"/>
 					<Button Style="{StaticResource SmallButtonStyle}" Command="{Binding RefreshCommand}" ToolTip="Refresh" DockPanel.Dock="Left">
 						<Image Style="{StaticResource Refresh16Image}"/>
 					</Button>
@@ -166,7 +168,13 @@
 					<TextBlock Text="همه اپراتورها   (در این بازه زمانی)" Style="{StaticResource titleTextStyle}"/>
 				</Border>
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-					<ItemsControl ItemsSource="{Binding OperatorsList}" ItemTemplate="{StaticResource commonOperatorTemplate}" Margin="2"/>
+					<ItemsControl ItemsSource="{Binding OperatorsList}" ItemTemplate="{StaticResource commonOperatorTemplate}" Margin="2">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<WrapPanel Orientation="Vertical"/>
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+					</ItemsControl>
 				</ScrollViewer>
 			</DockPanel>
 		</Border>

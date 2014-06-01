@@ -11,7 +11,7 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class ProcessVm : DependencyObject
 	{
-		public ProcessVm(
+		/*public ProcessVm(
 			Model.StateStationActivity ssaModel,
 			IList<OperatorEditorVm> operators,
 			IList<Model.ProcessOperator> usedOperators)
@@ -29,7 +29,7 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				Operators.First(x => x.OperatorId == processOperator.Id).IsSelected = true;
 			}
-		}
+		}*/
 
 		protected ProcessVm(Model.StateStationActivity ssaModel)
 		{
@@ -40,13 +40,13 @@ namespace Soheil.Core.ViewModels.PP
 		/// If you use this constructor, you can't use Machines or Operators
 		/// </summary>
 		/// <param name="model"></param>
-		public ProcessVm(Model.Process model, TaskVm task)
+		/*public ProcessVm(Model.Process model, TaskVm task)
 			: this(model.StateStationActivity)
 		{
 			TargetCount = model.TargetCount;
 			ProcessId = model.Id;
 			Task = task;
-		}
+		}*/
 		/// <summary>
 		/// Only used in ReportDetailedView, i.e. when ctor:ProcessVm(Model.Process model) is used
 		/// </summary>

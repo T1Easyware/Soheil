@@ -15,21 +15,29 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public class TaskVm : PPItemVm
 	{
+		/// <summary>
+		/// Gets Task Model
+		/// </summary>
 		public Model.Task Model { get; private set; }
+		/// <summary>
+		/// Gets Task Id
+		/// </summary>
 		public override int Id { get { return Model.Id; } }
+		/// <summary>
+		/// Gets parent BlockVm
+		/// </summary>
 		public BlockVm Block { get; private set; }
 
-		public DataServices.TaskReportDataService TaskReportDataService { get; private set; }
+		DataServices.TaskReportDataService _taskReportDataService;
 
 		#region Ctor
-		public TaskVm(Model.Task taskModel, BlockVm parentBlock)
+		public TaskVm(Model.Task taskModel, Dal.SoheilEdmContext uow)
 		{
 			//data service
-			UOW = parentBlock.UOW;
-			TaskReportDataService = new DataServices.TaskReportDataService(UOW);
+			UOW = uow;
+			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
 
 			Message = new EmbeddedException();
-			Block = parentBlock;
 
 			//update model data
 			Model = taskModel;
@@ -47,11 +55,66 @@ namespace Soheil.Core.ViewModels.PP
 				var ids = new List<int>();
 				foreach (var item in taskModel.Processes)
 				{
-					ids.AddRange(item.ProcessOperators.Select(x => x.Id));
+					ids.AddRange(item.ProcessOperators.Select(x => x.Operator.Id));
 				}
 				TaskOperatorCount = ids.Distinct().Count();
 			}
-			catch { }
+			catch { TaskOperatorCount = -1; }///??? does happen?
+
+			#region FillEmptySpaces Command
+			FillEmptySpacesCommand = new Commands.Command(o =>
+			{
+				var models = Model.TaskReports.OrderBy(x => x.ReportStartDateTime).ToArray();
+				var dt = StartDateTime;
+				foreach (var model in models)
+				{
+					if (model.ReportStartDateTime - dt > TimeSpan.FromSeconds(1))
+					{
+						//insert taskReport newModel before model
+						var duration = model.ReportStartDateTime - dt;
+						var newModel = new Model.TaskReport
+						{
+							Task = Model,
+							Code = Model.Code,
+							ReportStartDateTime = dt,
+							ReportEndDateTime = model.ReportStartDateTime,
+							ReportDurationSeconds = (int)duration.TotalSeconds,
+							TaskProducedG1 = 0,
+							TaskReportTargetPoint = (int)(Model.DurationSeconds / duration.TotalSeconds),
+							CreatedDate = DateTime.Now,
+							ModifiedDate = DateTime.Now,
+							ModifiedBy = LoginInfo.Id,
+						};
+						Model.TaskReports.Add(newModel);
+					}
+
+					dt = model.ReportEndDateTime;
+				}
+				if (Model.EndDateTime - dt > TimeSpan.FromSeconds(1))
+				{
+					//insert taskReport after last model
+					var duration = Model.EndDateTime - dt;
+					var newModel = new Model.TaskReport
+					{
+						Task = Model,
+						Code = Model.Code,
+						ReportStartDateTime = dt,
+						ReportEndDateTime = Model.EndDateTime,
+						ReportDurationSeconds = (int)duration.TotalSeconds,
+						TaskProducedG1 = 0,
+						TaskReportTargetPoint = (int)(Model.DurationSeconds / duration.TotalSeconds),
+						CreatedDate = DateTime.Now,
+						ModifiedDate = DateTime.Now,
+						ModifiedBy = LoginInfo.Id,
+					};
+					Model.TaskReports.Add(newModel);
+				}
+
+				//reload reports
+				ReloadTaskReports();
+			});
+			#endregion
+
 		}
 
 		#endregion
@@ -88,93 +151,57 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region TaskReports
 		/// <summary>
-		/// Partitions this Task into TaskReports and fills gaps with <see cref="TaskReportHolderVm"/>
+		/// Partitions this Task into <see cref="TaskReportVm"/>s
 		/// <para>Also reloads all process reports of the block, if asked to</para>
 		/// </summary>
 		/// <param name="reloadProcessReports">Calls ReloadProcessReportRows on Block.BlockReport</param>
-		public void ReloadTaskReports(bool reloadProcessReports)
+		public void ReloadTaskReports(bool reloadProcessReports = true)
 		{
 			try
 			{
+				//reload taskreport models
 				TaskReports.Clear();
-				var taskReportModels = TaskReportDataService.GetAllForTask(Id).OrderBy(x => x.ReportStartDateTime);
+				var taskReportModels = Model.TaskReports.OrderBy(x => x.ReportStartDateTime);
 
-				int gap = 0;
-				int remainingTP = TaskTargetPoint - taskReportModels.Sum(x => x.TaskReportTargetPoint);
-				int remainingDuration = DurationSeconds - taskReportModels.Sum(x => x.ReportDurationSeconds);
-				if (remainingDuration > 0)
-				{
-					//if any space is remained unreported IsReportFilled is false
-					IsReportFilled = false;
-					ReportFillPercent = string.Format("{0:D2}%", (100 * taskReportModels.Sum(x => x.ReportDurationSeconds) / DurationSeconds));
-				}
-				else
-				{
-					IsReportFilled = true;
-					ReportFillPercent = "100%";
-				}
-
-				//find all checkpoints in this task
-				//Task:		---TaskReport----TaskReport-----
-				//splits:	x  x         x   x         x   x
-				//type:		dt model     dt  model     dt  dt
-				List<object> splits = new List<object>();
-				DateTime? previousEndDateTime = null;
-				//add start of Task if gap at the start
-				if (taskReportModels.Any())
-				{
-					if (taskReportModels.First().ReportStartDateTime > StartDateTime)
-						splits.Add(StartDateTime);
-				}
-				else
-					splits.Add(StartDateTime);
-				//add taskReports and gaps between them if any
+				//add current reports
 				foreach (var taskReportModel in taskReportModels)
 				{
-					if(previousEndDateTime.HasValue && previousEndDateTime.Value < taskReportModel.ReportStartDateTime)
-					{
-						splits.Add(previousEndDateTime.Value);
-					}
-					splits.Add(taskReportModel);
-					previousEndDateTime = taskReportModel.ReportEndDateTime;
+					var taskReportVm = new Report.TaskReportVm(taskReportModel, UOW);
+					taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
+					TaskReports.Add(taskReportVm);
 				}
-				//add end of last report if gap in the end
-				if (taskReportModels.Any() && taskReportModels.Last().ReportEndDateTime < Model.EndDateTime)
+
+				//check for remaining
+				var dt = Model.StartDateTime;
+				var tp = Model.TaskTargetPoint;
+
+				if (taskReportModels.Any())
 				{
-					splits.Add(previousEndDateTime.Value);
+					dt = taskReportModels.Last().ReportEndDateTime;
+					tp -= taskReportModels.Sum(x => x.TaskReportTargetPoint);
 				}
-				//adds the end of range
-				splits.Add(Model.EndDateTime);
 
-				//put reports and holders
-				for (int i = 0; i < splits.Count-1; i++)
+				//add remaining
+				if (dt < Model.EndDateTime)
 				{
-					if(splits[i] is Model.TaskReport)
+					var newModel = new Model.TaskReport
 					{
-						var taskReportModel = splits[i] as Model.TaskReport;
-						var taskReportVm = new Report.TaskReportVm(this, taskReportModel);
-						TaskReports.Add(taskReportVm);
-					}
-					else
-					{
-						//find the gap
-						var startDt = (DateTime)splits[i];
-						var endDt = (splits[i + 1] is Model.TaskReport)
-									? (splits[i + 1] as Model.TaskReport).ReportStartDateTime
-									: (DateTime)splits[i + 1];
-						gap = (int)endDt.Subtract(startDt).TotalSeconds;
-
-						//guess the gapTP and modify remainings
-						int gapTP = (int)Math.Round(gap * remainingTP / (float)remainingDuration);
-						remainingTP -= gapTP;
-						remainingDuration -= gap;
-
-						//put the holder
-						var taskReportHolder = new Report.TaskReportHolderVm(this, startDt, gap, gapTP);
-						taskReportHolder.RequestForChangeOfCurrentTaskReportBuilder += vm => Block.Parent.PPTable.CurrentTaskReportBuilder = vm;
-						TaskReports.Add(taskReportHolder);
-					}
+						Task = Model,
+						Code = Model.Code,
+						ReportStartDateTime = dt,
+						ReportEndDateTime = Model.EndDateTime,
+						ReportDurationSeconds = (int)(Model.EndDateTime - dt).TotalSeconds,
+						TaskReportTargetPoint = tp,
+						TaskProducedG1 = 0,
+						CreatedDate = DateTime.Now,
+						ModifiedDate = DateTime.Now,
+						ModifiedBy = LoginInfo.Id,
+					};
+					var taskReportVm = new Report.TaskReportVm(newModel, UOW);
+					taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
+					TaskReports.Add(taskReportVm);
 				}
+
 
 				//load process reports
 				if(reloadProcessReports)
@@ -185,11 +212,16 @@ namespace Soheil.Core.ViewModels.PP
 			catch (Exception ex) { Message.AddEmbeddedException(ex.Message); }
 		}
 
+		void TaskReport_TaskReportDeleted(Report.TaskReportVm vm)
+		{
+			TaskReports.Remove(vm);
+		}
+
 		/// <summary>
 		/// Gets a bindable collection of TaskReports in this Task
 		/// </summary>
-		public ObservableCollection<Report.TaskReportBaseVm> TaskReports { get { return _taskReports; } }
-		private ObservableCollection<Report.TaskReportBaseVm> _taskReports = new ObservableCollection<Report.TaskReportBaseVm>();
+		public ObservableCollection<Report.TaskReportVm> TaskReports { get { return _taskReports; } }
+		private ObservableCollection<Report.TaskReportVm> _taskReports = new ObservableCollection<Report.TaskReportVm>();
 
 		/// <summary>
 		/// Gets a bindable value that shows the % of reports for this Task that are filled
@@ -212,8 +244,17 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty IsReportFilledProperty =
 			DependencyProperty.Register("IsReportFilled", typeof(bool), typeof(TaskVm), new UIPropertyMetadata(false));
+
+		/// <summary>
+		/// Bindable command to fill all empty gaps among TaskReports
+		/// </summary>
+		public Commands.Command FillEmptySpacesCommand
+		{
+			get { return (Commands.Command)GetValue(FillEmptySpacesCommandProperty); }
+			set { SetValue(FillEmptySpacesCommandProperty, value); }
+		}
+		public static readonly DependencyProperty FillEmptySpacesCommandProperty =
+			DependencyProperty.Register("FillEmptySpacesCommand", typeof(Commands.Command), typeof(TaskVm), new UIPropertyMetadata(null));
 		#endregion
-
-
 	}
 }

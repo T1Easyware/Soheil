@@ -32,7 +32,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 				<!-- TP -->
-				<TextBox Grid.Column="0" Text="23" ToolTip="{Loc PPE_TaskTP}" MinWidth="60" TextAlignment="Right" VerticalAlignment="Center"/>
+				<TextBox Grid.Column="0" Text="{Binding TaskTargetPoint}" ToolTip="{Loc PPE_TaskTP}" MinWidth="60" TextAlignment="Right" VerticalAlignment="Center"/>
                 <Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
 				<!-- same qty -->
 				<ToggleButton Grid.Column="1" IsChecked="{Binding IsSameQtyForActivitiesSelected}"

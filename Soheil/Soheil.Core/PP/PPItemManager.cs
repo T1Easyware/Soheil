@@ -60,16 +60,23 @@ namespace Soheil.Core.PP
 			get { return _pause; }
 			set
 			{
-				if (!_qThreadAlive && value)
+				if (!_qThreadAlive)
 				{
-					if (_qThread != null)
-						if (_qThread.IsAlive)
-							_qThread.Abort();
-					_qThread = new Thread(_threadStart);
-					_qThread.IsBackground = true;
-					_qThread.Start();
+					if (value)
+					{
+						if (_qThread != null)
+							if (_qThread.IsAlive)
+								_qThread.Abort();
+					}
+					else
+					{
+						_qThreadAlive = true;
+						_qThread = new Thread(_threadStart);
+						_qThread.IsBackground = true;
+						_qThread.Start();
+					}
 				}
-				_qThreadAlive = value;
+				_pause = value;
 			}
 		}
 
@@ -129,64 +136,43 @@ namespace Soheil.Core.PP
 
 		void _threadStart()
 		{
-			int flag = 1;
 			while (_qThreadAlive)
 			{
-				Thread.Sleep(50);
+				Thread.Sleep(200);
 
-				int tries = 0;
-				while ((tries < 100 || _qLoad.Any()) && _qThreadAlive)
+				while (!Pause && _qThreadAlive)
 				{
-					if (_qLoad.Any())
+					while (true)
 					{
 						Thread.Sleep(10);
+
+						lock (this)
+							if (!_qLoad.Any()) break;
 
 						//load
 						var task = _qLoad.Pop();
 						task.Start();
 						task.Wait();
-						tries = 0;
 					}
-					else
-					{
-						Thread.Sleep(101);
-						tries++;
-					}
-				}
 
-				while (IsAutoRefresh && !_qLoad.Any() && _qThreadAlive)
-				{
-					Thread.Sleep(500);
+					Thread.Sleep(50);
 
 					//update/delete
-					flag = (flag + 1) % 5;
-					if (flag == 0)
+					if (IsAutoRefresh)
 					{
 						Task.Factory.StartNew(_actionUpdateBlock, new ActionData(_lastStart, _lastEnd)).Wait();
-						continue;
-					}
-					if (flag == 1)
-					{
+						Thread.Sleep(50);
 						Task.Factory.StartNew(_actionUpdateNpt, new ActionData(_lastStart, _lastEnd)).Wait();
-						continue;
+						Thread.Sleep(50);
 					}
-					if (flag == 2)
-					{
-						Task.Factory.StartNew(_actionDeleteBlock, new ActionData(_lastStart, _lastEnd)).Wait();
-						continue;
-					}
-					if (flag == 3)
-					{
-						Task.Factory.StartNew(_actionDeleteNpt, new ActionData(_lastStart, _lastEnd)).Wait();
-						continue;
-					}
-					if (flag == 4)
-					{
-						Task.Factory.StartNew(_actionDeleteWorkTimes, new ActionData(_lastStart, _lastEnd)).Wait();
-						continue;
-					}
+
+					Task.Factory.StartNew(_actionDeleteBlock, new ActionData(_lastStart, _lastEnd)).Wait();
+					Thread.Sleep(50);
+					Task.Factory.StartNew(_actionDeleteNpt, new ActionData(_lastStart, _lastEnd)).Wait();
+					Thread.Sleep(50);
+					Task.Factory.StartNew(_actionDeleteWorkTimes, new ActionData(_lastStart, _lastEnd)).Wait();
+					Thread.Sleep(50);
 				}
-				flag = 1;
 			}
 		}
 
@@ -206,8 +192,12 @@ namespace Soheil.Core.PP
 			_qLoad.Clear();
 			if (_qThread != null)
 			{
+				int counter = 0;
 				while (_qThread.IsAlive)
-					Thread.Sleep(50);
+				{
+					Thread.Sleep(20);
+					if (counter++ > 100) Pause = true;
+				}
 			}
 		} 
 		#endregion
@@ -291,17 +281,21 @@ namespace Soheil.Core.PP
 
 			var data = new ActionData(startOfMonth, end);
 			var loadDayColors = new Task(_actionLoadDayColors, data);
-			_qLoad.Push(loadDayColors);
+			lock (this)
+				_qLoad.Push(loadDayColors);
 		}
 		private void fetchRange(DateTime start, DateTime end)
 		{
 			var data = new ActionData(start, end);
 			var loadWorkTimes = new Task(_actionLoadWorkTimes, data);
-			_qLoad.Push(loadWorkTimes);
+			lock (this)
+				_qLoad.Push(loadWorkTimes);
 			var loadBlocks = new Task(_actionLoadBlock, data);
-			_qLoad.Push(loadBlocks);
+			lock (this)
+				_qLoad.Push(loadBlocks);
 			var loadNpts = new Task(_actionLoadNpt, data);
-			_qLoad.Push(loadNpts);
+			lock (this)
+				_qLoad.Push(loadNpts);
 		}
 		#endregion
 

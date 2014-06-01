@@ -148,11 +148,9 @@
 				BorderThickness="1" CornerRadius="1" Padding="1" Margin="5,0,5,5">
 			<Grid>
 				<!-- fpc viewer -->
-				<Grid Visibility="{Binding FpcViewer, Converter={StaticResource isNotNullToVisibility}}">
-					<fpcView:FpcStateView DataContext="{Binding FpcViewer}"/>
-				</Grid>
+				<fpcView:FpcStateView DataContext="{Binding FpcViewer}" Visibility="{Binding Converter={StaticResource isNotNullToVisibility}}"/>
 				<!-- Block editor -->
-				<local:BlockEditor Visibility="{Binding SelectedBlock, Converter={StaticResource isNotNullToVisibility}}"/>
+				<local:BlockEditor DataContext="{Binding SelectedBlock}" Visibility="{Binding Converter={StaticResource isNotNullToVisibility}}"/>
 			</Grid>
 		</Border>
 	</DockPanel>

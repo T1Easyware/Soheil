@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soheil.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,40 +16,11 @@ using System.Windows.Shapes;
 
 namespace Soheil.Controls.CustomControls
 {
-	/// <summary>
-	/// Follow steps 1a or 1b and then 2 to use this custom control in a XAML file.
-	///
-	/// Step 1a) Using this custom control in a XAML file that exists in the current project.
-	/// Add this XmlNamespace attribute to the root element of the markup file where it is 
-	/// to be used:
-	///
-	///     xmlns:MyNamespace="clr-namespace:Soheil.Controls.CustomControls"
-	///
-	///
-	/// Step 1b) Using this custom control in a XAML file that exists in a different project.
-	/// Add this XmlNamespace attribute to the root element of the markup file where it is 
-	/// to be used:
-	///
-	///     xmlns:MyNamespace="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls.CustomControls"
-	///
-	/// You will also need to add a project reference from the project where the XAML file lives
-	/// to this project and Rebuild to avoid compilation errors:
-	///
-	///     Right click on the target project in the Solution Explorer and
-	///     "Add Reference"->"Projects"->[Browse to and select this project]
-	///
-	///
-	/// Step 2)
-	/// Go ahead and use your control in the XAML file.
-	///
-	///     <MyNamespace:TimeBox/>
-	///
-	/// </summary>
 	public class TimeBox : Control
 	{
 		public TimeBox()
 		{
-			SetDurationMinutesCommand = new CustomCommand(this);
+			SetTimeCommand = new CustomCommand(this);
 		}
 		static TimeBox()
 		{
@@ -63,7 +35,7 @@ namespace Soheil.Controls.CustomControls
 		}
 		public static readonly DependencyProperty DurationSecondsProperty =
 			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(TimeBox),
-			new UIPropertyMetadata(0, (d, e) =>
+			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
 				var vm = d as TimeBox;
 
@@ -79,7 +51,8 @@ namespace Soheil.Controls.CustomControls
 			set { SetValue(TimeProperty, value); }
 		}
 		public static readonly DependencyProperty TimeProperty =
-			DependencyProperty.Register("Time", typeof(TimeSpan), typeof(TimeBox), new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
+			DependencyProperty.Register("Time", typeof(TimeSpan), typeof(TimeBox), 
+			new FrameworkPropertyMetadata(TimeSpan.Zero, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
 				var vm = (TimeBox)d;
 
@@ -100,7 +73,8 @@ namespace Soheil.Controls.CustomControls
 			set { SetValue(HourProperty, value); }
 		}
 		public static readonly DependencyProperty HourProperty =
-			DependencyProperty.Register("Hour", typeof(int), typeof(TimeBox), new UIPropertyMetadata(0, (d, e) =>
+			DependencyProperty.Register("Hour", typeof(int), typeof(TimeBox), 
+			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
 				var vm = (TimeBox)d;
 
@@ -122,7 +96,8 @@ namespace Soheil.Controls.CustomControls
 			set { SetValue(MinuteProperty, value); }
 		}
 		public static readonly DependencyProperty MinuteProperty =
-			DependencyProperty.Register("Minute", typeof(int), typeof(TimeBox), new UIPropertyMetadata(0, (d, e) =>
+			DependencyProperty.Register("Minute", typeof(int), typeof(TimeBox), 
+			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
 				var vm = (TimeBox)d;
 
@@ -144,7 +119,8 @@ namespace Soheil.Controls.CustomControls
 			set { SetValue(SecondProperty, value); }
 		}
 		public static readonly DependencyProperty SecondProperty =
-			DependencyProperty.Register("Second", typeof(int), typeof(TimeBox), new UIPropertyMetadata(0, (d, e) =>
+			DependencyProperty.Register("Second", typeof(int), typeof(TimeBox), 
+			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
 				var vm = (TimeBox)d;
 
@@ -167,15 +143,21 @@ namespace Soheil.Controls.CustomControls
 			set { SetValue(IsReadOnlyProperty, value); }
 		}
 		public static readonly DependencyProperty IsReadOnlyProperty =
-			DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(TimeBox), new UIPropertyMetadata(false));
+			DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(TimeBox),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = d as TimeBox;
+				if (vm.SetTimeCommand != null)
+					vm.SetTimeCommand.Changed();
+			}));
 
-		public ICommand SetDurationMinutesCommand
+		public CustomCommand SetTimeCommand
 		{
-			get { return (ICommand)GetValue(SetDurationMinutesCommandProperty); }
-			set { SetValue(SetDurationMinutesCommandProperty, value); }
+			get { return (CustomCommand)GetValue(SetTimeCommandProperty); }
+			set { SetValue(SetTimeCommandProperty, value); }
 		}
-		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
-			DependencyProperty.Register("SetDurationMinutesCommand", typeof(ICommand), typeof(TimeBox), new PropertyMetadata(null));
+		public static readonly DependencyProperty SetTimeCommandProperty =
+			DependencyProperty.Register("SetTimeCommand", typeof(CustomCommand), typeof(TimeBox), new PropertyMetadata(null));
 		public class CustomCommand : ICommand
 		{
 			public bool CanExecute(object parameter)
@@ -188,7 +170,35 @@ namespace Soheil.Controls.CustomControls
 			{
 				if (_tb == null) return;
 				if (_tb.IsReadOnly) return;
-				_tb.DurationSeconds = (int)parameter;
+				switch ((TimeBoxParameter)parameter)
+				{
+					case TimeBoxParameter.Now:
+						_tb.Time = DateTime.Now.TimeOfDay;
+						break;
+					case TimeBoxParameter.FirstEmptySpace:
+						_tb.Time = TimeSpan.Zero;
+						break;
+					case TimeBoxParameter.StartOfHour:
+						_tb.Time = new TimeSpan((int)_tb.Time.TotalHours, 0, 0);
+						break;
+					case TimeBoxParameter.NextHour:
+						_tb.Time = _tb.Time.Add(TimeSpan.FromHours(1));
+						break;
+					case TimeBoxParameter.PreviousHour:
+						_tb.Time = _tb.Time.Add(TimeSpan.FromHours(-1));
+						break;
+					case TimeBoxParameter.AddHalfHour:
+						_tb.Time = _tb.Time.Add(TimeSpan.FromMinutes(30));
+						break;
+					case TimeBoxParameter.Add5Minutes:
+						_tb.Time = _tb.Time.Add(TimeSpan.FromMinutes(5));
+						break;
+					case TimeBoxParameter.Add1Minute:
+						_tb.Time = _tb.Time.Add(TimeSpan.FromMinutes(1));
+						break;
+					default:
+						break;
+				}
 			}
 			TimeBox _tb;
 			public CustomCommand(TimeBox tb)
@@ -196,5 +206,6 @@ namespace Soheil.Controls.CustomControls
 				_tb = tb;
 			}
 		}
+
 	}
 }

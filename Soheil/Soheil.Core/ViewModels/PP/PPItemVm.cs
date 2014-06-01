@@ -42,7 +42,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <para>Could be station or SSA...</para>
 		/// <para>does not apply for task</para>
 		/// </summary>
-		public int RowIndex { get; protected set; }
+		public int RowIndex { get; set; }
 		/// <summary>
 		/// Id of Model associated with this VM (This field must be overriden)
 		/// <para>Could be TaskId, NPTId, ProcessReportId...</para>

@@ -309,4 +309,16 @@ namespace Soheil.Common
 		/// </summary>
 		Closed = 2,
 	}
+
+	public enum TimeBoxParameter
+	{
+		Now,
+		FirstEmptySpace,
+		StartOfHour,
+		NextHour,
+		PreviousHour,
+		AddHalfHour,
+		Add5Minutes,
+		Add1Minute,
+	}
 }

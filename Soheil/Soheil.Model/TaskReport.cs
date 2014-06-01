@@ -103,38 +103,6 @@ namespace Soheil.Model
             }
         }
         private Task _task;
-    
-        public virtual ICollection<ProcessReport> ProcessReports
-        {
-            get
-            {
-                if (_processReports == null)
-                {
-                    var newCollection = new FixupCollection<ProcessReport>();
-                    newCollection.CollectionChanged += FixupProcessReports;
-                    _processReports = newCollection;
-                }
-                return _processReports;
-            }
-            set
-            {
-                if (!ReferenceEquals(_processReports, value))
-                {
-                    var previousValue = _processReports as FixupCollection<ProcessReport>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupProcessReports;
-                    }
-                    _processReports = value;
-                    var newValue = value as FixupCollection<ProcessReport>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupProcessReports;
-                    }
-                }
-            }
-        }
-        private ICollection<ProcessReport> _processReports;
 
         #endregion
 
@@ -152,28 +120,6 @@ namespace Soheil.Model
                 if (!Task.TaskReports.Contains(this))
                 {
                     Task.TaskReports.Add(this);
-                }
-            }
-        }
-    
-        private void FixupProcessReports(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (ProcessReport item in e.NewItems)
-                {
-                    item.TaskReport = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (ProcessReport item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.TaskReport, this))
-                    {
-                        item.TaskReport = null;
-                    }
                 }
             }
         }

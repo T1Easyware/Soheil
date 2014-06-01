@@ -9,6 +9,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class StoppageReportVm : DependencyObject
 	{
+		public Model.StoppageReport Model { get; protected set; }
+		readonly StoppageReportCollection Parent;
+
 		public StoppageReportVm(StoppageReportCollection parent, Model.StoppageReport model)
 		{
 			Index = parent.Parent.StoppageReports.List.Count + 1;
@@ -21,15 +24,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 							causeIds = new int[3] { model.Cause.Parent.Parent.Id, model.Cause.Parent.Id, model.Cause.Id };
 			StoppageLevels = FilterBoxVmCollection.CreateForStoppageReport(this, causeIds);
 			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(
-				model == null ? null : model.OperatorStoppageReports.Select(x => x.Operator.Id));
-			if (model != null)
-			{
-				AffectsTaskReport = model.AffectsTaskReport;
-				Id = model.Id;
-				LostSeconds = model.LostTime;
-				LostCount = model.LostCount;
-			}
-			else Id = -1;
+				model.OperatorStoppageReports.Select(x => x.Operator.Id));
+			AffectsTaskReport = model.AffectsTaskReport;
+			LostSeconds = model.LostTime;
+			LostCount = model.LostCount;
 			DeleteCommand = new Commands.Command(o => 
 			{
 				Parent.SumOfLostCount -= LostCount;
@@ -44,11 +42,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 			});
 		}
 
-		/// <summary>
-		/// StoppageReport Id
-		/// </summary>
-		public int Id { get; set; }
-		public StoppageReportCollection Parent { get; set; }
 
 		//Index Dependency Property
 		public int Index
@@ -111,7 +104,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			}));
 		private void updateEquivalents(int secs, int counts)
 		{
-			float ct = Parent.Parent.ParentRow.StateStationActivity.CycleTime;
+			float ct = Model.ProcessReport.Process.StateStationActivity.CycleTime;
 			TimeEquivalent = (int)(secs + counts * ct);
 			QuantityEquivalent = (int)(counts + secs / ct);
 		}

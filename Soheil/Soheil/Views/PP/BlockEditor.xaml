@@ -11,12 +11,201 @@
 			 xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="800" FlowDirection="RightToLeft">
-	<DockPanel Margin="8" Visibility="{Binding ShowFpc, Converter={StaticResource booleanToInvisibilityConverter}}">
+             d:DesignHeight="300" d:DesignWidth="1050" FlowDirection="RightToLeft">
+	<UserControl.Resources>
+		<Style TargetType="Border" x:Key="tipTabBorderStyle">
+			<Setter Property="Background" Value="#AAA"/>
+			<Setter Property="CornerRadius" Value="3,3,0,0"/>
+			<Setter Property="BorderBrush" Value="White"/>
+			<Setter Property="BorderThickness" Value="1.5,1.5,1.5,0"/>
+			<Setter Property="Margin" Value="2,0"/>
+		</Style>
+	</UserControl.Resources>
+	
+	<Grid Margin="8">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="25"/>
+		</Grid.RowDefinitions>
+		<Grid.Visibility>
+			<MultiBinding Converter="{StaticResource isEqualToVisibilityConverter2}">
+				<Binding Path="StateStation"/>
+				<Binding Path="SelectedStateStation"/>
+			</MultiBinding>
+		</Grid.Visibility>
+		<!-- Start of Block -->
+		<Border>
+			<DockPanel VerticalAlignment="Center" LastChildFill="False" Style="{StaticResource Panel3DEffectStyle}">
+				<Border Style="{StaticResource tipTabBorderStyle}">
+					<WrapPanel>
+						<TextBlock Text="{Loc PPE_TaskTP}" FontSize="14" FontWeight="Bold" Foreground="White"/>
+						<Grid MinWidth="60" Margin="5,0">
+							<!-- TP -->
+							<TextBox Grid.Column="0" Text="{Binding BlockTargetPoint}" ToolTip="{Loc PPE_TaskTP}" TextAlignment="Right" VerticalAlignment="Center"/>
+							<Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
+						</Grid>
+					</WrapPanel>
+				</Border>
+
+				<Canvas Width="10"/>
+				<Border Style="{StaticResource tipTabBorderStyle}">
+					<TextBlock Text="زمان شروع: " FontSize="14" FontWeight="Bold" Foreground="White"/>
+				</Border>
+				<Border Style="{StaticResource tipTabBorderStyle}">
+					<CheckBox Margin="3" IsChecked="{Binding IsAutoStart}">
+						<WrapPanel>
+							<TextBlock Text="{Loc PPE_FirstEmptySpace}"/>
+							<TextBlock Text="{Binding AutoStartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="20,0" TextAlignment="Left" HorizontalAlignment="Left"/>
+						</WrapPanel>
+					</CheckBox>
+				</Border>
+				<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
+					<WrapPanel>
+						<TextBlock Text="{Loc txtDate}" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+						<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+						<Button Margin="0,1" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" Style="{StaticResource Button3DTextStyle}"/>
+						<Button Margin="0,1" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}" Style="{StaticResource Button3DTextStyle}"/>
+					</WrapPanel>
+				</Border>
+				<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
+					<WrapPanel>
+						<TextBlock Margin="3,0,0,0" Text="{Loc txtTime}" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+						<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
+					</WrapPanel>
+				</Border>
+			</DockPanel>
+		</Border>
+		<!-- processes -->
+		<Grid Background="Silver" Grid.Row="1">
+			<Grid.Effect>
+				<DropShadowEffect ShadowDepth="0"/>
+			</Grid.Effect>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<DockPanel MinWidth="400" MaxWidth="600" Margin="2,5,7,0">
+				<!-- toolbar -->
+				<Grid DockPanel.Dock="Top">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition MinWidth="50"/>
+						<ColumnDefinition Width="3*"/>
+						<ColumnDefinition Width="4*"/>
+						<ColumnDefinition Width="60"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Text="فعالیتها:" VerticalAlignment="Center"/>
+					<!-- same qty -->
+					<ToggleButton Grid.Column="1" IsChecked="{Binding IsTargetPointFixed}"
+                              ToolTip="{Loc PPE_SameQtyForActivites}">
+						<DockPanel>
+							<Image Style="{StaticResource QuantityImage}" Margin="5,0" IsHitTestVisible="False"/>
+							<TextBox IsEnabled="{Binding IsTargetPointFixed}" Text="{Binding FixedTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="50"/>
+						</DockPanel>
+					</ToggleButton>
+					<!-- same time -->
+					<ToggleButton Grid.Column="2" IsChecked="{Binding IsDurationFixed}"
+                              ToolTip="{Loc PPE_SameTimeForActivites}">
+						<WrapPanel>
+							<Image Style="{StaticResource DurationImage}" Margin="5,0" IsHitTestVisible="False"/>
+							<CustomControls:DurationBox DurationSeconds="{Binding FixedDurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding IsDurationFixed, Converter={StaticResource inverter}}"/>
+						</WrapPanel>
+					</ToggleButton>
+					<!-- defer -->
+					<ToggleButton Grid.Column="3" IsChecked="{Binding IsDeferred}"
+                              ToolTip="{Loc PPE_DeferToActivites}">
+						<WrapPanel>
+							<Image Style="{StaticResource IndependentTPImage}" Margin="5,0" IsHitTestVisible="False"/>
+						</WrapPanel>
+					</ToggleButton>
+				</Grid>
+				<!-- Activity List -->
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<ItemsControl ItemsSource="{Binding ActivityList}" Background="#1000" Margin="2">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate DataType="{x:Type ppevm:ActivityEditorVm}">
+								<Border Background="#1FFF" BorderBrush="White" BorderThickness="1" CornerRadius="1" Margin="1">
+									<DockPanel>
+										<!-- One Activity -->
+										<StackPanel Width="100">
+											<!-- Name & Code -->
+											<TextBlock Text="{Binding Name}" TextWrapping="Wrap" DockPanel.Dock="Top"/>
+											<TextBlock Text="{Binding Code}" TextWrapping="Wrap" DockPanel.Dock="Left" Foreground="Gray"/>
+											<!-- choices helper -->
+											<WrapPanel>
+												<TextBlock Text="نفرساعتها: "/>
+												<ItemsControl ItemsSource="{Binding Choices}">
+													<ItemsControl.ItemTemplate>
+														<DataTemplate>
+															<Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="2" Margin="1">
+																<Border.Background>
+																	<Binding Path="IsMany" Converter="{StaticResource booleanToBrushConverter}">
+																		<Binding.ConverterParameter>
+																			<x:Array Type="Brush">
+																				<SolidColorBrush Color="#990" />
+																				<SolidColorBrush Color="Silver"/>
+																			</x:Array>
+																		</Binding.ConverterParameter>
+																	</Binding>
+																</Border.Background>
+																<TextBlock Text="{Binding ManHour}"/>
+																<Border.ToolTip>
+																	<!--loc farsi intended layout:-->
+																	<!--نفرساعت       |         2-->
+																	<UniformGrid Rows="3" Columns="2">
+																		<TextBlock Text="{Loc txtManHour}" Foreground="Gray"/>
+																		<TextBlock Text="{Binding ManHour}" FlowDirection="LeftToRight"/>
+																		<TextBlock Text="{Loc txtCycleTimeSec}" Foreground="Gray"/>
+																		<TextBlock Text="{Binding CycleTime}" FlowDirection="LeftToRight"/>
+																		<TextBlock Text="{Loc txtIsMany}" Grid.RowSpan="2" Visibility="{Binding IsMany, Converter={StaticResource booleanToVisibilityConverter}}"/>
+																	</UniformGrid>
+																</Border.ToolTip>
+															</Border>
+														</DataTemplate>
+													</ItemsControl.ItemTemplate>
+													<ItemsControl.ItemsPanel>
+														<ItemsPanelTemplate>
+															<UniformGrid Rows="1"/>
+														</ItemsPanelTemplate>
+													</ItemsControl.ItemsPanel>
+												</ItemsControl>
+											</WrapPanel>
+											<!-- Add button -->
+											<Button Command="{Binding AddProcessCommand}" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+												<WrapPanel>
+													<TextBlock Text="{Loc txtNew}" Foreground="#033"/>
+													<Image Style="{StaticResource Add16Image}"/>
+												</WrapPanel>
+											</Button>
+										</StackPanel>
+										<!-- Processes -->
+										<ItemsControl ItemsSource="{Binding ProcessList}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate DataType="{x:Type ppevm:ProcessEditorVm}">
+													<!-- One Process -->
+													<local:ProcessEditor DataContext="{Binding}"/>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+										</ItemsControl>
+									</DockPanel>
+								</Border>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+			</DockPanel>
+			
+			<GridSplitter Grid.Column="0" Width="5" Background="#6AA" BorderBrush="White" BorderThickness="1,0"/>
+			
+			<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="2,5,2,0">
+				<local:OperatorManager DataContext="{Binding OperatorManager}"/>
+			</ScrollViewer>
+		</Grid>
 		<!-- status bar -->
-		<StatusBar DockPanel.Dock="Bottom" Background="#378">
+		<StatusBar Grid.Row="2" Background="#999">
 			<!-- additional readonly info -->
-			<WrapPanel DockPanel.Dock="Left" TextBlock.Foreground="Black">
+			<WrapPanel TextBlock.Foreground="Black">
 				<WrapPanel.Resources>
 					<Style TargetType="TextBlock">
 						<Setter Property="Margin" Value="5,2"/>
@@ -43,184 +232,36 @@
 							</EventTrigger>
 						</Style.Triggers>
 					</Style>
+					<Style TargetType="StatusBarItem">
+						<Setter Property="Padding" Value="0"/>
+						<Setter Property="Height" Value="20"/>
+					</Style>
 				</WrapPanel.Resources>
-				<StackPanel>
-					<TextBlock Text="{Loc txtEndTime}"/>
-					<TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
-					<TextBlock Text="{Binding EndDate, Converter={StaticResource dateToPersianDateConverter}}"/>
-				</StackPanel>
-				<StackPanel>
-					<TextBlock Text="{Loc txtDuration}"/>
-					<TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
-				</StackPanel>
-				<StackPanel>
-					<TextBlock Text="{Loc PPE_SumOfTP}"/>
-					<TextBlock Text="{Binding BlockTargetPoint}"/>
-				</StackPanel>
-			</WrapPanel>
-			<Border Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" BorderBrush="#6EE2" Background="#2FFF" CornerRadius="2" BorderThickness="1" Margin="4">
-				<TextBlock Text="{Binding Message.FullExceptionText}" Foreground="#EE2"/>
-			</Border>
-		</StatusBar>
-		<!-- block data -->
-		<DockPanel DockPanel.Dock="Top" DataContext="{Binding SelectedBlock}">
-			<DockPanel.Visibility>
-				<MultiBinding Converter="{StaticResource isEqualToVisibilityConverter2}">
-					<Binding Path="StateStation"/>
-					<Binding Path="SelectedStateStation"/>
-				</MultiBinding>
-			</DockPanel.Visibility>
-			<!-- Start of Block -->
-			<DockPanel DockPanel.Dock="Left">
-				<!-- vertical title -->
-				<Border DockPanel.Dock="Left" BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffHeaderBackground}" BorderThickness="1,1,0,1" CornerRadius="5,0,0,5" Height="{Binding ElementName=startDateContents, Path=ActualHeight}" Margin="0,2" Padding="5,0">
-					<TextBlock Text="زمان شروع" Style="{StaticResource VerticalHeader}"/>
-				</Border>
-				<!-- times and stuff -->
-				<Border BorderBrush="{StaticResource taskDateStuffBorderBrush}" Background="{StaticResource taskDateStuffInsideBackground}" CornerRadius="0,5,5,0" BorderThickness="0,1,1,1" Margin="0,2" x:Name="startDateContents" Padding="5,0">
+				<StatusBarItem>
 					<StackPanel>
-						<CheckBox Margin="3" IsChecked="{Binding IsAutoStart}">
-							<WrapPanel>
-								<TextBlock Text="{Loc PPE_FirstEmptySpace}"/>
-								<TextBlock Text="{Binding AutoStartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="20,0"/>
-							</WrapPanel>
-						</CheckBox>
-						<WrapPanel VerticalAlignment="Center" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}" Style="{StaticResource Panel3DEffectStyle}">
-							<TextBlock Text="{Loc txtDate}" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-							<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
-							<Button Margin="0,1" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" Style="{StaticResource Button3DTextStyle}"/>
-							<Button Margin="0,1" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}" Style="{StaticResource Button3DTextStyle}"/>
-							<TextBlock Margin="3,0,0,0" Text="{Loc txtTime}" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-							<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
-							<Button Margin="0,1" Content="{Loc PPE_StartOfThisHour}" Command="{Binding SelectThisHourCommand}" ToolTip="{Loc PPE_StartOfThisHourTooltip}" Style="{StaticResource Button3DTextStyle}"/>
-							<Button Margin="0,1" Content="{Loc PPE_NextHour}" Command="{Binding AddOneHourCommand}" Style="{StaticResource Button3DTextStyle}"/>
-							<Button Margin="0,1" Content="{Loc PPE_PreviousHour}" Command="{Binding SubtractOneHourCommand}" Style="{StaticResource Button3DTextStyle}"/>
-						</WrapPanel>
+						<TextBlock Text="{Loc txtEndTime}"/>
+						<TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+						<TextBlock Text="{Binding EndDate, Converter={StaticResource dateToPersianDateConverter}}"/>
 					</StackPanel>
+				</StatusBarItem>
+				<StatusBarItem>
+					<StackPanel>
+						<TextBlock Text="{Loc txtDuration}"/>
+						<TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+					</StackPanel>
+				</StatusBarItem>
+				<StatusBarItem>
+					<StackPanel>
+						<TextBlock Text="{Loc PPE_SumOfTP}"/>
+						<TextBlock Text="{Binding BlockTargetPoint}"/>
+					</StackPanel>
+				</StatusBarItem>
+				<Border Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" BorderBrush="#6EE2" Background="#2FFF" CornerRadius="2" BorderThickness="1" Margin="4,0">
+					<TextBlock Text="{Binding Message.MainExceptionText}" ToolTip="{Binding Message.FullExceptionText}" Foreground="#EE2"/>
 				</Border>
-			</DockPanel>
-		</DockPanel>
-		<!-- task ranges -->
-		<TabControl ItemsSource="{Binding SelectedBlock.TaskList}">
-			<TabControl.Visibility>
-				<MultiBinding Converter="{StaticResource isEqualToVisibilityConverter2}">
-					<Binding Path="SelectedBlock.StateStation"/>
-					<Binding Path="SelectedBlock.SelectedStateStation"/>
-				</MultiBinding>
-			</TabControl.Visibility>
-			<!-- headers -->
-			<TabControl.ItemContainerStyle>
-				<Style TargetType="TabItem">
-					<Setter Property="Template">
-						<Setter.Value>
-							<ControlTemplate TargetType="{x:Type TabItem}">
-								<ControlTemplate.Resources>
-									<SolidColorBrush x:Key="RedBrush" Color="#888"/>
-									<SolidColorBrush x:Key="SolidBorderBrush" Color="#555" />
-									<SolidColorBrush x:Key="GreenBrush" Color="#6BB" />
-								</ControlTemplate.Resources>
-								<Grid>
-									<Border Name="Border" Margin="0,0,-4,0" Background="{StaticResource RedBrush}" BorderBrush="{StaticResource SolidBorderBrush}" BorderThickness="1,1,1,3" CornerRadius="2,12,0,0" >
-										<ContentPresenter x:Name="ContentSite" VerticalAlignment="Center" HorizontalAlignment="Center" ContentSource="Header" Margin="12,2,12,2" RecognizesAccessKey="True"/>
-									</Border>
-								</Grid>
-								<ControlTemplate.Triggers>
-									<Trigger Property="IsSelected" Value="True">
-										<Setter Property="Panel.ZIndex" Value="100" />
-										<Setter TargetName="Border" Property="Background" Value="{StaticResource GreenBrush}" />
-										<Setter TargetName="Border" Property="BorderThickness" Value="1,4,1,0" />
-									</Trigger>
-								</ControlTemplate.Triggers>
-							</ControlTemplate>
-						</Setter.Value>
-					</Setter>
-					<!-- each tab header ItemTemplate-->
-					<Setter Property="HeaderTemplate">
-						<Setter.Value>
-							<DataTemplate>
-								<DataTemplate.Resources>
-									<!-- normal task -->
-									<DataTemplate DataType="{x:Type ppevm:TaskEditorVm}">
-										<!-- TabHeader for real Tasks -->
-										<Border Background="#3000" BorderBrush="#8000" BorderThickness="2" CornerRadius="2" Margin="2" Padding="2">
-											<DockPanel>
-												<!-- task delete button and its confirmation -->
-												<Grid Visibility="{Binding IsDurationFixed, Converter={StaticResource booleanToInvisibilityConverter}}" DockPanel.Dock="Left">
-													<StackPanel Visibility="{Binding IsDeleteTaskMessageVisible, Converter={StaticResource booleanToVisibilityConverter}}">
-														<Button Command="{Binding ConfirmDeleteTaskCommand}">
-															<WrapPanel>
-																<Image Style="{StaticResource Delete16Image}" VerticalAlignment="Center"/>
-																<TextBlock Text="{Loc txtDelete}" Foreground="Crimson" VerticalAlignment="Center"/>
-															</WrapPanel>
-														</Button>
-														<Button Command="{Binding CancelDeleteTaskCommand}" Content="{Loc txtCancel}"/>
-													</StackPanel>
-													<Button Command="{Binding DeleteTaskCommand}" Visibility="{Binding IsDeleteTaskMessageVisible, Converter={StaticResource booleanToInvisibilityConverter}}">
-														<WrapPanel>
-															<Image Style="{StaticResource Delete16Image}" VerticalAlignment="Center"/>
-															<TextBlock Text="{Loc txtDelete}" Foreground="Crimson" VerticalAlignment="Center"/>
-														</WrapPanel>
-													</Button>
-												</Grid>
-												<!-- report info -->
-												<TextBlock Text="{Binding ReportInfo}" TextWrapping="Wrap" HorizontalAlignment="Center" DockPanel.Dock="Top"
-																	   Visibility="{Binding IsDurationFixed, Converter={StaticResource booleanToVisibilityConverter}}"/>
-												<!-- Duration info -->
-												<TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight" HorizontalAlignment="Center" DockPanel.Dock="Top"/>
-												<!-- TaskTargetPoint info -->
-												<DockPanel HorizontalAlignment="Center" DockPanel.Dock="Top">
-													<Image DockPanel.Dock="Left" Style="{StaticResource TargetPointImage}"/>
-													<TextBlock Text="{Binding TaskTargetPoint}"/>
-												</DockPanel>
-											</DockPanel>
-										</Border>
-									</DataTemplate>
-									<!-- task holder -->
-									<DataTemplate DataType="{x:Type ppevm:TaskEditorHolderVm}">
-										<!-- TabHeader for TaskHolders -->
-										<Grid>
-											<Button Background="#3000" BorderBrush="GreenYellow" BorderThickness="2" Command="{Binding CreateNewTaskCommand}" Padding="12">
-												<DockPanel>
-													<Image DockPanel.Dock="Left" Style="{StaticResource Add16Image}"/>
-													<TextBlock Text="{Loc txtNew}" Foreground="Black"/>
-												</DockPanel>
-											</Button>
-										</Grid>
-									</DataTemplate>
-								</DataTemplate.Resources>
-								<!-- auto select template -->
-								<ContentPresenter Content="{Binding}"/>
-							</DataTemplate>
-						</Setter.Value>
-					</Setter>
-					<Setter Property="IsSelected" Value="{Binding IsSelected}"/>
-				</Style>
-			</TabControl.ItemContainerStyle>
-			<!-- each tab ItemTemplate-->
-			<TabControl.ContentTemplate>
-				<DataTemplate>
-					<DataTemplate.Resources>
-						<!-- normal task -->
-						<DataTemplate DataType="{x:Type ppevm:TaskEditorVm}">
-							<local:TaskEditor DataContext="{Binding}"/>
-						</DataTemplate>
-						<!-- task holder -->
-						<DataTemplate DataType="{x:Type ppevm:TaskEditorHolderVm}">
-							<WrapPanel>
-								<Button Background="#3000" BorderBrush="GreenYellow" BorderThickness="2" Command="{Binding CreateNewTaskCommand}" Padding="12">
-									<DockPanel>
-										<Image DockPanel.Dock="Left" Style="{StaticResource Add16Image}"/>
-										<TextBlock Text="{Loc txtNew}" Foreground="Black"/>
-									</DockPanel>
-								</Button>
-							</WrapPanel>
-						</DataTemplate>
-					</DataTemplate.Resources>
-					<!-- auto select template -->
-					<ContentPresenter Content="{Binding}"/>
-				</DataTemplate>
-			</TabControl.ContentTemplate>
-		</TabControl>
-	</DockPanel>
+			</WrapPanel>
+		</StatusBar>
+
+	</Grid>
 
 </UserControl>

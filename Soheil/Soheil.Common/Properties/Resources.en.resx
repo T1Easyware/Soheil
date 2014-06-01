@@ -766,11 +766,8 @@
   <data name="PPE_PreviousHour" xml:space="preserve">
     <value>Hour -1</value>
   </data>
-  <data name="PPE_StartOfThisHour" xml:space="preserve">
+  <data name="PPE_StartOfHour" xml:space="preserve">
     <value>Beginning of hour</value>
-  </data>
-  <data name="PPE_StartOfThisHourTooltip" xml:space="preserve">
-    <value>Beginning of the current hour (not the entered time)</value>
   </data>
   <data name="ttCode" xml:space="preserve">
     <value>Code</value>
@@ -795,5 +792,11 @@
   </data>
   <data name="txtStation" xml:space="preserve">
     <value>Station</value>
+  </data>
+  <data name="txtIsMany" xml:space="preserve">
+    <value>Can be used multiple times</value>
+  </data>
+  <data name="txtOperatorsCount" xml:space="preserve">
+    <value>Operators count</value>
   </data>
 </root>

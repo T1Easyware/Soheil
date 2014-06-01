@@ -40,7 +40,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(AddCommandProperty, value); }
 		}
 		public static readonly DependencyProperty AddCommandProperty =
-			DependencyProperty.Register("AddCommand", typeof(Commands.Command), typeof(TaskReportHolderVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("AddCommand", typeof(Commands.Command), typeof(NPTReportVm), new UIPropertyMetadata(null));
 		//FocusCommand Dependency Property
 		public Commands.Command FocusCommand
 		{
@@ -48,7 +48,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(FocusCommandProperty, value); }
 		}
 		public static readonly DependencyProperty FocusCommandProperty =
-			DependencyProperty.Register("FocusCommand", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("FocusCommand", typeof(Commands.Command), typeof(NPTReportVm), new UIPropertyMetadata(null));
 		//CancelCommand Dependency Property
 		public Commands.Command CancelCommand
 		{
@@ -56,7 +56,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(CancelCommandProperty, value); }
 		}
 		public static readonly DependencyProperty CancelCommandProperty =
-			DependencyProperty.Register("CancelCommand", typeof(Commands.Command), typeof(TaskReportHolderVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("CancelCommand", typeof(Commands.Command), typeof(NPTReportVm), new UIPropertyMetadata(null));
 		#endregion
 
 		#region Start/End/Duration
@@ -67,20 +67,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(DurationSecondsProperty, value); }
 		}
 		public static readonly DependencyProperty DurationSecondsProperty =
-			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(TaskReportBaseVm),
+			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(NPTReportVm),
 			new PropertyMetadata(0, (d, e) =>
 			{
-				var vm = d as TaskReportHolderVm;
-				if (vm != null)
-				{
-					if (!vm.ByEndDate)
-						vm.EndDateTime = vm.StartDateTime.AddSeconds((int)e.NewValue);
-				}
-				d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue));
+				var vm = d as NPTReportVm;
 			}));
 		//Duration Dependency Property
 		public static readonly DependencyProperty DurationProperty =
-			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(TaskReportBaseVm), new UIPropertyMetadata(TimeSpan.Zero));
+			DependencyProperty.Register("Duration", typeof(TimeSpan), typeof(NPTReportVm), new UIPropertyMetadata(TimeSpan.Zero));
 
 		//EndDate Dependency Property
 		public DateTime EndDate
@@ -93,11 +87,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 			new UIPropertyMetadata(DateTime.Now, (d, e) =>
 			{
 				var vm = d as NPTReportVm;
-				if (vm != null)
-				{
-					if (vm.ByEndDate)
-						vm.DurationSeconds = (int)((DateTime)e.NewValue).Add(vm.EndTime).Subtract(vm.Parent.StartDateTime).TotalSeconds;
-				}
 			}));
 		//EndTime Dependency Property
 		public TimeSpan EndTime
@@ -110,11 +99,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as NPTReportVm;
-				if (vm != null)
-				{
-					if (vm.ByEndDate)
-						vm.DurationSeconds = (int)vm.EndDate.Add((TimeSpan)e.NewValue).Subtract(vm.Parent.StartDateTime).TotalSeconds;
-				}
 			}));
 		public DateTime EndDateTime
 		{
@@ -123,28 +107,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		#endregion
 
-		#region Other PropDp
-		//ByEndDate Dependency Property
-		public bool ByEndDate
-		{
-			get { return (bool)GetValue(ByEndDateProperty); }
-			set { SetValue(ByEndDateProperty, value); }
-		}
-		public static readonly DependencyProperty ByEndDateProperty =
-			DependencyProperty.Register("ByEndDate", typeof(bool), typeof(NPTReportVm),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				var vm = (NPTReportVm)d;
-				if ((bool)e.NewValue)
-					vm.DurationSeconds = (int)vm.EndDateTime.Subtract(vm.Parent.StartDateTime).TotalSeconds;
-				else
-				{
-					var endDt = vm.Parent.StartDateTime.AddSeconds(vm.DurationSeconds);
-					vm.EndDate = endDt.Date;
-					vm.EndTime = endDt.TimeOfDay;
-				}
-			}));
-		//IsSelected Dependency Property
 		/// <summary>
 		/// Also Sets CurrentNPTReportBuilder in PPTableVm
 		/// </summary>
@@ -163,14 +125,5 @@ namespace Soheil.Core.ViewModels.PP.Report
 				else
 					vm.Parent.Parent.PPTable.CurrentNPTReportBuilder = null;
 			}));
-		//Offset Dependency Property
-		public Point Offset
-		{
-			get { return (Point)GetValue(OffsetProperty); }
-			set { SetValue(OffsetProperty, value); }
-		}
-		public static readonly DependencyProperty OffsetProperty =
-			DependencyProperty.Register("Offset", typeof(Point), typeof(NPTReportVm), new UIPropertyMetadata(new Point()));
-		#endregion
 	}
 }

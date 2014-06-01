@@ -36,6 +36,20 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual bool IsMany
+        {
+            get { return _isMany; }
+            set { _isMany = value; }
+        }
+        private bool _isMany = true;
+    
+        public virtual bool IsInJob
+        {
+            get { return _isInJob; }
+            set { _isInJob = value; }
+        }
+        private bool _isInJob = true;
 
         #endregion
 

@@ -57,34 +57,14 @@ namespace Soheil.Core.DataServices
 		}
 
 		/// <summary>
-		/// Delete all a taskReport with all its inner objects 
+		/// Deletes a taskReport with all its inner objects 
 		/// </summary>
-		/// <param name="model"></param>
-		/// <param name="taskReportRepository"></param>
-		/// <param name="context"></param>
+		/// <param name="model">TaskReport Model to delete from its Task</param>
 		public void DeleteModel(TaskReport model)
 		{
-			var processReportDataService = new ProcessReportDataService(context);
-			var processOperatorReportRepository = new Repository<ProcessOperatorReport>(context);
-			var defectionReportRepository = new Repository<DefectionReport>(context);
-			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
-			var stoppageReportRepository = new Repository<StoppageReport>(context);
-			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
-			var processReports = model.ProcessReports.ToArray();
-			foreach (var processReportModel in processReports)
-			{
-				processReportDataService.ClearModel(
-					processReportModel,
-					_processReportRepository,
-					processOperatorReportRepository,
-					defectionReportRepository,
-					operatorDefectionReportRepository,
-					stoppageReportRepository,
-					operatorStoppageReportRepository,
-					context);
-				_processReportRepository.Delete(processReportModel);
-			}
+			model.Task.TaskReports.Remove(model);
 			_taskReportRepository.Delete(model);
+			context.Commit();
 		}
 
 		public void AttachModel(TaskReport model)
@@ -92,70 +72,6 @@ namespace Soheil.Core.DataServices
 			throw new NotImplementedException();
 		}
 		#endregion
-
-		public TaskReport AddReportToTask(Model.TaskReport report, Model.Task task)
-		{
-			if (report.ReportEndDateTime > task.EndDateTime) return null;
-			if (report.ReportStartDateTime < task.StartDateTime) return null;
-			if (report.ReportDurationSeconds > task.DurationSeconds) return null;
-			if (report.TaskReportTargetPoint > task.TaskTargetPoint) return null;
-			report.ModifiedDate = DateTime.Now;
-			report.CreatedDate = DateTime.Now;
-			report.Task = task;
-
-            foreach (var process in task.Processes)
-			{
-				int remainingPRTP = process.TargetCount - process.ProcessReports.Sum(x => x.ProcessReportTargetPoint);
-				if (remainingPRTP <= 0) continue;
-
-				int guessedPRTP = (int)(report.ReportDurationSeconds / process.StateStationActivity.CycleTime);
-				if (remainingPRTP < guessedPRTP) guessedPRTP = remainingPRTP;
-                report.ProcessReports.Add(new ProcessReport
-				{
-					Process = process,
-                    TaskReport = report,
-					ProcessReportTargetPoint = guessedPRTP,
-				});
-			}
-            task.TaskReports.Add(report);
-			context.Commit();
-            return report;
-		}
-
-		public IList<TaskReport> GetAllForTask(int taskId)
-		{
-			var models = new List<TaskReport>();
-			models.AddRange(_taskReportRepository.Find(x => x.Task.Id == taskId));
-			return models;
-		}
-
-		internal void DeleteById(int Id)
-		{
-			var model = _taskReportRepository.Single(x => x.Id == Id);
-			DeleteModel(model);
-			context.Commit();
-		}
-
-		/// <summary>
-		/// Does not return those reports which aren't affecting station results
-		/// </summary>
-		/// <param name="taskReportId"></param>
-		/// <returns></returns>
-		internal int GetSumOfDefectionCounts(int taskReportId)
-		{
-			var model = _taskReportRepository.FirstOrDefault(x => x.Id == taskReportId);
-			return (int)Math.Round(model.ProcessReports.Sum(x => x.DefectionReports.Where(z => z.AffectsTaskReport).Sum(y => y.CountEquivalence)));
-		}
-		/// <summary>
-		/// Does not return those reports which aren't affecting station results
-		/// </summary>
-		/// <param name="taskReportId"></param>
-		/// <returns></returns>
-		internal int GetSumOfStoppageCounts(int taskReportId)
-		{
-			var model = _taskReportRepository.FirstOrDefault(x => x.Id == taskReportId);
-			return (int)Math.Round(model.ProcessReports.Sum(x => x.StoppageReports.Where(z => z.AffectsTaskReport).Sum(y => y.CountEquivalence)));
-		}
 
 		internal void UpdateG1(int Id, int g1)
 		{
