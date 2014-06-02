@@ -137,6 +137,9 @@
     <Compile Include="OperatorDefectionReport.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="OperatorProcessReport.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="OperatorStoppageReport.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
@@ -168,9 +171,6 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="ProcessOperator.cs">
-      <DependentUpon>SoheilPOCO.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ProcessOperatorReport.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="ProcessReport.cs">

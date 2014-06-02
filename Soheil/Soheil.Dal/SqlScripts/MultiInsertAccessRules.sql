@@ -1,5 +1,5 @@
 ﻿
-USE SoheilDb
+USE [SoheilDb]
 INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 
 (1,'0','txtSoheil',null),
@@ -48,7 +48,7 @@ INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 	(38,'5','txtOptions',1),
 		(39,'51','txtSettings',37),
 		(40,'52','txtHelp',37),
-		(41,'53','txtAbout',37);
+		(47,'53','txtAbout',37);
 
 
 

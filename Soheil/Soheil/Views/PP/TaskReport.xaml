@@ -8,6 +8,7 @@
              xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+			 x:Name="root"
              Height="22" d:DesignWidth="300">
 	<Canvas Width="0" Height="0">
 		<Border Style="{StaticResource boundaryStyle}" BorderThickness="0,0,0,2" CornerRadius="0,0,3,3">
@@ -54,7 +55,7 @@
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
-				<Thumb DragStarted="startDragStart" DragDelta="startDragDelta" DragCompleted="startDragEnd">
+				<Thumb DragStarted="startDragStart" DragDelta="startDragDelta" DragCompleted="startDragEnd" Tag="{Binding ElementName=root, Path=Tag}">
 					<Thumb.Template>
 						<ControlTemplate>
 							<Border Style="{StaticResource startBoundaryStyle}">
@@ -82,7 +83,7 @@
 						</UniformGrid>
 					</Border>
 				</Popup>
-				<Thumb Grid.Column="4" DragStarted="endDragStart" DragDelta="endDragDelta" DragCompleted="endDragEnd">
+				<Thumb Grid.Column="4" DragStarted="endDragStart" DragDelta="endDragDelta" DragCompleted="endDragEnd" Tag="{Binding ElementName=root, Path=Tag}">
 					<Thumb.Template>
 						<ControlTemplate>
 							<Border Style="{StaticResource endBoundaryStyle}">

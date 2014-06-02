@@ -6,11 +6,6 @@
 					xmlns:format="clr-namespace:Soheil.Common;assembly=Soheil.Common"
 					xmlns:sys="clr-namespace:System;assembly=mscorlib"
 					>
-
-
-
-
-
 	<SolidColorBrush x:Key="cyanBrush" Color="#40BCBC"/>
 	<SolidColorBrush x:Key="greenBrush" Color="#40BC40"/>
 	<SolidColorBrush x:Key="blueBrush" Color="#4040BC"/>
@@ -21,10 +16,7 @@
 
 
 
-	<sys:Double x:Key="shadowOpacity">0.3</sys:Double>
->>>>>>> 75ff581e2857b912a3649a02eb1f41e075da16c9
 
-	<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
 
 	<!-- work times -->
 	<Converters:ColorToRgbBrush x:Key="ColorToRgbBrush"/>
@@ -38,12 +30,6 @@
 	<!-- fpc -->
 	<sys:Double x:Key="shadowOpacity">0.3</sys:Double>
 	
-	<SolidColorBrush x:Key="cyanBrush" Color="#40BCBC"/>
-	<SolidColorBrush x:Key="greenBrush" Color="#40BC40"/>
-	<SolidColorBrush x:Key="blueBrush" Color="#4040BC"/>
-	<SolidColorBrush x:Key="redBrush" Color="#BC4040"/>
-	<Border x:Key="fpcBackBrushVisual" BorderBrush="#5FFF" BorderThickness="0.1" Width="64" Height="64"/>
-	<VisualBrush x:Key="fpcBackBrush" Viewport="0,0,64,64" TileMode="Tile" ViewportUnits="Absolute" Visual="{StaticResource fpcBackBrushVisual}"/>
 	
 	<format:SafeRound1FloatConverter x:Key="round1Converter"/>
 
@@ -63,6 +49,7 @@
 	<core:ExpanderHeaderOpacityConverter x:Key="expanderHeaderOpacityConverter"/>
 
 	<!-- pptable -->
+	<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
 	<ppconv:BooleanToInvisibilityConverter x:Key="booleanToInvisibilityConverter"/>
 	<ppconv:IsNull x:Key="isNull"/>
 	<ppconv:IsNotNull x:Key="isNotNull"/>
@@ -96,6 +83,7 @@
 	<ppconv:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
 	<ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
 	<ppconv:ProcessBorderMarginConverter x:Key="processBorderMarginConverter"/>
+	<ppconv:ProcessReportBorderMarginConverter x:Key="processReportBorderMarginConverter"/>
 	
 	<ppconv:StartEndToWidthConverter x:Key="StartEndToWidthConverter"/>
 	<ppconv:StartToMarginConverter x:Key="StartToMarginConverter"/>

@@ -9,17 +9,40 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class ProcessVm : PPItemVm
 	{
+		public event Action LayoutChanged;
 		public Model.Process Model { get; protected set; }
 		public override int Id
 		{
 			get { return Model.Id; }
 		}
+		/// <summary>
+		/// Creates an instance of <see cref="ProcessVm"/> for the given model
+		/// </summary>
+		/// <param name="model"></param>
 		public ProcessVm(Model.Process model)
 		{
 			Model = model;
 			StartDateTime = model.StartDateTime;
 			DurationSeconds = model.DurationSeconds;
+			TargetPoint = model.TargetCount;
 
+			initializeCommands();
+		}
+		public int TargetPoint
+		{
+			get { return (int)GetValue(TargetPointProperty); }
+			set { SetValue(TargetPointProperty, value); }
+		}
+		public static readonly DependencyProperty TargetPointProperty =
+			DependencyProperty.Register("TargetPoint", typeof(int), typeof(ProcessVm), new UIPropertyMetadata(0));
+		/// <summary>
+		/// Gets a bindable collection of process reports for this process
+		/// </summary>
+		public ObservableCollection<ProcessReportVm> ProcessReportList { get { return _processReportList; } }
+		private ObservableCollection<ProcessReportVm> _processReportList = new ObservableCollection<ProcessReportVm>();
+
+		void initializeCommands()
+		{
 			FillEmptySpacesCommand = new Commands.Command(o =>
 			{
 				//check for remaining
@@ -64,7 +87,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 						//create process operators
 						foreach (var po in Model.ProcessOperators)
 						{
-							processReportModel.ProcessOperatorReports.Add(new Model.ProcessOperatorReport{
+							processReportModel.OperatorProcessReports.Add(new Model.OperatorProcessReport
+							{
 								ProcessReport = processReportModel,
 								ProcessOperator = po,
 								OperatorProducedG1 = tp / Model.ProcessOperators.Count,
@@ -101,7 +125,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 					//create process operators
 					foreach (var po in Model.ProcessOperators)
 					{
-						newModel.ProcessOperatorReports.Add(new Model.ProcessOperatorReport
+						newModel.OperatorProcessReports.Add(new Model.OperatorProcessReport
 						{
 							ProcessReport = newModel,
 							ProcessOperator = po,
@@ -113,14 +137,15 @@ namespace Soheil.Core.ViewModels.PP.Report
 					//add to processReports
 					Model.ProcessReports.Add(newModel);
 				}
+
+				if (LayoutChanged != null)
+					LayoutChanged();
 			});
 		}
 
-		//ProcessReportList Observable Collection
-		public ObservableCollection<ProcessReportVm> ProcessReportList { get { return _processReportList; } }
-		private ObservableCollection<ProcessReportVm> _processReportList = new ObservableCollection<ProcessReportVm>();
-
-		//FillEmptySpacesCommand Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable command to fill empty (unreported) spaces in this process with process reports
+		/// </summary>
 		public Commands.Command FillEmptySpacesCommand
 		{
 			get { return (Commands.Command)GetValue(FillEmptySpacesCommandProperty); }
@@ -128,5 +153,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty FillEmptySpacesCommandProperty =
 			DependencyProperty.Register("FillEmptySpacesCommand", typeof(Commands.Command), typeof(ProcessVm), new UIPropertyMetadata(null));
+
 	}
 }

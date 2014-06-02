@@ -2781,7 +2781,7 @@
                 <!--<GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtOperators}">
                     <ItemsControl Template="{StaticResource IncludeList}" />
                 </GroupBox>
-                <Canvas />
+                <Canvas /-->
             </DockPanel>
         </DataTemplate>
         <DataTemplate x:Key="ActivityGroupTemplate" DataType="ViewModels:ActivityGroupVM">

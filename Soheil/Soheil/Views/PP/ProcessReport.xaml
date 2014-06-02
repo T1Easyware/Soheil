@@ -5,234 +5,245 @@
              xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
              xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
 			 xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Report;assembly=Soheil.Core"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 x:Name="root"
              mc:Ignorable="d">
-	<Canvas Width="0" Height="0">
-		<StackPanel Height="40" Margin="0,1">
-			<StackPanel.Effect>
-				<DropShadowEffect ShadowDepth="0" BlurRadius="3"/>
-			</StackPanel.Effect>
-			<StackPanel.Width>
-				<MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
-					<Binding Path="Duration"/>
-					<Binding ElementName="root" Path="PPTable.HourZoom"/>
-				</MultiBinding>
-			</StackPanel.Width>
+	<StackPanel Height="40" Margin="0,1">
+		<StackPanel.Effect>
+			<DropShadowEffect ShadowDepth="0" BlurRadius="3"/>
+		</StackPanel.Effect>
+		<StackPanel.Width>
+			<MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
+				<Binding Path="Duration"/>
+				<Binding ElementName="root" Path="PPTable.HourZoom"/>
+			</MultiBinding>
+		</StackPanel.Width>
 
-			<!-- upper half (main) -->
-			<Border BorderBrush="Gainsboro" BorderThickness="3,2,3,0" CornerRadius="2,2,0,0" VerticalAlignment="Stretch" Height="20">
-				<Border.ToolTip>
-					<Grid FlowDirection="RightToLeft">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="200"/>
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-						</Grid.RowDefinitions>
-						<TextBlock Grid.Row="0" Text="زمان شروع"/>
-						<TextBlock Grid.Row="1" Text="زمان خاتمه"/>
-						<TextBlock Grid.Row="2" Text="مدت"/>
-						<Separator Grid.Row="3" Grid.ColumnSpan="3" Height="2"/>
-						<TextBlock Grid.Row="4" Text="مقدار هدف"/>
-						<TextBlock Grid.Row="5" Text="تولید سالم"/>
-						<TextBlock Grid.Row="6" Text="تعداد ضایعات"/>
-						<TextBlock Grid.Row="7" Text="تعداد توقفات"/>
-						<Image Grid.Column="1" Grid.Row="4" Style="{StaticResource TargetPointImage}"/>
-						<Image Grid.Column="1" Grid.Row="5" Style="{StaticResource ProducedG1Image}"/>
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding StartDateTime}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						<TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding EndDateTime}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						<TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}"  FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						<TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding ProcessReportTargetPoint}" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						<TextBlock Grid.Column="2" Grid.Row="5" Text="{Binding ProducedG1}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-						<TextBlock Grid.Column="2" Grid.Row="6" Text="{Binding DefectionCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-						<TextBlock Grid.Column="2" Grid.Row="7" Text="{Binding StoppageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-					</Grid>
-				</Border.ToolTip>
-				<Border.ContextMenu>
-					<ContextMenu FlowDirection="RightToLeft">
-						<MenuItem Header="افزودن گزارش بازه ای" Command="{Binding OpenReportRangeCommand}"/>
-						<MenuItem Header="حذف گزارش فعالیت" Command="{Binding DeleteProcessReportCommand}"/>
-					</ContextMenu>
-				</Border.ContextMenu>
-
-				<!-- main contents -->
-				<Grid>
-					<!-- portions colors -->
-					<DockPanel ClipToBounds="True">
-						<TextBlock DockPanel.Dock="Top" Text="{Binding ProcessReportTargetPoint}" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						<TextBlock DockPanel.Dock="Bottom" Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}"  FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						<Grid Panel.ZIndex="-1">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="{Binding ProducedG1, Converter={StaticResource portionToStarConverter}}"/>
-								<ColumnDefinition Width="{Binding DefectionCount, Converter={StaticResource portionToStarConverter}}"/>
-								<ColumnDefinition Width="{Binding StoppageCount, Converter={StaticResource portionToStarConverter}}"/>
-							</Grid.ColumnDefinitions>
-							<Border Background="#4AF" BorderBrush="Black" BorderThickness="1">
-								<TextBlock Text="{Binding ProducedG1}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-							</Border>
-							<Border Background="#F55" BorderBrush="Black" BorderThickness="1" Grid.Column="1">
-								<TextBlock Text="{Binding DefectionCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-							</Border>
-							<Border Background="#FD5" BorderBrush="Black" BorderThickness="1" Grid.Column="2">
-								<TextBlock Text="{Binding StoppageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
-							</Border>
-						</Grid>
-					</DockPanel>
-					<!-- button -->
-					<Button x:Name="button" Opacity="0" Command="{Binding OpenReportCommand}" ToolTip="گزارش فعالیت">
-						<Image Style="{StaticResource EditReportImage}"/>
-					</Button>
-					<!-- button's triggers -->
-					<Grid.Triggers>
-						<EventTrigger RoutedEvent="MouseEnter">
-							<BeginStoryboard>
-								<Storyboard Duration="0:0:0.2">
-									<DoubleAnimation Storyboard.TargetName="button" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.8"/>
-								</Storyboard>
-							</BeginStoryboard>
-						</EventTrigger>
-						<EventTrigger RoutedEvent="MouseLeave">
-							<BeginStoryboard>
-								<Storyboard Duration="0:0:0.7">
-									<DoubleAnimation Storyboard.TargetName="button" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
-								</Storyboard>
-							</BeginStoryboard>
-						</EventTrigger>
-					</Grid.Triggers>
-				</Grid>
-			</Border>
-			<!-- lower half (thumbs) -->
-			<Border Style="{StaticResource boundaryStyle}" BorderThickness="0,0,0,2" CornerRadius="0,0,3,3">
-
-				<Border.Margin>
-					<MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
-						<Binding Path="StartDateTime"/>
-						<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-					</MultiBinding>
-				</Border.Margin>
-				<Border.ToolTip>
-					<UniformGrid Rows="4" Columns="2">
-						<TextBlock Text="شروع بازه گزارش فعالیت "/>
-						<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
-						<TextBlock Text="پایان بازه گزارش فعالیت "/>
-						<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
-						<WrapPanel>
-							<Image Style="{StaticResource TargetPointImage}"/>
-							<TextBlock Text="مقدار هدف فعالیت در بازه زمانی "/>
-						</WrapPanel>
-						<TextBlock Text="{Binding TargetPoint}"/>
-						<WrapPanel>
-							<Image Style="{StaticResource ProducedG1Image}"/>
-							<TextBlock Text="خروجی سالم فعالیت در بازه زمانی "/>
-						</WrapPanel>
-						<TextBlock Text="{Binding ProducedG1}"/>
-					</UniformGrid>
-				</Border.ToolTip>
-
-				<Grid>
+		<!-- upper half (main) -->
+		<Border BorderBrush="Gainsboro" BorderThickness="3,2,3,0" CornerRadius="2,2,0,0" Height="20">
+			<Border.ToolTip>
+				<Grid FlowDirection="RightToLeft">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="200"/>
 					</Grid.ColumnDefinitions>
-					<Thumb DragStarted="startDragStart" DragDelta="startDragDelta" DragCompleted="startDragEnd">
-						<Thumb.Template>
-							<ControlTemplate>
-								<Border Style="{StaticResource startBoundaryStyle}">
-									<TextBlock Text="شروع" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
-								</Border>
-							</ControlTemplate>
-						</Thumb.Template>
-					</Thumb>
-					<Popup x:Name="startPopup" IsOpen="False">
-						<Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">
-							<Border.Effect>
-								<DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
-							</Border.Effect>
-							<UniformGrid Rows="3" Columns="2">
-								<TextBlock Text="{Loc txtStartDate}"/>
-								<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
-								<TextBlock Text="{Loc txtStartTime}"/>
-								<cc:TimeBox Time="{Binding StartTime}"/>
-								<Button Margin="50,2,-60,0">
-									<WrapPanel>
-										<Image Style="{StaticResource Save16Image}"/>
-										<TextBlock Text="{Loc txtSave}"/>
-									</WrapPanel>
-								</Button>
-							</UniformGrid>
-						</Border>
-					</Popup>
-					<Thumb Grid.Column="4" DragStarted="endDragStart" DragDelta="endDragDelta" DragCompleted="endDragEnd">
-						<Thumb.Template>
-							<ControlTemplate>
-								<Border Style="{StaticResource endBoundaryStyle}">
-									<TextBlock Text="پایان" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
-								</Border>
-							</ControlTemplate>
-						</Thumb.Template>
-					</Thumb>
-					<Popup x:Name="endPopup" IsOpen="False">
-						<Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">
-							<Border.Effect>
-								<DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
-							</Border.Effect>
-							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="25"/>
-									<RowDefinition Height="25"/>
-									<RowDefinition Height="25"/>
-									<RowDefinition Height="25"/>
-									<RowDefinition Height="25"/>
-								</Grid.RowDefinitions>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto"/>
-									<ColumnDefinition Width="Auto"/>
-									<ColumnDefinition Width="Auto"/>
-								</Grid.ColumnDefinitions>
-
-								<TextBlock Text="{Loc txtEndDate}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
-								<TextBlock Text="{Loc txtEndTime}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
-								<CheckBox Content="مدت زمان گزارش" IsChecked="{Binding ByEndDate, Converter={StaticResource inverter}}" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
-								<TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
-
-								<cal:PersianDatePicker SelectedDate="{Binding EndDate}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
-								<cc:TimeBox Time="{Binding EndTime}" Grid.Row="1" Grid.Column="1"/>
-								<cc:TimeBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding ByEndDate}" Grid.Row="2" Grid.Column="1"/>
-								<Button Command="{Binding AutoFindDuration}" ToolTip="محاسبه خودکار زمان از طریق مقدار هدف فعالیت" Grid.Row="2" Grid.Column="2">
-									<Image Style="{StaticResource Reload18Image}"/>
-								</Button>
-								<TextBox Text="{Binding TargetPoint}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="1"/>
-								<Button Command="{Binding AutoFindTargetPoint}" ToolTip="محاسبه خودکار مقدار هدف فعالیت از طریق زمان پایان" Grid.Row="3" Grid.Column="2">
-									<Image Style="{StaticResource Reload18Image}"/>
-								</Button>
-								<Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Width="150">
-									<WrapPanel>
-										<Image Style="{StaticResource Save16Image}"/>
-										<TextBlock Text="{Loc txtSave}"/>
-									</WrapPanel>
-								</Button>
-							</Grid>
-						</Border>
-					</Popup>
-					<TextBlock Grid.Column="2" Text="/"/>
-					<TextBox Grid.Column="1" Text="{Binding ProducedG1}" IsReadOnly="True" ToolTip="{Loc txtProducedG1}" FontSize="12"/>
-					<Image Grid.Column="1" Style="{StaticResource ProducedG1Image}" HorizontalAlignment="Right" Margin="5,0" IsHitTestVisible="False"/>
-					<TextBox Grid.Column="3" Text="{Binding ProcessReportTargetPoint}" ToolTip="{Loc txtTargetPoint}" FontSize="12"/>
-					<Image Grid.Column="3" Style="{StaticResource TargetPointImage}" HorizontalAlignment="Left" Margin="5,0" IsHitTestVisible="False"/>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					<TextBlock Grid.Row="0" Text="زمان شروع"/>
+					<TextBlock Grid.Row="1" Text="زمان خاتمه"/>
+					<TextBlock Grid.Row="2" Text="مدت"/>
+					<Separator Grid.Row="3" Grid.ColumnSpan="3" Height="2"/>
+					<TextBlock Grid.Row="4" Text="مقدار هدف"/>
+					<TextBlock Grid.Row="5" Text="تولید سالم"/>
+					<TextBlock Grid.Row="6" Text="تعداد ضایعات"/>
+					<TextBlock Grid.Row="7" Text="تعداد توقفات"/>
+					<Image Grid.Column="1" Grid.Row="4" Style="{StaticResource TargetPointImage}"/>
+					<Image Grid.Column="1" Grid.Row="5" Style="{StaticResource ProducedG1Image}"/>
+					<TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding StartDateTime}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					<TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding EndDateTime}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					<TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}"  FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					<TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding TargetPoint}" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					<TextBlock Grid.Column="2" Grid.Row="5" Text="{Binding ProducedG1}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
+					<TextBlock Grid.Column="2" Grid.Row="6" Text="{Binding DefectionCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
+					<TextBlock Grid.Column="2" Grid.Row="7" Text="{Binding StoppageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
 				</Grid>
-			</Border>
-		</StackPanel>
-	</Canvas>
+			</Border.ToolTip>
+			<Border.ContextMenu>
+				<ContextMenu FlowDirection="RightToLeft">
+					<MenuItem Header="افزودن گزارش بازه ای" Command="{Binding OpenReportRangeCommand}"/>
+					<MenuItem Header="حذف گزارش فعالیت" Command="{Binding DeleteProcessReportCommand}"/>
+				</ContextMenu>
+			</Border.ContextMenu>
+
+			<!-- main contents -->
+			<Grid>
+				<!-- portions colors -->
+				<Grid Panel.ZIndex="-1" ClipToBounds="True">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="{Binding ProducedG1, Converter={StaticResource portionToStarConverter}}"/>
+						<ColumnDefinition Width="{Binding DefectionCount, Converter={StaticResource portionToStarConverter}}"/>
+						<ColumnDefinition Width="{Binding StoppageCount, Converter={StaticResource portionToStarConverter}}"/>
+					</Grid.ColumnDefinitions>
+					<Border Background="#4AF" BorderBrush="Black" BorderThickness="1">
+						<DockPanel HorizontalAlignment="Center" ClipToBounds="True">
+							<Image Style="{StaticResource ProducedG1Image}"/>
+							<TextBlock Text="{Binding ProducedG1}" VerticalAlignment="Center"/>
+						</DockPanel>
+					</Border>
+					<Border Background="#F55" BorderBrush="Black" BorderThickness="1" Grid.Column="1">
+						<TextBlock Text="{Binding DefectionCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
+					</Border>
+					<Border Background="#FD5" BorderBrush="Black" BorderThickness="1" Grid.Column="2">
+						<TextBlock Text="{Binding StoppageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
+					</Border>
+				</Grid>
+				<!-- button -->
+				<Button x:Name="button" Opacity="0" Command="{Binding OpenReportCommand}" ToolTip="گزارش فعالیت">
+					<Image Style="{StaticResource EditReportImage}"/>
+				</Button>
+				<!-- button's triggers -->
+				<Grid.Triggers>
+					<EventTrigger RoutedEvent="MouseEnter">
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.2">
+								<DoubleAnimation Storyboard.TargetName="button" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.8"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+					<EventTrigger RoutedEvent="MouseLeave">
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:0.7">
+								<DoubleAnimation Storyboard.TargetName="button" Storyboard.TargetProperty="Opacity" Duration="0:0:0.7" To="0"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+				</Grid.Triggers>
+			</Grid>
+		</Border>
+		<!-- lower half (thumbs) -->
+		<Border Style="{StaticResource boundaryStyle}" BorderThickness="0,0,0,2" CornerRadius="0,0,3,3" Height="20">
+			<Border.Margin>
+				<MultiBinding Converter="{StaticResource processReportBorderMarginConverter}">
+					<Binding Path="StartDateTime"/>
+					<Binding ElementName="root" Path="PPTable.HourZoom"/>
+					<Binding ElementName="root" Path="Process.StartDateTime"/>
+				</MultiBinding>
+			</Border.Margin>
+			<Border.ToolTip>
+				<UniformGrid Rows="4" Columns="2">
+					<TextBlock Text="شروع بازه گزارش فعالیت "/>
+					<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+					<TextBlock Text="پایان بازه گزارش فعالیت "/>
+					<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+					<WrapPanel>
+						<Image Style="{StaticResource TargetPointImage}"/>
+						<TextBlock Text="مقدار هدف فعالیت در بازه زمانی "/>
+					</WrapPanel>
+					<TextBlock Text="{Binding TargetPoint}"/>
+					<WrapPanel>
+						<Image Style="{StaticResource ProducedG1Image}"/>
+						<TextBlock Text="خروجی سالم فعالیت در بازه زمانی "/>
+					</WrapPanel>
+					<TextBlock Text="{Binding ProducedG1}"/>
+				</UniformGrid>
+			</Border.ToolTip>
+
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<!-- start thumb -->
+				<Thumb DragStarted="startDragStart" DragDelta="startDragDelta" DragCompleted="startDragEnd" Tag="{Binding ElementName=root, Path=Tag}">
+					<Thumb.Template>
+						<ControlTemplate>
+							<Border Style="{StaticResource startBoundaryStyle}">
+								<TextBlock Text="شروع" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+							</Border>
+						</ControlTemplate>
+					</Thumb.Template>
+				</Thumb>
+				<Popup x:Name="startPopup" IsOpen="False">
+					<Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">
+						<Border.Effect>
+							<DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
+						</Border.Effect>
+						<UniformGrid Rows="3" Columns="2">
+							<TextBlock Text="{Loc txtStartDate}"/>
+							<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+							<TextBlock Text="{Loc txtStartTime}"/>
+							<cc:TimeBox Time="{Binding StartTime}"/>
+							<Button Margin="50,2,-60,0">
+								<WrapPanel>
+									<Image Style="{StaticResource Save16Image}"/>
+									<TextBlock Text="{Loc txtSave}"/>
+								</WrapPanel>
+							</Button>
+						</UniformGrid>
+					</Border>
+				</Popup>
+
+				<!-- end thumb -->
+				<Thumb Grid.Column="6" DragStarted="endDragStart" DragDelta="endDragDelta" DragCompleted="endDragEnd" Tag="{Binding ElementName=root, Path=Tag}">
+					<Thumb.Template>
+						<ControlTemplate>
+							<Border Style="{StaticResource endBoundaryStyle}">
+								<TextBlock Text="پایان" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+							</Border>
+						</ControlTemplate>
+					</Thumb.Template>
+				</Thumb>
+				<Popup x:Name="endPopup" IsOpen="False">
+					<Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">
+						<Border.Effect>
+							<DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
+						</Border.Effect>
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="25"/>
+								<RowDefinition Height="25"/>
+								<RowDefinition Height="25"/>
+								<RowDefinition Height="25"/>
+								<RowDefinition Height="25"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Text="{Loc txtEndDate}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+							<TextBlock Text="{Loc txtEndTime}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+							<CheckBox Content="مدت زمان گزارش" IsChecked="{Binding ByEndDate, Converter={StaticResource inverter}}" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+							<TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+
+							<cal:PersianDatePicker SelectedDate="{Binding EndDate}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
+							<cc:TimeBox Time="{Binding EndTime}" Grid.Row="1" Grid.Column="1"/>
+							<cc:TimeBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding ByEndDate}" Grid.Row="2" Grid.Column="1"/>
+							<Button Command="{Binding AutoFindDuration}" ToolTip="محاسبه خودکار زمان از طریق مقدار هدف فعالیت" Grid.Row="2" Grid.Column="2">
+								<Image Style="{StaticResource Reload18Image}"/>
+							</Button>
+							<TextBox Text="{Binding TargetPoint}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="1"/>
+							<Button Command="{Binding AutoFindTargetPoint}" ToolTip="محاسبه خودکار مقدار هدف فعالیت از طریق زمان پایان" Grid.Row="3" Grid.Column="2">
+								<Image Style="{StaticResource Reload18Image}"/>
+							</Button>
+							<Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Width="150">
+								<WrapPanel>
+									<Image Style="{StaticResource Save16Image}"/>
+									<TextBlock Text="{Loc txtSave}"/>
+								</WrapPanel>
+							</Button>
+						</Grid>
+					</Border>
+				</Popup>
+				
+				<!-- texts -->
+				<TextBlock Grid.Column="2" Text="/"/>
+				
+				<TextBox Grid.Column="1" Text="{Binding ProducedG1}" IsReadOnly="True" ToolTip="{Loc txtProducedG1}" FontSize="12"/>
+				<Image Grid.Column="1" Style="{StaticResource ProducedG1Image}" HorizontalAlignment="Right" Margin="5,0" IsHitTestVisible="False"/>
+				
+				<TextBox Grid.Column="3" Text="{Binding TargetPoint}" ToolTip="{Loc txtTargetPoint}" FontSize="12"/>
+				<Image Grid.Column="3" Style="{StaticResource TargetPointImage}" HorizontalAlignment="Left" Margin="5,0" IsHitTestVisible="False"/>
+				
+				<TextBlock Grid.Column="5" Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+				<Image Grid.Column="4" Style="{StaticResource DurationImage}"/>
+
+			</Grid>
+		</Border>
+	</StackPanel>
 </UserControl>

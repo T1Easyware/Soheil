@@ -676,7 +676,7 @@
 										<!-- Task range -->
 										<Border BorderBrush="Silver" BorderThickness="1,0,1,1" CornerRadius="0,0,3,3" 
 												Background="#8FF" x:Name="line" Height="15" Opacity="0.1"
-												ToolTip="برای پر کردن فضای خالی با گزارش بازه ای ایستگاه، کلیک کنید">
+												ToolTip="برای ایجاد گزارش بازه ای ایستگاه کلیک کنید">
 											<I:Interaction.Triggers>
 												<I:EventTrigger EventName="MouseDown">
 													<I:InvokeCommandAction Command="{Binding FillEmptySpacesCommand}"/>
@@ -795,7 +795,7 @@
 							</ItemsControl.Template>
 						</ItemsControl>
 
-						<!-- first column of Stations-->
+						<!-- Stations headers -->
 						<ItemsControl Grid.Row="7" Grid.ColumnSpan="2" ItemsSource="{Binding PPItems}" IsHitTestVisible="False">
 							<ItemsControl.Effect>
 								<DropShadowEffect Opacity="0.8" ShadowDepth="0" Color="White"/>
@@ -831,7 +831,7 @@
 								</ControlTemplate>
 							</ItemsControl.Template>
 						</ItemsControl>
-						<!-- first column of Activities -->
+						<!-- Activities headers -->
 						<DockPanel Grid.Row="6" Grid.ColumnSpan="2" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}" TextBlock.FontSize="10">
 							<Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Margin="0,2,0,0" Background="#023" Height="20">
 								<TextBlock Text="گزارشهای ایستگاه" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -892,7 +892,7 @@
 							</ItemsControl>
 						</DockPanel>
 						
-						<!-- Month-Day-Hour Sliders-->
+						<!-- Month-Day-Hour-15min -->
 						<ItemsControl Grid.Row="2" Grid.Column="1" SizeChanged="Grid_SizeChanged" ItemsSource="{Binding Months}" Name="ic_months">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
@@ -1089,7 +1089,7 @@
 						</ItemsControl>
 						
 						
-						<!-- RowsOfItems(Blocks,NPTs) ItemsControl -->
+						<!-- Blocks & NPTs -->
 						<ItemsControl Grid.Row="7" Grid.Column="1" ItemsSource="{Binding PPItems}">
 							<ItemsControl.Effect>
 								<DropShadowEffect Opacity="0.3" ShadowDepth="0" Color="White"/>
@@ -1151,7 +1151,7 @@
 							</ItemsControl.Template>
 						</ItemsControl>
 
-						<!--RowsOfActivity ItemsControl & ExceptionBalloons, Durations, TP, G1 (other columns of process report) -->
+						<!-- ProcessReports (+Exceptions Balloons) -->
 						<DockPanel Grid.Row="6" Grid.Column="1" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
 							<!-- & Durations, TPs, G1s -->
 							<ItemsControl DockPanel.Dock="Top" Height="59" ItemsSource="{Binding SelectedBlock.BlockReport.TaskReports}">
@@ -1246,7 +1246,7 @@
 								</ItemsControl.Template>
 							</ItemsControl>
 
-							<!--RowsOfActivity ItemsControl & Exceptions Balloons-->
+							<!-- ProcessReports & Exceptions Balloons-->
 							<Grid>
 								<ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ActivityList}">
 									<ItemsControl.Effect>
@@ -1268,6 +1268,11 @@
 																	</Canvas>
 																</DataTemplate>
 															</ItemsControl.ItemTemplate>
+															<ItemsControl.ItemsPanel>
+																<ItemsPanelTemplate>
+																	<Canvas/>
+																</ItemsPanelTemplate>
+															</ItemsControl.ItemsPanel>
 														</ItemsControl>
 													</DataTemplate>
 												</ItemsControl.ItemTemplate>
@@ -1303,10 +1308,17 @@
 
 									<!-- = OneRowOfActivity Balloons ====== -->
 									<ItemsControl.ItemTemplate>
-										<DataTemplate DataType="{x:Type report:ProcessRowVm}">
-											<ItemsControl ItemsSource="{Binding ProcessList}" 
-														  ItemTemplate="{StaticResource balloonTemplate}"
+										<DataTemplate DataType="{x:Type report:ActivityRowVm}">
+											<ItemsControl ItemsSource="{Binding ProcessRowList}" 
 														  Height="{Binding RowsCount, Converter={StaticResource floatMultiplier}, ConverterParameter=42}">
+												<ItemsControl.ItemTemplate>
+													<DataTemplate DataType="{x:Type report:ProcessRowVm}">
+														<ItemsControl ItemsSource="{Binding ProcessList}"
+																	  ItemTemplate="{StaticResource balloonTemplate}"
+																	  Height="{Binding RowsCount, Converter={StaticResource floatMultiplier}, ConverterParameter=42}">
+														</ItemsControl>
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
 												<ItemsControl.ItemsPanel>
 													<ItemsPanelTemplate>
 														<Canvas/>
@@ -1334,8 +1346,8 @@
 								</ItemsControl>
 							</Grid>
 						</DockPanel>
-					
-						<!-- ExceptionTooltips for Tasks,NPTs -->
+
+						<!-- Tasks,NPTs (Exceptions Balloons) -->
 						<ItemsControl Grid.Row="7" Grid.Column="1" ItemsSource="{Binding PPItems}" ClipToBounds="False">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate DataType="{x:Type vm:StationVm}">

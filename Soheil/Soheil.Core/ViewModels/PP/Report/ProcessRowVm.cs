@@ -53,8 +53,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 				}
 				else
 				{
-					tmp[bestRow].Add(process);
 					process.RowIndex = bestRow;
+					tmp[bestRow].Add(process);
 				}
 			}
 			RowsCount = tmp.Count;

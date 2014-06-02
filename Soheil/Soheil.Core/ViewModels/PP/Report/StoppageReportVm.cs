@@ -14,6 +14,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		public StoppageReportVm(StoppageReportCollection parent, Model.StoppageReport model)
 		{
+			Model = model;
 			Index = parent.Parent.StoppageReports.List.Count + 1;
 			Parent = parent;
 			int[] causeIds = null;

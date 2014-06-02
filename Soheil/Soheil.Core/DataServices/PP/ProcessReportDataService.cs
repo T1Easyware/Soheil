@@ -52,7 +52,7 @@ namespace Soheil.Core.DataServices
 		{
 			var processReportRepository = new Repository<ProcessReport>(context);
 			var processReportDataService = new ProcessReportDataService(context);
-			var processOperatorReportRepository = new Repository<ProcessOperatorReport>(context);
+			var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
 			var defectionReportRepository = new Repository<DefectionReport>(context);
 			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
 			var stoppageReportRepository = new Repository<StoppageReport>(context);
@@ -60,7 +60,7 @@ namespace Soheil.Core.DataServices
 			processReportDataService.ClearModel(
 				model,
 				processReportRepository,
-				processOperatorReportRepository,
+				operatorProcessReportRepository,
 				defectionReportRepository,
 				operatorDefectionReportRepository,
 				stoppageReportRepository,
@@ -82,7 +82,7 @@ namespace Soheil.Core.DataServices
 			if (id < 1) return null;
 			return _processReportRepository.FirstOrDefault(x => x.Id == id,
 					"Process.StateStationActivity",
-					"ProcessOperatorReports.ProcessOperator.Operator",
+					"OperatorProcessReports.ProcessOperator.Operator",
 					"StoppageReports",
 					"StoppageReports.Cause.Parent.Parent",
 					"StoppageReports.OperatorStoppageReports.Operator",
@@ -90,16 +90,16 @@ namespace Soheil.Core.DataServices
 					"DefectionReports.ProductDefection.Defection");
 		}
 		/// <summary>
-		/// Adds missing ProcessOperatorReports to the ProcessReport's ProcessOperatorReport collection
+		/// Adds missing OperatorProcessReports to the ProcessReport's OperatorProcessReport collection
 		/// </summary>
 		/// <param name="model"></param>
 		public void CorrectOperatorReports(ProcessReport model)
 		{
 			foreach (var processOperator in model.Process.ProcessOperators)
 			{
-				if (!model.ProcessOperatorReports.Any(x => x.ProcessOperator.Id == processOperator.Id))
+				if (!model.OperatorProcessReports.Any(x => x.ProcessOperator.Id == processOperator.Id))
 				{
-					processOperator.ProcessOperatorReports.Add(new ProcessOperatorReport
+					processOperator.OperatorProcessReports.Add(new OperatorProcessReport
 					{
 						ProcessReport = model,
 						ProcessOperator = processOperator,
@@ -125,14 +125,14 @@ namespace Soheil.Core.DataServices
 			{
 				//overwrite ProcessReport
 				model.ProducedG1 = vm.ProducedG1;
-				model.ProcessReportTargetPoint = vm.ProcessReportTargetPoint;
+				model.ProcessReportTargetPoint = vm.TargetPoint;
 			}
 			else
 			{
 				//add ProcessReport
 				model.Process = new Repository<Process>(context).FirstOrDefault(x => x.Id == vm.ProcessId);
 				model.ProducedG1 = vm.ProducedG1;
-				model.ProcessReportTargetPoint = vm.ProcessReportTargetPoint;
+				model.ProcessReportTargetPoint = vm.TargetPoint;
 			}
 
 			//delete defectionReports and their children
@@ -210,7 +210,7 @@ namespace Soheil.Core.DataServices
 		{
 			var processReportRepository = new Repository<ProcessReport>(context);
 			var processReportDataService = new ProcessReportDataService(context);
-			var processOperatorReportRepository = new Repository<ProcessOperatorReport>(context);
+			var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
 			var defectionReportRepository = new Repository<DefectionReport>(context);
 			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
 			var stoppageReportRepository = new Repository<StoppageReport>(context);
@@ -219,7 +219,7 @@ namespace Soheil.Core.DataServices
 			processReportDataService.ClearModel(
 				model,
 				processReportRepository,
-				processOperatorReportRepository,
+				operatorProcessReportRepository,
 				defectionReportRepository,
 				operatorDefectionReportRepository,
 				stoppageReportRepository,
@@ -243,17 +243,17 @@ namespace Soheil.Core.DataServices
 		internal void ClearModel(
 			ProcessReport processReportModel,
 			Repository<ProcessReport> processReportRepository,
-			Repository<ProcessOperatorReport> processOperatorReportRepository, 
+			Repository<OperatorProcessReport> operatorProcessReportRepository, 
 			Repository<DefectionReport> defectionReportRepository, 
 			Repository<OperatorDefectionReport> operatorDefectionReportRepository, 
 			Repository<StoppageReport> stoppageReportRepository, 
 			Repository<OperatorStoppageReport> operatorStoppageReportRepository, 
 			SoheilEdmContext context)
 		{
-			var operatorReports = processReportModel.ProcessOperatorReports.ToArray();
+			var operatorReports = processReportModel.OperatorProcessReports.ToArray();
 			foreach (var operatorReport in operatorReports)
 			{
-				processOperatorReportRepository.Delete(operatorReport);
+				operatorProcessReportRepository.Delete(operatorReport);
 			}
 			var defectionReports = processReportModel.DefectionReports.ToArray();
 			foreach (var defectionReportModel in defectionReports)

@@ -87,7 +87,7 @@ namespace Soheil.Core.DataServices
                                from ssActivity in ssaList.Where(ssa => process!=null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
                                let oprId = opr == null ? -1 : opr.Id
                                let prId = opr == null ? -1 : opr.ProcessReport == null ? -1 : opr.ProcessReport.Id
-                               let oId = opr == null ? -1 : opr.Operator == null ? -1 : opr.Operator.Id
+							   let oId = opr == null ? -1 : opr.ProcessOperator.Operator == null ? -1 : opr.ProcessOperator.Operator.Id
                                let ct = ssActivity == null ? 0 : ssActivity.CycleTime
                                let productionTime = opr == null || ssActivity == null ? 0 : opr.OperatorProducedG1 * ct
                                select new { oprId, prId, oId, productionTime, ct };
@@ -206,7 +206,7 @@ namespace Soheil.Core.DataServices
                 var odrList = odrRepository.GetAll();
 
 
-                var oprQuery = from opr in oprList.Where(opr => opr.Operator != null && opr.Operator.Id == operatorId)
+				var oprQuery = from opr in oprList.Where(opr => opr.ProcessOperator.Operator != null && opr.ProcessOperator.Operator.Id == operatorId)
                                from processReport in processReportList.Where(pr => opr.ProcessReport != null && opr.ProcessReport.Id == pr.Id && pr.StartDateTime >= startDate && pr.EndDateTime < endDate).DefaultIfEmpty()
                                from process in processList.Where(p => processReport != null && processReport.Process != null && p.Id == processReport.Process.Id).DefaultIfEmpty()
                                from ssActivity in ssaList.Where(ssa => process != null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
@@ -219,7 +219,7 @@ namespace Soheil.Core.DataServices
                                from activity in activityList.Where(a=> ssActivity != null && ssActivity.Activity != null && a.Id == ssActivity.Activity.Id).DefaultIfEmpty()
                                let oprId = opr == null ? -1 : opr.Id
                                let prId = opr == null ? -1 : opr.ProcessReport == null ? -1 : opr.ProcessReport.Id
-                               let oId = opr == null ? -1 : opr.Operator == null ? -1 : opr.Operator.Id
+							   let oId = opr == null ? -1 : opr.ProcessOperator.Operator == null ? -1 : opr.ProcessOperator.Operator.Id
                                let pdId = product == null ? -1 : product.Id
                                let pdCode = product == null ? string.Empty : product.Code
                                let pdName = product == null ? string.Empty : product.Name
@@ -359,7 +359,7 @@ namespace Soheil.Core.DataServices
 
                 var query = from opr in oprList
                               from processReport in processReportList.Where(pr=> opr.ProcessReport != null && opr.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.EndDateTime < oprInfo.EndDate).DefaultIfEmpty()
-                              group processReport by new { opr.Id, operatorId = opr.Operator.Id, opr.OperatorProducedG1} into g
+							group processReport by new { opr.Id, operatorId = opr.ProcessOperator.Operator.Id, opr.OperatorProducedG1 } into g
                               let duration = g.Sum(item => item == null ? 0 : item.DurationSeconds/item.OperatorProcessReports.Count)
                               select new { g.Key.Id, duration };
 

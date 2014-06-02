@@ -22,9 +22,12 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		DataServices.TaskReportDataService _taskReportDataService;
 
-		protected bool _isInInitializingPhase = true;
-
+		/// <summary>
+		/// Gets or sets a value that indicates whether user is dragging thumbs to change datetimes
+		/// </summary>
 		public bool IsUserDrag { get; set; }
+
+		protected bool _isInInitializingPhase = true;
 		#endregion
 
 		public TaskReportVm(Model.TaskReport model, Dal.SoheilEdmContext uow)

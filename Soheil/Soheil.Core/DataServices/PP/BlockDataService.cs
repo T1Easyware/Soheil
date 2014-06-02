@@ -50,7 +50,7 @@ namespace Soheil.Core.DataServices
 				"Job",
 				"Tasks.Processes.ProcessReports",
 				"Tasks.Processes.SelectedMachines",
-				"Tasks.Processes.ProcessReports.ProcessOperatorReports.ProcessOperator.Operator",
+				"Tasks.Processes.ProcessReports.OperatorProcessReports.ProcessOperator.Operator",
 				"Tasks.Processes.ProcessReports.DefectionReports",
 				"Tasks.Processes.ProcessReports.StoppageReports"
 				);
