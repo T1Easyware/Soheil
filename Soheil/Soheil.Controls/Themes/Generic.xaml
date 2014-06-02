@@ -364,7 +364,7 @@ TargetType="{x:Type Button}">
     </Style>
 <<<<<<< .mine
 
-=======
+
 
 >>>>>>> .theirs
     <Style TargetType="{x:Type CustomControls:MultiLevelBar}">
@@ -597,7 +597,7 @@ TargetType="{x:Type Button}">
 
 
 
-=======
+
 
 
 	<Style TargetType="{x:Type CustomControls:TimeBox}">

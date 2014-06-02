@@ -9,8 +9,8 @@
 
 
 
-<<<<<<< HEAD
-=======
+
+
 	<SolidColorBrush x:Key="cyanBrush" Color="#40BCBC"/>
 	<SolidColorBrush x:Key="greenBrush" Color="#40BC40"/>
 	<SolidColorBrush x:Key="blueBrush" Color="#4040BC"/>

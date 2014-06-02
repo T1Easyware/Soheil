@@ -1253,7 +1253,7 @@
 										<DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
 									</ItemsControl.Effect>
 
-									<!-- ==================================== OneRowOfActivity ========================================= -->
+									<!-- = OneRowOfActivity ====== -->
 									<ItemsControl.ItemTemplate>
 										<DataTemplate DataType="{x:Type report:ActivityRowVm}">
 											<ItemsControl ItemsSource="{Binding ProcessRowList}">
@@ -1301,7 +1301,7 @@
 								<!--RowsOfActivity ExceptionTooltips-->
 								<ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ActivityList}" Margin="0,6,0,0">
 
-									<!-- ==================================== OneRowOfActivity Balloons ========================================= -->
+									<!-- = OneRowOfActivity Balloons ====== -->
 									<ItemsControl.ItemTemplate>
 										<DataTemplate DataType="{x:Type report:ProcessRowVm}">
 											<ItemsControl ItemsSource="{Binding ProcessList}" 
