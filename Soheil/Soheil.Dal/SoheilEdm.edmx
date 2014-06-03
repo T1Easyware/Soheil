@@ -71,6 +71,7 @@
     <EntitySet Name="OperatorProcessReports" EntityType="SoheilEdm.Store.OperatorProcessReports" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Blocks" EntityType="SoheilEdm.Store.Blocks" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ActivitySkills" EntityType="SoheilEdm.Store.ActivitySkills" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ExternalConnectors" EntityType="SoheilEdm.Store.ExternalConnectors" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_PM" EntityType="SoheilEdm.Store.NonProductiveTasks_PM" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_Education" EntityType="SoheilEdm.Store.NonProductiveTasks_Education" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_Setup" EntityType="SoheilEdm.Store.NonProductiveTasks_Setup" store:Type="Tables" Schema="dbo" />
@@ -447,6 +448,14 @@
       <End Role="ProcessOperator" EntitySet="ProcessOperators" />
       <End Role="OperatorProcessReport" EntitySet="OperatorProcessReports" />
     </AssociationSet>
+    <AssociationSet Name="StateStationActivityExternalConnector" Association="SoheilEdm.Store.StateStationActivityExternalConnector">
+      <End Role="StateStationActivity" EntitySet="StateStationActivities" />
+      <End Role="ExternalConnector" EntitySet="ExternalConnectors" />
+    </AssociationSet>
+    <AssociationSet Name="StateStationActivityExternalConnector1" Association="SoheilEdm.Store.StateStationActivityExternalConnector1">
+      <End Role="StateStationActivity" EntitySet="StateStationActivities" />
+      <End Role="ExternalConnector" EntitySet="ExternalConnectors" />
+    </AssociationSet>
     <AssociationSet Name="FK_PM_inherits_NonProductiveTask" Association="SoheilEdm.Store.FK_PM_inherits_NonProductiveTask">
       <End Role="NonProductiveTask" EntitySet="NonProductiveTasks" />
       <End Role="PM" EntitySet="NonProductiveTasks_PM" />
@@ -520,6 +529,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="HasBuffer" Type="bit" Nullable="false" DefaultValue="false" />
     <Property Name="StartState_Id" Type="int" Nullable="false" />
     <Property Name="EndState_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -1220,6 +1230,14 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="Operator_Id" Type="int" Nullable="false" />
     <Property Name="Activity_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ExternalConnectors">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="StartSSA_Id" Type="int" Nullable="false" />
+    <Property Name="EndSSA_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="NonProductiveTasks_PM">
     <Key>
@@ -2366,6 +2384,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="StateStationActivityExternalConnector">
+    <End Role="StateStationActivity" Type="SoheilEdm.Store.StateStationActivities" Multiplicity="1" />
+    <End Role="ExternalConnector" Type="SoheilEdm.Store.ExternalConnectors" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateStationActivity">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ExternalConnector">
+        <PropertyRef Name="StartSSA_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="StateStationActivityExternalConnector1">
+    <End Role="StateStationActivity" Type="SoheilEdm.Store.StateStationActivities" Multiplicity="1" />
+    <End Role="ExternalConnector" Type="SoheilEdm.Store.ExternalConnectors" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateStationActivity">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ExternalConnector">
+        <PropertyRef Name="EndSSA_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PM_inherits_NonProductiveTask">
     <End Role="NonProductiveTask" Type="SoheilEdm.Store.NonProductiveTasks" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -2864,6 +2906,15 @@
             <End Role="ProcessOperator" EntitySet="ProcessOperators" />
             <End Role="OperatorProcessReport" EntitySet="OperatorProcessReports" />
           </AssociationSet>
+          <EntitySet Name="ExternalConnectors" EntityType="SoheilEdm.ExternalConnector" />
+          <AssociationSet Name="StateStationActivityExternalConnector" Association="SoheilEdm.StateStationActivityExternalConnector">
+            <End Role="StateStationActivity" EntitySet="StateStationActivities" />
+            <End Role="ExternalConnector" EntitySet="ExternalConnectors" />
+          </AssociationSet>
+          <AssociationSet Name="StateStationActivityExternalConnector1" Association="SoheilEdm.StateStationActivityExternalConnector1">
+            <End Role="StateStationActivity" EntitySet="StateStationActivities" />
+            <End Role="ExternalConnector" EntitySet="ExternalConnectors" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Product">
           <Key>
@@ -2932,6 +2983,7 @@
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="StartState" Relationship="SoheilEdm.StateConnector" FromRole="Connector" ToRole="State" />
           <NavigationProperty Name="EndState" Relationship="SoheilEdm.StateConnector1" FromRole="Connector" ToRole="State" />
+          <Property Name="HasBuffer" Type="Boolean" Nullable="false" DefaultValue="False" />
         </EntityType>
         <EntityType Name="Cause">
           <Key>
@@ -3443,6 +3495,8 @@
           <NavigationProperty Name="Processes" Relationship="SoheilEdm.StateStationActivityProcess" FromRole="StateStationActivity" ToRole="Process" />
           <Property Name="IsMany" Type="Boolean" Nullable="false" DefaultValue="True" />
           <Property Name="IsInJob" Type="Boolean" Nullable="false" DefaultValue="True" />
+          <NavigationProperty Name="OutExternalConnectors" Relationship="SoheilEdm.StateStationActivityExternalConnector" FromRole="StateStationActivity" ToRole="ExternalConnector" />
+          <NavigationProperty Name="InExternalConnectors" Relationship="SoheilEdm.StateStationActivityExternalConnector1" FromRole="StateStationActivity" ToRole="ExternalConnector" />
         </EntityType>
         <EntityType Name="StateStationActivityMachine">
           <Key>
@@ -4112,6 +4166,22 @@
           <End Type="SoheilEdm.ProcessOperator" Role="ProcessOperator" Multiplicity="1" />
           <End Type="SoheilEdm.OperatorProcessReport" Role="OperatorProcessReport" Multiplicity="*" />
         </Association>
+        <EntityType Name="ExternalConnector">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <NavigationProperty Name="StartSSA" Relationship="SoheilEdm.StateStationActivityExternalConnector" FromRole="ExternalConnector" ToRole="StateStationActivity" />
+          <NavigationProperty Name="EndSSA" Relationship="SoheilEdm.StateStationActivityExternalConnector1" FromRole="ExternalConnector" ToRole="StateStationActivity" />
+        </EntityType>
+        <Association Name="StateStationActivityExternalConnector">
+          <End Type="SoheilEdm.StateStationActivity" Role="StateStationActivity" Multiplicity="1" />
+          <End Type="SoheilEdm.ExternalConnector" Role="ExternalConnector" Multiplicity="*" />
+        </Association>
+        <Association Name="StateStationActivityExternalConnector1">
+          <End Type="SoheilEdm.StateStationActivity" Role="StateStationActivity" Multiplicity="1" />
+          <End Type="SoheilEdm.ExternalConnector" Role="ExternalConnector" Multiplicity="*" />
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4172,6 +4242,7 @@
       <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.Connector)">
         <MappingFragment StoreEntitySet="Connectors">
           <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="HasBuffer" ColumnName="HasBuffer" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4869,6 +4940,13 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ExternalConnectors">
+      <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.ExternalConnector)">
+        <MappingFragment StoreEntitySet="ExternalConnectors">
+          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5634,6 +5712,22 @@
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
+    <AssociationSetMapping Name="StateStationActivityExternalConnector" TypeName="SoheilEdm.StateStationActivityExternalConnector" StoreEntitySet="ExternalConnectors">
+      <EndProperty Name="StateStationActivity">
+        <ScalarProperty Name="Id" ColumnName="StartSSA_Id" />
+      </EndProperty>
+      <EndProperty Name="ExternalConnector">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StateStationActivityExternalConnector1" TypeName="SoheilEdm.StateStationActivityExternalConnector1" StoreEntitySet="ExternalConnectors">
+      <EndProperty Name="StateStationActivity">
+        <ScalarProperty Name="Id" ColumnName="EndSSA_Id" />
+      </EndProperty>
+      <EndProperty Name="ExternalConnector">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -5655,7 +5749,7 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="SoheilEdm" ZoomLevel="62" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+      <Diagram Name="SoheilEdm" ZoomLevel="86" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="5.25" PointX="16.5" PointY="11" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="20.25" PointY="15.625" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="35.875" PointY="13.25" Height="1.5956835937499996" FillColor="110, 100, 50" />
@@ -5915,6 +6009,9 @@
         <AssociationConnector Association="SoheilEdm.ActivitySkillProductActivitySkill" />
         <AssociationConnector Association="SoheilEdm.ProcessReportOperatorProcessReport" />
         <AssociationConnector Association="SoheilEdm.ProcessOperatorOperatorProcessReport" />
+        <EntityTypeShape EntityType="SoheilEdm.ExternalConnector" Width="1.875" PointX="26.25" PointY="34" />
+        <AssociationConnector Association="SoheilEdm.StateStationActivityExternalConnector" />
+        <AssociationConnector Association="SoheilEdm.StateStationActivityExternalConnector1" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

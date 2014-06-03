@@ -18,7 +18,7 @@
 				<Binding ElementName="root" Path="PPTable.HourZoom"/>
 			</MultiBinding>
 		</StackPanel.Width>
-
+		
 		<!-- upper half (main) -->
 		<Border BorderBrush="Gainsboro" BorderThickness="3,2,3,0" CornerRadius="2,2,0,0" Height="20">
 			<Border.ToolTip>
@@ -146,6 +146,7 @@
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				<!-- start thumb -->
 				<Thumb DragStarted="startDragStart" DragDelta="startDragDelta" DragCompleted="startDragEnd" Tag="{Binding ElementName=root, Path=Tag}">
@@ -178,7 +179,7 @@
 				</Popup>
 
 				<!-- end thumb -->
-				<Thumb Grid.Column="6" DragStarted="endDragStart" DragDelta="endDragDelta" DragCompleted="endDragEnd" Tag="{Binding ElementName=root, Path=Tag}">
+				<Thumb Grid.Column="7" DragStarted="endDragStart" DragDelta="endDragDelta" DragCompleted="endDragEnd" Tag="{Binding ElementName=root, Path=Tag}">
 					<Thumb.Template>
 						<ControlTemplate>
 							<Border Style="{StaticResource endBoundaryStyle}">
@@ -239,10 +240,12 @@
 				
 				<TextBox Grid.Column="3" Text="{Binding TargetPoint}" ToolTip="{Loc txtTargetPoint}" FontSize="12"/>
 				<Image Grid.Column="3" Style="{StaticResource TargetPointImage}" HorizontalAlignment="Left" Margin="5,0" IsHitTestVisible="False"/>
-				
-				<TextBlock Grid.Column="5" Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
-				<Image Grid.Column="4" Style="{StaticResource DurationImage}"/>
 
+				<ToggleButton IsChecked="{Binding IsDurationDividable}" Grid.Column="4" ToolTip="آیا مدت گزارش مضرب صحیحی از زمان سیکل است" Padding="0">
+					<Image Style="{StaticResource IsDividable}"/>
+				</ToggleButton>
+				<Image Grid.Column="5" Style="{StaticResource DurationImage}"/>
+				<TextBlock Grid.Column="6" Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
 			</Grid>
 		</Border>
 	</StackPanel>

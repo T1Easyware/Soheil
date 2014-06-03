@@ -101,6 +101,9 @@
     <Compile Include="Education.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="ExternalConnector.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="FishboneNode.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>

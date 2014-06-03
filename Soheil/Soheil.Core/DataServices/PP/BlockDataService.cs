@@ -194,6 +194,7 @@ namespace Soheil.Core.DataServices
 				(int)block.StartDateTime.GetPersianDayOfYear(),
 				block.StartDateTime.Hour,
 				block.StateStation.Station.Code);
+			block.ModifiedBy = LoginInfo.Id;
 
 			//fix tasks
 			var time = block.StartDateTime;

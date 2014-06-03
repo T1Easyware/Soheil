@@ -40,6 +40,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public DateTime LowerBound { get { return PreviousReport == null ? StartDateTime : PreviousReport.EndDateTime; } }
 		public DateTime UpperBound { get { return NextReport == null ? EndDateTime : NextReport.StartDateTime; } }
 
+		public float CycleTime { get; protected set; }
 
 		/// <summary>
 		/// Gets ProcessReport Id
@@ -73,6 +74,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
 
 			//properties
+			CycleTime = Model.Process.StateStationActivity.CycleTime;
 			Model.ProducedG1 = Model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);//??? can be different than sum
 			ProducedG1 = Model.ProducedG1;
 			TargetPoint = Model.ProcessReportTargetPoint;
@@ -166,13 +168,60 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (int)e.NewValue;
 				vm.Model.ProcessReportTargetPoint = val;
-				vm.DurationSeconds = (int)vm.Model.Process.StateStationActivity.CycleTime * val;
+				vm.DurationSeconds = (int)vm.CycleTime * val;
 			}, (d, v) =>
 			{
 				var vm = (ProcessReportVm)d;
 				var val = (int)v;
 				if (val < 1) return 1;
 				return v;
+			}));
+
+		#region Duration
+		/// <summary>
+		/// Gets the biggest integer multiply of CT which is less than duration
+		/// </summary>
+		/// <param name="duration">uncoerced input</param>
+		/// <returns></returns>
+		int getDividableSeconds(TimeSpan duration)
+		{
+			return getDividableSeconds((int)duration.TotalSeconds);
+		}
+		/// <summary>
+		/// Gets the biggest integer multiply of CT which is less than duration
+		/// </summary>
+		/// <param name="duration">uncoerced input</param>
+		/// <returns></returns>
+		int getDividableSeconds(int duration)
+		{
+			return
+				(int)
+					(CycleTime *
+					(int)
+						(duration / CycleTime)
+					);
+		}
+
+		//IsDurationDividable Dependency Property
+		public bool IsDurationDividable
+		{
+			get { return (bool)GetValue(IsDurationDividableProperty); }
+			set { SetValue(IsDurationDividableProperty, value); }
+		}
+		public static readonly DependencyProperty IsDurationDividableProperty =
+			DependencyProperty.Register("IsDurationDividable", typeof(bool), typeof(ProcessReportVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				var vm = d as ProcessReportVm;
+				if((bool)e.NewValue)
+				{
+					//coerce all
+					var dur = vm.getDividableSeconds(vm.DurationSeconds);
+					if(dur != vm.DurationSeconds)
+					{
+						vm.DurationSeconds = dur;
+					}
+				}
 			}));
 		/// <summary>
 		/// Gets or sets the bindable duration seconds
@@ -193,27 +242,45 @@ namespace Soheil.Core.ViewModels.PP.Report
 			}, (d, v) =>
 			{
 				var vm = (ProcessReportVm)d;
-				var val = (TimeSpan)v;
-				if (val.TotalSeconds < vm.Model.Process.StateStationActivity.CycleTime)
-					return vm.Model.Process.StateStationActivity.CycleTime;
-				if(vm.EndDateTime - vm.StartDateTime < val)
+				var val = (int)v;
+				//if very small => set to 1CT
+				if (val < vm.CycleTime)
 				{
-					return vm.EndDateTime - vm.StartDateTime;
+					return vm.CycleTime;
 				}
-				return v;
+				//if very large => set to Whole space
+				if (val > (vm.UpperBound - vm.LowerBound).TotalSeconds)
+				{
+					val = (int)(vm.UpperBound - vm.LowerBound).TotalSeconds;
+				}
+				//coerce if [÷]
+				if (vm.IsDurationDividable)
+				{
+					return vm.getDividableSeconds(val);
+				}
+				else
+				{
+					//don't coerce
+					return val;
+				}
 			}));
 		void ProcessReportVm_DurationSecondsChanged(int newVal)
 		{
 			if (!_isInInitializingPhase)
 			{
-				var tp = (int)(newVal / Model.Process.StateStationActivity.CycleTime);
-				var duration = (int)Model.Process.StateStationActivity.CycleTime * TargetPoint;
+				var tp = (int)(newVal / CycleTime);
+				var duration = (int)CycleTime * TargetPoint;
 				Model.DurationSeconds = duration;
 
-				TargetPoint = tp;
+				//set TP if [÷]
+				if (IsDurationDividable)
+				{
+					TargetPoint = tp;
+				}
 				EndDateTime = StartDateTime.AddSeconds(duration);
 			}
 		}
+		#endregion
 
 		#region Start
 		/// <summary>
@@ -232,25 +299,41 @@ namespace Soheil.Core.ViewModels.PP.Report
 				{
 					var vm = (ProcessReportVm)d;
 					var val = (DateTime)v;
+					//check lower bound
 					if (val < vm.LowerBound)
-						return vm.LowerBound;
-					return v;
+					{
+						val = vm.LowerBound;
+					}
+					//coerce if [÷]
+					if (vm.IsDurationDividable)
+					{
+						int dur = vm.getDividableSeconds(vm.EndDateTime - val);
+						return vm.EndDateTime.AddSeconds(-dur);
+					}
+					else
+					{
+						//don't coerce
+						return val;
+					}
 				}));
 		void ProcessReportVm_StartDateTimeChanged(DateTime newVal)
 		{
+			//update Model, EndDateTime, StartDate & StartTime
 			if (!_isInInitializingPhase)
 			{
-				Model.StartDateTime = newVal;
 				_isInInitializingPhase = true;
+				Model.StartDateTime = newVal;
+				SetValue(StartTimeProperty, newVal.TimeOfDay);
+				SetValue(StartDateProperty, newVal.Date);
 				EndDateTime = newVal.AddSeconds(DurationSeconds);
 				_isInInitializingPhase = false;
 			}
-
-			//update only startTime & startDate
-			_isInInitializingPhase = true;
-			SetValue(StartTimeProperty, newVal.TimeOfDay);
-			SetValue(StartDateProperty, newVal.Date);
-			_isInInitializingPhase = false;
+			else
+			{
+				//update only startTime & startDate
+				SetValue(StartTimeProperty, newVal.TimeOfDay);
+				SetValue(StartDateProperty, newVal.Date);
+			}
 		}
 
 		public static readonly DependencyProperty StartDateProperty =
@@ -284,21 +367,34 @@ namespace Soheil.Core.ViewModels.PP.Report
 			}
 			set
 			{
-				//coerce value
+				//check upper bound
 				if (value > UpperBound)
 				{
 					value = UpperBound;
 				}
+				//coerce if [÷]
+				if (IsDurationDividable)
+				{
+					int dur = getDividableSeconds(value - StartDateTime);
+					value = StartDateTime.AddSeconds(dur);
+				}
 
-				//update model
+				//update Model
+				Model.EndDateTime = value;
+
+				//update EndDate & EndTime
 				if (!_isInInitializingPhase)
-					Model.EndDateTime = value;
-
-				//update endTime & endDate
-				_isInInitializingPhase = true;
-				SetValue(EndTimeProperty, value.TimeOfDay);
-				SetValue(EndDateProperty, value.Date);
-				_isInInitializingPhase = false;
+				{
+					_isInInitializingPhase = true;
+					SetValue(EndTimeProperty, value.TimeOfDay);
+					SetValue(EndDateProperty, value.Date);
+					_isInInitializingPhase = false;
+				}
+				else
+				{
+					SetValue(EndTimeProperty, value.TimeOfDay);
+					SetValue(EndDateProperty, value.Date);
+				}
 
 				//update duration
 				DurationSeconds = (int)(value - Model.StartDateTime).TotalSeconds;

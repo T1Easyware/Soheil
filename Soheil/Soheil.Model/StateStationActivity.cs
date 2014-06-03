@@ -148,6 +148,70 @@ namespace Soheil.Model
             }
         }
         private ICollection<Process> _processes;
+    
+        public virtual ICollection<ExternalConnector> OutExternalConnectors
+        {
+            get
+            {
+                if (_outExternalConnectors == null)
+                {
+                    var newCollection = new FixupCollection<ExternalConnector>();
+                    newCollection.CollectionChanged += FixupOutExternalConnectors;
+                    _outExternalConnectors = newCollection;
+                }
+                return _outExternalConnectors;
+            }
+            set
+            {
+                if (!ReferenceEquals(_outExternalConnectors, value))
+                {
+                    var previousValue = _outExternalConnectors as FixupCollection<ExternalConnector>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupOutExternalConnectors;
+                    }
+                    _outExternalConnectors = value;
+                    var newValue = value as FixupCollection<ExternalConnector>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupOutExternalConnectors;
+                    }
+                }
+            }
+        }
+        private ICollection<ExternalConnector> _outExternalConnectors;
+    
+        public virtual ICollection<ExternalConnector> InExternalConnectors
+        {
+            get
+            {
+                if (_inExternalConnectors == null)
+                {
+                    var newCollection = new FixupCollection<ExternalConnector>();
+                    newCollection.CollectionChanged += FixupInExternalConnectors;
+                    _inExternalConnectors = newCollection;
+                }
+                return _inExternalConnectors;
+            }
+            set
+            {
+                if (!ReferenceEquals(_inExternalConnectors, value))
+                {
+                    var previousValue = _inExternalConnectors as FixupCollection<ExternalConnector>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupInExternalConnectors;
+                    }
+                    _inExternalConnectors = value;
+                    var newValue = value as FixupCollection<ExternalConnector>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupInExternalConnectors;
+                    }
+                }
+            }
+        }
+        private ICollection<ExternalConnector> _inExternalConnectors;
 
         #endregion
 
@@ -224,6 +288,50 @@ namespace Soheil.Model
                     if (ReferenceEquals(item.StateStationActivity, this))
                     {
                         item.StateStationActivity = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupOutExternalConnectors(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ExternalConnector item in e.NewItems)
+                {
+                    item.StartSSA = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (ExternalConnector item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.StartSSA, this))
+                    {
+                        item.StartSSA = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupInExternalConnectors(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ExternalConnector item in e.NewItems)
+                {
+                    item.EndSSA = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (ExternalConnector item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.EndSSA, this))
+                    {
+                        item.EndSSA = null;
                     }
                 }
             }

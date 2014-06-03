@@ -10,11 +10,15 @@ namespace Soheil.Core.ViewModels.PP.Report
 	public class ProcessVm : PPItemVm
 	{
 		public event Action LayoutChanged;
+		/// <summary>
+		/// Gets the process model
+		/// </summary>
 		public Model.Process Model { get; protected set; }
-		public override int Id
-		{
-			get { return Model.Id; }
-		}
+		/// <summary>
+		/// Gets the process Id
+		/// </summary>
+		public override int Id { get { return Model.Id; } }
+
 		/// <summary>
 		/// Creates an instance of <see cref="ProcessVm"/> for the given model
 		/// </summary>
@@ -28,6 +32,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 			initializeCommands();
 		}
+
+		/// <summary>
+		/// Gets or sets the bindable process TargetCount
+		/// </summary>
 		public int TargetPoint
 		{
 			get { return (int)GetValue(TargetPointProperty); }

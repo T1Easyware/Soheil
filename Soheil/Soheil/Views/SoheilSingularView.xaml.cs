@@ -383,5 +383,10 @@ namespace Soheil.Views
             }
         }
         #endregion
+
+		private void line_Loaded(object sender, RoutedEventArgs e)
+		{
+
+		}
     }
 }

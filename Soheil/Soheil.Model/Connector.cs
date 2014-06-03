@@ -24,6 +24,13 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual bool HasBuffer
+        {
+            get { return _hasBuffer; }
+            set { _hasBuffer = value; }
+        }
+        private bool _hasBuffer = false;
 
         #endregion
 

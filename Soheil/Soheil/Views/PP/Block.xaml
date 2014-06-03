@@ -11,6 +11,7 @@
 			 x:Name="root"  MouseEnter="MouseEnters" MouseLeave="MouseLeaves"
              mc:Ignorable="d" d:DesignHeight="50" d:DesignWidth="300">
 	<UserControl.Resources>
+		
 		<Style x:Key="taskOverlay" TargetType="Button">
 			<Setter Property="OverridesDefaultStyle" Value="True"/>
 			<Setter Property="Template">
@@ -447,9 +448,9 @@
 						<DataTrigger.EnterActions>
 							<BeginStoryboard x:Name="bsb">
 								<Storyboard>
-									<DoubleAnimation Storyboard.TargetProperty="Tag.GradientStops[1].Offset" From="-.4" To="1.4" Duration="0:0:1" AutoReverse="False" RepeatBehavior="Forever"/>
-									<ColorAnimation  Storyboard.TargetProperty="Tag.GradientStops[2].Color"  From="Transparent" To="#BFFF" Duration="0:0:.5" AutoReverse="True" RepeatBehavior="Forever"/>
-									<DoubleAnimation Storyboard.TargetProperty="Tag.GradientStops[3].Offset" From="1.4" To="-.4" Duration="0:0:1" AutoReverse="False" RepeatBehavior="Forever"/>
+									<DoubleAnimation DecelerationRatio="1" Storyboard.TargetProperty="Tag.GradientStops[1].Offset" Duration="0:0:2" AutoReverse="False" RepeatBehavior="Forever" From="-.4" To="1.4"/>
+									<ColorAnimation  DecelerationRatio="0" Storyboard.TargetProperty="Tag.GradientStops[2].Color"  Duration="0:0:1"  AutoReverse="True" RepeatBehavior="Forever" From="Transparent" To="#BFFF"/>
+									<DoubleAnimation DecelerationRatio="1" Storyboard.TargetProperty="Tag.GradientStops[3].Offset" Duration="0:0:2" AutoReverse="False" RepeatBehavior="Forever" From="1.4" To="-.4"/>
 								</Storyboard>
 							</BeginStoryboard>
 						</DataTrigger.EnterActions>

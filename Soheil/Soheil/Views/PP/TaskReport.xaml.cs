@@ -28,16 +28,17 @@ namespace Soheil.Views.PP
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Bindable Parent
-		/// </summary>
-		public TaskVm Task
+		TaskVm _task;
+		public FrameworkElement TaskUI
 		{
-			get { return (TaskVm)GetValue(TaskProperty); }
-			set { SetValue(TaskProperty, value); }
+			get { return (FrameworkElement)GetValue(TaskUIProperty); }
+			set { SetValue(TaskUIProperty, value); }
 		}
-		public static readonly DependencyProperty TaskProperty =
-			DependencyProperty.Register("Task", typeof(TaskVm), typeof(TaskReport), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty TaskUIProperty =
+			DependencyProperty.Register("TaskUI", typeof(FrameworkElement), typeof(TaskReport),
+			new UIPropertyMetadata(null, (d, e) => ((TaskReport)d)._task = e.NewValue.GetDataContext<TaskVm>()));
+
+
 		/// <summary>
 		/// Set this member from the containing PPTable
 		/// <para>This member is used to fetch some info from its parent</para>
@@ -54,10 +55,9 @@ namespace Soheil.Views.PP
 		private double _onThumbStartX;
 		private double getDeltaOnLine(object sender)
 		{
-			var line = Tag as FrameworkElement;
-			if (line != null)
+			if (TaskUI != null)
 			{
-				return Mouse.GetPosition(line).X;
+				return Mouse.GetPosition(TaskUI).X;
 			}
 			return double.NaN;
 		}
@@ -77,7 +77,7 @@ namespace Soheil.Views.PP
 			var onLineX = getDeltaOnLine(sender);
 			var taskReport = sender.GetDataContext<Soheil.Core.ViewModels.PP.Report.TaskReportVm>();
 			if (taskReport != null && !double.IsNaN(onLineX))
-				taskReport.StartDateTime = Task.StartDateTime.Add(
+				taskReport.StartDateTime = _task.StartDateTime.Add(
 					TimeSpan.FromHours((onLineX - _onThumbStartX) / PPTable.HourZoom));
 		}
 
@@ -102,7 +102,7 @@ namespace Soheil.Views.PP
 			var onLineX = getDeltaOnLine(sender);
 			var taskReport = sender.GetDataContext<Soheil.Core.ViewModels.PP.Report.TaskReportVm>();
 			if (taskReport != null && !double.IsNaN(onLineX))
-				taskReport.EndDateTime = Task.StartDateTime.Add(
+				taskReport.EndDateTime = _task.StartDateTime.Add(
 					TimeSpan.FromHours((onLineX - _onThumbStartX) / PPTable.HourZoom));
 		}
 
