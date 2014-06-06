@@ -22,6 +22,12 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		DataServices.TaskReportDataService _taskReportDataService;
 
+		public TaskReportVm PreviousReport { get; set; }
+		public TaskReportVm NextReport { get; set; }
+		public DateTime LowerBound { get { return PreviousReport == null ? Model.Task.StartDateTime : PreviousReport.EndDateTime; } }
+		public DateTime UpperBound { get { return NextReport == null ? Model.Task.EndDateTime : NextReport.StartDateTime; } }
+
+
 		/// <summary>
 		/// Gets or sets a value that indicates whether user is dragging thumbs to change datetimes
 		/// </summary>
@@ -34,16 +40,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 		{
 			Model = model;
 			UOW = uow;
-			if (model != null)
-			{
-				TargetPoint = Model.TaskReportTargetPoint;
-				ProducedG1 = Model.TaskProducedG1;
-				DurationSeconds = Model.ReportDurationSeconds;
-				StartDateTime = Model.ReportStartDateTime;
-				//StartTime = Model.ReportStartDateTime.TimeOfDay;
-				EndDateTime = Model.ReportEndDateTime;
-				//EndTime = Model.ReportEndDateTime.TimeOfDay;
-			}
+			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
+
+			TargetPoint = Model.TaskReportTargetPoint;
+			ProducedG1 = Model.TaskProducedG1;
+			DurationSeconds = Model.ReportDurationSeconds;
+			StartDateTime = Model.ReportStartDateTime;
+			EndDateTime = Model.ReportEndDateTime;
 
 			CanUserEditTaskTPAndG1 = true;
 			_isInInitializingPhase = false;
@@ -64,14 +67,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 
 		#region Start/End/Duration
-		//ByEndDate Dependency Property
-		public bool ByEndDate
-		{
-			get { return (bool)GetValue(ByEndDateProperty); }
-			set { SetValue(ByEndDateProperty, value); }
-		}
-		public static readonly DependencyProperty ByEndDateProperty =
-			DependencyProperty.Register("ByEndDate", typeof(bool), typeof(TaskReportVm), new UIPropertyMetadata(false));
 		//DurationSeconds Dependency Property
 		public int DurationSeconds
 		{
@@ -87,6 +82,21 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 				vm.EndDateTime = vm.StartDateTime.AddSeconds((int)e.NewValue);
 				d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue));
+			}, (d, v) =>
+			{
+				var vm = (TaskReportVm)d;
+				var val = (int)v;
+				//if very small => set to smallest unit
+				if (val < 300)
+				{
+					return 300;
+				}
+				//if very large => set to Whole space
+				if (val > (vm.UpperBound - vm.LowerBound).TotalSeconds)
+				{
+					val = (int)(vm.UpperBound - vm.LowerBound).TotalSeconds;
+				}
+				return val;
 			}));
 		//Duration Dependency Property
 		public static readonly DependencyProperty DurationProperty =
@@ -99,24 +109,74 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty StartDateTimeProperty =
 			DependencyProperty.Register("StartDateTime", typeof(DateTime), typeof(TaskReportVm),
+			new UIPropertyMetadata(DateTime.Now,
+				(d, e) => ((TaskReportVm)d).TaskReportVm_StartDateTimeChanged((DateTime)e.NewValue),
+				(d, v) =>
+				{
+					var vm = d as TaskReportVm;
+					var val = (DateTime)v;
+					//check lower bound
+					if (val < vm.LowerBound)
+					{
+						val = vm.LowerBound;
+					}
+					else if (val > vm.Model.ReportEndDateTime.AddSeconds(-300))
+					{
+						val = vm.Model.ReportEndDateTime.AddSeconds(-300);
+					}
+
+					if (val.AddSeconds(vm.Model.ReportDurationSeconds) > vm.UpperBound)
+					{
+						val = vm.UpperBound.AddSeconds(-vm.Model.ReportDurationSeconds);
+					}
+
+					if (vm.IsUserDrag)
+					{
+						return val.Date.Add(new TimeSpan(val.Hour, SoheilFunctions.RoundFiveMinutes(val.Minute), 0));
+					}
+					return val;
+				}));
+		void TaskReportVm_StartDateTimeChanged(DateTime newVal)
+		{
+			//update Model, EndDateTime, StartDate & StartTime
+			if (!_isInInitializingPhase)
+			{
+				//update Model
+				Model.ReportStartDateTime = newVal;
+
+				//Set EndDateTime
+				EndDateTime = newVal.AddSeconds(Model.ReportDurationSeconds);
+
+				_isInInitializingPhase = true;
+				SetValue(StartTimeProperty, newVal.TimeOfDay);
+				SetValue(StartDateProperty, newVal.Date);
+				_isInInitializingPhase = false;
+			}
+			else
+			{
+				//update only startTime & startDate
+				SetValue(StartTimeProperty, newVal.TimeOfDay);
+				SetValue(StartDateProperty, newVal.Date);
+			}
+		}
+		public static readonly DependencyProperty StartDateProperty =
+			DependencyProperty.Register("StartDate", typeof(DateTime), typeof(TaskReportVm),
 			new UIPropertyMetadata(DateTime.Now, (d, e) =>
 			{
 				var vm = d as TaskReportVm;
+				if (vm._isInInitializingPhase) return;
 				var val = (DateTime)e.NewValue;
-				if (val == null) return;
-			}, (d, v) =>
+				vm.StartDateTime = val.Add((TimeSpan)d.GetValue(StartTimeProperty));
+			}));
+		public static readonly DependencyProperty StartTimeProperty =
+			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(TaskReportVm),
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as TaskReportVm;
-				var val = (DateTime)v;
-				if (val >= vm.EndDateTime) return vm.EndDateTime.AddMinutes(-10);
-				if (val < vm.Model.Task.StartDateTime) return vm.Model.Task.StartDateTime;
-
-				if (vm.IsUserDrag)
-				{
-					return val.Date.Add(new TimeSpan(val.Hour, SoheilFunctions.RoundFiveMinutes(val.Minute), 0));
-				}
-				return val;
-			}));
+				if (vm._isInInitializingPhase) return;
+				var val = (TimeSpan)e.NewValue;
+				vm.StartDateTime = ((DateTime)d.GetValue(StartDateProperty)).Add(val);
+			})); 
 		//EndDateTime Dependency Property
 		public DateTime EndDateTime
 		{
@@ -125,26 +185,71 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty EndDateTimeProperty =
 			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(TaskReportVm),
+			new UIPropertyMetadata(DateTime.Now,
+				(d, e) => ((TaskReportVm)d).TaskReportVm_EndDateTimeChanged((DateTime)e.NewValue),
+				(d, v) =>
+				{
+					var vm = d as TaskReportVm;
+					var val = (DateTime)v;
+					//check upper bound
+					if (val > vm.UpperBound)
+					{
+						val = vm.UpperBound;
+					}
+					else if (val < vm.Model.ReportStartDateTime.AddSeconds(300))
+					{
+						val = vm.Model.ReportStartDateTime.AddSeconds(300);
+					}
+
+					if (vm.IsUserDrag)
+					{
+						var duration = (val - vm.StartDateTime).TotalSeconds;								//+--+--+--+-
+						var fixedDuration = vm.TargetPoint * (int)Math.Floor(duration / vm.TargetPoint);	//+--+--+--+
+						return vm.StartDateTime.AddSeconds(fixedDuration);
+					}
+					return val;
+				}));
+		void TaskReportVm_EndDateTimeChanged(DateTime newVal)
+		{
+			//update Model, DurationSeconds, EndDate & EndTime
+			if (!_isInInitializingPhase)
+			{
+				//update Model
+				Model.ReportEndDateTime = newVal;
+
+				//update DurationSeconds
+				DurationSeconds = (int)(newVal - Model.ReportStartDateTime).TotalSeconds;
+
+				_isInInitializingPhase = true;
+				SetValue(EndTimeProperty, newVal.TimeOfDay);
+				SetValue(EndDateProperty, newVal.Date);
+				_isInInitializingPhase = false;
+			}
+			else
+			{
+				//update only EndTime & EndDate
+				SetValue(EndTimeProperty, newVal.TimeOfDay);
+				SetValue(EndDateProperty, newVal.Date);
+			}
+		}
+		public static readonly DependencyProperty EndDateProperty =
+			DependencyProperty.Register("EndDate", typeof(DateTime), typeof(TaskReportVm),
 			new UIPropertyMetadata(DateTime.Now, (d, e) =>
 			{
 				var vm = d as TaskReportVm;
+				if (vm._isInInitializingPhase) return;
 				var val = (DateTime)e.NewValue;
-				if (val == null) return;
-			}, (d, v) =>
+				vm.EndDateTime = val.Add((TimeSpan)d.GetValue(EndTimeProperty));
+			}));
+		public static readonly DependencyProperty EndTimeProperty =
+			DependencyProperty.Register("EndTime", typeof(TimeSpan), typeof(TaskReportVm),
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as TaskReportVm;
-				var val = (DateTime)v;
-				if (val <= vm.StartDateTime) return vm.StartDateTime.AddMinutes(10);
-				if (val > vm.Model.Task.EndDateTime) return vm.Model.Task.EndDateTime;
-
-				if (vm.IsUserDrag)
-				{
-					var duration = (val - vm.StartDateTime).TotalSeconds;								//+--+--+--+-
-					var fixedDuration = vm.TargetPoint * (int)Math.Floor(duration / vm.TargetPoint);	//+--+--+--+
-					return vm.StartDateTime.AddSeconds(fixedDuration);
-				}
-				return val;
-			}));
+				if (vm._isInInitializingPhase) return;
+				var val = (TimeSpan)e.NewValue;
+				vm.EndDateTime = ((DateTime)d.GetValue(EndDateProperty)).Add(val);
+			})); 
 		#endregion
 
 		#region Count

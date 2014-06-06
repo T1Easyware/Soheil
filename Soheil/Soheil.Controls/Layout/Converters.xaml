@@ -94,6 +94,7 @@
 
 	<ppconv:IsEqualToBrushConverter x:Key="isEqualToBrushConverter"/>
 	<ppconv:BooleanToBrushConverter x:Key="booleanToBrushConverter"/>
+	<ppconv:BooleanToOpacityConverter x:Key="booleanToOpacityConverter"/>
 	<ppconv:ColorFixer x:Key="colorFixer"/>
 	<ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>
 	<ppconv:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>

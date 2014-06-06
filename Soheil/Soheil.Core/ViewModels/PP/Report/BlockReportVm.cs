@@ -78,7 +78,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 						var rowVm = activityVm.SsaRowList.FirstOrDefault(x => x.Id == process.StateStationActivity.Id);
 						if (rowVm == null) continue;
 						//create processVm
-						var processVm = new ProcessVm(process);
+						var processVm = new ProcessVm(process, UOW);
 						processVm.LayoutChanged += ReloadReports;
 						rowVm.ProcessList.Add(processVm);
 						//load process reports

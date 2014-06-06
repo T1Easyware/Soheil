@@ -37,8 +37,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		public ProcessReportVm PreviousReport { get; set; }
 		public ProcessReportVm NextReport { get; set; }
-		public DateTime LowerBound { get { return PreviousReport == null ? StartDateTime : PreviousReport.EndDateTime; } }
-		public DateTime UpperBound { get { return NextReport == null ? EndDateTime : NextReport.StartDateTime; } }
+		public DateTime LowerBound { get { return PreviousReport == null ? Model.Process.StartDateTime : PreviousReport.EndDateTime; } }
+		public DateTime UpperBound { get { return NextReport == null ? Model.Process.EndDateTime : NextReport.StartDateTime; } }
 
 		public float CycleTime { get; protected set; }
 
@@ -135,7 +135,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 		#endregion
 
 
-		#region DpProperties and callbacks
+		#region DepProperties and callbacks
 		/// <summary>
 		/// Gets or sets the bindable number of produced Grade 1 products for this process report
 		/// </summary>
@@ -167,8 +167,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 				var vm = (ProcessReportVm)d;
 				if (vm._isInInitializingPhase) return;
 				var val = (int)e.NewValue;
+
+				//update Model
 				vm.Model.ProcessReportTargetPoint = val;
-				vm.DurationSeconds = (int)vm.CycleTime * val;
+
+				//set Duration if [÷]
+				if(vm.IsDurationDividable)
+					vm.DurationSeconds = (int)vm.CycleTime * val;
+
 			}, (d, v) =>
 			{
 				var vm = (ProcessReportVm)d;
@@ -268,16 +274,21 @@ namespace Soheil.Core.ViewModels.PP.Report
 		{
 			if (!_isInInitializingPhase)
 			{
-				var tp = (int)(newVal / CycleTime);
-				var duration = (int)CycleTime * TargetPoint;
-				Model.DurationSeconds = duration;
+				//update TargetPoint
+				TargetPoint = (int)(newVal / CycleTime);
 
-				//set TP if [÷]
+				//update DurationSeconds
 				if (IsDurationDividable)
 				{
-					TargetPoint = tp;
+					Model.DurationSeconds = (int)CycleTime * TargetPoint;
 				}
-				EndDateTime = StartDateTime.AddSeconds(duration);
+				else
+				{
+					Model.DurationSeconds = newVal;
+				}
+
+				//update EndDateTime
+				EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);
 			}
 		}
 		#endregion
@@ -304,28 +315,31 @@ namespace Soheil.Core.ViewModels.PP.Report
 					{
 						val = vm.LowerBound;
 					}
-					//coerce if [÷]
-					if (vm.IsDurationDividable)
+					else if (val > vm.Model.EndDateTime.AddSeconds(-vm.CycleTime))
 					{
-						int dur = vm.getDividableSeconds(vm.EndDateTime - val);
-						return vm.EndDateTime.AddSeconds(-dur);
+						val = vm.Model.EndDateTime.AddSeconds(-vm.CycleTime);
 					}
-					else
+
+					if(val.AddSeconds(vm.Model.DurationSeconds) > vm.UpperBound)
 					{
-						//don't coerce
-						return val;
+						val = vm.UpperBound.AddSeconds(-vm.Model.DurationSeconds);
 					}
+					return val;
 				}));
 		void ProcessReportVm_StartDateTimeChanged(DateTime newVal)
 		{
 			//update Model, EndDateTime, StartDate & StartTime
 			if (!_isInInitializingPhase)
 			{
-				_isInInitializingPhase = true;
+				//update Model
 				Model.StartDateTime = newVal;
+
+				//Set EndDateTime
+				EndDateTime = newVal.AddSeconds(Model.DurationSeconds);
+
+				_isInInitializingPhase = true;
 				SetValue(StartTimeProperty, newVal.TimeOfDay);
 				SetValue(StartDateProperty, newVal.Date);
-				EndDateTime = newVal.AddSeconds(DurationSeconds);
 				_isInInitializingPhase = false;
 			}
 			else
@@ -344,7 +358,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (DateTime)e.NewValue;
 				vm.StartDateTime = val.Add((TimeSpan)d.GetValue(StartTimeProperty));
-				vm.DurationSeconds = (int)(vm.Model.EndDateTime - vm.Model.StartDateTime).TotalSeconds;
 			}));
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessReportVm),
@@ -353,51 +366,69 @@ namespace Soheil.Core.ViewModels.PP.Report
 				var vm = d as ProcessReportVm;
 				if (vm._isInInitializingPhase) return;
 				var val = (TimeSpan)e.NewValue;
-				vm.StartDateTime = ((DateTime)d.GetValue(StartTimeProperty)).Add(val);
-				vm.DurationSeconds = (int)(vm.Model.EndDateTime - vm.Model.StartDateTime).TotalSeconds;
+				vm.StartDateTime = ((DateTime)d.GetValue(StartDateProperty)).Add(val);
 			})); 
 		#endregion
 
 		#region End
+		/// <summary>
+		/// Gets or sets the bindable Start dateTime
+		/// </summary>
 		public DateTime EndDateTime
 		{
-			get
-			{
-				return Model.EndDateTime;
-			}
-			set
-			{
-				//check upper bound
-				if (value > UpperBound)
+			get { return (DateTime)GetValue(EndDateTimeProperty); }
+			set { SetValue(EndDateTimeProperty, value); }
+		}
+		public static readonly DependencyProperty EndDateTimeProperty =
+			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(ProcessReportVm),
+			new UIPropertyMetadata(DateTime.Now,
+				(d, e) => ((ProcessReportVm)d).ProcessReportVm_EndDateTimeChanged((DateTime)e.NewValue),
+				(d, v) =>
 				{
-					value = UpperBound;
-				}
-				//coerce if [÷]
-				if (IsDurationDividable)
-				{
-					int dur = getDividableSeconds(value - StartDateTime);
-					value = StartDateTime.AddSeconds(dur);
-				}
-
+					var vm = (ProcessReportVm)d;
+					var val = (DateTime)v;
+					//check upper bound
+					if (val > vm.UpperBound)
+					{
+						val = vm.UpperBound;
+					}
+					else if (val < vm.Model.StartDateTime.AddSeconds(vm.CycleTime))
+					{
+						val = vm.Model.StartDateTime.AddSeconds(vm.CycleTime);
+					}
+					//coerce if [÷]
+					if (vm.IsDurationDividable)
+					{
+						int dur = vm.getDividableSeconds(val - vm.Model.StartDateTime);
+						return vm.Model.StartDateTime.AddSeconds(dur);
+					}
+					else
+					{
+						//don't coerce
+						return val;
+					}
+				}));
+		void ProcessReportVm_EndDateTimeChanged(DateTime newVal)
+		{
+			//update Model, DurationSeconds, EndDate & EndTime
+			if (!_isInInitializingPhase)
+			{
 				//update Model
-				Model.EndDateTime = value;
+				Model.EndDateTime = newVal;
 
-				//update EndDate & EndTime
-				if (!_isInInitializingPhase)
-				{
-					_isInInitializingPhase = true;
-					SetValue(EndTimeProperty, value.TimeOfDay);
-					SetValue(EndDateProperty, value.Date);
-					_isInInitializingPhase = false;
-				}
-				else
-				{
-					SetValue(EndTimeProperty, value.TimeOfDay);
-					SetValue(EndDateProperty, value.Date);
-				}
+				//update DurationSeconds
+				DurationSeconds = (int)(newVal - Model.StartDateTime).TotalSeconds;
 
-				//update duration
-				DurationSeconds = (int)(value - Model.StartDateTime).TotalSeconds;
+				_isInInitializingPhase = true;
+				SetValue(EndTimeProperty, newVal.TimeOfDay);
+				SetValue(EndDateProperty, newVal.Date);
+				_isInInitializingPhase = false;
+			}
+			else
+			{
+				//update only EndTime & EndDate
+				SetValue(EndTimeProperty, newVal.TimeOfDay);
+				SetValue(EndDateProperty, newVal.Date);
 			}
 		}
 		public static readonly DependencyProperty EndDateProperty =
@@ -478,14 +509,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 		#endregion
 
 		#region Other Members
-		public bool ByEndDate
-		{
-			get { return (bool)GetValue(ByEndDateProperty); }
-			set { SetValue(ByEndDateProperty, value); }
-		}
-		public static readonly DependencyProperty ByEndDateProperty =
-			DependencyProperty.Register("ByEndDate", typeof(bool), typeof(ProcessReportVm), new UIPropertyMetadata(false));
-
 		/// <summary>
 		/// Gets or sets a bindable value that indicates whether this process report is selected
 		/// </summary>

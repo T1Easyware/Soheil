@@ -27,6 +27,16 @@ namespace Soheil.Views.PP
 			InitializeComponent();
 		}
 
+		private static System.Windows.Controls.Primitives.Popup _openedPopup;
+		private static void openPopup(System.Windows.Controls.Primitives.Popup newpopup)
+		{
+			if (_openedPopup != null)
+				_openedPopup.IsOpen = false;
+			if (newpopup != null)
+				newpopup.IsOpen = true;
+			_openedPopup = newpopup;
+		}
+
 		//PPTable Dependency Property
 		public Soheil.Core.ViewModels.PP.PPTableVm PPTable
 		{
@@ -82,7 +92,7 @@ namespace Soheil.Views.PP
 			sender.GetDataContext<ProcessReportVm>().IsUserDrag = false;
 			startPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
 			startPopup.PlacementTarget = sender as UIElement;
-			startPopup.IsOpen = true;
+			openPopup(startPopup);
 		}
 
 		private void endDragStart(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
@@ -107,8 +117,12 @@ namespace Soheil.Views.PP
 			sender.GetDataContext<ProcessReportVm>().IsUserDrag = false;
 			endPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
 			endPopup.PlacementTarget = sender as UIElement;
-			endPopup.IsOpen = true;
+			openPopup(endPopup);
 		}
 
+		private void PopupCloseButton_Click(object sender, RoutedEventArgs e)
+		{
+			openPopup(null);
+		}
 	}
 }

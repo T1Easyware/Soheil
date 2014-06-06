@@ -551,27 +551,7 @@
 				</ContextMenu>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="Background">
-			<Setter.Value>
-				<SolidColorBrush Color="#C8FF" Opacity="0.1"/>
-			</Setter.Value>
-		</Setter>
-		<Style.Triggers>
-			<EventTrigger RoutedEvent="MouseEnter">
-				<BeginStoryboard>
-					<Storyboard Duration="0:0:0.1">
-						<DoubleAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Opacity)" To="1" Duration="0:0:0.1"/>
-					</Storyboard>
-				</BeginStoryboard>
-			</EventTrigger>
-			<EventTrigger RoutedEvent="MouseLeave">
-				<BeginStoryboard>
-					<Storyboard Duration="0:0:0.2">
-						<DoubleAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Opacity)" To="0.1" Duration="0:0:0.2"/>
-					</Storyboard>
-				</BeginStoryboard>
-			</EventTrigger>
-		</Style.Triggers>
+		<Setter Property="Background" Value="Black"/>
 	</Style>
 	<Style TargetType="Border" x:Key="startBoundaryStyle" BasedOn="{StaticResource boundaryStyle}">
 		<Setter Property="Width" Value="30"/>
@@ -579,6 +559,22 @@
 		<Setter Property="BorderThickness" Value="3,0,0,2"/>
 		<Setter Property="CornerRadius" Value="0,0,0,3"/>
 		<Setter Property="TextBlock.FontSize" Value="10"/>
+		<Style.Triggers>
+			<EventTrigger RoutedEvent="MouseEnter">
+				<BeginStoryboard>
+					<Storyboard Duration="0:0:0.1">
+						<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#666" Duration="0:0:0.1"/>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+			<EventTrigger RoutedEvent="MouseLeave">
+				<BeginStoryboard>
+					<Storyboard Duration="0:0:0.2">
+						<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="Black" Duration="0:0:0.2"/>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+		</Style.Triggers>
 	</Style>
 	<Style TargetType="Border" x:Key="endBoundaryStyle" BasedOn="{StaticResource boundaryStyle}">
 		<Setter Property="Width" Value="30"/>
@@ -586,6 +582,22 @@
 		<Setter Property="BorderThickness" Value="0,0,3,2"/>
 		<Setter Property="CornerRadius" Value="0,0,3,0"/>
 		<Setter Property="TextBlock.FontSize" Value="10"/>
+		<Style.Triggers>
+			<EventTrigger RoutedEvent="MouseEnter">
+				<BeginStoryboard>
+					<Storyboard Duration="0:0:0.1">
+						<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#666" Duration="0:0:0.1"/>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+			<EventTrigger RoutedEvent="MouseLeave">
+				<BeginStoryboard>
+					<Storyboard Duration="0:0:0.2">
+						<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="Black" Duration="0:0:0.2"/>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+		</Style.Triggers>
 	</Style>
 
 </ResourceDictionary>

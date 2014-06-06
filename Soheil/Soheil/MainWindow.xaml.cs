@@ -74,7 +74,7 @@ namespace Soheil
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
 
-			if (Environment.UserName == "Bizhan")
+			if (Environment.UserName == "Bizhan" || Environment.UserName == "Bizz")
 			{
 				SingularList = new Core.ViewModels.PP.PPTableVm(AccessType.Full);
 				chrometabs.AddTab(CreateSingularTab(SoheilEntityType.ProductPlanTable), true);

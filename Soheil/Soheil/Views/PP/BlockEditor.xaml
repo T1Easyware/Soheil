@@ -42,7 +42,7 @@
 						<TextBlock Text="{Loc PPE_TaskTP}" FontSize="14" FontWeight="Bold" Foreground="White"/>
 						<Grid MinWidth="60" Margin="5,0">
 							<!-- TP -->
-							<TextBox Grid.Column="0" Text="{Binding BlockTargetPoint}" ToolTip="{Loc PPE_TaskTP}" TextAlignment="Right" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="0" Text="{Binding BlockTargetPoint, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Loc PPE_TaskTP}" TextAlignment="Right" VerticalAlignment="Center"/>
 							<Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
 						</Grid>
 					</WrapPanel>
