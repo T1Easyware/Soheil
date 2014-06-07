@@ -55,7 +55,20 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="selectedId">default guilty operator's Id</param>
 		private void AddOperator(FilterableItemVm[] operatorVms, int selectedId)
 		{
-			FilterBoxes.Add(FilterBoxVm.CreateForGuiltyOperators(this, selectedId, operatorVms));
+			var fb = FilterBoxVm.CreateForGuiltyOperators(this, selectedId, operatorVms);
+			fb.FilterBoxSelectedItemChanged += fb_FilterBoxSelectedItemChanged;
+			fb.FilterBoxDeleted += fb_FilterBoxDeleted;
+			FilterBoxes.Add(fb);
+		}
+
+		void fb_FilterBoxDeleted(FilterBoxVm arg1, FilterableItemVm arg2)
+		{
+			throw new NotImplementedException();
+		}
+
+		void fb_FilterBoxSelectedItemChanged(FilterBoxVm arg1, FilterableItemVm arg2)
+		{
+			throw new NotImplementedException();
 		}
 		/// <summary>
 		/// Creates an instance of FilterBoxVmCollection to be used as a collection of stoppage reports (cause)
@@ -89,6 +102,7 @@ namespace Soheil.Core.ViewModels.PP
 					}
 				}
 				parent.SelectedCode =  code;
+				parent.SelectCause(v.Id);
 			};
 			causeL2Box.FilterBoxSelectedItemChanged += (s, v) =>
 			{

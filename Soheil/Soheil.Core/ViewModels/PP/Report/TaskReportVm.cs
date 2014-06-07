@@ -48,23 +48,60 @@ namespace Soheil.Core.ViewModels.PP.Report
 			StartDateTime = Model.ReportStartDateTime;
 			EndDateTime = Model.ReportEndDateTime;
 
-			CanUserEditTaskTPAndG1 = true;
 			_isInInitializingPhase = false;
 			IsUserDrag = false;
 
 			initializeCommands();
 		}
 
-		private void SaveG1(int g1)
+		public void Save()
 		{
-			if (_isInInitializingPhase) return;
-			_taskReportDataService.UpdateG1(Id, g1);
+			if (_isInInitializingPhase || IsUserDrag) return;
+			UOW.Commit();
 		}
-		public void SaveTargetPoint(int tp)
+
+		#region DepProperties and callbacks
+
+		/// <summary>
+		/// Gets of sets the bindable ProducedG1 of task report
+		/// <para>Changing the value saves database</para>
+		/// </summary>
+		public int ProducedG1
 		{
-			if (_isInInitializingPhase) return;
-			_taskReportDataService.UpdateTargetPoint(Id, tp);
+			get { return (int)GetValue(ProducedG1Property); }
+			set { SetValue(ProducedG1Property, value); }
 		}
+		public static readonly DependencyProperty ProducedG1Property =
+			DependencyProperty.Register("ProducedG1", typeof(int), typeof(TaskReportVm),
+			new PropertyMetadata(0, (d, e) =>
+			{
+				var vm = d as TaskReportVm;
+				if (vm._isInInitializingPhase) return;
+
+				vm.Model.TaskProducedG1 = (int)e.NewValue;
+				vm.Save();
+			}));
+
+		/// <summary>
+		/// Gets of sets the bindable proportional target point of task report
+		/// <para>Changing the value saves database</para>
+		/// </summary>
+		public int TargetPoint
+		{
+			get { return (int)GetValue(TargetPointProperty); }
+			set { SetValue(TargetPointProperty, value); }
+		}
+		public static readonly DependencyProperty TargetPointProperty =
+			DependencyProperty.Register("TargetPoint", typeof(int), typeof(TaskReportVm),
+			new PropertyMetadata(0, (d, e) =>
+			{
+				var vm = d as TaskReportVm;
+				if (vm._isInInitializingPhase) return;
+
+				vm.Model.TaskReportTargetPoint = (int)e.NewValue;
+				vm.Save();
+			}));
+
 
 		#region Start/End/Duration
 		//DurationSeconds Dependency Property
@@ -80,8 +117,11 @@ namespace Soheil.Core.ViewModels.PP.Report
 				var vm = d as TaskReportVm;
 				if (vm._isInInitializingPhase) return;
 
+				vm.Model.ReportDurationSeconds = (int)e.NewValue;
 				vm.EndDateTime = vm.StartDateTime.AddSeconds((int)e.NewValue);
 				d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue));
+				vm.Save();
+
 			}, (d, v) =>
 			{
 				var vm = (TaskReportVm)d;
@@ -151,6 +191,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 				SetValue(StartTimeProperty, newVal.TimeOfDay);
 				SetValue(StartDateProperty, newVal.Date);
 				_isInInitializingPhase = false;
+
+				Save();
 			}
 			else
 			{
@@ -176,7 +218,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (TimeSpan)e.NewValue;
 				vm.StartDateTime = ((DateTime)d.GetValue(StartDateProperty)).Add(val);
-			})); 
+			}));
 		//EndDateTime Dependency Property
 		public DateTime EndDateTime
 		{
@@ -201,12 +243,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 						val = vm.Model.ReportStartDateTime.AddSeconds(300);
 					}
 
-					if (vm.IsUserDrag)
-					{
-						var duration = (val - vm.StartDateTime).TotalSeconds;								//+--+--+--+-
-						var fixedDuration = vm.TargetPoint * (int)Math.Floor(duration / vm.TargetPoint);	//+--+--+--+
-						return vm.StartDateTime.AddSeconds(fixedDuration);
-					}
 					return val;
 				}));
 		void TaskReportVm_EndDateTimeChanged(DateTime newVal)
@@ -249,90 +285,57 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (TimeSpan)e.NewValue;
 				vm.EndDateTime = ((DateTime)d.GetValue(EndDateProperty)).Add(val);
-			})); 
+			}));
 		#endregion
 
-		#region Count
-		/// <summary>
-		/// Gets of sets the bindable proportional target point of task report
-		/// <para>Changing the value saves database</para>
-		/// </summary>
-		public int TargetPoint
-		{
-			get { return (int)GetValue(TargetPointProperty); }
-			set { SetValue(TargetPointProperty, value); }
-		}
-		public static readonly DependencyProperty TargetPointProperty =
-			DependencyProperty.Register("TargetPoint", typeof(int), typeof(TaskReportVm),
-			new PropertyMetadata(0, (d, e) =>
-			{
-				var vm = d as TaskReportVm;
-				if (vm._isInInitializingPhase) return;
-				vm.SaveTargetPoint((int)e.NewValue);
-			}));
-
-		/// <summary>
-		/// Gets of sets the bindable ProducedG1 of task report
-		/// <para>Changing the value saves database</para>
-		/// </summary>
-		public int ProducedG1
-		{
-			get { return (int)GetValue(ProducedG1Property); }
-			set { SetValue(ProducedG1Property, value); }
-		}
-		public static readonly DependencyProperty ProducedG1Property =
-			DependencyProperty.Register("ProducedG1", typeof(int), typeof(TaskReportVm),
-			new PropertyMetadata(0, (d, e) =>
-			{
-				var vm = d as TaskReportVm;
-				if (vm._isInInitializingPhase) return;
-				vm.SaveG1((int)e.NewValue);
-			}));
-
-		/// <summary>
-		/// Gets of sets a bindable value that indicates whether user can edit task target point and produced g1
-		/// </summary>
-		public bool CanUserEditTaskTPAndG1
-		{
-			get { return (bool)GetValue(CanUserEditTaskTPAndG1Property); }
-			set { SetValue(CanUserEditTaskTPAndG1Property, value); }
-		}
-		public static readonly DependencyProperty CanUserEditTaskTPAndG1Property =
-			DependencyProperty.Register("CanUserEditTaskTPAndG1", typeof(bool), typeof(TaskReportVm), new UIPropertyMetadata(true));
-
-		/// <summary>
-		/// Gets a bindable width for grade 1 bar
-		/// <para>May differ from ProducedG1 in some cases</para>
-		/// </summary>
-		public int G1WidthToFit
-		{
-			get { return (int)GetValue(G1WidthToFitProperty); }
-			private set { SetValue(G1WidthToFitProperty, value); }
-		}
-		public static readonly DependencyProperty G1WidthToFitProperty =
-			DependencyProperty.Register("G1WidthToFit", typeof(int), typeof(TaskReportVm), new PropertyMetadata(0));
-		/// <summary>
-		/// Gets a bindable value that indicates the extra production count
-		/// </summary>
-		public int Excess
-		{
-			get { return (int)GetValue(ExcessProperty); }
-			private set { SetValue(ExcessProperty, value); }
-		}
-		public static readonly DependencyProperty ExcessProperty =
-			DependencyProperty.Register("Excess", typeof(int), typeof(TaskReportVm), new PropertyMetadata(0)); 
 		#endregion
+
 
 		#region Commands
 		void initializeCommands()
 		{
+			SaveCommand = new Commands.Command(o =>
+			{
+				UOW.Commit();
+			});
 			DeleteCommand = new Commands.Command(o =>
 			{
 				_taskReportDataService.DeleteModel(Model);
 				if (TaskReportDeleted != null)
 					TaskReportDeleted(this);
 			});
+			AutoDurationCommand = new Commands.Command(o =>
+			{
+				var otherReports = Model.Task.TaskReports.Where(x => x != Model);
+				var remainingTp = Model.Task.TaskTargetPoint - (otherReports.Any() ? otherReports.Sum(x => x.TaskReportTargetPoint) : 0);
+				var remainingDur = Model.Task.DurationSeconds - (otherReports.Any() ? otherReports.Sum(x => x.ReportDurationSeconds) : 0);
+				if (remainingTp <= 0 || remainingDur <= 0) 
+					DurationSeconds = 0;
+				else
+					DurationSeconds = (int)Math.Round(TargetPoint * remainingDur / (float)remainingTp);
+			});
+			AutoTargetPointCommand = new Commands.Command(o =>
+			{
+				var otherReports = Model.Task.TaskReports.Where(x => x != Model);
+				var remainingTp = Model.Task.TaskTargetPoint - (otherReports.Any() ? otherReports.Sum(x => x.TaskReportTargetPoint) : 0);
+				var remainingDur = Model.Task.DurationSeconds - (otherReports.Any() ? otherReports.Sum(x => x.ReportDurationSeconds) : 0);
+				if (remainingTp <= 0 || remainingDur <= 0)
+					TargetPoint = 0;
+				else
+					TargetPoint = (int)Math.Round(DurationSeconds * remainingTp / (float)remainingDur);
+			});
 		}
+
+		/// <summary>
+		/// Gets or sets a bindable command to save task report
+		/// </summary>
+		public Commands.Command SaveCommand
+		{
+			get { return (Commands.Command)GetValue(SaveCommandProperty); }
+			set { SetValue(SaveCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SaveCommandProperty =
+			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets a bindable command to delete task report
 		/// </summary>
@@ -343,6 +346,28 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty DeleteCommandProperty =
 			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets the bindable command to automatically set the TargetPoint of this report according to its DurationSeconds
+		/// </summary>
+		public Commands.Command AutoTargetPointCommand
+		{
+			get { return (Commands.Command)GetValue(AutoTargetPointCommandProperty); }
+			set { SetValue(AutoTargetPointCommandProperty, value); }
+		}
+		public static readonly DependencyProperty AutoTargetPointCommandProperty =
+			DependencyProperty.Register("AutoTargetPointCommand", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets the bindable command to automatically set the DurationSeconds of this report according to its TargetPoint
+		/// </summary>
+		public Commands.Command AutoDurationCommand
+		{
+			get { return (Commands.Command)GetValue(AutoDurationCommandProperty); }
+			set { SetValue(AutoDurationCommandProperty, value); }
+		}
+		public static readonly DependencyProperty AutoDurationCommandProperty =
+			DependencyProperty.Register("AutoDurationCommand", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
+
 		#endregion
 	}
 }

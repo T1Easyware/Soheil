@@ -47,12 +47,6 @@ namespace Soheil.Core.ViewModels
             set { _model.Code = value; OnPropertyChanged("Code"); }
         }
 
-		public bool IsG2
-		{
-			get { return _model.IsG2; }
-			set { _model.IsG2 = value; OnPropertyChanged("IsG2"); }
-		}
-
         public Status Status
         {
             get { return (Status) _model.Status; }
@@ -145,7 +139,7 @@ namespace Soheil.Core.ViewModels
         #region Static Methods
         public static Defection CreateNew(DefectionDataService dataService)
         {
-            int id = dataService.AddModel(new Defection { Name = "جدید", Code = string.Empty, IsG2=false, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now });
+            int id = dataService.AddModel(new Defection { Name = "جدید", Code = string.Empty, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now });
             return dataService.GetSingle(id);
         }
         #endregion

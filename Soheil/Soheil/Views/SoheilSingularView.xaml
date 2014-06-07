@@ -828,7 +828,7 @@
 							</ItemsControl.Template>
 						</ItemsControl>
 
-						
+
 						<!-- Month-Day-Hour-15min -->
 						<ItemsControl Grid.Row="2" Grid.Column="1" SizeChanged="Grid_SizeChanged" ItemsSource="{Binding Months}" Name="ic_months">
 							<ItemsControl.ItemsPanel>

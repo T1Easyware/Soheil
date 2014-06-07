@@ -16,12 +16,35 @@ namespace Soheil.Core.ViewModels.PP
 	public class FilterBoxVm : DependencyObject
 	{
 		/// <summary>
+		/// <para>in guilty operator used in DeleteCommand (removing this from Parent)</para>
+		/// </summary>
+		private FilterBoxVmCollection _parent;
+		/// <summary>
+		/// <para>in causes used in eventHandler (changing nextLevel's items)</para>
+		/// </summary>
+		private FilterBoxVm _nextLevel;
+		/// <summary>
+		/// Occurs when selected item is changed
+		/// </summary>
+		public event Action<FilterBoxVm, FilterableItemVm> FilterBoxSelectedItemChanged;
+		/// <summary>
+		/// Occurs when filterBox is deleted
+		/// </summary>
+		public event Action<FilterBoxVm, FilterableItemVm> FilterBoxDeleted;
+
+		/// <summary>
 		/// Creates an instance of FilterBoxVm
 		/// </summary>
 		public FilterBoxVm()
 		{
 			ClearCommand = new Commands.Command(o => SelectedItem = null);
-			DeleteCommand = new Commands.Command(o => { if (_parent != null) _parent.FilterBoxes.Remove(this); });
+			DeleteCommand = new Commands.Command(o =>
+			{
+				if (_parent != null) 
+					_parent.FilterBoxes.Remove(this);
+				if (FilterBoxDeleted != null)
+					FilterBoxDeleted(this, SelectedItem);
+			});
 		}
 		/// <summary>
 		/// Creates an instance of FilterBoxVm to be used as a collection of product defections
@@ -91,18 +114,7 @@ namespace Soheil.Core.ViewModels.PP
 			return vm;
 		}
 
-		/// <summary>
-		/// <para>in guilty operator used in DeleteCommand (removing this from Parent)</para>
-		/// </summary>
-		private FilterBoxVmCollection _parent;
-		/// <summary>
-		/// <para>in causes used in eventHandler (changing nextLevel's items)</para>
-		/// </summary>
-		private FilterBoxVm _nextLevel;
-		/// <summary>
-		/// For usage in StoppageReport (Cause LevelX)
-		/// </summary>
-		public event Action<FilterBoxVm, FilterableItemVm> FilterBoxSelectedItemChanged;
+
 
 
 		/// <summary>

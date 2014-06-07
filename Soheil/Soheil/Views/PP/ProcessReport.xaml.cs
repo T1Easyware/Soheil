@@ -58,7 +58,7 @@ namespace Soheil.Views.PP
 
 
 		private double _onThumbStartX;
-		private double getDeltaOnLine(object sender)
+		private double getDeltaOnLine()
 		{
 			var line = Tag as FrameworkElement;
 			if (line != null)
@@ -80,7 +80,7 @@ namespace Soheil.Views.PP
 
 		private void startDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
 		{
-			var onLineX = getDeltaOnLine(sender);
+			var onLineX = getDeltaOnLine();
 			var procReport = sender.GetDataContext<ProcessReportVm>();
 			if (procReport != null && !double.IsNaN(onLineX))
 				procReport.StartDateTime = Process.StartDateTime.Add(
@@ -89,7 +89,13 @@ namespace Soheil.Views.PP
 
 		private void startDragEnd(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
 		{
-			sender.GetDataContext<ProcessReportVm>().IsUserDrag = false;
+			var procReport = sender.GetDataContext<ProcessReportVm>();
+			if (procReport != null)
+			{
+				procReport.IsUserDrag = false;
+				procReport.Save();
+			}
+
 			startPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
 			startPopup.PlacementTarget = sender as UIElement;
 			openPopup(startPopup);
@@ -105,7 +111,7 @@ namespace Soheil.Views.PP
 
 		private void endDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
 		{
-			var onLineX = getDeltaOnLine(sender);
+			var onLineX = getDeltaOnLine();
 			var procReport = sender.GetDataContext<ProcessReportVm>();
 			if (procReport != null && !double.IsNaN(onLineX))
 				procReport.EndDateTime = Process.StartDateTime.Add(
@@ -114,7 +120,13 @@ namespace Soheil.Views.PP
 
 		private void endDragEnd(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
 		{
-			sender.GetDataContext<ProcessReportVm>().IsUserDrag = false;
+			var procReport = sender.GetDataContext<ProcessReportVm>();
+			if (procReport != null)
+			{
+				procReport.IsUserDrag = false;
+				procReport.Save();
+			}
+
 			endPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
 			endPopup.PlacementTarget = sender as UIElement;
 			openPopup(endPopup);

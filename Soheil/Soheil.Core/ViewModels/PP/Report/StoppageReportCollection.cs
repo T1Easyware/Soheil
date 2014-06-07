@@ -29,9 +29,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 			});
 		}
 
-		//List Observable Collection
-		private ObservableCollection<StoppageReportVm> _list = new ObservableCollection<StoppageReportVm>();
+		
 		public ObservableCollection<StoppageReportVm> List { get { return _list; } }
+		private ObservableCollection<StoppageReportVm> _list = new ObservableCollection<StoppageReportVm>();
 		
 		public override void UpdateParentSumOfCount(int newValue)
 		{

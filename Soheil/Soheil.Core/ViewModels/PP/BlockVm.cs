@@ -124,9 +124,14 @@ namespace Soheil.Core.ViewModels.PP
 				}
 				//create/reload process reports
 				if (BlockReport == null)
-					BlockReport = new Report.BlockReportVm(this);
+				{
+					BlockReport = new Report.BlockReportVm(Model);
+					BlockReport.ProcessReportBuilderChanged += val => Parent.PPTable.CurrentProcessReportBuilder = val;
+				}
 				else
+				{
 					BlockReport.ReloadReports();
+				}
 			}
 			catch (Exception ex) { Message.AddEmbeddedException(ex.Message); }
 		}

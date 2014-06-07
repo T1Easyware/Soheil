@@ -24,7 +24,7 @@
 	</UserControl.Width>
 	<Grid Height="40">
 		<!-- process -->
-		<Border BorderThickness="1" Background="#3FFF" BorderBrush="Black" CornerRadius="3" ToolTip="برای ایجاد گزارش فعالیت کلیک کنید">
+		<Border BorderThickness="1" Background="#3FFF" BorderBrush="Black" CornerRadius="3" ToolTip="برای ایجاد گزارش فعالیت کلیک کنید" Margin="0,6">
 			<Border.Triggers>
 				<EventTrigger RoutedEvent="MouseEnter">
 					<BeginStoryboard>

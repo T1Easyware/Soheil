@@ -167,8 +167,8 @@
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="30"/>
-								<ColumnDefinition Width="40"/>
 								<ColumnDefinition Width="150"/>
+								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="70"/>
 								<ColumnDefinition Width="50"/>
@@ -180,10 +180,10 @@
 								<TextBlock Text="R" TextAlignment="Center" HorizontalAlignment="Center"/>
 							</ContentControl>
 							<ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
-								<TextBlock Text="خروجی" TextAlignment="Center" HorizontalAlignment="Center"/>
+								<TextBlock Text="نوع عیب" TextAlignment="Center" HorizontalAlignment="Center"/>
 							</ContentControl>
 							<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
-								<TextBlock Text="نوع مشکل" TextAlignment="Center" HorizontalAlignment="Center"/>
+								<TextBlock Text="{Loc txtIsDefection}" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" ToolTip="بروز عیب می تواند باعث تولید درجه 2 یا ضایعات شود"/>
 							</ContentControl>
 							<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
 								<TextBlock Text="زمان از دست رفته" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
@@ -206,7 +206,7 @@
 						</Grid>
 						<Grid DockPanel.Dock="Bottom" Background="#222" TextBlock.Foreground="Silver">
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="180"/>
+								<ColumnDefinition Width="190"/>
 								<ColumnDefinition Width="40"/>
 								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="70"/>
@@ -222,9 +222,9 @@
 								</DockPanel>
 							</Button>
 							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
-							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding DefectionReports.SumOfLostTime}" HorizontalAlignment="Center"/>
+							<CustomControls:DurationBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding DefectionReports.SumOfLostTime}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="3" Text="{Binding DefectionReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
-							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding DefectionReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>
+							<CustomControls:DurationBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding DefectionReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding DefectionReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- Defections List -->
@@ -234,8 +234,8 @@
 									<Grid Background="#222" TextBlock.Foreground="Silver">
 										<Grid.ColumnDefinitions>
 											<ColumnDefinition Width="30"/>
-											<ColumnDefinition Width="40"/>
 											<ColumnDefinition Width="150"/>
+											<ColumnDefinition Width="50"/>
 											<ColumnDefinition Width="100"/>
 											<ColumnDefinition Width="70"/>
 											<ColumnDefinition Width="50"/>
@@ -246,16 +246,14 @@
 										<ContentControl Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding Index}" TextAlignment="Center" HorizontalAlignment="Center"/>
 										</ContentControl>
-										<ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
-											<TextBlock x:Name="OTT" Text="---" TextAlignment="Center" HorizontalAlignment="Center"/>
-										</ContentControl>
 										<Canvas ClipToBounds="False">
 											<Button Opacity="0" HorizontalAlignment="Left" 
 																    x:Name="deleteDefectionReportButton" ToolTip="حذف گزارش کیفی" Command="{Binding DeleteCommand}">
 												<Image Style="{StaticResource Delete16Image}"/>
 											</Button>
 										</Canvas>
-										<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
+
+										<ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
 											<DockPanel>
 												<TextBlock DockPanel.Dock="Right" Foreground="Red" Text="!" Width="10"
 															    Visibility="{Binding ProductDefection.SelectedItem, Converter={StaticResource isNullToVisibility}}" 
@@ -267,8 +265,11 @@
 																    IsEditable="True"/>
 											</DockPanel>
 										</ContentControl>
+										<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
+											<CheckBox x:Name="OTT" IsChecked="{Binding IsG2, Converter={StaticResource inverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+										</ContentControl>
 										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-											<CustomControls:TimeBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
+											<CustomControls:DurationBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
 											<TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -277,7 +278,7 @@
 											<CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
 										</ContentControl>
 										<ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-											<CustomControls:TimeBox DurationSeconds="{Binding TimeEquivalent, Mode=TwoWay}" IsReadOnly="True"/>
+											<CustomControls:DurationBox DurationSeconds="{Binding TimeEquivalent, Mode=TwoWay}" IsReadOnly="True"/>
 										</ContentControl>
 										<ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding QuantityEquivalent}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -324,14 +325,6 @@
 											</EventTrigger>
 										</Grid.Triggers>
 									</Grid>
-									<DataTemplate.Triggers>
-										<DataTrigger Binding="{Binding ProductDefection.SelectedItem.ViewModel.IsG2}" Value="True">
-											<Setter TargetName="OTT" Property="Text" Value="درجه 2"/>
-										</DataTrigger>
-										<DataTrigger Binding="{Binding ProductDefection.SelectedItem.ViewModel.IsG2}" Value="False">
-											<Setter TargetName="OTT" Property="Text" Value="ضایعات"/>
-										</DataTrigger>
-									</DataTemplate.Triggers>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>
@@ -406,9 +399,9 @@
 								</DockPanel>
 							</Button>
 							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
-							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding StoppageReports.SumOfLostTime}" HorizontalAlignment="Center"/>
+							<CustomControls:DurationBox IsReadOnly="True" Margin="2" Grid.Column="2" DurationSeconds="{Binding StoppageReports.SumOfLostTime}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="3" Text="{Binding StoppageReports.SumOfLostCount}" TextAlignment="Center" HorizontalAlignment="Center"/>
-							<CustomControls:TimeBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding StoppageReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>
+							<CustomControls:DurationBox IsReadOnly="True" Margin="2" Grid.Column="5" DurationSeconds="{Binding StoppageReports.SumOfTimeEquivalent}" HorizontalAlignment="Center"/>
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding StoppageReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- Stoppages List -->
@@ -458,7 +451,7 @@
 											<TextBox Text="{Binding SelectedCode}" TextChanged="CausesSelectedCode_TextChanged" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="25"/>
 										</ContentControl>
 										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
-											<CustomControls:TimeBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
+											<CustomControls:DurationBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
 											<TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
@@ -467,7 +460,7 @@
 											<CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
 										</ContentControl>
 										<ContentControl Grid.Column="6" Template="{StaticResource hoverStyle}">
-											<CustomControls:TimeBox DurationSeconds="{Binding TimeEquivalent, Mode=TwoWay}" IsReadOnly="True"/>
+											<CustomControls:DurationBox DurationSeconds="{Binding TimeEquivalent, Mode=TwoWay}" IsReadOnly="True"/>
 										</ContentControl>
 										<ContentControl Grid.Column="7" Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding QuantityEquivalent}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>

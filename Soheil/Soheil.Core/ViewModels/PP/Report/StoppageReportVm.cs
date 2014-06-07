@@ -31,11 +31,18 @@ namespace Soheil.Core.ViewModels.PP.Report
 			LostCount = model.LostCount;
 			DeleteCommand = new Commands.Command(o => 
 			{
+				//correct sums
 				Parent.SumOfLostCount -= LostCount;
 				Parent.SumOfLostTime-= LostSeconds;
 				Parent.SumOfTimeEquivalent -= TimeEquivalent;
 				Parent.SumOfCountEquivalent -= QuantityEquivalent;
+				
+				//delete
 				Parent.List.Remove(this);
+				Model.ProcessReport.StoppageReports.Remove(Model);
+				if (Model.Id > 0) new Dal.Repository<Model.StoppageReport>(Parent.Parent.UOW).Delete(Model);
+
+				//reset indices
 				for (int i = 0; i < Parent.List.Count; i++)
 				{
 					Parent.List[i].Index = i + 1;
@@ -43,6 +50,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 			});
 		}
 
+		internal void SelectCause(int causeId)
+		{
+			Model.Cause = new Dal.Repository<Model.Cause>(Parent.Parent.UOW).FirstOrDefault(x => x.Id == causeId);
+		}
 
 		//Index Dependency Property
 		public int Index
@@ -60,7 +71,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(AffectsTaskReportProperty, value); }
 		}
 		public static readonly DependencyProperty AffectsTaskReportProperty =
-			DependencyProperty.Register("AffectsTaskReport", typeof(bool), typeof(StoppageReportVm), new UIPropertyMetadata(true));
+			DependencyProperty.Register("AffectsTaskReport", typeof(bool), typeof(StoppageReportVm),
+			new UIPropertyMetadata(true, (d, e) => ((StoppageReportVm)d).Model.AffectsTaskReport = (bool)e.NewValue));
 
 		//SelectedCode Dependency Property
 		public string SelectedCode
@@ -85,6 +97,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				var vm = (StoppageReportVm)d;
 				var val = (int)e.NewValue;
+				vm.Model.LostTime = val;
 				vm.updateEquivalents(val, vm.LostCount);
 				vm.Parent.SumOfLostTime += (val - (int)e.OldValue);
 			}));
@@ -100,6 +113,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				var vm = (StoppageReportVm)d;
 				var val = (int)e.NewValue;
+				vm.Model.LostCount = val;
 				vm.updateEquivalents(vm.LostSeconds, val);
 				vm.Parent.SumOfLostCount += (val - (int)e.OldValue);
 			}));
@@ -161,5 +175,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty DeleteCommandProperty =
 			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(StoppageReportVm), new UIPropertyMetadata(null));
+
+
 	}
 }

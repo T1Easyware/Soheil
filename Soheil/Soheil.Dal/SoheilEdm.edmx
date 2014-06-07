@@ -522,7 +522,6 @@
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
-    <Property Name="IsG2" Type="bit" Nullable="false" DefaultValue="false" />
   </EntityType>
   <EntityType Name="Connectors">
     <Key>
@@ -558,6 +557,7 @@
     <Property Name="LostTime" Type="int" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="AffectsTaskReport" Type="bit" Nullable="false" DefaultValue="false" />
+    <Property Name="IsG2" Type="bit" Nullable="false" DefaultValue="false" />
     <Property Name="ActionPlan_Id" Type="int" Nullable="true" />
     <Property Name="ProcessReport_Id" Type="int" Nullable="false" />
     <Property Name="ProductDefection_Id" Type="int" Nullable="false" />
@@ -2974,7 +2974,6 @@
           <Property Type="Byte" Name="Status" Nullable="false" DefaultValue="1" cg:GetterAccess="Public" cg:SetterAccess="Public" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Type="Int32" Name="ModifiedBy" Nullable="false" />
           <NavigationProperty Name="ProductDefections" Relationship="SoheilEdm.DefectionProductDefection" FromRole="Defection" ToRole="ProductDefection" />
-          <Property Type="Boolean" Name="IsG2" Nullable="false" DefaultValue="False" />
         </EntityType>
         <EntityType Name="Connector">
           <Key>
@@ -3031,6 +3030,7 @@
           <NavigationProperty Name="OperatorDefectionReports" Relationship="SoheilEdm.DefectionReportOperatorDefectionReport" FromRole="DefectionReport" ToRole="OperatorDefectionReport" />
           <Property Type="Boolean" Name="AffectsTaskReport" Nullable="false" DefaultValue="False" />
           <NavigationProperty Name="ProductDefection" Relationship="SoheilEdm.ProductDefectionDefectionReport" FromRole="DefectionReport" ToRole="ProductDefection" />
+          <Property Name="IsG2" Type="Boolean" Nullable="false" DefaultValue="False" />
         </EntityType>
         <EntityType Name="Station">
           <Key>
@@ -4234,7 +4234,6 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="Status" ColumnName="Status" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-          <ScalarProperty Name="IsG2" ColumnName="IsG2" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4270,6 +4269,7 @@
           <ScalarProperty Name="LostTime" ColumnName="LostTime" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="AffectsTaskReport" ColumnName="AffectsTaskReport" />
+          <ScalarProperty Name="IsG2" ColumnName="IsG2" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5753,7 +5753,7 @@
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="5.25" PointX="16.5" PointY="11" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="20.25" PointY="15.625" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="35.875" PointY="13.25" Height="1.5956835937499996" FillColor="110, 100, 50" />
-        <EntityTypeShape EntityType="SoheilEdm.Defection" Width="1.875" PointX="33.5" PointY="10.25" Height="2.7494921874999996" FillColor="110, 100, 50" />
+        <EntityTypeShape EntityType="SoheilEdm.Defection" Width="1.875" PointX="33.25" PointY="10.375" Height="2.7494921874999996" FillColor="110, 100, 50" />
         <EntityTypeShape EntityType="SoheilEdm.Connector" Width="1.5" PointX="19.875" PointY="21.25" Height="1.7879850260416674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.Cause" Width="1.625" PointX="45.75" PointY="17.125" Height="2.5571907552083335" FillColor="255, 125, 75" />
         <EntityTypeShape EntityType="SoheilEdm.ActionPlan" Width="2" PointX="43" PointY="11" Height="2.7494921875" FillColor="110, 100, 50" />

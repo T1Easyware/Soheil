@@ -820,7 +820,8 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
-					vm.BlockReport = new Report.BlockReportVm(vm);
+					vm.BlockReport = new Report.BlockReportVm(vm.Model);
+					vm.BlockReport.ProcessReportBuilderChanged += val => CurrentProcessReportBuilder = val;
 					SelectedBlock = vm;
 				}
 				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }

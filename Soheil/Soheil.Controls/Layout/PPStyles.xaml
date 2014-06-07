@@ -563,7 +563,7 @@
 			<EventTrigger RoutedEvent="MouseEnter">
 				<BeginStoryboard>
 					<Storyboard Duration="0:0:0.1">
-						<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#666" Duration="0:0:0.1"/>
+						<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#4CC" Duration="0:0:0.1"/>
 					</Storyboard>
 				</BeginStoryboard>
 			</EventTrigger>
@@ -586,7 +586,7 @@
 			<EventTrigger RoutedEvent="MouseEnter">
 				<BeginStoryboard>
 					<Storyboard Duration="0:0:0.1">
-						<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#666" Duration="0:0:0.1"/>
+						<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#4CC" Duration="0:0:0.1"/>
 					</Storyboard>
 				</BeginStoryboard>
 			</EventTrigger>

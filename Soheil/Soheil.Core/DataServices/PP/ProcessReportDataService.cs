@@ -40,7 +40,8 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(ProcessReport model)
 		{
-			throw new NotImplementedException();
+			_processReportRepository.Add(model);
+			return 0;
 		}
 
 		public void UpdateModel(ProcessReport model)
@@ -121,21 +122,6 @@ namespace Soheil.Core.DataServices
 			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
 
 
-			vm.Model.ProducedG1 = vm.ProducedG1;
-			vm.Model.ProcessReportTargetPoint = vm.TargetPoint;
-
-			//delete defectionReports and their children
-			var defectionReports = vm.Model.DefectionReports.ToArray();
-			foreach (var defectionReport in defectionReports)
-			{
-				var odrs = defectionReport.OperatorDefectionReports.ToArray();
-				foreach (var odr in odrs)
-				{
-					operatorDefectionReportRepository.Delete(odr);
-				}
-				defectionReportRepository.Delete(defectionReport);
-			}
-
 			//add defectionReports and their children
 			foreach (var defectionReportVm in vm.DefectionReports.List)
 			{
@@ -144,6 +130,7 @@ namespace Soheil.Core.DataServices
 				defectionReportModel.LostCount = defectionReportVm.LostCount;
 				defectionReportModel.LostTime = defectionReportVm.LostSeconds;
 				defectionReportModel.ProcessReport = vm.Model;
+				defectionReportModel.IsG2 = defectionReportVm.IsG2;
 				defectionReportModel.ProductDefection = productDefectionRepository.FirstOrDefault(x => x.Id == defectionReportVm.ProductDefection.SelectedItem.Id);
 				foreach (var guiltyOperVm in defectionReportVm.GuiltyOperators.FilterBoxes)
 				{
@@ -153,18 +140,6 @@ namespace Soheil.Core.DataServices
 					defectionReportModel.OperatorDefectionReports.Add(operatorDefectionReportModel);
 				}
 				vm.Model.DefectionReports.Add(defectionReportModel);
-			}
-
-			//delete stoppageReports and their children
-			var stoppageReports = vm.Model.StoppageReports.ToArray();
-			foreach (var stoppageReport in stoppageReports)
-			{
-				var operatorStoppageReports = stoppageReport.OperatorStoppageReports.ToArray();
-				foreach (var operatorStoppageReport in operatorStoppageReports)
-				{
-					operatorStoppageReportRepository.Delete(operatorStoppageReport);
-				}
-				stoppageReportRepository.Delete(stoppageReport);
 			}
 
 			//add stoppageReports and their children

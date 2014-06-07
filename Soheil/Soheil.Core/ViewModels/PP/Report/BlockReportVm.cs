@@ -14,32 +14,25 @@ namespace Soheil.Core.ViewModels.PP.Report
 	/// </summary>
 	public class BlockReportVm : DependencyObject
 	{
+		public event Action<ProcessReportVm> ProcessReportBuilderChanged;
+
 		public Dal.SoheilEdmContext UOW { get; protected set; }
 		DataServices.TaskDataService TaskDataService;
 		DataServices.ProcessReportDataService ProcessReportDataService;
+		Model.Block entity;
 
 		/// <summary>
 		/// Creates a report for the given block, fills all process reports
 		/// </summary>
 		/// <param name="block"></param>
-		public BlockReportVm(BlockVm block)
+		public BlockReportVm(Model.Block model)
 		{
-			Block = block;
-			UOW = block.UOW;
+			UOW = new Dal.SoheilEdmContext();
 			TaskDataService = new DataServices.TaskDataService(UOW);
 			ProcessReportDataService = new DataServices.ProcessReportDataService(UOW);
+			entity = new DataServices.BlockDataService(UOW).GetSingle(model.Id);
 			ReloadReports();
 		}
-		/// <summary>
-		/// Gets or sets the bindable parent BlockVm
-		/// </summary>
-		public BlockVm Block
-		{
-			get { return (BlockVm)GetValue(BlockProperty); }
-			set { SetValue(BlockProperty, value); }
-		}
-		public static readonly DependencyProperty BlockProperty =
-			DependencyProperty.Register("Block", typeof(BlockVm), typeof(BlockReportVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets the bindable collection of ActivityRowVms 
@@ -57,16 +50,17 @@ namespace Soheil.Core.ViewModels.PP.Report
 		{
 			ActivityList.Clear();
 
-			foreach (var ssaGroup in Block.Model.StateStation.StateStationActivities.GroupBy(x => x.Activity))
+			foreach (var ssaGroup in entity.StateStation.StateStationActivities.GroupBy(x => x.Activity))
 			{
 				var activityVm = new ActivityRowVm(ssaGroup.Key);
 				ActivityList.Add(activityVm);
 			}
+
 			var ssaModels = new List<Model.StateStationActivity>();
-			foreach (var task in Block.TaskList.OrderBy(x => x.StartDateTime))
+			foreach (var task in entity.Tasks.OrderBy(x => x.StartDateTime))
 			{
 				//load ProcessReports
-				foreach (var processGroup in task.Model.Processes.GroupBy(x=>x.StateStationActivity.Activity))
+				foreach (var processGroup in task.Processes.GroupBy(x=>x.StateStationActivity.Activity))
 				{
 					//find activity
 					var activityVm = ActivityList.FirstOrDefault(x => x.Id == processGroup.Key.Id);
@@ -84,12 +78,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 						//load process reports
 						foreach (var processReport in process.ProcessReports.OrderBy(x => x.StartDateTime))
 						{
-							var processReportVm = new ProcessReportVm(processReport);
+							var processReportVm = new ProcessReportVm(processReport, UOW);
 							//process report events
 							processReportVm.LayoutChanged += ReloadReports;
 							processReportVm.ProcessReportSelected += vm =>
 							{
-								Block.Parent.PPTable.CurrentProcessReportBuilder = vm;
+								if (ProcessReportBuilderChanged != null)
+									ProcessReportBuilderChanged(vm);
 							};
 
 							//correct next/previous links

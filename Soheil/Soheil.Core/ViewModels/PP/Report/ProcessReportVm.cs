@@ -63,13 +63,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// Creates a ViewModel for the given ProcessReport with given row and column
 		/// </summary>
 		/// <param name="model">if null, it automatically assign unreported process space</param>
-		public ProcessReportVm(Model.ProcessReport model)
+		public ProcessReportVm(Model.ProcessReport model, Dal.SoheilEdmContext uow)
 		{
 			Model = model;
 			Message = new EmbeddedException();
 
 			//uow
-			UOW = new Dal.SoheilEdmContext();
+			UOW = uow;
 			_processReportDataService = new DataServices.ProcessReportDataService(UOW);
 			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
 
@@ -128,9 +128,19 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// <summary>
 		/// Saves this viewModel
 		/// </summary>
-		public void Save()
+		public void Save(bool onlyCommit = true)
 		{
-			_processReportDataService.Save(this);
+			if (_isInInitializingPhase || IsUserDrag) return;
+			
+			//attach
+			if (Model.Id == 0)
+				_processReportDataService.AddModel(Model);
+			
+			//saving scope
+			if (onlyCommit)
+				UOW.Commit();
+			else
+				_processReportDataService.Save(this);
 		}
 		#endregion
 
@@ -150,6 +160,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				var vm = (ProcessReportVm)d;
 				vm.Model.ProducedG1 = (int)e.NewValue;
+				vm.Save();
 			}));
 
 		/// <summary>
@@ -174,6 +185,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				//set Duration if [÷]
 				if(vm.IsDurationDividable)
 					vm.DurationSeconds = (int)vm.CycleTime * val;
+				vm.Save();
 
 			}, (d, v) =>
 			{
@@ -289,6 +301,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 				//update EndDateTime
 				EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);
+				Save();
 			}
 		}
 		#endregion
@@ -341,6 +354,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				SetValue(StartTimeProperty, newVal.TimeOfDay);
 				SetValue(StartDateProperty, newVal.Date);
 				_isInInitializingPhase = false;
+				Save();
 			}
 			else
 			{
@@ -548,7 +562,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			CloseCommand = new Commands.Command(o => IsSelected = false);
 			SaveCommand = new Commands.Command(o =>
 			{
-				Save();
+				Save(o != null);
 				IsSelected = false;
 				//reload all process reports for the block
 				if (LayoutChanged != null) 
@@ -568,6 +582,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 				{
 					Message.AddEmbeddedException(ex);
 				}
+			});
+			AutoDurationCommand = new Commands.Command(o =>
+			{
+				DurationSeconds = (int)(TargetPoint * CycleTime);
+			});
+			AutoTargetPointCommand = new Commands.Command(o =>
+			{
+				TargetPoint = (int)(DurationSeconds / CycleTime);
 			});
 		}
 
@@ -611,6 +633,27 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty DeleteProcessReportCommandProperty =
 			DependencyProperty.Register("DeleteProcessReportCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets the bindable command to automatically set the TargetPoint of this report according to its DurationSeconds
+		/// </summary>
+		public Commands.Command AutoTargetPointCommand
+		{
+			get { return (Commands.Command)GetValue(AutoTargetPointCommandProperty); }
+			set { SetValue(AutoTargetPointCommandProperty, value); }
+		}
+		public static readonly DependencyProperty AutoTargetPointCommandProperty =
+			DependencyProperty.Register("AutoTargetPointCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets the bindable command to automatically set the DurationSeconds of this report according to its TargetPoint
+		/// </summary>
+		public Commands.Command AutoDurationCommand
+		{
+			get { return (Commands.Command)GetValue(AutoDurationCommandProperty); }
+			set { SetValue(AutoDurationCommandProperty, value); }
+		}
+		public static readonly DependencyProperty AutoDurationCommandProperty =
+			DependencyProperty.Register("AutoDurationCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

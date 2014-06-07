@@ -41,12 +41,12 @@ insert into dbo.Products (Id, Code, Name, ColorNumber, AltColorNumber, ProductGr
 SET IDENTITY_INSERT dbo.Products OFF
 
 SET IDENTITY_INSERT dbo.Defections ON
-insert into dbo.Defections (Id, Code, Name, IsG2, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
-(1, 'Df1', N'خال خال', 'True', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(2, 'Df2', N'دانه دار', 'True', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(3, 'Df3', N'معیوب', 'False', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(4, 'Df4', N'پارگی', 'False', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(5, 'Df5', N'سوراخدار', 'False', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
+insert into dbo.Defections (Id, Code, Name, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
+(1, 'Df1', N'خال خال', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(2, 'Df2', N'دانه دار', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(3, 'Df3', N'معیوب', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(4, 'Df4', N'پارگی', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(5, 'Df5', N'سوراخدار', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
 SET IDENTITY_INSERT dbo.Defections OFF
 
 SET IDENTITY_INSERT dbo.ProductDefections ON
