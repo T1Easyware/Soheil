@@ -596,13 +596,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// <summary>
 		/// Gets or sets the bindable command to open this report
 		/// </summary>
-		public Commands.Command OpenReportCommand
+		public Commands.Command OpenCommand
 		{
-			get { return (Commands.Command)GetValue(OpenReportCommandProperty); }
-			set { SetValue(OpenReportCommandProperty, value); }
+			get { return (Commands.Command)GetValue(OpenCommandProperty); }
+			set { SetValue(OpenCommandProperty, value); }
 		}
-		public static readonly DependencyProperty OpenReportCommandProperty =
-			DependencyProperty.Register("OpenReportCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty OpenCommandProperty =
+			DependencyProperty.Register("OpenCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets the bindable command to save this report
 		/// </summary>
@@ -626,13 +626,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// <summary>
 		/// Gets or sets the bindable command to delete this report
 		/// </summary>
-		public Commands.Command DeleteProcessReportCommand
+		public Commands.Command DeleteCommand
 		{
-			get { return (Commands.Command)GetValue(DeleteProcessReportCommandProperty); }
-			set { SetValue(DeleteProcessReportCommandProperty, value); }
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
 		}
-		public static readonly DependencyProperty DeleteProcessReportCommandProperty =
-			DependencyProperty.Register("DeleteProcessReportCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets or sets the bindable command to automatically set the TargetPoint of this report according to its DurationSeconds

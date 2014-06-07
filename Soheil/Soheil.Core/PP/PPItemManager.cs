@@ -116,23 +116,25 @@ namespace Soheil.Core.PP
 			IsAutoRefresh = true;
 			_instances.Add(this);
 
-			_uow = new Dal.SoheilEdmContext();
-			_workProfilePlanDataService = new DataServices.WorkProfilePlanDataService(_uow);
-			_blockDataService = new DataServices.BlockDataService(_uow);
-			_nptDataService = new DataServices.NPTDataService(_uow);
 
 			_blocks = new List<PPItemBlock>();
 			_npts = new List<PPItemNpt>();
 			_shifts = new List<PPItemWorkTime>();
 
+			//initialize uow and dataservices
+			initializeData();
+
 			//initialize qTimer and actions
 			initializeActions();
 		}
-
-		public void ForceReload()
+		void initializeData()
 		{
-
+			_uow = new Dal.SoheilEdmContext();
+			_workProfilePlanDataService = new DataServices.WorkProfilePlanDataService(_uow);
+			_blockDataService = new DataServices.BlockDataService(_uow);
+			_nptDataService = new DataServices.NPTDataService(_uow);
 		}
+
 
 		void _threadStart()
 		{
@@ -142,7 +144,7 @@ namespace Soheil.Core.PP
 
 				while (!Pause && _qThreadAlive)
 				{
-					while (true)
+					while (!Pause && _qThreadAlive)
 					{
 						Thread.Sleep(10);
 
@@ -155,22 +157,29 @@ namespace Soheil.Core.PP
 						task.Wait();
 					}
 
+					if (Pause) break; if (_qThreadAlive) return;
+
 					Thread.Sleep(50);
 
 					//update/delete
 					if (IsAutoRefresh)
 					{
 						Task.Factory.StartNew(_actionUpdateBlock, new ActionData(_lastStart, _lastEnd)).Wait();
+						if (Pause) break; if (_qThreadAlive) return;
 						Thread.Sleep(50);
 						Task.Factory.StartNew(_actionUpdateNpt, new ActionData(_lastStart, _lastEnd)).Wait();
+						if (Pause) break; if (_qThreadAlive) return;
 						Thread.Sleep(50);
 					}
 
 					Task.Factory.StartNew(_actionDeleteBlock, new ActionData(_lastStart, _lastEnd)).Wait();
+					if (Pause) break; if (_qThreadAlive) return;
 					Thread.Sleep(50);
 					Task.Factory.StartNew(_actionDeleteNpt, new ActionData(_lastStart, _lastEnd)).Wait();
+					if (Pause) break; if (_qThreadAlive) return;
 					Thread.Sleep(50);
 					Task.Factory.StartNew(_actionDeleteWorkTimes, new ActionData(_lastStart, _lastEnd)).Wait();
+					if (Pause) break; if (_qThreadAlive) return;
 					Thread.Sleep(50);
 				}
 			}
@@ -296,6 +305,20 @@ namespace Soheil.Core.PP
 			var loadNpts = new Task(_actionLoadNpt, data);
 			lock (this)
 				_qLoad.Push(loadNpts);
+		}
+		public void ForceReload()
+		{
+			Pause = true;
+			initializeData();
+			_qLoad.Clear();
+
+			//sync load
+			var data = new ActionData(_lastStart, _lastEnd);
+			_actionLoadBlock.Invoke(data);
+			_actionLoadWorkTimes.Invoke(data);
+			_actionLoadNpt.Invoke(data);
+
+			Pause = false;
 		}
 		#endregion
 

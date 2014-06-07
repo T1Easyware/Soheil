@@ -34,7 +34,7 @@ namespace Soheil.Core.ViewModels.PP
 		void reloadFromModel()
 		{
 			//update model from database with new UOW
-			Model = new Dal.Repository<Model.Setup>(UOW).Single(x => x.Id == _id);
+			Model = new Dal.Repository<Model.NonProductiveTask>(UOW).OfType<Model.Setup>().Single(x => x.Id == _id);
 
 			StartDateTime = Model.StartDateTime;
 			DurationSeconds = Model.DurationSeconds;

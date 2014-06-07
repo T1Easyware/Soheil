@@ -200,6 +200,13 @@ namespace Soheil.Core.DataServices
 			var time = block.StartDateTime;
 			foreach (var task in block.Tasks)
 			{
+				//check for report
+				if(task.TaskReports.Any())
+					throw new Soheil.Common.SoheilException.RoutedException(
+								"Task مورد نظر گزارش دارد و قابل تغییر نمی باشد",
+								Common.SoheilException.ExceptionLevel.Error,
+								task);
+
 				//fix time
 				task.StartDateTime = time;
 				time = time.AddSeconds(task.DurationSeconds);

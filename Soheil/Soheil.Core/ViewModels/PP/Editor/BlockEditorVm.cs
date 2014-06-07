@@ -282,8 +282,21 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					!wasAutoStart ? StartDate.Add(StartTime) : DateTime.Now, //put it after specifed time if it wasn't auto start
 					(int)Duration.TotalSeconds);
 				var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
-				StartDate = block.StartDT.Date;
-				StartTime = block.StartDT.TimeOfDay;
+				
+				//measure start change
+				var change = block.StartDT - Model.StartDateTime;
+				//apply start change to block
+				Model.StartDateTime = block.StartDT;
+				Model.EndDateTime = block.EndDT;
+				//apply start change to task
+				task.StartDateTime = block.StartDT;
+				task.EndDateTime = block.EndDT;
+				//apply start change to processes
+				foreach (var process in task.Processes)
+				{
+					process.StartDateTime += change;
+					process.EndDateTime += change;
+				}
 
 				if (!sman.SaveSetups(seq))
 					Message.AddEmbeddedException("Some setups could not be added. check setup times table.");
