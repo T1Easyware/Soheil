@@ -58,7 +58,6 @@ namespace Soheil.Core.ViewModels
             { 
                 new ColumnInfo("Code",0), 
                 new ColumnInfo("Name",1), 
-                //new ColumnInfo("IsG2",2,true) ,
                 new ColumnInfo("Status",2) ,
                 new ColumnInfo("Mode",3,true) 
             };

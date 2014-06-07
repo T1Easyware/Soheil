@@ -37,9 +37,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		public ProcessReportVm PreviousReport { get; set; }
 		public ProcessReportVm NextReport { get; set; }
-		public DateTime LowerBound { get { return PreviousReport == null ? StartDateTime : PreviousReport.EndDateTime; } }
-		public DateTime UpperBound { get { return NextReport == null ? EndDateTime : NextReport.StartDateTime; } }
+		public DateTime LowerBound { get { return PreviousReport == null ? Model.Process.StartDateTime : PreviousReport.EndDateTime; } }
+		public DateTime UpperBound { get { return NextReport == null ? Model.Process.EndDateTime : NextReport.StartDateTime; } }
 
+		public float CycleTime { get; protected set; }
 
 		/// <summary>
 		/// Gets ProcessReport Id
@@ -62,17 +63,18 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// Creates a ViewModel for the given ProcessReport with given row and column
 		/// </summary>
 		/// <param name="model">if null, it automatically assign unreported process space</param>
-		public ProcessReportVm(Model.ProcessReport model)
+		public ProcessReportVm(Model.ProcessReport model, Dal.SoheilEdmContext uow)
 		{
 			Model = model;
 			Message = new EmbeddedException();
 
 			//uow
-			UOW = new Dal.SoheilEdmContext();
+			UOW = uow;
 			_processReportDataService = new DataServices.ProcessReportDataService(UOW);
 			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
 
 			//properties
+			CycleTime = Model.Process.StateStationActivity.CycleTime;
 			Model.ProducedG1 = Model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);//??? can be different than sum
 			ProducedG1 = Model.ProducedG1;
 			TargetPoint = Model.ProcessReportTargetPoint;
@@ -126,14 +128,24 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// <summary>
 		/// Saves this viewModel
 		/// </summary>
-		public void Save()
+		public void Save(bool onlyCommit = true)
 		{
-			_processReportDataService.Save(this);
+			if (_isInInitializingPhase || IsUserDrag) return;
+			
+			//attach
+			if (Model.Id == 0)
+				_processReportDataService.AddModel(Model);
+			
+			//saving scope
+			if (onlyCommit)
+				UOW.Commit();
+			else
+				_processReportDataService.Save(this);
 		}
 		#endregion
 
 
-		#region DpProperties and callbacks
+		#region DepProperties and callbacks
 		/// <summary>
 		/// Gets or sets the bindable number of produced Grade 1 products for this process report
 		/// </summary>
@@ -148,6 +160,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				var vm = (ProcessReportVm)d;
 				vm.Model.ProducedG1 = (int)e.NewValue;
+				vm.Save();
 			}));
 
 		/// <summary>
@@ -165,14 +178,68 @@ namespace Soheil.Core.ViewModels.PP.Report
 				var vm = (ProcessReportVm)d;
 				if (vm._isInInitializingPhase) return;
 				var val = (int)e.NewValue;
+
+				//update Model
 				vm.Model.ProcessReportTargetPoint = val;
-				vm.DurationSeconds = (int)vm.Model.Process.StateStationActivity.CycleTime * val;
+
+				//set Duration if [÷]
+				if(vm.IsDurationDividable)
+					vm.DurationSeconds = (int)vm.CycleTime * val;
+				vm.Save();
+
 			}, (d, v) =>
 			{
 				var vm = (ProcessReportVm)d;
 				var val = (int)v;
 				if (val < 1) return 1;
 				return v;
+			}));
+
+		#region Duration
+		/// <summary>
+		/// Gets the biggest integer multiply of CT which is less than duration
+		/// </summary>
+		/// <param name="duration">uncoerced input</param>
+		/// <returns></returns>
+		int getDividableSeconds(TimeSpan duration)
+		{
+			return getDividableSeconds((int)duration.TotalSeconds);
+		}
+		/// <summary>
+		/// Gets the biggest integer multiply of CT which is less than duration
+		/// </summary>
+		/// <param name="duration">uncoerced input</param>
+		/// <returns></returns>
+		int getDividableSeconds(int duration)
+		{
+			return
+				(int)
+					(CycleTime *
+					(int)
+						(duration / CycleTime)
+					);
+		}
+
+		//IsDurationDividable Dependency Property
+		public bool IsDurationDividable
+		{
+			get { return (bool)GetValue(IsDurationDividableProperty); }
+			set { SetValue(IsDurationDividableProperty, value); }
+		}
+		public static readonly DependencyProperty IsDurationDividableProperty =
+			DependencyProperty.Register("IsDurationDividable", typeof(bool), typeof(ProcessReportVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				var vm = d as ProcessReportVm;
+				if((bool)e.NewValue)
+				{
+					//coerce all
+					var dur = vm.getDividableSeconds(vm.DurationSeconds);
+					if(dur != vm.DurationSeconds)
+					{
+						vm.DurationSeconds = dur;
+					}
+				}
 			}));
 		/// <summary>
 		/// Gets or sets the bindable duration seconds
@@ -193,27 +260,51 @@ namespace Soheil.Core.ViewModels.PP.Report
 			}, (d, v) =>
 			{
 				var vm = (ProcessReportVm)d;
-				var val = (TimeSpan)v;
-				if (val.TotalSeconds < vm.Model.Process.StateStationActivity.CycleTime)
-					return vm.Model.Process.StateStationActivity.CycleTime;
-				if(vm.EndDateTime - vm.StartDateTime < val)
+				var val = (int)v;
+				//if very small => set to 1CT
+				if (val < vm.CycleTime)
 				{
-					return vm.EndDateTime - vm.StartDateTime;
+					return vm.CycleTime;
 				}
-				return v;
+				//if very large => set to Whole space
+				if (val > (vm.UpperBound - vm.LowerBound).TotalSeconds)
+				{
+					val = (int)(vm.UpperBound - vm.LowerBound).TotalSeconds;
+				}
+				//coerce if [÷]
+				if (vm.IsDurationDividable)
+				{
+					return vm.getDividableSeconds(val);
+				}
+				else
+				{
+					//don't coerce
+					return val;
+				}
 			}));
 		void ProcessReportVm_DurationSecondsChanged(int newVal)
 		{
 			if (!_isInInitializingPhase)
 			{
-				var tp = (int)(newVal / Model.Process.StateStationActivity.CycleTime);
-				var duration = (int)Model.Process.StateStationActivity.CycleTime * TargetPoint;
-				Model.DurationSeconds = duration;
+				//update TargetPoint
+				TargetPoint = (int)(newVal / CycleTime);
 
-				TargetPoint = tp;
-				EndDateTime = StartDateTime.AddSeconds(duration);
+				//update DurationSeconds
+				if (IsDurationDividable)
+				{
+					Model.DurationSeconds = (int)CycleTime * TargetPoint;
+				}
+				else
+				{
+					Model.DurationSeconds = newVal;
+				}
+
+				//update EndDateTime
+				EndDateTime = Model.StartDateTime.AddSeconds(Model.DurationSeconds);
+				Save();
 			}
 		}
+		#endregion
 
 		#region Start
 		/// <summary>
@@ -232,25 +323,45 @@ namespace Soheil.Core.ViewModels.PP.Report
 				{
 					var vm = (ProcessReportVm)d;
 					var val = (DateTime)v;
+					//check lower bound
 					if (val < vm.LowerBound)
-						return vm.LowerBound;
-					return v;
+					{
+						val = vm.LowerBound;
+					}
+					else if (val > vm.Model.EndDateTime.AddSeconds(-vm.CycleTime))
+					{
+						val = vm.Model.EndDateTime.AddSeconds(-vm.CycleTime);
+					}
+
+					if(val.AddSeconds(vm.Model.DurationSeconds) > vm.UpperBound)
+					{
+						val = vm.UpperBound.AddSeconds(-vm.Model.DurationSeconds);
+					}
+					return val;
 				}));
 		void ProcessReportVm_StartDateTimeChanged(DateTime newVal)
 		{
+			//update Model, EndDateTime, StartDate & StartTime
 			if (!_isInInitializingPhase)
 			{
+				//update Model
 				Model.StartDateTime = newVal;
-				_isInInitializingPhase = true;
-				EndDateTime = newVal.AddSeconds(DurationSeconds);
-				_isInInitializingPhase = false;
-			}
 
-			//update only startTime & startDate
-			_isInInitializingPhase = true;
-			SetValue(StartTimeProperty, newVal.TimeOfDay);
-			SetValue(StartDateProperty, newVal.Date);
-			_isInInitializingPhase = false;
+				//Set EndDateTime
+				EndDateTime = newVal.AddSeconds(Model.DurationSeconds);
+
+				_isInInitializingPhase = true;
+				SetValue(StartTimeProperty, newVal.TimeOfDay);
+				SetValue(StartDateProperty, newVal.Date);
+				_isInInitializingPhase = false;
+				Save();
+			}
+			else
+			{
+				//update only startTime & startDate
+				SetValue(StartTimeProperty, newVal.TimeOfDay);
+				SetValue(StartDateProperty, newVal.Date);
+			}
 		}
 
 		public static readonly DependencyProperty StartDateProperty =
@@ -261,7 +372,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (DateTime)e.NewValue;
 				vm.StartDateTime = val.Add((TimeSpan)d.GetValue(StartTimeProperty));
-				vm.DurationSeconds = (int)(vm.Model.EndDateTime - vm.Model.StartDateTime).TotalSeconds;
 			}));
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessReportVm),
@@ -270,38 +380,69 @@ namespace Soheil.Core.ViewModels.PP.Report
 				var vm = d as ProcessReportVm;
 				if (vm._isInInitializingPhase) return;
 				var val = (TimeSpan)e.NewValue;
-				vm.StartDateTime = ((DateTime)d.GetValue(StartTimeProperty)).Add(val);
-				vm.DurationSeconds = (int)(vm.Model.EndDateTime - vm.Model.StartDateTime).TotalSeconds;
+				vm.StartDateTime = ((DateTime)d.GetValue(StartDateProperty)).Add(val);
 			})); 
 		#endregion
 
 		#region End
+		/// <summary>
+		/// Gets or sets the bindable Start dateTime
+		/// </summary>
 		public DateTime EndDateTime
 		{
-			get
-			{
-				return Model.EndDateTime;
-			}
-			set
-			{
-				//coerce value
-				if (value > UpperBound)
+			get { return (DateTime)GetValue(EndDateTimeProperty); }
+			set { SetValue(EndDateTimeProperty, value); }
+		}
+		public static readonly DependencyProperty EndDateTimeProperty =
+			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(ProcessReportVm),
+			new UIPropertyMetadata(DateTime.Now,
+				(d, e) => ((ProcessReportVm)d).ProcessReportVm_EndDateTimeChanged((DateTime)e.NewValue),
+				(d, v) =>
 				{
-					value = UpperBound;
-				}
+					var vm = (ProcessReportVm)d;
+					var val = (DateTime)v;
+					//check upper bound
+					if (val > vm.UpperBound)
+					{
+						val = vm.UpperBound;
+					}
+					else if (val < vm.Model.StartDateTime.AddSeconds(vm.CycleTime))
+					{
+						val = vm.Model.StartDateTime.AddSeconds(vm.CycleTime);
+					}
+					//coerce if [÷]
+					if (vm.IsDurationDividable)
+					{
+						int dur = vm.getDividableSeconds(val - vm.Model.StartDateTime);
+						return vm.Model.StartDateTime.AddSeconds(dur);
+					}
+					else
+					{
+						//don't coerce
+						return val;
+					}
+				}));
+		void ProcessReportVm_EndDateTimeChanged(DateTime newVal)
+		{
+			//update Model, DurationSeconds, EndDate & EndTime
+			if (!_isInInitializingPhase)
+			{
+				//update Model
+				Model.EndDateTime = newVal;
 
-				//update model
-				if (!_isInInitializingPhase)
-					Model.EndDateTime = value;
+				//update DurationSeconds
+				DurationSeconds = (int)(newVal - Model.StartDateTime).TotalSeconds;
 
-				//update endTime & endDate
 				_isInInitializingPhase = true;
-				SetValue(EndTimeProperty, value.TimeOfDay);
-				SetValue(EndDateProperty, value.Date);
+				SetValue(EndTimeProperty, newVal.TimeOfDay);
+				SetValue(EndDateProperty, newVal.Date);
 				_isInInitializingPhase = false;
-
-				//update duration
-				DurationSeconds = (int)(value - Model.StartDateTime).TotalSeconds;
+			}
+			else
+			{
+				//update only EndTime & EndDate
+				SetValue(EndTimeProperty, newVal.TimeOfDay);
+				SetValue(EndDateProperty, newVal.Date);
 			}
 		}
 		public static readonly DependencyProperty EndDateProperty =
@@ -382,14 +523,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 		#endregion
 
 		#region Other Members
-		public bool ByEndDate
-		{
-			get { return (bool)GetValue(ByEndDateProperty); }
-			set { SetValue(ByEndDateProperty, value); }
-		}
-		public static readonly DependencyProperty ByEndDateProperty =
-			DependencyProperty.Register("ByEndDate", typeof(bool), typeof(ProcessReportVm), new UIPropertyMetadata(false));
-
 		/// <summary>
 		/// Gets or sets a bindable value that indicates whether this process report is selected
 		/// </summary>
@@ -429,7 +562,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			CloseCommand = new Commands.Command(o => IsSelected = false);
 			SaveCommand = new Commands.Command(o =>
 			{
-				Save();
+				Save(o != null);
 				IsSelected = false;
 				//reload all process reports for the block
 				if (LayoutChanged != null) 
@@ -450,18 +583,26 @@ namespace Soheil.Core.ViewModels.PP.Report
 					Message.AddEmbeddedException(ex);
 				}
 			});
+			AutoDurationCommand = new Commands.Command(o =>
+			{
+				DurationSeconds = (int)(TargetPoint * CycleTime);
+			});
+			AutoTargetPointCommand = new Commands.Command(o =>
+			{
+				TargetPoint = (int)(DurationSeconds / CycleTime);
+			});
 		}
 
 		/// <summary>
 		/// Gets or sets the bindable command to open this report
 		/// </summary>
-		public Commands.Command OpenReportCommand
+		public Commands.Command OpenCommand
 		{
-			get { return (Commands.Command)GetValue(OpenReportCommandProperty); }
-			set { SetValue(OpenReportCommandProperty, value); }
+			get { return (Commands.Command)GetValue(OpenCommandProperty); }
+			set { SetValue(OpenCommandProperty, value); }
 		}
-		public static readonly DependencyProperty OpenReportCommandProperty =
-			DependencyProperty.Register("OpenReportCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty OpenCommandProperty =
+			DependencyProperty.Register("OpenCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets the bindable command to save this report
 		/// </summary>
@@ -485,13 +626,34 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// <summary>
 		/// Gets or sets the bindable command to delete this report
 		/// </summary>
-		public Commands.Command DeleteProcessReportCommand
+		public Commands.Command DeleteCommand
 		{
-			get { return (Commands.Command)GetValue(DeleteProcessReportCommandProperty); }
-			set { SetValue(DeleteProcessReportCommandProperty, value); }
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
 		}
-		public static readonly DependencyProperty DeleteProcessReportCommandProperty =
-			DependencyProperty.Register("DeleteProcessReportCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets the bindable command to automatically set the TargetPoint of this report according to its DurationSeconds
+		/// </summary>
+		public Commands.Command AutoTargetPointCommand
+		{
+			get { return (Commands.Command)GetValue(AutoTargetPointCommandProperty); }
+			set { SetValue(AutoTargetPointCommandProperty, value); }
+		}
+		public static readonly DependencyProperty AutoTargetPointCommandProperty =
+			DependencyProperty.Register("AutoTargetPointCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets the bindable command to automatically set the DurationSeconds of this report according to its TargetPoint
+		/// </summary>
+		public Commands.Command AutoDurationCommand
+		{
+			get { return (Commands.Command)GetValue(AutoDurationCommandProperty); }
+			set { SetValue(AutoDurationCommandProperty, value); }
+		}
+		public static readonly DependencyProperty AutoDurationCommandProperty =
+			DependencyProperty.Register("AutoDurationCommand", typeof(Commands.Command), typeof(ProcessReportVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

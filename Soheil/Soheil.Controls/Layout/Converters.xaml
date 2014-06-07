@@ -67,7 +67,7 @@
 	<ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
 
 
-	<ppconv:SumOfThree x:Key="sumOfThree"/>
+	<ppconv:SumOfDoubles x:Key="sumOfDoubles"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier2"/>
 	<ppconv:DoubleMultiplier2 x:Key="doubleMultiplier2"/>
@@ -94,6 +94,7 @@
 
 	<ppconv:IsEqualToBrushConverter x:Key="isEqualToBrushConverter"/>
 	<ppconv:BooleanToBrushConverter x:Key="booleanToBrushConverter"/>
+	<ppconv:BooleanToOpacityConverter x:Key="booleanToOpacityConverter"/>
 	<ppconv:ColorFixer x:Key="colorFixer"/>
 	<ppconv:HighContrastForecolor x:Key="highContrastForecolor"/>
 	<ppconv:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>

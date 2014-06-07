@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Collections.ObjectModel;
+using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PP.Editor
 {
@@ -39,6 +40,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
             SelectedStateStation = StateStation;
 			StartDate = Model.StartDateTime.Date;
 			StartTime = Model.StartDateTime.TimeOfDay;
+			BlockTargetPoint = Model.BlockTargetPoint;
 
 			initOperatorManager();
 			initTask();
@@ -70,6 +72,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			OperatorManager.SelectionChanged += OperatorManager_SelectionChanged;
 		}
 
+		/// <summary>
+		/// Performs required operations for a new task (or after station is changed)
+		/// </summary>
 		void initTask()
 		{
 			OperatorManager.Block = Model;
@@ -86,6 +91,17 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					Code = Model.Code,
 					ModifiedBy = Model.ModifiedBy,
 				});
+			}
+
+			//choose IsDurationFixed/IsTargetPointFixed/IsDeferred
+			var task = Model.Tasks.First();
+			if (task.Processes.Any())
+			{
+				if(task.Processes.AreAllEqual(x => x.DurationSeconds))
+					IsDurationFixed = true;
+				else if (task.Processes.AreAllEqual(x => x.TargetCount))
+					IsTargetPointFixed = true;
+				else IsDeferred = true;
 			}
 
 			//add event handlers to ActivityList
@@ -218,7 +234,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		internal void Save()
 		{
 			var task = Model.Tasks.FirstOrDefault();
-			if (task == null) throw new Exception("No task is created");
+			if (task == null) throw new Exception("Task not found.");
 
 			#region correct machines
 
@@ -228,8 +244,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var nptDs = new DataServices.NPTDataService(_uow);
 
 			//recalc Start/End/Duration
+			Model.StartDateTime = StartDate.Add(StartTime);
 			if (task.Processes.Any(x => x.StartDateTime < Model.StartDateTime))
 				throw new Exception("Start time of a process is wrong.");
+			foreach (var process in task.Processes)
+			{
+				process.EndDateTime = process.StartDateTime.AddSeconds(process.DurationSeconds);
+			}
 			Model.EndDateTime = task.Processes.Max(x => x.EndDateTime);
 			Model.DurationSeconds = (int)(Model.EndDateTime - Model.StartDateTime).TotalSeconds;
 
@@ -246,7 +267,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
 
 				//if not fit, make it auto start
-				if (inRangeBlocks.Any() || inRangeNPTs.Any())
+				if (inRangeBlocks.Any(x => x != Model) || inRangeNPTs.Any())
 					fits = false;
 			}
 
@@ -261,8 +282,21 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					!wasAutoStart ? StartDate.Add(StartTime) : DateTime.Now, //put it after specifed time if it wasn't auto start
 					(int)Duration.TotalSeconds);
 				var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
-				StartDate = block.StartDT.Date;
-				StartTime = block.StartDT.TimeOfDay;
+				
+				//measure start change
+				var change = block.StartDT - Model.StartDateTime;
+				//apply start change to block
+				Model.StartDateTime = block.StartDT;
+				Model.EndDateTime = block.EndDT;
+				//apply start change to task
+				task.StartDateTime = block.StartDT;
+				task.EndDateTime = block.EndDT;
+				//apply start change to processes
+				foreach (var process in task.Processes)
+				{
+					process.StartDateTime += change;
+					process.EndDateTime += change;
+				}
 
 				if (!sman.SaveSetups(seq))
 					Message.AddEmbeddedException("Some setups could not be added. check setup times table.");

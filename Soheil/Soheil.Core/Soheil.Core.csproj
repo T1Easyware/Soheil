@@ -249,7 +249,6 @@
     <Compile Include="ViewModels\PP\PPTableVm.cs" />
     <Compile Include="ViewModels\PP\StationVm.cs" />
     <Compile Include="ViewModels\PP\TaskVm.cs" />
-    <Compile Include="ViewModels\PP\ProcessVm.cs" />
     <Compile Include="ViewModels\PP\ProductGroupVm.cs" />
     <Compile Include="ViewModels\PP\ProductReworkVm.cs" />
     <Compile Include="ViewModels\PP\ProductVm.cs" />
@@ -434,6 +433,7 @@
     <None Include="ViewModels\OrganizationCalendar\ClassDiagram1.cd" />
     <None Include="ViewModels\PP\Editor\seqDiag_ProcessEditor.sequencediagram" />
     <None Include="ViewModels\PP\Editor\seqDiag_Editor.sequencediagram" />
+    <None Include="ViewModels\PP\Report\seqDiag_processReport.sequencediagram" />
     <None Include="ViewModels\PP\_PPClassDiagram.cd" />
     <None Include="ViewModels\SkillCenter\_SkillCenterClassDiagram.cd" />
   </ItemGroup>
@@ -443,6 +443,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ViewModels\PP\Editor\seqDiag_Editor.sequencediagram.layout">
       <DependentUpon>seqDiag_Editor.sequencediagram</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewModels\PP\Report\seqDiag_processReport.sequencediagram.layout">
+      <DependentUpon>seqDiag_processReport.sequencediagram</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

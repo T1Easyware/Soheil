@@ -48,7 +48,7 @@ namespace Soheil.Core.ViewModels.PP
 		void initializeEditors()
 		{
 			TaskEditor = new PlanEditorVm();
-			TaskEditor.RefreshPPItems += () => UpdateRange(true);
+			TaskEditor.RefreshPPItems += () => PPItems.Manager.ForceReload();
 			/*refresh is enough.
 			 * TaskEditor.BlockAdded += model => PPItems.AddItem(model);
 			TaskEditor.BlockUpdated += (oldModel, newModel) =>
@@ -60,7 +60,7 @@ namespace Soheil.Core.ViewModels.PP
 			};*/
 
 			JobEditor = new JobEditorVm();
-			JobEditor.RefreshPPItems += () => UpdateRange(true);
+			JobEditor.RefreshPPItems += () => PPItems.Manager.ForceReload();
 			/*refresh is enough.
 			 *JobEditor.JobAdded += model =>
 			{
@@ -750,6 +750,7 @@ namespace Soheil.Core.ViewModels.PP
 				try
 				{
 					var ppeBlock = new Editor.BlockEditorVm(vm.Model);
+					ppeBlock.BlockAdded += b => PPItems.Manager.ForceReload();
 					TaskEditor.BlockList.Add(ppeBlock);
 					TaskEditor.SelectedBlock = ppeBlock;
 				}
@@ -820,25 +821,26 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
-					vm.BlockReport = new Report.BlockReportVm(vm);
+					vm.BlockReport = new Report.BlockReportVm(vm.Model);
+					vm.BlockReport.ProcessReportBuilderChanged += val => CurrentProcessReportBuilder = val;
 					SelectedBlock = vm;
 				}
 				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 			});
 			//EditReportCommand reloads *ALL* reports for its block 
-			vm.TaskList.CollectionChanged += (s, e) =>
-			{
-				if (e.NewItems != null)
-					foreach (var task in e.NewItems.OfType<TaskVm>())
-					{
-						if (task != null)
-							task.EditReportCommand = new Commands.Command(o =>
-							{
-								SelectedBlock = vm;
-								vm.ReloadReports();
-							});
-					}
-			};
+			//vm.TaskList.CollectionChanged += (s, e) =>
+			//{
+			//	if (e.NewItems != null)
+			//		foreach (var task in e.NewItems.OfType<TaskVm>())
+			//		{
+			//			if (task != null)
+			//				task.EditReportCommand = new Commands.Command(o =>
+			//				{
+			//					SelectedBlock = vm;
+			//					vm.ReloadReports();
+			//				});
+			//		}
+			//};
 		}
 
 		//ToggleTaskEditorCommand Dependency Property

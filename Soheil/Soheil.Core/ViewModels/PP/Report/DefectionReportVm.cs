@@ -14,23 +14,38 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		public DefectionReportVm(DefectionReportCollection parent, Model.DefectionReport model)
 		{
+
 			Model = model;
 			Index = parent.Parent.DefectionReports.List.Count + 1;
 			Parent = parent;
+
 			ProductDefection = FilterBoxVm.CreateForProductDefections(
 				model.ProductDefection == null ? -1 : model.ProductDefection.Id, 
 				model.ProcessReport.Process.StateStationActivity.StateStation.State.FPC.Product.Id);
+			var pdrepo = new Dal.Repository<Model.ProductDefection>(Parent.Parent.UOW);
+			ProductDefection.FilterBoxSelectedItemChanged += (s, v) => 
+				Model.ProductDefection = pdrepo.FirstOrDefault(x => x.Id == v.Id);
+
 			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorDefectionReports.Select(x=>x.Operator.Id));
+	
 			AffectsTaskReport = model.AffectsTaskReport;
 			LostSeconds = model.LostTime;
 			LostCount = model.LostCount;
+			
 			DeleteCommand = new Commands.Command(o => 
 			{
+				//correct sums
 				Parent.SumOfLostCount -= LostCount;
 				Parent.SumOfLostTime-= LostSeconds;
 				Parent.SumOfTimeEquivalent -= TimeEquivalent;
 				Parent.SumOfCountEquivalent -= QuantityEquivalent;
+
+				//delete
 				Parent.List.Remove(this);
+				Model.ProcessReport.DefectionReports.Remove(Model);
+				if (Model.Id > 0) new Dal.Repository<Model.DefectionReport>(Parent.Parent.UOW).Delete(Model);
+
+				//reset indices
 				for (int i = 0; i < Parent.List.Count; i++)
 				{
 					Parent.List[i].Index = i + 1;
@@ -54,8 +69,21 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(AffectsTaskReportProperty, value); }
 		}
 		public static readonly DependencyProperty AffectsTaskReportProperty =
-			DependencyProperty.Register("AffectsTaskReport", typeof(bool), typeof(DefectionReportVm), new UIPropertyMetadata(true));
+			DependencyProperty.Register("AffectsTaskReport", typeof(bool), typeof(DefectionReportVm),
+			new UIPropertyMetadata(true, (d, e) => ((DefectionReportVm)d).Model.AffectsTaskReport = (bool)e.NewValue));
+		/// <summary>
+		/// Gets a bindable value that indicates if the Defection of this Vm represents a Grade 2
+		/// <para>If false, the the defection is (unusable) defection</para>
+		/// </summary>
 
+		public bool IsG2
+		{
+			get { return (bool)GetValue(IsG2Property); }
+			set { SetValue(IsG2Property, value); }
+		}
+		public static readonly DependencyProperty IsG2Property =
+			DependencyProperty.Register("IsG2", typeof(bool), typeof(DefectionReportVm), 
+			new UIPropertyMetadata(false, (d, e) => ((DefectionReportVm)d).Model.IsG2 = (bool)e.NewValue));
 
 		#region Time
 		//LostSeconds Dependency Property
@@ -70,6 +98,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				var vm = (DefectionReportVm)d;
 				var val = (int)e.NewValue;
+				vm.Model.LostTime = val;
 				vm.updateEquivalents(val, vm.LostCount);
 				vm.Parent.SumOfLostTime += (val - (int)e.OldValue);
 			}));
@@ -85,6 +114,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				var vm = (DefectionReportVm)d;
 				var val = (int)e.NewValue;
+				vm.Model.LostCount = val;
 				vm.updateEquivalents(vm.LostSeconds, val);
 				vm.Parent.SumOfLostCount += (val - (int)e.OldValue);
 			}));

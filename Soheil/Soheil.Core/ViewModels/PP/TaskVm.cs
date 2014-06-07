@@ -36,7 +36,7 @@ namespace Soheil.Core.ViewModels.PP
 			//data service
 			UOW = uow;
 			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
-
+			
 			Message = new EmbeddedException();
 
 			//update model data
@@ -45,7 +45,7 @@ namespace Soheil.Core.ViewModels.PP
 			StartDateTimeChanged += newVal => Model.StartDateTime = newVal;
 			DurationSeconds = taskModel.DurationSeconds;
 			DurationSecondsChanged += newVal => Model.DurationSeconds = newVal;
-			TaskTargetPoint = taskModel.TaskTargetPoint;
+			//TaskTargetPoint = taskModel.TaskTargetPoint;
 			TaskProducedG1 = taskModel.TaskReports.Sum(x => x.TaskProducedG1);
 
 			//this non-crucial block of code is likely to throw
@@ -119,11 +119,16 @@ namespace Soheil.Core.ViewModels.PP
 
 		#endregion
 
-		#region Members
+		#region Props
 		public int TaskTargetPoint
 		{
 			get { return Model.TaskTargetPoint; }
 			set { Model.TaskTargetPoint = value; OnPropertyChanged("TaskTargetPoint"); }
+		}
+		public DateTime EndDateTime
+		{
+			get { return Model.EndDateTime; }
+			set { Model.EndDateTime = value; OnPropertyChanged("EndDateTime"); }
 		}
 		
 		/// <summary>
@@ -152,64 +157,51 @@ namespace Soheil.Core.ViewModels.PP
 		#region TaskReports
 		/// <summary>
 		/// Partitions this Task into <see cref="TaskReportVm"/>s
-		/// <para>Also reloads all process reports of the block, if asked to</para>
 		/// </summary>
-		/// <param name="reloadProcessReports">Calls ReloadProcessReportRows on Block.BlockReport</param>
-		public void ReloadTaskReports(bool reloadProcessReports = true)
+		public void ReloadTaskReports()
 		{
-			try
+			//reload taskreport models
+			TaskReports.Clear();
+			var taskReportModels = Model.TaskReports.OrderBy(x => x.ReportStartDateTime);
+
+			//add current reports
+			foreach (var taskReportModel in taskReportModels)
 			{
-				//reload taskreport models
-				TaskReports.Clear();
-				var taskReportModels = Model.TaskReports.OrderBy(x => x.ReportStartDateTime);
-
-				//add current reports
-				foreach (var taskReportModel in taskReportModels)
-				{
-					var taskReportVm = new Report.TaskReportVm(taskReportModel, UOW);
-					taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
-					TaskReports.Add(taskReportVm);
-				}
-
-				//check for remaining
-				var dt = Model.StartDateTime;
-				var tp = Model.TaskTargetPoint;
-
-				if (taskReportModels.Any())
-				{
-					dt = taskReportModels.Last().ReportEndDateTime;
-					tp -= taskReportModels.Sum(x => x.TaskReportTargetPoint);
-				}
-
-				//add remaining
-				if (dt < Model.EndDateTime)
-				{
-					var newModel = new Model.TaskReport
-					{
-						Task = Model,
-						Code = Model.Code,
-						ReportStartDateTime = dt,
-						ReportEndDateTime = Model.EndDateTime,
-						ReportDurationSeconds = (int)(Model.EndDateTime - dt).TotalSeconds,
-						TaskReportTargetPoint = tp,
-						TaskProducedG1 = 0,
-						CreatedDate = DateTime.Now,
-						ModifiedDate = DateTime.Now,
-						ModifiedBy = LoginInfo.Id,
-					};
-					var taskReportVm = new Report.TaskReportVm(newModel, UOW);
-					taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
-					TaskReports.Add(taskReportVm);
-				}
-
-
-				//load process reports
-				if(reloadProcessReports)
-				{
-					Block.BlockReport.ReloadProcessReportRows();
-				}
+				var taskReportVm = new Report.TaskReportVm(taskReportModel, UOW);
+				taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
+				TaskReports.Add(taskReportVm);
 			}
-			catch (Exception ex) { Message.AddEmbeddedException(ex.Message); }
+
+			////check for remaining
+			//var dt = Model.StartDateTime;
+			//var tp = Model.TaskTargetPoint;
+
+			//if (taskReportModels.Any())
+			//{
+			//	dt = taskReportModels.Last().ReportEndDateTime;
+			//	tp -= taskReportModels.Sum(x => x.TaskReportTargetPoint);
+			//}
+
+			////add remaining
+			//if (dt < Model.EndDateTime)
+			//{
+			//	var newModel = new Model.TaskReport
+			//	{
+			//		Task = Model,
+			//		Code = Model.Code,
+			//		ReportStartDateTime = dt,
+			//		ReportEndDateTime = Model.EndDateTime,
+			//		ReportDurationSeconds = (int)(Model.EndDateTime - dt).TotalSeconds,
+			//		TaskReportTargetPoint = tp,
+			//		TaskProducedG1 = 0,
+			//		CreatedDate = DateTime.Now,
+			//		ModifiedDate = DateTime.Now,
+			//		ModifiedBy = LoginInfo.Id,
+			//	};
+			//	var taskReportVm = new Report.TaskReportVm(newModel, UOW);
+			//	taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
+			//	TaskReports.Add(taskReportVm);
+			//}
 		}
 
 		void TaskReport_TaskReportDeleted(Report.TaskReportVm vm)

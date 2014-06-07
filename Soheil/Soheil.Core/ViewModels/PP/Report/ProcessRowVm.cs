@@ -8,13 +8,13 @@ using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PP.Report
 {
-	public class ProcessRowVm : StateStationActivityVm
+	public class SsaRowVm : StateStationActivityVm
 	{
 		/// <summary>
-		/// Creates a ProcessRowVm to load process reports
+		/// Creates a SsaRowVm to load process reports
 		/// </summary>
 		/// <param name="ssa"></param>
-		public ProcessRowVm(Model.StateStationActivity model)
+		public SsaRowVm(Model.StateStationActivity model)
 			: base(model)
 		{
 			//manual ProcessList.CollectionChanged += ProcessList_CollectionChanged;
@@ -72,7 +72,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(RowsCountProperty, value); }
 		}
 		public static readonly DependencyProperty RowsCountProperty =
-			DependencyProperty.Register("RowsCount", typeof(int), typeof(ProcessRowVm), new UIPropertyMetadata(0));
+			DependencyProperty.Register("RowsCount", typeof(int), typeof(SsaRowVm), new UIPropertyMetadata(0));
 
 		/// <summary>
 		/// Gets a bindable collection of process reports

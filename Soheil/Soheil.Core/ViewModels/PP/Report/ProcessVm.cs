@@ -10,24 +10,33 @@ namespace Soheil.Core.ViewModels.PP.Report
 	public class ProcessVm : PPItemVm
 	{
 		public event Action LayoutChanged;
+		/// <summary>
+		/// Gets the process model
+		/// </summary>
 		public Model.Process Model { get; protected set; }
-		public override int Id
-		{
-			get { return Model.Id; }
-		}
+		/// <summary>
+		/// Gets the process Id
+		/// </summary>
+		public override int Id { get { return Model.Id; } }
+		public Dal.SoheilEdmContext UOW { get; protected set; }
+
 		/// <summary>
 		/// Creates an instance of <see cref="ProcessVm"/> for the given model
 		/// </summary>
-		/// <param name="model"></param>
-		public ProcessVm(Model.Process model)
+		public ProcessVm(Model.Process model, Dal.SoheilEdmContext uow)
 		{
 			Model = model;
+			UOW = uow;
 			StartDateTime = model.StartDateTime;
 			DurationSeconds = model.DurationSeconds;
 			TargetPoint = model.TargetCount;
 
 			initializeCommands();
 		}
+
+		/// <summary>
+		/// Gets or sets the bindable process TargetCount
+		/// </summary>
 		public int TargetPoint
 		{
 			get { return (int)GetValue(TargetPointProperty); }
@@ -46,19 +55,20 @@ namespace Soheil.Core.ViewModels.PP.Report
 			FillEmptySpacesCommand = new Commands.Command(o =>
 			{
 				//check for remaining
+				bool hasRemaining = false;
 				var remDuration = Model.DurationSeconds;
 				var remTP = Model.TargetCount;
+				var reports = Model.ProcessReports.OrderBy(x => x.StartDateTime).ToArray();
 
 				//init remainings
-				if (Model.ProcessReports.Any())
+				if (reports.Any())
 				{
 					remTP -= Model.ProcessReports.Sum(x => x.ProcessReportTargetPoint);
 					remDuration -= Model.ProcessReports.Sum(x => x.DurationSeconds);
 				}
-
-				//fill spaces between reports
+				//fill spaces before each report
 				var dt = Model.StartDateTime;
-				foreach (var processReport in Model.ProcessReports.ToArray())
+				foreach (var processReport in reports.ToArray())
 				{
 					//add one before
 					if (processReport.StartDateTime - dt > TimeSpan.FromSeconds(Model.StateStationActivity.CycleTime))
@@ -91,12 +101,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 							{
 								ProcessReport = processReportModel,
 								ProcessOperator = po,
-								OperatorProducedG1 = tp / Model.ProcessOperators.Count,
+								//OperatorProducedG1 = tp / Model.ProcessOperators.Count,
 							});
 						}
 
 						//add to processReports
 						Model.ProcessReports.Add(processReportModel);
+						hasRemaining = true;
 					}
 					dt = processReport.EndDateTime;
 				}
@@ -136,7 +147,11 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 					//add to processReports
 					Model.ProcessReports.Add(newModel);
+					hasRemaining = true;
 				}
+
+				if (hasRemaining)
+					UOW.Commit();
 
 				if (LayoutChanged != null)
 					LayoutChanged();

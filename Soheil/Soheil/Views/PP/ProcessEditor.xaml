@@ -9,7 +9,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" FlowDirection="RightToLeft"
-             MaxWidth="600">
+             MaxWidth="600" IsEnabled="{Binding HasReport, Converter={StaticResource inverter}}">
 	<UserControl.Resources>
 		<DataTemplate DataType="{x:Type ppevm:MachineEditorVm}">
 			<CheckBox Content="{Binding Code}" IsChecked="{Binding IsUsed}" IsEnabled="{Binding CanBeUsed}" ToolTip="{Binding Name}" Opacity="1" x:Name="checkBox" Foreground="Silver"/>
@@ -48,44 +48,62 @@
 	</UserControl.Resources>
 	
 
-	<Border CornerRadius="10" BorderThickness="5" Margin="4">
+	<Border CornerRadius="10" Margin="2">
+		<Border.Style>
+			<Style TargetType="{x:Type Border}">
+				<Style.Triggers>
+					<DataTrigger Binding="{Binding HasReport}" Value="True">
+						<Setter Property="BorderThickness" Value="1"/>
+						<Setter Property="Background" Value="#1000"/>
+						<Setter Property="Effect" Value="{x:Null}"/>
+					</DataTrigger>
+					<DataTrigger Binding="{Binding HasReport}" Value="False">
+						<Setter Property="BorderThickness" Value="3"/>
+						<Setter Property="Background">
+							<Setter.Value>
+								<Binding Path="IsSelected" Converter="{StaticResource booleanToBrushConverter}">
+									<Binding.ConverterParameter>
+										<x:Array Type="Brush">
+											<SolidColorBrush Color="#ABDE" />
+											<SolidColorBrush Color="Gainsboro"/>
+										</x:Array>
+									</Binding.ConverterParameter>
+								</Binding>
+							</Setter.Value>
+						</Setter>
+						<Setter Property="Effect">
+							<Setter.Value>
+								<DropShadowEffect ShadowDepth="2" BlurRadius="3"/>
+							</Setter.Value>
+						</Setter>
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+		</Border.Style>
 		<I:Interaction.Triggers>
 			<I:EventTrigger EventName="MouseDown">
 				<I:InvokeCommandAction Command="{Binding SelectCommand}"/>
 			</I:EventTrigger>
 		</I:Interaction.Triggers>
 		<Border.BorderBrush>
-			<Binding Path="HasReport" Converter="{StaticResource booleanToBrushConverter}">
+			<Binding Path="IsSelected" Converter="{StaticResource booleanToBrushConverter}">
 				<Binding.ConverterParameter>
 					<x:Array Type="Brush">
-						<SolidColorBrush Color="#AEEE" />
-						<SolidColorBrush Color="#A4DF"/>
+						<SolidColorBrush Color="#A4DF" />
+						<SolidColorBrush Color="#AEEE"/>
 					</x:Array>
 				</Binding.ConverterParameter>
 			</Binding>
 		</Border.BorderBrush>
-		<Border.Background>
-			<Binding Path="IsSelected" Converter="{StaticResource booleanToBrushConverter}">
-				<Binding.ConverterParameter>
-					<x:Array Type="Brush">
-						<SolidColorBrush Color="#B7BB" />
-						<SolidColorBrush Color="#BAAA"/>
-					</x:Array>
-				</Binding.ConverterParameter>
-			</Binding>
-		</Border.Background>
-		<Border.Effect>
-			<DropShadowEffect ShadowDepth="2" BlurRadius="3"/>
-		</Border.Effect>
+		
+		
         <DockPanel>
-			
-			
 			
             <!-- basic -->
             <DockPanel DockPanel.Dock="Left">
                 <StackPanel DockPanel.Dock="Left">
 					<DockPanel>
-						<TextBlock Text="{Loc txtStartTime}" VerticalAlignment="Center" Foreground="Silver">
+						<TextBlock Text="{Loc txtStartTime}" VerticalAlignment="Center">
 							<TextBlock.ToolTip>
 								<UniformGrid Rows="3" Columns="2">
 									<TextBlock Text="{Loc txtStartTime}"/>
@@ -100,14 +118,14 @@
 						<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
 					</DockPanel>
 					<!--DockPanel>
-						<TextBlock Text="{Loc txtEndTime}" VerticalAlignment="Center" Foreground="Silver"/>
+						<TextBlock Text="{Loc txtEndTime}" VerticalAlignment="Center"/>
 						<CustomControls:TimeBox Time="{Binding EndTime}" IsReadOnly="True"/>
 					</-->
 					<DockPanel>
 						<Image Style="{StaticResource QuantityImage}" Margin="2,3" DockPanel.Dock="Left" ToolTip="{Loc txtTargetPoint}"/>
 						<Grid DockPanel.Dock="Right" Width="49">
 							<Image Style="{StaticResource OperatorImage}" DockPanel.Dock="Right" ToolTip="{Loc txtOperatorsCount}" HorizontalAlignment="Right"/>
-							<TextBlock Text="{Binding SelectedOperatorsCount}" Foreground="#FFA" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,0"/>
+							<TextBlock Text="{Binding SelectedOperatorsCount}" Foreground="#048" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,0"/>
 							<Image Style="{StaticResource Warning16Image}" Visibility="{Binding OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right"
 								ToolTip="تعداد اپراتورهای تخصیص داده شده نامعتبر می باشد"/>
 						</Grid>
@@ -116,7 +134,7 @@
 					<DockPanel>
 						<Image Style="{StaticResource DurationImage}" Margin="2,3" DockPanel.Dock="Left" ToolTip="{Loc txtDuration}"/>
 						<Image Style="{StaticResource CycleTimeImage}" DockPanel.Dock="Right" ToolTip="{Loc txtCycleTime}"/>
-						<TextBlock Text="{Binding SelectedChoice.CycleTime}" DockPanel.Dock="Right" Foreground="#FFA" ToolTip="{Loc txtCycleTime}" Margin="2,0"/>
+						<TextBlock Text="{Binding SelectedChoice.CycleTime}" DockPanel.Dock="Right" Foreground="#048" ToolTip="{Loc txtCycleTime}" Margin="2,0"/>
 						<CustomControls:DurationBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" ToolTip="{Loc txtDuration}" MaxWidth="80" HorizontalAlignment="Left"/>
 					</DockPanel>
 				</StackPanel>
@@ -136,7 +154,7 @@
 						<ItemsControl ItemsSource="{Binding SelectedMachines}" ToolTip="برای ویرایش یک بار کلیک کنید" Background="Transparent">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<TextBlock Text="{Binding Code}" Foreground="Silver" x:Name="txt" ToolTip="{Binding Name}"/>
+									<TextBlock Text="{Binding Code}" x:Name="txt" ToolTip="{Binding Name}"/>
 									<DataTemplate.Triggers>
 										<DataTrigger Binding="{Binding CanBeUsed}" Value="False">
 											<Setter TargetName="txt" Property="Opacity" Value="0.5"/>

@@ -115,16 +115,25 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		public void ReloadReports()
 		{
-			//create/reload task reports
-			foreach (var task in TaskList)
+			try
 			{
-				task.ReloadTaskReports(false);
+				//create/reload task reports
+				foreach (var task in TaskList)
+				{
+					task.ReloadTaskReports();
+				}
+				//create/reload process reports
+				if (BlockReport == null)
+				{
+					BlockReport = new Report.BlockReportVm(Model);
+					BlockReport.ProcessReportBuilderChanged += val => Parent.PPTable.CurrentProcessReportBuilder = val;
+				}
+				else
+				{
+					BlockReport.ReloadReports();
+				}
 			}
-			//create/reload process reports
-			if (BlockReport == null)
-				BlockReport = new Report.BlockReportVm(this);
-			else
-				BlockReport.ReloadProcessReportRows();
+			catch (Exception ex) { Message.AddEmbeddedException(ex.Message); }
 		}
 
 		#endregion

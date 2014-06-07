@@ -40,7 +40,8 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(ProcessReport model)
 		{
-			throw new NotImplementedException();
+			_processReportRepository.Add(model);
+			return 0;
 		}
 
 		public void UpdateModel(ProcessReport model)
@@ -120,32 +121,6 @@ namespace Soheil.Core.DataServices
 			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
 			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
 
-			var model = _processReportRepository.FirstOrDefault(x => x.Id == vm.Id);
-			if (model != null)
-			{
-				//overwrite ProcessReport
-				model.ProducedG1 = vm.ProducedG1;
-				model.ProcessReportTargetPoint = vm.TargetPoint;
-			}
-			else
-			{
-				//add ProcessReport
-				model.Process = new Repository<Process>(context).FirstOrDefault(x => x.Id == vm.ProcessId);
-				model.ProducedG1 = vm.ProducedG1;
-				model.ProcessReportTargetPoint = vm.TargetPoint;
-			}
-
-			//delete defectionReports and their children
-			var defectionReports = model.DefectionReports.ToArray();
-			foreach (var defectionReport in defectionReports)
-			{
-				var odrs = defectionReport.OperatorDefectionReports.ToArray();
-				foreach (var odr in odrs)
-				{
-					operatorDefectionReportRepository.Delete(odr);
-				}
-				defectionReportRepository.Delete(defectionReport);
-			}
 
 			//add defectionReports and their children
 			foreach (var defectionReportVm in vm.DefectionReports.List)
@@ -154,7 +129,8 @@ namespace Soheil.Core.DataServices
 				defectionReportModel.AffectsTaskReport = defectionReportVm.AffectsTaskReport;
 				defectionReportModel.LostCount = defectionReportVm.LostCount;
 				defectionReportModel.LostTime = defectionReportVm.LostSeconds;
-				defectionReportModel.ProcessReport = model;
+				defectionReportModel.ProcessReport = vm.Model;
+				defectionReportModel.IsG2 = defectionReportVm.IsG2;
 				defectionReportModel.ProductDefection = productDefectionRepository.FirstOrDefault(x => x.Id == defectionReportVm.ProductDefection.SelectedItem.Id);
 				foreach (var guiltyOperVm in defectionReportVm.GuiltyOperators.FilterBoxes)
 				{
@@ -163,19 +139,7 @@ namespace Soheil.Core.DataServices
 					operatorDefectionReportModel.Operator = operatorRepository.FirstOrDefault(x => x.Id == guiltyOperVm.SelectedItem.Id);
 					defectionReportModel.OperatorDefectionReports.Add(operatorDefectionReportModel);
 				}
-				model.DefectionReports.Add(defectionReportModel);
-			}
-
-			//delete stoppageReports and their children
-			var stoppageReports = model.StoppageReports.ToArray();
-			foreach (var stoppageReport in stoppageReports)
-			{
-				var operatorStoppageReports = stoppageReport.OperatorStoppageReports.ToArray();
-				foreach (var operatorStoppageReport in operatorStoppageReports)
-				{
-					operatorStoppageReportRepository.Delete(operatorStoppageReport);
-				}
-				stoppageReportRepository.Delete(stoppageReport);
+				vm.Model.DefectionReports.Add(defectionReportModel);
 			}
 
 			//add stoppageReports and their children
@@ -185,7 +149,7 @@ namespace Soheil.Core.DataServices
 				stoppageReportModel.AffectsTaskReport = stoppageReportVm.AffectsTaskReport;
 				stoppageReportModel.LostCount = stoppageReportVm.LostCount;
 				stoppageReportModel.LostTime = stoppageReportVm.LostSeconds;
-				stoppageReportModel.ProcessReport = model;
+				stoppageReportModel.ProcessReport = vm.Model;
 				int selid = stoppageReportVm.StoppageLevels.FilterBoxes[2].SelectedItem.Id;
 				stoppageReportModel.Cause = causeRepository.FirstOrDefault(x => x.Id == selid);
 				foreach (var guiltyOperVm in stoppageReportVm.GuiltyOperators.FilterBoxes)
@@ -195,7 +159,7 @@ namespace Soheil.Core.DataServices
 					operatorStoppageReportModel.Operator = operatorRepository.FirstOrDefault(x => x.Id == guiltyOperVm.SelectedItem.Id);
 					stoppageReportModel.OperatorStoppageReports.Add(operatorStoppageReportModel);
 				}
-				model.StoppageReports.Add(stoppageReportModel);
+				vm.Model.StoppageReports.Add(stoppageReportModel);
 			}
 
 			context.Commit();

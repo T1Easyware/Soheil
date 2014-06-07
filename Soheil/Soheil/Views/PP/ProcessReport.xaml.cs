@@ -27,6 +27,16 @@ namespace Soheil.Views.PP
 			InitializeComponent();
 		}
 
+		private static System.Windows.Controls.Primitives.Popup _openedPopup;
+		private static void openPopup(System.Windows.Controls.Primitives.Popup newpopup)
+		{
+			if (_openedPopup != null)
+				_openedPopup.IsOpen = false;
+			if (newpopup != null)
+				newpopup.IsOpen = true;
+			_openedPopup = newpopup;
+		}
+
 		//PPTable Dependency Property
 		public Soheil.Core.ViewModels.PP.PPTableVm PPTable
 		{
@@ -48,7 +58,7 @@ namespace Soheil.Views.PP
 
 
 		private double _onThumbStartX;
-		private double getDeltaOnLine(object sender)
+		private double getDeltaOnLine()
 		{
 			var line = Tag as FrameworkElement;
 			if (line != null)
@@ -70,7 +80,7 @@ namespace Soheil.Views.PP
 
 		private void startDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
 		{
-			var onLineX = getDeltaOnLine(sender);
+			var onLineX = getDeltaOnLine();
 			var procReport = sender.GetDataContext<ProcessReportVm>();
 			if (procReport != null && !double.IsNaN(onLineX))
 				procReport.StartDateTime = Process.StartDateTime.Add(
@@ -79,10 +89,16 @@ namespace Soheil.Views.PP
 
 		private void startDragEnd(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
 		{
-			sender.GetDataContext<ProcessReportVm>().IsUserDrag = false;
+			var procReport = sender.GetDataContext<ProcessReportVm>();
+			if (procReport != null)
+			{
+				procReport.IsUserDrag = false;
+				procReport.Save();
+			}
+
 			startPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
 			startPopup.PlacementTarget = sender as UIElement;
-			startPopup.IsOpen = true;
+			openPopup(startPopup);
 		}
 
 		private void endDragStart(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
@@ -95,7 +111,7 @@ namespace Soheil.Views.PP
 
 		private void endDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
 		{
-			var onLineX = getDeltaOnLine(sender);
+			var onLineX = getDeltaOnLine();
 			var procReport = sender.GetDataContext<ProcessReportVm>();
 			if (procReport != null && !double.IsNaN(onLineX))
 				procReport.EndDateTime = Process.StartDateTime.Add(
@@ -104,11 +120,21 @@ namespace Soheil.Views.PP
 
 		private void endDragEnd(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
 		{
-			sender.GetDataContext<ProcessReportVm>().IsUserDrag = false;
+			var procReport = sender.GetDataContext<ProcessReportVm>();
+			if (procReport != null)
+			{
+				procReport.IsUserDrag = false;
+				procReport.Save();
+			}
+
 			endPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
 			endPopup.PlacementTarget = sender as UIElement;
-			endPopup.IsOpen = true;
+			openPopup(endPopup);
 		}
 
+		private void PopupCloseButton_Click(object sender, RoutedEventArgs e)
+		{
+			openPopup(null);
+		}
 	}
 }

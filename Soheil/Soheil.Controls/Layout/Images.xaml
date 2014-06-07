@@ -221,7 +221,11 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ManHour.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
-
+	<Style x:Key="IsDividable" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/IsDividable.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	
 	<!-- Job -->
 
 	<Style x:Key="JobImage" TargetType="Image">

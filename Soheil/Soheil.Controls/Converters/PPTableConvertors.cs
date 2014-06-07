@@ -37,6 +37,18 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class BooleanToOpacityConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (bool)value ? 1d : 0.4d;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 	public class TaskProgressColorConverter : IMultiValueConverter
 	{
@@ -738,21 +750,7 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
-	public class FloatMultiplier2 : IMultiValueConverter
-	{
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (values[0] == DependencyProperty.UnsetValue ||
-				values[1] == DependencyProperty.UnsetValue ||
-				values[0] == null || values[1] == null) return 0f;
-			return (System.Convert.ToSingle(values[0]) * System.Convert.ToSingle(values[1])).ToString();
-		}
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
 	//has a minus
 	public class DoubleMultiplierToThickness : IMultiValueConverter
 	{
@@ -782,15 +780,17 @@ namespace Soheil.Controls.Converters.PP
 		}
 	}
 
-	public class SumOfThree : IMultiValueConverter
+	public class SumOfDoubles : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (values[0] != DependencyProperty.UnsetValue && values[1] != DependencyProperty.UnsetValue && values[2] != DependencyProperty.UnsetValue && values[3] != DependencyProperty.UnsetValue)
+			var sum = 0d;
+			foreach (var value in values)
 			{
-				return (double)values[0] + (double)values[1] + (double)values[2] + (double)values[3];
+				if (values == DependencyProperty.UnsetValue) return 0d;
+				sum += (double)value;
 			}
-			return 0;
+			return sum;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -814,6 +814,21 @@ namespace Soheil.Controls.Converters.PP
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+	public class FloatMultiplier2 : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue ||
+				values[1] == DependencyProperty.UnsetValue ||
+				values[0] == null || values[1] == null) return 0f;
+			return (System.Convert.ToSingle(values[0]) * System.Convert.ToSingle(values[1])).ToString();
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}

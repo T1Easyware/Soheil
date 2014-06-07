@@ -13,11 +13,20 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public DefectionReportCollection(ProcessReportVm parent)
 		{
 			Parent = parent;
-			AddCommand = new Commands.Command(o => List.Add(new DefectionReportVm(this, new Model.DefectionReport
+			AddCommand = new Commands.Command(o =>
 			{
-				ProcessReport = parent.Model,
-				ModifiedBy = LoginInfo.Id,
-			})));
+				var model = new Model.DefectionReport
+				{
+					ProcessReport = parent.Model,
+					LostCount = 0,
+					LostTime = 0,
+					ProductDefection = null,
+					ModifiedBy = LoginInfo.Id,
+				};
+				parent.Model.DefectionReports.Add(model);
+				var vm = new DefectionReportVm(this, model);
+				List.Add(vm);
+			});
 		}
 
 		//List Observable Collection

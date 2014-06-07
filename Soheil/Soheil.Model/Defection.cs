@@ -61,13 +61,6 @@ namespace Soheil.Model
             get;
             set;
         }
-    
-        public virtual bool IsG2
-        {
-            get { return _isG2; }
-            set { _isG2 = value; }
-        }
-        private bool _isG2 = false;
 
         #endregion
 

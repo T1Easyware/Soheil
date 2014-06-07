@@ -26,13 +26,12 @@ namespace Soheil.Core.PP
 		/// </summary>
 		public void Reload()
 		{
-			Start = Model.StartDateTime;
-			End = Model.EndDateTime;
-
 			if (UOW == null)
 				UOW = new Dal.SoheilEdmContext();
 			var nptDataService = new DataServices.NPTDataService(UOW);
 			Model = nptDataService.GetSingle(Id);
+			Start = Model.StartDateTime;
+			End = Model.EndDateTime;
 		}
 
 	}

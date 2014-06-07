@@ -21,7 +21,6 @@ namespace Soheil.Core.ViewModels.PP
 			Id = model.Defection.Id;
 			ProductDefectionId = model.Id;
 			Text = model.Defection.Name;
-			IsG2 = model.Defection.IsG2;
 		}
 		/// <summary>
 		/// Gets Defection Id
@@ -41,16 +40,5 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty TextProperty =
 			DependencyProperty.Register("Text", typeof(string), typeof(DefectionVm), new UIPropertyMetadata(null));
-		/// <summary>
-		/// Gets a bindable value that indicates if the Defection of this Vm represents a Grade 2
-		/// <para>If false, the the defection is typical defection</para>
-		/// </summary>
-		public bool IsG2
-		{
-			get { return (bool)GetValue(IsG2Property); }
-			protected set { SetValue(IsG2Property, value); }
-		}
-		public static readonly DependencyProperty IsG2Property =
-			DependencyProperty.Register("IsG2", typeof(bool), typeof(DefectionVm), new UIPropertyMetadata(false));
 	}
 }

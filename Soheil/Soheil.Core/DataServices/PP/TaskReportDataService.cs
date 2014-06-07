@@ -72,19 +72,5 @@ namespace Soheil.Core.DataServices
 			throw new NotImplementedException();
 		}
 		#endregion
-
-		internal void UpdateG1(int Id, int g1)
-		{
-			var model = _taskReportRepository.FirstOrDefault(x => x.Id == Id);
-			model.TaskProducedG1 = g1;
-			context.Commit();
-		}
-
-		internal void UpdateTargetPoint(int Id, int tp)
-		{
-			var model = _taskReportRepository.FirstOrDefault(x => x.Id == Id, "Task");
-			model.Task.TaskTargetPoint = tp;
-			context.Commit();
-		}
 	}
 }

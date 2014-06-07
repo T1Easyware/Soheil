@@ -14,10 +14,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 		{
 			foreach (var ssa in model.StateStationActivities.OrderBy(x => x.ManHour))
 			{
-				ProcessRowList.Add(new ProcessRowVm(ssa));
+				SsaRowList.Add(new SsaRowVm(ssa));
 			}
 		}
-		public ObservableCollection<ProcessRowVm> ProcessRowList { get { return _processRowList; } }
-		private ObservableCollection<ProcessRowVm> _processRowList = new ObservableCollection<ProcessRowVm>();
+		public ObservableCollection<SsaRowVm> SsaRowList { get { return _ssaRowList; } }
+		private ObservableCollection<SsaRowVm> _ssaRowList = new ObservableCollection<SsaRowVm>();
 	}
 }

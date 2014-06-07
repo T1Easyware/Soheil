@@ -51,29 +51,35 @@ namespace Soheil
 
         public Command LoginCommand { get; set; }
 
-        public MainWindow()
-        {
-            _accessRuleDataService = new AccessRuleDataService();
-            _userDataService = new UserDataService();
+		public MainWindow()
+		{
+			_accessRuleDataService = new AccessRuleDataService();
+			_userDataService = new UserDataService();
 
-            var culture = CultureInfo.GetCultureInfo("fa-IR");
+			var culture = CultureInfo.GetCultureInfo("fa-IR");
 
-            Dispatcher.Thread.CurrentCulture = culture;
-            Dispatcher.Thread.CurrentUICulture = culture;
+			Dispatcher.Thread.CurrentCulture = culture;
+			Dispatcher.Thread.CurrentUICulture = culture;
 
-            LocalizationManager.UpdateValues();
-            
-            InitializeComponent();
-            AccessList = new List<Tuple<string, AccessType>>();
-            LoginCommand = new Command(Login);
-            _newTabNumber = 1;
+			LocalizationManager.UpdateValues();
 
-            // temp
-            Login(null);
-            //.
+			InitializeComponent();
+			AccessList = new List<Tuple<string, AccessType>>();
+			LoginCommand = new Command(Login);
+			_newTabNumber = 1;
+
+			// temp
+			Login(null);
+			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
-        }
+
+			if (Environment.UserName == "Bizhan" || Environment.UserName == "Bizz")
+			{
+				SingularList = new Core.ViewModels.PP.PPTableVm(AccessType.Full);
+				chrometabs.AddTab(CreateSingularTab(SoheilEntityType.ProductPlanTable), true);
+			}
+		}
 
         public ISplitList SplitList { get; set; }
         public ISingularList SingularList { get; set; }

@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 06/02/2014 21:24:00
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 06/07/2014 16:38:36
+-- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -296,6 +296,12 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_ProcessOperatorOperatorProcessReport]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[OperatorProcessReports] DROP CONSTRAINT [FK_ProcessOperatorOperatorProcessReport];
 GO
+IF OBJECT_ID(N'[dbo].[FK_StateStationActivityExternalConnector]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ExternalConnectors] DROP CONSTRAINT [FK_StateStationActivityExternalConnector];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StateStationActivityExternalConnector1]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ExternalConnectors] DROP CONSTRAINT [FK_StateStationActivityExternalConnector1];
+GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
 GO
@@ -508,6 +514,9 @@ GO
 IF OBJECT_ID(N'[dbo].[ActivitySkills]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ActivitySkills];
 GO
+IF OBJECT_ID(N'[dbo].[ExternalConnectors]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ExternalConnectors];
+GO
 IF OBJECT_ID(N'[dbo].[NonProductiveTasks_PM]', 'U') IS NOT NULL
     DROP TABLE [dbo].[NonProductiveTasks_PM];
 GO
@@ -571,14 +580,14 @@ CREATE TABLE [dbo].[Defections] (
     [ModifiedDate] datetime  NOT NULL,
     [CreatedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
-    [ModifiedBy] int  NOT NULL,
-    [IsG2] bit  NOT NULL
+    [ModifiedBy] int  NOT NULL
 );
 GO
 
 -- Creating table 'Connectors'
 CREATE TABLE [dbo].[Connectors] (
     [Id] int IDENTITY(1,1) NOT NULL,
+    [HasBuffer] bit  NOT NULL,
     [StartState_Id] int  NOT NULL,
     [EndState_Id] int  NOT NULL
 );
@@ -607,6 +616,7 @@ CREATE TABLE [dbo].[DefectionReports] (
     [LostTime] int  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [AffectsTaskReport] bit  NOT NULL,
+    [IsG2] bit  NOT NULL,
     [ActionPlan_Id] int  NULL,
     [ProcessReport_Id] int  NOT NULL,
     [ProductDefection_Id] int  NOT NULL
@@ -1282,6 +1292,14 @@ CREATE TABLE [dbo].[ActivitySkills] (
 );
 GO
 
+-- Creating table 'ExternalConnectors'
+CREATE TABLE [dbo].[ExternalConnectors] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [StartSSA_Id] int  NOT NULL,
+    [EndSSA_Id] int  NOT NULL
+);
+GO
+
 -- Creating table 'NonProductiveTasks_PM'
 CREATE TABLE [dbo].[NonProductiveTasks_PM] (
     [Id] int  NOT NULL,
@@ -1702,6 +1720,12 @@ GO
 -- Creating primary key on [Id] in table 'ActivitySkills'
 ALTER TABLE [dbo].[ActivitySkills]
 ADD CONSTRAINT [PK_ActivitySkills]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'ExternalConnectors'
+ALTER TABLE [dbo].[ExternalConnectors]
+ADD CONSTRAINT [PK_ExternalConnectors]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -3033,6 +3057,34 @@ ADD CONSTRAINT [FK_ProcessOperatorOperatorProcessReport]
 CREATE INDEX [IX_FK_ProcessOperatorOperatorProcessReport]
 ON [dbo].[OperatorProcessReports]
     ([ProcessOperator_Id]);
+GO
+
+-- Creating foreign key on [StartSSA_Id] in table 'ExternalConnectors'
+ALTER TABLE [dbo].[ExternalConnectors]
+ADD CONSTRAINT [FK_StateStationActivityExternalConnector]
+    FOREIGN KEY ([StartSSA_Id])
+    REFERENCES [dbo].[StateStationActivities]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_StateStationActivityExternalConnector'
+CREATE INDEX [IX_FK_StateStationActivityExternalConnector]
+ON [dbo].[ExternalConnectors]
+    ([StartSSA_Id]);
+GO
+
+-- Creating foreign key on [EndSSA_Id] in table 'ExternalConnectors'
+ALTER TABLE [dbo].[ExternalConnectors]
+ADD CONSTRAINT [FK_StateStationActivityExternalConnector1]
+    FOREIGN KEY ([EndSSA_Id])
+    REFERENCES [dbo].[StateStationActivities]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_StateStationActivityExternalConnector1'
+CREATE INDEX [IX_FK_StateStationActivityExternalConnector1]
+ON [dbo].[ExternalConnectors]
+    ([EndSSA_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'
