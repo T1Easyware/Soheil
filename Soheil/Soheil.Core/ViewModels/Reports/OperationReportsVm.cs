@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Soheil.Common;
@@ -20,6 +22,8 @@ namespace Soheil.Core.ViewModels.Reports
         public Command NavigateInsideCommand { get; set; }
         public Command NavigateBackCommand { get; set; }
         public Command PrintCommand { get; set; }
+	    public Command RefreshCommand { get; set; }
+
         private readonly Stack<OperatorBarInfo> _history; 
 
         public IList<OperatorBarVm> Bars
@@ -37,6 +41,21 @@ namespace Soheil.Core.ViewModels.Reports
 	    {
             get { return (ObservableCollection<int>)GetValue(ScalesProperty); }
 	        set { SetValue(ScalesProperty, value); }
+	    }
+
+	    public ObservableCollection<string> ScaleHeaders
+	    {
+	        get
+	        {
+                var scaleHeaders = new ObservableCollection<string>();
+                foreach (var scale in Scales)
+                {
+                    scaleHeaders.Add(CurrentType == OEType.CountBased
+                        ? scale.ToString(CultureInfo.InvariantCulture)
+                        : Format.ConvertToHours(scale));
+                }
+                return scaleHeaders;
+	        }   
 	    }
 
         public static readonly DependencyProperty OperatorProcessReportProperty =
@@ -93,6 +112,15 @@ namespace Soheil.Core.ViewModels.Reports
 	        get { return (DateTimeIntervals) GetValue(CurrentIntervalProperty); }
 	        set{ SetValue(CurrentIntervalProperty, value); }
 	    }
+
+	    public static readonly DependencyProperty CurrentTypeProperty = DependencyProperty.Register(
+	        "CurrentType", typeof (OEType), typeof (OperationReportsVm), new PropertyMetadata(default(OEType)));
+
+	    public OEType CurrentType
+	    {
+	        get { return (OEType) GetValue(CurrentTypeProperty); }
+	        set { SetValue(CurrentTypeProperty, value); }
+	    }
         public OperatorReportDataService DataService { get; set; }
 
 
@@ -114,6 +142,7 @@ namespace Soheil.Core.ViewModels.Reports
             NavigateBackCommand = new Command(NavigateBack,CanNavigateBack);
             PrintCommand = new Command(Print, CanPrint);
             InitializeProviderCommand = new Command(InitializeProviders);
+            RefreshCommand = new Command(Refresh,CanRefresh);
         }
 
         void OperationReportsVmCenterDateChanged(double barHOffset)
@@ -128,6 +157,8 @@ namespace Soheil.Core.ViewModels.Reports
 		        _history.Push(new OperatorBarInfo());
 		    else
                 barInfo = (OperatorBarInfo)param;
+
+		    barInfo.IsCountBase = CurrentType == OEType.CountBased;
 
             LittleWindowWidth = 20;
             int intervalCount = GetIntervalCount(CurrentInterval, barInfo);
@@ -147,12 +178,13 @@ namespace Soheil.Core.ViewModels.Reports
                 ScaleLines.Add(0);
             }
             ScaleLines.RemoveAt(0);
+            OnPropertyChanged("ScaleHeaders");
 		}
 
 	    public void LoadOperatorProcessReport(int operatorId)
 	    {
 	        var dataService = new OperatorReportDataService();
-	        OperatorProcessReport = dataService.GetOperatorEfficiency(operatorId, StartDate, EndDate);
+	        OperatorProcessReport = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
 	    }
 
 	    private int GetIntervalCount(DateTimeIntervals interval, OperatorBarInfo barInfo)
@@ -221,10 +253,6 @@ namespace Soheil.Core.ViewModels.Reports
         public void NavigateBack(object param)
         {
             OprVisibility = Visibility.Collapsed;
-            //_history.Pop();
-            //var barInfo = _history.Pop(); 
-            //_history.Push(barInfo);
-            //InitializeProviders(barInfo);
         }
 
         public bool CanNavigateBack()
@@ -239,14 +267,32 @@ namespace Soheil.Core.ViewModels.Reports
             if (printDialog.ShowDialog() == false)
                 return;
             var barInfo = _history.Pop();
-	        string documentTitle = barInfo.Text;
+            string documentTitle = barInfo.Text;
             var pageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
 
             var paginator = new CustomDataGridDocumentPaginator(param as DataGrid, documentTitle, pageSize, new Thickness(30, 20, 30, 20));
             printDialog.PrintDocument(paginator, "Grid");
+
+
 	    }
 
 	    public bool CanPrint()
+	    {
+	        return true;
+	    }
+
+	    public void Refresh(object param)
+	    {
+	        if (OprVisibility == Visibility.Visible)
+	        {
+	            var info = _history.Pop();
+	            _history.Push(info);
+	            LoadOperatorProcessReport(info.Id);
+	        }
+	        else
+	            InitializeProviders(null);
+	    }
+	    public bool CanRefresh()
 	    {
 	        return true;
 	    }

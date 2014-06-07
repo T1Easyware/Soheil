@@ -52,6 +52,7 @@
       <HintPath>..\External Assemblies\PersianDateControls.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -155,6 +156,42 @@
     </Compile>
     <Compile Include="PasswordHelper.cs" />
     <Compile Include="CustomControls\GridHelper.cs" />
+    <Compile Include="Printing\DataRowBoundEventArgs.cs" />
+    <Compile Include="Printing\DocumentWalker.cs" />
+    <Compile Include="Printing\Document\InlineAggregateValue.cs" />
+    <Compile Include="Printing\Document\InlineContextValue.cs" />
+    <Compile Include="Printing\Document\InlineDocumentValue.cs" />
+    <Compile Include="Printing\Document\InlineTableCellValue.cs" />
+    <Compile Include="Printing\Document\ReportProperties.cs" />
+    <Compile Include="Printing\Document\SectionDataGroup.cs" />
+    <Compile Include="Printing\Document\SectionReportFooter.cs" />
+    <Compile Include="Printing\Document\SectionReportHeader.cs" />
+    <Compile Include="Printing\Document\TableRowForDataTable.cs" />
+    <Compile Include="Printing\Document\TableRowForDynamicDataTable.cs" />
+    <Compile Include="Printing\Document\TableRowForDynamicHeader.cs" />
+    <Compile Include="Printing\ImageErrorEventArgs.cs" />
+    <Compile Include="Printing\ImageEventArgs.cs" />
+    <Compile Include="Printing\InlineHasValue.cs" />
+    <Compile Include="Printing\InlinePropertyValue.cs" />
+    <Compile Include="Printing\Interfaces\IAggregateValue.cs" />
+    <Compile Include="Printing\Interfaces\IChart.cs" />
+    <Compile Include="Printing\Interfaces\IHasValue.cs" />
+    <Compile Include="Printing\Interfaces\IInlineContextValue.cs" />
+    <Compile Include="Printing\Interfaces\IInlineDocumentValue.cs" />
+    <Compile Include="Printing\Interfaces\IInlinePropertyValue.cs" />
+    <Compile Include="Printing\Interfaces\IPropertyValue.cs" />
+    <Compile Include="Printing\Interfaces\ITableCellValue.cs" />
+    <Compile Include="Printing\Interfaces\ITableRowForDataTable.cs" />
+    <Compile Include="Printing\Interfaces\ITableRowForDynamicDataTable.cs" />
+    <Compile Include="Printing\Interfaces\ITableRowForDynamicHeader.cs" />
+    <Compile Include="Printing\MultipleReportPaginator.cs" />
+    <Compile Include="Printing\ReportContextValueType.cs" />
+    <Compile Include="Printing\ReportData.cs" />
+    <Compile Include="Printing\ReportDocument.cs" />
+    <Compile Include="Printing\ReportPaginator.cs" />
+    <Compile Include="Printing\ReportPaginatorDynamicCache.cs" />
+    <Compile Include="Printing\ReportPaginatorStaticCache.cs" />
+    <Compile Include="Printing\XamlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -549,6 +586,7 @@
     <Resource Include="Images\PP\pp_startOfHour.png" />
     <Resource Include="Images\PP\pp_untilEnd.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

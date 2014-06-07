@@ -13,5 +13,6 @@ namespace Soheil.Core.Reports
         public string Text { get; set; }
         public LinearGradientBrush Color { get; set; }
         public bool IsMenuItem { get; set; }
+        public bool IsCountBase { get; set; }
     }
 }

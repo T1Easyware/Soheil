@@ -27,8 +27,8 @@ namespace Soheil.Views
             _openCursor = openCursor;
             _closeCursor = closeCursor;
         }
-		
-		private ISingularList _viewMode;
+
+        private ISingularList _viewMode;
         public ISingularList ViewModel
         {
             get
@@ -364,8 +364,40 @@ namespace Soheil.Views
 
         #region OperatorsReport
 
-        private static readonly List<string> _columnHeaders = new List<string> { "Date", "Product", "Station", "Activity", "TargetPoint", "ProductionTime", "DefectionTime", "StoppageTime"};
-
+        private List<string> _columnHeaders;
+        private void SetOperatorReportHeaders()
+        {
+            if (ViewModel is OperationReportsVm)
+            {
+                var vm = ViewModel as OperationReportsVm;
+                if (vm.CurrentType == OEType.CountBased)
+                    _columnHeaders = new List<string>
+                    {
+                        "Date",
+                        "Product",
+                        "IsRework",
+                        "Station",
+                        "Activity",
+                        "TargetCount",
+                        "ProductionCount",
+                        "DefectionCount",
+                        "StoppageCount"
+                    };
+                else
+                    _columnHeaders = new List<string>
+                    {
+                        "Date",
+                        "Product",
+                        "IsRework",
+                        "Station",
+                        "Activity",
+                        "TargetTime",
+                        "ProductionTime",
+                        "DefectionTime",
+                        "StoppageTime"
+                    };
+            }
+        }
         private void OnSelectedDateChanged(object sender, RoutedEventArgs e)
         {
             ((OperationReportsVm)ViewModel).InitializeProviders(null);
@@ -373,6 +405,7 @@ namespace Soheil.Views
 
         private void OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
+            SetOperatorReportHeaders();
             if (_columnHeaders.Contains(e.Column.Header.ToString()))
             {
                 e.Column.Header = Common.Properties.Resources.ResourceManager.GetString("txt" + e.Column.Header);

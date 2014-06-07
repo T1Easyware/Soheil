@@ -37,9 +37,6 @@ namespace Soheil.Common
             _tableColumnDefinitions = new Collection<ColumnDefinition>();
             _documentSource = documentSource;
 
-            _tableColumnDefinitions = new Collection<ColumnDefinition>();
-            _documentSource = documentSource;
-
             DocumentTitle = documentTitle;
             PageSize = pageSize;
             PageMargin = pageMargin;
@@ -97,7 +94,7 @@ namespace Soheil.Common
 
         public override DocumentPage GetPage(int pageNumber)
         {
-            DocumentPage page = null;
+            DocumentPage page;
             var itemsSource = new List<object>();
 
             ICollectionView viewSource = CollectionViewSource.GetDefaultView(_documentSource.ItemsSource);

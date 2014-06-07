@@ -804,4 +804,58 @@
   <data name="txtOperatorsCount" xml:space="preserve">
     <value>تعداد اپراتورها</value>
   </data>
+  <data name="txtDefectionTime" xml:space="preserve">
+    <value>زمان تولید معیوب</value>
+  </data>
+  <data name="txtOperationReports" xml:space="preserve">
+    <value>گزارش عملکرد اپراتورها</value>
+  </data>
+  <data name="txtPrint" xml:space="preserve">
+    <value>چاپ</value>
+  </data>
+  <data name="txtProductionTime" xml:space="preserve">
+    <value>زمان تولید سالم</value>
+  </data>
+  <data name="txtStoppageTime" xml:space="preserve">
+    <value>زمان توقفات</value>
+  </data>
+  <data name="txtTargetTime" xml:space="preserve">
+    <value>زمان هدف</value>
+  </data>
+  <data name="txtIsRework" xml:space="preserve">
+    <value>دوباره کاری</value>
+  </data>
+  <data name="OEType_CountBased" xml:space="preserve">
+    <value>بر اساس تعداد</value>
+  </data>
+  <data name="OEType_None" xml:space="preserve">
+    <value>پیش فرض</value>
+  </data>
+  <data name="OEType_TimeBased" xml:space="preserve">
+    <value>براساس زمان</value>
+  </data>
+  <data name="txtDefectionCount" xml:space="preserve">
+    <value>مقدار تولید معیوب</value>
+  </data>
+  <data name="txtDefectionValue" xml:space="preserve">
+    <value>تولید معیوب</value>
+  </data>
+  <data name="txtProductionCount" xml:space="preserve">
+    <value>مقدار تولید سالم</value>
+  </data>
+  <data name="txtProductionValue" xml:space="preserve">
+    <value>تولید سالم</value>
+  </data>
+  <data name="txtStoppageCount" xml:space="preserve">
+    <value>مقدار توقفات</value>
+  </data>
+  <data name="txtStoppageValue" xml:space="preserve">
+    <value>توقفات</value>
+  </data>
+  <data name="txtTargetCount" xml:space="preserve">
+    <value>مقدار هدف</value>
+  </data>
+  <data name="txtTargetValue" xml:space="preserve">
+    <value>هدف</value>
+  </data>
 </root>

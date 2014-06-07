@@ -27,31 +27,31 @@ namespace Soheil.Core.ViewModels.Reports
 	        set { SetValue(ValueProperty, value); }
 	    }
 
-        public static readonly DependencyProperty Value1Property =
-    DependencyProperty.Register("Value1", typeof(double), typeof(OperatorBarVm), new PropertyMetadata(default(double)));
+        public static readonly DependencyProperty ProductionValueProperty =
+    DependencyProperty.Register("ProductionValue", typeof(double), typeof(OperatorBarVm), new PropertyMetadata(default(double)));
 
-        public double Value1
+        public double ProductionValue
         {
-            get { return (double)GetValue(Value1Property); }
-            set { SetValue(Value1Property, value); }
+            get { return (double)GetValue(ProductionValueProperty); }
+            set { SetValue(ProductionValueProperty, value); }
         }
 
-        public static readonly DependencyProperty Value2Property =
-    DependencyProperty.Register("Value2", typeof(double), typeof(OperatorBarVm), new PropertyMetadata(default(double)));
+        public static readonly DependencyProperty DefectionValueProperty =
+    DependencyProperty.Register("DefectionValue", typeof(double), typeof(OperatorBarVm), new PropertyMetadata(default(double)));
 
-        public double Value2
+        public double DefectionValue
         {
-            get { return (double)GetValue(Value2Property); }
-            set { SetValue(Value2Property, value); }
+            get { return (double)GetValue(DefectionValueProperty); }
+            set { SetValue(DefectionValueProperty, value); }
         }
 
-        public static readonly DependencyProperty Value3Property =
-    DependencyProperty.Register("Value3", typeof(double), typeof(OperatorBarVm), new PropertyMetadata(default(double)));
+        public static readonly DependencyProperty StoppageValueProperty =
+    DependencyProperty.Register("StoppageValue", typeof(double), typeof(OperatorBarVm), new PropertyMetadata(default(double)));
 
-        public double Value3
+        public double StoppageValue
         {
-            get { return (double)GetValue(Value3Property); }
-            set { SetValue(Value3Property, value); }
+            get { return (double)GetValue(StoppageValueProperty); }
+            set { SetValue(StoppageValueProperty, value); }
         }
 
 	    public static readonly DependencyProperty TipProperty =
@@ -72,31 +72,31 @@ namespace Soheil.Core.ViewModels.Reports
 	        set { SetValue(HeaderProperty, value); }
 	    }
 
-        public static readonly DependencyProperty Tip1Property =
-    DependencyProperty.Register("Tip1", typeof(string), typeof(OperatorBarVm), new PropertyMetadata(default(string)));
+        public static readonly DependencyProperty ProductionTipProperty =
+    DependencyProperty.Register("ProductionTip", typeof(string), typeof(OperatorBarVm), new PropertyMetadata(default(string)));
 
-        public string Tip1
+        public string ProductionTip
         {
-            get { return (string)GetValue(Tip1Property); }
-            set { SetValue(Tip1Property, value); }
+            get { return (string)GetValue(ProductionTipProperty); }
+            set { SetValue(ProductionTipProperty, value); }
         }
 
-        public static readonly DependencyProperty Tip2Property =
-    DependencyProperty.Register("Tip2", typeof(string), typeof(OperatorBarVm), new PropertyMetadata(default(string)));
+        public static readonly DependencyProperty DefectionTipProperty =
+    DependencyProperty.Register("DefectionTip", typeof(string), typeof(OperatorBarVm), new PropertyMetadata(default(string)));
 
-        public string Tip2
+        public string DefectionTip
         {
-            get { return (string)GetValue(Tip2Property); }
-            set { SetValue(Tip2Property, value); }
+            get { return (string)GetValue(DefectionTipProperty); }
+            set { SetValue(DefectionTipProperty, value); }
         }
 
-        public static readonly DependencyProperty Tip3Property =
-    DependencyProperty.Register("Tip3", typeof(string), typeof(OperatorBarVm), new PropertyMetadata(default(string)));
+        public static readonly DependencyProperty StoppageTipProperty =
+    DependencyProperty.Register("StoppageTip", typeof(string), typeof(OperatorBarVm), new PropertyMetadata(default(string)));
 
-        public string Tip3
+        public string StoppageTip
         {
-            get { return (string)GetValue(Tip3Property); }
-            set { SetValue(Tip3Property, value); }
+            get { return (string)GetValue(StoppageTipProperty); }
+            set { SetValue(StoppageTipProperty, value); }
         }
 
 	    public static readonly DependencyProperty HeightProperty =

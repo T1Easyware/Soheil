@@ -193,6 +193,14 @@ namespace Soheil.Common
         Cash,
         Stock
     }
+
+    [TypeConverter(typeof(LocalizedEnumConverter))]
+    public enum OEType
+    {
+        None,
+        TimeBased,
+        CountBased
+    }
     public enum PPDateLevels
     {
         Hours, Days, Month

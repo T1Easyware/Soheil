@@ -125,18 +125,32 @@ namespace Soheil.Core.Reports
                 var bar = new OperatorBarVm
                 {
                     Info = currentInfo,
-                    Value = records[i - startOperator].Value * Scale,
-                    Value1 = records[i - startOperator].Value1 * Scale,
-                    Value2 = records[i - startOperator].Value2 * Scale,
-                    Value3 = records[i - startOperator].Value3 * Scale,
-                    Tip = records[i - startOperator].Value.ToString(CultureInfo.InvariantCulture),
-                    Tip1 = records[i - startOperator].Value1.ToString(CultureInfo.InvariantCulture),
-                    Tip2 = records[i - startOperator].Value2.ToString(CultureInfo.InvariantCulture),
-                    Tip3 = records[i - startOperator].Value3.ToString(CultureInfo.InvariantCulture),
                     Header = records[i - startOperator].Header,
                     MainColor = GetColor(),
                     MenuItems = GetMenuItems(currentInfo)
                 };
+                if (BarInfo.IsCountBase)
+                {
+                    bar.Value = Convert.ToDouble( records[i - startOperator].Data[4])*Scale;
+                    bar.ProductionValue = Convert.ToDouble( records[i - startOperator].Data[5])*Scale;
+                    bar.DefectionValue = Convert.ToDouble( records[i - startOperator].Data[6])*Scale;
+                    bar.StoppageValue = Convert.ToDouble( records[i - startOperator].Data[7])*Scale;
+                    bar.Tip = Convert.ToString(records[i - startOperator].Data[4]);
+                    bar.ProductionTip = Convert.ToString(records[i - startOperator].Data[5]);
+                    bar.DefectionTip = Convert.ToString(records[i - startOperator].Data[6]);
+                    bar.StoppageTip = Convert.ToString(records[i - startOperator].Data[7]);
+                }
+                else
+                {
+                    bar.Value = Convert.ToDouble(records[i - startOperator].Data[0])*Scale;
+                    bar.ProductionValue = Convert.ToDouble( records[i - startOperator].Data[1])*Scale;
+                    bar.DefectionValue = Convert.ToDouble( records[i - startOperator].Data[2])*Scale;
+                    bar.StoppageValue = Convert.ToDouble( records[i - startOperator].Data[3])*Scale;
+                    bar.Tip = Format.ConvertToHM(Convert.ToInt32(records[i - startOperator].Data[0]));
+                    bar.ProductionTip = Format.ConvertToHM(Convert.ToInt32(records[i - startOperator].Data[1]));
+                    bar.DefectionTip = Format.ConvertToHM(Convert.ToInt32(records[i - startOperator].Data[2]));
+                    bar.StoppageTip = Format.ConvertToHM(Convert.ToInt32(records[i - startOperator].Data[3]));
+                }
                 bars.Add(bar);
             }
             return bars;

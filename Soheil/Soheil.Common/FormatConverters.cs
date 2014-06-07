@@ -96,6 +96,21 @@ namespace Soheil.Common
 		{
 			return value.ToString();
 		}
+        public static string ConvertToHMS(int seconds)
+        {
+            var time = new TimeSpan(0, 0, seconds);
+            return string.Format("{0:00}:{1:00}:{2:00}", time.TotalHours, time.Minutes, time.Seconds);
+        }
+        public static string ConvertToHM(int seconds)
+        {
+            var time = new TimeSpan(0, 0, seconds);
+            return string.Format("{0:00}:{1:00}", time.TotalHours, time.Seconds > 30 ? time.Minutes + 1 : time.Minutes);
+        }
+        public static string ConvertToHours(int seconds)
+        {
+            var time = new TimeSpan(0, 0, seconds);
+            return string.Format("{0:00}", time.Minutes > 30 ? time.TotalHours + 1 : time.TotalHours);
+        }
 	}
 	public abstract class BaseConverter : MarkupExtension
 	{

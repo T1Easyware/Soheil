@@ -97,8 +97,8 @@ namespace Soheil.Common
 		} 
 		#endregion
 
-		#region Color, Point
-		public static bool IsDark(this System.Windows.Media.Color color)
+        #region Color, Point
+        public static bool IsDark(this System.Windows.Media.Color color)
 		{
 			return (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) < 128;
 		}

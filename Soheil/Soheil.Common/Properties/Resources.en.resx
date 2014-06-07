@@ -799,4 +799,58 @@
   <data name="txtOperatorsCount" xml:space="preserve">
     <value>Operators count</value>
   </data>
+  <data name="txtDefectionTime" xml:space="preserve">
+    <value>Defection Time</value>
+  </data>
+  <data name="txtOperationReports" xml:space="preserve">
+    <value>Operators Efficiency Report</value>
+  </data>
+  <data name="txtPrint" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="txtProductionTime" xml:space="preserve">
+    <value>Production Time</value>
+  </data>
+  <data name="txtStoppageTime" xml:space="preserve">
+    <value>Stoppage Time</value>
+  </data>
+  <data name="txtTargetTime" xml:space="preserve">
+    <value>Target Time</value>
+  </data>
+  <data name="txtIsRework" xml:space="preserve">
+    <value>Is Rework</value>
+  </data>
+  <data name="OEType_CountBased" xml:space="preserve">
+    <value>Count Based</value>
+  </data>
+  <data name="OEType_None" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="OEType_TimeBased" xml:space="preserve">
+    <value>Time Based</value>
+  </data>
+  <data name="DefectionCount" xml:space="preserve">
+    <value>Defection Amount</value>
+  </data>
+  <data name="ProductionCount" xml:space="preserve">
+    <value>Production Amount</value>
+  </data>
+  <data name="StoppageCount" xml:space="preserve">
+    <value>Stoppage Amount</value>
+  </data>
+  <data name="TargetCount" xml:space="preserve">
+    <value>Target Point</value>
+  </data>
+  <data name="txtDefectionValue" xml:space="preserve">
+    <value>Defection</value>
+  </data>
+  <data name="txtProductionValue" xml:space="preserve">
+    <value>Production</value>
+  </data>
+  <data name="txtStoppageValue" xml:space="preserve">
+    <value>Stoppage</value>
+  </data>
+  <data name="txtTargetValue" xml:space="preserve">
+    <value>Target</value>
+  </data>
 </root>

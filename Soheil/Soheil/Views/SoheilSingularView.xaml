@@ -2371,20 +2371,14 @@
                         </GradientStopCollection>
                     </GradientBrush.GradientStops>
                 </LinearGradientBrush>
-                <ObjectDataProvider x:Key="CostTypes"
+                <ObjectDataProvider x:Key="OETypes"
                                     MethodName="GetValues"
                                     ObjectType="{x:Type System:Enum}">
                     <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="Common:CostType" />
+                        <x:Type TypeName="Common:OEType" />
                     </ObjectDataProvider.MethodParameters>
                 </ObjectDataProvider>
-                <ObjectDataProvider x:Key="IndexIntervals"
-                            MethodName="GetValues"
-                            ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="Common:DateTimeIntervals" />
-                    </ObjectDataProvider.MethodParameters>
-                </ObjectDataProvider>
+
                 <!--Slider Repeat Button-->
                 <Style x:Key="ScrollBarLineButton" TargetType="{x:Type RepeatButton}">
                     <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -2487,13 +2481,21 @@
                                 <persianDateControls:PersianDatePicker Margin="5,0,5,0" SelectedDate="{Binding StartDate}" SelectedDateChanged="OnSelectedDateChanged"/>
                                 <TextBlock Margin="25,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtEndDate}" />
                                 <persianDateControls:PersianDatePicker Margin="5,0,5,0" SelectedDate="{Binding EndDate}" SelectedDateChanged="OnSelectedDateChanged"/>
+                                <TextBlock Margin="25,2,5,0" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtIndexType}" />
+                                <ComboBox Margin="5,0,5,0" ItemsSource="{Binding Source={StaticResource OETypes}}" SelectedValue="{Binding Path=CurrentType}">
+                                    <I:Interaction.Triggers>
+                                        <I:EventTrigger EventName="SelectionChanged">
+                                            <I:InvokeCommandAction Command="{Binding RefreshCommand}"/>
+                                        </I:EventTrigger>
+                                    </I:Interaction.Triggers>
+                                </ComboBox>
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right">
-                                <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtProductionTime}" />
+                                <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtProductionValue}" />
                                 <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l1Brush}"/>
-                                <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtDefectionTime}" />
+                                <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtDefectionValue}" />
                                 <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l2Brush}"/>
-                                <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtStoppageTime}" />
+                                <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtStoppageValue}" />
                                 <Rectangle Margin="5,2,50,0" Width="15" Fill="{StaticResource l3Brush}"/>
                             </WrapPanel>
                             <Canvas/>
@@ -2508,6 +2510,8 @@
                                       Style="{StaticResource SoheilGroupBox}" Header="{Binding Title}" DockPanel.Dock="Top">
                                 <DataGrid x:Name="dataGrid" 
                                       FlowDirection="RightToLeft"
+                                          IsReadOnly="True"
+                                          AlternatingRowBackground="{StaticResource DisabledSelectionBrush}"
                                       IsSynchronizedWithCurrentItem="True"
                                       AutoGeneratingColumn="OnAutoGeneratingColumn"
                                       SelectionMode="Single"
@@ -2607,7 +2611,7 @@
                             </DockPanel.Resources>
                             <DockPanel Width="50" DockPanel.Dock="Right">
                                 <Button DockPanel.Dock="Bottom" Margin="2" Height="18" Command="{Binding NavigateBackCommand}" Content="←"></Button>
-                                <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding Scales}">
+                                <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding ScaleHeaders}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Style="{StaticResource EntryBoxHeader}" 
@@ -2694,15 +2698,15 @@
                                                                                 <RowDefinition Height="*"/>
                                                                                 <RowDefinition Height="*"/>
                                                                             </Grid.RowDefinitions>
-                                                                            <TextBlock x:Name="Color3" Height="{Binding Value3}" Background="{StaticResource l3Brush}" Text="{Binding Tip3}" 
+                                                                            <TextBlock x:Name="Color3" Height="{Binding StoppageValue}" Background="{StaticResource l3Brush}" Text="{Binding StoppageTip}" 
                                                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="0"/>
-                                                                            <Rectangle x:Name="Bar3" Height="{Binding Value3}" Fill="{StaticResource e3Brush}" Grid.Column="1" Grid.Row="0"/>
-                                                                            <TextBlock x:Name="Color2" Height="{Binding Value2}" Background="{StaticResource l2Brush}" Text="{Binding Tip2}" 
+                                                                            <Rectangle x:Name="Bar3" Height="{Binding StoppageValue}" Fill="{StaticResource e3Brush}" Grid.Column="1" Grid.Row="0"/>
+                                                                            <TextBlock x:Name="Color2" Height="{Binding DefectionValue}" Background="{StaticResource l2Brush}" Text="{Binding DefectionTip}" 
                                                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="1"/>
-                                                                            <Rectangle x:Name="Bar2" Height="{Binding Value2}" Fill="{StaticResource e2Brush}" Grid.Column="1" Grid.Row="1"/>
-                                                                            <TextBlock x:Name="Color1" Height="{Binding Value1}" Background="{StaticResource l1Brush}" Text="{Binding Tip1}" 
+                                                                            <Rectangle x:Name="Bar2" Height="{Binding DefectionValue}" Fill="{StaticResource e2Brush}" Grid.Column="1" Grid.Row="1"/>
+                                                                            <TextBlock x:Name="Color1" Height="{Binding ProductionValue}" Background="{StaticResource l1Brush}" Text="{Binding ProductionTip}" 
                                                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="2"/>
-                                                                            <Rectangle x:Name="Bar1" Height="{Binding Value1}" Fill="{StaticResource e1Brush}" Grid.Column="1" Grid.Row="2"/>
+                                                                            <Rectangle x:Name="Bar1" Height="{Binding ProductionValue}" Fill="{StaticResource e1Brush}" Grid.Column="1" Grid.Row="2"/>
                                                                         </Grid>
                                                                         <Grid x:Name="Shade" Background="White" Opacity="0">
                                                                             <Grid.Effect>
