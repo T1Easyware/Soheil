@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Core.Printing;
 using Soheil.Core.Reports;
 using Soheil.Core.Virtualizing;
+using System.Windows.Xps.Packaging;
 
 namespace Soheil.Core.ViewModels.Reports
 {
@@ -123,7 +128,14 @@ namespace Soheil.Core.ViewModels.Reports
 	    }
         public OperatorReportDataService DataService { get; set; }
 
+	    public static readonly DependencyProperty DocumentProperty = DependencyProperty.Register(
+            "Document", typeof(FixedDocumentSequence), typeof(OperationReportsVm), new PropertyMetadata(default(FixedDocumentSequence)));
 
+	    public FixedDocumentSequence Document
+	    {
+            get { return (FixedDocumentSequence)GetValue(DocumentProperty); }
+	        set { SetValue(DocumentProperty, value); }
+	    }
         public OperationReportsVm(AccessType access)
         {
             CenterPoint = 0;
@@ -185,6 +197,36 @@ namespace Soheil.Core.ViewModels.Reports
 	    {
 	        var dataService = new OperatorReportDataService();
 	        OperatorProcessReport = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
+
+            var reportDocument = new ReportDocument();
+
+            var reader = new StreamReader(new FileStream(@"D:\Work\SoheilGit\Soheil\Soheil\Views\Reports\SimpleReport.xaml", FileMode.Open, FileAccess.Read));
+            reportDocument.XamlData = reader.ReadToEnd();
+            reportDocument.XamlImagePath = Path.Combine(Environment.CurrentDirectory, @"D:\Work\SoheilGit\Soheil\Soheil\Views\Reports\");
+            reader.Close();
+
+            var data = new ReportData();
+
+            // set constant document values
+            data.ReportDocumentValues.Add("PrintDate", DateTime.Now); // print date is now
+
+            // sample table "Ean"
+            var table = new DataTable("Ean");
+            table.Columns.Add("Position", typeof(string));
+            table.Columns.Add("Item", typeof(string));
+            table.Columns.Add("EAN", typeof(string));
+            table.Columns.Add("Count", typeof(int));
+            var rnd = new Random(1234);
+            for (int i = 1; i <= 100; i++)
+            {
+                // randomly create some articles
+                table.Rows.Add(new object[] { i, "Item " + i.ToString("0000"), "123456790123", rnd.Next(9) + 1 });
+            }
+            data.DataTables.Add(table);
+
+            XpsDocument xps = reportDocument.CreateXpsDocument(data);
+
+	        Document = xps.GetFixedDocumentSequence();
 	    }
 
 	    private int GetIntervalCount(DateTimeIntervals interval, OperatorBarInfo barInfo)
@@ -262,16 +304,17 @@ namespace Soheil.Core.ViewModels.Reports
 
 	    public void Print(object param)
 	    {
-            var printDialog = new PrintDialog();
+            //var printDialog = new PrintDialog();
 
-            if (printDialog.ShowDialog() == false)
-                return;
-            var barInfo = _history.Pop();
-            string documentTitle = barInfo.Text;
-            var pageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
+            //if (printDialog.ShowDialog() == false)
+            //    return;
+            //var barInfo = _history.Pop();
+            //string documentTitle = barInfo.Text;
+            //var pageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
 
-            var paginator = new CustomDataGridDocumentPaginator(param as DataGrid, documentTitle, pageSize, new Thickness(30, 20, 30, 20));
-            printDialog.PrintDocument(paginator, "Grid");
+            //var paginator = new CustomDataGridDocumentPaginator(param as DataGrid, documentTitle, pageSize, new Thickness(30, 20, 30, 20));
+            //printDialog.PrintDocument(paginator, "Grid");
+
 
 
 	    }

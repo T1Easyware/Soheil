@@ -107,7 +107,8 @@ namespace Soheil.Core.ViewModels
             Title = Name;
             foreach (var child in entity.Children)
             {
-                ChildNodes.Add(new CauseVM(child, Access,dataService));
+                if (child.Status != (decimal) Status.Deleted)
+                    ChildNodes.Add(new CauseVM(child, Access,dataService));
             }
         }
 

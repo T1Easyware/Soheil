@@ -3308,26 +3308,6 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="Controls:DataGridRowDeleting.IsDeletingValue" Value="True">
-                                            <!--<Trigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
-                                                        Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.2" />
-                                                        </DoubleAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </Trigger.EnterActions>
-                                            <Trigger.ExitActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
-                                                   Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.8" />
-                                                        </DoubleAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </Trigger.ExitActions>-->
                                             <Setter Property="DetailsVisibility" Value="Visible"></Setter>
                                         </Trigger>
                                         <Trigger Property="Controls:DataGridTextSearch.IsTextMatch" Value="False">
@@ -3355,29 +3335,6 @@
                                                 </BeginStoryboard>
                                             </Trigger.ExitActions>
                                         </Trigger>
-                                        <!--<Trigger Property="IsSelected" Value="True">
-                                            <Trigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
-                                                   Storyboard.TargetName="SelectedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
-                                                        </DoubleAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </Trigger.EnterActions>
-                                            <Trigger.ExitActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
-                                                   Storyboard.TargetName="SelectedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                                        </DoubleAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </Trigger.ExitActions>
-                                              <Setter Property="DetailsVisibility" Value="Visible" />  
-                                        </Trigger>-->
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -3445,7 +3402,9 @@
             </DataGrid>
         </DataTemplate>
         <DataTemplate x:Key="TreeViewListTemplate">
-            <TreeView FlowDirection="{Loc enumDirection}">
+            <TreeView FlowDirection="{Loc enumDirection}"
+                      PreviewKeyDown="TreePreviewKeyDown"
+                      PreviewLostKeyboardFocus="OnTreeLostFocus">
                 <TreeView.ItemsSource>
                     <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}"
                              UpdateSourceTrigger="PropertyChanged">
@@ -3457,9 +3416,10 @@
                 </I:Interaction.Behaviors>
                 <TreeView.Resources>
                     <ResourceDictionary>
+                        <Converters:DeleteColorConverter x:Key="deleteConverter"/>
                         <HierarchicalDataTemplate DataType="{x:Type Base:NodeContentViewModel}" ItemsSource="{Binding ChildNodes}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Title}" />
+                            <StackPanel Orientation="Horizontal" Background="{Binding IsDeleting, Converter={StaticResource deleteConverter}}">
+                                <TextBlock x:Name="xx" Text="{Binding Title}"/>
                                 <Button Content="+" 
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.AddCommand}"
                                         />

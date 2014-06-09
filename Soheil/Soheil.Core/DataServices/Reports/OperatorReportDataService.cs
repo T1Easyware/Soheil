@@ -29,7 +29,7 @@ namespace Soheil.Core.DataServices
 
         public double GetMax(DateTimeIntervals intervalType, OperatorBarInfo barInfo, int count)
         {
-            return GetMaxOperatorByDate(barInfo);
+            return GetMaxOperatorEfficiency(barInfo);
         }
 
         public int GetMachineCount()
@@ -82,7 +82,7 @@ namespace Soheil.Core.DataServices
                 var indexList = operatorList.Skip(startIndex).Take(count).Select((o, index) => new { interval = index, o.Id, o.Code, o.Name });
 
                 var oprQuery = from opr in oprList
-                               from processReport in processReportList.Where(pr=> opr.ProcessReport != null && opr.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.EndDateTime < oprInfo.EndDate).DefaultIfEmpty()
+                               from processReport in processReportList.Where(pr=> opr.ProcessReport != null && opr.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate).DefaultIfEmpty()
                                from process in processList.Where(p=> processReport != null && processReport.Process != null && p.Id == processReport.Process.Id).DefaultIfEmpty()
                                from ssActivity in ssaList.Where(ssa => process!=null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
                                let oprId = opr == null ? -1 : opr.Id
@@ -146,15 +146,15 @@ namespace Soheil.Core.DataServices
                             from pr in prQuery.Where(p => p.operatorId == oprt.Id).DefaultIfEmpty()
                             group pr by new {oprt.interval, oprt.Id, oprt.Code, oprt.Name} into g
 
-                            let targetTime = g.Any() ? 0 : g.Sum(item => item.duration)
-                            let productionTime = g.Any() ? 0 : g.Sum(item => item.productionTime)
-                            let stoppageTime = g.Any() ? 0 : g.Max(item=>item.stoppageTime)
-                            let defectionTime = g.Any() ? 0 : g.Max(item => item.defectionTime)
+                            let targetTime = g.Any() ?  g.Sum(item => item == null ? 0 : item.duration) : 0
+                            let productionTime = g.Any() ? g.Sum(item => item == null ? 0 : item.productionTime) : 0
+                            let stoppageTime = g.Any() ? g.Max(item => item == null ? 0 : item.stoppageTime) : 0
+                            let defectionTime = g.Any() ? g.Max(item => item == null ? 0 : item.defectionTime) : 0
 
-                            let targetCount = g.Any() ? 0 : g.Sum(item => item.target)
-                            let productionCount = g.Any() ? 0 : g.Sum(item => item.productionCount)
-                            let stoppageCount = g.Any() ? 0 : g.Max(item => item.stoppageCount)
-                            let defectionCount = g.Any() ? 0 : g.Max(item => item.defectionCount)
+                            let targetCount = g.Any() ? g.Sum(item => item == null ? 0 : item.target) : 0
+                            let productionCount = g.Any() ? g.Sum(item => item == null ? 0 : item.productionCount) : 0
+                            let stoppageCount = g.Any() ? g.Max(item => item == null ? 0 : item.stoppageCount) : 0
+                            let defectionCount = g.Any() ? g.Max(item => item == null ? 0 : item.defectionCount) : 0
 
                             select new { g.Key.interval, g.Key.Id, g.Key.Code, g.Key.Name, stoppageTime, defectionTime, productionTime, targetTime, stoppageCount, defectionCount, productionCount, targetCount };
 
@@ -389,7 +389,7 @@ namespace Soheil.Core.DataServices
             return result;
         }
 
-        private double GetMaxOperatorByDate(OperatorBarInfo oprInfo)
+        private double GetMaxOperatorEfficiency(OperatorBarInfo oprInfo)
         {
             using (var context = new SoheilEdmContext())
             {
@@ -401,7 +401,7 @@ namespace Soheil.Core.DataServices
 
 
                 var query = from opr in oprList
-                              from processReport in processReportList.Where(pr=> opr.ProcessReport != null && opr.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.EndDateTime < oprInfo.EndDate).DefaultIfEmpty()
+                              from processReport in processReportList.Where(pr=> opr.ProcessReport != null && opr.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate).DefaultIfEmpty()
 							group processReport by new { opr.Id, operatorId = opr.ProcessOperator.Operator.Id, opr.OperatorProducedG1 } into g
                             let duration = g.Sum(item => item == null ? 0 : item.DurationSeconds / item.OperatorProcessReports.Count)
                             let target = g.Sum(item => item == null ? 0 : item.ProcessReportTargetPoint / item.OperatorProcessReports.Count)
@@ -411,9 +411,9 @@ namespace Soheil.Core.DataServices
                 var result = query.ToList();
                 if (oprInfo.IsCountBase)
                 {
-                    return result.Any() ? result.Max(item => item.target) : 100;
+                    return result.Any() ? result.Max(item => item == null ? 100 : item.target) : 100;
                 }
-                return result.Any() ? result.Max(item => item.duration) : 100000;
+                return result.Any() ? result.Max(item => item == null ? 100000 : item.duration) : 100000;
 
             }
         }

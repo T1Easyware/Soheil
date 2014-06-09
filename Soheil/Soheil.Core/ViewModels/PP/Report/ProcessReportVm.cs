@@ -558,7 +558,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 		#region Commands
 		void initializeCommands()
 		{
-			OpenReportCommand = new Commands.Command(o => IsSelected = true);
+			OpenCommand = new Commands.Command(o => IsSelected = true);
 			CloseCommand = new Commands.Command(o => IsSelected = false);
 			SaveCommand = new Commands.Command(o =>
 			{
@@ -568,7 +568,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (LayoutChanged != null) 
 					LayoutChanged();
 			});
-			DeleteProcessReportCommand = new Commands.Command(o =>
+			DeleteCommand = new Commands.Command(o =>
 			{
 				try
 				{

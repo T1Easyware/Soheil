@@ -158,6 +158,19 @@ namespace Soheil.Core.Base
 
         public ObservableCollection<IEntityNode> ChildNodes { get; set; }
 
+        public static void Remove(int id, IEntityNode root)
+        {
+            foreach (var node in root.ChildNodes)
+            {
+                if (node.Id == id)
+                {
+                    root.ChildNodes.Remove(node);
+                    return;
+                }
+                Remove(id,node);
+            }
+        }
+
         protected TreeSplitViewModel(AccessType access): base(access)
         {
             ChildNodes = new ObservableCollection<IEntityNode>();
