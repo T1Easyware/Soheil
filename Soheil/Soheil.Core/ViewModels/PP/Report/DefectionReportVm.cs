@@ -18,15 +18,53 @@ namespace Soheil.Core.ViewModels.PP.Report
 			Model = model;
 			Index = parent.Parent.DefectionReports.List.Count + 1;
 			Parent = parent;
+			IsG2 = model.IsG2;
 
 			ProductDefection = FilterBoxVm.CreateForProductDefections(
 				model.ProductDefection == null ? -1 : model.ProductDefection.Id, 
 				model.ProcessReport.Process.StateStationActivity.StateStation.State.FPC.Product.Id);
 			var pdrepo = new Dal.Repository<Model.ProductDefection>(Parent.Parent.UOW);
-			ProductDefection.FilterBoxSelectedItemChanged += (s, v) => 
+			ProductDefection.FilterableItemSelected += (s, old, v) => 
 				Model.ProductDefection = pdrepo.FirstOrDefault(x => x.Id == v.Id);
 
-			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorDefectionReports.Select(x=>x.Operator.Id));
+			//create and load OperatorDefectionReports
+			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorDefectionReports, Parent.Parent.UOW);
+			var odrRepo = new Dal.Repository<Model.OperatorDefectionReport>(Parent.Parent.UOW);
+			GuiltyOperators.OperatorSelected += (vm, oldOp, newOp) =>
+			{
+				if (newOp.Model == null) return;
+
+				//reload ODR model
+				if (vm.Model == null)
+				{
+				}
+
+				if (oldOp == null)
+				{
+					//create and add new ODR
+					var odr = new Model.OperatorDefectionReport
+					{
+						DefectionReport = model,
+						Operator = newOp.Model,
+						ModifiedBy = LoginInfo.Id,
+					};
+					odrRepo.Add(odr);
+					vm.Model = odr;
+				}
+				else
+				{
+					//update existing ODR
+					vm.Model.Operator = newOp.Model;
+				}
+			};
+			GuiltyOperators.OperatorRemoved += vm =>
+			{
+				if (vm.Model != null)
+				{
+					model.OperatorDefectionReports.Remove(vm.Model);
+					odrRepo.Delete(vm.Model);
+				}
+			};
 	
 			AffectsTaskReport = model.AffectsTaskReport;
 			LostSeconds = model.LostTime;

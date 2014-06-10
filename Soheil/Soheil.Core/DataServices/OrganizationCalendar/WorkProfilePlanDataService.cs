@@ -192,13 +192,8 @@ namespace Soheil.Core.DataServices
 		internal List<WorkProfilePlan> GetInRange(DateTime startDate, DateTime endDate)
 		{
 			var plans = workProfilePlanRepository.Find(x => !(x.EndDate < startDate || x.StartDate > endDate),
-				"WorkProfile",
-				"WorkProfile.WorkDays",
-				"WorkProfile.WorkDays.WorkShifts",
 				"WorkProfile.WorkDays.WorkShifts.WorkBreaks",
 				"WorkProfile.WorkDays.WorkShifts.WorkShiftPrototype",
-				"WorkProfile.WorkShiftPrototypes",
-				"WorkProfile.WorkShiftPrototypes.WorkShifts",
 				"WorkProfile.WorkShiftPrototypes.WorkShifts.WorkBreaks"
 				);
 			return plans.ToList();

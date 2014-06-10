@@ -76,6 +76,7 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				var vm = AddItem(item);
 				vm.ViewMode = ViewMode;
+				item.HasVm = true;
 			};
 			Manager.BlockUpdated += item =>
 			{

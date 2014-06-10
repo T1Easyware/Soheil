@@ -22,246 +22,247 @@
 		</Style>
 	</UserControl.Resources>
 	
-	<Grid Margin="8">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="25"/>
-		</Grid.RowDefinitions>
-		<Grid.Visibility>
-			<MultiBinding Converter="{StaticResource isEqualToVisibilityConverter2}">
-				<Binding Path="StateStation"/>
-				<Binding Path="SelectedStateStation"/>
-			</MultiBinding>
-		</Grid.Visibility>
-		<!-- Start of Block -->
-		<Border>
-			<DockPanel VerticalAlignment="Center" LastChildFill="False" Style="{StaticResource Panel3DEffectStyle}">
-				<Border Style="{StaticResource tipTabBorderStyle}">
-					<WrapPanel>
-						<TextBlock Text="{Loc PPE_TaskTP}" FontSize="14" FontWeight="Bold" Foreground="White"/>
-						<Grid MinWidth="60" Margin="5,0">
-							<!-- TP -->
-							<TextBox Grid.Column="0" Text="{Binding BlockTargetPoint, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Loc PPE_TaskTP}" TextAlignment="Right" VerticalAlignment="Center"/>
-							<Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
-						</Grid>
-					</WrapPanel>
-				</Border>
+	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+		
+		<Grid Margin="8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="25"/>
+			</Grid.RowDefinitions>
+			<Grid.Visibility>
+				<MultiBinding Converter="{StaticResource isEqualToVisibilityConverter2}">
+					<Binding Path="StateStation"/>
+					<Binding Path="SelectedStateStation"/>
+				</MultiBinding>
+			</Grid.Visibility>
+			<!-- Start of Block -->
+			<Border>
+				<DockPanel VerticalAlignment="Center" LastChildFill="False" Style="{StaticResource Panel3DEffectStyle}">
+					<Border Style="{StaticResource tipTabBorderStyle}">
+						<WrapPanel>
+							<TextBlock Text="{Loc PPE_TaskTP}" FontSize="14" FontWeight="Bold" Foreground="White"/>
+							<Grid MinWidth="60" Margin="5,0">
+								<!-- TP -->
+								<TextBox Grid.Column="0" Text="{Binding BlockTargetPoint, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Loc PPE_TaskTP}" TextAlignment="Right" VerticalAlignment="Center"/>
+								<Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
+							</Grid>
+						</WrapPanel>
+					</Border>
 
-				<Canvas Width="10"/>
-				<Border Style="{StaticResource tipTabBorderStyle}">
-					<TextBlock Text="زمان شروع: " FontSize="14" FontWeight="Bold" Foreground="White"/>
-				</Border>
-				<Border Style="{StaticResource tipTabBorderStyle}">
-					<CheckBox Margin="3" IsChecked="{Binding IsAutoStart}">
+					<Canvas Width="10"/>
+					<Border Style="{StaticResource tipTabBorderStyle}">
+						<TextBlock Text="زمان شروع: " FontSize="14" FontWeight="Bold" Foreground="White"/>
+					</Border>
+					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
+						<CheckBox Margin="3" Content="موازی" ToolTip="برنامه می تواند همزمان با برنامه های دیگر همین ایستگاه تعریف شود. در اینصورت برنامه در زیر برنامه های دیگر قرار می گیرد" Foreground="White" IsChecked="{Binding IsParallel}"/>
+					</Border>
+					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsParallel, Converter={StaticResource booleanToInvisibilityConverter}}">
+						<CheckBox Content="{Loc PPE_FirstEmptySpace}" Margin="3" IsChecked="{Binding IsAutoStart}"/>
+					</Border>
+					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
 						<WrapPanel>
-							<TextBlock Text="{Loc PPE_FirstEmptySpace}"/>
-							<TextBlock Text="{Binding AutoStartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="20,0" TextAlignment="Left" HorizontalAlignment="Left"/>
+							<TextBlock Text="{Loc txtDate}" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+							<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+							<Button Margin="0,1" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" Style="{StaticResource Button3DTextStyle}"/>
+							<Button Margin="0,1" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}" Style="{StaticResource Button3DTextStyle}"/>
 						</WrapPanel>
-					</CheckBox>
-				</Border>
-				<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
-					<WrapPanel>
-						<TextBlock Text="{Loc txtDate}" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-						<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
-						<Button Margin="0,1" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" Style="{StaticResource Button3DTextStyle}"/>
-						<Button Margin="0,1" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}" Style="{StaticResource Button3DTextStyle}"/>
-					</WrapPanel>
-				</Border>
-				<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
-					<WrapPanel>
-						<TextBlock Margin="3,0,0,0" Text="{Loc txtTime}" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-						<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
-					</WrapPanel>
-				</Border>
-			</DockPanel>
-		</Border>
-		<!-- processes -->
-		<Grid Background="Silver" Grid.Row="1">
-			<Grid.Effect>
-				<DropShadowEffect ShadowDepth="0"/>
-			</Grid.Effect>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
+					</Border>
+					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
+						<WrapPanel>
+							<TextBlock Margin="3,0,0,0" Text="{Loc txtTime}" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+							<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
+						</WrapPanel>
+					</Border>
+				</DockPanel>
+			</Border>
+			<!-- processes -->
+			<Grid Background="Silver" Grid.Row="1">
+				<Grid.Effect>
+					<DropShadowEffect ShadowDepth="0"/>
+				</Grid.Effect>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
 
-			<DockPanel MinWidth="400" MaxWidth="600" Margin="2,5,7,0">
-				<!-- toolbar -->
-				<Grid DockPanel.Dock="Top">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition MinWidth="50"/>
-						<ColumnDefinition Width="3*"/>
-						<ColumnDefinition Width="4*"/>
-						<ColumnDefinition Width="60"/>
-					</Grid.ColumnDefinitions>
-					<TextBlock Text="فعالیتها:" VerticalAlignment="Center"/>
-					<!-- same qty -->
-					<ToggleButton Grid.Column="1" IsChecked="{Binding IsTargetPointFixed}"
-                              ToolTip="{Loc PPE_SameQtyForActivites}">
-						<DockPanel>
-							<Image Style="{StaticResource QuantityImage}" Margin="5,0" IsHitTestVisible="False"/>
-							<TextBox IsEnabled="{Binding IsTargetPointFixed}" Text="{Binding FixedTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="50"/>
-						</DockPanel>
-					</ToggleButton>
-					<!-- same time -->
-					<ToggleButton Grid.Column="2" IsChecked="{Binding IsDurationFixed}"
-                              ToolTip="{Loc PPE_SameTimeForActivites}">
-						<WrapPanel>
-							<Image Style="{StaticResource DurationImage}" Margin="5,0" IsHitTestVisible="False"/>
-							<CustomControls:DurationBox DurationSeconds="{Binding FixedDurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding IsDurationFixed, Converter={StaticResource inverter}}"/>
-						</WrapPanel>
-					</ToggleButton>
-					<!-- defer -->
-					<ToggleButton Grid.Column="3" IsChecked="{Binding IsDeferred}"
-                              ToolTip="{Loc PPE_DeferToActivites}">
-						<WrapPanel>
-							<Image Style="{StaticResource IndependentTPImage}" Margin="5,0" IsHitTestVisible="False"/>
-						</WrapPanel>
-					</ToggleButton>
-				</Grid>
-				<!-- Activity List -->
-				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-					<ItemsControl ItemsSource="{Binding ActivityList}" Background="#1000" Margin="2">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="{x:Type ppevm:ActivityEditorVm}">
-								<Border Background="#1FFF" BorderBrush="White" BorderThickness="1" CornerRadius="1" Margin="1">
-									<DockPanel>
-										<!-- One Activity -->
-										<StackPanel Width="100">
-											<!-- Name & Code -->
-											<TextBlock Text="{Binding Name}" TextWrapping="Wrap" DockPanel.Dock="Top"/>
-											<TextBlock Text="{Binding Code}" TextWrapping="Wrap" DockPanel.Dock="Left" Foreground="Gray"/>
-											<!-- choices helper -->
-											<WrapPanel>
-												<TextBlock Text="نفرساعتها: "/>
-												<ItemsControl ItemsSource="{Binding Choices}">
-													<ItemsControl.ItemTemplate>
-														<DataTemplate>
-															<Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="2" Margin="1">
-																<Border.Background>
-																	<Binding Path="IsMany" Converter="{StaticResource booleanToBrushConverter}">
-																		<Binding.ConverterParameter>
-																			<x:Array Type="Brush">
-																				<SolidColorBrush Color="#990" />
-																				<SolidColorBrush Color="Silver"/>
-																			</x:Array>
-																		</Binding.ConverterParameter>
-																	</Binding>
-																</Border.Background>
-																<TextBlock Text="{Binding ManHour}"/>
-																<Border.ToolTip>
-																	<!--loc farsi intended layout:-->
-																	<!--نفرساعت       |         2-->
-																	<UniformGrid Rows="3" Columns="2">
-																		<TextBlock Text="{Loc txtManHour}" Foreground="Gray"/>
-																		<TextBlock Text="{Binding ManHour}" FlowDirection="LeftToRight"/>
-																		<TextBlock Text="{Loc txtCycleTimeSec}" Foreground="Gray"/>
-																		<TextBlock Text="{Binding CycleTime}" FlowDirection="LeftToRight"/>
-																		<TextBlock Text="{Loc txtIsMany}" Grid.RowSpan="2" Visibility="{Binding IsMany, Converter={StaticResource booleanToVisibilityConverter}}"/>
-																	</UniformGrid>
-																</Border.ToolTip>
-															</Border>
-														</DataTemplate>
-													</ItemsControl.ItemTemplate>
-													<ItemsControl.ItemsPanel>
-														<ItemsPanelTemplate>
-															<UniformGrid Rows="1"/>
-														</ItemsPanelTemplate>
-													</ItemsControl.ItemsPanel>
-												</ItemsControl>
-											</WrapPanel>
-											<!-- Add button -->
-											<Button Command="{Binding AddProcessCommand}" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+				<DockPanel MinWidth="400" MaxWidth="600" Margin="2,5,7,0">
+					<!-- toolbar -->
+					<Grid DockPanel.Dock="Top">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition MinWidth="50"/>
+							<ColumnDefinition Width="3*"/>
+							<ColumnDefinition Width="4*"/>
+							<ColumnDefinition Width="60"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="فعالیتها:" VerticalAlignment="Center"/>
+						<!-- same qty -->
+						<ToggleButton Grid.Column="1" IsChecked="{Binding IsTargetPointFixed}"
+								  ToolTip="{Loc PPE_SameQtyForActivites}">
+							<DockPanel>
+								<Image Style="{StaticResource QuantityImage}" Margin="5,0" IsHitTestVisible="False"/>
+								<TextBox IsEnabled="{Binding IsTargetPointFixed}" Text="{Binding FixedTargetPoint, UpdateSourceTrigger=PropertyChanged}" MinWidth="50"/>
+							</DockPanel>
+						</ToggleButton>
+						<!-- same time -->
+						<ToggleButton Grid.Column="2" IsChecked="{Binding IsDurationFixed}"
+								  ToolTip="{Loc PPE_SameTimeForActivites}">
+							<WrapPanel>
+								<Image Style="{StaticResource DurationImage}" Margin="5,0" IsHitTestVisible="False"/>
+								<CustomControls:DurationBox DurationSeconds="{Binding FixedDurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding IsDurationFixed, Converter={StaticResource inverter}}"/>
+							</WrapPanel>
+						</ToggleButton>
+						<!-- defer -->
+						<ToggleButton Grid.Column="3" IsChecked="{Binding IsDeferred}"
+								  ToolTip="{Loc PPE_DeferToActivites}">
+							<WrapPanel>
+								<Image Style="{StaticResource IndependentTPImage}" Margin="5,0" IsHitTestVisible="False"/>
+							</WrapPanel>
+						</ToggleButton>
+					</Grid>
+					<!-- Activity List -->
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<ItemsControl ItemsSource="{Binding ActivityList}" Background="#1000" Margin="2">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate DataType="{x:Type ppevm:ActivityEditorVm}">
+									<Border Background="#1FFF" BorderBrush="White" BorderThickness="1" CornerRadius="1" Margin="1">
+										<DockPanel>
+											<!-- One Activity -->
+											<StackPanel Width="100">
+												<!-- Name & Code -->
+												<TextBlock Text="{Binding Name}" TextWrapping="Wrap" DockPanel.Dock="Top"/>
+												<TextBlock Text="{Binding Code}" TextWrapping="Wrap" DockPanel.Dock="Left" Foreground="Gray"/>
+												<!-- choices helper -->
 												<WrapPanel>
-													<TextBlock Text="{Loc txtNew}" Foreground="#033"/>
-													<Image Style="{StaticResource Add16Image}"/>
+													<TextBlock Text="نفرساعتها: "/>
+													<ItemsControl ItemsSource="{Binding Choices}">
+														<ItemsControl.ItemTemplate>
+															<DataTemplate>
+																<Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="2" Margin="1">
+																	<Border.Background>
+																		<Binding Path="IsMany" Converter="{StaticResource booleanToBrushConverter}">
+																			<Binding.ConverterParameter>
+																				<x:Array Type="Brush">
+																					<SolidColorBrush Color="#990" />
+																					<SolidColorBrush Color="Silver"/>
+																				</x:Array>
+																			</Binding.ConverterParameter>
+																		</Binding>
+																	</Border.Background>
+																	<TextBlock Text="{Binding ManHour}"/>
+																	<Border.ToolTip>
+																		<!--loc farsi intended layout:-->
+																		<!--نفرساعت       |         2-->
+																		<UniformGrid Rows="3" Columns="2">
+																			<TextBlock Text="{Loc txtManHour}" Foreground="Gray"/>
+																			<TextBlock Text="{Binding ManHour}" FlowDirection="LeftToRight"/>
+																			<TextBlock Text="{Loc txtCycleTimeSec}" Foreground="Gray"/>
+																			<TextBlock Text="{Binding CycleTime}" FlowDirection="LeftToRight"/>
+																			<TextBlock Text="{Loc txtIsMany}" Grid.RowSpan="2" Visibility="{Binding IsMany, Converter={StaticResource booleanToVisibilityConverter}}"/>
+																		</UniformGrid>
+																	</Border.ToolTip>
+																</Border>
+															</DataTemplate>
+														</ItemsControl.ItemTemplate>
+														<ItemsControl.ItemsPanel>
+															<ItemsPanelTemplate>
+																<UniformGrid Rows="1"/>
+															</ItemsPanelTemplate>
+														</ItemsControl.ItemsPanel>
+													</ItemsControl>
 												</WrapPanel>
-											</Button>
-										</StackPanel>
-										<!-- Processes -->
-										<ItemsControl ItemsSource="{Binding ProcessList}">
-											<ItemsControl.ItemTemplate>
-												<DataTemplate DataType="{x:Type ppevm:ProcessEditorVm}">
-													<!-- One Process -->
-													<local:ProcessEditor DataContext="{Binding}"/>
-												</DataTemplate>
-											</ItemsControl.ItemTemplate>
-										</ItemsControl>
-									</DockPanel>
-								</Border>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
+												<!-- Add button -->
+												<Button Command="{Binding AddProcessCommand}" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+													<WrapPanel>
+														<TextBlock Text="{Loc txtNew}" Foreground="#033"/>
+														<Image Style="{StaticResource Add16Image}"/>
+													</WrapPanel>
+												</Button>
+											</StackPanel>
+											<!-- Processes -->
+											<ItemsControl ItemsSource="{Binding ProcessList}">
+												<ItemsControl.ItemTemplate>
+													<DataTemplate DataType="{x:Type ppevm:ProcessEditorVm}">
+														<!-- One Process -->
+														<local:ProcessEditor DataContext="{Binding}"/>
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
+											</ItemsControl>
+										</DockPanel>
+									</Border>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</ScrollViewer>
+				</DockPanel>
+			
+				<GridSplitter Grid.Column="0" Width="5" Background="#6AA" BorderBrush="White" BorderThickness="1,0"/>
+			
+				<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="2,5,2,0">
+					<local:OperatorManager DataContext="{Binding OperatorManager}"/>
 				</ScrollViewer>
-			</DockPanel>
-			
-			<GridSplitter Grid.Column="0" Width="5" Background="#6AA" BorderBrush="White" BorderThickness="1,0"/>
-			
-			<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="2,5,2,0">
-				<local:OperatorManager DataContext="{Binding OperatorManager}"/>
-			</ScrollViewer>
-		</Grid>
-		<!-- status bar -->
-		<StatusBar Grid.Row="2" Background="#999">
-			<!-- additional readonly info -->
-			<WrapPanel TextBlock.Foreground="Black">
-				<WrapPanel.Resources>
-					<Style TargetType="TextBlock">
-						<Setter Property="Margin" Value="5,2"/>
-						<Setter Property="MinWidth" Value="10"/>
-					</Style>
-					<Style TargetType="StackPanel">
-						<Setter Property="Margin" Value="5,0,10,0"/>
-						<Setter Property="Background" Value="#1FFF"/>
-						<Setter Property="Orientation" Value="Horizontal"/>
-						<Style.Triggers>
-							<EventTrigger RoutedEvent="MouseEnter">
-								<BeginStoryboard>
-									<Storyboard Duration="0:0:1">
-										<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#4FFF" Duration="0:0:1"/>
-									</Storyboard>
-								</BeginStoryboard>
-							</EventTrigger>
-							<EventTrigger RoutedEvent="MouseLeave">
-								<BeginStoryboard>
-									<Storyboard Duration="0:0:1">
-										<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#1FFF" Duration="0:0:1"/>
-									</Storyboard>
-								</BeginStoryboard>
-							</EventTrigger>
-						</Style.Triggers>
-					</Style>
-					<Style TargetType="StatusBarItem">
-						<Setter Property="Padding" Value="0"/>
-						<Setter Property="Height" Value="20"/>
-					</Style>
-				</WrapPanel.Resources>
-				<StatusBarItem>
-					<StackPanel>
-						<TextBlock Text="{Loc txtEndTime}"/>
-						<TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
-						<TextBlock Text="{Binding EndDate, Converter={StaticResource dateToPersianDateConverter}}"/>
-					</StackPanel>
-				</StatusBarItem>
-				<StatusBarItem>
-					<StackPanel>
-						<TextBlock Text="{Loc txtDuration}"/>
-						<TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
-					</StackPanel>
-				</StatusBarItem>
-				<StatusBarItem>
-					<StackPanel>
-						<TextBlock Text="{Loc PPE_SumOfTP}"/>
-						<TextBlock Text="{Binding BlockTargetPoint}"/>
-					</StackPanel>
-				</StatusBarItem>
-				<Border Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" BorderBrush="#6EE2" Background="#2FFF" CornerRadius="2" BorderThickness="1" Margin="4,0">
-					<TextBlock Text="{Binding Message.MainExceptionText}" ToolTip="{Binding Message.FullExceptionText}" Foreground="#EE2"/>
-				</Border>
-			</WrapPanel>
-		</StatusBar>
+			</Grid>
+			<!-- status bar -->
+			<StatusBar Grid.Row="2" Background="#999">
+				<!-- additional readonly info -->
+				<WrapPanel TextBlock.Foreground="Black">
+					<WrapPanel.Resources>
+						<Style TargetType="TextBlock">
+							<Setter Property="Margin" Value="5,2"/>
+							<Setter Property="MinWidth" Value="10"/>
+						</Style>
+						<Style TargetType="StackPanel">
+							<Setter Property="Margin" Value="5,0,10,0"/>
+							<Setter Property="Background" Value="#1FFF"/>
+							<Setter Property="Orientation" Value="Horizontal"/>
+							<Style.Triggers>
+								<EventTrigger RoutedEvent="MouseEnter">
+									<BeginStoryboard>
+										<Storyboard Duration="0:0:1">
+											<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#4FFF" Duration="0:0:1"/>
+										</Storyboard>
+									</BeginStoryboard>
+								</EventTrigger>
+								<EventTrigger RoutedEvent="MouseLeave">
+									<BeginStoryboard>
+										<Storyboard Duration="0:0:1">
+											<ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#1FFF" Duration="0:0:1"/>
+										</Storyboard>
+									</BeginStoryboard>
+								</EventTrigger>
+							</Style.Triggers>
+						</Style>
+						<Style TargetType="StatusBarItem">
+							<Setter Property="Padding" Value="0"/>
+							<Setter Property="Height" Value="20"/>
+						</Style>
+					</WrapPanel.Resources>
+					<StatusBarItem>
+						<StackPanel>
+							<TextBlock Text="{Loc txtEndTime}"/>
+							<TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+							<TextBlock Text="{Binding EndDate, Converter={StaticResource dateToPersianDateConverter}}"/>
+						</StackPanel>
+					</StatusBarItem>
+					<StatusBarItem>
+						<StackPanel>
+							<TextBlock Text="{Loc txtDuration}"/>
+							<TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+						</StackPanel>
+					</StatusBarItem>
+					<StatusBarItem>
+						<StackPanel>
+							<TextBlock Text="{Loc PPE_SumOfTP}"/>
+							<TextBlock Text="{Binding BlockTargetPoint}"/>
+						</StackPanel>
+					</StatusBarItem>
+					<Border Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" BorderBrush="#6EE2" Background="#2FFF" CornerRadius="2" BorderThickness="1" Margin="4,0">
+						<TextBlock Text="{Binding Message.MainExceptionText}" ToolTip="{Binding Message.FullExceptionText}" Foreground="#EE2"/>
+					</Border>
+				</WrapPanel>
+			</StatusBar>
 
-	</Grid>
+		</Grid>
+	</ScrollViewer>
 
 </UserControl>

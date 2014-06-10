@@ -111,86 +111,51 @@ namespace Soheil.Core.DataServices
 			}
 		}
 
-		public void Save(ViewModels.PP.Report.ProcessReportVm vm)
+		public void Save(ProcessReport model)
 		{
-			var productDefectionRepository = new Repository<ProductDefection>(context);
-			var causeRepository = new Repository<Cause>(context);
-			var defectionReportRepository = new Repository<DefectionReport>(context);
-			var stoppageReportRepository = new Repository<StoppageReport>(context);
-			var operatorRepository = new Repository<Operator>(context);
-			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
-			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
-
-
-			//add defectionReports and their children
-			foreach (var defectionReportVm in vm.DefectionReports.List)
+			//correct Defections
+			var drRepo = new Repository<DefectionReport>(context);
+			var odrRepo = new Repository<OperatorDefectionReport>(context);
+			foreach (var dr in model.DefectionReports.ToArray())
 			{
-				var defectionReportModel = new Model.DefectionReport();
-				defectionReportModel.AffectsTaskReport = defectionReportVm.AffectsTaskReport;
-				defectionReportModel.LostCount = defectionReportVm.LostCount;
-				defectionReportModel.LostTime = defectionReportVm.LostSeconds;
-				defectionReportModel.ProcessReport = vm.Model;
-				defectionReportModel.IsG2 = defectionReportVm.IsG2;
-				defectionReportModel.ProductDefection = productDefectionRepository.FirstOrDefault(x => x.Id == defectionReportVm.ProductDefection.SelectedItem.Id);
-				foreach (var guiltyOperVm in defectionReportVm.GuiltyOperators.FilterBoxes)
+				foreach (var odr in dr.OperatorDefectionReports.ToArray())
 				{
-					var operatorDefectionReportModel = new Model.OperatorDefectionReport();
-					operatorDefectionReportModel.DefectionReport = defectionReportModel;
-					operatorDefectionReportModel.Operator = operatorRepository.FirstOrDefault(x => x.Id == guiltyOperVm.SelectedItem.Id);
-					defectionReportModel.OperatorDefectionReports.Add(operatorDefectionReportModel);
+					if(odr.Operator == null)
+					{
+						dr.OperatorDefectionReports.Remove(odr);
+						odrRepo.Delete(odr);
+					}
 				}
-				vm.Model.DefectionReports.Add(defectionReportModel);
+				if (dr.ProductDefection == null)
+				{
+					model.DefectionReports.Remove(dr);
+					drRepo.Delete(dr);
+				}
 			}
 
-			//add stoppageReports and their children
-			foreach (var stoppageReportVm in vm.StoppageReports.List)
+			//correct Stoppages
+			var srRepo = new Repository<StoppageReport>(context);
+			var osrRepo = new Repository<OperatorStoppageReport>(context);
+			foreach (var sr in model.StoppageReports.ToArray())
 			{
-				var stoppageReportModel = new Model.StoppageReport();
-				stoppageReportModel.AffectsTaskReport = stoppageReportVm.AffectsTaskReport;
-				stoppageReportModel.LostCount = stoppageReportVm.LostCount;
-				stoppageReportModel.LostTime = stoppageReportVm.LostSeconds;
-				stoppageReportModel.ProcessReport = vm.Model;
-				int selid = stoppageReportVm.StoppageLevels.FilterBoxes[2].SelectedItem.Id;
-				stoppageReportModel.Cause = causeRepository.FirstOrDefault(x => x.Id == selid);
-				foreach (var guiltyOperVm in stoppageReportVm.GuiltyOperators.FilterBoxes)
+				foreach (var osr in sr.OperatorStoppageReports.ToArray())
 				{
-					var operatorStoppageReportModel = new Model.OperatorStoppageReport();
-					operatorStoppageReportModel.StoppageReport = stoppageReportModel;
-					operatorStoppageReportModel.Operator = operatorRepository.FirstOrDefault(x => x.Id == guiltyOperVm.SelectedItem.Id);
-					stoppageReportModel.OperatorStoppageReports.Add(operatorStoppageReportModel);
+					if (osr.Operator == null)
+					{
+						sr.OperatorStoppageReports.Remove(osr);
+						osrRepo.Delete(osr);
+					}
 				}
-				vm.Model.StoppageReports.Add(stoppageReportModel);
+				if (sr.Cause == null)
+				{
+					model.StoppageReports.Remove(sr);
+					srRepo.Delete(sr);
+				}
 			}
 
-			context.Commit();
-		}
-
-		/// <summary>
-		/// Resets a processReport to its original form
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="newTargetPoint">new automatically calculated targetpoint</param>
-		internal void ResetById(int id, int newTargetPoint)
-		{
-			var processReportRepository = new Repository<ProcessReport>(context);
-			var processReportDataService = new ProcessReportDataService(context);
-			var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
-			var defectionReportRepository = new Repository<DefectionReport>(context);
-			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
-			var stoppageReportRepository = new Repository<StoppageReport>(context);
-			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
-			var model = processReportRepository.Single(x => x.Id == id);
-			processReportDataService.ClearModel(
-				model,
-				processReportRepository,
-				operatorProcessReportRepository,
-				defectionReportRepository,
-				operatorDefectionReportRepository,
-				stoppageReportRepository,
-				operatorStoppageReportRepository,
-				context);
-			model.ProcessReportTargetPoint = newTargetPoint;
-			model.ProducedG1 = 0;
+			//correct G1
+			if (model.OperatorProcessReports.Any())
+				model.ProducedG1 = model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);
 			context.Commit();
 		}
 

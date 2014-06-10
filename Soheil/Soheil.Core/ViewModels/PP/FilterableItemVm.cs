@@ -13,6 +13,20 @@ namespace Soheil.Core.ViewModels.PP
 	public class FilterableItemVm : DependencyObject
 	{
 		/// <summary>
+		/// Gets or sets the parent of this FilterableItemVm
+		/// </summary>
+		public FilterBoxVm Parent { get; set; }
+		/// <summary>
+		/// Gets the CauseId, ProductDefectionId or OperatorId
+		/// </summary>
+		public int Id { get; protected set; }
+
+		/// <summary>
+		/// Item's Operator Model (in guilty operators collection)
+		/// </summary>
+		public dynamic Model { get; set; }
+
+		/// <summary>
 		/// Creates an instance of FilterableItemVm
 		/// </summary>
 		/// <param name="id">Id of the model represented by this vm</param>
@@ -34,6 +48,7 @@ namespace Soheil.Core.ViewModels.PP
 		public static FilterableItemVm CreateForGuiltyOperator(Model.Operator model)
 		{
 			var vm = new FilterableItemVm(model.Id, model.Name);
+			vm.Model = model;
 			return vm;
 		}
 		/// <summary>
@@ -61,14 +76,6 @@ namespace Soheil.Core.ViewModels.PP
 			return vm;
 		}
 
-		/// <summary>
-		/// Gets or sets the parent of this FilterableItemVm
-		/// </summary>
-		public FilterBoxVm Parent { get; set; }
-		/// <summary>
-		/// Gets the CauseId, ProductDefectionId or OperatorId
-		/// </summary>
-		public int Id { get; protected set; }
 		/// <summary>
 		/// Gets a bindable value for another viewModel which this FilterableItemVm wraps around
 		/// <para>Null if no other ViewModel is wrapped by this FilterableItemVm</para>

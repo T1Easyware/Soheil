@@ -1215,6 +1215,7 @@
     <Property Name="EndDateTime" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="PPFlagsNr" Type="tinyint" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="Job_Id" Type="int" Nullable="true" />
     <Property Name="Education_Id" Type="int" Nullable="true" />
     <Property Name="StateStation_Id" Type="int" Nullable="false" />
@@ -4096,6 +4097,7 @@
           <NavigationProperty Name="Job" Relationship="SoheilEdm.JobBlock" FromRole="Block" ToRole="Job" />
           <NavigationProperty Name="Education" Relationship="SoheilEdm.EducationBlock" FromRole="Block" ToRole="Education" />
           <NavigationProperty Name="StateStation" Relationship="SoheilEdm.StateStationBlock" FromRole="Block" ToRole="StateStation" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" />
         </EntityType>
         <Association Name="BlockTask">
           <End Type="SoheilEdm.Block" Role="Block" Multiplicity="1" />
@@ -4929,6 +4931,7 @@
           <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="PPFlagsNr" ColumnName="PPFlagsNr" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5749,7 +5752,7 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="SoheilEdm" ZoomLevel="86" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+      <Diagram Name="SoheilEdm" ZoomLevel="55" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="5.25" PointX="16.5" PointY="11" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="20.25" PointY="15.625" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="35.875" PointY="13.25" Height="1.5956835937499996" FillColor="110, 100, 50" />
@@ -5771,7 +5774,7 @@
         <EntityTypeShape EntityType="SoheilEdm.Process" Width="3.25" PointX="34.25" PointY="23.125" Height="2.364889322916671" FillColor="64, 64, 64" />
         <EntityTypeShape EntityType="SoheilEdm.ProcessOperator" Width="1.875" PointX="38.375" PointY="24.75" Height="1.9802864583333335" IsExpanded="true" FillColor="YellowGreen" />
         <EntityTypeShape EntityType="SoheilEdm.ProcessReport" Width="5.125" PointX="34.25" PointY="18" Height="2.5571907552083326" FillColor="150, 150, 150" />
-        <EntityTypeShape EntityType="SoheilEdm.TaskReport" Width="2.25" PointX="31.375" PointY="19" Height="2.5571907552083353" FillColor="150, 150, 150" />
+        <EntityTypeShape EntityType="SoheilEdm.TaskReport" Width="2.25" PointX="31.375" PointY="18" Height="2.5571907552083353" FillColor="150, 150, 150" />
         <EntityTypeShape EntityType="SoheilEdm.StoppageReport" Width="4.5" PointX="40.625" PointY="17.625" Height="2.5571907552083317" FillColor="235, 200, 140" />
         <EntityTypeShape EntityType="SoheilEdm.OperatorStoppageReport" Width="2" PointX="43.25" PointY="22" Height="1.9802864583333353" FillColor="224, 247, 193" />
         <EntityTypeShape EntityType="SoheilEdm.OperatorDefectionReport" Width="2" PointX="46.5" PointY="22" Height="1.9802864583333353" FillColor="224, 247, 193" />

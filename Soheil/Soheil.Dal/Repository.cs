@@ -15,15 +15,15 @@ namespace Soheil.Dal
             if (unitOfWork == null)
                 throw new ArgumentNullException("unitOfWork");
 
-            _context = unitOfWork as SoheilEdmContext;
+			_context = unitOfWork as SoheilEdmContext;
         }
 
         #region IRepository<TModel> Members
 
-        public IQueryable<TModel> AsQueryable()
+		public ParallelQuery<TModel> AsParallel()
         {
-            throw new NotImplementedException();
-        }
+			return _context.CreateObjectSet<TModel>().AsParallel<TModel>();
+		}
 
 		public IQueryable<T> OfType<T>() { return _context.CreateObjectSet<TModel>().OfType<T>(); }
 		public IQueryable<T> OfType<T>(params string[] includePath)

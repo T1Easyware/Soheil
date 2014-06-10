@@ -36,21 +36,84 @@ namespace Soheil.Core.PP
 		public event Action<DateTime, Color[]> DayColorsUpdated;
 		#endregion
 
+
+		#region Members
+		DataServices.BlockDataService _blockDataService;
+		DataServices.NPTDataService _nptDataService;
+
+		//block
+		Action<object> _actionLoadBlock;//load blocks within the modified range as ActionData (<object>)
+		Action<object> _actionUpdateBlock;
+		Action<object> _actionDeleteBlock;
+
+		//npt
+		Action<object> _actionLoadNpt;
+		Action<object> _actionUpdateNpt;
+		Action<object> _actionDeleteNpt;
+
+		//worktimes
+		Action<object> _actionLoadWorkTimes;
+		Action<object> _actionDeleteWorkTimes;
+
+		//range
+		object _rangeLock = new object();
+		TimeSpan _rangeMargin = TimeSpan.FromHours(3);//additional margin to range
+		DateTime _start = DateTime.MinValue;//last value AutoFetchRange taken (after margin is added)
+		DateTime _end = DateTime.MinValue;
+
+		//cache
+		object _cacheLock = new object();
+		int _stations = 0;
+		List<PPItemBlock>[] _blocks;
+		List<PPItemNpt> _npts;
+		List<PPItemWorkTime> _shifts;
+
+		#endregion
+
+
+
+		#region Ctor
+		public PPItemManager(Dispatcher dispatcher)
+		{
+			_dispatcher = dispatcher;
+			IsAutoRefresh = true;
+			_instances.Add(this);
+
+			//initialize dataservices
+			_blockDataService = new DataServices.BlockDataService();
+			_nptDataService = new DataServices.NPTDataService();
+
+			_stations = new DataServices.StationDataService().GetActives().Max(x => x.Index);
+			_blocks = new List<PPItemBlock>[_stations];
+			for (int i = 0; i < _stations; i++)
+			{
+				_blocks[i] = new List<PPItemBlock>();
+			}
+			_npts = new List<PPItemNpt>();
+			_shifts = new List<PPItemWorkTime>();
+
+			//initialize qTimer and actions
+			initializeActions();
+
+			//start the thread
+			Pause = false;
+		}
+		#endregion
+
+		#region Thread
+		
 		/// <summary>
 		/// Gets or sets a value that indicates whether PPItemManager keep all items updated when idle
 		/// </summary>
 		public bool IsAutoRefresh { get; set; }
 
-		#region Members
-		Dal.SoheilEdmContext _uow;
-		DataServices.WorkProfilePlanDataService _workProfilePlanDataService;
-		DataServices.BlockDataService _blockDataService;
-		DataServices.NPTDataService _nptDataService;
-
+		//private members
 		Thread _qThread;
-		Dispatcher _dispatcher;
 		bool _qThreadAlive = false;
-		bool _pause = false;
+		bool _pause = true;
+		bool _isIdle = true;
+		static List<PPItemManager> _instances = new List<PPItemManager>();
+		Dispatcher _dispatcher;
 
 		/// <summary>
 		/// Pauses or unpauses the thread
@@ -79,114 +142,42 @@ namespace Soheil.Core.PP
 				_pause = value;
 			}
 		}
-
-		Stack<Task> _qLoad;
-		Action<object> _actionLoadWorkTimes;
-		Action<object> _actionLoadBlock;//load blocks within the modified range as ActionData (<object>)
-		Action<object> _actionLoadNpt;
-		private object _lockObject;//used for load day colors
-		Action<object> _actionLoadDayColors;
-
-		Action<object> _actionDeleteWorkTimes;
-		Action<object> _actionDeleteBlock;
-		Action<object> _actionDeleteNpt;
-
-		Action<object> _actionUpdateBlock;
-		Action<object> _actionUpdateNpt;
-
-		//_last: last values FetchRange taken (used for delete and update actions)
-		//_lastPerf: last values FetchRange performed upon (used to determine needs for load actions)
-		//_perfMargin: min required ticks between a dt and its _lastPerf to perform upon that dt
-		const long _perfMargin = 50000000000;//1hours and 32minutes
-		DateTime _lastStart = DateTime.MinValue;
-		DateTime _lastEnd = DateTime.MinValue;
-		DateTime _lastPerfStart = DateTime.MinValue;
-		DateTime _lastPerfEnd = DateTime.MinValue;
-
-		List<PPItemBlock> _blocks;
-		List<PPItemNpt> _npts;
-		List<PPItemWorkTime> _shifts;
-
-		#endregion
-
-		public PPItemManager(Dispatcher dispatcher)
-		{
-			_lockObject = new Object();
-			_dispatcher = dispatcher;
-			IsAutoRefresh = true;
-			_instances.Add(this);
-
-
-			_blocks = new List<PPItemBlock>();
-			_npts = new List<PPItemNpt>();
-			_shifts = new List<PPItemWorkTime>();
-
-			//initialize uow and dataservices
-			initializeData();
-
-			//initialize qTimer and actions
-			initializeActions();
-		}
-		void initializeData()
-		{
-			_uow = new Dal.SoheilEdmContext();
-			_workProfilePlanDataService = new DataServices.WorkProfilePlanDataService(_uow);
-			_blockDataService = new DataServices.BlockDataService(_uow);
-			_nptDataService = new DataServices.NPTDataService(_uow);
-		}
-
-
 		void _threadStart()
 		{
 			while (_qThreadAlive)
 			{
+				//control the thread
 				Thread.Sleep(200);
+				while (Pause) Thread.Sleep(200);
 
-				while (!Pause && _qThreadAlive)
+				//retreive thread-unsafe values
+				PPRange range;
+				bool isIdle;
+				lock(_rangeLock)
 				{
-					while (!Pause && _qThreadAlive)
-					{
-						Thread.Sleep(10);
+					isIdle = _isIdle;
+					range = new PPRange(_start, _end);
+					//apply margin
+					if (range.IsValidRange())
+						range.ApplyMargin(_rangeMargin);
+				}
 
-						lock (this)
-							if (!_qLoad.Any()) break;
-
-						//load
-						var task = _qLoad.Pop();
-						task.Start();
-						task.Wait();
-					}
-
-					if (Pause) break; if (_qThreadAlive) return;
-
-					Thread.Sleep(50);
-
-					//update/delete
-					if (IsAutoRefresh)
-					{
-						Task.Factory.StartNew(_actionUpdateBlock, new ActionData(_lastStart, _lastEnd)).Wait();
-						if (Pause) break; if (_qThreadAlive) return;
-						Thread.Sleep(50);
-						Task.Factory.StartNew(_actionUpdateNpt, new ActionData(_lastStart, _lastEnd)).Wait();
-						if (Pause) break; if (_qThreadAlive) return;
-						Thread.Sleep(50);
-					}
-
-					Task.Factory.StartNew(_actionDeleteBlock, new ActionData(_lastStart, _lastEnd)).Wait();
-					if (Pause) break; if (_qThreadAlive) return;
-					Thread.Sleep(50);
-					Task.Factory.StartNew(_actionDeleteNpt, new ActionData(_lastStart, _lastEnd)).Wait();
-					if (Pause) break; if (_qThreadAlive) return;
-					Thread.Sleep(50);
-					Task.Factory.StartNew(_actionDeleteWorkTimes, new ActionData(_lastStart, _lastEnd)).Wait();
-					if (Pause) break; if (_qThreadAlive) return;
-					Thread.Sleep(50);
+				//decision making
+				if (!isIdle)
+				{
+					//Load blocks in range (add/update newer blocks)
+					_actionLoadBlock.Invoke(range);
+					_actionLoadNpt.Invoke(range);
+				}
+				else
+				{
+					//Idle => GC & Refresh
+					_actionUpdateBlock.Invoke(range);
+					_actionUpdateNpt.Invoke(range);
 				}
 			}
 		}
 
-		#region Exit
-		static List<PPItemManager> _instances = new List<PPItemManager>();
 		public static void Abort()
 		{
 			while(_instances.Any())
@@ -198,7 +189,6 @@ namespace Soheil.Core.PP
 		{
 			_qThreadAlive = false;
 			_instances.Remove(this);
-			_qLoad.Clear();
 			if (_qThread != null)
 			{
 				int counter = 0;
@@ -211,6 +201,8 @@ namespace Soheil.Core.PP
 		} 
 		#endregion
 
+
+
 		#region Methods
 		/// <summary>
 		/// Automatically Reloads or deletes blocks, Npts and workShifts within the specified range
@@ -222,98 +214,29 @@ namespace Soheil.Core.PP
 		/// <param name="rangeEnd">end of the timeline range</param>
 		public void AutoFetchRange(DateTime rangeStart, DateTime rangeEnd)
 		{
-			_lastStart = rangeStart;
-			_lastEnd = rangeEnd;
-
-			//findout how the range is changed
-			bool reloadStart = false;
-			bool reloadEnd = false;
-
-			//if it's simply zoomed
-			if (rangeStart == _lastPerfStart && rangeEnd != _lastPerfEnd)
+			lock (_rangeLock)
 			{
-				//zoom out from a fixed start
-				if (rangeEnd > _lastPerfEnd.AddTicks(_perfMargin))
-				{
-					reloadEnd = true;
-				}
-			}
-			else//if it's moved
-			{
-				//zoom out from both sides
-				if (rangeStart.AddTicks(_perfMargin) < _lastPerfStart && rangeEnd > _lastPerfEnd.AddTicks(_perfMargin))
-				{
-					reloadStart = true;
-					reloadEnd = true;
-				}
-				//moved forward but still overlapping with last range
-				else if (rangeStart <= _lastPerfEnd && _lastPerfEnd < rangeEnd)
-				{
-					if (_lastPerfEnd.AddTicks(_perfMargin) < rangeEnd)
-					{
-						reloadEnd = true;
-					}
-				}
-				//moved backward but still overlapping with last range
-				else if (rangeStart < _lastPerfStart && _lastPerfStart < rangeEnd)
-				{
-					if (rangeStart.AddTicks(_perfMargin) < _lastPerfStart)
-					{
-						reloadStart = true;
-					}
-				}
-				//change datetime
-				else if (Math.Abs(rangeStart.Ticks - _lastPerfStart.Ticks) > _perfMargin 
-					|| Math.Abs(rangeEnd.Ticks - _lastPerfEnd.Ticks) > _perfMargin)
-				{
-					_lastPerfStart = rangeStart;
-					_lastPerfEnd = rangeEnd;
-					fetchRange(rangeStart, rangeEnd);
-				}
-			}
-
-			//then enqueue actions
-			if (reloadStart)
-			{
-				_lastPerfStart = rangeStart;
-				fetchRange(rangeStart, _lastPerfStart);
-			}
-			if (reloadEnd)
-			{
-				_lastPerfEnd = rangeEnd;
-				fetchRange(_lastPerfEnd, rangeEnd);
+				_start = rangeStart.Add(-_rangeMargin);
+				_end = rangeEnd.Add(_rangeMargin);
+				_isIdle = false;
 			}
 		}
-		public void FetchDayColorsOfMonth(DateTime startOfMonth)
+		/// <summary>
+		/// Reloads day colors and shifts of the selected month
+		/// </summary>
+		/// <param name="startOfMonth"></param>
+		public void FetchWorkTimes(DateTime startOfMonth)
 		{
 			var end = startOfMonth.AddDays(startOfMonth.GetPersianMonthDays());
-
-			var data = new ActionData(startOfMonth, end);
-			var loadDayColors = new Task(_actionLoadDayColors, data);
-			lock (this)
-				_qLoad.Push(loadDayColors);
-		}
-		private void fetchRange(DateTime start, DateTime end)
-		{
-			var data = new ActionData(start, end);
-			var loadWorkTimes = new Task(_actionLoadWorkTimes, data);
-			lock (this)
-				_qLoad.Push(loadWorkTimes);
-			var loadBlocks = new Task(_actionLoadBlock, data);
-			lock (this)
-				_qLoad.Push(loadBlocks);
-			var loadNpts = new Task(_actionLoadNpt, data);
-			lock (this)
-				_qLoad.Push(loadNpts);
+			var data = new PPRange(startOfMonth, end);
+			Task.Factory.StartNew(_actionLoadWorkTimes, data);
 		}
 		public void ForceReload()
 		{
 			Pause = true;
-			initializeData();
-			_qLoad.Clear();
 
 			//sync load
-			var data = new ActionData(_lastStart, _lastEnd);
+			var data = new PPRange(_start, _end);
 			_actionLoadBlock.Invoke(data);
 			_actionLoadWorkTimes.Invoke(data);
 			_actionLoadNpt.Invoke(data);
@@ -325,45 +248,111 @@ namespace Soheil.Core.PP
 		#region Actions
 		private void initializeActions()
 		{
-			#region Queue Timer
-			_qLoad = new Stack<Task>();
-			//start the thread
-			Pause = false;
-			#endregion
-
 			#region Load Actions
 			//-----------------------	ADD BLOCK	-------------------------------
 			_actionLoadBlock = (object data) =>
 			{
-				//retreive data
-				var actionData = data as ActionData;
+				var actionData = data as PPRange;
 				if (!actionData.IsValidRange()) return;
 
-				//find blocks in range
-				var start = actionData.Start.AddSeconds(-1);
-				var end = actionData.End.AddSeconds(1);
-				var blockIds = _blockDataService.GetIdsInRange(start, end).ToArray();
+				//Load blockInfos
+				var blockInfos = _blockDataService.GetInRange(actionData.Start, actionData.End).ToArray();
 
-				//add each block to view model
-				foreach (var blockId in blockIds)
+				//add each blockInfo to cache
+				foreach (var blockInfo in blockInfos)
 				{
-					//keep updated with _lastBlockIds
-					lock (this) { if (_blocks.Any(x => x.Id == blockId)) continue; }
+					//find b in cache
+					PPItemBlock b;
+					lock (_cacheLock)
+						b = _blocks[blockInfo.StationIndex].FirstOrDefault(x => x.Id == blockInfo.Id);
 
-					//create the PPItemBlock and load full data
-					var fullData = new PPItemBlock(blockId);
-
-					//fire event to add it
-					if (!PPItemBlock.IsNull(fullData))
+					if (b == null)
 					{
-						_dispatcher.Invoke(() =>
+						//new block (not in cache) is found
+						//create the PPItemBlock and load full data
+						//set HasVm to false
+						b = new PPItemBlock(blockInfo.Id);
+						lock (_cacheLock)
 						{
-							if (BlockAdded != null)
-								BlockAdded(fullData);
-						});
+							//add to cache
+							_blocks[blockInfo.StationIndex].Add(b);
+						}
+					}
+					else
+					{
+						//newer version (of an existing block in cache) is found
+						lock (_cacheLock)
+						{
+							if (b.Model.ModifiedDate != blockInfo.ModifiedDate)
+							{
+								//reload b
+								//set HasVm to false
+								b.Reload();
+							}
+						}
+					}
+					Thread.Sleep(10);
+				}
 
-						//add the PPItemBlock
-						lock (this) { _blocks.Add(fullData); }
+				//find VIndex of each block in cache
+				for (int st = 0; st < _stations; st++)
+				{
+					lock(_cacheLock)
+					{
+						if(_blocks[st].Any())
+						{
+							//find VIndex of station[st]
+							_blocks[st].Sort((x, y) =>
+							{
+								return x.Start < y.Start ? 1 : -1;
+							});
+
+							int maxV = 1;
+							for (int i = 0; i < _blocks[st].Count; i++)
+							{
+								//block (b)
+								var b = _blocks[st][i];
+
+								//find VIndex of block (b)
+								if (i == 0)
+								{
+									b.VIndex = 0;
+								}
+								else
+								{
+									//search through previous blocks (pblocks)
+									var pblocks = _blocks[st].Take(i);
+									var nominates = pblocks.Where(x => b.Start >= x.End).OrderByDescending(x => x.End);
+									var nom = pblocks.FirstOrDefault();
+
+									if (nom == null)
+									{
+										//non of rows has space
+										b.VIndex = maxV;
+										maxV++;
+									}
+									else
+									{
+										//nom is the row
+										b.VIndex = nom.VIndex;
+									}
+								}
+
+								//fire event to add it
+								if (!PPItemBlock.IsNull(b))
+								{
+									_dispatcher.Invoke(() =>
+									{
+										//set HasVm to true
+										if (BlockAdded != null)
+											BlockAdded(b);
+									});
+								}
+							}
+							
+							//sleep if station[st] contains some block
+							Thread.Sleep(50);
+						}
 					}
 				}
 			};
@@ -372,13 +361,11 @@ namespace Soheil.Core.PP
 			_actionLoadNpt = (object data) =>
 			{
 				//retreive data
-				var actionData = data as ActionData;
+				var actionData = data as PPRange;
 				if (!actionData.IsValidRange()) return;
 
 				//find npt Ids within the range
-				var start = actionData.Start.AddSeconds(-1);
-				var end = actionData.End.AddSeconds(1);
-				var nptIds = _nptDataService.GetIdsInRange(start, end).ToArray();
+				var nptIds = _nptDataService.GetIdsInRange(actionData.Start, actionData.End).ToArray();
 
 				//add each npt to view model
 				foreach (var nptId in nptIds)
@@ -405,13 +392,13 @@ namespace Soheil.Core.PP
 			_actionLoadWorkTimes = (object data) =>
 			{
 				//retreive data
-				var actionData = data as ActionData;
+				var actionData = data as PPRange;
 				if (!actionData.IsValidRange()) return;
+				var _workProfilePlanDataService = new DataServices.WorkProfilePlanDataService();
 
-				//find npt Ids within the range
-				var start = actionData.Start.Date.AddDays(-1);
-				var end = actionData.End.Date.AddDays(1);
-				var workTimes = _workProfilePlanDataService.GetShiftsInRange(start, end).Where(x => x.Item1.IsOpen);
+				//find workprofiles
+				var workTimes = _workProfilePlanDataService.GetShiftsInRange(actionData.Start, actionData.End)
+					.Where(x => x.Item1.IsOpen);
 
 				foreach (var tuple in workTimes)
 				{
@@ -431,22 +418,8 @@ namespace Soheil.Core.PP
 							WorkTimeAdded(shiftItem);
 					});
 				}
-			};
 
-			DateTime lastMonthUpdated = DateTime.MinValue;
-			//-----------------------	ADD DAY COLOR	-------------------------------
-			_actionLoadDayColors = (object data) =>
-			{
-				//retreive data
-				var actionData = data as ActionData;
-				if (!actionData.IsValidRange()) return;
-				lock (_lockObject)
-				{
-					if (actionData.Start == lastMonthUpdated) return;
-					else lastMonthUpdated = actionData.Start;
-				}
-				
-				//read colors from data service
+				//find day colors
 				var dayColors = _workProfilePlanDataService.GetBusinessDayColorsInRange(actionData.Start, actionData.End).ToArray();
 
 				//change colors of Days
@@ -455,6 +428,8 @@ namespace Soheil.Core.PP
 					if (DayColorsUpdated != null)
 						DayColorsUpdated(actionData.Start, dayColors);
 				});
+
+				_workProfilePlanDataService.Dispose();
 			};
 			#endregion
 
@@ -463,7 +438,7 @@ namespace Soheil.Core.PP
 			_actionDeleteBlock = (object data) =>
 			{
 				//retreive data
-				var actionData = data as ActionData;
+				/*var actionData = data as ActionData;
 				if (!actionData.IsValidRange()) return;
 
 				//find outside blocks
@@ -480,13 +455,13 @@ namespace Soheil.Core.PP
 						if (BlockRemoved != null)
 						BlockRemoved(item);
 					});
-				}
+				}*/
 			};
 			//-----------------------	REMOVE NPT	-------------------------------
 			_actionDeleteNpt = (object data) =>
 			{
 				//retreive data
-				var actionData = data as ActionData;
+				var actionData = data as PPRange;
 				if (!actionData.IsValidRange()) return;
 
 				//find outside NPTs
@@ -509,9 +484,9 @@ namespace Soheil.Core.PP
 			_actionDeleteWorkTimes = (object data) =>
 			{
 				//retreive data
-				var actionData = data as ActionData;
+				var actionData = data as PPRange;
 				if (!actionData.IsValidRange()) return;
-				var correctedActionData = new ActionData(actionData.Start.Date.AddDays(-1), actionData.End.Date.AddDays(1));
+				var correctedActionData = new PPRange(actionData.Start.Date.AddDays(-1), actionData.End.Date.AddDays(1));
 
 				//find outside worktimes
 				PPItemWorkTime[] outsideItems;
@@ -535,7 +510,7 @@ namespace Soheil.Core.PP
 			_actionUpdateBlock = (object data) =>
 			{
 				//retreive data
-				var actionData = data as ActionData;
+				/*var actionData = data as ActionData;
 				if (!actionData.IsValidRange()) return;
 
 				//find blocks in range
@@ -608,12 +583,12 @@ namespace Soheil.Core.PP
 							if (idx != -1) _blocks[idx] = fullData;
 						}
 					}
-				}
+				}*/
 			};
 			_actionUpdateNpt = (object data) =>
 			{
 				//retreive data
-				var actionData = data as ActionData;
+				var actionData = data as PPRange;
 				if (!actionData.IsValidRange()) return;
 
 				//find blocks in range

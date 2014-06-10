@@ -808,7 +808,7 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to انصراف.
+        ///   Looks up a localized string similar to بازگشت.
         /// </summary>
         public static string txtCancel {
             get {

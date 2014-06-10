@@ -174,7 +174,11 @@ namespace Soheil.Core.DataServices
 
 		internal int GetNextIndex()
 		{
-			return _stationRepository.GetAll().Max(x => x.Index)+1;
+			var list = _stationRepository.GetAll();
+			if (list.Any())
+				return list.Max(x => x.Index) + 1;
+			else
+				return 0;
 		}
 	}
 }

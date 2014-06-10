@@ -137,19 +137,21 @@ namespace Soheil.Core.DataServices
 		}
 
 		/// <summary>
-		/// Returns all block Ids which are completely or partially inside the given range
+		/// Returns all block which are completely or partially inside the given range
 		/// <para>blocks touching the range from outside are not counted</para>
+		/// <para>only Ids, StationIndex and ModifiedDates are returned</para>
 		/// </summary>
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public IEnumerable<int> GetIdsInRange(DateTime startDate, DateTime endDate)
+		public IEnumerable<Soheil.Core.PP.BlockInfo> GetInRange(DateTime startDate, DateTime endDate)
 		{
 			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
 			return _blockRepository
-				.Find(x => !(x.EndDateTime <= startDate || x.StartDateTime >= endDate))
+				.AsParallel()
+				.Where(x => !(x.EndDateTime <= startDate || x.StartDateTime >= endDate))
 				.OrderBy(y => y.StartDateTime)
-				.Select(x => x.Id);
+				.Select(x => new Soheil.Core.PP.BlockInfo(x.Id, x.StateStation.Station.Index, x.ModifiedDate));
 		}
 
 		//blocks in specified station, after (or partially after) startDate
@@ -195,6 +197,7 @@ namespace Soheil.Core.DataServices
 				block.StartDateTime.Hour,
 				block.StateStation.Station.Code);
 			block.ModifiedBy = LoginInfo.Id;
+			block.ModifiedDate = DateTime.Now;
 
 			//fix tasks
 			var time = block.StartDateTime;
@@ -331,7 +334,7 @@ namespace Soheil.Core.DataServices
 		public Changeover FindChangeover(int stationId, int fromProductReworkId, int toProductReworkId)
 		{
 			Changeover changeover = null;
-
+			
 			var changeoverRepository = new Repository<Changeover>(context);
 			changeover = changeoverRepository.FirstOrDefault(x =>
 				x.Station.Id == stationId
@@ -565,10 +568,19 @@ namespace Soheil.Core.DataServices
 				});
 
 				//move...
-				foreach (var movingTask in movingBlocks)
+				foreach (var movingBlock in movingBlocks)
 				{
-					movingTask.StartDateTime = movingTask.StartDateTime.AddSeconds(delaySeconds);
-					movingTask.EndDateTime = movingTask.EndDateTime.AddSeconds(delaySeconds);
+					movingBlock.StartDateTime = movingBlock.StartDateTime.AddSeconds(delaySeconds);
+					movingBlock.EndDateTime = movingBlock.EndDateTime.AddSeconds(delaySeconds);
+					if(movingBlock.Tasks.Any())
+					{
+						foreach (var task in movingBlock.Tasks)
+						{
+							task.StartDateTime = task.StartDateTime.AddSeconds(delaySeconds);
+							task.EndDateTime = task.EndDateTime.AddSeconds(delaySeconds);
+						}
+					}
+					movingBlock.ModifiedDate = DateTime.Now;
 				}
 				foreach (var movingSetup in movingSetups)
 				{
@@ -591,5 +603,6 @@ namespace Soheil.Core.DataServices
 		}
 
 		#endregion
+
 	}
 }

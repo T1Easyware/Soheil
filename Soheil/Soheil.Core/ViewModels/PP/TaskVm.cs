@@ -171,37 +171,6 @@ namespace Soheil.Core.ViewModels.PP
 				taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
 				TaskReports.Add(taskReportVm);
 			}
-
-			////check for remaining
-			//var dt = Model.StartDateTime;
-			//var tp = Model.TaskTargetPoint;
-
-			//if (taskReportModels.Any())
-			//{
-			//	dt = taskReportModels.Last().ReportEndDateTime;
-			//	tp -= taskReportModels.Sum(x => x.TaskReportTargetPoint);
-			//}
-
-			////add remaining
-			//if (dt < Model.EndDateTime)
-			//{
-			//	var newModel = new Model.TaskReport
-			//	{
-			//		Task = Model,
-			//		Code = Model.Code,
-			//		ReportStartDateTime = dt,
-			//		ReportEndDateTime = Model.EndDateTime,
-			//		ReportDurationSeconds = (int)(Model.EndDateTime - dt).TotalSeconds,
-			//		TaskReportTargetPoint = tp,
-			//		TaskProducedG1 = 0,
-			//		CreatedDate = DateTime.Now,
-			//		ModifiedDate = DateTime.Now,
-			//		ModifiedBy = LoginInfo.Id,
-			//	};
-			//	var taskReportVm = new Report.TaskReportVm(newModel, UOW);
-			//	taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
-			//	TaskReports.Add(taskReportVm);
-			//}
 		}
 
 		void TaskReport_TaskReportDeleted(Report.TaskReportVm vm)

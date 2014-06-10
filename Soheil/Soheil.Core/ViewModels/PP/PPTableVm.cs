@@ -140,7 +140,7 @@ namespace Soheil.Core.ViewModels.PP
 						//refetch it, if selected month is changed after fetch
 						if (SelectedMonth.Data != startingDate)
 						{
-							PPItems.Manager.FetchDayColorsOfMonth(SelectedMonth.Data);
+							PPItems.Manager.FetchWorkTimes(SelectedMonth.Data);
 							return;
 						}
 						//colorize days
@@ -418,7 +418,7 @@ namespace Soheil.Core.ViewModels.PP
 
 				//reloads the days collection according to DateTime of selected month
 				vm.Days.Reload(val.Data);
-				vm.PPItems.Manager.FetchDayColorsOfMonth(val.Data);
+				vm.PPItems.Manager.FetchWorkTimes(val.Data);
 
 				//changes the DayZoom to match the number of days in the current month
 				vm.DayZoom = vm.GridWidth / val.NumOfDays;

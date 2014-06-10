@@ -17,6 +17,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			Model = model;
 			Index = parent.Parent.StoppageReports.List.Count + 1;
 			Parent = parent;
+			
 			int[] causeIds = null;
 			if (model != null)
 				if (model.Cause != null)
@@ -24,8 +25,40 @@ namespace Soheil.Core.ViewModels.PP.Report
 						if (model.Cause.Parent.Parent != null)
 							causeIds = new int[3] { model.Cause.Parent.Parent.Id, model.Cause.Parent.Id, model.Cause.Id };
 			StoppageLevels = FilterBoxVmCollection.CreateForStoppageReport(this, causeIds);
-			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(
-				model.OperatorStoppageReports.Select(x => x.Operator.Id));
+
+			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorStoppageReports, Parent.Parent.UOW);
+			var osrRepo = new Dal.Repository<Model.OperatorStoppageReport>(Parent.Parent.UOW);
+			GuiltyOperators.OperatorSelected += (vm, oldOp, newOp) =>
+			{
+				if (newOp.Model == null) return;
+				//update model
+				if (vm.Model == null)
+				{
+					//create and add new OSR
+					var osr = new Model.OperatorStoppageReport
+					{
+						StoppageReport = model,
+						Operator = newOp.Model,
+						ModifiedBy = LoginInfo.Id,
+					};
+					osrRepo.Add(osr);
+					vm.Model = osr;
+				}
+				else
+				{
+					//update existing OSR
+					vm.Model.Operator = newOp.Model;
+				}
+			};
+			GuiltyOperators.OperatorRemoved += vm =>
+			{
+				if (vm.Model != null)
+				{
+					model.OperatorStoppageReports.Remove(vm.Model);
+					osrRepo.Delete(vm.Model);
+				}
+			};
+
 			AffectsTaskReport = model.AffectsTaskReport;
 			LostSeconds = model.LostTime;
 			LostCount = model.LostCount;

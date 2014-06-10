@@ -13,10 +13,11 @@ namespace Soheil.DbFix
 		static void Main(string[] args)
 		{
 			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("Soheil Database fix tool");
+			Console.WriteLine(". Soheil Database fix tool");
 
 			try
 			{
+				TestFill.RunAll();
 				FpcState.CorrectStates();
 				//other fixes
 			}

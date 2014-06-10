@@ -15,14 +15,23 @@ namespace Soheil.Core.ViewModels.PP
 	public class FilterBoxVmCollection : DependencyObject
 	{
 		/// <summary>
+		/// Occurs when Operator is selected in one of filterBoxes (sender, oldValue, newValue)
+		/// </summary>
+		public event Action<FilterBoxVm, FilterableItemVm, FilterableItemVm> OperatorSelected;
+		/// <summary>
+		/// Occurs when Operator (filterBox) is removed
+		/// </summary>
+		public event Action<FilterBoxVm> OperatorRemoved;
+
+		/// <summary>
 		/// Creates an instance of FilterBoxVmCollection to be used as a collection of guilty operators
 		/// </summary>
-		/// <param name="operatorIds">collection of operator Ids that are guilty by default</param>
+		/// <param name="models">collection of ODR or OSR models which represent guilty operators</param>
 		/// <returns></returns>
-		public static FilterBoxVmCollection CreateForGuiltyOperators(IEnumerable<int> operatorIds)
+		public static FilterBoxVmCollection CreateForGuiltyOperators(dynamic models, Dal.SoheilEdmContext uow)
 		{
 			//find all active operators
-			var operatorDs = new DataServices.OperatorDataService();
+			var operatorDs = new DataServices.OperatorDataService(uow);
 			var operatorModels = operatorDs.GetActives();
 			
 			//create vm for all active operators
@@ -34,14 +43,14 @@ namespace Soheil.Core.ViewModels.PP
 
 			//initiate this vm to auto-add operatorVms when a new FilterBoxVm is added to it
 			var vm = new FilterBoxVmCollection();
-			vm.AddCommand = new Commands.Command(o => vm.AddOperator(operatorVms, -1));
+			vm.AddCommand = new Commands.Command(o => vm.AddOperator(operatorVms));
 
 			//add new FilterBoxVm for each of guilty operators and select the guilty operator in it
-			if (operatorIds != null)
+			if (models != null)
 			{
-				foreach (var operatorId in operatorIds)
+				foreach (var model in models)
 				{
-					vm.AddOperator(operatorVms, operatorId);
+					vm.AddOperator(operatorVms, model);
 				}
 			}
 
@@ -52,24 +61,30 @@ namespace Soheil.Core.ViewModels.PP
 		/// Adds a FilterBoxVm to this collection specialized for guilty operators
 		/// </summary>
 		/// <param name="operatorVms">ViewModels for operators to be added to the filterBox</param>
-		/// <param name="selectedId">default guilty operator's Id</param>
-		private void AddOperator(FilterableItemVm[] operatorVms, int selectedId)
+		/// <param name="model">Model of an existing ODR or OSR model used to create this FilterBox</param>
+		private void AddOperator(FilterableItemVm[] operatorVms, dynamic model = null)
 		{
-			var fb = FilterBoxVm.CreateForGuiltyOperators(this, selectedId, operatorVms);
-			fb.FilterBoxSelectedItemChanged += fb_FilterBoxSelectedItemChanged;
-			fb.FilterBoxDeleted += fb_FilterBoxDeleted;
+			int operId = model == null ? 0 : model.Operator.Id;
+			var fb = FilterBoxVm.CreateForGuiltyOperators(this, operId, operatorVms);
+			fb.Model = model;
+
+			fb.FilterableItemSelected += (vm, oldOp, newOp) =>
+			{
+				if (newOp == null) return;
+				if (newOp.Model != null)
+				{
+					if (OperatorSelected != null)
+						OperatorSelected(vm, oldOp, newOp);
+				}
+			};
+			fb.FilterBoxDeleted += vm =>
+			{
+				if (OperatorRemoved != null)
+					OperatorRemoved(vm);
+			};
 			FilterBoxes.Add(fb);
 		}
 
-		void fb_FilterBoxDeleted(FilterBoxVm arg1, FilterableItemVm arg2)
-		{
-			throw new NotImplementedException();
-		}
-
-		void fb_FilterBoxSelectedItemChanged(FilterBoxVm arg1, FilterableItemVm arg2)
-		{
-			throw new NotImplementedException();
-		}
 		/// <summary>
 		/// Creates an instance of FilterBoxVmCollection to be used as a collection of stoppage reports (cause)
 		/// </summary>
@@ -88,7 +103,7 @@ namespace Soheil.Core.ViewModels.PP
 			var causeL1Box = FilterBoxVm.CreateForCause(causeL2Box, causeL1Models);
 
 			//set the event handlers
-			causeL3Box.FilterBoxSelectedItemChanged += (s, v) =>
+			causeL3Box.FilterableItemSelected += (s, old, v) =>
 			{
 				string code = string.Empty;
 				if (causeL1Box.SelectedItem != null)
@@ -104,7 +119,7 @@ namespace Soheil.Core.ViewModels.PP
 				parent.SelectedCode =  code;
 				parent.SelectCause(v.Id);
 			};
-			causeL2Box.FilterBoxSelectedItemChanged += (s, v) =>
+			causeL2Box.FilterableItemSelected += (s, old, v) =>
 			{
 				string code = string.Empty;
 				if (causeL1Box.SelectedItem != null)
@@ -122,7 +137,7 @@ namespace Soheil.Core.ViewModels.PP
 					causeL3Box.FilteredList.Add(FilterableItemVm.CreateForCause(causeL3Box, item));
 				}
 			};
-			causeL1Box.FilterBoxSelectedItemChanged += (s, v) =>
+			causeL1Box.FilterableItemSelected += (s, old, v) =>
 			{
 				if (v != null)
 					parent.SelectedCode = ((CauseVm)v.ViewModel).Code;

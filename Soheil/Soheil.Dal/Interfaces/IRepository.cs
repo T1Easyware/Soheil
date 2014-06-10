@@ -11,7 +11,7 @@ namespace Soheil.Dal.Interfaces
     /// <typeparam name="TModel"></typeparam>
     public interface IRepository<TModel> where TModel : class
     {
-        IQueryable<TModel> AsQueryable();
+		ParallelQuery<TModel> AsParallel();
 
         IEnumerable<TModel> GetAll();
         IEnumerable<TModel> Find(Expression<Func<TModel, bool>> where);

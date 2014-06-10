@@ -12,6 +12,9 @@ namespace Soheil.Core.PP
 		public Model.Block Model { get; private set; }
 		public int[] ReportData { get; private set; }
 		public bool CanAddSetupBefore { get; private set; }
+		public int VIndex { get; set; }
+		public DateTime ModifiedDate { get; private set; }
+		public bool HasVm { get; set; }
 
 		/// <summary>
 		/// Creates an instance of <see cref="PPItemBlock"/> and reload its details
@@ -21,6 +24,7 @@ namespace Soheil.Core.PP
 		public PPItemBlock(int blockId)
 		{
 			Id = blockId;
+			HasVm = false;
 			Reload();
 		}
 		/// <summary>
@@ -28,10 +32,14 @@ namespace Soheil.Core.PP
 		/// </summary>
 		public void Reload()
 		{
+			HasVm = false;
+
 			if (UOW == null) 
 				UOW = new Dal.SoheilEdmContext();
 			var blockDataService = new DataServices.BlockDataService(UOW);
 			Model = blockDataService.GetSingleFull(Id);
+			
+			ModifiedDate = Model.ModifiedDate;
 			Start = Model.StartDateTime;
 			End = Model.EndDateTime;
 
@@ -44,5 +52,6 @@ namespace Soheil.Core.PP
 			if (instance == null) return true;
 			return (instance.Model == null);
 		}
+
 	}
 }

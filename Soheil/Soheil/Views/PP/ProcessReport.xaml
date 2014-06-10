@@ -28,8 +28,8 @@
 
 	<UserControl.ContextMenu>
 		<ContextMenu FlowDirection="RightToLeft">
-			<MenuItem Header="افزودن گزارش بازه ای" Command="{Binding OpenReportRangeCommand}"/>
-			<MenuItem Header="حذف گزارش فعالیت" Command="{Binding DeleteProcessReportCommand}"/>
+			<MenuItem Header="افزودن گزارش بازه ای" Command="{Binding OpenCommand}"/>
+			<MenuItem Header="حذف گزارش فعالیت" Command="{Binding DeleteCommand}"/>
 		</ContextMenu>
 	</UserControl.ContextMenu>
 	<UserControl.ToolTip>
@@ -104,7 +104,7 @@
 				</Grid>
 				<Border Grid.ColumnSpan="3" Background="#4FFF" Margin="0,0,0,5"/>
 				<!-- button -->
-				<Button x:Name="button" Opacity="0" Command="{Binding OpenReportCommand}" ToolTip="گزارش فعالیت">
+				<Button x:Name="button" Opacity="0" Command="{Binding OpenCommand}" ToolTip="گزارش فعالیت">
 					<Image Style="{StaticResource EditReportImage}"/>
 				</Button>
 				<!-- button's triggers -->

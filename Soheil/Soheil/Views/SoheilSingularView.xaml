@@ -650,7 +650,7 @@
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
 
-						<!-- Row Zero -->
+						<!-- Row Zero (slide down) -->
 						<StackPanel Grid.Row="0" Grid.ColumnSpan="2">
 							<!-- JobList -->
 							<local:JobList x:Name="jobListPanel" Grid.ColumnSpan="2" Grid.Row="1" Height="0" 
@@ -1028,7 +1028,7 @@
 						<!-- Report system (+Exceptions Balloons) -->
 						<StackPanel Grid.Row="5" Grid.Column="1" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
 							<!-- TaskReport system -->
-							<ItemsControl ItemsSource="{Binding SelectedBlock.TaskList}" Height="20">
+							<ItemsControl ItemsSource="{Binding SelectedBlock.TaskList}" Height="20" ClipToBounds="True">
 								<ItemsControl.ItemTemplate>
 									<DataTemplate DataType="{x:Type vm:TaskVm}">
 										<Canvas>
