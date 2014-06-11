@@ -8,5 +8,6 @@ namespace Soheil.Core.Interfaces
         ObservableCollection<IEntityNode> ChildNodes { get; set; }
         int ParentId { get; set; }
         string Title { get; set; }
+
     }
 }

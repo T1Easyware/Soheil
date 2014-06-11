@@ -39,6 +39,7 @@ namespace Soheil.Core.Interfaces
 
     public interface ISplitNodeContent : ISplitItemContent, IEntityNode
     {
+        bool IsExpanded { get; set; }
     }
 
 }

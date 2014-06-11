@@ -78,6 +78,8 @@ namespace Soheil.Core.ViewModels
         {
             get { return LoginInfo.GetUsername(_model.ModifiedBy); }
         }
+
+        
         #endregion
 
         #region Methods

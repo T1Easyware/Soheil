@@ -36,6 +36,8 @@ namespace Soheil.Core.Interfaces
         IEntityNode RootNode { get; set; }
         ObservableCollection<IEntityNode> ChildNodes { get; set; }
 
+        ISplitNodeContent CurrentNode { get; set; }
+
     }
 
 

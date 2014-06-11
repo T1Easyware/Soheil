@@ -64,7 +64,6 @@ namespace Soheil.Views
                 _itemContentView.ContentTemplate = tmpl;
             }
 
-                
             else if (ViewModel.CurrentContent is AccessRuleVM)
             {
                 var tmpl = (DataTemplate)FindResource("AccessRuleTemplate");
