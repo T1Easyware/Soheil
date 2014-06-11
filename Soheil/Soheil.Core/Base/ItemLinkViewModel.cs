@@ -55,6 +55,16 @@ namespace Soheil.Core.Base
 
         public abstract void Include(object param);
 
+        public Command IncludeRangeCommand { get; set; }
+
+        public virtual bool CanIncludeRange()
+        {
+            return (Access & AccessType.Update) == AccessType.Update;
+        }
+
+        public virtual void IncludeRange(object param)
+        { }
+
         public abstract void RefreshItems();
 
         public Command ExcludeCommand { get; set; }
@@ -63,6 +73,44 @@ namespace Soheil.Core.Base
         public virtual bool CanExclude()
         {
             return (Access & AccessType.Update) == AccessType.Update;
+        }
+
+        public Command ExcludeRangeCommand { get; set; }
+        public virtual void ExcludeRange(object param) { }
+
+        public virtual bool CanExcludeRange()
+        {
+            return (Access & AccessType.Update) == AccessType.Update;
+        }
+
+        public Command CheckAllForExcludeCommand { get; set; }
+
+        public void CheckAllForExclude(object param)
+        {
+            foreach (ISplitDetail selectedItem in SelectedItems)
+            {
+                selectedItem.IsChecked = (bool) param;
+            }
+        }
+
+        public virtual bool CanCheckAllForExclude()
+        {
+            return (Access & AccessType.Update) == AccessType.Update;
+        }
+
+        public Command CheckAllForIncludeCommand { get; set; }
+
+        public virtual bool CanCheckAllForInclude()
+        {
+            return (Access & AccessType.Update) == AccessType.Update;
+        }
+
+        public void CheckAllForInclude(object param)
+        {
+            foreach (ISplitContent item in AllItems)
+            {
+                item.IsChecked = (bool) param;
+            }
         }
 
         private Visibility _visibility;
@@ -85,6 +133,8 @@ namespace Soheil.Core.Base
         {
             LinkVisibility = Visibility.Collapsed;
             ViewDetailsCommand = new Command(ViewDetails, CanViewDetails);
+            CheckAllForExcludeCommand = new Command(CheckAllForExclude, CanCheckAllForExclude);
+            CheckAllForIncludeCommand = new Command(CheckAllForInclude, CanCheckAllForInclude);
             Access = access;
         }
     }

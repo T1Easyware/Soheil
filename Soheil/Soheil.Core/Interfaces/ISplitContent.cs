@@ -9,8 +9,9 @@ namespace Soheil.Core.Interfaces
     {
         bool IsSelected { get; set; }
         bool IsLinked { get; set; }
-
         bool IsDeleting { get; set;}
+
+        bool IsChecked { get; set; }
 
         Visibility MainContentVisibility { get; set; }
         ISplitCollectionLink CurrentLink { get; set; }

@@ -21,6 +21,15 @@ namespace Soheil.Core.Base
             set { SetValue(PresentationTypeProperty, value); }
         }
 
+        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register(
+            "IsChecked", typeof (bool), typeof (ItemRelationDetailViewModel), new PropertyMetadata(default(bool)));
+
+        public bool IsChecked
+        {
+            get { return (bool) GetValue(IsCheckedProperty); }
+            set { SetValue(IsCheckedProperty, value); }
+        }
+
         public abstract int Id { get; set; }
 
     }

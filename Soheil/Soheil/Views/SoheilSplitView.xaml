@@ -25,6 +25,8 @@
                                      Path=ActualWidth}"
              Mc:Ignorable="D">
     <UserControl.Resources>
+        <System:Boolean x:Key="TrueValue">True</System:Boolean>
+        <System:Boolean x:Key="FalseValue">False</System:Boolean>
         <SolidColorBrush x:Key="ViewColor">Gainsboro</SolidColorBrush>
         <SolidColorBrush x:Key="PrintColor">MediumOrchid</SolidColorBrush>
         <SolidColorBrush x:Key="UpdateColor">Gold</SolidColorBrush>
@@ -107,17 +109,19 @@
 
 		<!-- General Templates -->
         <ControlTemplate x:Key="ConfirmExcludeButton">
-            <DockPanel>
-                <ToggleButton Style="{StaticResource ConfirmCancelButton}" DockPanel.Dock="Left" Width="20" Content="X" Margin="1">
-                    <I:Interaction.Triggers>
-                        <I:EventTrigger EventName="Indeterminate">
-                            <I:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
+            <Border Style="{StaticResource SoheilDarkCoverBorder}">
+                <DockPanel>
+                    <ToggleButton Style="{StaticResource ConfirmCancelButton}" DockPanel.Dock="Left" Width="20" Content="X" Margin="1">
+                        <I:Interaction.Triggers>
+                            <I:EventTrigger EventName="Indeterminate">
+                                <I:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
                                             CommandParameter="{Binding}" />
-                        </I:EventTrigger>
-                    </I:Interaction.Triggers>
-                </ToggleButton>
-                <Canvas/>
-            </DockPanel>
+                            </I:EventTrigger>
+                        </I:Interaction.Triggers>
+                    </ToggleButton>
+                    <Canvas/>
+                </DockPanel>
+            </Border>
         </ControlTemplate>    
         <!--.............................................. Navigation Templates ..........................................-->
 
@@ -125,7 +129,7 @@
         <DataTemplate x:Key="UserPositionTemplate">
             <Border Style="{StaticResource SoheilItemBorder}">
                 <StackPanel>
-                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
+                <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
                 <Button
                     Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
                     CommandParameter="{Binding}">
@@ -218,9 +222,10 @@
             <Border Style="{StaticResource SoheilItemBorder}">
                 <StackPanel>
                     <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
-                    <Button
-                        Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}"
-                        CommandParameter="{Binding}">
+                    <ToggleButton IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                  CommandParameter="{Binding}"
+                                  Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
+                                    Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}">
                         <ContentPresenter>
                             <ContentPresenter.ContentTemplate>
                                 <DataTemplate DataType="ViewModels:ProductDefectionVM">
@@ -231,7 +236,7 @@
                                 </DataTemplate>
                             </ContentPresenter.ContentTemplate>
                         </ContentPresenter>
-                    </Button>
+                    </ToggleButton>
                 </StackPanel>
             </Border>
         </DataTemplate>
@@ -485,41 +490,43 @@
                     ItemsSource="{Binding CurrentContent.CurrentLink.AllItems}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="Interfaces:ISplitContent">
-                            <Button Name="linkItem" CommandParameter="{Binding}">
-                                <Button.Command>
-                                    <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}">
-                                        <Binding.Path>ViewModel.CurrentContent.CurrentLink.IncludeCommand</Binding.Path>
-                                    </Binding>
-                                </Button.Command>
-                                <ContentPresenter>
-                                    <ContentPresenter.ContentTemplate>
-                                        <DataTemplate>
-                                            <WrapPanel>
-                                                <TextBlock>
-                                                    <TextBlock.Text>
-                                                        <Binding>
-                                                            <Binding.Path>Code</Binding.Path>
-                                                        </Binding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                                <TextBlock Text=" - " />
-                                                <TextBlock>
-                                                    <TextBlock.Text>
-                                                        <Binding>
-                                                            <Binding.Path>Name</Binding.Path>
-                                                        </Binding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                            </WrapPanel>
-                                        </DataTemplate>
-                                    </ContentPresenter.ContentTemplate>
-                                </ContentPresenter>
-                            </Button>
-                            <!--<DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding IsLinked}" Value="true">
-                                    <Setter TargetName="linkItem" Property="Button.Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </DataTemplate.Triggers>-->
+                            <Border Style="{StaticResource SoheilDarkCoverBorder}">
+                                <DockPanel>
+                                    <Button  DockPanel.Dock="Left" Content="►" Foreground="{StaticResource DefaultSelectionBrush}" Width="20"
+                                             Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.IncludeCommand}"
+                                             CommandParameter="{Binding}"/>
+                                    <ToggleButton Name="linkItem" IsChecked="{Binding IsChecked, Mode=TwoWay}">
+                                    <!--<Button.Command>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}">
+                                            <Binding.Path>ViewModel.CurrentContent.CurrentLink.IncludeCommand</Binding.Path>
+                                        </Binding>
+                                    </Button.Command>-->
+                                    <ContentPresenter>
+                                        <ContentPresenter.ContentTemplate>
+                                            <DataTemplate>
+                                                <WrapPanel>
+                                                    <TextBlock>
+                                                        <TextBlock.Text>
+                                                            <Binding>
+                                                                <Binding.Path>Code</Binding.Path>
+                                                            </Binding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                    <TextBlock Text=" - " />
+                                                    <TextBlock>
+                                                        <TextBlock.Text>
+                                                            <Binding>
+                                                                <Binding.Path>Name</Binding.Path>
+                                                            </Binding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </WrapPanel>
+                                            </DataTemplate>
+                                        </ContentPresenter.ContentTemplate>
+                                    </ContentPresenter>
+                                </ToggleButton>
+                                </DockPanel>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     <ItemsControl.ItemsPanel>
@@ -1810,11 +1817,27 @@
                 <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
                     <DockPanel>
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
-                        <ItemsControl Template="{StaticResource ExcludeList}"/>
+                        <Border DockPanel.Dock="Bottom" Style="{StaticResource SoheilDarkCoverBorder}" Height="30">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="◄◄"  Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"></Button>
+                                <Button Content="++" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                                <Button Content="--" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                            </StackPanel>
+                        </Border>
+                        <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}"/>
                     </DockPanel>
                 </GroupBox>
                 <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtDefections}">
-                    <ItemsControl Template="{StaticResource IncludeList}"/>
+                    <DockPanel>
+                        <Border DockPanel.Dock="Bottom" Style="{StaticResource SoheilDarkCoverBorder}" Height="30">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="►►" Command="{Binding CurrentContent.CurrentLink.IncludeRangeCommand}" HorizontalAlignment="Right"/>
+                                <Button Content="++" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                                <Button Content="--" Command="{Binding CurrentContent.CurrentLink.CheckAllForIncludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                            </StackPanel>
+                        </Border>
+                        <ItemsControl Template="{StaticResource IncludeList}"/>
+                    </DockPanel>
                 </GroupBox>
                 <Canvas />
             </DockPanel>
@@ -3402,9 +3425,27 @@
             </DataGrid>
         </DataTemplate>
         <DataTemplate x:Key="TreeViewListTemplate">
+            <DataTemplate.Resources>
+                <Converters:DeleteColorConverter x:Key="deleteConverter"/>
+            </DataTemplate.Resources>
             <TreeView FlowDirection="{Loc enumDirection}"
                       PreviewKeyDown="TreePreviewKeyDown"
                       PreviewLostKeyboardFocus="OnTreeLostFocus">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate x:Name="NodeTemplate" DataType="{x:Type Base:NodeContentViewModel}" ItemsSource="{Binding ChildNodes}">
+                        <StackPanel Orientation="Horizontal" Background="{Binding IsDeleting, Converter={StaticResource deleteConverter}}">
+                            <TextBlock Text="{Binding Title, Mode=TwoWay}"/>
+                            <Button Content="+" 
+                                        Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.AddCommand}"
+                                        />
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <!--<TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.IsExpanded}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>-->
                 <TreeView.ItemsSource>
                     <Binding RelativeSource="{RelativeSource AncestorType=Views:SoheilSplitView}"
                              UpdateSourceTrigger="PropertyChanged">
@@ -3414,159 +3455,6 @@
                 <I:Interaction.Behaviors>
                     <ControlBehaviors:BindableSelectedItemBehavior SelectedItem="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </I:Interaction.Behaviors>
-                <TreeView.Resources>
-                    <ResourceDictionary>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Foreground">
-                                        <Setter.Value>
-                                            <SolidColorBrush Color="{DynamicResource TitleBarLightColor}" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </Trigger>
-                            </Style.Triggers>
-                            <Setter Property="IsExpanded" Value="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.IsExpanded, Mode=TwoWay}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="HorizontalContentAlignment"
-            Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-                            <Setter Property="VerticalContentAlignment"
-            Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-                            <Setter Property="Padding" Value="1,0,0,0" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
-                                        <ControlTemplate.Resources>
-                                            <Storyboard x:Key="HoverOn">
-                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder"
-                                             Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
-                                                </DoubleAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                            <Storyboard x:Key="HoverOff">
-                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder"
-                                             Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                    <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
-                                                </DoubleAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                            <Storyboard x:Key="SelectedOn">
-                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectionBorder"
-                                             Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
-                                                </DoubleAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                            <Storyboard x:Key="SelectedOff">
-                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectionBorder"
-                                             Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                    <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
-                                                </DoubleAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                        </ControlTemplate.Resources>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" MinWidth="19" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <ToggleButton x:Name="Expander" Background="{x:Null}" BorderBrush="{x:Null}" ClickMode="Press"
-                          Foreground="{x:Null}"
-                          IsChecked="{Binding Path=IsExpanded,
-                                                          RelativeSource={RelativeSource TemplatedParent}}"
-                          Style="{DynamicResource NuclearTreeViewItemToggleButton}" />
-                                            <Border x:Name="Selection_Border" Grid.Column="1" BorderThickness="1,1,1,1"
-                    CornerRadius="3,3,3,3">
-                                                <Grid Width="Auto" Height="Auto">
-                                                    <Border x:Name="MainBorder" Background="{DynamicResource NormalBrush}"
-                        CornerRadius="2,2,2,2" Opacity="0.25" />
-                                                    <Border x:Name="SelectionBorder" Background="{DynamicResource SelectedBackgroundBrush}"
-                        CornerRadius="2,2,2,2" Opacity="0" />
-                                                    <Border x:Name="HoverBorder" Background="{DynamicResource NormalBrush}"
-                        CornerRadius="2,2,2,2" Opacity="0" />
-                                                    <ContentPresenter x:Name="PART_Header" Height="Auto" Margin="2,0,2,0"
-                                  ContentSource="Header" />
-                                                </Grid>
-                                            </Border>
-                                            <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" />
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsExpanded" Value="false">
-                                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
-                                            </Trigger>
-                                            <Trigger Property="HasItems" Value="false">
-                                                <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
-                                            </Trigger>
-                                            <Trigger Property="IsSelected" Value="true">
-                                                <Trigger.ExitActions>
-                                                    <BeginStoryboard x:Name="SelectedOn_BeginStoryboard1"
-                                 Storyboard="{StaticResource SelectedOff}" />
-                                                </Trigger.ExitActions>
-                                                <Trigger.EnterActions>
-                                                    <BeginStoryboard x:Name="SelectedOn_BeginStoryboard"
-                                 Storyboard="{StaticResource SelectedOn}" />
-                                                </Trigger.EnterActions>
-                                            </Trigger>
-                                            <MultiTrigger>
-                                                <MultiTrigger.Conditions>
-                                                    <Condition Property="IsSelected" Value="true" />
-                                                    <Condition Property="IsSelectionActive" Value="false" />
-                                                </MultiTrigger.Conditions>
-                                                <Setter Property="Foreground"
-                      Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-                                                <Setter TargetName="Selection_Border" Property="Background"
-                      Value="{DynamicResource SelectedBackgroundBrush}" />
-                                                <Setter TargetName="Selection_Border" Property="Opacity" Value="0.5" />
-                                                <Setter TargetName="Selection_Border" Property="BorderBrush"
-                      Value="{DynamicResource NormalBorderBrush}" />
-                                            </MultiTrigger>
-                                            <Trigger Property="IsEnabled" Value="false">
-                                                <Setter Property="Foreground"
-                      Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-                                            </Trigger>
-                                            <MultiTrigger>
-                                                <MultiTrigger.ExitActions>
-                                                    <BeginStoryboard x:Name="HoverOff_BeginStoryboard"
-                                 Storyboard="{StaticResource HoverOff}" />
-                                                </MultiTrigger.ExitActions>
-                                                <MultiTrigger.EnterActions>
-                                                    <BeginStoryboard Storyboard="{StaticResource HoverOn}" />
-                                                </MultiTrigger.EnterActions>
-                                                <MultiTrigger.Conditions>
-                                                    <Condition SourceName="Selection_Border" Property="IsMouseOver" Value="True" />
-                                                    <Condition Property="IsSelected" Value="False" />
-                                                </MultiTrigger.Conditions>
-                                            </MultiTrigger>
-                                            <MultiTrigger>
-                                                <MultiTrigger.Conditions>
-                                                    <Condition Property="IsSelected" Value="true" />
-                                                    <Condition SourceName="Selection_Border" Property="IsMouseOver" Value="true" />
-                                                </MultiTrigger.Conditions>
-                                                <Setter TargetName="Selection_Border" Property="Background"
-                      Value="{DynamicResource SelectedBackgroundBrush}" />
-                                                <Setter TargetName="Selection_Border" Property="Opacity" Value="0.8" />
-                                                <Setter TargetName="Selection_Border" Property="BorderBrush"
-                      Value="{DynamicResource NormalBorderBrush}" />
-                                            </MultiTrigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                        <Converters:DeleteColorConverter x:Key="deleteConverter"/>
-                        <HierarchicalDataTemplate DataType="{x:Type Base:NodeContentViewModel}" ItemsSource="{Binding ChildNodes}">
-                            <StackPanel Orientation="Horizontal" Background="{Binding IsDeleting, Converter={StaticResource deleteConverter}}">
-                                <TextBlock Text="{Binding Title, Mode=TwoWay}"/>
-                                <Button Content="+" 
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.AddCommand}"
-                                        />
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                    </ResourceDictionary>
-                </TreeView.Resources>
             </TreeView>
         </DataTemplate>
         <TemplateSelectors:SplitViewListSelector x:Key="ListTemplateSelector"

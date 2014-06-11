@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using Soheil.Common;
@@ -37,6 +38,8 @@ namespace Soheil.Core.ViewModels
 
             IncludeCommand = new Command(Include, CanInclude);
             ExcludeCommand = new Command(Exclude, CanExclude);
+            IncludeRangeCommand = new Command(IncludeRange, CanIncludeRange);
+            ExcludeRangeCommand = new Command(ExcludeRange, CanExcludeRange);
         }
 
         public ProductVM CurrentProduct { get; set; }
@@ -111,6 +114,32 @@ namespace Soheil.Core.ViewModels
         public override void Exclude(object param)
         {
             ProductDataService.RemoveDefection(CurrentProduct.Id, ((IEntityItem) param).Id);
+        }
+
+        public override void IncludeRange(object param)
+        {
+            var tempList = new List<ISplitContent>();
+            tempList.AddRange(AllItems.Cast<ISplitContent>());
+            foreach (ISplitContent item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    ProductDataService.AddDefection(CurrentProduct.Id, ((IEntityItem)item).Id);
+                }
+            }
+        }
+
+        public override void ExcludeRange(object param)
+        {
+            var tempList = new List<ISplitDetail>();
+            tempList.AddRange(SelectedItems.Cast<ISplitDetail>());
+            foreach (ISplitDetail item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    ProductDataService.RemoveDefection(CurrentProduct.Id, ((IEntityItem)item).Id);
+                }
+            }
         }
 
     }
