@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Soheil.Common;
+using Soheil.Core.Base;
 using Soheil.Core.Interfaces;
 using Soheil.Core.ViewModels;
 
@@ -494,6 +495,31 @@ namespace Soheil.Views
             }
         }
 
+        private void TreePreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var tree = (TreeView)sender;
+            _currentContent = (ISplitNodeContent)tree.SelectedItem;
+            var treeVm = (ITreeSplitList) ViewModel;
+            var root = treeVm.RootNode;
+            if (e.Key == Key.Delete)
+            {
+                if (ViewModel.CurrentContent.IsDeleting)
+                {
+                    ((IEntityObject)ViewModel.CurrentContent).Delete(null);
+                    TreeSplitViewModel.Remove(_currentContent.Id,root);
+                }
+                else
+                {
+                    e.Handled = true;
+                    ViewModel.CurrentContent.IsDeleting = true;
+                }
+            }
+            else if (e.Key == Key.Escape)
+            {
+                ViewModel.CurrentContent.IsDeleting = false;
+            }
+        }
+
         private void DataGridOnPreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
             _cellEditingMode = true;
@@ -521,5 +547,19 @@ namespace Soheil.Views
 		{
 
 		}
-	}
+
+        private void OnTreeLostFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var tree = (TreeView)sender;
+            _currentContent = (ISplitNodeContent)tree.SelectedItem;
+            if (_currentContent == null) return;
+            _currentContent.IsDeleting = false;
+        }
+
+    //    private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+    //    {
+    //        ((TreeViewItem) ((ContentPresenter) ((Button) sender).TemplatedParent).TemplatedParent).IsExpanded = true;
+    //        ViewModel.Add();
+    //    }
+    }
 }

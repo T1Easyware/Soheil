@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Xps.Packaging;
 using Soheil.Common;
 using Soheil.Core.Interfaces;
+using Soheil.Core.Printing;
 using Soheil.Core.ViewModels.Index;
 using Soheil.Core.ViewModels.Reports;
 using Soheil.Core.Virtualizing;
@@ -367,36 +371,7 @@ namespace Soheil.Views
         private List<string> _columnHeaders;
         private void SetOperatorReportHeaders()
         {
-            if (ViewModel is OperationReportsVm)
-            {
-                var vm = ViewModel as OperationReportsVm;
-                if (vm.CurrentType == OEType.CountBased)
-                    _columnHeaders = new List<string>
-                    {
-                        "Date",
-                        "Product",
-                        "IsRework",
-                        "Station",
-                        "Activity",
-                        "TargetCount",
-                        "ProductionCount",
-                        "DefectionCount",
-                        "StoppageCount"
-                    };
-                else
-                    _columnHeaders = new List<string>
-                    {
-                        "Date",
-                        "Product",
-                        "IsRework",
-                        "Station",
-                        "Activity",
-                        "TargetTime",
-                        "ProductionTime",
-                        "DefectionTime",
-                        "StoppageTime"
-                    };
-            }
+           
         }
         private void OnSelectedDateChanged(object sender, RoutedEventArgs e)
         {

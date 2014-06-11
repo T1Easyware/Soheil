@@ -31,6 +31,7 @@ namespace Soheil.Core.ViewModels
                 }
             }
 
+
             Items = new ListCollectionView(viewModels);
 
             if (viewModels.Count > 0)

@@ -34,7 +34,8 @@ namespace Soheil.Core.Interfaces
     public interface ITreeSplitList : ISplitList
     {
         IEntityNode RootNode { get; set; }
-        ObservableCollection<IEntityNode> ChildNodes { get; set; } 
+        ObservableCollection<IEntityNode> ChildNodes { get; set; }
+
     }
 
 

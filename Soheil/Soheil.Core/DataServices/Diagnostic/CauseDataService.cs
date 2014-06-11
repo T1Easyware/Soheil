@@ -36,7 +36,7 @@ namespace Soheil.Core.DataServices
 		public ObservableCollection<Cause> GetAll()
 		{
 			ObservableCollection<Cause> models;
-			IEnumerable<Cause> entityList = _causeRepository.Find(cause => cause.Status != (decimal)Status.Deleted, "Children");
+			IEnumerable<Cause> entityList = _causeRepository.Find(cause => cause.Status != (decimal)Status.Deleted);
 			models = new ObservableCollection<Cause>(entityList);
 			return models;
 		}
@@ -84,6 +84,7 @@ namespace Soheil.Core.DataServices
 
 			entity.Code = model.Code;
 			entity.Name = model.Name;
+		    entity.Status = model.Status;
 			context.Commit();
 		}
 
