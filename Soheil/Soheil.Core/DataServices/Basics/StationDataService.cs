@@ -56,8 +56,8 @@ namespace Soheil.Core.DataServices
 		{
 			ObservableCollection<Station> models;
 			IEnumerable<Station> entityList =
-				_stationRepository.Find(
-					station => station.Status == (decimal)Status.Active);
+				_stationRepository.Find(station => station.Status == (decimal)Status.Active,
+				"StationMachines.Machine.MachineFamily");
 			models = new ObservableCollection<Station>(entityList);
 			return models;
 		}
@@ -114,15 +114,6 @@ namespace Soheil.Core.DataServices
 			return models;
 		}
 
-		public IEnumerable<Station> GetAllIncludingMachines()
-		{
-			List<Station> models;
-			IEnumerable<Station> entityList = _stationRepository.Find(station =>
-				station.Status != (decimal)Status.Deleted,
-				"StationMachines", "StationMachines.Machine", "StationMachines.Machine.MachineFamily");
-			models = new List<Station>(entityList);
-			return models;
-		}
 
 		public void AddMachine(int stationId, int machineId)
 		{

@@ -26,5 +26,18 @@ namespace Soheil.Core.PP
 		/// Id of item's model
 		/// </summary>
 		public int Id { get; protected set; }
+		public int VIndex { get; set; }
+		public bool HasVm { get; set; }
+		public DateTime ModifiedDate { get; protected set; }
+
+		public static bool IsNull(PPItemBase instance)
+		{
+			if (instance == null) return true;
+			if (instance is PPItemBlock)
+				return ((instance as PPItemBlock).Model == null);
+			if (instance is PPItemNpt)
+				return ((instance as PPItemNpt).Model == null);
+			return true;
+		}
 	}
 }

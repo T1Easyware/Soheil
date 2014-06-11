@@ -13,7 +13,6 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
-using Soheil.Core.Printing;
 using Soheil.Core.Reports;
 using Soheil.Core.Virtualizing;
 using System.Windows.Xps.Packaging;
@@ -195,7 +194,7 @@ namespace Soheil.Core.ViewModels.Reports
 
 	    public void LoadOperatorProcessReport(int operatorId)
 	    {
-	        var dataService = new OperatorReportDataService();
+	       /* var dataService = new OperatorReportDataService();
 	        OperatorProcessReport = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
 
             var reportDocument = new ReportDocument();
@@ -226,7 +225,7 @@ namespace Soheil.Core.ViewModels.Reports
 
             XpsDocument xps = reportDocument.CreateXpsDocument(data);
 
-	        Document = xps.GetFixedDocumentSequence();
+	        Document = xps.GetFixedDocumentSequence();*/
 	    }
 
 	    private int GetIntervalCount(DateTimeIntervals interval, OperatorBarInfo barInfo)

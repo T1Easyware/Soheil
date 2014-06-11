@@ -27,7 +27,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			Id = model.Id;
 			Name = model.Name;
 			Code = model.Code;
-			foreach (var product in model.Products)
+			foreach (var product in model.Products.Where(x=>x.RecordStatus== Common.Status.Active))
 			{
 				AddChild(new ProductVm(product));
 			}

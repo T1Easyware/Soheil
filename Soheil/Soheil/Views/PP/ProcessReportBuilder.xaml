@@ -358,7 +358,7 @@
 							<ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
 								<StackPanel>
 									<TextBlock Text="علت توقفات" TextAlignment="Center" HorizontalAlignment="Center"/>
-									<TextBlock Text="سطح 1  -  سطح 2  -  سطح 3" TextAlignment="Right" HorizontalAlignment="Center"/>
+									<TextBlock Text="سطح1 - سطح2 - سطح3" TextAlignment="Right" HorizontalAlignment="Center"/>
 								</StackPanel>
 							</ContentControl>
 							<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">

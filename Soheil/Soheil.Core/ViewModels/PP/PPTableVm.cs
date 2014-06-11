@@ -140,7 +140,7 @@ namespace Soheil.Core.ViewModels.PP
 						//refetch it, if selected month is changed after fetch
 						if (SelectedMonth.Data != startingDate)
 						{
-							PPItems.Manager.FetchWorkTimes(SelectedMonth.Data);
+							PPItems.Manager.InitMonth(SelectedMonth.Data);
 							return;
 						}
 						//colorize days
@@ -157,9 +157,9 @@ namespace Soheil.Core.ViewModels.PP
 							ShiftsAndBreaks.Add(vm);
 						}
 					};
-					PPItems.Manager.WorkTimeRemoved += item =>
+					PPItems.Manager.WorkTimesRemoved += () =>
 					{
-						var vms = ShiftsAndBreaks.Where(x => x.IsShift && x.Start == item.Start).ToArray();
+						/*var vms = ShiftsAndBreaks.Where(x => x.IsShift && x.Start == item.Start).ToArray();
 						foreach (var vm in vms)
 						{
 							foreach (var breakVm in vm.Children)
@@ -167,7 +167,8 @@ namespace Soheil.Core.ViewModels.PP
 								ShiftsAndBreaks.Remove(breakVm);
 							}
 							ShiftsAndBreaks.Remove(vm);
-						}
+						}*/
+						ShiftsAndBreaks.Clear();
 					};
 					PPItems.BlockAdded += vm =>
 					{
@@ -418,7 +419,7 @@ namespace Soheil.Core.ViewModels.PP
 
 				//reloads the days collection according to DateTime of selected month
 				vm.Days.Reload(val.Data);
-				vm.PPItems.Manager.FetchWorkTimes(val.Data);
+				vm.PPItems.Manager.InitMonth(val.Data);
 
 				//changes the DayZoom to match the number of days in the current month
 				vm.DayZoom = vm.GridWidth / val.NumOfDays;

@@ -9,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Xps.Packaging;
 using Soheil.Common;
 using Soheil.Core.Interfaces;
-using Soheil.Core.Printing;
 using Soheil.Core.ViewModels.Index;
 using Soheil.Core.ViewModels.Reports;
 using Soheil.Core.Virtualizing;

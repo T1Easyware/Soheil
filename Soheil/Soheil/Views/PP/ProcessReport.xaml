@@ -164,7 +164,7 @@
 							<EventTrigger RoutedEvent="MouseEnter">
 								<BeginStoryboard>
 									<Storyboard Duration="0:0:.2">
-										<DoubleAnimation Storyboard.TargetName="durtext" Storyboard.TargetProperty="Width" To="60" Duration="0:0:.2"/>
+										<DoubleAnimation Storyboard.TargetName="durtext" Storyboard.TargetProperty="Width" To="90" Duration="0:0:.2"/>
 									</Storyboard>
 								</BeginStoryboard>
 							</EventTrigger>

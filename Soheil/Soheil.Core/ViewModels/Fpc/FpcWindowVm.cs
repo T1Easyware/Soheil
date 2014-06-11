@@ -221,13 +221,13 @@ namespace Soheil.Core.ViewModels.Fpc
 
 			//Stations
 			Stations.Clear();
-			var stations = fpcDataService.stationDataService.GetAllIncludingMachines();
+			var stations = fpcDataService.stationDataService.GetActives();
 			foreach (var item in stations)
 				Stations.Add(new StationVm(item));
 
 			//ActivityGroups
 			ActivityGroups.Clear();
-			var actgs = fpcDataService.activityGroupDataService.GetAllWithActivities();
+			var actgs = fpcDataService.activityGroupDataService.GetActives();
 			foreach (var item in actgs)
 				ActivityGroups.Add(new ActivityGroupVm(item));
 

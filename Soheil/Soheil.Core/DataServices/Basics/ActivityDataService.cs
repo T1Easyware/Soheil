@@ -124,7 +124,7 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public ObservableCollection<Activity> GetActives()
         {
-			var entityList = _activityRepository.Find(activity => activity.Status == (decimal)Status.Active, "ActivityGroup");
+			var entityList = _activityRepository.Find(activity => activity.Status == (byte)Status.Active, "ActivityGroup");
 			return new ObservableCollection<Activity>(entityList);
         }
 

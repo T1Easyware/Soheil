@@ -52,6 +52,14 @@ namespace Soheil.Core.ViewModels.PP
 				var val = (TimeSpan)e.NewValue;
 				vm.StartDateTime = vm.StartDate.Add(val);
 			}));
+		//VIndex Dependency Property
+		public int VIndex
+		{
+			get { return (int)GetValue(VIndexProperty); }
+			set { SetValue(VIndexProperty, value); }
+		}
+		public static readonly DependencyProperty VIndexProperty =
+			DependencyProperty.Register("VIndex", typeof(int), typeof(NPTVm), new UIPropertyMetadata(0));
 
 		//Parent Dependency Property
 		public PPItemCollection Parent

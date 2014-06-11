@@ -22,7 +22,7 @@ namespace Soheil.Core.ViewModels.PP
 			Name = model.Name;
 			Code = model.Code;
 
-			foreach (var p_model in model.Products)
+			foreach (var p_model in model.Products.Where(x => x.RecordStatus == Common.Status.Active))
 			{
 				Products.Add(new ProductVm(p_model, this));
 			}

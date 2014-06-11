@@ -34,13 +34,13 @@ namespace Soheil.Core.DataServices
 
 		public ObservableCollection<Operator> GetAll()
 		{
-			IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status != (decimal)Status.Deleted);
+			IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status != (byte)Status.Deleted);
 			return new ObservableCollection<Operator>(entityList);
 		}
 
 		public ObservableCollection<Operator> GetActives()
 		{
-			IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active);
+			IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (byte)Status.Active);
 			return new ObservableCollection<Operator>(entityList);
 		}
 
@@ -48,7 +48,7 @@ namespace Soheil.Core.DataServices
 		{
 			if (linkType == SoheilEntityType.Activities)
 			{
-				IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (decimal)Status.Active && opr.ActivitySkills.All(item => item.Activity.Id != linkId));
+				IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (byte)Status.Active && opr.ActivitySkills.All(item => item.Activity.Id != linkId));
 				return new ObservableCollection<Operator>(entityList);
 			}
 			return GetActives();

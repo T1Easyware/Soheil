@@ -27,7 +27,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			initializeCommands();
 
 			//load products
-			var pgList = _productGroupDs.GetActivesRecursive();
+			var pgList = _productGroupDs.GetActives();
 			foreach (var pg in pgList)
 			{
 				var pgvm = new JobProductGroupVm(pg, _jobDs);

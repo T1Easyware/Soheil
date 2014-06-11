@@ -3414,7 +3414,7 @@
                 <I:Interaction.Behaviors>
                     <ControlBehaviors:BindableSelectedItemBehavior SelectedItem="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </I:Interaction.Behaviors>
-                <TreeView.Resources>
+                <!--TreeView.Resources>
                     <ResourceDictionary>
                         <Converters:DeleteColorConverter x:Key="deleteConverter"/>
                         <HierarchicalDataTemplate DataType="{x:Type Base:NodeContentViewModel}" ItemsSource="{Binding ChildNodes}">
@@ -3426,7 +3426,7 @@
                             </StackPanel>
                         </HierarchicalDataTemplate>
                     </ResourceDictionary>
-                </TreeView.Resources>
+                </-->
             </TreeView>
         </DataTemplate>
         <TemplateSelectors:SplitViewListSelector x:Key="ListTemplateSelector"

@@ -7,9 +7,15 @@ using System.Collections.ObjectModel;
 
 namespace Soheil.Core.PP
 {
-	public class BlockInfo
+	public class ItemMetaInfo
 	{
-		public BlockInfo(int id, int idx, DateTime modDate)
+		/// <summary>
+		/// Creates a new ItemMetaInfo for the given data
+		/// </summary>
+		/// <param name="id">Id of model</param>
+		/// <param name="idx">Index of Station</param>
+		/// <param name="modDate">Modified Date</param>
+		public ItemMetaInfo(int id, int idx, DateTime modDate)
 		{
 			Id = id;
 			StationIndex = idx;

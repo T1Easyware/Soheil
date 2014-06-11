@@ -3321,7 +3321,7 @@
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Code" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Type="String" Name="Name" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="Byte" Name="Status" Nullable="false" DefaultValue="1" cg:GetterAccess="Private" cg:SetterAccess="Private" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+          <Property Type="Byte" Name="Status" Nullable="false" DefaultValue="1" cg:GetterAccess="Public" cg:SetterAccess="Public" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Type="Int32" Name="ModifiedBy" Nullable="false" />
           <NavigationProperty Name="Product" Relationship="SoheilEdm.ProductProductRework" FromRole="ProductRework" ToRole="Product" />
           <NavigationProperty Name="Rework" Relationship="SoheilEdm.ReworkProductRework" FromRole="ProductRework" ToRole="Rework" />

@@ -98,7 +98,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			Tree.Add(general);
 
 			//add all groups and their children recursively
-			var allGroups = ProductGroupDataService.GetActivesRecursive();
+			var allGroups = ProductGroupDataService.GetActives();
 			foreach (var productGroup in allGroups)
 			{
 				var pg = new ProductGroupVm(productGroup);

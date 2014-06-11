@@ -35,25 +35,20 @@ namespace Soheil.Core.DataServices
 
 		public ObservableCollection<ProductGroup> GetAll()
 		{
-			var entityList = _productGroupRepository.Find(group => group.Status != (decimal)Status.Deleted);
+			var entityList = _productGroupRepository.Find(group => group.Status != (byte)Status.Deleted);
 			return new ObservableCollection<ProductGroup>(entityList);
 		}
-
 		public ObservableCollection<ProductGroup> GetActives()
 		{
-			var entityList = _productGroupRepository.Find(group => group.Status == (decimal)Status.Active);
+			var entityList = _productGroupRepository.Find(group => 
+				group.Status == (byte)Status.Active &&
+				group.Products.Any(x => 
+					x.Status == (byte)Status.Active &&
+					x.ProductReworks.Any(pr => pr.Status == (byte)Status.Active))
+				, "Products.ProductReworks.Rework");
 			return new ObservableCollection<ProductGroup>(entityList);
 		}
 
-		/// <summary>
-		/// Fetches active products with full data (Products.ProductRework.Rework)
-		/// </summary>
-		/// <returns></returns>
-		public ObservableCollection<ProductGroup> GetActivesRecursive()
-		{
-			var entityList = _productGroupRepository.GetAll("Products", "Products.ProductReworks", "Products.ProductReworks.Rework");
-			return new ObservableCollection<ProductGroup>(entityList);
-		}
 		/// <summary>
 		/// <para>Fetches active products with filtered data (Products.ProductRework.Rework)</para>
 		/// <para>according to their states and the specified station</para>
@@ -64,7 +59,8 @@ namespace Soheil.Core.DataServices
 			List<ProductGroup> pgCopies = new List<ProductGroup>();
 			var repository = new Repository<Product>(context);
 			var station = new Repository<Station>(context).Single(x => x.Id == stationId);
-			var allProducts = repository.GetAll(
+			var allProducts = repository.Find(
+				x => x.Status == (byte)Status.Active,
 				"ProductGroup",
 				"ProductReworks", "ProductReworks.Rework",
 				"ProductReworks.Warmups", "ProductReworks.Warmups.Station",
@@ -89,7 +85,7 @@ namespace Soheil.Core.DataServices
 
 				#region Rework
 				//for all PRs
-				foreach (var productRework in product.ProductReworks)
+				foreach (var productRework in product.ProductReworks.Where(x => x.Status == (byte)Status.Active))
 				{
 					//find states that matches current PR and station
 					var states = (productRework.Rework == null) ?
@@ -125,8 +121,13 @@ namespace Soheil.Core.DataServices
 				#endregion
 
 				#region Product And Group
-				//if empty pg, skip
-				if (!product.ProductGroup.Products.Any(x => !x.ProductReworks.Any())) continue;
+				//if pg is empty or inactive, skip
+				if (product.ProductGroup.Status != (byte)Status.Active) 
+					continue;
+				if (!product.ProductGroup.Products
+					.Any(x => !x.ProductReworks
+						.Any(pr => pr.Status == (byte)Status.Active))) 
+					continue;
 
 				var pgCopy = pgCopies.FirstOrDefault(x => x.Id == product.ProductGroup.Id);
 				if (pgCopy == null)

@@ -42,7 +42,7 @@
 				</EventTrigger>
 			</Border.Triggers>
 			<I:Interaction.Triggers>
-				<I:EventTrigger EventName="MouseDown">
+				<I:EventTrigger EventName="MouseLeftButtonDown">
 					<I:InvokeCommandAction Command="{Binding FillEmptySpacesCommand}"/>
 				</I:EventTrigger>
 			</I:Interaction.Triggers>

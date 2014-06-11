@@ -393,7 +393,23 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class PPBlockBorderMarginConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+            if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return new Thickness(0, 2, 0, 2);
+			var startDt = (DateTime)values[0];
+			var oneHourWidth = (double)values[1];
+			var vindex = (int)values[2];
+            return new Thickness(startDt.Subtract(startDt.GetNorooz()).TotalHours * oneHourWidth, 2 + vindex*42, 0, 2);
+		}
 
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+	
 	public class StartEndToWidthConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

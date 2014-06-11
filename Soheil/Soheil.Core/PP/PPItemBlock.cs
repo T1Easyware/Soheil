@@ -12,9 +12,6 @@ namespace Soheil.Core.PP
 		public Model.Block Model { get; private set; }
 		public int[] ReportData { get; private set; }
 		public bool CanAddSetupBefore { get; private set; }
-		public int VIndex { get; set; }
-		public DateTime ModifiedDate { get; private set; }
-		public bool HasVm { get; set; }
 
 		/// <summary>
 		/// Creates an instance of <see cref="PPItemBlock"/> and reload its details
@@ -46,12 +43,5 @@ namespace Soheil.Core.PP
 			ReportData = blockDataService.GetProductionReportData(Model);
 			CanAddSetupBefore = blockDataService.CanAddSetupBeforeBlock(Model);
 		}
-
-		public static bool IsNull(PPItemBlock instance)
-		{
-			if (instance == null) return true;
-			return (instance.Model == null);
-		}
-
 	}
 }

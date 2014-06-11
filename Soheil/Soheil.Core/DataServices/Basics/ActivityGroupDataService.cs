@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Soheil.Common;
@@ -26,10 +27,6 @@ namespace Soheil.Core.DataServices
 			_activityGroupRepository = new Repository<ActivityGroup>(context);
 		}
 
-		public IEnumerable<ActivityGroup> GetAllWithActivities()
-		{
-			return new List<ActivityGroup>(_activityGroupRepository.Find(group => group.Status != (decimal)Status.Deleted, "Activities"));
-		}
 
 		#region IDataService<ActivityGroupVM> Members
 
@@ -40,13 +37,16 @@ namespace Soheil.Core.DataServices
 
 		public ObservableCollection<ActivityGroup> GetAll()
 		{
-			IEnumerable<ActivityGroup> entityList = _activityGroupRepository.Find(group => group.Status != (decimal)Status.Deleted, "Activities");
+			IEnumerable<ActivityGroup> entityList = _activityGroupRepository.Find(group => group.Status != (byte)Status.Deleted, "Activities");
 			return new ObservableCollection<ActivityGroup>(entityList);
 		}
 
 		public ObservableCollection<ActivityGroup> GetActives()
 		{
-			IEnumerable<ActivityGroup> entityList = _activityGroupRepository.Find(group => group.Status == (decimal)Status.Active, "Activities");
+			IEnumerable<ActivityGroup> entityList = _activityGroupRepository.Find(group =>
+				group.Status == (byte)Status.Active &&
+				group.Activities.Any(x => x.Status == (byte)Status.Active),
+				"Activities");
 			return new ObservableCollection<ActivityGroup>(entityList);
 		}
 

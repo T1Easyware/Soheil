@@ -129,14 +129,20 @@ namespace Soheil.Core.ViewModels.SkillCenter
 
 			//Init Data
 
-			//add column groups
-			var groups = _agDataService.GetActives().Select(activityGroupModel => new ActivityGroupColumnVm(activityGroupModel));
-			foreach (var grp in groups) Groups.Add(grp);
-			//add columns
-			var columns = _aDataService.GetActives().Select(activityModel => new ActivityColumnVm(activityModel));
-			foreach (var col in columns) Columns.Add(col);
+			var a_g = _aDataService.GetActives().GroupBy(x => x.ActivityGroup);
+			foreach (var activityGroup in a_g)
+			{
+				Groups.Add(new ActivityGroupColumnVm(activityGroup.Key));
+				foreach (var activity in activityGroup)
+				{
+					Columns.Add(new ActivityColumnVm(activity));
+				}
+			}
+
 			//add cells
-			var rows = _operatorDataService.GetActives().Select(operatorModel => new OperatorRowVm(operatorModel));
+			var rows = _operatorDataService.GetActives().Select(operatorModel => 
+				new OperatorRowVm(operatorModel));
+
 			switch (_targetMode)
 			{
 				case TargetMode.General:
@@ -144,7 +150,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 					//General mode
 					foreach (var row in rows)
 					{
-						foreach (var act in columns)
+						foreach (var act in Columns)
 						{
 							var activitySkill = _asDataService.FindOrAdd(row.Id, act.Id);
 							var skill = new ActivitySkillVm(activitySkill);
@@ -159,7 +165,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 					//ProductRework mode
 					foreach (var row in rows)
 					{
-						foreach (var act in columns)
+						foreach (var act in Columns)
 						{
 							var productActivitySkill = _pasDataService.FindOrAdd(SelectedItem.Id, row.Id, act.Id);
 							var skill = new ProductReworkActivitySkillVm(productActivitySkill);
@@ -174,7 +180,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 					//Product mode
 					foreach (var row in rows)
 					{
-						foreach (var act in columns)
+						foreach (var act in Columns)
 						{
 							//var productActivitySkill = _pasDataService.FindOrAdd(row.Id, act.Id);
 							var skill = new ProductActivitySkillVm();
@@ -189,7 +195,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 					//ProductGroup mode
 					foreach (var row in rows)
 					{
-						foreach (var act in columns)
+						foreach (var act in Columns)
 						{
 							//var activitySkill = _asDataService.FindOrAdd(row.Id, act.Id);
 							var skill = new ProductGroupActivitySkillVm();

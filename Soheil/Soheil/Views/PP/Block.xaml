@@ -74,9 +74,10 @@
 		</I:EventTrigger>
 	</I:Interaction.Triggers>
 	<UserControl.Margin>
-		<MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
+		<MultiBinding Converter="{StaticResource ppBlockBorderMarginConverter}">
 			<Binding Path="StartDateTime"/>
 			<Binding ElementName="root" Path="PPTable.HourZoom"/>
+			<Binding Path="VIndex"/>
 		</MultiBinding>
 	</UserControl.Margin>
 	<UserControl.Width>

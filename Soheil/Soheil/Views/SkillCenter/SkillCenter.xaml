@@ -115,7 +115,7 @@
 							<EventTrigger RoutedEvent="MouseEnter">
 								<BeginStoryboard>
 									<Storyboard Duration="0:0:0.1">
-										<ColorAnimation Storyboard.TargetProperty="(Polygon.Fill).(SolidColorBrush.Color)" To="#6CC" Duration="0:0:0.1"/>
+										<ColorAnimation Storyboard.TargetProperty="(Polygon.Fill).(SolidColorBrush.Color)" To="White" Duration="0:0:0.1"/>
 									</Storyboard>
 								</BeginStoryboard>
 							</EventTrigger>
@@ -170,7 +170,7 @@
 					<Setter TargetName="O" Property="Style">
 						<Setter.Value>
 							<Style TargetType="Polygon">
-								<Setter Property="Fill" Value="Green"/>
+								<Setter Property="Fill" Value="#2C3"/>
 							</Style>
 						</Setter.Value>
 					</Setter>
@@ -179,7 +179,7 @@
 					<Setter TargetName="U" Property="Style">
 						<Setter.Value>
 							<Style TargetType="Polygon">
-								<Setter Property="Fill" Value="YellowGreen"/>
+								<Setter Property="Fill" Value="#3AE"/>
 							</Style>
 						</Setter.Value>
 					</Setter>
@@ -188,7 +188,7 @@
 					<Setter TargetName="L" Property="Style">
 						<Setter.Value>
 							<Style TargetType="Polygon">
-								<Setter Property="Fill" Value="Yellow"/>
+								<Setter Property="Fill" Value="#FD0"/>
 							</Style>
 						</Setter.Value>
 					</Setter>
@@ -197,7 +197,7 @@
 					<Setter TargetName="I" Property="Style">
 						<Setter.Value>
 							<Style TargetType="Polygon">
-								<Setter Property="Fill" Value="Orange"/>
+								<Setter Property="Fill" Value="#C22"/>
 							</Style>
 						</Setter.Value>
 					</Setter>
@@ -206,7 +206,7 @@
 					<Setter TargetName="N" Property="Style">
 						<Setter.Value>
 							<Style TargetType="Polygon">
-								<Setter Property="Fill" Value="Red"/>
+								<Setter Property="Fill" Value="#777"/>
 							</Style>
 						</Setter.Value>
 					</Setter>

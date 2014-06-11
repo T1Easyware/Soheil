@@ -65,6 +65,7 @@ namespace Soheil.Core.ViewModels.SetupTime
 		public void Reload()
 		{
 			var pgModelList = new DataServices.ProductGroupDataService().GetActivesRecursive(Id);
+
 			#region Reload Sync
 			int col = 0;
 			int row = 0;
