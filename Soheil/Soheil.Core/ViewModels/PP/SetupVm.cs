@@ -18,6 +18,7 @@ namespace Soheil.Core.ViewModels.PP
 		public override int Id { get { return Model.Id; } }
 		private int _id;
 
+
 		#region Ctor
 		public SetupVm(int setupId, PPItemCollection parent) 
 			: base(parent)
@@ -37,6 +38,7 @@ namespace Soheil.Core.ViewModels.PP
 			Model = new Dal.Repository<Model.NonProductiveTask>(UOW).OfType<Model.Setup>().Single(x => x.Id == _id);
 
 			StartDateTime = Model.StartDateTime;
+			EndDateTime = Model.EndDateTime;
 			DurationSeconds = Model.DurationSeconds;
 			RowIndex = Model.Warmup.Station.Index;
 
@@ -52,6 +54,14 @@ namespace Soheil.Core.ViewModels.PP
 		#endregion
 
 		#region prop dps
+		//EndDateTime Dependency Property
+		public DateTime EndDateTime
+		{
+			get { return (DateTime)GetValue(EndDateTimeProperty); }
+			set { SetValue(EndDateTimeProperty, value); }
+		}
+		public static readonly DependencyProperty EndDateTimeProperty =
+			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(SetupVm), new UIPropertyMetadata(DateTime.Now));
 
 		//ChangeoverSeconds Dependency Property
 		public int ChangeoverSeconds

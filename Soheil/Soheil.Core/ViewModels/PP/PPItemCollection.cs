@@ -106,7 +106,7 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						//add
 						vm = AddNPT(item.Id);
-						vm.ViewMode = ViewMode;
+						if (vm != null) vm.ViewMode = ViewMode;
 					}
 					else
 					{
@@ -307,6 +307,7 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						new DataServices.BlockDataService().DeleteModelRecursive(vm.Model);
 						RemoveItem(vm);
+						Manager.ForceReload();
 					}
 					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 				}

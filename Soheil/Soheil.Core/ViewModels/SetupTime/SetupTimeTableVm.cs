@@ -41,10 +41,14 @@ namespace Soheil.Core.ViewModels.SetupTime
 			RefreshAllCommand.Execute(null);
 		}
 
-		//Stations Observable Collection
-		private ObservableCollection<Station> _stations = new ObservableCollection<Station>();
+		/// <summary>
+		/// Gets a bindable collection of Stations
+		/// </summary>
 		public ObservableCollection<Station> Stations { get { return _stations; } }
-		//SelectedStation Dependency Property
+		private ObservableCollection<Station> _stations = new ObservableCollection<Station>();
+		/// <summary>
+		/// Gets or sets the bindable selected station
+		/// </summary>
 		public Station SelectedStation
 		{
 			get { return (Station)GetValue(SelectedStationProperty); }
@@ -53,7 +57,9 @@ namespace Soheil.Core.ViewModels.SetupTime
 		public static readonly DependencyProperty SelectedStationProperty =
 			DependencyProperty.Register("SelectedStation", typeof(Station), typeof(SetupTimeTableVm),
 			new PropertyMetadata(null, (d, e) => ((Station)e.NewValue).Reload()));
-		//RefreshAllCommand Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable command to refresh everything
+		/// </summary>
 		public Commands.Command RefreshAllCommand
 		{
 			get { return (Commands.Command)GetValue(RefreshAllCommandProperty); }

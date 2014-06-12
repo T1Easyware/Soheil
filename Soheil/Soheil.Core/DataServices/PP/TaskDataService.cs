@@ -21,6 +21,7 @@ namespace Soheil.Core.DataServices
 		Repository<Process> _processRepository;
 		Repository<ProcessOperator> _processOperatorRepository;
 		Repository<SelectedMachine> _selectedMachineRepository;
+		TaskReportDataService _taskReportDataService;
 		ProcessReportDataService _processReportDataService;
 
 		public event EventHandler<ModelAddedEventArgs<Task>> TaskAdded;
@@ -41,6 +42,8 @@ namespace Soheil.Core.DataServices
 			_processRepository = new Repository<Process>(context);
 			_processOperatorRepository = new Repository<ProcessOperator>(context);
 			_selectedMachineRepository = new Repository<SelectedMachine>(context);
+
+			_taskReportDataService = new TaskReportDataService(context);
 			_processReportDataService = new ProcessReportDataService(context);
 		}
 
@@ -104,34 +107,40 @@ namespace Soheil.Core.DataServices
 		/// <param name="context"></param>
 		public void DeleteModel(Task model)
 		{
-			var entity = _taskRepository.Single(x => x.Id == model.Id);
-			if (entity == null)
-			{
-				//not saved at all (just remove it from its parent)
-				model.Block.Tasks.Remove(model);
-				return;
-			}
+			if (model.Processes.Any(x => x.ProcessReports.Any()))
+				throw new Soheil.Common.SoheilException.RoutedException(
+					"You can't delete this Task. It has Reports",
+					Soheil.Common.SoheilException.ExceptionLevel.Error, model.Block);
 
-			if(model.Processes.Any(x=>x.ProcessReports.Any()))
-				throw new RoutedException("You can't delete this Task. It has Reports", ExceptionLevel.Error, model);
-
-			var taskReportDs = new TaskReportDataService(context);
-			foreach (var taskReportEnt in entity.TaskReports)
+			foreach (var taskReportEnt in model.TaskReports)
 			{
-				taskReportDs.DeleteModel(taskReportEnt);
+				_taskReportDataService.DeleteModel(taskReportEnt);
 			}
-			foreach (var process in entity.Processes.ToList())
+			foreach (var process in model.Processes.ToList())
 			{
 				DeleteModel(process);
 			}
 			model.Block.Tasks.Remove(model);
-			_taskRepository.Delete(entity);
+			_taskRepository.Delete(model);
+			context.Commit();
+		}
+		public void DeleteModelRecursive(Task model)
+		{
+			foreach (var taskReportEnt in model.TaskReports)
+			{
+				_taskReportDataService.DeleteModel(taskReportEnt);
+			}
+			foreach (var process in model.Processes.ToList())
+			{
+				DeleteModel(process, true);
+			}
+			model.Block.Tasks.Remove(model);
+			_taskRepository.Delete(model);
 			context.Commit();
 		}
 		//Recursive (sm & po)
-		internal void DeleteModel(Process process)
+		internal void DeleteModel(Process process, bool force = false)
 		{
-			process.Task.Processes.Remove(process);
 			foreach (var po in process.ProcessOperators.ToArray())
 			{
 				DeleteModel(po);
@@ -140,13 +149,14 @@ namespace Soheil.Core.DataServices
 			{
 				DeleteModel(sm);
 			}
-			if (process.IsReportEmpty)
+			if (process.IsReportEmpty || force)
 			{
 				foreach (var processReport in process.ProcessReports.ToArray())
 				{
 					_processReportDataService.DeleteModel(processReport);
 				}
 			}
+			process.Task.Processes.Remove(process);
 			_processRepository.Delete(process);
 		}
 

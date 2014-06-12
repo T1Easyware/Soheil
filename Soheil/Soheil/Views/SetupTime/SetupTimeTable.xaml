@@ -229,6 +229,9 @@
 
 		<!--Stations-->
 		<DockPanel Grid.RowSpan="2" Grid.Column="2" Grid.Row="1" FlowDirection="RightToLeft">
+			<DockPanel.Effect>
+				<DropShadowEffect Color="White" BlurRadius="2" Opacity=".2"/>
+			</DockPanel.Effect>
 			<TextBlock Text="ایستگاه را انتخاب کنید" DockPanel.Dock="Top" Foreground="Silver"/>
 			<ListBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}" Focusable="False" DisplayMemberPath="Name"/>
 		</DockPanel>

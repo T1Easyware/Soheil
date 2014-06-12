@@ -121,14 +121,9 @@ namespace Soheil.Core.DataServices
 				#endregion
 
 				#region Product And Group
-				//if pg is empty or inactive, skip
+				//if pg is inactive, skip
 				if (product.ProductGroup.Status != (byte)Status.Active) 
 					continue;
-				if (!product.ProductGroup.Products
-					.Any(x => !x.ProductReworks
-						.Any(pr => pr.Status == (byte)Status.Active))) 
-					continue;
-
 				var pgCopy = pgCopies.FirstOrDefault(x => x.Id == product.ProductGroup.Id);
 				if (pgCopy == null)
 				{

@@ -96,14 +96,11 @@ namespace Soheil.Core.DataServices
 		{
 			var taskDataService = new TaskDataService(context);
 			var taskReportDataService = new TaskReportDataService(context);
+			var processReportDataService = new ProcessReportDataService(context);
 			var entity = _blockRepository.Single(x => x.Id == model.Id);
 			foreach (var task in entity.Tasks.ToArray())
 			{
-				foreach (var taskReport in task.TaskReports.ToArray())
-				{
-					taskReportDataService.DeleteModel(taskReport);
-				}
-				taskDataService.DeleteModel(task);
+				taskDataService.DeleteModelRecursive(task);
 			}
 			_blockRepository.Delete(entity);
 			context.Commit();

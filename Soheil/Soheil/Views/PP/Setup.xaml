@@ -33,16 +33,19 @@
 			</LinearGradientBrush>
 		</Border.Background>
 		<Border.ToolTip>
-			<StackPanel>
-				<TextBlock Text="آماده سازی"/>
+			<StackPanel FlowDirection="RightToLeft">
+				<WrapPanel>
+					<Image Style="{StaticResource SetupImage}"/>
+					<TextBlock Text="آماده سازی"/>
+				</WrapPanel>
 				<Separator/>
 				<WrapPanel>
-					<TextBlock Text="زمان شروع: " Foreground="DarkGray"/>
-					<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateToLocalStringConverter}}"/>
+					<TextBlock Text="شروع: " Foreground="DarkGray"/>
+					<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
 				</WrapPanel>
 				<WrapPanel>
-					<TextBlock Text="زمان خاتمه: " Foreground="DarkGray"/>
-					<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateToLocalStringConverter}}"/>
+					<TextBlock Text="خاتمه: " Foreground="DarkGray"/>
+					<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
 				</WrapPanel>
 				<WrapPanel>
 					<TextBlock Text="مدت آماده سازی: " Foreground="DarkGray"/>
