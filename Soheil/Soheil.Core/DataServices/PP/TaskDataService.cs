@@ -139,8 +139,18 @@ namespace Soheil.Core.DataServices
 			context.Commit();
 		}
 		//Recursive (sm & po)
-		internal void DeleteModel(Process process, bool force = false)
+		/// <summary>
+		/// Deletes a process and returns a value indicating success
+		/// <para>No commit</para>
+		/// </summary>
+		/// <param name="process"></param>
+		/// <param name="force"></param>
+		/// <returns></returns>
+		internal bool DeleteModel(Process process, bool force = false)
 		{
+			if (!force && !process.IsReportEmpty)
+				return false;
+
 			foreach (var po in process.ProcessOperators.ToArray())
 			{
 				DeleteModel(po);
@@ -149,15 +159,13 @@ namespace Soheil.Core.DataServices
 			{
 				DeleteModel(sm);
 			}
-			if (process.IsReportEmpty || force)
+			foreach (var processReport in process.ProcessReports.ToArray())
 			{
-				foreach (var processReport in process.ProcessReports.ToArray())
-				{
-					_processReportDataService.DeleteModel(processReport);
-				}
+				_processReportDataService.DeleteModel(processReport);
 			}
 			process.Task.Processes.Remove(process);
 			_processRepository.Delete(process);
+			return true;
 		}
 
 		internal void DeleteModel(SelectedMachine sm)

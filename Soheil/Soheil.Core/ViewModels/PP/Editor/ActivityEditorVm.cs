@@ -92,8 +92,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		#region Event Handlers
 		void ProcessList_Added(ProcessEditorVm processVm)
 		{
-			//notify Block about selection
+			//notify Block about selection and delete
 			processVm.Selected += Process_Selected;
+			processVm.Deleted += Process_Deleted;
 
 			//notify Block about changes in times
 			processVm.TimesChanged += Process_TimesChanged;
@@ -116,6 +117,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (Selected != null) 
 				Selected(processVm);
 		}
+		void Process_Deleted(ProcessEditorVm processVm)
+		{
+			ProcessList.Remove(processVm);
+		}
+		
 		void Process_TimesChanged(ProcessEditorVm processVm, DateTime start, DateTime end)
 		{
 			if (TimesChanged != null)

@@ -57,6 +57,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// Occurs when this process is selected among other processes with same activity
 		/// </summary>
 		public event Action<ProcessEditorVm> Selected;
+		public event Action<ProcessEditorVm> Deleted;
 		/// <summary>
 		/// Occurs when selected choice of SSAs for this Process is changed
 		/// <para>second parameter can be null</para>
@@ -138,6 +139,17 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			//command
 			SelectCommand = new Commands.Command(o => IsSelected = true);
+			DeleteCommand = new Commands.Command(o =>
+			{
+				var succeed = new DataServices.TaskDataService(uow).DeleteModel(Model, (bool)o);
+				if (succeed)
+				{
+					uow.Commit();
+					if (Deleted != null) Deleted(this);
+				}
+				else
+					Message.AddEmbeddedException("Activity has reports");
+			});
 
 			_isInitializing = false;
 		}
@@ -436,7 +448,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		#endregion
 
-		#region Select, Report, Message
+		#region Select,Delete, Report, Message,
 		/// <summary>
 		/// Gets or sets a bindable value that indicates whether this process is selected among all processes of the block
 		/// </summary>
@@ -464,6 +476,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SelectCommandProperty =
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
+
+		//DeleteCommand Dependency Property
+		public Commands.Command DeleteCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
+
 		/// <summary>
 		/// Gets or sets a bindable value that indicates whether this process has reports
 		/// </summary>

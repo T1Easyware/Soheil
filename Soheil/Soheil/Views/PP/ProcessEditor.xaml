@@ -9,7 +9,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" FlowDirection="RightToLeft"
-             MaxWidth="600" IsEnabled="{Binding HasReport, Converter={StaticResource inverter}}">
+             MaxWidth="600" >
 	<UserControl.Resources>
 		<DataTemplate DataType="{x:Type ppevm:MachineEditorVm}">
 			<CheckBox Content="{Binding Code}" IsChecked="{Binding IsUsed}" IsEnabled="{Binding CanBeUsed}" ToolTip="{Binding Name}" Opacity="1" x:Name="checkBox" Foreground="Silver"/>
@@ -46,9 +46,22 @@
 			<TextBlock Text="{Binding Name}"/>
 		</HierarchicalDataTemplate>
 	</UserControl.Resources>
-	
 
-	<Border CornerRadius="10" Margin="2">
+	<UserControl.ContextMenu>
+		<ContextMenu>
+			<MenuItem Command="{Binding DeleteCommand}" Header="حذف فعالیت">
+				<MenuItem.CommandParameter>
+					<sys:Boolean>False</sys:Boolean>
+				</MenuItem.CommandParameter>
+			</MenuItem>
+			<MenuItem Command="{Binding DeleteCommand}" Header="حذف فعالیت و گزارشهای آن">
+				<MenuItem.CommandParameter>
+					<sys:Boolean>True</sys:Boolean>
+				</MenuItem.CommandParameter>
+			</MenuItem>
+		</ContextMenu>
+	</UserControl.ContextMenu>
+	<Border CornerRadius="10" Margin="2" IsEnabled="{Binding HasReport, Converter={StaticResource inverter}}">
 		<Border.Style>
 			<Style TargetType="{x:Type Border}">
 				<Style.Triggers>
@@ -95,6 +108,7 @@
 				</Binding.ConverterParameter>
 			</Binding>
 		</Border.BorderBrush>
+
 		
 		
         <DockPanel>
