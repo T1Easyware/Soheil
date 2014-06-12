@@ -62,8 +62,7 @@ namespace Soheil.Core.Base
             return (Access & AccessType.Update) == AccessType.Update;
         }
 
-        public virtual void IncludeRange(object param)
-        { }
+        public abstract void IncludeRange(object param);
 
         public abstract void RefreshItems();
 
@@ -76,7 +75,7 @@ namespace Soheil.Core.Base
         }
 
         public Command ExcludeRangeCommand { get; set; }
-        public virtual void ExcludeRange(object param) { }
+        public abstract void ExcludeRange(object param);
 
         public virtual bool CanExcludeRange()
         {
@@ -135,6 +134,8 @@ namespace Soheil.Core.Base
             ViewDetailsCommand = new Command(ViewDetails, CanViewDetails);
             CheckAllForExcludeCommand = new Command(CheckAllForExclude, CanCheckAllForExclude);
             CheckAllForIncludeCommand = new Command(CheckAllForInclude, CanCheckAllForInclude);
+            IncludeRangeCommand = new Command(IncludeRange, CanIncludeRange);
+            ExcludeRangeCommand = new Command(ExcludeRange, CanExcludeRange);
             Access = access;
         }
     }

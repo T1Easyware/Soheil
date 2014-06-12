@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using Soheil.Common;
@@ -104,5 +105,30 @@ namespace Soheil.Core.ViewModels
             PositionDataService.RemoveUser(CurrentPosition.Id, ((IEntityItem)param).Id);
         }
 
+        public override void IncludeRange(object param)
+        {
+            var tempList = new List<ISplitContent>();
+            tempList.AddRange(AllItems.Cast<ISplitContent>());
+            foreach (ISplitContent item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    PositionDataService.AddUser(CurrentPosition.Id, ((IEntityItem)item).Id);
+                }
+            }
+        }
+
+        public override void ExcludeRange(object param)
+        {
+            var tempList = new List<ISplitDetail>();
+            tempList.AddRange(SelectedItems.Cast<ISplitDetail>());
+            foreach (ISplitDetail item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    PositionDataService.RemoveUser(CurrentPosition.Id, ((IEntityItem)item).Id);
+                }
+            }
+        }
     }
 }

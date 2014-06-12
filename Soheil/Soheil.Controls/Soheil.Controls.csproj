@@ -554,6 +554,13 @@
   <ItemGroup>
     <Resource Include="Images\PP\IsDividable.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CheckAll.png" />
+    <Resource Include="Images\excludeAll.png" />
+    <Resource Include="Images\Include.png" />
+    <Resource Include="Images\IncludeAll.png" />
+    <Resource Include="Images\UnCheckAll.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

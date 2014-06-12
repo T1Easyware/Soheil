@@ -858,4 +858,16 @@
   <data name="txtTargetValue" xml:space="preserve">
     <value>هدف</value>
   </data>
+  <data name="txtCheckAll" xml:space="preserve">
+    <value>انتخاب همه</value>
+  </data>
+  <data name="txtExcludeChecked" xml:space="preserve">
+    <value>حذف انتخاب شده ها</value>
+  </data>
+  <data name="txtIncludeChecked" xml:space="preserve">
+    <value>افزودن انتخاب شده ها</value>
+  </data>
+  <data name="txtUncheckAll" xml:space="preserve">
+    <value>انتخاب هیچ</value>
+  </data>
 </root>

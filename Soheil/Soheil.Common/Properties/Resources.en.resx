@@ -853,4 +853,16 @@
   <data name="txtTargetValue" xml:space="preserve">
     <value>Target</value>
   </data>
+  <data name="txtCheckAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="txtExcludeChecked" xml:space="preserve">
+    <value>Exclude selected items</value>
+  </data>
+  <data name="txtIncludeChecked" xml:space="preserve">
+    <value>Include selected items</value>
+  </data>
+  <data name="txtUncheckAll" xml:space="preserve">
+    <value>Deselect all</value>
+  </data>
 </root>

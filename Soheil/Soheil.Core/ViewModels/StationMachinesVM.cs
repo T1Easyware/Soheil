@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using Soheil.Common;
@@ -128,6 +129,32 @@ namespace Soheil.Core.ViewModels
             StationDataService.RemoveMachine(CurrentStation.Id, ((IEntityItem) param).Id);
         }
 
-		public Command IncludeAllCommand { get; set; }
+        public override void IncludeRange(object param)
+        {
+            var tempList = new List<ISplitContent>();
+            tempList.AddRange(AllItems.Cast<ISplitContent>());
+            foreach (ISplitContent item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    StationDataService.AddMachine(CurrentStation.Id, ((IEntityItem)item).Id);
+                }
+            }
+        }
+
+        public override void ExcludeRange(object param)
+        {
+            var tempList = new List<ISplitDetail>();
+            tempList.AddRange(SelectedItems.Cast<ISplitDetail>());
+            foreach (ISplitDetail item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    StationDataService.RemoveMachine(CurrentStation.Id, ((IEntityItem)item).Id);
+                }
+            }
+        }
+
+        public Command IncludeAllCommand { get; set; }
     }
 }

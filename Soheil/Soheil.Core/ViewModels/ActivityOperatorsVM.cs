@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using Soheil.Common;
@@ -111,6 +112,32 @@ namespace Soheil.Core.ViewModels
         public override void Exclude(object param)
         {
             ActivityDataService.RemoveOperator(CurrentActivity.Id, ((IEntityItem)param).Id);
+        }
+
+        public override void IncludeRange(object param)
+        {
+            var tempList = new List<ISplitContent>();
+            tempList.AddRange(AllItems.Cast<ISplitContent>());
+            foreach (ISplitContent item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    ActivityDataService.AddOperator(CurrentActivity.Id, ((IEntityItem)item).Id);
+                }
+            }
+        }
+
+        public override void ExcludeRange(object param)
+        {
+            var tempList = new List<ISplitDetail>();
+            tempList.AddRange(SelectedItems.Cast<ISplitDetail>());
+            foreach (ISplitDetail item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    ActivityDataService.RemoveOperator(CurrentActivity.Id, ((IEntityItem)item).Id);
+                }
+            }
         }
     }
 }
