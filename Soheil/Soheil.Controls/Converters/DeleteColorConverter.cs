@@ -25,6 +25,7 @@ namespace Soheil.Controls.Converters
         public object ConvertBack(object value, Type targetType,
                                   object parameter, CultureInfo culture)
         {
+            int a;
             throw new NotImplementedException();
         }
 
