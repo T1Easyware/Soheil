@@ -68,7 +68,11 @@ namespace Soheil.Core.PP
 			_instances.Add(this);
 
 			//initialize cache
-			_stations = new DataServices.StationDataService().GetActives().Max(x => x.Index);
+			var stations = new DataServices.StationDataService().GetActives();
+			if (stations.Any())
+				_stations = stations.Max(x => x.Index);
+			else
+				_stations = 0;
 			_blocks = new List<PPItemBlock>[_stations];
 			_npts = new List<PPItemNpt>[_stations];
 			for (int i = 0; i < _stations; i++)
@@ -350,7 +354,8 @@ namespace Soheil.Core.PP
 									{
 										//search through previous blocks (prevs)
 										var prevs = row.Take(i);
-										var nominates = prevs.Where(x => item.Start >= x.End).OrderByDescending(x => x.End);
+										var nominates = prevs.Where(x => (item.Start - x.End).TotalSeconds > -1)
+											.OrderByDescending(x => x.End);
 										var nom = nominates.FirstOrDefault();
 
 										if (nom == null)
