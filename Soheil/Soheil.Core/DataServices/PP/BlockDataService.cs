@@ -147,11 +147,12 @@ namespace Soheil.Core.DataServices
 		public IEnumerable<Soheil.Core.PP.ItemMetaInfo> GetInRange(DateTime startDate, DateTime endDate)
 		{
 			//boundaries not included because otherwise a block won't be fitted in a well-fittable space (see reference: PPEditorBlock)
-			return _blockRepository
-				
+			var tmp = _blockRepository
 				.Find(x => !(x.EndDateTime <= startDate || x.StartDateTime >= endDate))
 				.OrderBy(y => y.StartDateTime)
-				.Select(x => new Soheil.Core.PP.ItemMetaInfo(x.Id, x.StateStation.Station.Index, x.ModifiedDate));
+				.Select(x => new object[] { x.Id, x.StateStation.Station.Index, x.ModifiedDate });
+
+			return tmp.Select(x => new Soheil.Core.PP.ItemMetaInfo((int)x[0], (int)x[1], (DateTime)x[2]));
 		}
 
 		//blocks in specified station, after (or partially after) startDate

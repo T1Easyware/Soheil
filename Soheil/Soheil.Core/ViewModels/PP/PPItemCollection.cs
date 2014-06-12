@@ -294,6 +294,7 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						new DataServices.BlockDataService().DeleteModel(vm.Model);
 						RemoveItem(vm);
+						Manager.ForceReload();
 					}
 					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 				}

@@ -23,10 +23,18 @@ namespace Soheil
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			//Exceptions.log
 			Application.Current.DispatcherUnhandledException +=
 				new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(Current_DispatcherUnhandledException);
 			if (!Directory.Exists(folder))
 				Directory.CreateDirectory(folder);
+
+			//debug mode
+			if (e.Args.Length > 0)
+				Soheil.Core.LoginInfo.IsDebugMode = e.Args[0].ToUpper() == "D";
+			else 
+				Soheil.Core.LoginInfo.IsDebugMode = false;
+
 			base.OnStartup(e);
 		}
 		void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

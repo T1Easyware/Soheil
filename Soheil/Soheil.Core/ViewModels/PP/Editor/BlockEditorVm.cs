@@ -14,8 +14,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public int StateId { get { return State.Id; } }
 		public int StationId { get { return StateStation == null ? 0 : StateStation.StationId; } }
 
-		public event Action<Model.Block> BlockAdded;
-
 		DataServices.BlockDataService _blockDataService;
 
 		Dal.SoheilEdmContext _uow;
@@ -312,7 +310,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			#endregion
 
 			_blockDataService.SaveBlock(Model);
-			if (BlockAdded != null) BlockAdded(Model);
 		}
 
 		#endregion

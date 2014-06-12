@@ -11,6 +11,7 @@ namespace Soheil.Core
         public static int Id { get; set; }
         public static string Title { get; set; }
         public static List<Tuple<string, AccessType>> Access { get; set; }
+		public static bool IsDebugMode { get; set; }
 
         public static string GetUsername(int userId)
         {
@@ -18,5 +19,6 @@ namespace Soheil.Core
             var user = DataService.GetSingle(userId);
             return user == null ? string.Empty : user.Username;
         }
-    }
+
+	}
 }

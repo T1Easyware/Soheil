@@ -122,7 +122,6 @@ namespace Soheil.Core.ViewModels.PP
 				(t => Dispatcher.Invoke(() =>
 				{
 					_suppressUpdateRange = true;
-
 					//initialize DateTimes
 					var currentDate = Arash.PersianDate.Today.ToDateTime();
 					var startDate = currentDate.GetNorooz();
@@ -751,7 +750,6 @@ namespace Soheil.Core.ViewModels.PP
 				try
 				{
 					var ppeBlock = new Editor.BlockEditorVm(vm.Model);
-					ppeBlock.BlockAdded += b => PPItems.Manager.ForceReload();
 					TaskEditor.BlockList.Add(ppeBlock);
 					TaskEditor.SelectedBlock = ppeBlock;
 				}

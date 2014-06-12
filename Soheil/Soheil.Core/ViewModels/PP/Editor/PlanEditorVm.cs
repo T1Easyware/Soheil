@@ -56,10 +56,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				//add to list
 				block = new BlockEditorVm(stateVm.Model);
-				block.BlockAdded += b =>
-				{
-					if (RefreshPPItems != null) RefreshPPItems();
-				};
 				BlockList.Add(block);
 			}
 			else
