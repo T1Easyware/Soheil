@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Soheil.Common;
@@ -157,6 +158,7 @@ namespace Soheil.Core.Base
         }
 
         public ObservableCollection<IEntityNode> ChildNodes { get; set; }
+        public ISplitNodeContent CurrentNode { get; set; }
 
         public static void Remove(int id, IEntityNode root)
         {
@@ -168,6 +170,26 @@ namespace Soheil.Core.Base
                     return;
                 }
                 Remove(id,node);
+            }
+        }
+
+        public static IEntityNode Find(int id, IEntityNode root)
+        {
+            if (root.Id == id) return root;
+            return root.ChildNodes.Select(node => Find(id, node)).FirstOrDefault(result => result != null);
+        }
+
+        public void Update(int id, IEntityNode root, IEntityNode newValue)
+        {
+            foreach (var node in root.ChildNodes)
+            {
+                if (node.Id == id)
+                {
+                    root.ChildNodes.Add(newValue);
+                    root.ChildNodes.Remove(node);
+                    return;
+                }
+                Update(id, node, newValue);
             }
         }
 

@@ -85,6 +85,11 @@ namespace Soheil.Core.ViewModels
             SelectedItems.CommitNew();
         }
 
+        public override void IncludeRange(object param)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override void RefreshItems()
         {
             AllItems = new ListCollectionView(OrganizationChartDataService.GetActives());
@@ -93,6 +98,11 @@ namespace Soheil.Core.ViewModels
         public override void Include(object param)
         {
             PositionDataService.AddOrganizationChart(CurrentPosition.Id, ((IEntityItem)param).Id);
+        }
+
+        public override void ExcludeRange(object param)
+        {
+            throw new System.NotImplementedException();
         }
 
         public override void Exclude(object param)

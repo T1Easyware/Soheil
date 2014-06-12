@@ -844,6 +844,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to انتخاب همه.
+        /// </summary>
+        public static string txtCheckAll {
+            get {
+                return ResourceManager.GetString("txtCheckAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to بستن.
         /// </summary>
         public static string txtClose {
@@ -1132,6 +1141,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to حذف انتخاب شده ها.
+        /// </summary>
+        public static string txtExcludeChecked {
+            get {
+                return ResourceManager.GetString("txtExcludeChecked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to خروج.
         /// </summary>
         public static string txtExit {
@@ -1218,6 +1236,15 @@ namespace Soheil.Common.Properties {
         public static string txtIncludeAll {
             get {
                 return ResourceManager.GetString("txtIncludeAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to افزودن انتخاب شده ها.
+        /// </summary>
+        public static string txtIncludeChecked {
+            get {
+                return ResourceManager.GetString("txtIncludeChecked", resourceCulture);
             }
         }
         
@@ -2172,6 +2199,15 @@ namespace Soheil.Common.Properties {
         public static string txtTotalQty {
             get {
                 return ResourceManager.GetString("txtTotalQty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to انتخاب هیچ.
+        /// </summary>
+        public static string txtUncheckAll {
+            get {
+                return ResourceManager.GetString("txtUncheckAll", resourceCulture);
             }
         }
         

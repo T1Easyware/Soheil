@@ -86,6 +86,8 @@ namespace Soheil.Core.DataServices
 			entity.Name = model.Name;
 		    entity.Status = model.Status;
 			context.Commit();
+            if (CauseUpdated != null)
+                CauseUpdated(this, new ModelUpdatedEventArgs<Cause>(model,null));
 		}
 
 		public void DeleteModel(Cause model)
@@ -106,7 +108,8 @@ namespace Soheil.Core.DataServices
 
 		#endregion
 
-		public event EventHandler<ModelAddedEventArgs<Cause>> CauseAdded;
+        public event EventHandler<ModelAddedEventArgs<Cause>> CauseAdded;
+        public event EventHandler<ModelUpdatedEventArgs<Cause>> CauseUpdated;
 
 		#region Overrides of RecursiveDataServiceBase
 

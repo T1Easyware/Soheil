@@ -24,6 +24,8 @@ namespace Soheil.Core.Base
 
         public Command ExcludeCommand { get; set; }
         public Command IncludeCommand { get; set; }
+        public Command ExcludeRangeCommand { get; set; }
+        public Command IncludeRangeCommand { get; set; }
 
         public ListCollectionView AllItems
         {
@@ -45,6 +47,25 @@ namespace Soheil.Core.Base
         }
 
         public abstract void Include(object param);
+        public void ExcludeRange(object param)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool CanExcludeRange()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool CanIncludeRange()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void IncludeRange(object param)
+        {
+            throw new System.NotImplementedException();
+        }
 
         public abstract void RefreshItems();
 
@@ -67,6 +88,32 @@ namespace Soheil.Core.Base
             return (Access & AccessType.Update) == AccessType.Update;
         }
 
+        public Command CheckAllForExcludeCommand { get; set; }
+
+        public void CheckAllForExclude(object param)
+        {
+
+        }
+
+        public virtual bool CanCheckAllForExclude()
+        {
+            return (Access & AccessType.Update) == AccessType.Update;
+        }
+
+        public Command CheckAllForIncludeCommand { get; set; }
+
+        public virtual bool CanCheckAllForInclude()
+        {
+            return (Access & AccessType.Update) == AccessType.Update;
+        }
+
+        public void CheckAllForInclude(object param)
+        {
+            foreach (ISplitContent item in AllItems)
+            {
+                item.IsChecked = true;
+            }
+        }
         public IEntityNode FindNode(IEntityNode root, int id)
         {
             var queue = new Queue<IEntityNode>();

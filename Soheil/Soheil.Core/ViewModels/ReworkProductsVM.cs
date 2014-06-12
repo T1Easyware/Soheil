@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using Soheil.Common;
@@ -119,6 +120,32 @@ namespace Soheil.Core.ViewModels
         public override void Exclude(object param)
         {
             ReworkDataService.RemoveProduct(CurrentRework.Id, ((IEntityItem) param).Id);
+        }
+
+        public override void IncludeRange(object param)
+        {
+            var tempList = new List<ISplitContent>();
+            tempList.AddRange(AllItems.Cast<ISplitContent>());
+            foreach (ISplitContent item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    ReworkDataService.AddProduct(CurrentRework.Id, ((IEntityItem)item).Id,string.Empty,string.Empty,0);
+                }
+            }
+        }
+
+        public override void ExcludeRange(object param)
+        {
+            var tempList = new List<ISplitDetail>();
+            tempList.AddRange(SelectedItems.Cast<ISplitDetail>());
+            foreach (ISplitDetail item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    ReworkDataService.RemoveProduct(CurrentRework.Id, ((IEntityItem)item).Id);
+                }
+            }
         }
     }
 }

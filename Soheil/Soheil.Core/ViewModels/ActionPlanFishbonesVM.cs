@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Data;
 using Soheil.Common;
 using Soheil.Core.Base;
@@ -68,7 +70,7 @@ namespace Soheil.Core.ViewModels
 
         private void OnFishboneNodeRemoved(object sender, ModelRemovedEventArgs e)
         {
-            foreach (ProductVM item in SelectedItems)
+            foreach (ActionPlanFishboneVM item in SelectedItems)
             {
                 if (item.Id == e.Id)
                 {
@@ -97,6 +99,32 @@ namespace Soheil.Core.ViewModels
         public override void Exclude(object param)
         {
             ActionPlanDataService.RemoveFishboneNode(CurrentActionPlan.Id, ((IEntityItem) param).Id);
+        }
+
+        public override void IncludeRange(object param)
+        {
+            var tempList = new List<ISplitContent>();
+            tempList.AddRange(AllItems.Cast<ISplitContent>());
+            foreach (ISplitContent item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    ActionPlanDataService.AddFishboneNode(CurrentActionPlan.Id, ((IEntityItem)item).Id);
+                }
+            }
+        }
+
+        public override void ExcludeRange(object param)
+        {
+            var tempList = new List<ISplitDetail>();
+            tempList.AddRange(SelectedItems.Cast<ISplitDetail>());
+            foreach (ISplitDetail item in tempList)
+            {
+                if (item.IsChecked)
+                {
+                    ActionPlanDataService.RemoveFishboneNode(CurrentActionPlan.Id, ((IEntityItem)item).Id);
+                }
+            }
         }
     }
 }

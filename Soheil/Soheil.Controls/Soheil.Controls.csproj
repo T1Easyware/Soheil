@@ -102,6 +102,7 @@
     <Compile Include="Converters\AccessTypeColorConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\AccessTypeVisibilityConverter.cs" />
+    <Compile Include="Converters\DeleteColorConverter.cs" />
     <Compile Include="Converters\PPTableConvertors.cs" />
     <Compile Include="Converters\SearchValueConverter.cs" />
     <Compile Include="Converters\TreeNodeAlignmentConverter.cs" />
@@ -552,6 +553,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PP\IsDividable.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CheckAll.png" />
+    <Resource Include="Images\excludeAll.png" />
+    <Resource Include="Images\Include.png" />
+    <Resource Include="Images\IncludeAll.png" />
+    <Resource Include="Images\UnCheckAll.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

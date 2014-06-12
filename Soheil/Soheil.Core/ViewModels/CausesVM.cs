@@ -64,6 +64,7 @@ namespace Soheil.Core.ViewModels
         {
             CauseDataService = new CauseDataService();
             CauseDataService.CauseAdded += OnCauseAdded;
+            CauseDataService.CauseUpdated += OnCauseUpdated;
 
             AddCommand = new Command(Add, CanAdd);RefreshCommand = new Command(CreateItems);
             AddGroupCommand = new Command(Add, CanAddGroup);
@@ -97,10 +98,16 @@ namespace Soheil.Core.ViewModels
             Items.AddNewItem(newCauseVm);
             Items.CommitNew();
 
+            newCauseVm.IsExpanded = true;
             ((ISplitNodeContent)CurrentContent).ChildNodes.Add(newCauseVm);
             CurrentContent = newCauseVm;
             CurrentContent.IsSelected = true;
+        }
 
+        void OnCauseUpdated(object sender, ModelUpdatedEventArgs<Cause> e)
+        {
+            var newCauseVm = new CauseVM(e.NewModel, Access, CauseDataService);
+            Update(newCauseVm.Id, RootNode, newCauseVm);
         }
         #endregion
     }

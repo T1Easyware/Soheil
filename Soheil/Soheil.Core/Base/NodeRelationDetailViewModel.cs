@@ -21,6 +21,8 @@ namespace Soheil.Core.Base
             set { SetValue(PresentationTypeProperty, value); }
         }
 
+        public bool IsChecked { get; set; }
+
         public abstract int Id { get; set; }
 
         public ObservableCollection<IEntityNode> ChildNodes { get; set; }
