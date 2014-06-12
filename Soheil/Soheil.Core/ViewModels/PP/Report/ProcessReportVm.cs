@@ -140,7 +140,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			if (onlyCommit)
 				UOW.Commit();
 			else
-				_processReportDataService.Save(this);
+				_processReportDataService.Save(Model);
 		}
 		#endregion
 
@@ -176,8 +176,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 			new UIPropertyMetadata(0, (d, e) =>
 			{
 				var vm = (ProcessReportVm)d;
-				if (vm._isInInitializingPhase) return;
 				var val = (int)e.NewValue;
+				vm.TargetPointForOperator = string.Format("{0:F2}", (float)val/vm.Model.OperatorProcessReports.Count);
+				if (vm._isInInitializingPhase) return;
 
 				//update Model
 				vm.Model.ProcessReportTargetPoint = val;
@@ -194,6 +195,16 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (val < 1) return 1;
 				return v;
 			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates the TargetPoint for each operator
+		/// </summary>
+		public string TargetPointForOperator
+		{
+			get { return (string)GetValue(TargetPointForOperatorProperty); }
+			set { SetValue(TargetPointForOperatorProperty, value); }
+		}
+		public static readonly DependencyProperty TargetPointForOperatorProperty =
+			DependencyProperty.Register("TargetPointForOperator", typeof(string), typeof(ProcessReportVm), new UIPropertyMetadata("0"));
 
 		#region Duration
 		/// <summary>

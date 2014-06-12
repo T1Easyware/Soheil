@@ -130,7 +130,7 @@
     <value>Back</value>
   </data>
   <data name="txtCancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Return</value>
   </data>
   <data name="txtCDate" xml:space="preserve">
     <value>Created Date :</value>

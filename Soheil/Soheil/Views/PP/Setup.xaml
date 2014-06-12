@@ -9,9 +9,10 @@
 			 x:Name="root"
              mc:Ignorable="d" d:DesignHeight="50" d:DesignWidth="300">
 	<UserControl.Margin>
-		<MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
+		<MultiBinding Converter="{StaticResource ppBlockBorderMarginConverter}">
 			<Binding Path="StartDateTime"/>
 			<Binding ElementName="root" Path="PPTable.HourZoom"/>
+			<Binding Path="VIndex"/>
 		</MultiBinding>
 	</UserControl.Margin>
 	<UserControl.Width>

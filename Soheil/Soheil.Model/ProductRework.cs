@@ -37,7 +37,7 @@ namespace Soheil.Model
             set;
         }
     
-        private byte Status
+        public virtual byte Status
         {
             get { return _status; }
             set { _status = value; }

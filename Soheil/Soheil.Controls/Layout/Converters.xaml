@@ -81,6 +81,7 @@
 	<ppconv:TaskReportWidth x:Key="taskReportWidth"/>
 	<ppconv:PPTaskBorderWidthConverter x:Key="ppTaskBorderWidthConverter"/>
 	<ppconv:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
+	<ppconv:PPBlockBorderMarginConverter x:Key="ppBlockBorderMarginConverter"/>
 	<ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>
 	<ppconv:ProcessBorderMarginConverter x:Key="processBorderMarginConverter"/>
 	<ppconv:ProcessReportBorderMarginConverter x:Key="processReportBorderMarginConverter"/>

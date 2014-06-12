@@ -66,6 +66,12 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual System.DateTime ModifiedDate
+        {
+            get;
+            set;
+        }
 
         #endregion
 

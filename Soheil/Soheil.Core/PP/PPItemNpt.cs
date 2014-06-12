@@ -19,6 +19,7 @@ namespace Soheil.Core.PP
 		public PPItemNpt(int nptId)
 		{
 			Id = nptId;
+			HasVm = false;
 			Reload();
 		}
 		/// <summary>
@@ -26,9 +27,13 @@ namespace Soheil.Core.PP
 		/// </summary>
 		public void Reload()
 		{
+			HasVm = false;
+
 			if (UOW == null)
 				UOW = new Dal.SoheilEdmContext();
 			var nptDataService = new DataServices.NPTDataService(UOW);
+
+			ModifiedDate = DateTime.MinValue;//???
 			Model = nptDataService.GetSingle(Id);
 			Start = Model.StartDateTime;
 			End = Model.EndDateTime;

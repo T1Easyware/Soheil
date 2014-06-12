@@ -101,7 +101,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 							{
 								ProcessReport = processReportModel,
 								ProcessOperator = po,
-								//OperatorProducedG1 = tp / Model.ProcessOperators.Count,
 							});
 						}
 
@@ -140,7 +139,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 						{
 							ProcessReport = newModel,
 							ProcessOperator = po,
-							OperatorProducedG1 = tp / Model.ProcessOperators.Count,
+							OperatorProducedG1 = 0,
 							ModifiedBy = LoginInfo.Id,
 						});
 					}

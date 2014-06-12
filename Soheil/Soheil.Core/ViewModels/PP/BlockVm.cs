@@ -70,6 +70,7 @@ namespace Soheil.Core.ViewModels.PP
 			Model = _fullData.Model;
 
 			RowIndex = Model.StateStation.Station.Index;
+			VIndex = _fullData.VIndex;
 			StartDateTime = Model.StartDateTime;
 			DurationSeconds = Model.DurationSeconds;
 
@@ -149,6 +150,17 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty ParentProperty =
 			DependencyProperty.Register("Parent", typeof(PPItemCollection), typeof(BlockVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates how many rows are above this block in its own station
+		/// </summary>
+		public int VIndex
+		{
+			get { return (int)GetValue(VIndexProperty); }
+			set { SetValue(VIndexProperty, value); }
+		}
+		public static readonly DependencyProperty VIndexProperty =
+			DependencyProperty.Register("VIndex", typeof(int), typeof(BlockVm), new UIPropertyMetadata(0));
 
 		#region Product and State
 		/// <summary>

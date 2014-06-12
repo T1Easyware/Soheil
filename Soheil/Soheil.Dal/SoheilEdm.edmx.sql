@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 06/07/2014 22:11:52
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 06/10/2014 10:47:28
+-- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -1274,6 +1274,7 @@ CREATE TABLE [dbo].[Blocks] (
     [EndDateTime] datetime  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [PPFlagsNr] tinyint  NOT NULL,
+    [ModifiedDate] datetime  NOT NULL,
     [Job_Id] int  NULL,
     [Education_Id] int  NULL,
     [StateStation_Id] int  NOT NULL

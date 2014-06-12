@@ -98,7 +98,7 @@ namespace Soheil.Core.PP.Smart
 					shouldWarnUser ? ExceptionLevel.Warning : ExceptionLevel.Info,
 					"مسیریابی خودکار FPC");
 			}
-			throw new SoheilExceptionBase("با موفقیت ذخیره و مسیریابی خودکار با موفقیت انجام شد", ExceptionLevel.Info, "ذخیره FPC");
+			throw new SoheilExceptionBase("ذخیره و مسیریابی با موفقیت انجام شد", ExceptionLevel.Info, "ذخیره FPC");
 		}
 		#endregion
 

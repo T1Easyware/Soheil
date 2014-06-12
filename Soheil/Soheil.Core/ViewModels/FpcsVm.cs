@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
@@ -17,17 +18,17 @@ namespace Soheil.Core.ViewModels
         public override void CreateItems(object param)
         {
             var groupViewModels = new ObservableCollection<ProductVM>();
-            foreach (var product in ProductDataService.GetAll())
+            foreach (var product in ProductDataService.GetActives())
             {
                 groupViewModels.Add(new ProductVM(product, Access, ProductDataService, ProductGroupDataService));
             }
             GroupItems = new ListCollectionView(groupViewModels);
 
             var viewModels = new ObservableCollection<FpcVm>();
-            foreach (var model in FpcDataService.GetAll())
-            {
-                viewModels.Add(new FpcVm(model, GroupItems, Access, FpcDataService));
-            }
+			foreach (var model in FpcDataService.GetAll().Where(x => x.Product.RecordStatus == Status.Active))
+			{
+				viewModels.Add(new FpcVm(model, GroupItems, Access, FpcDataService));
+			}
             Items = new ListCollectionView(viewModels);
 
             if (viewModels.Count > 0)

@@ -21,6 +21,7 @@ namespace Soheil.Core.PP
 		public PPItemBlock(int blockId)
 		{
 			Id = blockId;
+			HasVm = false;
 			Reload();
 		}
 		/// <summary>
@@ -28,21 +29,19 @@ namespace Soheil.Core.PP
 		/// </summary>
 		public void Reload()
 		{
+			HasVm = false;
+
 			if (UOW == null) 
 				UOW = new Dal.SoheilEdmContext();
 			var blockDataService = new DataServices.BlockDataService(UOW);
 			Model = blockDataService.GetSingleFull(Id);
+			
+			ModifiedDate = Model.ModifiedDate;
 			Start = Model.StartDateTime;
 			End = Model.EndDateTime;
 
 			ReportData = blockDataService.GetProductionReportData(Model);
 			CanAddSetupBefore = blockDataService.CanAddSetupBeforeBlock(Model);
-		}
-
-		public static bool IsNull(PPItemBlock instance)
-		{
-			if (instance == null) return true;
-			return (instance.Model == null);
 		}
 	}
 }

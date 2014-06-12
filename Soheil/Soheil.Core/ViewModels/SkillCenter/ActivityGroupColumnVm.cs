@@ -20,7 +20,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			Id = model.Id;
 			Name = model.Name;
 			Code = model.Code;
-			Span = model.Activities.Count;//???those in the current product or all? all for now.
+			Span = model.Activities.Count(x => x.RecordStatus == Common.Status.Active);
 		}
 		/// <summary>
 		/// Gets a bindable value that indicates the number of activities under this group

@@ -7,18 +7,23 @@ using System.Collections.ObjectModel;
 
 namespace Soheil.Core.PP
 {
-	class ActionData
+	class PPRange
 	{
-		public ActionData(DateTime start, DateTime end)
+		public PPRange(DateTime start, DateTime end)
 		{
 			Start = start;
 			End = end;
+		}
+		public void ApplyMargin(TimeSpan margin)
+		{
+			Start = Start.Add(-margin);
+			End = End.Add(margin);
 		}
 		internal DateTime Start { get; private set; }
 		internal DateTime End { get; private set; }
 
 		/// <summary>
-		/// Specifies whether the PPItemBase fits (or partially fits) in the range specifed by this ActionData
+		/// Specifies whether the PPItemBase fits (or partially fits) in the range specifed by this PPRange
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="end"></param>

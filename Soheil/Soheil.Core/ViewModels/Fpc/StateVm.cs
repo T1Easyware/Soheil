@@ -43,7 +43,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public string Name
 		{
 			get { return Model.Name; }
-			set { Model.Name = value; OnModelChanged(); OnPropertyChanged("Name"); }
+			set { Model.Name = value == null ? "" : value; OnModelChanged(); OnPropertyChanged("Name"); }
 		}
 		/// <summary>
 		/// Gets or sets the Code of this state
@@ -51,7 +51,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public string Code
 		{
 			get { return Model.Code; }
-			set { Model.Code = value; OnModelChanged(); OnPropertyChanged("Code"); }
+			set { Model.Code = value == null ? "" : value; OnModelChanged(); OnPropertyChanged("Code"); }
 		}
 		/// <summary>
 		/// Gets the type of this state (Start, Mid, End, Rework)

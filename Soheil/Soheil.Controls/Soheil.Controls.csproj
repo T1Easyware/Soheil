@@ -96,7 +96,6 @@
     <Compile Include="Behaviors\FocusSelectAllTextBoxBehavior.cs" />
     <Compile Include="Behaviors\LinqToVisualTree.cs" />
     <Compile Include="Behaviors\ScrollOffsetBinding.cs" />
-    <Compile Include="Converters\DeleteColorConverter.cs" />
     <Compile Include="Converters\BooleanToLengthConverter.cs" />
     <Compile Include="Converters\ColorToBrushConvertor.cs" />
     <Compile Include="Converters\ColumnVisibilityConverter.cs" />

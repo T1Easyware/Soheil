@@ -40,9 +40,6 @@
 				</DockPanel>
 
 				<DockPanel Grid.Row="1" LastChildFill="False">
-					<TextBlock DockPanel.Dock="Left" Text="مقدار هدف فعالیت" VerticalAlignment="Center"/>
-					<TextBox DockPanel.Dock="Left" Text="{Binding ProcessReportTargetPoint}" VerticalAlignment="Center" MinWidth="60"/>
-					<Canvas Width="20"/>
 					<TextBlock DockPanel.Dock="Left" Text="زمان شروع گزارش" VerticalAlignment="Center"/>
 					<cal:PersianDatePicker DockPanel.Dock="Left" SelectedDate="{Binding StartDate}" IsEnabled="False"/>
 					<TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" IsReadOnly="True" FlowDirection="LeftToRight"/>
@@ -100,14 +97,19 @@
 						</Grid>
 						<Grid DockPanel.Dock="Bottom" TextBlock.Foreground="Silver">
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="30"/>
+								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="60"/>
-								<ColumnDefinition Width="2*"/>
+								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="60"/>
-								<ColumnDefinition Width="80"/>
-								<ColumnDefinition Width="1*"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<TextBlock Margin="2" Grid.Column="1" Text="مجموع"/>
+							<TextBlock Margin="2" Grid.Column="0" Text="مقدار هدف فعالیت = "/>
+							<TextBlock Margin="2,0" Grid.Column="1" Text="{Binding TargetPoint}" Foreground="Gold" FontWeight="Bold" FontSize="14"/>
+							<TextBlock Margin="2" Grid.Column="2" Text="برای هر اپراتور = "/>
+							<TextBlock Margin="2,0" Grid.Column="3" Text="{Binding TargetPointForOperator}" Foreground="Gold" FontWeight="Bold" FontSize="14"/>
+							<TextBlock Margin="2" Grid.Column="5" Text="مجموع تولید سالم"/>
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding ProducedG1}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- operator report List -->
@@ -356,7 +358,7 @@
 							<ContentControl Grid.Column="1" Template="{StaticResource hoverStyle}">
 								<StackPanel>
 									<TextBlock Text="علت توقفات" TextAlignment="Center" HorizontalAlignment="Center"/>
-									<TextBlock Text="سطح 1  -  سطح 2  -  سطح 3" TextAlignment="Right" HorizontalAlignment="Center"/>
+									<TextBlock Text="سطح1 - سطح2 - سطح3" TextAlignment="Right" HorizontalAlignment="Center"/>
 								</StackPanel>
 							</ContentControl>
 							<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">

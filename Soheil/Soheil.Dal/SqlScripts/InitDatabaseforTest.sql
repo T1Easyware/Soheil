@@ -812,7 +812,6 @@ SET IDENTITY_INSERT dbo.StateStationActivityMachines OFF
 
 SET IDENTITY_INSERT dbo.Causes ON
 insert into dbo.Causes (Id, [Level], Name, Code, Parent_Id, CreatedDate, ModifiedDate, [Status], ModifiedBy) values 
-('1','0','Cause','0', NULL, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 ('2','1',N'فنی','0', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 ('3','1',N'پرسنلی','1', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
 ('4','1',N'سایر','99', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),

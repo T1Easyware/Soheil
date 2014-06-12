@@ -22,7 +22,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public ActivityGroupVm(Model.ActivityGroup model)
 		{
 			Model = model;
-			foreach (var act in model.Activities)
+			foreach (var act in model.Activities.Where(x=>x.RecordStatus == Common.Status.Active))
 			{
 				Activities.Add(new ActivityVm(act, this));
 			}

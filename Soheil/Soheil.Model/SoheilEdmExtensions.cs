@@ -14,20 +14,15 @@ namespace Soheil.Model
 
 	public partial class AccessRule
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
 	}
 
 	public partial class ActionPlan
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 	}
 
 	public partial class ActionPlan_Root
@@ -36,24 +31,29 @@ namespace Soheil.Model
 
 	public partial class Activity
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 	}
 
 	public partial class ActivityGroup
 	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 	}
 
 	public partial class Cause
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 	}
 
 	public partial class CauseL1
@@ -74,20 +74,20 @@ namespace Soheil.Model
 
 	public partial class CostCenter
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 	}
 
 	public partial class Defection
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 	}
 
 	public partial class Defection_Root
@@ -101,11 +101,11 @@ namespace Soheil.Model
 
 	public partial class FPC
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 
 		/// <summary>
 		/// Gets the state which starts all the fpc
@@ -157,11 +157,11 @@ namespace Soheil.Model
 
 	public partial class Machine
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 	}
 
 	public partial class MachineFamily
@@ -170,11 +170,11 @@ namespace Soheil.Model
 
 	public partial class Operator
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
 	}
 
 	public partial class ActivitySkill
@@ -245,7 +245,14 @@ namespace Soheil.Model
 			set { Status = (byte)value; }
 		}
 	}
-
+	public partial class ProductGroup
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+	}
 	public partial class Product
 	{
 		public Status RecordStatus
@@ -273,18 +280,21 @@ namespace Soheil.Model
 
 		public FPC DefaultFpc { get { return FPCs.FirstOrDefault(x => x.IsDefault); } }
 	}
-
+	public partial class Rework
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+	}
 	public partial class ProductDefection
 	{
 	}
 
 	public partial class ProductRework
 	{
-		//public Status RecordStatus
-		//{
-		//    get { return (Status)Common.Status; }
-		//    set { Common.Status = (byte)value; }
-		//}
+
 	}
 
 	public partial class Rework

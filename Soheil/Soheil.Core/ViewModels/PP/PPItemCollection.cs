@@ -72,37 +72,45 @@ namespace Soheil.Core.ViewModels.PP
 			//manager
 			Manager = new PPItemManager(parent.Dispatcher);
 
-			Manager.BlockAdded += item =>
+			Manager.BlockAddedOrUpdated += item =>
 			{
-				var vm = AddItem(item);
-				vm.ViewMode = ViewMode;
-			};
-			Manager.BlockUpdated += item =>
-			{
-				var vm = this[item.Model.StateStation.Station.Index].Blocks.FirstOrDefault(x => x.Id == item.Id);
-				if (vm != null)
+				var station = this[item.Model.StateStation.Station.Index];
+				var vm = station.Blocks.FirstOrDefault(x => x.Id == item.Id);
+				if(vm == null)
 				{
+					//add
+					vm = AddItem(item);
+					vm.ViewMode = ViewMode;
+					item.HasVm = true;
+				}
+				else
+				{
+					//update
 					vm.Reload(item);
 				}
+				FixStationVSizes(station);
 			};
 			Manager.BlockRemoved += item =>
 			{
 				//keep updated with _lastBlockIds
 				RemoveItem(item.Model);
+				FixStationVSizes(this[item.Model.StateStation.Station.Index]);
 			};
-			Manager.NptAdded += item =>
+			Manager.NptAddedOrUpdated += item =>
 			{
-				var vm = AddNPT(item.Id);
-				vm.ViewMode = ViewMode;
-			};
-			Manager.NptUpdated += item =>
-			{
-				var model = item.Model as Model.Setup;
-				if (model != null)
+				if (item.Model is Model.Setup)//???
 				{
-					var vm = this[model.Warmup.Station.Index].NPTs.FirstOrDefault(x => x.Id == item.Id);
-					if(vm!=null)
+					var station = this[(item.Model as Model.Setup).Warmup.Station.Index];
+					var vm = station.NPTs.FirstOrDefault(x => x.Id == item.Id);
+					if (vm == null)
 					{
+						//add
+						vm = AddNPT(item.Id);
+						vm.ViewMode = ViewMode;
+					}
+					else
+					{
+						//update
 						vm.Reload(item);
 					}
 				}
@@ -111,6 +119,13 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				RemoveItem(item.Model as Model.Setup);
 			};
+		}
+		private void FixStationVSizes(StationVm station)
+		{
+			if (station.Blocks.Any())
+				station.VCount = station.Blocks.Max(x => x.VIndex) + 1;
+			else
+				station.VCount = 1;
 		}
 		public void Dispose()
 		{
@@ -279,6 +294,7 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						new DataServices.BlockDataService().DeleteModel(vm.Model);
 						RemoveItem(vm);
+						Manager.ForceReload();
 					}
 					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 				}

@@ -104,6 +104,8 @@ namespace Soheil.Core.DataServices
 
 		public void UpdateModel(State model)
 		{
+			if (model.Name == null) model.Name = "";
+			if (model.Code == null) model.Code = "";
 			context.Commit();
 		}
 

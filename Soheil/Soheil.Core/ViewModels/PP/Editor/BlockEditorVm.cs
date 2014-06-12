@@ -14,8 +14,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public int StateId { get { return State.Id; } }
 		public int StationId { get { return StateStation == null ? 0 : StateStation.StationId; } }
 
-		public event Action<Model.Block> BlockAdded;
-
 		DataServices.BlockDataService _blockDataService;
 
 		Dal.SoheilEdmContext _uow;
@@ -258,53 +256,60 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			task.EndDateTime = Model.EndDateTime;
 			task.DurationSeconds = Model.DurationSeconds;
 
-			//check if it fits
-			bool wasAutoStart = IsAutoStart;
-			bool fits = true;
-			if (!IsAutoStart)
+			//check how it should be placed
+			if (IsParallel)//parallel
 			{
-				var inRangeBlocks = _blockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
-				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
 
-				//if not fit, make it auto start
-				if (inRangeBlocks.Any(x => x != Model) || inRangeNPTs.Any())
-					fits = false;
 			}
-
-			//check if should use auto start
-			if (IsAutoStart || !fits)
+			else//serial
 			{
-				// Updates the start datetime of this block to fit the first empty space
-				Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(_blockDataService, nptDs);
-				var seq = sman.FindNextFreeSpace(
-					StationId,
-					State.ProductRework.Id,
-					!wasAutoStart ? StartDate.Add(StartTime) : DateTime.Now, //put it after specifed time if it wasn't auto start
-					(int)Duration.TotalSeconds);
-				var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
-				
-				//measure start change
-				var change = block.StartDT - Model.StartDateTime;
-				//apply start change to block
-				Model.StartDateTime = block.StartDT;
-				Model.EndDateTime = block.EndDT;
-				//apply start change to task
-				task.StartDateTime = block.StartDT;
-				task.EndDateTime = block.EndDT;
-				//apply start change to processes
-				foreach (var process in task.Processes)
+				//check if it fits
+				bool wasAutoStart = IsAutoStart;
+				bool fits = true;
+				if (!IsAutoStart)
 				{
-					process.StartDateTime += change;
-					process.EndDateTime += change;
+					var inRangeBlocks = _blockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
+					var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
+
+					//if not fit, make it auto start
+					if (inRangeBlocks.Any(x => x != Model) || inRangeNPTs.Any())
+						fits = false;
 				}
 
-				if (!sman.SaveSetups(seq))
-					Message.AddEmbeddedException("Some setups could not be added. check setup times table.");
-			} 
+				//check if should use auto start
+				if (IsAutoStart || !fits)
+				{
+					// Updates the start datetime of this block to fit the first empty space
+					Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(_blockDataService, nptDs);
+					var seq = sman.FindNextFreeSpace(
+						StationId,
+						State.ProductRework.Id,
+						!wasAutoStart ? StartDate.Add(StartTime) : DateTime.Now, //put it after specifed time if it wasn't auto start
+						(int)Duration.TotalSeconds);
+					var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
+
+					//measure start change
+					var change = block.StartDT - Model.StartDateTime;
+					//apply start change to block
+					Model.StartDateTime = block.StartDT;
+					Model.EndDateTime = block.EndDT;
+					//apply start change to task
+					task.StartDateTime = block.StartDT;
+					task.EndDateTime = block.EndDT;
+					//apply start change to processes
+					foreach (var process in task.Processes)
+					{
+						process.StartDateTime += change;
+						process.EndDateTime += change;
+					}
+
+					if (!sman.SaveSetups(seq))
+						Message.AddEmbeddedException("Some setups could not be added. check setup times table.");
+				}
+			}
 			#endregion
 
 			_blockDataService.SaveBlock(Model);
-			if (BlockAdded != null) BlockAdded(Model);
 		}
 
 		#endregion
@@ -407,11 +412,22 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = d as BlockEditorVm;
 				var val = (bool)e.NewValue;
 				if(val)
-				{
-					var end = vm.AutoStartDateTime.Add(vm.Duration);
-					d.SetValue(EndDateProperty, end.Date);
-					d.SetValue(EndTimeProperty, end.TimeOfDay);
-				}
+					vm.IsParallel = false;
+			}));
+		//IsParallel Dependency Property
+		public bool IsParallel
+		{
+			get { return (bool)GetValue(IsParallelProperty); }
+			set { SetValue(IsParallelProperty, value); }
+		}
+		public static readonly DependencyProperty IsParallelProperty =
+			DependencyProperty.Register("IsParallel", typeof(bool), typeof(BlockEditorVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				var val = (bool)e.NewValue;
+				if (val)
+					vm.IsAutoStart = false;
 			}));
 		/// <summary>
 		/// Gets or sets the bindable StartDate manually defined for this block
@@ -450,26 +466,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}));
 
 
-
-		//AutoStartDateTime Dependency Property
-		public DateTime AutoStartDateTime
-		{
-			get { return (DateTime)GetValue(AutoStartDateTimeProperty); }
-			set { SetValue(AutoStartDateTimeProperty, value); }
-		}
-		public static readonly DependencyProperty AutoStartDateTimeProperty =
-			DependencyProperty.Register("AutoStartDateTime", typeof(DateTime), typeof(BlockEditorVm),
-			new UIPropertyMetadata(DateTime.Now, (d, e) =>
-			{
-				var vm = d as BlockEditorVm;
-				var val = (DateTime)e.NewValue;
-				if(vm.IsAutoStart)
-				{
-					var end = val.Add(vm.Duration);
-					d.SetValue(EndDateProperty, end.Date);
-					d.SetValue(EndDateProperty, end.TimeOfDay);
-				}
-			}));
 
 		/// <summary>
 		/// Gets or sets the bindable auto-calculated EndDate of this block

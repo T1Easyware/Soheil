@@ -3507,6 +3507,19 @@
                 <I:Interaction.Behaviors>
                     <ControlBehaviors:BindableSelectedItemBehavior SelectedItem="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </I:Interaction.Behaviors>
+                <!--TreeView.Resources>
+                    <ResourceDictionary>
+                        <Converters:DeleteColorConverter x:Key="deleteConverter"/>
+                        <HierarchicalDataTemplate DataType="{x:Type Base:NodeContentViewModel}" ItemsSource="{Binding ChildNodes}">
+                            <StackPanel Orientation="Horizontal" Background="{Binding IsDeleting, Converter={StaticResource deleteConverter}}">
+                                <TextBlock x:Name="xx" Text="{Binding Title}"/>
+                                <Button Content="+" 
+                                        Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.AddCommand}"
+                                        />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </ResourceDictionary>
+                </-->
             </TreeView>
         </DataTemplate>
         <TemplateSelectors:SplitViewListSelector x:Key="ListTemplateSelector"

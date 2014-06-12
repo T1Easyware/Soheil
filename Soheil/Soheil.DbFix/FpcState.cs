@@ -14,7 +14,7 @@ namespace Soheil.DbFix
 		{
 			int c = 0;
 			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine("This module fixes all missing mainProduct refs in all states in db");
+			Console.WriteLine("4. Fix all missing mainProduct refs in all states in db");
 			Console.ForegroundColor = ConsoleColor.DarkGray;
 
 			//actual db shit

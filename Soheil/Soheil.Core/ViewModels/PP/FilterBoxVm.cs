@@ -24,13 +24,18 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		private FilterBoxVm _nextLevel;
 		/// <summary>
-		/// Occurs when selected item is changed
+		/// Occurs when item is selected (sender, oldValue, newValue)
 		/// </summary>
-		public event Action<FilterBoxVm, FilterableItemVm> FilterBoxSelectedItemChanged;
+		public event Action<FilterBoxVm, FilterableItemVm, FilterableItemVm> FilterableItemSelected;
 		/// <summary>
 		/// Occurs when filterBox is deleted
 		/// </summary>
-		public event Action<FilterBoxVm, FilterableItemVm> FilterBoxDeleted;
+		public event Action<FilterBoxVm> FilterBoxDeleted;
+
+		/// <summary>
+		/// Selected OperatorDefectionReport Model or OperatorStoppageReport Model
+		/// </summary>
+		public dynamic Model { get; set; }
 
 		/// <summary>
 		/// Creates an instance of FilterBoxVm
@@ -43,7 +48,7 @@ namespace Soheil.Core.ViewModels.PP
 				if (_parent != null) 
 					_parent.FilterBoxes.Remove(this);
 				if (FilterBoxDeleted != null)
-					FilterBoxDeleted(this, SelectedItem);
+					FilterBoxDeleted(this);
 			});
 		}
 		/// <summary>
@@ -110,7 +115,6 @@ namespace Soheil.Core.ViewModels.PP
 
 			//select the default operator
 			vm.SelectedItem = vm.FilteredList.FirstOrDefault(x => x.Id == selectedId);
-
 			return vm;
 		}
 
@@ -130,8 +134,9 @@ namespace Soheil.Core.ViewModels.PP
 			new UIPropertyMetadata(null, (d, e) =>
 			{
 				var vm = (FilterBoxVm)d;
-				if (vm.FilterBoxSelectedItemChanged != null)
-					vm.FilterBoxSelectedItemChanged(vm, (FilterableItemVm)e.NewValue);
+				if (e.NewValue != null)
+					if (vm.FilterableItemSelected != null)
+						vm.FilterableItemSelected(vm, (FilterableItemVm)e.OldValue, (FilterableItemVm)e.NewValue);
 			}));
 
 		/// <summary>
