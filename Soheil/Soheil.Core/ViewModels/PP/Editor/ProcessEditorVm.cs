@@ -85,9 +85,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			TargetPoint = model.TargetCount;
 			DurationSeconds = model.DurationSeconds;
 
-			Date = model.Task.Block.StartDateTime.Date;
-			StartTime = model.StartDateTime.Subtract(Date);
-			EndTime = model.EndDateTime.Subtract(Date); 
+			StartDateTime = model.StartDateTime;
+			EndDateTime = model.EndDateTime;
 			#endregion
 
 			#region Machines
@@ -103,6 +102,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			//MachineFamilyList
 			ShowAllMachinesCommand = new Commands.Command(o =>
 			{
+				if (Model.StateStationActivity == null)
+				{
+					Message.AddEmbeddedException("فعالیت یا نفرساعت آن نامعتبر است"); 
+					return;
+				}
+
 				ShowAllMachines = true;
 				IsSelected = true;
 				MachineFamilyList.Clear();
@@ -144,7 +149,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var succeed = new DataServices.TaskDataService(uow).DeleteModel(Model, (bool)o);
 				if (succeed)
 				{
-					uow.Commit();
+					//uow.Commit();
 					if (Deleted != null) Deleted(this);
 				}
 				else
@@ -262,7 +267,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				if (vm.HoldEvents) return;
 
 				//update EndTime
-				vm.EndTime = vm.StartTime.Add(TimeSpan.FromSeconds(val));
+				vm.EndDateTime = vm.StartDateTime.Add(TimeSpan.FromSeconds(val));
 
 				//update TargetPoint
 				if (vm.SelectedChoice != null)
@@ -274,27 +279,39 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			}));
 
-		/// <summary>
-		/// Gets or sets Date of this process (StartTime and EndTime are considered relative to this Date)
-		/// </summary>
-		public DateTime Date
+		//StartDateTime Dependency Property
+		public DateTime StartDateTime
 		{
-			get { return _date; }
-			set
-			{
-				_date = value;
-				if (!_isInitializing && Model != null)
-				{
-					Model.StartDateTime = value.Add(StartTime);
-					Model.EndDateTime = value.Add(EndTime);
-				}
-			}
+			get { return (DateTime)GetValue(StartDateTimeProperty); }
+			set { SetValue(StartDateTimeProperty, value); }
 		}
-		DateTime _date;
+		public static readonly DependencyProperty StartDateTimeProperty =
+			DependencyProperty.Register("StartDateTime", typeof(DateTime), typeof(ProcessEditorVm),
+			new UIPropertyMetadata(DateTime.Now, (d, e) =>
+			{
+				var vm = d as ProcessEditorVm;
+				var val = (DateTime)e.NewValue;
 
-		/// <summary>
-		/// Gets or sets a bindable value for starting timespan (offset from Date)
-		/// </summary>
+				//update StartDate & StartTime
+				var prevHoldEvents = vm.HoldEvents;
+				vm.HoldEvents = true;
+				vm.StartDate = val.Date;
+				vm.StartTime = val.TimeOfDay;
+				vm.HoldEvents = prevHoldEvents;
+
+				if (vm._isInitializing) return;
+				//update model
+				vm.Model.StartDateTime = val;
+				vm.EndDateTime = val.AddSeconds(vm.DurationSeconds);
+
+				if (vm.HoldEvents) return;
+
+				//fire event
+				if (vm.TimesChanged != null)
+					vm.TimesChanged(vm, vm.Model.StartDateTime, vm.Model.EndDateTime);
+
+			}));
+		//StartTime Dependency Property
 		public TimeSpan StartTime
 		{
 			get { return (TimeSpan)GetValue(StartTimeProperty); }
@@ -305,34 +322,42 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as ProcessEditorVm;
-				if (vm._isInitializing) return;
-
-				//update model
-				vm.Model.StartDateTime = vm.Date.Add((TimeSpan)e.NewValue);
-
+				var val = (TimeSpan)e.NewValue;
 				if (vm.HoldEvents) return;
-
-				//fire event
-				if (vm.TimesChanged != null)
-					vm.TimesChanged(vm, vm.Model.StartDateTime, vm.Model.EndDateTime);
+				vm.StartDateTime = vm.StartDate.Add(val);
 			}));
-		/// <summary>
-		/// Gets or sets a bindable value for ending timespan (offset from Date)
-		/// </summary>
-		public TimeSpan EndTime
+		//StartDate Dependency Property
+		public DateTime StartDate
 		{
-			get { return (TimeSpan)GetValue(EndTimeProperty); }
-			set { SetValue(EndTimeProperty, value); }
+			get { return (DateTime)GetValue(StartDateProperty); }
+			set { SetValue(StartDateProperty, value); }
 		}
-		public static readonly DependencyProperty EndTimeProperty =
-			DependencyProperty.Register("EndTime", typeof(TimeSpan), typeof(ProcessEditorVm),
-			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
+		public static readonly DependencyProperty StartDateProperty =
+			DependencyProperty.Register("StartDate", typeof(DateTime), typeof(ProcessEditorVm),
+			new UIPropertyMetadata(DateTime.Now, (d, e) =>
 			{
 				var vm = d as ProcessEditorVm;
+				var val = (DateTime)e.NewValue;
+				if (vm.HoldEvents) return;
+				vm.StartDateTime = val.Add(vm.StartTime);
+			}));
+
+		//EndDateTime Dependency Property
+		public DateTime EndDateTime
+		{
+			get { return (DateTime)GetValue(EndDateTimeProperty); }
+			set { SetValue(EndDateTimeProperty, value); }
+		}
+		public static readonly DependencyProperty EndDateTimeProperty =
+			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(ProcessEditorVm),
+			new UIPropertyMetadata(DateTime.Now, (d, e) =>
+			{
+				var vm = d as ProcessEditorVm;
+				var val = (DateTime)e.NewValue;
 				if (vm._isInitializing) return;
 
 				//update model
-				vm.Model.EndDateTime = vm.Date.Add((TimeSpan)e.NewValue);
+				vm.Model.EndDateTime = val;
 
 				if (vm.HoldEvents) return;
 
@@ -340,6 +365,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				if (vm.TimesChanged != null)
 					vm.TimesChanged(vm, vm.Model.StartDateTime, vm.Model.EndDateTime);
 			}));
+
 		#endregion
 
 		#region Operators and Choice

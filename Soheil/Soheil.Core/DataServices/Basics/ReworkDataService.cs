@@ -96,7 +96,7 @@ namespace Soheil.Core.DataServices
 		{
 			if (linkType == SoheilEntityType.Products)
 			{
-				var entityList = _reworkRepository.Find(rework => rework.Status == (decimal)Status.Active && rework.ProductReworks.All(item=>item.Product.Id != linkId));
+				var entityList = _reworkRepository.Find(rework => (rework.Status == (decimal)Status.Active) && rework.ProductReworks.All(item=>item.Product.Id != linkId));
 				return new ObservableCollection<Rework>(entityList);
 			}
 			return GetActives();

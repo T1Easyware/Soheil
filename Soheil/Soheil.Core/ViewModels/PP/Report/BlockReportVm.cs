@@ -20,17 +20,20 @@ namespace Soheil.Core.ViewModels.PP.Report
 		DataServices.TaskDataService TaskDataService;
 		DataServices.ProcessReportDataService ProcessReportDataService;
 		Model.Block entity;
+		BlockVm _parent;
 
 		/// <summary>
 		/// Creates a report for the given block, fills all process reports
 		/// </summary>
 		/// <param name="block"></param>
-		public BlockReportVm(Model.Block model)
+		public BlockReportVm(BlockVm vm)
 		{
+			_parent = vm;
 			UOW = new Dal.SoheilEdmContext();
 			TaskDataService = new DataServices.TaskDataService(UOW);
 			ProcessReportDataService = new DataServices.ProcessReportDataService(UOW);
-			entity = new DataServices.BlockDataService(UOW).GetSingle(model.Id);
+			entity = new DataServices.BlockDataService(UOW).GetSingle(vm.Id);
+
 			ReloadReports();
 		}
 
@@ -48,8 +51,12 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// </summary>
 		public void ReloadReports()
 		{
-			ActivityList.Clear();
+			_parent.ReloadTasks();
+			if (_parent.TaskList.Count > 0)
+				_parent.TaskList[0].ReloadTaskReports();
 
+			ActivityList.Clear();
+			
 			foreach (var ssaGroup in entity.StateStation.StateStationActivities.GroupBy(x => x.Activity))
 			{
 				var activityVm = new ActivityRowVm(ssaGroup.Key);

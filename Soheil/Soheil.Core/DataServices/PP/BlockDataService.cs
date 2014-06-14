@@ -81,6 +81,8 @@ namespace Soheil.Core.DataServices
 		{
 			var taskDataService = new TaskDataService(context);
 			var entity = _blockRepository.Single(x => x.Id == model.Id);
+			if (entity == null) return;
+
 			foreach (var task in entity.Tasks.ToArray())
 			{
 				taskDataService.DeleteModel(task);
@@ -98,6 +100,8 @@ namespace Soheil.Core.DataServices
 			var taskReportDataService = new TaskReportDataService(context);
 			var processReportDataService = new ProcessReportDataService(context);
 			var entity = _blockRepository.Single(x => x.Id == model.Id);
+			if (entity == null) return;
+
 			foreach (var task in entity.Tasks.ToArray())
 			{
 				taskDataService.DeleteModelRecursive(task);
@@ -202,11 +206,20 @@ namespace Soheil.Core.DataServices
 			foreach (var task in block.Tasks)
 			{
 				//check for report
-				if(task.TaskReports.Any())
-					throw new Soheil.Common.SoheilException.RoutedException(
-								"Task مورد نظر گزارش دارد و قابل تغییر نمی باشد",
-								Common.SoheilException.ExceptionLevel.Error,
-								task);
+				if (task.TaskReports.Any())
+				{
+					var diff = task.StartDateTime - task.TaskReports.First().ReportStartDateTime;
+					foreach (var taskReport in task.TaskReports)
+					{
+						taskReport.ReportStartDateTime += diff;
+						taskReport.ReportEndDateTime += diff;
+						if(taskReport.ReportEndDateTime > task.EndDateTime)
+							throw new Soheil.Common.SoheilException.RoutedException(
+										"مدت گزارش ایستگاه از مدت برنامه طولانی تر است",
+										Common.SoheilException.ExceptionLevel.Error,
+										task);
+					}
+				}
 
 				//fix time
 				task.StartDateTime = time;
@@ -269,7 +282,7 @@ namespace Soheil.Core.DataServices
 		}
 		/// <summary>
 		/// <para>Returns nextBlock and nextSetup which start after (or at the) end</para>
-		/// <para>if nextSetup is after nextBlock it is considered as null</para>
+		/// <para>if nextSetup ends after nextBlock it is considered as null</para>
 		/// <para>This method is for auto setup-time add</para>
 		/// </summary>
 		/// <param name="stationId"></param>
@@ -289,23 +302,24 @@ namespace Soheil.Core.DataServices
 		/// <returns>Task or Setup</returns>
 		private Tuple<Block, Setup> findPreviousPPItem(int stationId, DateTime start)
 		{
+			var tmp = start.AddSeconds(1);
 			var previousTask = _blockRepository.LastOrDefault(x =>
 				x.StateStation.Station.Id == stationId
-				&& x.StartDateTime < start,
-				dt => dt.StartDateTime,
-				"StateStation", "StateStation.Station", "StateStation.State", "StateStation.State.OnProductRework");
+				&& x.EndDateTime <= tmp,
+				dt => dt.EndDateTime,
+				"StateStation.Station", "StateStation.State.OnProductRework");
 
 			var previousSetup = _nptRepository
-				.OfType<Setup>("Warmup", "Warmup.Station", "Warmup.ProductRework", "Changeover", "Changeover.FromProductRework", "Changeover.Station")
-				.OrderByDescending(x => x.StartDateTime)
+				.OfType<Setup>("Warmup.Station", "Warmup.ProductRework", "Changeover.FromProductRework", "Changeover.Station")
+				.OrderByDescending(x => x.EndDateTime)
 				.FirstOrDefault(x =>
 					x.Warmup.Station.Id == stationId
-					&& x.StartDateTime < start);
+					&& x.EndDateTime <= tmp);
 
 			if (previousSetup == null || previousTask == null)
 				return new Tuple<Block, Setup>(previousTask, previousSetup);
 			return new Tuple<Block, Setup>(previousTask,
-				(previousSetup.StartDateTime >= previousTask.EndDateTime) ? previousSetup : null);
+				(previousSetup.EndDateTime >= previousTask.EndDateTime) ? previousSetup : null);
 		}
 		private Tuple<Block, Setup> findNextPPItem(int stationId, DateTime end)
 		{
@@ -467,14 +481,83 @@ namespace Soheil.Core.DataServices
 
 				var setupStartDateTime = block.StartDateTime;
 
+				#region Prev
+				//find previous thing
+				var previousItem = findPreviousPPItem(block.StateStation.Station.Id, setupStartDateTime);
+
+				int delaySeconds = 0;
+
+				//check changeover
+				var changeover = findChangeover(block, previousItem.Item1, result);
+				if (changeover != null)
+					delaySeconds += changeover.Seconds;
+
+				//check warmup
+				var warmup = findWarmup(block, result);
+				if (warmup != null)
+					delaySeconds += warmup.Seconds; 
+				#endregion
+
+				bool moveNeeded = false;
+				//check if previousSetup needs to be removed
+				bool needToDeletePreviousSetup = false;
+				if (previousItem.Item2 != null)
+				{
+					if (previousItem.Item2.Warmup.Id == warmup.Id && previousItem.Item2.Changeover.Id == changeover.Id)
+					{
+						result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+							InsertSetupBeforeBlockErrors.ErrorSource.This,
+							"برای این Task راه اندازی وجود دارد لذا راه اندازی جدید افزوده نشد",
+							-1));
+						result.IsSaved = false;
+						return result;
+					}
+					else//it is a wrong setup
+					{
+						_nptRepository.Delete(previousItem.Item2);
+						needToDeletePreviousSetup = true;
+					}
+				}
+				//if it's zero seconds
+				if (delaySeconds == 0)
+				{
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						InsertSetupBeforeBlockErrors.ErrorSource.This,
+						"زمان کل برابر با صفر است، لذا راه اندازی افزوده نشد",
+						0));
+					result.IsSaved = needToDeletePreviousSetup;
+					if (needToDeletePreviousSetup) context.Commit();
+					return result;
+				}
+				//prev is block
+				if (previousItem.Item2 == null && previousItem.Item1 != null)
+				{
+					if ((block.StartDateTime - previousItem.Item1.EndDateTime).Seconds >= delaySeconds)
+					{
+						//no need to move anything
+						setupStartDateTime = block.StartDateTime.AddSeconds(-delaySeconds);
+					}
+					else moveNeeded = true;
+				}
+
+
+				//re-evaluate movingItems
 				var movingBlocks = _blockRepository.Find(x =>
 					x.StateStation.Station.Id == block.StateStation.Station.Id
 					&& x.StartDateTime >= setupStartDateTime)
-					.ToArray();
-				var movingNpts = _nptRepository.Find(x => x.StartDateTime >= setupStartDateTime);//this has no station
-				var movingSetups = movingNpts.OfType<Setup>().Where(x => x.Warmup.Station.Id == block.StateStation.Station.Id);
+					.OrderBy(x => x.StartDateTime).ToArray();
+				var movingNpts = _nptRepository.Find(x =>
+					x.StartDateTime >= setupStartDateTime)
+					.OrderBy(x => x.StartDateTime);//this has no station
+				var movingSetups = movingNpts.OfType<Setup>().Where(x =>
+					x.Warmup.Station.Id == block.StateStation.Station.Id);
 				//var movingEducations = movingNpts.OfType<Education>().Where(x => x.Task.StateStation.Station.Id == task.StateStation.Station.Id);
 				//etc...
+
+
+				#region Problems
+
+
 
 				//if any of them have report, quit
 				if (movingBlocks.Any(x => x.Tasks.Any(t => t.TaskReports.Any())))
@@ -506,71 +589,16 @@ namespace Soheil.Core.DataServices
 					result.IsSaved = false;
 					return result;
 				}
-				//etc...
+				//etc... 
+				#endregion
 
-				//find previous thing
-				var previousItem = findPreviousPPItem(block.StateStation.Station.Id, setupStartDateTime);
-
-				int delaySeconds = 0;
-
-				//check changeover
-				var changeover = findChangeover(block, previousItem.Item1, result);
-				if (changeover != null)
-					delaySeconds += changeover.Seconds;
-
-				//check warmup
-				var warmup = findWarmup(block, result);
-				if (warmup != null)
-					delaySeconds += warmup.Seconds;
-
-				//check if previousSetup needs to be removed
-				bool needToDeletePreviousSetup = false;
-				if (previousItem.Item2 != null)
-				{
-					if (previousItem.Item2.Warmup.Id == warmup.Id && previousItem.Item2.Changeover.Id == changeover.Id)
-					{
-						result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
-							InsertSetupBeforeBlockErrors.ErrorSource.This,
-							"برای این Task راه اندازی وجود دارد لذا راه اندازی جدید افزوده نشد",
-							-1));
-						result.IsSaved = false;
-						return result;
-					}
-					else//it is a wrong setup
-					{
-						_nptRepository.Delete(previousItem.Item2);
-						needToDeletePreviousSetup = true;
-					}
-				}
-
-				//if it's zero seconds
-				if (delaySeconds == 0)
-				{
-					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
-						InsertSetupBeforeBlockErrors.ErrorSource.This,
-						"زمان کل برابر با صفر است، لذا راه اندازی افزوده نشد",
-						0));
-					result.IsSaved = needToDeletePreviousSetup;
-					if (needToDeletePreviousSetup) context.Commit();
-					return result;
-				}
-
-				//add setuptime
-				_nptRepository.Add(new Setup
-				{
-					Changeover = changeover,
-					Warmup = warmup,
-					StartDateTime = setupStartDateTime,
-					DurationSeconds = delaySeconds,
-					EndDateTime = setupStartDateTime.AddSeconds(delaySeconds),
-				});
-
+				#region Move
 				//move...
 				foreach (var movingBlock in movingBlocks)
 				{
 					movingBlock.StartDateTime = movingBlock.StartDateTime.AddSeconds(delaySeconds);
 					movingBlock.EndDateTime = movingBlock.EndDateTime.AddSeconds(delaySeconds);
-					if(movingBlock.Tasks.Any())
+					if (movingBlock.Tasks.Any())
 					{
 						foreach (var task in movingBlock.Tasks)
 						{
@@ -585,8 +613,22 @@ namespace Soheil.Core.DataServices
 					movingSetup.StartDateTime = movingSetup.StartDateTime.AddSeconds(delaySeconds);
 					movingSetup.EndDateTime = movingSetup.EndDateTime.AddSeconds(delaySeconds);
 				}
-				//etc...
+				//etc... 
+				#endregion
+
+				#region Add & Save Setup
+				//add setuptime
+				_nptRepository.Add(new Setup
+				{
+					Changeover = changeover,
+					Warmup = warmup,
+					StartDateTime = setupStartDateTime,
+					DurationSeconds = delaySeconds,
+					EndDateTime = setupStartDateTime.AddSeconds(delaySeconds),
+				});
 				context.Commit();
+				#endregion
+
 				result.IsSaved = true;
 			}
 			catch (Exception exp)

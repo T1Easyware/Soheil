@@ -186,7 +186,7 @@ namespace Soheil.Core.ViewModels.PP
 
 
 					//Initialize stations
-					var stationModels = new DataServices.StationDataService().GetActives().OrderBy(x => x.Index);
+					var stationModels = new DataServices.StationDataService().FixAndGetActives();
 					NumberOfStations = stationModels.Count();
 					foreach (var stationModel in stationModels)
 					{
@@ -241,6 +241,8 @@ namespace Soheil.Core.ViewModels.PP
 		public void UpdateRange(bool loadItemsAsWell)
 		{
 			//finds start and end of the visible range in PPTable
+			if (double.IsInfinity(HoursPassed)) return;
+
 			var start = SelectedMonth.Data.AddHours(HoursPassed);
 			var end = start.AddHours(GridWidth / HourZoom);
 
@@ -378,7 +380,12 @@ namespace Soheil.Core.ViewModels.PP
 			protected set { SetValue(HourZoomProperty, value); }
 		}
 		public static readonly DependencyProperty HourZoomProperty =
-			DependencyProperty.Register("HourZoom", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(100d, (d, e) => { ((PPTableVm)d).UpdateRange(false); }));
+			DependencyProperty.Register("HourZoom", typeof(double), typeof(PPTableVm), new UIPropertyMetadata(100d, (d, e) => { ((PPTableVm)d).UpdateRange(false); }, (d, v) =>
+			{
+				if ((double)v < 20) return 20d;
+				if ((double)v > 2000) return 2000d;
+				return v;
+			}));
 		/// <summary>
 		/// Gets bindable Number of days in currect active year
 		/// </summary>
@@ -476,10 +483,7 @@ namespace Soheil.Core.ViewModels.PP
 			var start = blockVm.StartDateTime;
 			HoursPassed = start.GetPersianDayOfMonth() * 24 + start.Hour + start.Minute / 60d + start.Second / 3600d - 24;
 
-			var tmp = (GridWidth * 3600) / blockVm.DurationSeconds;
-			if (tmp < 20) HourZoom = 0;
-			else if (tmp > 2000) HourZoom = 2000;
-			else HourZoom = tmp;
+			HourZoom = (GridWidth * 3600) / blockVm.DurationSeconds;
 		}
 		/// <summary>
 		/// Zooms to fit the given range in screen
@@ -492,10 +496,7 @@ namespace Soheil.Core.ViewModels.PP
 
 			HoursPassed = start.GetPersianDayOfMonth() * 24 + start.Hour + start.Minute / 60d + start.Second / 3600d - 24;
 
-			var tmp = (GridWidth * 3600) / end.Subtract(start).TotalSeconds;
-			if (tmp < 20) HourZoom = 0;
-			else if (tmp > 2000) HourZoom = 2000;
-			else HourZoom = tmp;
+			HourZoom = (GridWidth * 3600) / end.Subtract(start).TotalSeconds;
 		}
 		/// <summary>
 		/// Backs up values of HoursPassed, HourZoom and VerticalScreenOffset into their backup values
@@ -820,7 +821,7 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
-					vm.BlockReport = new Report.BlockReportVm(vm.Model);
+					vm.BlockReport = new Report.BlockReportVm(vm);
 					vm.BlockReport.ProcessReportBuilderChanged += val => CurrentProcessReportBuilder = val;
 					SelectedBlock = vm;
 				}

@@ -65,6 +65,7 @@ namespace Soheil.Core.ViewModels
                         break;
                     }
                 }
+				if(AllItems!=null)
                 foreach (ProductDefectionVM item in AllItems)
                 {
                     if (item.Id == productDefection.Id)

@@ -112,11 +112,11 @@ namespace Soheil.Core.DataServices
 					"You can't delete this Task. It has Reports",
 					Soheil.Common.SoheilException.ExceptionLevel.Error, model.Block);
 
-			foreach (var taskReportEnt in model.TaskReports)
+			foreach (var taskReportEnt in model.TaskReports.ToArray())
 			{
 				_taskReportDataService.DeleteModel(taskReportEnt);
 			}
-			foreach (var process in model.Processes.ToList())
+			foreach (var process in model.Processes.ToArray())
 			{
 				DeleteModel(process);
 			}
@@ -163,7 +163,8 @@ namespace Soheil.Core.DataServices
 			{
 				_processReportDataService.DeleteModel(processReport);
 			}
-			process.Task.Processes.Remove(process);
+			if (process.Task != null)
+				process.Task.Processes.Remove(process);
 			_processRepository.Delete(process);
 			return true;
 		}

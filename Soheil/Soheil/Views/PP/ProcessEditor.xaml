@@ -4,6 +4,7 @@
              xmlns:I="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Editor;assembly=Soheil.Core"
              xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
+             xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:Soheil.Views.PP"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -114,27 +115,26 @@
         <DockPanel>
 			
             <!-- basic -->
-            <DockPanel DockPanel.Dock="Left">
+            <DockPanel DockPanel.Dock="Left" Background="Transparent">
                 <StackPanel DockPanel.Dock="Left">
+					<StackPanel.ToolTip>
+						<UniformGrid Rows="3" Columns="2">
+							<TextBlock Text="{Loc txtStartTime}"/>
+							<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
+							<TextBlock Text="{Loc txtEndTime}"/>
+							<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
+							<TextBlock Text="{Loc txtDuration}"/>
+							<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
+						</UniformGrid>
+					</StackPanel.ToolTip>
+
 					<DockPanel>
-						<TextBlock Text="{Loc txtStartTime}" VerticalAlignment="Center">
-							<TextBlock.ToolTip>
-								<UniformGrid Rows="3" Columns="2">
-									<TextBlock Text="{Loc txtStartTime}"/>
-									<TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
-									<TextBlock Text="{Loc txtEndTime}"/>
-									<TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
-									<TextBlock Text="{Loc txtDuration}"/>
-									<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
-								</UniformGrid>
-							</TextBlock.ToolTip>
-						</TextBlock>
+						<TextBlock Text="{Loc txtStart}" VerticalAlignment="Center"/>
 						<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
 					</DockPanel>
-					<!--DockPanel>
-						<TextBlock Text="{Loc txtEndTime}" VerticalAlignment="Center"/>
-						<CustomControls:TimeBox Time="{Binding EndTime}" IsReadOnly="True"/>
-					</-->
+					<DockPanel x:Name="startDatePanel" Height="0">
+						<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+					</DockPanel>
 					<DockPanel>
 						<Image Style="{StaticResource QuantityImage}" Margin="2,3" DockPanel.Dock="Left" ToolTip="{Loc txtTargetPoint}"/>
 						<Grid DockPanel.Dock="Right" Width="49">
@@ -143,7 +143,7 @@
 							<Image Style="{StaticResource Warning16Image}" Visibility="{Binding OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right"
 								ToolTip="تعداد اپراتورهای تخصیص داده شده نامعتبر می باشد"/>
 						</Grid>
-						<TextBox Text="{Binding TargetPoint}" DockPanel.Dock="Bottom" VerticalAlignment="Center" ToolTip="{Loc txtTargetPoint}"/>
+						<TextBox Text="{Binding TargetPoint, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Bottom" VerticalAlignment="Center" ToolTip="{Loc txtTargetPoint}"/>
 					</DockPanel>
 					<DockPanel>
 						<Image Style="{StaticResource DurationImage}" Margin="2,3" DockPanel.Dock="Left" ToolTip="{Loc txtDuration}"/>
@@ -152,6 +152,22 @@
 						<CustomControls:DurationBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" ToolTip="{Loc txtDuration}" MaxWidth="80" HorizontalAlignment="Left"/>
 					</DockPanel>
 				</StackPanel>
+				<DockPanel.Triggers>
+					<EventTrigger RoutedEvent="MouseEnter">
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:.1">
+								<DoubleAnimation Storyboard.TargetName="startDatePanel" Storyboard.TargetProperty="Height" Duration="0:0:.1" To="25"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+					<EventTrigger RoutedEvent="MouseLeave">
+						<BeginStoryboard>
+							<Storyboard Duration="0:0:.1">
+								<DoubleAnimation Storyboard.TargetName="startDatePanel" Storyboard.TargetProperty="Height" Duration="0:0:.1" To="0"/>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+				</DockPanel.Triggers>
             </DockPanel>
 
 

@@ -82,6 +82,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		internal async void refresh()
 		{
+			if (Process != null) if (Process.Task == null) return;
+
 			foreach (var oper in OperatorsList)
 			{
 				bool[] status;

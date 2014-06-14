@@ -870,4 +870,7 @@
   <data name="txtUncheckAll" xml:space="preserve">
     <value>انتخاب هیچ</value>
   </data>
+  <data name="txtStart" xml:space="preserve">
+    <value>شروع</value>
+  </data>
 </root>

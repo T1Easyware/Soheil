@@ -32,11 +32,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			SelectedProduct = null;
 			BlockList.Clear();
 
-			//initializeDataServices
-			var _productGroupDs = new DataServices.ProductGroupDataService();
-
+			//init data
 			ProductGroups.Clear();
-			var pgList = _productGroupDs.GetActives();
+			var pgList = new DataServices.ProductGroupDataService().GetActives();
 			foreach (var pg in pgList)
 			{
 				ProductGroups.Add(new ProductGroupVm(pg));

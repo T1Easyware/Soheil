@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Collections.ObjectModel;
 using Soheil.Common.SoheilException;
 using Soheil.Core.Base;
+using Soheil.Core.ViewModels.PP.Report;
 
 namespace Soheil.Core.ViewModels.PP
 {
@@ -66,6 +67,10 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				var models = Model.TaskReports.OrderBy(x => x.ReportStartDateTime).ToArray();
 				var dt = StartDateTime;
+				var tp = Model.TaskTargetPoint;
+				if (models.Any()) tp -= models.Sum(x => x.TaskReportTargetPoint);
+
+				//insert before each task report
 				foreach (var model in models)
 				{
 					if (model.ReportStartDateTime - dt > TimeSpan.FromSeconds(1))
@@ -80,7 +85,7 @@ namespace Soheil.Core.ViewModels.PP
 							ReportEndDateTime = model.ReportStartDateTime,
 							ReportDurationSeconds = (int)duration.TotalSeconds,
 							TaskProducedG1 = 0,
-							TaskReportTargetPoint = (int)(Model.DurationSeconds / duration.TotalSeconds),
+							TaskReportTargetPoint = (int)(duration.TotalSeconds * Model.TaskTargetPoint / Model.DurationSeconds),
 							CreatedDate = DateTime.Now,
 							ModifiedDate = DateTime.Now,
 							ModifiedBy = LoginInfo.Id,
@@ -90,6 +95,8 @@ namespace Soheil.Core.ViewModels.PP
 
 					dt = model.ReportEndDateTime;
 				}
+
+				//insert after last task report
 				if (Model.EndDateTime - dt > TimeSpan.FromSeconds(1))
 				{
 					//insert taskReport after last model
@@ -102,7 +109,7 @@ namespace Soheil.Core.ViewModels.PP
 						ReportEndDateTime = Model.EndDateTime,
 						ReportDurationSeconds = (int)duration.TotalSeconds,
 						TaskProducedG1 = 0,
-						TaskReportTargetPoint = (int)(Model.DurationSeconds / duration.TotalSeconds),
+						TaskReportTargetPoint = (int)(duration.TotalSeconds * Model.TaskTargetPoint / Model.DurationSeconds),
 						CreatedDate = DateTime.Now,
 						ModifiedDate = DateTime.Now,
 						ModifiedBy = LoginInfo.Id,
@@ -164,17 +171,27 @@ namespace Soheil.Core.ViewModels.PP
 			TaskReports.Clear();
 			var taskReportModels = Model.TaskReports.OrderBy(x => x.ReportStartDateTime);
 
-			//add current reports
+			//add current reports & set limits
+			TaskReportVm prev = null;
 			foreach (var taskReportModel in taskReportModels)
 			{
 				var taskReportVm = new Report.TaskReportVm(taskReportModel, UOW);
 				taskReportVm.TaskReportDeleted += TaskReport_TaskReportDeleted;
+				if(prev!=null)
+				{
+					prev.NextReport = taskReportVm;
+					taskReportVm.PreviousReport = prev;
+				}
+				prev = taskReportVm;
 				TaskReports.Add(taskReportVm);
 			}
 		}
 
 		void TaskReport_TaskReportDeleted(Report.TaskReportVm vm)
 		{
+			if (vm.NextReport != null) vm.NextReport.PreviousReport = vm.PreviousReport;
+			if (vm.PreviousReport != null) vm.PreviousReport.NextReport = vm.NextReport;
+
 			TaskReports.Remove(vm);
 		}
 

@@ -70,7 +70,7 @@ namespace Soheil.Core.PP
 			//initialize cache
 			var stations = new DataServices.StationDataService().GetActives();
 			if (stations.Any())
-				_stations = stations.Max(x => x.Index);
+				_stations = stations.Max(x => x.Index)+1;
 			else
 				_stations = 0;
 			_blocks = new List<PPItemBlock>[_stations];
@@ -138,7 +138,6 @@ namespace Soheil.Core.PP
 			while (_qThreadAlive)
 			{
 				//control the thread
-				Thread.Sleep(500);
 				while (Pause)
 				{
 					if (!_qThreadAlive) return;
@@ -157,6 +156,7 @@ namespace Soheil.Core.PP
 
 				//Load blocks/Npts in range (add/update newer blocks)
 				_actionLoadItem.Invoke(range);
+				Thread.Sleep(500);
 			}
 		}
 
@@ -352,13 +352,14 @@ namespace Soheil.Core.PP
 									}
 									else
 									{
-										//search through previous blocks (prevs)
-										var prevs = row.Take(i);
-										var nominates = prevs.Where(x => (item.Start - x.End).TotalSeconds > -1)
-											.OrderByDescending(x => x.End);
-										var nom = nominates.FirstOrDefault();
+										//search through previous blocks
+										var targetRow = row
+											.Take(i)
+											.GroupBy(g => g.VIndex)
+											.FirstOrDefault(g => g
+												.All(x => (x.End - item.Start < TimeSpan.FromSeconds(1))));
 
-										if (nom == null)
+										if (targetRow == null)
 										{
 											//non of rows has space
 											item.VIndex = maxV;
@@ -367,7 +368,7 @@ namespace Soheil.Core.PP
 										else
 										{
 											//nom is the row
-											item.VIndex = nom.VIndex;
+											item.VIndex = targetRow.First().VIndex;
 										}
 									}
 
@@ -406,7 +407,10 @@ namespace Soheil.Core.PP
 					{
 						//find outside blocks
 						PPItemBlock[] outsideBlocks;
-						lock (this) { outsideBlocks = _blocks[st].Where(x => !actionData2.IsInRange(x)).ToArray(); }
+						lock (this)
+						{
+							outsideBlocks = _blocks[st].Where(x => !actionData2.IsInRange(x) || x.Id == 0).ToArray();
+						}
 						foreach (var item in outsideBlocks)
 						{
 							//remove from list

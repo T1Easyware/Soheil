@@ -61,7 +61,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			//Add process command
 			AddProcessCommand = new Commands.Command(o =>
 			{
-				var dt = ProcessList.Any() ? ProcessList.Max(x => x.Model.EndDateTime) : task.StartDateTime;
+				var dt = ProcessList.Any() ? 
+					ProcessList
+						.Where(x => x.ActivityModel.Id == ssaGroup.Key.Id)
+						.Max(x => x.Model.EndDateTime)
+					: task.StartDateTime;
 				var processVm = new ProcessEditorVm(
 					new Model.Process
 					{
@@ -72,6 +76,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						Task = task,
 					}, Model, uow);//activity Model is set here
 				ProcessList.Add(processVm);
+				processVm.IsSelected = true;
 			});
 			/*		
 			 * Model.StateStationActivity ssa = ssaGroup.First();
@@ -119,7 +124,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		void Process_Deleted(ProcessEditorVm processVm)
 		{
+			processVm.IsSelected = false;
 			ProcessList.Remove(processVm);
+			if (ProcessList.Any()) ProcessList.First().IsSelected = true;
 		}
 		
 		void Process_TimesChanged(ProcessEditorVm processVm, DateTime start, DateTime end)

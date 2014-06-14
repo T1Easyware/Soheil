@@ -185,12 +185,12 @@ namespace Soheil.Core.DataServices
 		{
 			if (linkType == SoheilEntityType.Defections)
 			{
-				var entityList = _productRepository.Find(product => product.Status == (decimal)Status.Active && product.ProductDefections.All(item=> item.Defection.Id != linkId), "ProductGroup");
+				var entityList = _productRepository.Find(product => (product.Status == (decimal)Status.Active) && product.ProductDefections.All(item=> item.Defection.Id != linkId), "ProductGroup");
 				return new ObservableCollection<Product>(entityList);
 			}
 			if (linkType == SoheilEntityType.Reworks)
 			{
-				var entityList = _productRepository.Find(product => product.Status == (decimal)Status.Active && product.ProductReworks.All(item=> item.Rework.Id != linkId), "ProductGroup");
+				var entityList = _productRepository.Find(product => (product.Status == (decimal)Status.Active) && product.ProductReworks.All(item=> item.Rework.Id != linkId), "ProductGroup");
 				return new ObservableCollection<Product>(entityList);
 			}
 			return GetActives();

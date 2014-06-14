@@ -36,8 +36,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			State = new StateVm(Model.StateStation.State);
 			StateStation = State.StateStationList.First(x => x.StateStationId == Model.StateStation.Id);
             SelectedStateStation = StateStation;
-			StartDate = Model.StartDateTime.Date;
-			StartTime = Model.StartDateTime.TimeOfDay;
 			BlockTargetPoint = Model.BlockTargetPoint;
 
 			initOperatorManager();
@@ -76,6 +74,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		void initTask()
 		{
 			OperatorManager.Block = Model;
+			StartDate = Model.StartDateTime.Date;
+			StartTime = Model.StartDateTime.TimeOfDay;
 
 			if (!Model.Tasks.Any())
 			{
@@ -192,16 +192,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var diff = process.Model.StartDateTime - start;
 
 				process.HoldEvents = true;
-				process.StartTime = Model.StartDateTime.TimeOfDay;
+				process.StartDateTime = Model.StartDateTime;
 				process.HoldEvents = false;
 
-				process.EndTime = process.EndTime.Add(diff);
+				process.EndDateTime = process.EndDateTime.Add(diff);
 				//changing EndTime fires this event handler again
 			}
 			else//if start is wrong don't do the following
 			{
 				var max = ActivityList.Where(a => a.ProcessList.Any())
-					.Max(a => a.ProcessList.Max(p => p.Date.Add(p.EndTime)));
+					.Max(a => a.ProcessList.Max(p => p.EndDateTime));
 				EndDate = max.Date;
 				EndTime = max.TimeOfDay;
 				Model.EndDateTime = max;
@@ -209,18 +209,28 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}
 			OperatorManager.refresh();
 		}
-		void StartChanged(DateTime start)
+		void StartChanged(DateTime oldVal, DateTime newVal)
 		{
-			Model.StartDateTime = start;
+			Model.StartDateTime = newVal;
 
-			var end = start.AddSeconds(Model.DurationSeconds);
+			var end = newVal.AddSeconds(Model.DurationSeconds);
 			EndDate = end.Date;
 			EndTime = end.TimeOfDay;
 
 			var task = Model.Tasks.FirstOrDefault();//??? for 1 task only
 			if (task != null)
 			{
-				task.StartDateTime = start;
+				task.StartDateTime = newVal;
+				var diff = newVal - oldVal;
+
+				foreach (var act in ActivityList)
+				{
+					foreach (var process in act.ProcessList.Where(x => !x.HasReport))
+					{
+						process.StartDateTime += diff;
+						process.EndDateTime += diff;
+					}
+				}
 			}
 		}
 		#endregion
@@ -243,8 +253,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			//recalc Start/End/Duration
 			Model.StartDateTime = StartDate.Add(StartTime);
-			if (task.Processes.Any(x => x.StartDateTime < Model.StartDateTime))
-				throw new Exception("Start time of a process is wrong.");
+			foreach (var process in task.Processes)
+			{
+				if (process.StartDateTime < Model.StartDateTime)
+					process.StartDateTime = Model.StartDateTime;
+			}
 			foreach (var process in task.Processes)
 			{
 				process.EndDateTime = process.StartDateTime.AddSeconds(process.DurationSeconds);
@@ -443,8 +456,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(DateTime.Now.Date, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
-				var val = (DateTime)e.NewValue;
-				vm.StartChanged(val.Add(vm.StartTime));
+				vm.StartChanged(
+					((DateTime)e.OldValue).Add(vm.StartTime),
+					((DateTime)e.NewValue).Add(vm.StartTime));
 			}));
 
 		/// <summary>
@@ -458,11 +472,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(BlockEditorVm),
-			new UIPropertyMetadata(DateTime.Now.TimeOfDay, (d, e) =>
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
-				var val = (TimeSpan)e.NewValue;
-				vm.StartChanged(vm.StartDate.Add(val));
+				vm.StartChanged(
+					vm.StartDate.Add((TimeSpan)e.OldValue),
+					vm.StartDate.Add((TimeSpan)e.NewValue));
 			}));
 
 
@@ -640,11 +655,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					Code = StateStation.Code,
 					StateStation = StateStation.Model,
-					StartDateTime = DateTime.Now,
-					EndDateTime = DateTime.Now,
+					StartDateTime = DateTime.Now.Date.AddHours(DateTime.Now.Hour),
+					EndDateTime = DateTime.Now.Date.AddHours(DateTime.Now.Hour),
 					DurationSeconds = 0,
 					ModifiedBy = LoginInfo.Id,
 				};
+
 				initTask();
 			});
 			DontChangeStationCommand = new Commands.Command(o =>

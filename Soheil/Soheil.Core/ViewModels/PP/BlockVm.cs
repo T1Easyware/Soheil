@@ -94,12 +94,8 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				Job = new JobVm(Model.Job);
 			}
-			/*foreach (var task in Model.Tasks)
-			{
-				TaskList.Add(new TaskVm(task, this));
-			}*/
 		}
-		private void reloadTasks()///??? later on add processes too
+		internal void ReloadTasks()///??? later on add processes too
 		{
 			TaskList.Clear();
 			if (Model != null)
@@ -110,31 +106,6 @@ namespace Soheil.Core.ViewModels.PP
 					TaskList.Add(new TaskVm(task, UOW));
 				}
 			}
-		}
-		/// <summary>
-		/// Reloads (or Creates) all task reports and process reports for this block
-		/// </summary>
-		public void ReloadReports()
-		{
-			try
-			{
-				//create/reload task reports
-				foreach (var task in TaskList)
-				{
-					task.ReloadTaskReports();
-				}
-				//create/reload process reports
-				if (BlockReport == null)
-				{
-					BlockReport = new Report.BlockReportVm(Model);
-					BlockReport.ProcessReportBuilderChanged += val => Parent.PPTable.CurrentProcessReportBuilder = val;
-				}
-				else
-				{
-					BlockReport.ReloadReports();
-				}
-			}
-			catch (Exception ex) { Message.AddEmbeddedException(ex.Message); }
 		}
 
 		#endregion
@@ -311,8 +282,8 @@ namespace Soheil.Core.ViewModels.PP
 			DependencyProperty.Register("ShowTasks", typeof(bool), typeof(BlockVm),
 			new UIPropertyMetadata(false, (d, e) =>
 			{
-				if ((bool)e.NewValue)
-					((BlockVm)d).reloadTasks();
+				/*if ((bool)e.NewValue)
+					((BlockVm)d).reloadTasks();*/
 			}));
 		/// <summary>
 		/// Gets a bindable value that indicates if a new Setup can be added before this Block

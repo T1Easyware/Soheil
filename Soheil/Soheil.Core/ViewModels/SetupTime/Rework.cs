@@ -14,8 +14,16 @@ namespace Soheil.Core.ViewModels.SetupTime
 		{
 			ProductReworkId = model.Id;
 
-			Name = model.Name;
-			Code = model.Code;
+			if (model.Rework != null)
+			{
+				Name = (string.IsNullOrEmpty(model.Name)) ? model.Rework.Name : model.Name;
+				Code = (string.IsNullOrEmpty(model.Name)) ? model.Rework.Code : model.Code;
+			}
+			else
+			{
+				Name = model.Name;
+				Code = model.Code;
+			}
 			Product = parentVm;
 			Checkbox = new CheckboxCell(this);
 			Warmup = new WarmupCell(parentVm.ProductGroup.Station.Id, this, model.Warmups.First());

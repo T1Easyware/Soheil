@@ -131,7 +131,7 @@ namespace Soheil.Core.DataServices
                     var repository = new Repository<Defection>(context);
                     IEnumerable<Defection> entityList =
                         repository.Find(
-                            defection => defection.Status == (decimal)Status.Active && defection.ProductDefections.All(item=> item.Product.Id != linkId));
+                            defection => (defection.Status == (decimal)Status.Active) && defection.ProductDefections.All(item=> item.Product.Id != linkId));
                     models = new ObservableCollection<Defection>(entityList);
                 }
                 return models;

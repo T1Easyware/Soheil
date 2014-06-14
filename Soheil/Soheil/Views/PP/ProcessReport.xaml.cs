@@ -115,7 +115,7 @@ namespace Soheil.Views.PP
 			var procReport = sender.GetDataContext<ProcessReportVm>();
 			if (procReport != null && !double.IsNaN(onLineX))
 				procReport.EndDateTime = Process.StartDateTime.Add(
-					TimeSpan.FromHours((onLineX - _onThumbStartX) / PPTable.HourZoom));
+					TimeSpan.FromHours((onLineX + _onThumbStartX) / PPTable.HourZoom));
 		}
 
 		private void endDragEnd(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
