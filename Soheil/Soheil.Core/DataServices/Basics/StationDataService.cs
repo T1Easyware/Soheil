@@ -156,7 +156,8 @@ namespace Soheil.Core.DataServices
 				ObservableCollection<Station> models;
 				IEnumerable<Station> entityList =
 					_stationRepository.Find(
-						station => station.Status == (decimal)Status.Active && station.StationMachines.All(item=>item.Machine.Id != linkId));
+						station => (station.Status == (decimal)Status.Active)
+							&& station.StationMachines.All(item=>item.Machine.Id != linkId));
 				models = new ObservableCollection<Station>(entityList);
 				return models;
 			}
@@ -170,6 +171,17 @@ namespace Soheil.Core.DataServices
 				return list.Max(x => x.Index) + 1;
 			else
 				return 0;
+		}
+
+		internal IEnumerable<Station> FixAndGetActives()
+		{
+			var all = GetActives().OrderBy(x => x.Index).ToArray();
+			for (int i = 0; i < all.Length; i++)
+			{
+				all[i].Index = i;
+			}
+			context.Commit();
+			return all;
 		}
 	}
 }

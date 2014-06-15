@@ -10,6 +10,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class MachineEditorVm : DependencyObject
 	{
+		public event Action<bool> SelectedChanged;
 		public int MachineId { get; protected set; }
 
 		IGrouping<Model.Machine, Model.StateStationActivityMachine> _group;
@@ -23,6 +24,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			Name = smModel.StateStationActivityMachine.Machine.Name;
 			Code = smModel.StateStationActivityMachine.Machine.Code;
+			MachineId = smModel.StateStationActivityMachine.Machine.Id;
 			IsUsed = true;
 			CanBeUsed = true;
 		}
@@ -41,7 +43,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public void Revalidate(Model.Process process)
 		{
 			CanBeUsed = _group.Any(x => x.StateStationActivity.Id == process.StateStationActivity.Id);
-			IsUsed = process.SelectedMachines.Any(x => x.StateStationActivityMachine.Machine.Id == MachineId);
 		}
 		#endregion
 
@@ -67,7 +68,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(IsUsedProperty, value); }
 		}
 		public static readonly DependencyProperty IsUsedProperty =
-			DependencyProperty.Register("IsUsed", typeof(bool), typeof(MachineEditorVm), new UIPropertyMetadata(false));
+			DependencyProperty.Register("IsUsed", typeof(bool), typeof(MachineEditorVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				if (((MachineEditorVm)d).SelectedChanged != null)
+					((MachineEditorVm)d).SelectedChanged((bool)e.NewValue);
+			}));
 		public bool CanBeUsed
 		{
 			get { return (bool)GetValue(CanBeUsedProperty); }

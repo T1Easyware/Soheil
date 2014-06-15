@@ -152,7 +152,9 @@ namespace Soheil.Core.DataServices
 		/// <returns>bool[3] => [0]:IsSelected in process, [1]:IsInTask (other processes of task) [2]:IsInTimeRange (other tasks or stations)</returns>
 		public bool[] GetOperatorStatus(Model.Operator model, Model.Process process)
 		{
-			var procOpers = model.ProcessOperators.Where(x =>
+			if (process == null) return new bool[] { false, false, false };
+
+			var procOpers = model.ProcessOperators.Where(x => x.Process.Task != null).Where(x =>
 				x.Process.Task.StartDateTime < process.EndDateTime &&
 				x.Process.Task.EndDateTime > process.StartDateTime);
 
@@ -176,7 +178,7 @@ namespace Soheil.Core.DataServices
 			return new bool[]{
 				false,
 				task.Processes.Any(p => p.ProcessOperators.Any(po => po.Operator.Id == model.Id)),
-				model.ProcessOperators.Any(x =>
+				model.ProcessOperators.Where(x => x.Process.Task != null).Any(x =>
 					x.Process.Task != task &&
 					x.Process.Task.StartDateTime < task.EndDateTime &&
 					x.Process.Task.EndDateTime > task.StartDateTime),

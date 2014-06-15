@@ -1126,7 +1126,7 @@
 									<!-- = OneRowOfActivity ====== -->
 									<ItemsControl.ItemTemplate>
 										<DataTemplate DataType="{x:Type report:ActivityRowVm}">
-											<ItemsControl ItemsSource="{Binding SsaRowList}">
+											<ItemsControl ItemsSource="{Binding SsaRowList}" MinHeight="42">
 												<ItemsControl.ItemTemplate>
 													<DataTemplate DataType="{x:Type report:SsaRowVm}">
 														<ItemsControl ItemsSource="{Binding ProcessList}">

@@ -10,6 +10,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 {
 	public class MachineFamilyEditorVm : DependencyObject
 	{
+		public event Action<MachineEditorVm, bool> SelectionChanged;
 		#region Ctor
 		public MachineFamilyEditorVm(IGrouping<Model.MachineFamily, IGrouping<Model.Machine, Model.StateStationActivityMachine>> machineFamily)
 		{
@@ -17,21 +18,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			Code = machineFamily.Key.Code;
 			foreach (var machine in machineFamily)
 			{
-				MachineList.Add(new MachineEditorVm(machine));
+				var machineVm = new MachineEditorVm(machine);
+				machineVm.SelectedChanged += val =>
+				{
+					if (SelectionChanged != null)
+						SelectionChanged(machineVm, val);
+				};
+				MachineList.Add(machineVm);
 			}
 		}
 
-		/// <summary>
-		/// Updates Machines in this family according to their process (IsUsed, CanBeUsed properties)
-		/// </summary>
-		/// <param name="process"></param>
-		public void Revalidate(Model.Process process)
-		{
-			foreach (var item in MachineList)
-			{
-				item.Revalidate(process);
-			}
-		}
 		#endregion
 
 		//MachineList Observable Collection

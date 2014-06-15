@@ -273,6 +273,14 @@
 								 Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" Grid.Column="4"/>
 						<Popup FlowDirection="LeftToRight" IsEnabled="{Binding Path=IsReadOnly, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Converter={StaticResource inverter}}" x:Name="contextMenu" Placement="Bottom" PlacementTarget="{Binding ElementName=grid}">
 							<StackPanel>
+								<StackPanel.Resources>
+									<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+										<Setter Property="Margin" Value="0,-5"/>
+										<Setter Property="Height" Value="30"/>
+										<Setter Property="VerticalAlignment" Value="Center"/>
+										<Setter Property="VerticalContentAlignment" Value="Center"/>
+									</Style>
+								</StackPanel.Resources>
 								<MenuItem Header="Now" Command="{Binding SetTimeCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}"
 										  CommandParameter="{x:Static Common:TimeBoxParameter.Now}">
 									<MenuItem.Icon>
@@ -463,6 +471,15 @@
 								 Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" Grid.Column="4"/>
 						<Popup FlowDirection="LeftToRight" IsEnabled="{Binding Path=IsReadOnly, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:DurationBox}}, Converter={StaticResource inverter}}" x:Name="contextMenu" Placement="Bottom" PlacementTarget="{Binding ElementName=grid}">
 							<StackPanel>
+								<StackPanel.Resources>
+									<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+										<Setter Property="Margin" Value="0,-5"/>
+										<Setter Property="Height" Value="30"/>
+										<Setter Property="VerticalAlignment" Value="Center"/>
+										<Setter Property="VerticalContentAlignment" Value="Center"/>
+									</Style>
+								</StackPanel.Resources>
+
 								<MenuItem Header="Until work break" Command="{Binding SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:DurationBox}}}">
 									<MenuItem.Icon>
 										<Image Style="{StaticResource DurationFillToEnd}"/>

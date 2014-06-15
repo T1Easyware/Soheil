@@ -17,7 +17,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		DataServices.BlockDataService _blockDataService;
 
 		Dal.SoheilEdmContext _uow;
-
+		bool _isInitializing;
 
 		#region Ctor & init
 		/// <summary>
@@ -27,6 +27,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <param name="blockModel">block containing some (or no) tasks to edit (must be obtained from the same context)</param>
 		public BlockEditorVm(Model.Block blockModel)
 		{
+			_isInitializing = true;
 			_uow = new Dal.SoheilEdmContext();
 			_blockDataService = new DataServices.BlockDataService(_uow);
 			Message = new Common.SoheilException.EmbeddedException();
@@ -36,13 +37,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			State = new StateVm(Model.StateStation.State);
 			StateStation = State.StateStationList.First(x => x.StateStationId == Model.StateStation.Id);
             SelectedStateStation = StateStation;
-			StartDate = Model.StartDateTime.Date;
-			StartTime = Model.StartDateTime.TimeOfDay;
 			BlockTargetPoint = Model.BlockTargetPoint;
 
 			initOperatorManager();
 			initTask();
 			initializeCommands();
+			_isInitializing = false;
 		}
 		/// <summary>
 		/// Creates an instance of BlockEditor viewModel for an existing fpcState model
@@ -76,7 +76,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		void initTask()
 		{
 			OperatorManager.Block = Model;
-
+			StartDate = Model.StartDateTime.Date;
+			StartTime = Model.StartDateTime.TimeOfDay;
+			
 			if (!Model.Tasks.Any())
 			{
 				Model.Tasks.Add(new Model.Task
@@ -128,22 +130,22 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			if (IsTargetPointFixed)
 			{
-				processVm.TargetPoint = 0;
-				processVm.TargetPoint = FixedTargetPoint;
+				processVm.Timing.TargetPoint = 0;
+				processVm.Timing.TargetPoint = FixedTargetPoint;
 			}
 			else if (IsDurationFixed)
 			{
-				processVm.DurationSeconds = 0;
-				processVm.DurationSeconds = FixedDurationSeconds;
+				processVm.Timing.DurationSeconds = 0;
+				processVm.Timing.DurationSeconds = FixedDurationSeconds;
 			}
 			else if (IsDeferred)
 			{
 				//set target point
-				if (processVm.DurationSeconds > 0)
-					processVm.TargetPoint = (int)(processVm.DurationSeconds / newChoice.CycleTime);
+				if (processVm.Timing.DurationSeconds > 0)
+					processVm.Timing.TargetPoint = (int)(processVm.Timing.DurationSeconds / newChoice.CycleTime);
 				//or set duration seconds
 				else
-					processVm.DurationSeconds = (int)(processVm.TargetPoint * newChoice.CycleTime);
+					processVm.Timing.DurationSeconds = (int)(processVm.Timing.TargetPoint * newChoice.CycleTime);
 			}
 		}
 		#endregion
@@ -189,38 +191,40 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			if (start < Model.StartDateTime)
 			{
-				var diff = process.Model.StartDateTime - start;
-
-				process.HoldEvents = true;
-				process.StartTime = Model.StartDateTime.TimeOfDay;
-				process.HoldEvents = false;
-
-				process.EndTime = process.EndTime.Add(diff);
-				//changing EndTime fires this event handler again
+				StartDate = start.Date;
+				StartTime = start.TimeOfDay;
 			}
-			else//if start is wrong don't do the following
+			else
 			{
 				var max = ActivityList.Where(a => a.ProcessList.Any())
-					.Max(a => a.ProcessList.Max(p => p.Date.Add(p.EndTime)));
+					.Max(a => a.ProcessList.Max(p => p.Timing.EndDateTime));
 				EndDate = max.Date;
 				EndTime = max.TimeOfDay;
 				Model.EndDateTime = max;
-				Duration = Model.EndDateTime - Model.StartDateTime;
 			}
+			Duration = Model.EndDateTime - Model.StartDateTime;
 			OperatorManager.refresh();
 		}
-		void StartChanged(DateTime start)
+		void StartChanged(DateTime oldVal, DateTime newVal)
 		{
-			Model.StartDateTime = start;
+			Model.StartDateTime = newVal;
 
-			var end = start.AddSeconds(Model.DurationSeconds);
+			var end = newVal.AddSeconds(Model.DurationSeconds);
 			EndDate = end.Date;
 			EndTime = end.TimeOfDay;
 
 			var task = Model.Tasks.FirstOrDefault();//??? for 1 task only
 			if (task != null)
 			{
-				task.StartDateTime = start;
+				task.StartDateTime = newVal;
+
+				foreach (var act in ActivityList)
+				{
+					foreach (var process in act.ProcessList.Where(x => !x.HasReport && x.Model.StartDateTime < newVal))
+					{
+						process.Timing.StartDateTime = newVal;
+					}
+				}
 			}
 		}
 		#endregion
@@ -234,17 +238,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var task = Model.Tasks.FirstOrDefault();
 			if (task == null) throw new Exception("Task not found.");
 
-			#region correct machines
-
-			#endregion
-
 			#region Evaluate times and space
 			var nptDs = new DataServices.NPTDataService(_uow);
 
 			//recalc Start/End/Duration
 			Model.StartDateTime = StartDate.Add(StartTime);
-			if (task.Processes.Any(x => x.StartDateTime < Model.StartDateTime))
-				throw new Exception("Start time of a process is wrong.");
+			foreach (var process in task.Processes)
+			{
+				if (process.StartDateTime < Model.StartDateTime)
+					process.StartDateTime = Model.StartDateTime;
+			}
 			foreach (var process in task.Processes)
 			{
 				process.EndDateTime = process.StartDateTime.AddSeconds(process.DurationSeconds);
@@ -309,12 +312,54 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}
 			#endregion
 
+			#region correct machines
+			foreach (var act in ActivityList)
+			{
+				foreach (var process in act.ProcessList)
+				{
+					//delete from model
+					foreach (var sm in process.Model.SelectedMachines.ToArray())
+					{
+						if (sm.StateStationActivityMachine.StateStationActivity.Id !=
+							process.Model.StateStationActivity.Id
+							||
+							!process.SelectedMachines.Any(x=>x.MachineId 
+								== sm.StateStationActivityMachine.Machine.Id))
+						{
+							process.Model.SelectedMachines.Remove(sm);
+							new Dal.Repository<Model.SelectedMachine>(_uow).Delete(sm);
+						};
+					}
+					//add to model
+					foreach (var sm in process.SelectedMachines)
+					{
+						//skip if exists
+						if (process.Model.SelectedMachines.Any(x => 
+							x.StateStationActivityMachine.Machine.Id == sm.MachineId)) 
+							continue;
+
+						//find the proper ssam
+						var ssam = process.Model.StateStationActivity.StateStationActivityMachines.
+							FirstOrDefault(x => x.Machine.Id == sm.MachineId);
+
+						//create a selected machines
+						if (ssam != null)
+							process.Model.SelectedMachines.Add(new Model.SelectedMachine
+							{
+								Process = process.Model,
+								StateStationActivityMachine = ssam,
+							});
+					}
+				}
+			}
+			#endregion
+
 			_blockDataService.SaveBlock(Model);
 		}
 
 		#endregion
 
-		#region Properties
+		#region Relations
 		/// <summary>
 		/// Gets a collection of ActivityEditorVms that contains all processes of this block
 		/// </summary>
@@ -354,25 +399,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			DependencyProperty.Register("SelectedStateStation", typeof(StateStationVm), typeof(BlockEditorVm), new UIPropertyMetadata(null));
 
 		/// <summary>
-		/// Gets or sets the bindable auto-calculate TargetPoint of this block
-		/// <para>Changing this value causes change to TargetPoint of model</para>
-		/// </summary>
-		public int BlockTargetPoint
-		{
-			get { return (int)GetValue(BlockTargetPointProperty); }
-			set { SetValue(BlockTargetPointProperty, value); }
-		}
-		public static readonly DependencyProperty BlockTargetPointProperty =
-			DependencyProperty.Register("BlockTargetPoint", typeof(int), typeof(BlockEditorVm),
-			new UIPropertyMetadata(0, (d, e) =>
-			{
-				var vm = (BlockEditorVm)d;
-				vm.Model.BlockTargetPoint = (int)(e.NewValue);
-				if (vm.Model.Tasks.Any())
-					vm.Model.Tasks.First().TaskTargetPoint = (int)(e.NewValue);
-			}));
-
-		/// <summary>
 		/// Gets or sets the bindable viewModel for Operators system
 		/// </summary>
 		public OperatorManagerVm OperatorManager
@@ -396,38 +422,25 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 		#endregion
 
-		#region Date & Time
+		#region Block times
+
 		/// <summary>
-		/// Gets or sets the bindable value that indicates whether this block will fit in the earliest possible space
+		/// Gets or sets the bindable auto-calculate TargetPoint of this block
+		/// <para>Changing this value causes change to TargetPoint of model</para>
 		/// </summary>
-		public bool IsAutoStart
+		public int BlockTargetPoint
 		{
-			get { return (bool)GetValue(IsAutoStartProperty); }
-			set { SetValue(IsAutoStartProperty, value); }
+			get { return (int)GetValue(BlockTargetPointProperty); }
+			set { SetValue(BlockTargetPointProperty, value); }
 		}
-		public static readonly DependencyProperty IsAutoStartProperty =
-			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(BlockEditorVm),
-			new PropertyMetadata(false, (d, e) =>
+		public static readonly DependencyProperty BlockTargetPointProperty =
+			DependencyProperty.Register("BlockTargetPoint", typeof(int), typeof(BlockEditorVm),
+			new UIPropertyMetadata(0, (d, e) =>
 			{
-				var vm = d as BlockEditorVm;
-				var val = (bool)e.NewValue;
-				if(val)
-					vm.IsParallel = false;
-			}));
-		//IsParallel Dependency Property
-		public bool IsParallel
-		{
-			get { return (bool)GetValue(IsParallelProperty); }
-			set { SetValue(IsParallelProperty, value); }
-		}
-		public static readonly DependencyProperty IsParallelProperty =
-			DependencyProperty.Register("IsParallel", typeof(bool), typeof(BlockEditorVm),
-			new UIPropertyMetadata(true, (d, e) =>
-			{
-				var vm = d as BlockEditorVm;
-				var val = (bool)e.NewValue;
-				if (val)
-					vm.IsAutoStart = false;
+				var vm = (BlockEditorVm)d;
+				vm.Model.BlockTargetPoint = (int)(e.NewValue);
+				if (vm.Model.Tasks.Any())
+					vm.Model.Tasks.First().TaskTargetPoint = (int)(e.NewValue);
 			}));
 		/// <summary>
 		/// Gets or sets the bindable StartDate manually defined for this block
@@ -443,8 +456,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(DateTime.Now.Date, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
-				var val = (DateTime)e.NewValue;
-				vm.StartChanged(val.Add(vm.StartTime));
+				if (vm._isInitializing) return;
+
+				vm.StartChanged(
+					((DateTime)e.OldValue).Add(vm.StartTime),
+					((DateTime)e.NewValue).Add(vm.StartTime));
 			}));
 
 		/// <summary>
@@ -458,11 +474,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty StartTimeProperty =
 			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(BlockEditorVm),
-			new UIPropertyMetadata(DateTime.Now.TimeOfDay, (d, e) =>
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
-				var val = (TimeSpan)e.NewValue;
-				vm.StartChanged(vm.StartDate.Add(val));
+				if (vm._isInitializing) return;
+
+				vm.StartChanged(
+					vm.StartDate.Add((TimeSpan)e.OldValue),
+					vm.StartDate.Add((TimeSpan)e.NewValue));
 			}));
 
 
@@ -481,6 +500,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(DateTime.Now, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
+				if (vm._isInitializing) return;
 				var val = (DateTime)e.NewValue;
 				vm.Model.EndDateTime = val.Add(vm.EndTime);
 
@@ -501,6 +521,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
+				if (vm._isInitializing) return;
 				var val = (TimeSpan)e.NewValue;
 				vm.Model.EndDateTime = vm.EndDate.Add(val);
 
@@ -522,13 +543,50 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
+				if (vm._isInitializing) return;
 				var val = (TimeSpan)e.NewValue;
 				vm.Model.DurationSeconds = (int)val.TotalSeconds;
 
 				var task = vm.Model.Tasks.FirstOrDefault();
 				if (task != null) task.DurationSeconds = vm.Model.DurationSeconds;
 			}));
-		
+
+
+		/// <summary>
+		/// Gets or sets the bindable value that indicates whether this block will fit in the earliest possible space
+		/// </summary>
+		public bool IsAutoStart
+		{
+			get { return (bool)GetValue(IsAutoStartProperty); }
+			set { SetValue(IsAutoStartProperty, value); }
+		}
+		public static readonly DependencyProperty IsAutoStartProperty =
+			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(BlockEditorVm),
+			new PropertyMetadata(false, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				var val = (bool)e.NewValue;
+				if (val)
+					vm.IsParallel = false;
+			}));
+		//IsParallel Dependency Property
+		public bool IsParallel
+		{
+			get { return (bool)GetValue(IsParallelProperty); }
+			set { SetValue(IsParallelProperty, value); }
+		}
+		public static readonly DependencyProperty IsParallelProperty =
+			DependencyProperty.Register("IsParallel", typeof(bool), typeof(BlockEditorVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				var vm = d as BlockEditorVm;
+				var val = (bool)e.NewValue;
+				if (val)
+					vm.IsAutoStart = false;
+			}));
+		#endregion
+
+		#region Process times
 		//IsTargetPointFixed Dependency Property
 		public bool IsTargetPointFixed
 		{
@@ -597,7 +655,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					foreach (var process in activity.ProcessList)
 					{
-						process.TargetPoint = val;
+						process.Timing.TargetPoint = val;
 					}
 				}
 			}));
@@ -618,10 +676,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					foreach (var process in activity.ProcessList)
 					{
-						process.DurationSeconds = val;
+						process.Timing.DurationSeconds = val;
 					}
 				}
-			}));
+			})); 
 		#endregion
 
 
@@ -640,11 +698,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					Code = StateStation.Code,
 					StateStation = StateStation.Model,
-					StartDateTime = DateTime.Now,
-					EndDateTime = DateTime.Now,
+					StartDateTime = DateTime.Now.Date.AddHours(DateTime.Now.Hour),
+					EndDateTime = DateTime.Now.Date.AddHours(DateTime.Now.Hour),
 					DurationSeconds = 0,
 					ModifiedBy = LoginInfo.Id,
 				};
+
 				initTask();
 			});
 			DontChangeStationCommand = new Commands.Command(o =>

@@ -2014,6 +2014,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to شروع.
+        /// </summary>
+        public static string txtStart {
+            get {
+                return ResourceManager.GetString("txtStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تاریخ شروع.
         /// </summary>
         public static string txtStartDate {

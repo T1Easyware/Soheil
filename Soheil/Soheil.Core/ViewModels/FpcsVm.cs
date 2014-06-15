@@ -26,7 +26,7 @@ namespace Soheil.Core.ViewModels
             GroupItems = new ListCollectionView(groupViewModels);
 
             var viewModels = new ObservableCollection<FpcVm>();
-			foreach (var model in FpcDataService.GetAll().Where(x => x.Product.RecordStatus == Status.Active))
+			foreach (var model in FpcDataService.GetAll().Where(x => x.RecordStatus != Status.Deleted && x.Product.RecordStatus == Status.Active))
 			{
 				viewModels.Add(new FpcVm(model, GroupItems, Access, FpcDataService));
 			}

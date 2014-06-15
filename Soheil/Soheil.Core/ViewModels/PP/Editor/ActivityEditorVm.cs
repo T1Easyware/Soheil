@@ -61,7 +61,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			//Add process command
 			AddProcessCommand = new Commands.Command(o =>
 			{
-				var dt = ProcessList.Any() ? ProcessList.Max(x => x.Model.EndDateTime) : task.StartDateTime;
+				var dt = ProcessList.Any() ? 
+					ProcessList
+						.Where(x => x.ActivityModel.Id == ssaGroup.Key.Id)
+						.Max(x => x.Model.EndDateTime)
+					: task.StartDateTime;
 				var processVm = new ProcessEditorVm(
 					new Model.Process
 					{
@@ -72,28 +76,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						Task = task,
 					}, Model, uow);//activity Model is set here
 				ProcessList.Add(processVm);
+				processVm.IsSelected = true;
 			});
-			/*		
-			 * Model.StateStationActivity ssa = ssaGroup.First();
-				if (ProcessList.Any(x => x.SelectedChoice.StateStationActivityId == ssa.Id))
-				{
-					ssa = ssaGroup.FirstOrDefault(x => x.IsMany);
-				}
-				if (ssa == null)
-				{
-					ssa = ssaGroup.FirstOrDefault(s => 
-						!ProcessList.Any(p => p.SelectedChoice.StateStationActivityId == s.Id));
-				}
-				if (ssa == null)
-					Message.AddEmbeddedException("تمام حالات این فعالیت پوشش داده شده است. امکان افزودن وجود ندارد");
-*/
 		}
 
 		#region Event Handlers
 		void ProcessList_Added(ProcessEditorVm processVm)
 		{
-			//notify Block about selection
+			//notify Block about selection and delete
 			processVm.Selected += Process_Selected;
+			processVm.Deleted += Process_Deleted;
 
 			//notify Block about changes in times
 			processVm.TimesChanged += Process_TimesChanged;
@@ -116,6 +108,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (Selected != null) 
 				Selected(processVm);
 		}
+		void Process_Deleted(ProcessEditorVm processVm)
+		{
+			processVm.IsSelected = false;
+			ProcessList.Remove(processVm);
+			if (ProcessList.Any()) ProcessList.First().IsSelected = true;
+		}
+		
 		void Process_TimesChanged(ProcessEditorVm processVm, DateTime start, DateTime end)
 		{
 			if (TimesChanged != null)

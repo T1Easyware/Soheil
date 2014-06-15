@@ -83,7 +83,7 @@ namespace Soheil.Views.PP
 			var onLineX = getDeltaOnLine();
 			var procReport = sender.GetDataContext<ProcessReportVm>();
 			if (procReport != null && !double.IsNaN(onLineX))
-				procReport.StartDateTime = Process.StartDateTime.Add(
+				procReport.Timing.StartDateTime = Process.StartDateTime.Add(
 					TimeSpan.FromHours((onLineX - _onThumbStartX) / PPTable.HourZoom));
 		}
 
@@ -114,8 +114,8 @@ namespace Soheil.Views.PP
 			var onLineX = getDeltaOnLine();
 			var procReport = sender.GetDataContext<ProcessReportVm>();
 			if (procReport != null && !double.IsNaN(onLineX))
-				procReport.EndDateTime = Process.StartDateTime.Add(
-					TimeSpan.FromHours((onLineX - _onThumbStartX) / PPTable.HourZoom));
+				procReport.Timing.EndDateTime = Process.StartDateTime.Add(
+					TimeSpan.FromHours((onLineX + _onThumbStartX) / PPTable.HourZoom));
 		}
 
 		private void endDragEnd(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)

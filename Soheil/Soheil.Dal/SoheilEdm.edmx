@@ -558,6 +558,7 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="AffectsTaskReport" Type="bit" Nullable="false" DefaultValue="false" />
     <Property Name="IsG2" Type="bit" Nullable="false" DefaultValue="false" />
+    <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
     <Property Name="ActionPlan_Id" Type="int" Nullable="true" />
     <Property Name="ProcessReport_Id" Type="int" Nullable="false" />
     <Property Name="ProductDefection_Id" Type="int" Nullable="false" />
@@ -749,6 +750,7 @@
     <Property Name="LostTime" Type="int" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="AffectsTaskReport" Type="bit" Nullable="false" DefaultValue="false" />
+    <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
     <Property Name="ProcessReport_Id" Type="int" Nullable="false" />
     <Property Name="Cause_Id" Type="int" Nullable="true" />
   </EntityType>
@@ -3032,6 +3034,7 @@
           <Property Type="Boolean" Name="AffectsTaskReport" Nullable="false" DefaultValue="False" />
           <NavigationProperty Name="ProductDefection" Relationship="SoheilEdm.ProductDefectionDefectionReport" FromRole="DefectionReport" ToRole="ProductDefection" />
           <Property Name="IsG2" Type="Boolean" Nullable="false" DefaultValue="False" />
+          <Property Name="Description" Type="String" Nullable="true" />
         </EntityType>
         <EntityType Name="Station">
           <Key>
@@ -3266,6 +3269,7 @@
           <NavigationProperty Name="ProcessReport" Relationship="SoheilEdm.ProcessReportStoppageReport" FromRole="StoppageReport" ToRole="ProcessReport" />
           <NavigationProperty Name="Cause" Relationship="SoheilEdm.CauseStoppageReport" FromRole="StoppageReport" ToRole="Cause" />
           <Property Type="Boolean" Name="AffectsTaskReport" Nullable="false" DefaultValue="False" />
+          <Property Name="Description" Type="String" Nullable="true" />
         </EntityType>
         <EntityType Name="OperatorStoppageReport">
           <Key>
@@ -4272,6 +4276,7 @@
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="AffectsTaskReport" ColumnName="AffectsTaskReport" />
           <ScalarProperty Name="IsG2" ColumnName="IsG2" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -4460,6 +4465,7 @@
           <ScalarProperty Name="LostTime" ColumnName="LostTime" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="AffectsTaskReport" ColumnName="AffectsTaskReport" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5752,7 +5758,7 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="SoheilEdm" ZoomLevel="55" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+      <Diagram Name="SoheilEdm" ZoomLevel="72" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="5.25" PointX="16.5" PointY="11" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="20.25" PointY="15.625" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="35.875" PointY="13.25" Height="1.5956835937499996" FillColor="110, 100, 50" />

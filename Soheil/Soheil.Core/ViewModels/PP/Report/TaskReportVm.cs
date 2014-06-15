@@ -120,6 +120,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 				vm.Model.ReportDurationSeconds = (int)e.NewValue;
 				vm.EndDateTime = vm.StartDateTime.AddSeconds((int)e.NewValue);
 				d.SetValue(DurationProperty, TimeSpan.FromSeconds((int)e.NewValue));
+
+				if (vm.IsUserDrag) vm.AutoTargetPointCommand.Execute(null);
+
 				vm.Save();
 
 			}, (d, v) =>
@@ -155,6 +158,12 @@ namespace Soheil.Core.ViewModels.PP.Report
 				{
 					var vm = d as TaskReportVm;
 					var val = (DateTime)v;
+
+					//if (vm.IsUserDrag)
+					//{
+					//	val = val.Date.Add(new TimeSpan(val.Hour, SoheilFunctions.RoundFiveMinutes(val.Minute), 0));
+					//}
+
 					//check lower bound
 					if (val < vm.LowerBound)
 					{
@@ -170,10 +179,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 						val = vm.UpperBound.AddSeconds(-vm.Model.ReportDurationSeconds);
 					}
 
-					if (vm.IsUserDrag)
-					{
-						return val.Date.Add(new TimeSpan(val.Hour, SoheilFunctions.RoundFiveMinutes(val.Minute), 0));
-					}
 					return val;
 				}));
 		void TaskReportVm_StartDateTimeChanged(DateTime newVal)

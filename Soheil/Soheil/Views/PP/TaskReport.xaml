@@ -89,25 +89,34 @@
 					<Border.Effect>
 						<DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
 					</Border.Effect>
-					<UniformGrid Rows="3" Columns="2">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
 						<TextBlock Text="{Loc txtStartDate}"/>
-						<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
-						<TextBlock Text="{Loc txtStartTime}"/>
-						<cc:TimeBox Time="{Binding StartTime}"/>
+						<cal:PersianDatePicker SelectedDate="{Binding StartDate}" Grid.Row="0" Grid.Column="1"/>
+						<TextBlock Text="{Loc txtStartTime}" Grid.Row="1"/>
+						<cc:TimeBox Time="{Binding StartTime}" Grid.Row="1" Grid.Column="1"/>
 
-						<Button Click="PopupCloseButton_Click">
+						<Button Click="PopupCloseButton_Click" Grid.Row="2">
 							<WrapPanel>
 								<Image Style="{StaticResource Undo16Image}"/>
-								<TextBlock Text="{Loc txtCancel}"/>
+								<TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
 							</WrapPanel>
 						</Button>
-						<Button Command="{Binding SaveCommand}">
+						<Button Command="{Binding SaveCommand}" Grid.Row="2" Grid.Column="1">
 							<WrapPanel>
 								<Image Style="{StaticResource Save16Image}"/>
-								<TextBlock Text="{Loc txtSave}"/>
+								<TextBlock Text="{Loc txtSave}" Foreground="Black"/>
 							</WrapPanel>
 						</Button>
-					</UniformGrid>
+					</Grid>
 				</Border>
 			</Popup>
 
@@ -132,7 +141,7 @@
 							<RowDefinition Height="25"/>
 							<RowDefinition Height="25"/>
 							<RowDefinition Height="25"/>
-							<RowDefinition Height="25"/>
+							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -160,13 +169,13 @@
 						<Button Grid.Row="4" Grid.Column="0" Click="PopupCloseButton_Click">
 							<WrapPanel>
 								<Image Style="{StaticResource Undo16Image}"/>
-								<TextBlock Text="{Loc txtCancel}"/>
+								<TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
 							</WrapPanel>
 						</Button>
 						<Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Command="{Binding SaveCommand}">
 							<WrapPanel>
 								<Image Style="{StaticResource Save16Image}"/>
-								<TextBlock Text="{Loc txtSave}"/>
+								<TextBlock Text="{Loc txtSave}" Foreground="Black"/>
 							</WrapPanel>
 						</Button>
 					</Grid>

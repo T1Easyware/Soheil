@@ -105,6 +105,7 @@
     <Compile Include="Reports\OperatorBarInfo.cs" />
     <Compile Include="Reports\OperatorBarProvider.cs" />
     <Compile Include="Reports\OperatorBarSlideProvider.cs" />
+    <Compile Include="ViewModels\PP\TimingSet.cs" />
     <Compile Include="ViewModels\Reports\OprDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />
     <Compile Include="PP\PPRange.cs" />

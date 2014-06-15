@@ -181,16 +181,17 @@ namespace Soheil.Core.ViewModels.PP
 		/// Removes a blockVm from this collection based on its Id
 		/// </summary>
 		/// <param name="vm">vm of block to remove (Id and RowIndex are used)</param>
-		public void RemoveItem(BlockVm vm)
+		public void RemoveItem(BlockVm vm, int id = -1)
 		{
 			if (vm == null) return;
+			if (id == -1) id = vm.Id;
 			try
 			{
 				//remove from vm
-				this[vm.RowIndex].Blocks.RemoveWhere(x => x.Id == vm.Id);
+				this[vm.RowIndex].Blocks.RemoveWhere(x => x.Id == id);
 
 				//deselect selected block
-				if (BlockRemoved != null) BlockRemoved(vm.Id);
+				if (BlockRemoved != null) BlockRemoved(id);
 			}
 			catch (Exception ex) { vm.Message.AddEmbeddedException(ex.Message); }
 		}
@@ -276,11 +277,10 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="vm"></param>
 		private void initializeCommands(BlockVm vm)
 		{
-			vm.InsertSetupBefore = new Commands.Command(async o =>
+			vm.InsertSetupBefore = new Commands.Command(o =>
 			{
-				//the following part is async version of "var result = ds.InsertSetupBeforeTask(Id)"
 				var id = vm.Id;
-				var result = await Task.Run(() => new DataServices.BlockDataService().InsertSetupBeforeBlock(id));
+				var result = new DataServices.BlockDataService().InsertSetupBeforeBlock(id);
 
 				//in case of error callback with result
 				if (result.IsSaved) Manager.ForceReload();
@@ -292,8 +292,9 @@ namespace Soheil.Core.ViewModels.PP
 				{
 					try
 					{
+						int id = vm.Model.Id;
 						new DataServices.BlockDataService().DeleteModel(vm.Model);
-						RemoveItem(vm);
+						RemoveItem(vm, id);
 						Manager.ForceReload();
 					}
 					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
@@ -305,8 +306,9 @@ namespace Soheil.Core.ViewModels.PP
 				{
 					try
 					{
+						int id = vm.Model.Id;
 						new DataServices.BlockDataService().DeleteModelRecursive(vm.Model);
-						RemoveItem(vm);
+						RemoveItem(vm, id);
 						Manager.ForceReload();
 					}
 					catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }

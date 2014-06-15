@@ -37,9 +37,9 @@ namespace Soheil.Core.DataServices
 		public ObservableCollection<ProductGroup> GetActives()
 		{
 			var entityList = _productGroupRepository.Find(group => 
-				group.Status == (byte)Status.Active &&
+				(group.Status == (byte)Status.Active) &&
 				group.Products.Any(x => 
-					x.Status == (byte)Status.Active &&
+					(x.Status == (byte)Status.Active) &&
 					x.ProductReworks.Any(pr => pr.Status == (byte)Status.Active))
 				, "Products.ProductReworks.Rework");
 			return new ObservableCollection<ProductGroup>(entityList);

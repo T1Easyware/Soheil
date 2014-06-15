@@ -40,7 +40,7 @@ namespace Soheil.Core.DataServices
 		public ObservableCollection<ActivityGroup> GetActives()
 		{
 			IEnumerable<ActivityGroup> entityList = _activityGroupRepository.Find(group =>
-				group.Status == (byte)Status.Active &&
+				(group.Status == (byte)Status.Active) &&
 				group.Activities.Any(x => x.Status == (byte)Status.Active),
 				"Activities");
 			return new ObservableCollection<ActivityGroup>(entityList);

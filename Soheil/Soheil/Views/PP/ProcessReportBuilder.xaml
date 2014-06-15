@@ -7,10 +7,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="700">
+             d:DesignHeight="400" d:DesignWidth="900">
 	<Border BorderBrush="{StaticResource BorderBrushNormal}" BorderThickness="1" CornerRadius="1" TextBlock.Foreground="Silver" Padding="4">
 		<Border.Effect>
-			<DropShadowEffect ShadowDepth="0" BlurRadius="6"/>
+			<DropShadowEffect ShadowDepth="0" BlurRadius="6" Color="Gainsboro"/>
 		</Border.Effect>
 		<ScrollViewer HorizontalScrollBarVisibility="Disabled">
 			<Grid>
@@ -31,21 +31,15 @@
 					<TextBlock DockPanel.Dock="Left" Text="نام محصول: "/>
 					<Rectangle Width="16" Height="16" DockPanel.Dock="Left" Margin="2">
 						<Rectangle.Fill>
-							<SolidColorBrush Color="{Binding Parent.Process.Task.ProductColor}"/>
+							<SolidColorBrush Color="{Binding ProductColor}"/>
 						</Rectangle.Fill>
 					</Rectangle>
-					<TextBlock DockPanel.Dock="Left" Text="{Binding ParentColumn.Task.Block.ProductName}"/>
+					<TextBlock DockPanel.Dock="Left" Text="{Binding ProductName}"/>
 					<TextBlock DockPanel.Dock="Left" Text="     نام فعالیت: "/>
-					<TextBlock Text="{Binding ParentRow.StateStationActivity.Activity.Name}"/>
+					<TextBlock Text="{Binding ActivityName}"/>
 				</DockPanel>
 
-				<DockPanel Grid.Row="1" LastChildFill="False">
-					<TextBlock DockPanel.Dock="Left" Text="زمان شروع گزارش" VerticalAlignment="Center"/>
-					<cal:PersianDatePicker DockPanel.Dock="Left" SelectedDate="{Binding StartDate}" IsEnabled="False"/>
-					<TextBox Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" IsReadOnly="True" FlowDirection="LeftToRight"/>
-				</DockPanel>
-
-				<DockPanel LastChildFill="False" Grid.RowSpan="2" HorizontalAlignment="Right">
+				<DockPanel LastChildFill="False" Grid.RowSpan="2" HorizontalAlignment="Right" Margin="0,0,0,-18">
 					<Button DockPanel.Dock="Right" Command="{Binding SaveCommand}">
 						<DockPanel>
 							<Image DockPanel.Dock="Left" Style="{StaticResource Save16Image}"/>
@@ -61,11 +55,11 @@
 				</DockPanel>
 
 				<!-- Operator produced G1 -->
-				<Border Grid.Row="2" BorderBrush="#088" Background="#6AA"
-										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
+				<Border Grid.Row="2" BorderBrush="#CCC" Background="#08F"
+										    BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
 					<TextBlock Text="خروجی تفکیک شده (تولید سالم هر اپراتور)" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
-				<Border Grid.Row="3" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+				<Border Grid.Row="3" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White" Height="25">
 							<Grid.ColumnDefinitions>
@@ -95,7 +89,7 @@
 								<TextBlock Text="تعداد تولید سالم" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
 							</ContentControl>
 						</Grid>
-						<Grid DockPanel.Dock="Bottom" TextBlock.Foreground="Silver">
+						<Grid DockPanel.Dock="Bottom" TextBlock.Foreground="Silver" Background="#222">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="60"/>
@@ -116,7 +110,7 @@
 						<ItemsControl ItemsSource="{Binding OperatorReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<Grid Background="#222" TextBlock.Foreground="Silver">
+									<Grid Background="Black" TextBlock.Foreground="Silver">
 										<Grid.ColumnDefinitions>
 											<ColumnDefinition Width="30"/>
 											<ColumnDefinition Width="60"/>
@@ -160,11 +154,11 @@
 				</Border>
 
 				<!-- Defections -->
-				<Border Grid.Row="4" BorderBrush="#088" Background="#6AA"
-										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
+				<Border Grid.Row="4" BorderBrush="#CCC" Background="#E64"
+						BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
 					<TextBlock Text="گزارش کیفی (ضایعات)" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
-				<Border Grid.Row="5" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+				<Border Grid.Row="5" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
 							<Grid.ColumnDefinitions>
@@ -177,6 +171,7 @@
 								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="100"/>
 							</Grid.ColumnDefinitions>
 							<ContentControl Template="{StaticResource hoverStyle}">
 								<TextBlock Text="R" TextAlignment="Center" HorizontalAlignment="Center"/>
@@ -205,6 +200,9 @@
 							<ContentControl Grid.Column="8" Template="{StaticResource hoverStyle}">
 								<TextBlock Text="اپراتورهای مقصر" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
 							</ContentControl>
+							<ContentControl Grid.Column="9" Template="{StaticResource hoverStyle}">
+								<TextBlock Text="توضیحات" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
+							</ContentControl>
 						</Grid>
 						<Grid DockPanel.Dock="Bottom" Background="#222" TextBlock.Foreground="Silver">
 							<Grid.ColumnDefinitions>
@@ -216,6 +214,7 @@
 								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="100"/>
 							</Grid.ColumnDefinitions>
 							<Button DockPanel.Dock="Bottom" Command="{Binding DefectionReports.AddCommand}" HorizontalAlignment="Left">
 								<DockPanel>
@@ -230,10 +229,10 @@
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding DefectionReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- Defections List -->
-						<ItemsControl ItemsSource="{Binding DefectionReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+						<ItemsControl ItemsSource="{Binding DefectionReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#1FFF">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<Grid Background="#222" TextBlock.Foreground="Silver">
+									<Grid Background="Black" TextBlock.Foreground="Silver">
 										<Grid.ColumnDefinitions>
 											<ColumnDefinition Width="30"/>
 											<ColumnDefinition Width="150"/>
@@ -244,6 +243,7 @@
 											<ColumnDefinition Width="100"/>
 											<ColumnDefinition Width="50"/>
 											<ColumnDefinition Width="*"/>
+											<ColumnDefinition Width="100"/>
 										</Grid.ColumnDefinitions>
 										<ContentControl Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding Index}" TextAlignment="Center" HorizontalAlignment="Center"/>
@@ -310,6 +310,9 @@
 												</Button>
 											</WrapPanel>
 										</ContentControl>
+										<ContentControl Grid.Column="9" Template="{StaticResource hoverStyle}">
+											<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" HorizontalAlignment="Stretch" Width="Auto" FontSize="12" Margin="2,0"/>
+										</ContentControl>
 										<Grid.Triggers>
 											<EventTrigger RoutedEvent="MouseEnter">
 												<BeginStoryboard>
@@ -334,11 +337,11 @@
 				</Border>
 
 				<!-- Stoppage -->
-				<Border Grid.Row="6" BorderBrush="#088" Background="#6AA"
-										    BorderThickness="2" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
+				<Border Grid.Row="6" BorderBrush="#CCC" Background="#FC0"
+										    BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
 					<TextBlock Text="گزارش توقفات" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
-				<Border Grid.Row="7" BorderBrush="#088" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+				<Border Grid.Row="7" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
 							<Grid.ColumnDefinitions>
@@ -351,6 +354,7 @@
 								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="100"/>
 							</Grid.ColumnDefinitions>
 							<ContentControl Template="{StaticResource hoverStyle}">
 								<TextBlock Text="R" TextAlignment="Center" HorizontalAlignment="Center"/>
@@ -382,8 +386,11 @@
 							<ContentControl Grid.Column="8" Template="{StaticResource hoverStyle}">
 								<TextBlock Text="اپراتورهای مقصر" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
 							</ContentControl>
+							<ContentControl Grid.Column="9" Template="{StaticResource hoverStyle}">
+								<TextBlock Text="توضیحات" TextWrapping="WrapWithOverflow" TextAlignment="Center" HorizontalAlignment="Center"/>
+							</ContentControl>
 						</Grid>
-						<Grid DockPanel.Dock="Bottom" Background="#222" TextBlock.Foreground="Silver">
+						<Grid DockPanel.Dock="Bottom" Background="Black" TextBlock.Foreground="Silver">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="180"/>
 								<ColumnDefinition Width="40"/>
@@ -393,6 +400,7 @@
 								<ColumnDefinition Width="100"/>
 								<ColumnDefinition Width="50"/>
 								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="100"/>
 							</Grid.ColumnDefinitions>
 							<Button Command="{Binding StoppageReports.AddCommand}" HorizontalAlignment="Left">
 								<DockPanel>
@@ -407,7 +415,7 @@
 							<TextBlock Margin="2" Grid.Column="6" Text="{Binding StoppageReports.SumOfCountEquivalent}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- Stoppages List -->
-						<ItemsControl ItemsSource="{Binding StoppageReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+						<ItemsControl ItemsSource="{Binding StoppageReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#1FFF">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
 									<Grid Background="#222" TextBlock.Foreground="Silver">
@@ -421,13 +429,14 @@
 											<ColumnDefinition Width="100"/>
 											<ColumnDefinition Width="50"/>
 											<ColumnDefinition Width="*"/>
+											<ColumnDefinition Width="100"/>
 										</Grid.ColumnDefinitions>
 										<ContentControl Template="{StaticResource hoverStyle}">
 											<TextBlock Text="{Binding Index}" TextAlignment="Center" HorizontalAlignment="Center"/>
 										</ContentControl>
 										<Canvas ClipToBounds="False">
 											<Button Opacity="0" HorizontalAlignment="Left" 
-																    x:Name="deleteStoppageReportButton" ToolTip="حذف گزارش توقفات" Command="{Binding DeleteCommand}">
+													x:Name="deleteStoppageReportButton" ToolTip="حذف گزارش توقفات" Command="{Binding DeleteCommand}">
 												<Image Style="{StaticResource Delete16Image}"/>
 											</Button>
 										</Canvas>
@@ -450,7 +459,7 @@
 											</ItemsControl>
 										</ContentControl>
 										<ContentControl Grid.Column="2" Template="{StaticResource hoverStyle}">
-											<TextBox Text="{Binding SelectedCode}" TextChanged="CausesSelectedCode_TextChanged" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="25"/>
+											<TextBox Text="{Binding SelectedCode}" TextChanged="CausesSelectedCode_TextChanged" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="30"/>
 										</ContentControl>
 										<ContentControl Grid.Column="3" Template="{StaticResource hoverStyle}">
 											<CustomControls:DurationBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
@@ -498,6 +507,9 @@
 													<Image Style="{StaticResource Add16Image}"/>
 												</Button>
 											</WrapPanel>
+										</ContentControl>
+										<ContentControl Grid.Column="9" Template="{StaticResource hoverStyle}">
+											<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" HorizontalAlignment="Stretch" Width="Auto" FontSize="12" Margin="2,0"/>
 										</ContentControl>
 										<Grid.Triggers>
 											<EventTrigger RoutedEvent="MouseEnter">

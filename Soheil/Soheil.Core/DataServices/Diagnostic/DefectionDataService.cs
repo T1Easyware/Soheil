@@ -99,7 +99,7 @@ namespace Soheil.Core.DataServices
             {
                     IEnumerable<Defection> entityList =
                         _defectionRepository.Find(
-                            defection => defection.Status == (decimal)Status.Active && defection.ProductDefections.All(item=> item.Product.Id != linkId));
+                            defection => (defection.Status == (decimal)Status.Active) && defection.ProductDefections.All(item=> item.Product.Id != linkId));
                     return new ObservableCollection<Defection>(entityList);
             }
             return GetActives();
