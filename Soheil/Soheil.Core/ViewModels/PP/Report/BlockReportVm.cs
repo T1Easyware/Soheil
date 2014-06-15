@@ -95,9 +95,12 @@ namespace Soheil.Core.ViewModels.PP.Report
 							};
 
 							//correct next/previous links
-							processReportVm.PreviousReport = processVm.ProcessReportList.LastOrDefault();
-							if (processReportVm.PreviousReport != null)
-								processReportVm.PreviousReport.NextReport = processReportVm;
+							var lastpr = processVm.ProcessReportList.LastOrDefault();
+							if (lastpr != null)
+							{
+								processReportVm.Timing.PreviousReport = lastpr.Timing;
+								processReportVm.Timing.PreviousReport.NextReport = processReportVm.Timing;
+							}
 
 							//add the report to its processVm
 							processVm.ProcessReportList.Add(processReportVm);

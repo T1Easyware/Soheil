@@ -95,6 +95,10 @@ namespace Soheil.Common
 			if (x > 0) x = 7 - x;
 			return (dateTime.DayOfYear - x) / 7;
 		} 
+		public static DateTime TruncateMilliseconds(this DateTime dateTime)
+		{
+			return dateTime.AddTicks(-(dateTime.Ticks % TimeSpan.TicksPerSecond));
+		}
 		#endregion
 
         #region Color, Point

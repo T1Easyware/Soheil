@@ -86,19 +86,23 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			foreach (var oper in OperatorsList)
 			{
-				bool[] status;
-				var operModel = oper.OperatorModel;
-				if (Process == null)
+				try
 				{
-					status = await Task.Run(() => OperatorDataService.GetOperatorStatus(operModel, Block.Tasks.FirstOrDefault()));
+					bool[] status;
+					var operModel = oper.OperatorModel;
+					if (Process == null)
+					{
+						status = await Task.Run(() => OperatorDataService.GetOperatorStatus(operModel, Block.Tasks.FirstOrDefault()));
+					}
+					else
+					{
+						status = await Task.Run(() => OperatorDataService.GetOperatorStatus(operModel, Process));
+					}
+					oper.IsSelected = status[0];
+					oper.IsInTask = status[1];
+					oper.IsInTimeRange = status[2];
 				}
-				else
-				{
-					status = await Task.Run(() => OperatorDataService.GetOperatorStatus(operModel, Process));
-				}
-				oper.IsSelected = status[0];
-				oper.IsInTask = status[1];
-				oper.IsInTimeRange = status[2];
+				catch { }
 			}
 		} 
 		#endregion

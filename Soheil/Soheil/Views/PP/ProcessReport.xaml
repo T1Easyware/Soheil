@@ -11,7 +11,7 @@
              mc:Ignorable="d">
 	<UserControl.Margin>
 		<MultiBinding Converter="{StaticResource processReportBorderMarginConverter}">
-			<Binding Path="StartDateTime"/>
+			<Binding Path="Timing.StartDateTime"/>
 			<Binding ElementName="root" Path="PPTable.HourZoom"/>
 			<Binding ElementName="root" Path="Process.StartDateTime"/>
 		</MultiBinding>
@@ -21,7 +21,7 @@
 	</UserControl.Effect>
 	<UserControl.Width>
 		<MultiBinding Converter="{StaticResource ppTaskBorderWidthConverter}">
-			<Binding Path="Duration"/>
+			<Binding Path="Timing.Duration"/>
 			<Binding ElementName="root" Path="PPTable.HourZoom"/>
 		</MultiBinding>
 	</UserControl.Width>
@@ -59,10 +59,10 @@
 			<TextBlock Grid.Row="7" Text="تعداد توقفات"/>
 			<Image Grid.Column="1" Grid.Row="4" Style="{StaticResource TargetPointImage}"/>
 			<Image Grid.Column="1" Grid.Row="5" Style="{StaticResource ProducedG1Image}"/>
-			<TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding StartDateTime}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-			<TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding EndDateTime}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-			<TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}"  FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-			<TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding TargetPoint}" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			<TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding Timing.StartDateTime}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			<TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding Timing.EndDateTime}" FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			<TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding Timing.Duration, Converter={StaticResource timeSpanToStringConverter}}"  FlowDirection="LeftToRight" FontWeight="Bold"  TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			<TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Timing.TargetPoint}" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			<TextBlock Grid.Column="2" Grid.Row="5" Text="{Binding ProducedG1}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
 			<TextBlock Grid.Column="2" Grid.Row="6" Text="{Binding DefectionCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
 			<TextBlock Grid.Column="2" Grid.Row="7" Text="{Binding StoppageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
@@ -152,14 +152,14 @@
 					<Image Grid.Column="1" Style="{StaticResource ProducedG1Image}" HorizontalAlignment="Right" Margin="5,0" IsHitTestVisible="False"/>
 					<TextBlock Grid.Column="2" Text="/"/>
 					<Image Grid.Column="3" Style="{StaticResource TargetPointImage}" HorizontalAlignment="Left" Margin="5,0" IsHitTestVisible="False"/>
-					<TextBox Grid.Column="4" Text="{Binding TargetPoint, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Loc txtTargetPoint}" FontSize="12" TextAlignment="Left"/>
+					<TextBox Grid.Column="4" Text="{Binding Timing.TargetPoint, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Loc txtTargetPoint}" FontSize="12" TextAlignment="Left"/>
 
-					<ToggleButton IsChecked="{Binding IsDurationDividable}" Grid.Column="5" ToolTip="آیا مدت گزارش مضرب صحیحی از زمان سیکل است">
-						<Image Style="{StaticResource IsDividable}" Margin="-2" Opacity="{Binding IsDurationDividable, Converter={StaticResource booleanToOpacityConverter}}"/>
+					<ToggleButton IsChecked="{Binding Timing.IsDurationDividable}" Grid.Column="5" ToolTip="آیا مدت گزارش مضرب صحیحی از زمان سیکل است">
+						<Image Style="{StaticResource IsDividable}" Margin="-2" Opacity="{Binding Timing.IsDurationDividable, Converter={StaticResource booleanToOpacityConverter}}"/>
 					</ToggleButton>
 					<DockPanel Grid.Column="6" Background="Transparent">
 						<Image Style="{StaticResource DurationImage}" DockPanel.Dock="Left"/>
-						<TextBlock Text="{Binding Duration, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight" VerticalAlignment="Center" Width="0" x:Name="durtext"/>
+						<TextBlock Text="{Binding Timing.Duration, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight" VerticalAlignment="Center" Width="0" x:Name="durtext"/>
 						<DockPanel.Triggers>
 							<EventTrigger RoutedEvent="MouseEnter">
 								<BeginStoryboard>
@@ -205,9 +205,9 @@
 								<RowDefinition/>
 							</Grid.RowDefinitions>
 							<TextBlock Text="{Loc txtStartDate}" Grid.Row="0" Grid.Column="0"/>
-							<cal:PersianDatePicker SelectedDate="{Binding StartDate}" Grid.Row="0" Grid.Column="1"/>
+							<cal:PersianDatePicker SelectedDate="{Binding Timing.StartDate}" Grid.Row="0" Grid.Column="1"/>
 							<TextBlock Text="{Loc txtStartTime}" Grid.Row="1" Grid.Column="0"/>
-							<cc:TimeBox Time="{Binding StartTime}" Grid.Row="1" Grid.Column="1"/>
+							<cc:TimeBox Time="{Binding Timing.StartTime}" Grid.Row="1" Grid.Column="1"/>
 							<Button Click="PopupCloseButton_Click" Grid.Row="2" Grid.Column="0">
 								<WrapPanel>
 									<Image Style="{StaticResource Undo16Image}"/>
@@ -258,17 +258,17 @@
 							<TextBlock Text="مدت زمان گزارش" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
 							<TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
 
-							<Button Command="{Binding AutoDurationCommand}" ToolTip="محاسبه خودکار زمان از طریق مقدار هدف ایستگاه" Grid.Row="2" Grid.Column="1">
+							<Button Command="{Binding Timing.AutoDurationCommand}" ToolTip="محاسبه خودکار زمان از طریق مقدار هدف ایستگاه" Grid.Row="2" Grid.Column="1">
 								<Image Style="{StaticResource Reload18Image}" Margin="-2"/>
 							</Button>
-							<Button Command="{Binding AutoTargetPointCommand}" ToolTip="محاسبه خودکار مقدار هدف ایستگاه از طریق زمان پایان" Grid.Row="3" Grid.Column="1">
+							<Button Command="{Binding Timing.AutoTargetPointCommand}" ToolTip="محاسبه خودکار مقدار هدف ایستگاه از طریق زمان پایان" Grid.Row="3" Grid.Column="1">
 								<Image Style="{StaticResource Reload18Image}" Margin="-2"/>
 							</Button>
 
-							<cal:PersianDatePicker SelectedDate="{Binding EndDate}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
-							<cc:TimeBox Time="{Binding EndTime}" Grid.Row="1" Grid.Column="2"/>
-							<cc:TimeBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding ByEndDate}" Grid.Row="2" Grid.Column="2"/>
-							<TextBox Text="{Binding TargetPoint, UpdateSourceTrigger=PropertyChanged}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="2"/>
+							<cal:PersianDatePicker SelectedDate="{Binding Timing.EndDate}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
+							<cc:TimeBox Time="{Binding Timing.EndTime}" Grid.Row="1" Grid.Column="2"/>
+							<cc:TimeBox DurationSeconds="{Binding Timing.DurationSeconds, Mode=TwoWay}" Grid.Row="2" Grid.Column="2"/>
+							<TextBox Text="{Binding Timing.TargetPoint, UpdateSourceTrigger=PropertyChanged}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="2"/>
 
 							<Button Grid.Row="4" Grid.Column="0" Click="PopupCloseButton_Click">
 								<WrapPanel>

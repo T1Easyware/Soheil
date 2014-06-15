@@ -19,11 +19,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 			Parent = parent;
 			
 			int[] causeIds = null;
-			if (model != null)
-				if (model.Cause != null)
-					if (model.Cause.Parent != null)
-						if (model.Cause.Parent.Parent != null)
-							causeIds = new int[3] { model.Cause.Parent.Parent.Id, model.Cause.Parent.Id, model.Cause.Id };
+			if (model.Cause != null)
+				if (model.Cause.Parent != null)
+					if (model.Cause.Parent.Parent != null)
+						causeIds = new int[3] { model.Cause.Parent.Parent.Id, model.Cause.Parent.Id, model.Cause.Id };
 			StoppageLevels = FilterBoxVmCollection.CreateForStoppageReport(this, causeIds);
 
 			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorStoppageReports, Parent.Parent.UOW);
@@ -62,6 +61,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 			AffectsTaskReport = model.AffectsTaskReport;
 			LostSeconds = model.LostTime;
 			LostCount = model.LostCount;
+			Description = model.Description;
+
 			DeleteCommand = new Commands.Command(o => 
 			{
 				//correct sums
@@ -88,7 +89,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 			Model.Cause = new Dal.Repository<Model.Cause>(Parent.Parent.UOW).FirstOrDefault(x => x.Id == causeId);
 		}
 
-		//Index Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable index of this report
+		/// </summary>
 		public int Index
 		{
 			get { return (int)GetValue(IndexProperty); }
@@ -97,7 +100,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public static readonly DependencyProperty IndexProperty =
 			DependencyProperty.Register("Index", typeof(int), typeof(StoppageReportVm), new UIPropertyMetadata(0));
 		
-		//AffectsTaskReport Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether the count of this report affects TaskReport's output
+		/// </summary>
 		public bool AffectsTaskReport
 		{
 			get { return (bool)GetValue(AffectsTaskReportProperty); }
@@ -107,7 +112,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 			DependencyProperty.Register("AffectsTaskReport", typeof(bool), typeof(StoppageReportVm),
 			new UIPropertyMetadata(true, (d, e) => ((StoppageReportVm)d).Model.AffectsTaskReport = (bool)e.NewValue));
 
-		//SelectedCode Dependency Property
+		/// <summary>
+		/// Gets or set the bindable code for selected cause
+		/// </summary>
 		public string SelectedCode
 		{
 			get { return (string)GetValue(SelectedCodeProperty); }
@@ -116,6 +123,23 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public static readonly DependencyProperty SelectedCodeProperty =
 			DependencyProperty.Register("SelectedCode", typeof(string), typeof(StoppageReportVm),
 			new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or set the bindable description
+		/// </summary>
+		public string Description
+		{
+			get { return (string)GetValue(DescriptionProperty); }
+			set { SetValue(DescriptionProperty, value); }
+		}
+		public static readonly DependencyProperty DescriptionProperty =
+			DependencyProperty.Register("Description", typeof(string), typeof(StoppageReportVm),
+			new UIPropertyMetadata(null, (d, e) =>
+			{
+				var vm = (StoppageReportVm)d;
+				var val = (string)e.NewValue;
+				if (val == null) return;
+				vm.Model.Description = val;
+			}));
 
 		#region Time
 		//LostSeconds Dependency Property

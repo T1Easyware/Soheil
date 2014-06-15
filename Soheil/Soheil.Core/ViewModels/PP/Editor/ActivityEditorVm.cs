@@ -78,20 +78,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				ProcessList.Add(processVm);
 				processVm.IsSelected = true;
 			});
-			/*		
-			 * Model.StateStationActivity ssa = ssaGroup.First();
-				if (ProcessList.Any(x => x.SelectedChoice.StateStationActivityId == ssa.Id))
-				{
-					ssa = ssaGroup.FirstOrDefault(x => x.IsMany);
-				}
-				if (ssa == null)
-				{
-					ssa = ssaGroup.FirstOrDefault(s => 
-						!ProcessList.Any(p => p.SelectedChoice.StateStationActivityId == s.Id));
-				}
-				if (ssa == null)
-					Message.AddEmbeddedException("تمام حالات این فعالیت پوشش داده شده است. امکان افزودن وجود ندارد");
-*/
 		}
 
 		#region Event Handlers

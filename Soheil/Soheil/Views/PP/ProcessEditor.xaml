@@ -120,20 +120,20 @@
 					<StackPanel.ToolTip>
 						<UniformGrid Rows="3" Columns="2">
 							<TextBlock Text="{Loc txtStartTime}"/>
-							<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
+							<TextBlock Text="{Binding Timing.StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
 							<TextBlock Text="{Loc txtEndTime}"/>
-							<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
+							<TextBlock Text="{Binding Timing.EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
 							<TextBlock Text="{Loc txtDuration}"/>
-							<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
+							<TextBlock Text="{Binding Timing.DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
 						</UniformGrid>
 					</StackPanel.ToolTip>
 
 					<DockPanel>
 						<TextBlock Text="{Loc txtStart}" VerticalAlignment="Center"/>
-						<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
+						<CustomControls:TimeBox Time="{Binding Timing.StartTime, Mode=TwoWay}"/>
 					</DockPanel>
 					<DockPanel x:Name="startDatePanel" Height="0">
-						<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+						<cal:PersianDatePicker SelectedDate="{Binding Timing.StartDate}"/>
 					</DockPanel>
 					<DockPanel>
 						<Image Style="{StaticResource QuantityImage}" Margin="2,3" DockPanel.Dock="Left" ToolTip="{Loc txtTargetPoint}"/>
@@ -143,13 +143,13 @@
 							<Image Style="{StaticResource Warning16Image}" Visibility="{Binding OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right"
 								ToolTip="تعداد اپراتورهای تخصیص داده شده نامعتبر می باشد"/>
 						</Grid>
-						<TextBox Text="{Binding TargetPoint, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Bottom" VerticalAlignment="Center" ToolTip="{Loc txtTargetPoint}"/>
+						<TextBox Text="{Binding Timing.TargetPoint, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Bottom" VerticalAlignment="Center" ToolTip="{Loc txtTargetPoint}"/>
 					</DockPanel>
 					<DockPanel>
 						<Image Style="{StaticResource DurationImage}" Margin="2,3" DockPanel.Dock="Left" ToolTip="{Loc txtDuration}"/>
 						<Image Style="{StaticResource CycleTimeImage}" DockPanel.Dock="Right" ToolTip="{Loc txtCycleTime}"/>
 						<TextBlock Text="{Binding SelectedChoice.CycleTime}" DockPanel.Dock="Right" Foreground="#048" ToolTip="{Loc txtCycleTime}" Margin="2,0"/>
-						<CustomControls:DurationBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" ToolTip="{Loc txtDuration}" MaxWidth="80" HorizontalAlignment="Left"/>
+						<CustomControls:DurationBox DurationSeconds="{Binding Timing.DurationSeconds, Mode=TwoWay}" ToolTip="{Loc txtDuration}" MaxWidth="80" HorizontalAlignment="Left"/>
 					</DockPanel>
 				</StackPanel>
 				<DockPanel.Triggers>

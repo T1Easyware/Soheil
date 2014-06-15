@@ -55,6 +55,12 @@ namespace Soheil.Model
             set { _affectsTaskReport = value; }
         }
         private bool _affectsTaskReport = false;
+    
+        public virtual string Description
+        {
+            get;
+            set;
+        }
 
         #endregion
 

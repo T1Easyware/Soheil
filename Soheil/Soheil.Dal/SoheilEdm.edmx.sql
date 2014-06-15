@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 06/12/2014 12:21:10
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 06/15/2014 14:27:20
+-- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -617,6 +617,7 @@ CREATE TABLE [dbo].[DefectionReports] (
     [ModifiedBy] int  NOT NULL,
     [AffectsTaskReport] bit  NOT NULL,
     [IsG2] bit  NOT NULL,
+    [Description] nvarchar(max)  NULL,
     [ActionPlan_Id] int  NULL,
     [ProcessReport_Id] int  NOT NULL,
     [ProductDefection_Id] int  NOT NULL
@@ -808,6 +809,7 @@ CREATE TABLE [dbo].[StoppageReports] (
     [LostTime] int  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [AffectsTaskReport] bit  NOT NULL,
+    [Description] nvarchar(max)  NULL,
     [ProcessReport_Id] int  NOT NULL,
     [Cause_Id] int  NULL
 );

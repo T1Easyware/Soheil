@@ -25,27 +25,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	/// </summary>
 	public class ProcessEditorVm : DependencyObject
 	{
-		Dal.SoheilEdmContext _uow;
-
+		#region Events
 		/// <summary>
-		/// Gets the process model
-		/// </summary>
-		public Model.Process Model { get; protected set; }
-		/// <summary>
-		/// Gets the model for Activity (it is fixed unlike SSA)
-		/// </summary>
-		public Soheil.Model.Activity ActivityModel { get; protected set; }
-
-		/// <summary>
-		/// Gets or sets a value that indicates whether this viewModel should prevent TargetPointChanged and DurationChanged events from firing
-		/// </summary>
-		public bool HoldEvents { get; set; }
-		//indicates whether this viewModel should prevent changing Model
-		bool _isInitializing;
-
-		/// <summary>
-		/// Occurs when DurationSeconds of this Process is changed
-		/// <para>first arg is oldValue, seconds arg is NewValue</para>
+		/// Occurs when Start or end of this Process is changed
+		/// <para>first arg is Start, seconds arg is End</para>
 		/// </summary>
 		public event Action<ProcessEditorVm, DateTime, DateTime> TimesChanged;
 		/// <summary>
@@ -63,7 +46,23 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <para>second parameter can be null</para>
 		/// </summary>
 		public event Action<ProcessEditorVm, ChoiceEditorVm> SelectedChoiceChanged;
+		#endregion
 
+		#region Props and members
+		Dal.SoheilEdmContext _uow;
+
+		/// <summary>
+		/// Gets the process model
+		/// </summary>
+		public Model.Process Model { get; protected set; }
+		/// <summary>
+		/// Gets the model for Activity (it is fixed unlike SSA)
+		/// </summary>
+		public Soheil.Model.Activity ActivityModel { get; protected set; }
+
+		//indicates whether this viewModel should prevent changing Model
+		internal bool _isInitializing; 
+		#endregion
 
 		#region Ctor & choiceIsChanged
 		/// <summary>
@@ -82,11 +81,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			HasReport = Model.ProcessReports.Any();
 			Message = new Common.SoheilException.EmbeddedException();
 
-			TargetPoint = model.TargetCount;
-			DurationSeconds = model.DurationSeconds;
-
-			StartDateTime = model.StartDateTime;
-			EndDateTime = model.EndDateTime;
+			Timing = new TimingSet(this);
+			Timing.DurationChanged += v => Model.DurationSeconds = v;
+			Timing.StartChanged += v => Model.StartDateTime = v;
+			Timing.EndChanged += v => Model.EndDateTime = v;
+			Timing.TargetPointChanged += tp => Model.TargetCount = tp;
+			Timing.TimesChanged += (start, end) =>
+			{
+				if (TimesChanged != null) TimesChanged(this, start, end);
+			};
 			#endregion
 
 			#region Machines
@@ -96,8 +99,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var machineVm = new MachineEditorVm(sm);
 				SelectedMachines.Add(machineVm);
 			}
-			NoSelectedMachines = !model.SelectedMachines.Any();
-			SelectedMachines.CollectionChanged += (s, e) => NoSelectedMachines = !SelectedMachines.Any();
+			NoSelectedMachines = !SelectedMachines.Any();
 
 			//MachineFamilyList
 			ShowAllMachinesCommand = new Commands.Command(o =>
@@ -125,7 +127,27 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				foreach (var machineFamily in machineFamilies)
 				{
 					var machineFamilyVm = new MachineFamilyEditorVm(machineFamily);
-					machineFamilyVm.Revalidate(Model);
+					machineFamilyVm.SelectionChanged += (vm, val) =>
+					{
+						//add/remove SelectedMachines
+						var sm = SelectedMachines.FirstOrDefault(x => x.MachineId == vm.MachineId);
+						if (val && sm == null)
+						{
+							SelectedMachines.Add(vm);
+						}
+						else if (!val)
+						{
+							SelectedMachines.Remove(sm);
+						}
+						NoSelectedMachines = !SelectedMachines.Any();
+					};
+
+					//revalidate
+					foreach (var machineVm in machineFamilyVm.MachineList)
+					{
+						machineVm.Revalidate(model);
+						machineVm.IsUsed = SelectedMachines.Any(x => x.MachineId == machineVm.MachineId);
+					}
 					MachineFamilyList.Add(machineFamilyVm);
 				}
 			}); 
@@ -214,159 +236,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		#endregion
 
-		#region TP & Time
 		/// <summary>
-		/// Gets or sets a bindable value for target point of this process
-		/// <para>Changing this value updates DurationSeconds and model's TargetCount</para>
+		/// Gets or sets the bindable Timing component of this vm
 		/// </summary>
-		public int TargetPoint
+		public TimingSet Timing
 		{
-			get { return (int)GetValue(TargetPointProperty); }
-			set { SetValue(TargetPointProperty, value); }
+			get { return (TimingSet)GetValue(TimingProperty); }
+			set { SetValue(TimingProperty, value); }
 		}
-		public static readonly DependencyProperty TargetPointProperty =
-			DependencyProperty.Register("TargetPoint", typeof(int), typeof(ProcessEditorVm),
-			new UIPropertyMetadata(0, (d, e) =>
-			{
-				var vm = (ProcessEditorVm)d;
-				if (vm._isInitializing) return;
-
-				//update model
-				var val = (int)e.NewValue;
-				vm.Model.TargetCount = val;
-
-				if (vm.HoldEvents) return;
-
-				//update DurationSeconds
-				if (vm.SelectedChoice != null)
-				{
-					int newDuration = (int)Math.Floor(val * vm.SelectedChoice.CycleTime);
-					if (newDuration != vm.DurationSeconds)
-						vm.DurationSeconds = newDuration;
-				}
-			}));
-		/// <summary>
-		/// Gets or sets a bindable value for duration seconds of this process
-		/// </summary>
-		public int DurationSeconds
-		{
-			get { return (int)GetValue(DurationSecondsProperty); }
-			set { SetValue(DurationSecondsProperty, value); }
-		}
-		public static readonly DependencyProperty DurationSecondsProperty =
-			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(ProcessEditorVm),
-			new UIPropertyMetadata(0, (d, e) =>
-			{
-				var vm = (ProcessEditorVm)d;
-				if (vm._isInitializing) return;
-
-				//update model
-				var val = (int)e.NewValue;
-				vm.Model.DurationSeconds = val;
-				
-				if (vm.HoldEvents) return;
-
-				//update EndTime
-				vm.EndDateTime = vm.StartDateTime.Add(TimeSpan.FromSeconds(val));
-
-				//update TargetPoint
-				if (vm.SelectedChoice != null)
-				{
-					int newTargetPoint = (int)Math.Floor(val / vm.SelectedChoice.CycleTime);
-					if (newTargetPoint != vm.TargetPoint)
-						vm.TargetPoint = newTargetPoint;
-				}
-
-			}));
-
-		//StartDateTime Dependency Property
-		public DateTime StartDateTime
-		{
-			get { return (DateTime)GetValue(StartDateTimeProperty); }
-			set { SetValue(StartDateTimeProperty, value); }
-		}
-		public static readonly DependencyProperty StartDateTimeProperty =
-			DependencyProperty.Register("StartDateTime", typeof(DateTime), typeof(ProcessEditorVm),
-			new UIPropertyMetadata(DateTime.Now, (d, e) =>
-			{
-				var vm = d as ProcessEditorVm;
-				var val = (DateTime)e.NewValue;
-
-				//update StartDate & StartTime
-				var prevHoldEvents = vm.HoldEvents;
-				vm.HoldEvents = true;
-				vm.StartDate = val.Date;
-				vm.StartTime = val.TimeOfDay;
-				vm.HoldEvents = prevHoldEvents;
-
-				if (vm._isInitializing) return;
-				//update model
-				vm.Model.StartDateTime = val;
-				vm.EndDateTime = val.AddSeconds(vm.DurationSeconds);
-
-				if (vm.HoldEvents) return;
-
-				//fire event
-				if (vm.TimesChanged != null)
-					vm.TimesChanged(vm, vm.Model.StartDateTime, vm.Model.EndDateTime);
-
-			}));
-		//StartTime Dependency Property
-		public TimeSpan StartTime
-		{
-			get { return (TimeSpan)GetValue(StartTimeProperty); }
-			set { SetValue(StartTimeProperty, value); }
-		}
-		public static readonly DependencyProperty StartTimeProperty =
-			DependencyProperty.Register("StartTime", typeof(TimeSpan), typeof(ProcessEditorVm),
-			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
-			{
-				var vm = d as ProcessEditorVm;
-				var val = (TimeSpan)e.NewValue;
-				if (vm.HoldEvents) return;
-				vm.StartDateTime = vm.StartDate.Add(val);
-			}));
-		//StartDate Dependency Property
-		public DateTime StartDate
-		{
-			get { return (DateTime)GetValue(StartDateProperty); }
-			set { SetValue(StartDateProperty, value); }
-		}
-		public static readonly DependencyProperty StartDateProperty =
-			DependencyProperty.Register("StartDate", typeof(DateTime), typeof(ProcessEditorVm),
-			new UIPropertyMetadata(DateTime.Now, (d, e) =>
-			{
-				var vm = d as ProcessEditorVm;
-				var val = (DateTime)e.NewValue;
-				if (vm.HoldEvents) return;
-				vm.StartDateTime = val.Add(vm.StartTime);
-			}));
-
-		//EndDateTime Dependency Property
-		public DateTime EndDateTime
-		{
-			get { return (DateTime)GetValue(EndDateTimeProperty); }
-			set { SetValue(EndDateTimeProperty, value); }
-		}
-		public static readonly DependencyProperty EndDateTimeProperty =
-			DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(ProcessEditorVm),
-			new UIPropertyMetadata(DateTime.Now, (d, e) =>
-			{
-				var vm = d as ProcessEditorVm;
-				var val = (DateTime)e.NewValue;
-				if (vm._isInitializing) return;
-
-				//update model
-				vm.Model.EndDateTime = val;
-
-				if (vm.HoldEvents) return;
-
-				//fire event
-				if (vm.TimesChanged != null)
-					vm.TimesChanged(vm, vm.Model.StartDateTime, vm.Model.EndDateTime);
-			}));
-
-		#endregion
+		public static readonly DependencyProperty TimingProperty =
+			DependencyProperty.Register("Timing", typeof(TimingSet), typeof(ProcessEditorVm), new UIPropertyMetadata(null));
 
 		#region Operators and Choice
 		/// <summary>
@@ -493,6 +372,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					if (vm.Selected != null)
 						vm.Selected(vm);
 				}
+				else
+					vm.ShowAllMachines = false;
 			}));
 		//SelectCommand Dependency Property
 		public Commands.Command SelectCommand

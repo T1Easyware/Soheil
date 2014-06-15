@@ -48,7 +48,16 @@ namespace Soheil.Core.ViewModels.PP
 		void initializeEditors()
 		{
 			TaskEditor = new PlanEditorVm();
-			TaskEditor.RefreshPPItems += () => PPItems.Manager.ForceReload();
+			TaskEditor.RefreshPPItems += () =>
+			{
+				PPItems.Manager.ForceReload();
+
+				if (ShowBlockReport)
+				{
+					SelectedBlock.BlockReport = new Report.BlockReportVm(SelectedBlock);
+					SelectedBlock.BlockReport.ProcessReportBuilderChanged += val => CurrentProcessReportBuilder = val;
+				}
+			};
 			/*refresh is enough.
 			 * TaskEditor.BlockAdded += model => PPItems.AddItem(model);
 			TaskEditor.BlockUpdated += (oldModel, newModel) =>
@@ -958,8 +967,5 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty ShowInsertSetupButtonProperty =
 			DependencyProperty.Register("ShowInsertSetupButton", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(false));
 		#endregion
-
-
-
 	}
 }

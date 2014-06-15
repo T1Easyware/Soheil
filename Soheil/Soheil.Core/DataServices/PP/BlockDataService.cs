@@ -230,6 +230,16 @@ namespace Soheil.Core.DataServices
 				{
 					if (process.TargetCount == 0 || process.StateStationActivity == null)
 					{
+						foreach (var po in process.ProcessOperators.ToArray())
+						{
+							process.ProcessOperators.Remove(po);
+							new Repository<ProcessOperator>(context).Delete(po);
+						}
+						foreach (var sm in process.SelectedMachines.ToArray())
+						{
+							process.SelectedMachines.Remove(sm);
+							new Repository<SelectedMachine>(context).Delete(sm);
+						}
 						task.Processes.Remove(process);
 						new Repository<Process>(context).Delete(process);
 					}

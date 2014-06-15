@@ -69,6 +69,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			AffectsTaskReport = model.AffectsTaskReport;
 			LostSeconds = model.LostTime;
 			LostCount = model.LostCount;
+			Description = model.Description;
 			
 			DeleteCommand = new Commands.Command(o => 
 			{
@@ -92,7 +93,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 
 
-		//Index Dependency Property
+		/// <summary>
+		/// Gets or sets the bindable index of this report
+		/// </summary>
 		public int Index
 		{
 			get { return (int)GetValue(IndexProperty); }
@@ -100,7 +103,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty IndexProperty =
 			DependencyProperty.Register("Index", typeof(int), typeof(DefectionReportVm), new UIPropertyMetadata(0));
-		//AffectsTaskReport Dependency Property
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether the count of this report affects TaskReport's output
+		/// </summary>
 		public bool AffectsTaskReport
 		{
 			get { return (bool)GetValue(AffectsTaskReportProperty); }
@@ -113,7 +118,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// Gets a bindable value that indicates if the Defection of this Vm represents a Grade 2
 		/// <para>If false, the the defection is (unusable) defection</para>
 		/// </summary>
-
 		public bool IsG2
 		{
 			get { return (bool)GetValue(IsG2Property); }
@@ -122,6 +126,24 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public static readonly DependencyProperty IsG2Property =
 			DependencyProperty.Register("IsG2", typeof(bool), typeof(DefectionReportVm), 
 			new UIPropertyMetadata(false, (d, e) => ((DefectionReportVm)d).Model.IsG2 = (bool)e.NewValue));
+
+		/// <summary>
+		/// Gets or set the bindable description
+		/// </summary>
+		public string Description
+		{
+			get { return (string)GetValue(DescriptionProperty); }
+			set { SetValue(DescriptionProperty, value); }
+		}
+		public static readonly DependencyProperty DescriptionProperty =
+			DependencyProperty.Register("Description", typeof(string), typeof(DefectionReportVm),
+			new UIPropertyMetadata(null, (d, e) =>
+			{
+				var vm = (DefectionReportVm)d;
+				var val = (string)e.NewValue;
+				if (val == null) return;
+				vm.Model.Description = val;
+			}));
 
 		#region Time
 		//LostSeconds Dependency Property
