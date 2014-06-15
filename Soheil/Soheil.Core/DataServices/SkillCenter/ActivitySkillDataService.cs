@@ -19,7 +19,7 @@ namespace Soheil.Core.DataServices
 		}
 		public ActivitySkillDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 		}
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Soheil.Core.DataServices
         public ActivitySkill GetSingle(int id)
         {
             ActivitySkill entity;
-			var operatorRepository = new Repository<ActivitySkill>(context);
+			var operatorRepository = new Repository<ActivitySkill>(Context);
             entity = operatorRepository.FirstOrDefault(model => model.Id == id, "Operator","Activity");
             return entity;
         }
@@ -55,20 +55,20 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(ActivitySkill model)
         {
-			var repository = new Repository<ActivitySkill>(context);
+			var repository = new Repository<ActivitySkill>(Context);
 			repository.Add(model);
-			context.Commit();
+			Context.Commit();
 			return model.Id;
         }
 
 		public void UpdateModel(ActivitySkill model)
         {
-			var repository = new Repository<ActivitySkill>(context);
+			var repository = new Repository<ActivitySkill>(Context);
 			ActivitySkill entity = repository.Single(generalActivitySkill => generalActivitySkill.Id == model.Id);
 
             entity.IluoNr = model.IluoNr;
 
-            context.Commit();
+            Context.Commit();
 			if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<ActivitySkill>(entity));
         }
 
@@ -84,14 +84,14 @@ namespace Soheil.Core.DataServices
 
 		public ActivitySkill FindOrAdd(int operatorId, int activityId)
 		{
-			var operatorRepository = new Repository<ActivitySkill>(context);
+			var operatorRepository = new Repository<ActivitySkill>(Context);
 			var model = operatorRepository.FirstOrDefault(x => 
 				x.Activity.Id == activityId 
 				&& x.Operator.Id == operatorId, "Operator", "Activity");
 			if(model == null)
 			{
-				var actv = new Repository<Activity>(context).Single(x => x.Id == activityId);
-				var oper = new Repository<Operator>(context).Single(x => x.Id == operatorId);
+				var actv = new Repository<Activity>(Context).Single(x => x.Id == activityId);
+				var oper = new Repository<Operator>(Context).Single(x => x.Id == operatorId);
 				model = new ActivitySkill
 				{
 					Activity = actv,
@@ -101,7 +101,7 @@ namespace Soheil.Core.DataServices
 					ModifiedBy = LoginInfo.Id,
 					IluoNr = 0,
 				};
-				context.Commit();
+				Context.Commit();
 			}
 			return model;
 		}

@@ -23,7 +23,7 @@ namespace Soheil.Core.DataServices
 		}
 		public JobDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_jobRepository = new Repository<Job>(context);
 		}
 
@@ -56,7 +56,7 @@ namespace Soheil.Core.DataServices
 		{
 			var entity = _jobRepository.Single(x => x.Id == model.Id);
 			entity.Description = model.Description;
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void DeleteModel(Job model)
@@ -64,19 +64,19 @@ namespace Soheil.Core.DataServices
 			var ent = _jobRepository.FirstOrDefault(x => x.Id == model.Id);
 			if (ent == null) return;
 			_jobRepository.Delete(ent);
-			context.Commit();
+			Context.Commit();
 		}
 		public void DeleteModel(int jobId)
 		{
 			var ent = _jobRepository.FirstOrDefault(x => x.Id == jobId);
 			if (ent == null) throw new Soheil.Common.SoheilException.SoheilExceptionBase("هیچ Jobای برای این Task پیدا نشد", Common.SoheilException.ExceptionLevel.Warning);
-			var blockDs = new BlockDataService(context);
+			var blockDs = new BlockDataService(Context);
 			foreach (var block in ent.Blocks.ToList())
 			{
 				blockDs.DeleteModel(block);
 			}
 			_jobRepository.Delete(ent);
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void AttachModel(Job model)
@@ -100,17 +100,17 @@ namespace Soheil.Core.DataServices
 		internal void SaveAndGenerateTasks(IList<ViewModels.PP.Editor.PPEditorJob> jobVms)
 		{
 			//var lkvJobModels = new List<KeyValuePair<Job, Job>>();
-			var taskDs = new TaskDataService(context);
+			var taskDs = new TaskDataService(Context);
 
 			//for each replication happens the following:
 			//	create (or update) jobs
 			//	create a smart job
 			//	create tasks
 			//	do other stuff (setups...)
-			var blockDs = new BlockDataService(context);
-			var taskRepos = new Repository<Task>(context);
+			var blockDs = new BlockDataService(Context);
+			var taskRepos = new Repository<Task>(Context);
 			var setupDs = new SetupDataService();
-			SmartManager manager = new SmartManager(blockDs, new NPTDataService(context));
+			SmartManager manager = new SmartManager(blockDs, new NPTDataService(Context));
 			List<SmartRange> toAddSetups = new List<SmartRange>();
 
 			foreach (var jobVm in jobVms.OrderBy(x => 1 / x.Weight))
@@ -130,8 +130,8 @@ namespace Soheil.Core.DataServices
 							Deadline = jobVm.Deadline,
 							ReleaseTime = jobVm.ReleaseDT,
 							Description = jobVm.Description,
-							FPC = new Repository<FPC>(context).FirstOrDefault(x => x.Id == jobVm.FpcId),
-							ProductRework = new Repository<ProductRework>(context).FirstOrDefault(x => x.Id == jobVm.ProductRework.Id),
+							FPC = new Repository<FPC>(Context).FirstOrDefault(x => x.Id == jobVm.FpcId),
+							ProductRework = new Repository<ProductRework>(Context).FirstOrDefault(x => x.Id == jobVm.ProductRework.Id),
 						};
 						_jobRepository.Add(jobModel);
 						#endregion
@@ -152,8 +152,8 @@ namespace Soheil.Core.DataServices
 						jobModel.Deadline = jobVm.Deadline;
 						jobModel.ReleaseTime = jobVm.ReleaseDT;
 						jobModel.Description = jobVm.Description;
-						jobModel.FPC = new Repository<FPC>(context).FirstOrDefault(x => x.Id == jobVm.FpcId);
-						jobModel.ProductRework = new Repository<ProductRework>(context)
+						jobModel.FPC = new Repository<FPC>(Context).FirstOrDefault(x => x.Id == jobVm.FpcId);
+						jobModel.ProductRework = new Repository<ProductRework>(Context)
 							.FirstOrDefault(x => x.Id == jobVm.ProductRework.Id);
 						#endregion
 					}
@@ -171,11 +171,11 @@ namespace Soheil.Core.DataServices
 						{
 							//Set the time
 							//first reload State (in smartJob it's loaded by DataService instead of this context)
-							step.State = new Repository<State>(context).FirstOrDefault(x => x.Id == step.State.Id);
+							step.State = new Repository<State>(Context).FirstOrDefault(x => x.Id == step.State.Id);
 							step.MakeTheBestFit();
 
 							//Make the task
-							step.BestStateStation = new Repository<StateStation>(context)
+							step.BestStateStation = new Repository<StateStation>(Context)
 								.FirstOrDefault(x => x.Id == step.BestStateStation.Id);
 							var block = smartJob.MakeBlockFrom(step, jobModel);
 							blockDs.AddModel(block);
@@ -187,7 +187,7 @@ namespace Soheil.Core.DataServices
 							}
 							foreach (var item in step.ChosenSequence.Where(x => x.Type == SmartRange.RangeType.DeleteSetup))
 							{
-								if (!setupDs.DeleteModelById(item.SetupId, context))
+								if (!setupDs.DeleteModelById(item.SetupId, Context))
 									toAddSetups.RemoveWhere(x =>
 										x.StartDT == item.StartDT
 										&& x.EndDT == item.EndDT
@@ -200,9 +200,9 @@ namespace Soheil.Core.DataServices
 			}
 			foreach (var item in toAddSetups)
 			{
-				setupDs.AddModelBySmart(item, context);
+				setupDs.AddModelBySmart(item, Context);
 			}
-			context.Commit();
+			Context.Commit();
 			/*foreach (var kvJM in lkvJobModels)
 			{
 				kvJM.Key.Id = kvJM.Value.Id;
@@ -218,7 +218,7 @@ namespace Soheil.Core.DataServices
 
 		internal int GetFpcIdForProductId(int productId)
 		{
-			var fpc = new Repository<FPC>(context).FirstOrDefault(x => x.Product.Id == productId && x.IsDefault);
+			var fpc = new Repository<FPC>(Context).FirstOrDefault(x => x.Product.Id == productId && x.IsDefault);
 			if (fpc == null) return -1;
 			return fpc.Id;
 		}

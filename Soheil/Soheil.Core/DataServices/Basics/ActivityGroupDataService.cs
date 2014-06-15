@@ -16,15 +16,11 @@ namespace Soheil.Core.DataServices
 		public event EventHandler<ModelAddedEventArgs<ActivityGroup>> ActivityGroupAdded;
 		Repository<ActivityGroup> _activityGroupRepository;
 
-		public ActivityGroupDataService()
-			: this(new SoheilEdmContext())
-		{
-		}
 
 		public ActivityGroupDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_activityGroupRepository = new Repository<ActivityGroup>(context);
+			this.Context = context ?? new SoheilEdmContext();
+            _activityGroupRepository = new Repository<ActivityGroup>(Context);
 		}
 
 
@@ -54,7 +50,7 @@ namespace Soheil.Core.DataServices
 		{
 			int id;
 			_activityGroupRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (ActivityGroupAdded != null)
 				ActivityGroupAdded(this, new ModelAddedEventArgs<ActivityGroup>(model));
 			id = model.Id;
@@ -66,7 +62,7 @@ namespace Soheil.Core.DataServices
 			model.CreatedDate = model.CreatedDate;
 			model.ModifiedDate = DateTime.Now;
 
-			context.Commit();
+			Context.Commit();
 		}
 
         public void DeleteModel(ActivityGroup model)

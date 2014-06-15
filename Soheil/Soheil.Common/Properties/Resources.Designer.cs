@@ -2205,9 +2205,9 @@ namespace Soheil.Common.Properties {
         /// <summary>
         ///   Looks up a localized string similar to انتخاب هیچ.
         /// </summary>
-        public static string txtUncheckAll {
+        public static string txtUnCheckAll {
             get {
-                return ResourceManager.GetString("txtUncheckAll", resourceCulture);
+                return ResourceManager.GetString("txtUnCheckAll", resourceCulture);
             }
         }
         

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Soheil.Common;
+using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
@@ -9,73 +10,50 @@ using Soheil.Model;
 
 namespace Soheil.Core.DataServices
 {
-    public class CostCenterDataService : IDataService<CostCenter>
+    public class CostCenterDataService :  DataServiceBase, IDataService<CostCenter>
     {
+        readonly Repository<CostCenter> _costCenterRepository;
+
+        public CostCenterDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _costCenterRepository = new Repository<CostCenter>(context);
+        }
+
         #region IDataService<CostCenter> Members
 
         public CostCenter GetSingle(int id)
         {
-            CostCenter entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var costCenterRepository = new Repository<CostCenter>(context);
-                entity = costCenterRepository.Single(costCenter => costCenter.Id == id);
-            }
-            return entity;
+            return _costCenterRepository.Single(costCenter => costCenter.Id == id);
         }
 
         public ObservableCollection<CostCenter> GetAll()
         {
-            ObservableCollection<CostCenter> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<CostCenter>(context);
-                IEnumerable<CostCenter> entityList = repository.Find(costCenter=> costCenter.Status != (decimal)Status.Deleted);
-                models = new ObservableCollection<CostCenter>(entityList);
-            }
-            return models;
+
+            IEnumerable<CostCenter> entityList =
+                _costCenterRepository.Find(costCenter => costCenter.Status != (decimal) Status.Deleted);
+            return new ObservableCollection<CostCenter>(entityList);
         }
 
         public ObservableCollection<CostCenter> GetActives()
         {
-            ObservableCollection<CostCenter> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<CostCenter>(context);
-                IEnumerable<CostCenter> entityList = repository.Find(costCenter => costCenter.Status == (decimal)Status.Active);
-                models = new ObservableCollection<CostCenter>(entityList);
-            }
-            return models;
+            IEnumerable<CostCenter> entityList =
+                _costCenterRepository.Find(costCenter => costCenter.Status == (decimal) Status.Active);
+            return new ObservableCollection<CostCenter>(entityList);
         }
 
         public int AddModel(CostCenter model)
         {
-            int id;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<CostCenter>(context);
-                repository.Add(model);
-                context.Commit();
+                _costCenterRepository.Add(model);
+                Context.Commit();
                 if (CostCenterAdded != null)
                     CostCenterAdded(this, new ModelAddedEventArgs<CostCenter>(model));
-                id = model.Id;
-            }
-            return id;
+                return model.Id;
         }
 
         public void UpdateModel(CostCenter model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var costCenterRepository = new Repository<CostCenter>(context);
-                CostCenter entity = costCenterRepository.FirstOrDefault(costCenter => costCenter.Id == model.Id);
-
-                entity.Description = model.Description;
-                entity.Name = model.Name;
-                entity.SourceType = model.SourceType;
-                entity.Status = model.Status;
-                context.Commit();
-            }
+            Context.Commit();
         }
 
         public void DeleteModel(CostCenter model)
@@ -84,17 +62,13 @@ namespace Soheil.Core.DataServices
 
         public void AttachModel(CostCenter model)
         {
-            using (var context = new SoheilEdmContext())
+            if (_costCenterRepository.Exists(costCenter => costCenter.Id == model.Id))
             {
-                var repository = new Repository<CostCenter>(context);
-                if (repository.Exists(costCenter => costCenter.Id == model.Id))
-                {
-                    UpdateModel(model);
-                }
-                else
-                {
-                    AddModel(model);
-                }
+                UpdateModel(model);
+            }
+            else
+            {
+                AddModel(model);
             }
         }
 
@@ -109,11 +83,7 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public CostCenter GetModel(int id)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<CostCenter>(context);
-                return repository.Single(cost => cost.Id == id);
-            }
+            return _costCenterRepository.Single(cost => cost.Id == id);
         }
     }
 }

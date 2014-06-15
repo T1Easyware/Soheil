@@ -21,14 +21,14 @@ namespace Soheil.Core.DataServices
 		}
 		public NPTDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_nptRepository = new Repository<NonProductiveTask>(context);
 		}
 
 		#region IDataService
 		public NonProductiveTask GetSingle(int id)
 		{
-				var repository = new Repository<NonProductiveTask>(context);
+				var repository = new Repository<NonProductiveTask>(Context);
 				return repository.FirstOrDefault(x => x.Id == id);
 		}
 
@@ -44,34 +44,34 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(NonProductiveTask model)
 		{
-				var repository = new Repository<NonProductiveTask>(context);
+				var repository = new Repository<NonProductiveTask>(Context);
 				repository.Add(model);
-				context.Commit();
+				Context.Commit();
 			return 1;
 		}
 
 		public void UpdateModel(NonProductiveTask model)
 		{
-				var repository = new Repository<NonProductiveTask>(context);
+				var repository = new Repository<NonProductiveTask>(Context);
 				var entity = repository.FirstOrDefault(x => x.Id == model.Id);
 				if (entity == null) AddModel(model);
 				else repository.Add(model);
-				context.Commit();
+				Context.Commit();
 		}
 
 		public void DeleteModel(NonProductiveTask model)
 		{
-				var repository = new Repository<NonProductiveTask>(context);
+				var repository = new Repository<NonProductiveTask>(Context);
 				var entity = repository.FirstOrDefault(x => x.Id == model.Id);
 				if (entity != null) repository.Delete(entity);
-				context.Commit();
+				Context.Commit();
 		}
 		public void DeleteModel(int id)
 		{
-				var repository = new Repository<NonProductiveTask>(context);
+				var repository = new Repository<NonProductiveTask>(Context);
 				var entity = repository.FirstOrDefault(x => x.Id == id);
 				if (entity != null) repository.Delete(entity);
-				context.Commit();
+				Context.Commit();
 		}
 
 		public void AttachModel(NonProductiveTask model)
@@ -137,8 +137,8 @@ namespace Soheil.Core.DataServices
 			{
 				return AddModel(new Setup
 				{
-					Changeover = new Repository<Changeover>(context).FirstOrDefault(x => x.Id == setup.ChangeoverId),
-					Warmup = new Repository<Warmup>(context).FirstOrDefault(x => x.Id == setup.WarmupId),
+					Changeover = new Repository<Changeover>(Context).FirstOrDefault(x => x.Id == setup.ChangeoverId),
+					Warmup = new Repository<Warmup>(Context).FirstOrDefault(x => x.Id == setup.WarmupId),
 					StartDateTime = setup.StartDT,
 					DurationSeconds = setup.DurationSeconds,
 					EndDateTime = setup.EndDT,

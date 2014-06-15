@@ -99,6 +99,7 @@
     <Compile Include="DataServices\OrganizationCalendar\WorkProfileDataService.cs" />
     <Compile Include="Fpc\StateTemplateSelector.cs" />
     <Compile Include="Interfaces\IBarChartViewer.cs" />
+    <Compile Include="Interfaces\IEntityCollection.cs" />
     <Compile Include="Interfaces\IReportBarVm.cs" />
     <Compile Include="PP\ItemMetaInfo.cs" />
     <Compile Include="Reports\OperatorBarInfo.cs" />
@@ -327,9 +328,9 @@
     <Compile Include="DataServices\SkillCenter\ActivitySkillDataService.cs" />
     <Compile Include="Enums\NavigationPropertyPresentationType.cs" />
     <Compile Include="Interfaces\IEntityItem.cs" />
-    <Compile Include="Interfaces\IEntityItemCollection.cs" />
-    <Compile Include="Interfaces\IEntityNodeCollection.cs" />
-    <Compile Include="Interfaces\IEntityCollection.cs" />
+    <Compile Include="Interfaces\IEntityItemRelationCollection.cs" />
+    <Compile Include="Interfaces\IEntityNodeRelationCollection.cs" />
+    <Compile Include="Interfaces\IEntityRelationCollection.cs" />
     <Compile Include="Interfaces\IEntityNode.cs" />
     <Compile Include="Interfaces\IEntityObject.cs" />
     <Compile Include="Interfaces\ISplitContent.cs" />

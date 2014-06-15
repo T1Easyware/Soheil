@@ -21,7 +21,7 @@ namespace Soheil.Core.DataServices
 		}
 		public OperatorDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_operatorRepository = new Repository<Operator>(context);
 		}
 
@@ -57,7 +57,7 @@ namespace Soheil.Core.DataServices
 		public int AddModel(Operator model)
 		{
 			_operatorRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (OperatorAdded != null)
 				OperatorAdded(this, new ModelAddedEventArgs<Operator>(model));
 			return model.Id;
@@ -73,7 +73,7 @@ namespace Soheil.Core.DataServices
 			entity.CreatedDate = model.CreatedDate;
 			entity.ModifiedBy = LoginInfo.Id;
 			entity.ModifiedDate = DateTime.Now;
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void DeleteModel(Operator model)
@@ -110,7 +110,7 @@ namespace Soheil.Core.DataServices
 
 		public void AddActivity(int oprId, int activityId)
 		{
-			var operatorRepository = new Repository<Activity>(context);
+			var operatorRepository = new Repository<Activity>(Context);
 			Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
 			Activity newActivity = operatorRepository.Single(opr => opr.Id == activityId);
 			if (currentOperator.ActivitySkills.Any(oprActivity => oprActivity.Operator.Id == oprId && oprActivity.Activity.Id == activityId))
@@ -126,13 +126,13 @@ namespace Soheil.Core.DataServices
 				ModifiedBy = LoginInfo.Id,
 			};
 			currentOperator.ActivitySkills.Add(newGeneralActivitySkill);
-			context.Commit();
+			Context.Commit();
 			ActivityAdded(this, new ModelAddedEventArgs<ActivitySkill>(newGeneralActivitySkill));
 		}
 
 		public void RemoveActivity(int oprId, int activityId)
 		{
-			var oprActivityRepository = new Repository<ActivitySkill>(context);
+			var oprActivityRepository = new Repository<ActivitySkill>(Context);
 			Operator currentOperator = _operatorRepository.Single(opr => opr.Id == oprId);
 			ActivitySkill currentGeneralActivitySkill =
 				currentOperator.ActivitySkills.First(
@@ -140,7 +140,7 @@ namespace Soheil.Core.DataServices
 					oprActivity.Operator.Id == oprId && oprActivity.Id == activityId);
 			int id = currentGeneralActivitySkill.Id;
 			oprActivityRepository.Delete(currentGeneralActivitySkill);
-			context.Commit();
+			Context.Commit();
 			ActivityRemoved(this, new ModelRemovedEventArgs(id));
 		}
 

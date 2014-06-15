@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -15,13 +16,14 @@ namespace Soheil.Core.ViewModels
     {
         public StationMachinesVM(StationVM station, AccessType access):base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentStation = station;
-            StationDataService = new StationDataService();
+            StationDataService = new StationDataService(UnitOfWork);
             StationDataService.MachineAdded += OnMachineAdded;
             StationDataService.MachineRemoved += OnMachineRemoved;
-            MachineDataService = new MachineDataService();
-            StationMachineDataService = new StationMachineDataService();
-            MachineFamilyDataService = new MachineFamilyDataService();
+            MachineDataService = new MachineDataService(UnitOfWork);
+            StationMachineDataService = new StationMachineDataService(UnitOfWork);
+            MachineFamilyDataService = new MachineFamilyDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<StationMachineVM>();
             foreach (var stationMachine in StationDataService.GetMachines(station.Id))

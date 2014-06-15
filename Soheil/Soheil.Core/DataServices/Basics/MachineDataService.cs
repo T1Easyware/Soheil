@@ -16,8 +16,8 @@ namespace Soheil.Core.DataServices
 		public event EventHandler<ModelAddedEventArgs<Machine>> MachineAdded;
 		public event EventHandler<ModelAddedEventArgs<StationMachine>> StationAdded;
 		public event EventHandler<ModelRemovedEventArgs> StationRemoved;
-		Repository<Machine> _machineRepository;
-		Repository<MachineFamily> _machineFamilyRepository;
+	    readonly Repository<Machine> _machineRepository;
+	    readonly Repository<MachineFamily> _machineFamilyRepository;
 
 		public MachineDataService()
 			: this(new SoheilEdmContext())
@@ -26,9 +26,9 @@ namespace Soheil.Core.DataServices
 		}
 		public MachineDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_machineRepository = new Repository<Machine>(context);
-			_machineFamilyRepository = new Repository<MachineFamily>(context);
+			Context = context ?? new SoheilEdmContext();
+            _machineRepository = new Repository<Machine>(Context);
+            _machineFamilyRepository = new Repository<MachineFamily>(Context);
 		}
 	
 		public Machine GetSingleWithFamily(int id)
@@ -38,7 +38,7 @@ namespace Soheil.Core.DataServices
 
 		public bool IsMachineIsUsedByDefault(int machineId, int stateStationActivityId)
 		{
-			var ssaRepository = new Repository<StateStationActivity>(context);
+			var ssaRepository = new Repository<StateStationActivity>(Context);
 			return ssaRepository.First(x => x.Id == stateStationActivityId)
 				.StateStationActivityMachines.First(y => y.Machine.Id == machineId).IsFixed;
 		}
@@ -62,7 +62,7 @@ namespace Soheil.Core.DataServices
 			int id;
 			var machineGroup = _machineFamilyRepository.Single(group => group.Id == model.MachineFamily.Id);
 			machineGroup.Machines.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (MachineAdded != null)
 				MachineAdded(this, new ModelAddedEventArgs<Machine>(model));
 			id = model.Id;
@@ -75,7 +75,7 @@ namespace Soheil.Core.DataServices
 			var machineGroup = _machineFamilyRepository.Single(group => group.Id == groupId);
 			model.MachineFamily = machineGroup;
 			machineGroup.Machines.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (MachineAdded != null)
 				MachineAdded(this, new ModelAddedEventArgs<Machine>(model));
 			id = model.Id;
@@ -87,7 +87,7 @@ namespace Soheil.Core.DataServices
 			model.ModifiedBy = LoginInfo.Id;
 			model.ModifiedDate = DateTime.Now;
 
-			context.Commit();
+			Context.Commit();
         }
 		public void UpdateModel(Machine model, int groupId)
 		{
@@ -95,7 +95,7 @@ namespace Soheil.Core.DataServices
 			model.ModifiedDate = DateTime.Now;
 
 			model.MachineFamily = _machineFamilyRepository.Single(machineGroup => machineGroup.Id == groupId);
-			context.Commit();
+			Context.Commit();
 		}
 
         public void DeleteModel(Machine model)
@@ -142,10 +142,10 @@ namespace Soheil.Core.DataServices
 				&& machineStation.Station.Id == stationId))
 				return;
 
-			var newStation = new Repository<Station>(context).Single(station => station.Id == stationId);
+			var newStation = new Repository<Station>(Context).Single(station => station.Id == stationId);
 			var newMachineStation = new StationMachine { Station = newStation, Machine = currentMachine };
 			currentMachine.StationMachines.Add(newMachineStation);
-			context.Commit();
+			Context.Commit();
 			StationAdded(this, new ModelAddedEventArgs<StationMachine>(newMachineStation));
         }
 
@@ -157,8 +157,8 @@ namespace Soheil.Core.DataServices
 					&& machineStation.Id == stationId);
 
                 int id = currentMachineStation.Id;
-				new Repository<StationMachine>(context).Delete(currentMachineStation);
-                context.Commit();
+				new Repository<StationMachine>(Context).Delete(currentMachineStation);
+                Context.Commit();
                 StationRemoved(this, new ModelRemovedEventArgs(id));
         }
 
@@ -191,7 +191,7 @@ namespace Soheil.Core.DataServices
 		public IEnumerable<Machine> GetActives(int stateStationActivityId, params string[] includePath)
 		{
 			var models = new List<Machine>();
-			var ssamList = new Repository<StateStationActivityMachine>(context).Find(ssam =>
+			var ssamList = new Repository<StateStationActivityMachine>(Context).Find(ssam =>
 				ssam.StateStationActivity.Id == stateStationActivityId &&
 				ssam.Machine.Status == (decimal)Status.Active, includePath);
 			models.AddRange(ssamList.Select(ssam => ssam.Machine));

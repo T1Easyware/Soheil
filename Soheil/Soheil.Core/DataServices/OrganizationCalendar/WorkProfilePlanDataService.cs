@@ -23,7 +23,7 @@ namespace Soheil.Core.DataServices
 		}
 		public WorkProfilePlanDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			workProfilePlanRepository = new Repository<WorkProfilePlan>(context);
 		}
 
@@ -61,7 +61,7 @@ namespace Soheil.Core.DataServices
             model.ModifiedDate = DateTime.Now;
             model.CreatedDate = DateTime.Now;
             workProfilePlanRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 
             WorkProfilePlanAdded(this, new ModelAddedEventArgs<WorkProfilePlan>(model));
 			return model.Id;
@@ -71,13 +71,13 @@ namespace Soheil.Core.DataServices
 		{
             model.ModifiedBy = LoginInfo.Id;
             model.ModifiedDate = DateTime.Now;
-			context.Commit();
+			Context.Commit();
 		}
 
         public void DeleteModel(WorkProfilePlan model)
 		{
             workProfilePlanRepository.Delete(model);
-			context.Commit();
+			Context.Commit();
 		}
 
         public void AttachModel(WorkProfilePlan model)
@@ -94,7 +94,7 @@ namespace Soheil.Core.DataServices
 		{
             var model = workProfilePlanRepository.Single(x => x.Id == id);
 			var clone = cloneModel(model);
-			context.Commit();
+			Context.Commit();
 			return clone;
 		}
         public /*override*/ T Clone<T>(T model)
@@ -102,7 +102,7 @@ namespace Soheil.Core.DataServices
 			var typed_model = (WorkProfilePlan)Convert.ChangeType(model, typeof(WorkProfilePlan));
 			var typed_clone = cloneModel(typed_model);
 			var t_clone = (T)Convert.ChangeType(typed_clone, typeof(T));
-            context.Commit();
+            Context.Commit();
 			return t_clone;
         }
 
@@ -130,7 +130,7 @@ namespace Soheil.Core.DataServices
         /// <param name="workProfileId"></param>
         internal void SetWorkProfile(WorkProfilePlan model, int workProfileId)
         {
-            model.WorkProfile = new Repository<WorkProfile>(context).Single(x => x.Id == workProfileId);
+            model.WorkProfile = new Repository<WorkProfile>(Context).Single(x => x.Id == workProfileId);
         }
 
 		public void AddDefaultWorkProfilePlanIfNeeded()
@@ -144,7 +144,7 @@ namespace Soheil.Core.DataServices
 		public WorkProfilePlan CreateDefault()
 		{
 			var last = GetLast();
-			var wpds = new Repository<WorkProfile>(context);
+			var wpds = new Repository<WorkProfile>(Context);
 			var lastwp = wpds.LastOrDefault(x => true, x => x.ModifiedDate);
 			if (lastwp == null)
 			{
@@ -164,7 +164,7 @@ namespace Soheil.Core.DataServices
 
 		public override void Dispose()
 		{
-			context.Dispose();
+			Context.Dispose();
 			base.Dispose();
 		}
 
@@ -208,7 +208,7 @@ namespace Soheil.Core.DataServices
 		/// <returns></returns>
 		internal BusinessDayType GetEffectiveBizState(DateTime date, WorkProfilePlan plan)
 		{
-			var states = new HolidayDataService(context).GetBusinessDayStatesAtDate(date);
+			var states = new HolidayDataService(Context).GetBusinessDayStatesAtDate(date);
 
 			if (plan == null) return BusinessDayType.None;
 			states.Add(plan.WorkProfile.GetBusinessState((int)date.GetPersianDayOfWeek()));

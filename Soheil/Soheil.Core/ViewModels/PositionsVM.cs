@@ -6,6 +6,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -50,7 +51,8 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            PositionDataService = new PositionDataService();
+            UnitOfWork = new SoheilEdmContext();
+            PositionDataService = new PositionDataService(UnitOfWork);
             PositionDataService.PositionAdded += OnPositionAdded;
 
             ColumnHeaders = new List<ColumnInfo> 

@@ -7,6 +7,7 @@ using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
 using Soheil.Core.ViewModels.InfoViewModels;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -133,14 +134,15 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            CostCenterDataService = new CostCenterDataService();
-            MachineDataService = new MachineDataService();
-            StationDataService = new StationDataService();
-            OperatorDataService = new OperatorDataService();
-            ActivityDataService = new ActivityDataService();
-            WarehouseDataService = new PartWarehouseDataService();
+            UnitOfWork = new SoheilEdmContext();
+            CostCenterDataService = new CostCenterDataService(UnitOfWork);
+            MachineDataService = new MachineDataService(UnitOfWork);
+            StationDataService = new StationDataService(UnitOfWork);
+            OperatorDataService = new OperatorDataService(UnitOfWork);
+            ActivityDataService = new ActivityDataService(UnitOfWork);
+            WarehouseDataService = new PartWarehouseDataService(UnitOfWork);
 
-            CostDataService = new CostDataService();
+            CostDataService = new CostDataService(UnitOfWork);
             CostDataService.CostAdded += OnCostAdded;
             CostCenterDataService.CostCenterAdded += OnCostCenterAdded;
 

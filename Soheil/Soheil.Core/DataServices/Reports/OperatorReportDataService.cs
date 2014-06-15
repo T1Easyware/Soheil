@@ -57,6 +57,7 @@ namespace Soheil.Core.DataServices
         {
             IList<Record> records = new List<Record>();
 
+
             using (var context = new SoheilEdmContext())
             {
                 var operatorRepository = new Repository<Operator>(context);
@@ -69,7 +70,7 @@ namespace Soheil.Core.DataServices
                 var drRepository = new Repository<DefectionReport>(context);
                 var odrRepository = new Repository<OperatorDefectionReport>(context);
 
-                var operatorList = operatorRepository.GetAll();
+                var operatorList = operatorRepository.Find(item=> item.Status != (decimal) Status.Deleted);
                 var oprList = operatorProcessReportRepository.GetAll(); 
                 var processReportList = processReportRepository.GetAll();
                 var processList = processRepository.GetAll();
@@ -91,7 +92,7 @@ namespace Soheil.Core.DataServices
                                let ct = ssActivity == null ? 0 : ssActivity.CycleTime
                                let productionTime = opr == null || ssActivity == null ? 0 : opr.OperatorProducedG1 * ct
                                let productionCount = opr == null || ssActivity == null ? 0 : opr.OperatorProducedG1
-                               select new { oprId, prId, oId, productionTime, productionCount, ct };
+                               select new { oprId, prId, oId, productionTime, productionCount, ct, opr.OperatorProducedG1 };
 
                 var sQuery = from opr in oprQuery
                              from osReport in osrList.Where(osr=> osr.Operator != null && osr.Operator.Id == opr.oId).DefaultIfEmpty()
@@ -163,6 +164,7 @@ namespace Soheil.Core.DataServices
                 for (int i = startIndex; i < count; i++)
                 {
                     var newRecord = new Record();
+                    newRecord.Data = new List<object>(8) {0,0,0,0,0,0,0,0};
                     foreach (var line in sortedQuery)
                     {
                         if (line.interval + startIndex == i)

@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -16,10 +17,11 @@ namespace Soheil.Core.ViewModels
         public UserPositionsVM(UserVM user, AccessType access)
             : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentUser = user;
-            UserDataService = new UserDataService();
-            PositionDataService = new PositionDataService();
-            AccessRuleDataService = new AccessRuleDataService();
+            UserDataService = new UserDataService(UnitOfWork);
+            PositionDataService = new PositionDataService(UnitOfWork);
+            AccessRuleDataService = new AccessRuleDataService(UnitOfWork);
             UserDataService.PositionAdded += OnPositionAdded;
             UserDataService.PositionRemoved += OnPositionRemoved;
 

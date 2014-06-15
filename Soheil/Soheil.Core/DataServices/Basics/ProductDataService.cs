@@ -19,16 +19,12 @@ namespace Soheil.Core.DataServices
 		public event EventHandler<ModelRemovedEventArgs> DefectionRemoved;
 		public event EventHandler<ModelAddedEventArgs<ProductRework>> ReworkAdded;
 		public event EventHandler<ModelRemovedEventArgs> ReworkRemoved;
-		Repository<Product> _productRepository;
+	    readonly Repository<Product> _productRepository;
 
-		public ProductDataService()
-			: this(new SoheilEdmContext())
-		{
-		}
 		public ProductDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_productRepository = new Repository<Product>(context);
+			Context = context ?? new SoheilEdmContext();
+            _productRepository = new Repository<Product>(Context);
 
 			//along with this event a default FPC and PR is added
 			ProductAdded += (sender, e) =>
@@ -72,10 +68,10 @@ namespace Soheil.Core.DataServices
 		public int AddModel(Product model)
 		{
 			int id;
-			var groupRepository = new Repository<ProductGroup>(context);
+			var groupRepository = new Repository<ProductGroup>(Context);
 			ProductGroup productGroup = groupRepository.Single(group => group.Id == model.ProductGroup.Id);
 			productGroup.Products.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (ProductAdded != null)
 				ProductAdded(this, new ModelAddedEventArgs<Product>(model));
 			id = model.Id;
@@ -85,11 +81,11 @@ namespace Soheil.Core.DataServices
 		public int AddModel(Product model, int groupId)
 		{
 			int id;
-			var groupRepository = new Repository<ProductGroup>(context);
+			var groupRepository = new Repository<ProductGroup>(Context);
 			ProductGroup productGroup = groupRepository.Single(group => group.Id == groupId);
 			model.ProductGroup = productGroup;
 			productGroup.Products.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (ProductAdded != null)
 				ProductAdded(this, new ModelAddedEventArgs<Product>(model));
 			id = model.Id;
@@ -104,12 +100,12 @@ namespace Soheil.Core.DataServices
 			//if default FPC and PR exist, update their Name & Code
 			createDefaultFPCAndProductRework(model);
 			
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void UpdateModel(Product model, int groupId)
 		{
-			var productGroupRepository = new Repository<ProductGroup>(context);
+			var productGroupRepository = new Repository<ProductGroup>(Context);
 			ProductGroup group =
 				productGroupRepository.Single(productGroup => productGroup.Id == groupId);
 
@@ -121,7 +117,7 @@ namespace Soheil.Core.DataServices
 			//if default FPC and PR exist, update their Name & Code
 			createDefaultFPCAndProductRework(model);
 
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void DeleteModel(Product model)
@@ -211,18 +207,18 @@ namespace Soheil.Core.DataServices
 				&& productDefection.Defection.Id == defectionId))
 				return;
 
-			var defectionRepository = new Repository<Defection>(context);
+			var defectionRepository = new Repository<Defection>(Context);
 			Defection newDefection = defectionRepository.Single(defection => defection.Id == defectionId);
 
 			var newProductDefection = new ProductDefection { Defection = newDefection, Product = currentProduct };
 			currentProduct.ProductDefections.Add(newProductDefection);
-			context.Commit();
+			Context.Commit();
 			DefectionAdded(this, new ModelAddedEventArgs<ProductDefection>(newProductDefection));
 		}
 
 		public void RemoveDefection(int productId, int defectionId)
 		{
-			var productDefectionRepository = new Repository<ProductDefection>(context);
+			var productDefectionRepository = new Repository<ProductDefection>(Context);
 			Product currentProduct = _productRepository.Single(product => product.Id == productId);
 			ProductDefection currentProductDefection =
 				currentProduct.ProductDefections.First(
@@ -230,7 +226,7 @@ namespace Soheil.Core.DataServices
 					productDefection.Product.Id == productId && productDefection.Id == defectionId);
 			int id = currentProductDefection.Id;
 			productDefectionRepository.Delete(currentProductDefection);
-			context.Commit();
+			Context.Commit();
 			DefectionRemoved(this, new ModelRemovedEventArgs(id));
 		}
 
@@ -242,7 +238,7 @@ namespace Soheil.Core.DataServices
 
 		public void AddRework(int productId, int reworkId, string code, string name, int modifiedBy)
 		{
-			var reworkRepository = new Repository<Rework>(context);
+			var reworkRepository = new Repository<Rework>(Context);
 			Product currentProduct = _productRepository.Single(product => product.Id == productId);
 			Rework newRework = reworkRepository.Single(rework => rework.Id == reworkId);
 			if (currentProduct.ProductReworks.Any(productRework => productRework.Product.Id == productId && productRework.Rework!=null && productRework.Rework.Id == reworkId))
@@ -251,13 +247,13 @@ namespace Soheil.Core.DataServices
 			}
 			var newProductRework = new ProductRework { Rework = newRework, Product = currentProduct, Code = code, Name = name, ModifiedBy = modifiedBy };
 			currentProduct.ProductReworks.Add(newProductRework);
-			context.Commit();
+			Context.Commit();
 			ReworkAdded(this, new ModelAddedEventArgs<ProductRework>(newProductRework));
 		}
 
 		public void RemoveRework(int productId, int reworkId)
 		{
-			var productReworkRepository = new Repository<ProductRework>(context);
+			var productReworkRepository = new Repository<ProductRework>(Context);
 			Product currentProduct = _productRepository.Single(product => product.Id == productId);
 			ProductRework currentProductRework =
 				currentProduct.ProductReworks.FirstOrDefault(
@@ -271,8 +267,8 @@ namespace Soheil.Core.DataServices
 			productReworkRepository.Delete(currentProductRework);
 
 			//correct states
-			var stateRepository = new Repository<State>(context);
-			var connectorRepository = new Repository<Connector>(context);
+			var stateRepository = new Repository<State>(Context);
+			var connectorRepository = new Repository<Connector>(Context);
 			int reworkStateTypeNr = (int)StateType.Rework;
 			if (stateRepository.Exists(x => x.OnProductRework.Id == id && x.StateTypeNr != reworkStateTypeNr))
 				return;
@@ -287,7 +283,7 @@ namespace Soheil.Core.DataServices
 					connectorRepository.Delete(conn);
 				stateRepository.Delete(state);
 			}
-			context.Commit();
+			Context.Commit();
 			ReworkRemoved(this, new ModelRemovedEventArgs(id));
 		}
 	}

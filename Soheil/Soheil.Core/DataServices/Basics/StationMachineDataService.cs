@@ -11,7 +11,7 @@ namespace Soheil.Core.DataServices
 	public class StationMachineDataService : DataServiceBase, IDataService<StationMachine>
 	{
 		public event EventHandler<ModelAddedEventArgs<StationMachine>> ModelUpdated;
-		Repository<StationMachine> _stationMachineRepository;
+	    readonly Repository<StationMachine> _stationMachineRepository;
 
 		public StationMachineDataService()
 			: this(new SoheilEdmContext())
@@ -19,8 +19,8 @@ namespace Soheil.Core.DataServices
 		}
 		public StationMachineDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_stationMachineRepository = new Repository<StationMachine>(context);
+			Context = context ?? new SoheilEdmContext();
+            _stationMachineRepository = new Repository<StationMachine>(Context);
 		}
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace Soheil.Core.DataServices
 		{
 			StationMachine entity = _stationMachineRepository.Single(productDefection => productDefection.Id == model.Id);
 			entity.RecordStatus = model.RecordStatus;
-			context.Commit();
+			Context.Commit();
 			if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<StationMachine>(entity));
 		}
 

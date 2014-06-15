@@ -22,13 +22,13 @@ namespace Soheil.Core.DataServices
 		}
 		public WorkProfileDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			workProfileRepository = new Repository<WorkProfile>(context);
 		}
 
 		public WorkProfile GetSingle(int id)
 		{
-			return new Repository<WorkProfile>(context).Single(x => x.Id == id,
+			return new Repository<WorkProfile>(Context).Single(x => x.Id == id,
 				"WorkDays",
 				"WorkShiftPrototypes",
 				"WorkDays.WorkShifts",
@@ -63,7 +63,7 @@ namespace Soheil.Core.DataServices
 			model.ModifiedDate = DateTime.Now;
 			model.CreatedDate = DateTime.Now;
 			workProfileRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 
 			WorkProfileAdded(this, new ModelAddedEventArgs<WorkProfile>(model));
 			return model.Id;
@@ -71,7 +71,7 @@ namespace Soheil.Core.DataServices
 
 		public void UpdateModel(WorkProfile model)
 		{
-			context.Commit();
+			Context.Commit();
 			//var workProfileRepository = new Repository<WorkProfile>(context);
 			//WorkProfile entity = workProfileRepository.Single(x => x.Id == model.Id);
 			/*entity.Name = model.Name;
@@ -131,10 +131,10 @@ namespace Soheil.Core.DataServices
 		public void DeleteModel(WorkProfile model)
 		{
 			var newModel = workProfileRepository.Single(cost => cost.Id == model.Id);
-			var protoRepos = new Repository<WorkShiftPrototype>(context);
-			var dayRepos = new Repository<WorkDay>(context);
-			var shiftRepos = new Repository<WorkShift>(context);
-			var breakRepos = new Repository<WorkBreak>(context);
+			var protoRepos = new Repository<WorkShiftPrototype>(Context);
+			var dayRepos = new Repository<WorkDay>(Context);
+			var shiftRepos = new Repository<WorkShift>(Context);
+			var breakRepos = new Repository<WorkBreak>(Context);
 
 			//delete old items
 			foreach (var day in newModel.WorkDays.ToArray())
@@ -160,13 +160,13 @@ namespace Soheil.Core.DataServices
 			newModel.WorkShiftPrototypes.Clear();
 
 			workProfileRepository.Delete(newModel);
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void AttachModel(WorkProfile model)
 		{
 			workProfileRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 		}
 		
 		/// <summary>
@@ -176,7 +176,7 @@ namespace Soheil.Core.DataServices
 		/// <returns>clone</returns>
 		internal WorkProfile CloneModelById(int id)
 		{
-			var workProfileRepository = new Repository<WorkProfile>(context);
+			var workProfileRepository = new Repository<WorkProfile>(Context);
 			var model = workProfileRepository.Single(x => x.Id == id,
 				"WorkDays",
 				"WorkShiftPrototypes",
@@ -184,13 +184,13 @@ namespace Soheil.Core.DataServices
 				"WorkDays.WorkShifts.WorkShiftPrototype",
 				"WorkDays.WorkShifts.WorkBreaks");
 			var clone = cloneModel(model);
-			context.Commit();
+			Context.Commit();
 			return clone;
 		}
 		public /*override*/ WorkProfile Clone(WorkProfile model)
 		{
 			var clone = cloneModel(model);
-			context.Commit();
+			Context.Commit();
 			return clone;
 		}
 

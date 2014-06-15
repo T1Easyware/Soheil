@@ -172,12 +172,12 @@ namespace Soheil.Core.ViewModels.Reports
 		    barInfo.IsCountBase = CurrentType == OEType.CountBased;
 
             LittleWindowWidth = 20;
-            int intervalCount = GetIntervalCount(CurrentInterval, barInfo);
+            int intervalCount = GetIntervalCount();
 
-            BarSlides = new VirtualizingCollection<BarSlideItemVm>(new OperatorBarSlideProvider(intervalCount), 6);
+            BarSlides = new VirtualizingCollection<BarSlideItemVm>(new OperatorBarSlideProvider(intervalCount), 12);
 
             var barProvider = new OperatorBarProvider(intervalCount, 600, CurrentInterval, DataService, barInfo);
-            Bars = new VirtualizingCollection<OperatorBarVm>(barProvider, 6);
+            Bars = new VirtualizingCollection<OperatorBarVm>(barProvider, 12);
 
             Scales.Clear();
             ScaleLines.Clear();
@@ -228,43 +228,12 @@ namespace Soheil.Core.ViewModels.Reports
 	        Document = xps.GetFixedDocumentSequence();*/
 	    }
 
-	    private int GetIntervalCount(DateTimeIntervals interval, OperatorBarInfo barInfo)
-        {
-            switch (barInfo.Level)
-            {
-                case 0:
-                    int currentYear = DateTime.Now.Year;
-                    var startDate = new DateTime(currentYear, 1, 1);
-                    var endDate = new DateTime(currentYear + 1, 1, 1).AddDays(-1);
+	    private int GetIntervalCount()
+	    {
+	        return DataService.GetOperatorsCount();
+	    }
 
-                    switch (interval)
-                    {
-                        case DateTimeIntervals.Hourly:
-                            return (int)Math.Ceiling((endDate - startDate).TotalHours);
-                        case DateTimeIntervals.Shiftly:
-                            return (int)Math.Ceiling((endDate - startDate).TotalDays * SoheilConstants.ShiftPerDay);
-                        case DateTimeIntervals.Daily:
-                            return (int)Math.Ceiling((endDate - startDate).TotalDays);
-                        case DateTimeIntervals.Weekly:
-                            return (int)Math.Ceiling((endDate - startDate).TotalDays / 7);
-                        case DateTimeIntervals.Monthly:
-                            return 12;
-                        default:
-                            return 12;
-                    }
-
-                case 1:
-                    return 0;
-
-                case 2:
-                    return DataService.GetOperatorsCount();
-
-                default:
-                    return 0;
-            }
-        }
-
-        public void NavigateInside(object param)
+	    public void NavigateInside(object param)
         {
             OperatorBarInfo indexId;
             if (param is OperatorBarVm)

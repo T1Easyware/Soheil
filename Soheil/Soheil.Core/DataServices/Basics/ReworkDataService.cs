@@ -16,16 +16,12 @@ namespace Soheil.Core.DataServices
 		public event EventHandler<ModelAddedEventArgs<Rework>> ReworkAdded;
 		public event EventHandler<ModelAddedEventArgs<ProductRework>> ProductAdded;
 		public event EventHandler<ModelRemovedEventArgs> ProductRemoved;
-		Repository<Rework> _reworkRepository;
+	    readonly Repository<Rework> _reworkRepository;
 
-		public ReworkDataService()
-			:this(new SoheilEdmContext())
-		{
-		}
 		public ReworkDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_reworkRepository = new Repository<Rework>(context);
+			Context = context ?? new SoheilEdmContext();
+            _reworkRepository = new Repository<Rework>(Context);
 		}
 
 		#region IDataService<Rework> Members
@@ -45,7 +41,7 @@ namespace Soheil.Core.DataServices
 		{
 			int id;
 			_reworkRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (ReworkAdded != null)
 				ReworkAdded(this, new ModelAddedEventArgs<Rework>(model));
 			id = model.Id;
@@ -56,7 +52,7 @@ namespace Soheil.Core.DataServices
 		{
 			model.ModifiedBy = LoginInfo.Id;
 			model.ModifiedDate = DateTime.Now;
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void DeleteModel(Rework model)
@@ -110,7 +106,7 @@ namespace Soheil.Core.DataServices
 
 		public void AddProduct(int reworkId, int productId, string code, string name, int modifiedBy)
 		{
-			var productRepository = new Repository<Product>(context);
+			var productRepository = new Repository<Product>(Context);
 			Rework currentRework = _reworkRepository.Single(rework => rework.Id == reworkId);
 			Product newProduct = productRepository.Single(product => product.Id == productId);
 			if (currentRework.ProductReworks.Any(reworkProduct => reworkProduct.Rework.Id == reworkId && reworkProduct.Product.Id == productId))
@@ -119,13 +115,13 @@ namespace Soheil.Core.DataServices
 			}
 			var newProductRework = new ProductRework { Product = newProduct, Rework = currentRework, Code = code, Name = name, ModifiedBy = modifiedBy };
 			currentRework.ProductReworks.Add(newProductRework);
-			context.Commit();
+			Context.Commit();
 			ProductAdded(this, new ModelAddedEventArgs<ProductRework>(newProductRework));
 		}
 
 		public void RemoveProduct(int reworkId, int productId)
 		{
-			var reworkProductRepository = new Repository<ProductRework>(context);
+			var reworkProductRepository = new Repository<ProductRework>(Context);
             Rework currentRework = _reworkRepository.Single(rework => rework.Id == reworkId);
 			ProductRework currentReworkProduct =
 				currentRework.ProductReworks.First(
@@ -133,7 +129,7 @@ namespace Soheil.Core.DataServices
 					reworkProduct.Rework.Id == reworkId && reworkProduct.Id == productId);
 			int id = currentReworkProduct.Id;
 			reworkProductRepository.Delete(currentReworkProduct);
-			context.Commit();
+			Context.Commit();
 			ProductRemoved(this, new ModelRemovedEventArgs(id));
 
 		}

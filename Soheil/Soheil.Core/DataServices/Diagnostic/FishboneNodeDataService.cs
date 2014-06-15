@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Soheil.Common;
+using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
@@ -10,8 +11,20 @@ using Soheil.Model;
 
 namespace Soheil.Core.DataServices
 {
-    public class FishboneNodeDataService : IDataService<FishboneNode>
+    public class FishboneNodeDataService : DataServiceBase, IDataService<FishboneNode>
     {
+
+        private readonly Repository<ActionPlan> _actionPlanRepository;
+        private readonly Repository<FishboneNode_ActionPlan> _fishboneActionplanRepository;
+        private readonly Repository<FishboneNode> _fishboneRepository;
+
+        public FishboneNodeDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _actionPlanRepository = new Repository<ActionPlan>(context);
+            _fishboneActionplanRepository = new Repository<FishboneNode_ActionPlan>(context);
+            _fishboneRepository = new Repository<FishboneNode>(context);
+        }
         /// <summary>
         /// Gets a single view model.
         /// </summary>
@@ -19,7 +32,7 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public FishboneNode GetSingle(int id)
         {
-            throw new System.NotImplementedException();
+            return _fishboneRepository.Single(node => node.Id == id);
         }
 
         /// <summary>
@@ -28,14 +41,9 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public ObservableCollection<FishboneNode> GetAll()
         {
-            ObservableCollection<FishboneNode> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<FishboneNode>(context);
-                IEnumerable<FishboneNode> entityList = repository.GetAll("FishboneNode_ActionPlans", "Root", "Parent","Children");
-                models = new ObservableCollection<FishboneNode>(entityList);
-            }
-            return models;
+
+                IEnumerable<FishboneNode> entityList = _fishboneRepository.GetAll("FishboneNode_ActionPlans", "Root", "Parent","Children");
+                return new ObservableCollection<FishboneNode>(entityList);
         }
 
         /// <summary>
@@ -54,14 +62,9 @@ namespace Soheil.Core.DataServices
 
         public void UpdateModel(FishboneNode model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<FishboneNode>(context);
-                FishboneNode entity = repository.Single(actionPlanFishboneNode => actionPlanFishboneNode.Id == model.Id);
+                FishboneNode entity = _fishboneRepository.Single(actionPlanFishboneNode => actionPlanFishboneNode.Id == model.Id);
                 entity.Description = model.Description;
-                context.Commit();
-                if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<FishboneNode>(entity));
-            }
+                Context.Commit();
         }
 
         public void DeleteModel(FishboneNode model)
@@ -82,51 +85,35 @@ namespace Soheil.Core.DataServices
 
         public ObservableCollection<FishboneNode_ActionPlan> GetActionPlans(int fishboneId)
         {
-            ObservableCollection<FishboneNode_ActionPlan> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<FishboneNode>(context);
-                FishboneNode entity = repository.FirstOrDefault(fishbone => fishbone.Id == fishboneId, "FishboneNode_ActionPlans.FishboneNode", "FishboneNode_ActionPlans.ActionPlan");
-                models = new ObservableCollection<FishboneNode_ActionPlan>(entity.FishboneNode_ActionPlans.Where(item=>item.ActionPlan.Status ==(decimal)Status.Active));
-            }
-
-            return models;
+                FishboneNode entity = _fishboneRepository.FirstOrDefault(fishbone => fishbone.Id == fishboneId, "FishboneNode_ActionPlans.FishboneNode", "FishboneNode_ActionPlans.ActionPlan");
+                return new ObservableCollection<FishboneNode_ActionPlan>(entity.FishboneNode_ActionPlans.Where(item=>item.ActionPlan.Status ==(decimal)Status.Active));
         }
 
         public void AddActionPlan(int fishboneId, int actionPlanId)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var fishboneRepository = new Repository<FishboneNode>(context);
-                var actionPlanRepository = new Repository<ActionPlan>(context);
-                FishboneNode currentFishboneNode = fishboneRepository.Single(fishbone => fishbone.Id == fishboneId);
-                ActionPlan newActionPlan = actionPlanRepository.Single(actionPlan => actionPlan.Id == actionPlanId);
+                FishboneNode currentFishboneNode = _fishboneRepository.Single(fishbone => fishbone.Id == fishboneId);
+                ActionPlan newActionPlan = _actionPlanRepository.Single(actionPlan => actionPlan.Id == actionPlanId);
                 if (currentFishboneNode.FishboneNode_ActionPlans.Any(fishboneActionPlan => fishboneActionPlan.FishboneNode.Id == fishboneId && fishboneActionPlan.ActionPlan.Id == actionPlanId))
                 {
                     return;
                 }
                 var newActionPlanFishboneNode = new FishboneNode_ActionPlan { FishboneNode = currentFishboneNode, ActionPlan = newActionPlan };
                 currentFishboneNode.FishboneNode_ActionPlans.Add(newActionPlanFishboneNode);
-                context.Commit();
+                Context.Commit();
                 ActionPlanAdded(this, new ModelAddedEventArgs<FishboneNode_ActionPlan>(newActionPlanFishboneNode));
-            }
+            
         }
 
         public void RemoveActionPlan(int fishboneId, int actionPlanId)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var fishboneRepository = new Repository<FishboneNode>(context);
-                var fishboneActionPlanRepository = new Repository<FishboneNode_ActionPlan>(context);
-                FishboneNode currentFishboneNode = fishboneRepository.Single(fishbone => fishbone.Id == fishboneId);
+                FishboneNode currentFishboneNode = _fishboneRepository.Single(fishbone => fishbone.Id == fishboneId);
                 FishboneNode_ActionPlan currentFishboneNodeActionPlan =
                     currentFishboneNode.FishboneNode_ActionPlans.First(
                         fishboneActionPlan =>
                         fishboneActionPlan.FishboneNode.Id == fishboneId && fishboneActionPlan.ActionPlan.Id == actionPlanId);
-                fishboneActionPlanRepository.Delete(currentFishboneNodeActionPlan);
-                context.Commit();
+                _fishboneActionplanRepository.Delete(currentFishboneNodeActionPlan);
+                Context.Commit();
                 ActionPlanRemoved(this, new ModelRemovedEventArgs(actionPlanId));
-            }
         }
     }
 }

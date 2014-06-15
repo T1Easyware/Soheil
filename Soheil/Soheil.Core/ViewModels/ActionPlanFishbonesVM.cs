@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -17,12 +18,13 @@ namespace Soheil.Core.ViewModels
         public ActionPlanFishbonesVM(ActionPlanVM actionPlan, AccessType access)
             : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentActionPlan = actionPlan;
-            ActionPlanDataService = new ActionPlanDataService();
+            ActionPlanDataService = new ActionPlanDataService(UnitOfWork);
             ActionPlanDataService.FishboneNodeAdded += OnFishboneNodeAdded;
             ActionPlanDataService.FishboneNodeRemoved += OnFishboneNodeRemoved;
-            FishboneActionPlanDataService = new FishboneActionPlanDataService();
-            FishboneNodeDataService=new FishboneNodeDataService();
+            FishboneActionPlanDataService = new FishboneActionPlanDataService(UnitOfWork);
+            FishboneNodeDataService = new FishboneNodeDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<ActionPlanFishboneVM>();
             foreach (var fishboneNodeActionPlan in ActionPlanDataService.GetFishboneNodes(actionPlan.Id))
@@ -74,6 +76,10 @@ namespace Soheil.Core.ViewModels
             {
                 if (item.Id == e.Id)
                 {
+                    var model = FishboneNodeDataService.GetSingle(item.FishboneNodeId);
+                    var returnedVm = new FishboneNodeVM(model, Access, FishboneNodeDataService);
+                    AllItems.AddNewItem(returnedVm);
+                    AllItems.CommitNew();
                     SelectedItems.Remove(item);
                     break;
                 }

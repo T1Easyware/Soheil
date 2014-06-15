@@ -18,7 +18,7 @@ namespace Soheil.Core.DataServices
 		}
 		public ProductActivitySkillDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 		}
 
         #region IDataService<SpecialSkill> Members
@@ -27,7 +27,7 @@ namespace Soheil.Core.DataServices
         {
 			ProductActivitySkill entity;
 
-				var specialSkillRepository = new Repository<ProductActivitySkill>(context);
+				var specialSkillRepository = new Repository<ProductActivitySkill>(Context);
                 entity = specialSkillRepository.Single(specialSkill => specialSkill.Id == id);
 
             return entity;
@@ -37,7 +37,7 @@ namespace Soheil.Core.DataServices
         {
 			ObservableCollection<ProductActivitySkill> models;
 
-				var repository = new Repository<ProductActivitySkill>(context);
+				var repository = new Repository<ProductActivitySkill>(Context);
 				IEnumerable<ProductActivitySkill> entityList = repository.GetAll();
 				models = new ObservableCollection<ProductActivitySkill>(entityList);
 
@@ -68,14 +68,14 @@ namespace Soheil.Core.DataServices
 		public void UpdateModel(ProductActivitySkill model)
         {
 
-				var specialSkillRepository = new Repository<ProductActivitySkill>(context);
+				var specialSkillRepository = new Repository<ProductActivitySkill>(Context);
 				ProductActivitySkill entity = specialSkillRepository.Single(specialSkill => specialSkill.Id == model.Id);
 
                // entity.Reserve1 = model.Reserve1;
             //    entity.Reserve2 = model.Reserve2;
               //  entity.Reserve3 = model.Reserve3;
                 entity.ModifiedBy = LoginInfo.Id;
-                context.Commit();
+                Context.Commit();
 
         }
 
@@ -86,7 +86,7 @@ namespace Soheil.Core.DataServices
 		public void AttachModel(ProductActivitySkill model)
         {
 
-				var repository = new Repository<ProductActivitySkill>(context);
+				var repository = new Repository<ProductActivitySkill>(Context);
                 if (repository.Exists(specialSkill => specialSkill.Id == model.Id))
                 {
                     UpdateModel(model);
@@ -104,14 +104,14 @@ namespace Soheil.Core.DataServices
 
 		public ProductActivitySkill FindOrAdd(int productReworkId, int operatorId, int activityId)
 		{
-			var asModel = new ActivitySkillDataService(context).FindOrAdd(operatorId, activityId);
-			var pasRepository = new Repository<ProductActivitySkill>(context);
+			var asModel = new ActivitySkillDataService(Context).FindOrAdd(operatorId, activityId);
+			var pasRepository = new Repository<ProductActivitySkill>(Context);
 			var model = pasRepository.FirstOrDefault(x =>
 				x.ProductRework.Id == productReworkId
 				&& x.ActivitySkill.Id == asModel.Id, "ActivitySkill.Operator", "ActivitySkill.Activity");
 			if (model == null)
 			{
-				var prModel = new Repository<ProductRework>(context).Single(x => x.Id == productReworkId);
+				var prModel = new Repository<ProductRework>(Context).Single(x => x.Id == productReworkId);
 				model = new ProductActivitySkill
 				{
 					ActivitySkill = asModel,
@@ -121,7 +121,7 @@ namespace Soheil.Core.DataServices
 					ModifiedBy = LoginInfo.Id,
 					IluoNr = 0,
 				};
-				context.Commit();
+				Context.Commit();
 			}
 			return model;
 		}

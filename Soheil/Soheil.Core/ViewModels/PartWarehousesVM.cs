@@ -6,6 +6,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -77,8 +78,9 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            PartWarehouseGroupDataService = new PartWarehouseGroupDataService();
-            PartWarehouseDataService = new PartWarehouseDataService();
+            UnitOfWork = new SoheilEdmContext();
+            PartWarehouseGroupDataService = new PartWarehouseGroupDataService(UnitOfWork);
+            PartWarehouseDataService = new PartWarehouseDataService(UnitOfWork);
             PartWarehouseDataService.PartWarehouseAdded += OnPartWarehouseAdded;
             PartWarehouseGroupDataService.PartWarehouseGroupAdded += OnPartWarehouseGroupAdded;
 

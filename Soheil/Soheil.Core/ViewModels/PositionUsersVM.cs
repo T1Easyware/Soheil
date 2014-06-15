@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -16,11 +17,12 @@ namespace Soheil.Core.ViewModels
         public PositionUsersVM(PositionVM position, AccessType access)
             : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentPosition = position;
-            PositionDataService = new PositionDataService();
+            PositionDataService = new PositionDataService(UnitOfWork);
             PositionDataService.UserAdded += OnUserAdded;
             PositionDataService.UserRemoved += OnUserRemoved;
-            UserDataService = new UserDataService();
+            UserDataService = new UserDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<UserPositionVM>();
             foreach (var positionUser in PositionDataService.GetUsers(position.Id))

@@ -2,6 +2,7 @@ using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels

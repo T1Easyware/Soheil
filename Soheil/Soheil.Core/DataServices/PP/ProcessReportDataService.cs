@@ -19,7 +19,7 @@ namespace Soheil.Core.DataServices
 		}
 		public ProcessReportDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_processReportRepository = new Repository<ProcessReport>(context);
 		}
 
@@ -51,13 +51,13 @@ namespace Soheil.Core.DataServices
 
 		public void DeleteModel(ProcessReport model)
 		{
-			var processReportRepository = new Repository<ProcessReport>(context);
-			var processReportDataService = new ProcessReportDataService(context);
-			var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
-			var defectionReportRepository = new Repository<DefectionReport>(context);
-			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(context);
-			var stoppageReportRepository = new Repository<StoppageReport>(context);
-			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(context);
+			var processReportRepository = new Repository<ProcessReport>(Context);
+			var processReportDataService = new ProcessReportDataService(Context);
+			var operatorProcessReportRepository = new Repository<OperatorProcessReport>(Context);
+			var defectionReportRepository = new Repository<DefectionReport>(Context);
+			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(Context);
+			var stoppageReportRepository = new Repository<StoppageReport>(Context);
+			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(Context);
 			processReportDataService.ClearModel(
 				model,
 				processReportRepository,
@@ -66,11 +66,11 @@ namespace Soheil.Core.DataServices
 				operatorDefectionReportRepository,
 				stoppageReportRepository,
 				operatorStoppageReportRepository,
-				context);
+				Context);
 
 			model.Process.ProcessReports.Remove(model);
 			_processReportRepository.Delete(model);
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void AttachModel(ProcessReport model)
@@ -114,8 +114,8 @@ namespace Soheil.Core.DataServices
 		public void Save(ProcessReport model)
 		{
 			//correct Defections
-			var drRepo = new Repository<DefectionReport>(context);
-			var odrRepo = new Repository<OperatorDefectionReport>(context);
+			var drRepo = new Repository<DefectionReport>(Context);
+			var odrRepo = new Repository<OperatorDefectionReport>(Context);
 			foreach (var dr in model.DefectionReports.ToArray())
 			{
 				foreach (var odr in dr.OperatorDefectionReports.ToArray())
@@ -134,8 +134,8 @@ namespace Soheil.Core.DataServices
 			}
 
 			//correct Stoppages
-			var srRepo = new Repository<StoppageReport>(context);
-			var osrRepo = new Repository<OperatorStoppageReport>(context);
+			var srRepo = new Repository<StoppageReport>(Context);
+			var osrRepo = new Repository<OperatorStoppageReport>(Context);
 			foreach (var sr in model.StoppageReports.ToArray())
 			{
 				foreach (var osr in sr.OperatorStoppageReports.ToArray())
@@ -156,7 +156,7 @@ namespace Soheil.Core.DataServices
 			//correct G1
 			if (model.OperatorProcessReports.Any())
 				model.ProducedG1 = model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);
-			context.Commit();
+			Context.Commit();
 		}
 
 		/// <summary>

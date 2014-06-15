@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -15,13 +16,14 @@ namespace Soheil.Core.ViewModels
     {
         public OperatorActivitiesVM(OperatorVM opr, AccessType access) : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentOperator = opr;
-            OperatorDataService = new OperatorDataService();
+            OperatorDataService = new OperatorDataService(UnitOfWork);
             OperatorDataService.ActivityAdded += OnActivityAdded;
             OperatorDataService.ActivityRemoved += OnActivityRemoved;
-            ActivityDataService = new ActivityDataService();
-            ActivityOperatorDataService = new ActivitySkillDataService();
-            ActivityGroupDataService = new ActivityGroupDataService();
+            ActivityDataService = new ActivityDataService(UnitOfWork);
+            ActivityOperatorDataService = new ActivitySkillDataService(UnitOfWork);
+            ActivityGroupDataService = new ActivityGroupDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<ActivityOperatorVM>();
             foreach (var generalActivitySkill in OperatorDataService.GetActivities(opr.Id))

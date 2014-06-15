@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -17,13 +18,14 @@ namespace Soheil.Core.ViewModels
         public DefectionProductsVM(DefectionVM defection, AccessType access)
             : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentDefection = defection;
-            DefectionDataService = new DefectionDataService();
+            DefectionDataService = new DefectionDataService(UnitOfWork);
             DefectionDataService.ProductAdded += OnProductAdded;
             DefectionDataService.ProductRemoved += OnProductRemoved;
-            ProductDataService = new ProductDataService();
-            ProductGroupDataService = new ProductGroupDataService();
-            ProductDefectionDataService = new ProductDefectionDataService();
+            ProductDataService = new ProductDataService(UnitOfWork);
+            ProductGroupDataService = new ProductGroupDataService(UnitOfWork);
+            ProductDefectionDataService = new ProductDefectionDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<ProductDefectionVM>();
             foreach (var productDefection in DefectionDataService.GetProducts(defection.Id))

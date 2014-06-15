@@ -4,12 +4,12 @@ namespace Soheil.Core.Base
 {
     public abstract class DataServiceBase : IDisposable
     {
-		public SoheilEdmContext context { get; protected set; }
+		public SoheilEdmContext Context { get; protected set; }
 
 		public virtual void Dispose()
 		{
-			if (context != null)
-				context.Dispose();
+			if (Context != null)
+				Context.Dispose();
 		}
 
 		protected string getCloneName(string originalName)

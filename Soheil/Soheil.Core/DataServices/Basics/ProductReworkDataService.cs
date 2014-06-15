@@ -13,22 +13,17 @@ namespace Soheil.Core.DataServices
 	public class ProductReworkDataService : DataServiceBase, IDataService<ProductRework>
 	{
 		public event EventHandler<ModelAddedEventArgs<ProductRework>> ModelUpdated;
-		Repository<ProductRework> _productReworkRepository;
+	    readonly Repository<ProductRework> _productReworkRepository;
 
 		public IEnumerable<ProductRework> GetWhere(Expression<Func<ProductRework, bool>> where)
 		{
 			return new List<ProductRework>(_productReworkRepository.Find(where));
 		}
 
-		public ProductReworkDataService()
-			:this(new SoheilEdmContext())
-		{
-
-		}
 		public ProductReworkDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_productReworkRepository = new Repository<ProductRework>(context);
+			this.Context = context ?? new SoheilEdmContext();
+            _productReworkRepository = new Repository<ProductRework>(Context);
 		}
 
 		/// <summary>
@@ -71,7 +66,7 @@ namespace Soheil.Core.DataServices
 		public void UpdateModel(ProductRework model)
 		{
 			model.ModifiedBy = LoginInfo.Id;
-			context.Commit();
+			Context.Commit();
 			if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<ProductRework>(model));
 		}
 

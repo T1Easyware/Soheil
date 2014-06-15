@@ -11,6 +11,13 @@ namespace Soheil.Core.DataServices
 {
     public class OrganizationChartPositionDataService : RecursiveDataServiceBase, IDataService<OrganizationChart_Position>
     {
+        private readonly Repository<OrganizationChart_Position> _orgChatPositionRepository;
+        
+        public OrganizationChartPositionDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _orgChatPositionRepository = new Repository<OrganizationChart_Position>(context);
+        }
         /// <summary>
         /// Gets a single view model.
         /// </summary>
@@ -18,13 +25,7 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public OrganizationChart_Position GetSingle(int id)
         {
-            OrganizationChart_Position model;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<OrganizationChart_Position>(context);
-                model = repository.FirstOrDefault(orgChartPosition => orgChartPosition.Id == id);
-            }
-            return model;
+                return _orgChatPositionRepository.FirstOrDefault(orgChartPosition => orgChartPosition.Id == id);
         }
 
         /// <summary>
@@ -33,14 +34,8 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public ObservableCollection<OrganizationChart_Position> GetAll()
         {
-            var models = new ObservableCollection<OrganizationChart_Position>();
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<OrganizationChart_Position>(context);
-                IEnumerable<OrganizationChart_Position> entityList = repository.GetAll();
-                models = new ObservableCollection<OrganizationChart_Position>(entityList);
-            }
-            return models;
+                IEnumerable<OrganizationChart_Position> entityList = _orgChatPositionRepository.GetAll();
+                return new ObservableCollection<OrganizationChart_Position>(entityList);
         }
 
         /// <summary>

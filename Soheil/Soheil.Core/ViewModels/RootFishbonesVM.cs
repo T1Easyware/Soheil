@@ -9,6 +9,7 @@ using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
 using Soheil.Core.ViewModels.InfoViewModels;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -17,17 +18,18 @@ namespace Soheil.Core.ViewModels
     {
         public RootFishbonesVM(RootVM root, ProductDefectionVM productDefection, AccessType access) : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentRoot = root;
-            RootDataService = new RootDataService();
+            RootDataService = new RootDataService(UnitOfWork);
             RootDataService.FishboneAdded += OnFishboneNodeAdded;
             RootDataService.FishboneRemoved += OnFishboneNodeRemoved;
-            ProductDefectionDataService = new ProductDefectionDataService();
-            ProductDataService = new ProductDataService();
-            DefectionDataService = new DefectionDataService();
+            ProductDefectionDataService = new ProductDefectionDataService(UnitOfWork);
+            ProductDataService = new ProductDataService(UnitOfWork);
+            DefectionDataService = new DefectionDataService(UnitOfWork);
             SwitchItemsCommand = new Command(SetProductDefections);
             ViewProductDefectionsCommand = new Command(ViewProductDefections);
             InitializeFishboneCommand = new Command(InitializeFishbone);
-            FishboneNodeDataService = new FishboneNodeDataService();
+            FishboneNodeDataService = new FishboneNodeDataService(UnitOfWork);
 
             RootNode = new FishboneNodeVM(Access, FishboneNodeDataService) { Title = string.Empty, Id = -1, ParentId = -2 };
 

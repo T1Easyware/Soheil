@@ -7,6 +7,7 @@ using System.Windows.Data;
 using Soheil.Common;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 
 namespace Soheil.Core.Base
 {
@@ -137,6 +138,8 @@ namespace Soheil.Core.Base
         public abstract void CreateItems(object param);
 
         #endregion
+
+        public SoheilEdmContext UnitOfWork { get; set; }
     }
 
     public abstract class GridSplitViewModel : SplitViewModel, IGridSplitList

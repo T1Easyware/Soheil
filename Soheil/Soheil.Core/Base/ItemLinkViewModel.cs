@@ -3,6 +3,7 @@ using System.Windows.Data;
 using Soheil.Common;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 
 namespace Soheil.Core.Base
 {
@@ -22,6 +23,8 @@ namespace Soheil.Core.Base
             get { return (ListCollectionView)GetValue(AllItemsProperty); }
             set { SetValue(AllItemsProperty, value); }
         }
+
+
         public ListCollectionView SelectedItems
         {
             get { return (ListCollectionView)GetValue(SelectedItemsProperty); }
@@ -138,5 +141,7 @@ namespace Soheil.Core.Base
             ExcludeRangeCommand = new Command(ExcludeRange, CanExcludeRange);
             Access = access;
         }
+
+        public SoheilEdmContext UnitOfWork { get; set; }
     }
 }
