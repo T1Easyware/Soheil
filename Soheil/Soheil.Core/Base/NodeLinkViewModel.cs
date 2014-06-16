@@ -5,6 +5,7 @@ using Soheil.Common;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using System.Collections.Generic;
+using Soheil.Dal;
 
 namespace Soheil.Core.Base
 {
@@ -32,6 +33,7 @@ namespace Soheil.Core.Base
             get { return (ListCollectionView)GetValue(AllItemsProperty); }
             set { SetValue(AllItemsProperty, value); }
         }
+
 
         public abstract void Exclude(object param);
 
@@ -190,5 +192,7 @@ namespace Soheil.Core.Base
         {
             return "Root: "+ RootNode.Title +"-"+ RootNode.ChildNodes.Count +"Current: "+ CurrentNode.Title +"-"+ CurrentNode.ChildNodes.Count;
         }
+
+        public SoheilEdmContext UnitOfWork { get; set; }
     }
 }

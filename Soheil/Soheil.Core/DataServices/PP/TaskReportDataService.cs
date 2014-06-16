@@ -23,7 +23,7 @@ namespace Soheil.Core.DataServices
 		}
 		public TaskReportDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_taskReportRepository = new Repository<TaskReport>(context);
 			_taskRepository = new Repository<Task>(context);
 			_processRepository = new Repository<Process>(context);
@@ -64,7 +64,7 @@ namespace Soheil.Core.DataServices
 		{
 			model.Task.TaskReports.Remove(model);
 			_taskReportRepository.Delete(model);
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void AttachModel(TaskReport model)

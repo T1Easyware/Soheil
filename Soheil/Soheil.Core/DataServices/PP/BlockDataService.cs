@@ -19,7 +19,7 @@ namespace Soheil.Core.DataServices
 
 		public BlockDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_blockRepository = new Repository<Block>(context);
 			_nptRepository = new Repository<NonProductiveTask>(context);
 			_taskRepository = new Repository<Task>(context);
@@ -79,7 +79,7 @@ namespace Soheil.Core.DataServices
 
 		public void DeleteModel(Block model)
 		{
-			var taskDataService = new TaskDataService(context);
+			var taskDataService = new TaskDataService(Context);
 			var entity = _blockRepository.Single(x => x.Id == model.Id);
 			if (entity == null) return;
 
@@ -88,7 +88,7 @@ namespace Soheil.Core.DataServices
 				taskDataService.DeleteModel(task);
 			}
 			_blockRepository.Delete(entity);
-			context.Commit();
+			Context.Commit();
 		}
 		/// <summary>
 		/// Delete a block with all its reports. No questions asked!
@@ -96,9 +96,9 @@ namespace Soheil.Core.DataServices
 		/// <param name="model"></param>
 		public void DeleteModelRecursive(Block model)
 		{
-			var taskDataService = new TaskDataService(context);
-			var taskReportDataService = new TaskReportDataService(context);
-			var processReportDataService = new ProcessReportDataService(context);
+			var taskDataService = new TaskDataService(Context);
+			var taskReportDataService = new TaskReportDataService(Context);
+			var processReportDataService = new ProcessReportDataService(Context);
 			var entity = _blockRepository.Single(x => x.Id == model.Id);
 			if (entity == null) return;
 
@@ -107,7 +107,7 @@ namespace Soheil.Core.DataServices
 				taskDataService.DeleteModelRecursive(task);
 			}
 			_blockRepository.Delete(entity);
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void AttachModel(Block model)
@@ -242,7 +242,7 @@ namespace Soheil.Core.DataServices
 							new Repository<SelectedMachine>(context).Delete(sm);
 						}
 						task.Processes.Remove(process);
-						new Repository<Process>(context).Delete(process);
+						new Repository<Process>(Context).Delete(process);
 					}
 					else if (!process.StateStationActivity.IsMany)
 					{
@@ -258,7 +258,7 @@ namespace Soheil.Core.DataServices
 					}
 				}
 			}
-			context.Commit();
+			Context.Commit();
 		}
 
 		#region NPT
@@ -358,7 +358,7 @@ namespace Soheil.Core.DataServices
 		{
 			Changeover changeover = null;
 			
-			var changeoverRepository = new Repository<Changeover>(context);
+			var changeoverRepository = new Repository<Changeover>(Context);
 			changeover = changeoverRepository.FirstOrDefault(x =>
 				x.Station.Id == stationId
 				&& x.FromProductRework.Id == fromProductReworkId
@@ -367,13 +367,13 @@ namespace Soheil.Core.DataServices
 			{
 				changeover = new Changeover
 				{
-					Station = new Repository<Station>(context).Single(x => x.Id == stationId),
-					FromProductRework = new Repository<ProductRework>(context).Single(x => x.Id == stationId),
-					ToProductRework = new Repository<ProductRework>(context).Single(x => x.Id == stationId),
+					Station = new Repository<Station>(Context).Single(x => x.Id == stationId),
+					FromProductRework = new Repository<ProductRework>(Context).Single(x => x.Id == stationId),
+					ToProductRework = new Repository<ProductRework>(Context).Single(x => x.Id == stationId),
 					Seconds = 0
 				};
 				changeoverRepository.Add(changeover);
-				context.Commit();
+				Context.Commit();
 				/*if (result != null)
 				{
 					result.Errors.Add(new Pair<InsertSetupBeforeTaskErrors.ErrorSource, string, int>(
@@ -389,7 +389,7 @@ namespace Soheil.Core.DataServices
 		private Changeover findChangeover(Block block, Block previousBlock, InsertSetupBeforeBlockErrors result)
 		{
 			Changeover changeover = null;
-			var changeoverRepository = new Repository<Changeover>(context);
+			var changeoverRepository = new Repository<Changeover>(Context);
 			if (previousBlock != null)
 			{
 				changeover = changeoverRepository.FirstOrDefault(x =>
@@ -422,7 +422,7 @@ namespace Soheil.Core.DataServices
 		{
 			Warmup warmup = null;
 
-			var warmupRepository = new Repository<Warmup>(context);
+			var warmupRepository = new Repository<Warmup>(Context);
 			warmup = warmupRepository.FirstOrDefault(x =>
 				x.Station.Id == stationId
 				&& x.ProductRework.Id == productReworkId);
@@ -430,12 +430,12 @@ namespace Soheil.Core.DataServices
 			{
 				warmup = new Warmup
 				{
-					Station = new Repository<Station>(context).Single(x => x.Id == stationId),
-					ProductRework = new Repository<ProductRework>(context).Single(x => x.Id == productReworkId),
+					Station = new Repository<Station>(Context).Single(x => x.Id == stationId),
+					ProductRework = new Repository<ProductRework>(Context).Single(x => x.Id == productReworkId),
 					Seconds = 0
 				};
 				warmupRepository.Add(warmup);
-				context.Commit();
+				Context.Commit();
 				/*if (result != null)
 				{
 					result.Errors.Add(new Pair<InsertSetupBeforeTaskErrors.ErrorSource, string, int>(
@@ -450,7 +450,7 @@ namespace Soheil.Core.DataServices
 		}
 		private Warmup findWarmup(Block block, InsertSetupBeforeBlockErrors result)
 		{
-			var warmupRepository = new Repository<Warmup>(context);
+			var warmupRepository = new Repository<Warmup>(Context);
 			var warmup = warmupRepository.FirstOrDefault(x =>
 				x.Station.Id == block.StateStation.Station.Id
 				&& x.ProductRework.Id == block.StateStation.State.OnProductRework.Id);
@@ -537,7 +537,7 @@ namespace Soheil.Core.DataServices
 						"زمان کل برابر با صفر است، لذا راه اندازی افزوده نشد",
 						0));
 					result.IsSaved = needToDeletePreviousSetup;
-					if (needToDeletePreviousSetup) context.Commit();
+					if (needToDeletePreviousSetup) Context.Commit();
 					return result;
 				}
 				//prev is block
@@ -637,7 +637,7 @@ namespace Soheil.Core.DataServices
 					DurationSeconds = delaySeconds,
 					EndDateTime = setupStartDateTime.AddSeconds(delaySeconds),
 				});
-				context.Commit();
+				Context.Commit();
 				#endregion
 
 				result.IsSaved = true;

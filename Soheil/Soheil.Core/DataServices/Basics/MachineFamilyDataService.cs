@@ -13,19 +13,15 @@ namespace Soheil.Core.DataServices
     public class MachineFamilyDataService : DataServiceBase, IDataService<MachineFamily>
     {
 		public event EventHandler<ModelAddedEventArgs<MachineFamily>> MachineFamilyAdded;
-		Repository<MachineFamily> _machineFamilyRepository;
-		Repository<Machine> _machineRepository;
+        readonly Repository<MachineFamily> _machineFamilyRepository;
+        readonly Repository<Machine> _machineRepository;
 
-		public MachineFamilyDataService()
-			: this(new SoheilEdmContext())
-		{
-		}
 
 		public MachineFamilyDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_machineFamilyRepository = new Repository<MachineFamily>(context);
-			_machineRepository = new Repository<Machine>(context);
+			this.Context = context ?? new SoheilEdmContext();
+            _machineFamilyRepository = new Repository<MachineFamily>(Context);
+            _machineRepository = new Repository<Machine>(Context);
 		}
 
 
@@ -52,7 +48,7 @@ namespace Soheil.Core.DataServices
 		{
 			int id;
 			_machineFamilyRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (MachineFamilyAdded != null)
 				MachineFamilyAdded(this, new ModelAddedEventArgs<MachineFamily>(model));
 			id = model.Id;
@@ -68,7 +64,7 @@ namespace Soheil.Core.DataServices
 			entity.CreatedDate = model.CreatedDate;
 			entity.ModifiedBy = LoginInfo.Id;
 			entity.ModifiedDate = DateTime.Now;
-			context.Commit();
+			Context.Commit();
 		}
 
         public void DeleteModel(MachineFamily model)

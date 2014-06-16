@@ -35,7 +35,7 @@ namespace Soheil.Core.DataServices
 		}
 		public TaskDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_taskRepository = new Repository<Task>(context);
 			_taskReportRepository = new Repository<TaskReport>(context);
 			_nptRepository = new Repository<NonProductiveTask>(context);
@@ -68,7 +68,7 @@ namespace Soheil.Core.DataServices
 		public int AddModel(Task model)
 		{
 			_taskRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (TaskAdded != null)
 				TaskAdded(this, new ModelAddedEventArgs<Task>(model));
 			return model.Id;
@@ -122,7 +122,7 @@ namespace Soheil.Core.DataServices
 			}
 			model.Block.Tasks.Remove(model);
 			_taskRepository.Delete(model);
-			context.Commit();
+			Context.Commit();
 		}
 		public void DeleteModelRecursive(Task model)
 		{
@@ -136,7 +136,7 @@ namespace Soheil.Core.DataServices
 			}
 			model.Block.Tasks.Remove(model);
 			_taskRepository.Delete(model);
-			context.Commit();
+			Context.Commit();
 		}
 		//Recursive (sm & po)
 		/// <summary>
@@ -219,7 +219,7 @@ namespace Soheil.Core.DataServices
 
 		public ObservableCollection<TaskReport> GetTaskReports(int taskId)
 		{
-			var repository = new Repository<Task>(context);
+			var repository = new Repository<Task>(Context);
 			Task entity = repository.FirstOrDefault(x => x.Id == taskId);
 			return new ObservableCollection<TaskReport>(entity.TaskReports);
 		}
@@ -258,12 +258,12 @@ namespace Soheil.Core.DataServices
 
 		public StateStationActivity GetStateStationActivity(int ssaId)
 		{
-			return new Repository<StateStationActivity>(context).Single(x => x.Id == ssaId);
+			return new Repository<StateStationActivity>(Context).Single(x => x.Id == ssaId);
 		}
 
 		public StateStationActivityMachine GetStateStationActivityMachine(int ssamId)
 		{
-			return new Repository<StateStationActivityMachine>(context).Single(x => x.Id == ssamId);
+			return new Repository<StateStationActivityMachine>(Context).Single(x => x.Id == ssamId);
 		}
 
 

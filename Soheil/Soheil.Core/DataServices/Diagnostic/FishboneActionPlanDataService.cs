@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
@@ -7,9 +8,20 @@ using Soheil.Model;
 
 namespace Soheil.Core.DataServices
 {
-    public class FishboneActionPlanDataService : IDataService<FishboneNode_ActionPlan>
+    public class FishboneActionPlanDataService : DataServiceBase, IDataService<FishboneNode_ActionPlan>
     {
         public event EventHandler<ModelAddedEventArgs<FishboneNode_ActionPlan>> ModelUpdated;
+        private readonly Repository<FishboneNode_ActionPlan> _fishboneActionplanRepository;
+        public FishboneActionPlanDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _fishboneActionplanRepository = new Repository<FishboneNode_ActionPlan>(Context);
+        }
+        public FishboneActionPlanDataService()
+        {
+            Context = new SoheilEdmContext();
+            _fishboneActionplanRepository = new Repository<FishboneNode_ActionPlan>(Context);
+        }
         /// <summary>
         /// Gets a single view model.
         /// </summary>
@@ -45,14 +57,10 @@ namespace Soheil.Core.DataServices
 
         public void UpdateModel(FishboneNode_ActionPlan model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<FishboneNode_ActionPlan>(context);
-                FishboneNode_ActionPlan entity = repository.Single(productDefection => productDefection.Id == model.Id);
+                FishboneNode_ActionPlan entity = _fishboneActionplanRepository.Single(productDefection => productDefection.Id == model.Id);
 
-                context.Commit();
+                Context.Commit();
                 if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<FishboneNode_ActionPlan>(entity));
-            }
         }
 
         public void DeleteModel(FishboneNode_ActionPlan model)

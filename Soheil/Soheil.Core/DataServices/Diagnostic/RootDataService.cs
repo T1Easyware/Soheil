@@ -13,62 +13,46 @@ namespace Soheil.Core.DataServices
 {
     public class RootDataService : DataServiceBase, IDataService<Root>
     {
+        private readonly Repository<ProductDefection> _productDefectionRepository;
+        private readonly Repository<Root> _rootRepository;
+        private readonly Repository<FishboneNode> _fishboneRepository; 
+        public RootDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _fishboneRepository = new Repository<FishboneNode>(context);
+            _productDefectionRepository = new Repository<ProductDefection>(context);
+            _rootRepository = new Repository<Root>(context);
+        }
+
         #region IDataService<Root> Members
 
         public Root GetSingle(int id)
         {
-            Root entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var rootRepository = new Repository<Root>(context);
-                entity = rootRepository.Single(root => root.Id == id);
-            }
-            return entity;
+                return _rootRepository.Single(root => root.Id == id);
         }
 
         public ObservableCollection<Root> GetAll()
         {
-            ObservableCollection<Root> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Root>(context);
                 IEnumerable<Root> entityList =
-                    repository.Find(
+                    _rootRepository.Find(
                         root => root.Status != (decimal)Status.Deleted, "ProductDefection", "ProductDefection.Product", "ProductDefection.Defection");
-                models = new ObservableCollection<Root>(entityList);
-            }
-            return models;
+                return new ObservableCollection<Root>(entityList);
         }
 
         public int AddModel(Root model)
         {
-            int id;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Root>(context);
-                repository.Add(model);
-                context.Commit();
+                _rootRepository.Add(model);
+                Context.Commit();
                 if (RootAdded != null)
                     RootAdded(this, new ModelAddedEventArgs<Root>(model));
-                id = model.Id;
-            }
-            return id;
+                return model.Id;
         }
 
         public void UpdateModel(Root model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var rootRepository = new Repository<Root>(context);
-                Root entity = rootRepository.Single(root => root.Id == model.Id);
-
-                entity.Code = model.Code;
-                entity.Name = model.Name;
-                entity.CreatedDate = model.CreatedDate;
-                entity.ModifiedBy = LoginInfo.Id;
-                entity.ModifiedDate = DateTime.Now;
-                context.Commit();
-            }
+            model.ModifiedBy = LoginInfo.Id;
+            model.ModifiedDate = DateTime.Now;
+                Context.Commit();
         }
 
         public void DeleteModel(Root model)
@@ -77,10 +61,7 @@ namespace Soheil.Core.DataServices
 
         public void AttachModel(Root model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Root>(context);
-                if (repository.Exists(root => root.Id == model.Id))
+                if (_rootRepository.Exists(root => root.Id == model.Id))
                 {
                     UpdateModel(model);
                 }
@@ -88,7 +69,6 @@ namespace Soheil.Core.DataServices
                 {
                     AddModel(model);
                 }
-            }
         }
 
         #endregion
@@ -103,16 +83,10 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public ObservableCollection<Root> GetActives()
         {
-            ObservableCollection<Root> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Root>(context);
                 IEnumerable<Root> entityList =
-                    repository.Find(
+                    _rootRepository.Find(
                         root => root.Status == (decimal)Status.Active, "ProductDefection", "ProductDefection.Product", "ProductDefection.Defection");
-                models = new ObservableCollection<Root>(entityList);
-            }
-            return models;
+                return  new ObservableCollection<Root>(entityList);
         }
 
         /// <summary>
@@ -123,45 +97,28 @@ namespace Soheil.Core.DataServices
         {
             if (linkType == SoheilEntityType.ActionPlans)
             {
-                ObservableCollection<Root> models;
-                using (var context = new SoheilEdmContext())
-                {
-                    var repository = new Repository<Root>(context);
                     IEnumerable<Root> entityList =
-                        repository.Find(
+                        _rootRepository.Find(
                             root => root.Status == (decimal)Status.Active, "ProductDefection", "ProductDefection.Product", "ProductDefection.Defection");
-                    models = new ObservableCollection<Root>(entityList);
-                }
-                return models;
+                    return new ObservableCollection<Root>(entityList);
             }
             return GetActives();
         }
 
         public ObservableCollection<FishboneNode> GetFishboneNodes(int rootId)
         {
-            ObservableCollection<FishboneNode> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Root>(context);
-                Root entity = repository.FirstOrDefault(root => root.Id == rootId, "FishboneNodes.Children", "FishboneNodes.Parent");
-                models = new ObservableCollection<FishboneNode>(entity.FishboneNodes);
-            }
-
-            return models;
+                Root entity = _rootRepository.FirstOrDefault(root => root.Id == rootId, "FishboneNodes.Children", "FishboneNodes.Parent");
+                return new ObservableCollection<FishboneNode>(entity.FishboneNodes);
         }
 
         public void AddFishboneNode(int rootId, FishboneNodeType rootType, int parentId, string description, FishboneNodeType nodeType)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var rootRepository = new Repository<Root>(context);
-                var fishboneRepository = new Repository<FishboneNode>(context);
-                Root currentRoot = rootRepository.Single(root => root.Id == rootId);
+                Root currentRoot = _rootRepository.Single(root => root.Id == rootId);
                 //if (currentRoot.FishboneNodes.Any(rootDefection => rootDefection.Root.Id == rootId))
                 //{
                 //    return;
                 //}
-                var parent = fishboneRepository.FirstOrDefault(fishbone => fishbone.Id == parentId);
+                var parent = _fishboneRepository.FirstOrDefault(fishbone => fishbone.Id == parentId);
                 var newFishboneNode = new FishboneNode { 
                     Root = currentRoot, 
                     RootType = (byte) rootType,
@@ -170,19 +127,14 @@ namespace Soheil.Core.DataServices
                     Type = (byte) nodeType,
                     ModifiedDate = DateTime.Now};
                 currentRoot.FishboneNodes.Add(newFishboneNode);
-                context.Commit();
+                Context.Commit();
                 FishboneAdded(this, new ModelAddedEventArgs<FishboneNode>(newFishboneNode));
-            }
         }
 
         public void InitializeFishboneRoots(int rootId, int productDefectionId)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var rootRepository = new Repository<Root>(context);
-                var productDefectionRepository = new Repository<ProductDefection>(context);
-                Root currentRoot = rootRepository.Single(root => root.Id == rootId);
-                currentRoot.ProductDefection = productDefectionRepository.FirstOrDefault(entity => entity.Id == productDefectionId);
+                Root currentRoot = _rootRepository.Single(root => root.Id == rootId);
+                currentRoot.ProductDefection = _productDefectionRepository.FirstOrDefault(entity => entity.Id == productDefectionId);
 
                 if (currentRoot.FishboneNodes.Any(rootDefection => rootDefection.Root.Id == rootId))
                 {
@@ -256,23 +208,18 @@ namespace Soheil.Core.DataServices
                 };
                 rootNode.Children.Add(maintenanceNode);
 
-                context.Commit();
+                Context.Commit();
                 FishboneAdded(this, new ModelAddedEventArgs<FishboneNode>(rootNode));
-            }
+            
         }
 
         public void RemoveFishboneNode(int rootId, int fishboneId)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var rootRepository = new Repository<Root>(context);
-                var fishboneRepository = new Repository<FishboneNode>(context);
-                Root currentRoot = rootRepository.Single(root => root.Id == rootId);
+                Root currentRoot = _rootRepository.Single(root => root.Id == rootId);
                 FishboneNode currentFishbone = currentRoot.FishboneNodes.First(fishboneNode => fishboneNode.Id == fishboneId);
-                fishboneRepository.Delete(currentFishbone);
-                context.Commit();
+                _fishboneRepository.Delete(currentFishbone);
+                Context.Commit();
                 FishboneRemoved(this, new ModelRemovedEventArgs(fishboneId));
-            }
         }
     }
 }

@@ -109,7 +109,7 @@ namespace Soheil.Common
         public static string ConvertToHours(int seconds)
         {
             var time = new TimeSpan(0, 0, seconds);
-            return string.Format("{0:00}", time.Minutes > 30 ? time.TotalHours + 1 : time.TotalHours);
+            return string.Format("{0:0}", time.TotalHours);
         }
 	}
 	public abstract class BaseConverter : MarkupExtension

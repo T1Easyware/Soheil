@@ -867,7 +867,7 @@
   <data name="txtIncludeChecked" xml:space="preserve">
     <value>افزودن انتخاب شده ها</value>
   </data>
-  <data name="txtUncheckAll" xml:space="preserve">
+  <data name="txtUnCheckAll" xml:space="preserve">
     <value>انتخاب هیچ</value>
   </data>
   <data name="txtStart" xml:space="preserve">

@@ -16,7 +16,7 @@ namespace Soheil.Core.DataServices
 		public event EventHandler<ModelAddedEventArgs<Station>> StationAdded;
 		public event EventHandler<ModelAddedEventArgs<StationMachine>> MachineAdded;
 		public event EventHandler<ModelRemovedEventArgs> MachineRemoved;
-		Repository<Station> _stationRepository;
+        readonly Repository<Station> _stationRepository;
 
 		public StationDataService()
 			: this(new SoheilEdmContext())
@@ -25,7 +25,7 @@ namespace Soheil.Core.DataServices
 
 		public StationDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			Context = context;
 			_stationRepository = new Repository<Station>(context);
 		}
 
@@ -66,7 +66,7 @@ namespace Soheil.Core.DataServices
 		{
 			int id;
 			_stationRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (StationAdded != null)
 				StationAdded(this, new ModelAddedEventArgs<Station>(model));
 			id = model.Id;
@@ -83,7 +83,7 @@ namespace Soheil.Core.DataServices
 			entity.ModifiedBy = LoginInfo.Id;
 			entity.ModifiedDate = DateTime.Now;
 			entity.Status = model.Status;
-			context.Commit();
+			Context.Commit();
 		}
 
         public void DeleteModel(Station model)
@@ -117,7 +117,7 @@ namespace Soheil.Core.DataServices
 
 		public void AddMachine(int stationId, int machineId)
 		{
-			var machineRepository = new Repository<Machine>(context);
+			var machineRepository = new Repository<Machine>(Context);
 			Station currentStation = _stationRepository.Single(station => station.Id == stationId);
 			Machine newMachine = machineRepository.Single(machine => machine.Id == machineId);
 			if (currentStation.StationMachines.Any(stationMachine => stationMachine.Station.Id == stationId && stationMachine.Machine.Id == machineId))
@@ -126,13 +126,13 @@ namespace Soheil.Core.DataServices
 			}
 			var newStationMachine = new StationMachine { Machine = newMachine, Station = currentStation };
 			currentStation.StationMachines.Add(newStationMachine);
-			context.Commit();
+			Context.Commit();
 			MachineAdded(this, new ModelAddedEventArgs<StationMachine>(newStationMachine));
 		}
 
 		public void RemoveMachine(int stationId, int machineId)
 		{
-			var stationMachineRepository = new Repository<StationMachine>(context);
+			var stationMachineRepository = new Repository<StationMachine>(Context);
 			Station currentStation = _stationRepository.Single(station => station.Id == stationId);
 			StationMachine currentStationMachine =
 				currentStation.StationMachines.First(
@@ -140,7 +140,7 @@ namespace Soheil.Core.DataServices
 					stationMachine.Station.Id == stationId && stationMachine.Id == machineId);
 			int id = currentStationMachine.Id;
 			stationMachineRepository.Delete(currentStationMachine);
-			context.Commit();
+			Context.Commit();
 			MachineRemoved(this, new ModelRemovedEventArgs(id));
 		}
 

@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -16,11 +17,12 @@ namespace Soheil.Core.ViewModels
         public AccessRuleUsersVM(AccessRuleVM accessRule, AccessType access)
             : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentAccessRule = accessRule;
-            AccessRuleDataService = new AccessRuleDataService();
+            AccessRuleDataService = new AccessRuleDataService(UnitOfWork);
             AccessRuleDataService.UserAdded += OnUserAdded;
             AccessRuleDataService.UserRemoved += OnUserRemoved;
-            UserDataService = new UserDataService();
+            UserDataService = new UserDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<UserAccessRuleVM>();
             foreach (var accessRuleUser in AccessRuleDataService.GetUsers(accessRule.Id))

@@ -5,6 +5,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -61,7 +62,8 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            AccessRuleDataService = new AccessRuleDataService();
+            UnitOfWork = new SoheilEdmContext();
+            AccessRuleDataService = new AccessRuleDataService(UnitOfWork);
             AccessRuleDataService.AccessRuleAdded += OnAccessRuleAdded;
 
             AddCommand = new Command(Add, CanAdd);RefreshCommand = new Command(CreateItems);

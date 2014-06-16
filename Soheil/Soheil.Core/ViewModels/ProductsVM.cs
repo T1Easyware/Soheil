@@ -6,6 +6,8 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
+using Soheil.Dal.Interfaces;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -13,7 +15,6 @@ namespace Soheil.Core.ViewModels
     public class ProductsVM : GridSplitViewModel
     {
         #region Properties
-
         public override void CreateItems(object param)
         {
             var groupViewModels = new ObservableCollection<ProductGroupVM>();
@@ -69,8 +70,9 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            ProductGroupDataService = new ProductGroupDataService();
-            ProductDataService = new ProductDataService();
+            UnitOfWork = new SoheilEdmContext();
+            ProductGroupDataService = new ProductGroupDataService(UnitOfWork);
+            ProductDataService = new ProductDataService(UnitOfWork);
             ProductDataService.ProductAdded += OnProductAdded;
             ProductGroupDataService.ProductGroupAdded += OnProductGroupAdded;
 

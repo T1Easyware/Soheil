@@ -18,59 +18,31 @@ namespace Soheil.Core.DataServices
 
         public Defection GetSingle(int id)
         {
-            Defection entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var defectionRepository = new Repository<Defection>(context);
-                entity = defectionRepository.Single(defection => defection.Id == id);
-            }
-            return entity;
+                return _defectionRepository.Single(defection => defection.Id == id);
         }
 
         public ObservableCollection<Defection> GetAll()
         {
-            ObservableCollection<Defection> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Defection>(context);
                 IEnumerable<Defection> entityList =
-                    repository.Find(
+                    _defectionRepository.Find(
                         defection => defection.Status != (decimal)Status.Deleted);
-                models = new ObservableCollection<Defection>(entityList);
-            }
-            return models;
+                return new ObservableCollection<Defection>(entityList);
         }
 
         public int AddModel(Defection model)
         {
-            int id;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Defection>(context);
-                repository.Add(model);
-                context.Commit();
+                _defectionRepository.Add(model);
+                Context.Commit();
                 if (DefectionAdded != null)
                     DefectionAdded(this, new ModelAddedEventArgs<Defection>(model));
-                id = model.Id;
-            }
-            return id;
+                return model.Id;
         }
 
         public void UpdateModel(Defection model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var defectionRepository = new Repository<Defection>(context);
-                Defection entity = defectionRepository.Single(defection => defection.Id == model.Id);
-
-                entity.Code = model.Code;
-				entity.Name = model.Name;
-                entity.CreatedDate = model.CreatedDate;
-                entity.ModifiedBy = LoginInfo.Id;
-                entity.ModifiedDate = DateTime.Now;
-                entity.Status = model.Status;
-                context.Commit();
-            }
+            model.ModifiedBy = LoginInfo.Id;
+            model.ModifiedDate = DateTime.Now;
+                Context.Commit();
         }
 
         public void DeleteModel(Defection model)
@@ -79,10 +51,7 @@ namespace Soheil.Core.DataServices
 
         public void AttachModel(Defection model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Defection>(context);
-                if (repository.Exists(defection => defection.Id == model.Id))
+                if (_defectionRepository.Exists(defection => defection.Id == model.Id))
                 {
                     UpdateModel(model);
                 }
@@ -90,7 +59,6 @@ namespace Soheil.Core.DataServices
                 {
                     AddModel(model);
                 }
-            }
         }
 
         #endregion
@@ -99,22 +67,26 @@ namespace Soheil.Core.DataServices
         public event EventHandler<ModelAddedEventArgs<ProductDefection>> ProductAdded;
         public event EventHandler<ModelRemovedEventArgs> ProductRemoved;
 
+        private readonly Repository<Defection> _defectionRepository;
+        private readonly Repository<ProductDefection> _defectionProductRepository;
+        private readonly Repository<Product> _productRepository; 
+        public DefectionDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _defectionRepository = new Repository<Defection>(context);
+            _productRepository = new Repository<Product>(context);
+            _defectionProductRepository = new Repository<ProductDefection>(context);
+        }
         /// <summary>
         /// Gets all active products as view models.
         /// </summary>
         /// <returns></returns>
         public ObservableCollection<Defection> GetActives()
         {
-            ObservableCollection<Defection> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Defection>(context);
                 IEnumerable<Defection> entityList =
-                    repository.Find(
+                    _defectionRepository.Find(
                         defection => defection.Status == (decimal) Status.Active);
-                models = new ObservableCollection<Defection>(entityList);
-            }
-            return models;
+                return new ObservableCollection<Defection>(entityList);
         }
 
         /// <summary>
@@ -125,68 +97,48 @@ namespace Soheil.Core.DataServices
         {
             if (linkType == SoheilEntityType.Products)
             {
-                ObservableCollection<Defection> models;
-                using (var context = new SoheilEdmContext())
-                {
-                    var repository = new Repository<Defection>(context);
                     IEnumerable<Defection> entityList =
-                        repository.Find(
+                        _defectionRepository.Find(
                             defection => (defection.Status == (decimal)Status.Active) && defection.ProductDefections.All(item=> item.Product.Id != linkId));
-                    models = new ObservableCollection<Defection>(entityList);
-                }
-                return models;
+                    return new ObservableCollection<Defection>(entityList);
             }
             return GetActives();
         }
 
         public ObservableCollection<ProductDefection> GetProducts(int defectionId)
         {
-            ObservableCollection<ProductDefection> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Defection>(context);
-                Defection entity = repository.FirstOrDefault(defection => defection.Id == defectionId, "ProductDefections.Defection", "ProductDefections.Product");
-                models = new ObservableCollection<ProductDefection>(entity.ProductDefections.Where(item=>item.Product.Status == (decimal)Status.Active));
-            }
-
-            return models;
+                Defection entity = _defectionRepository.FirstOrDefault(defection => defection.Id == defectionId, "ProductDefections.Defection", "ProductDefections.Product");
+                return new ObservableCollection<ProductDefection>(entity.ProductDefections.Where(item=>item.Product.Status == (decimal)Status.Active));
         }
 
         public void AddProduct(int defectionId, int productId)
         {
-            using (var context = new SoheilEdmContext())
+            Defection currentDefection = _defectionRepository.Single(defection => defection.Id == defectionId);
+            Product newProduct = _productRepository.Single(product => product.Id == productId);
+            if (
+                currentDefection.ProductDefections.Any(
+                    defectionProduct =>
+                        defectionProduct.Defection.Id == defectionId && defectionProduct.Product.Id == productId))
             {
-                var defectionRepository = new Repository<Defection>(context);
-                var productRepository = new Repository<Product>(context);
-                Defection currentDefection = defectionRepository.Single(defection => defection.Id == defectionId);
-                Product newProduct = productRepository.Single(product => product.Id == productId);
-                if (currentDefection.ProductDefections.Any(defectionProduct => defectionProduct.Defection.Id == defectionId && defectionProduct.Product.Id == productId))
-                {
-                    return;
-                }
-                var newProductDefection = new ProductDefection { Defection = currentDefection, Product = newProduct };
-                currentDefection.ProductDefections.Add(newProductDefection);
-                context.Commit();
-                ProductAdded(this, new ModelAddedEventArgs<ProductDefection>(newProductDefection));
+                return;
             }
+            var newProductDefection = new ProductDefection {Defection = currentDefection, Product = newProduct};
+            currentDefection.ProductDefections.Add(newProductDefection);
+            Context.Commit();
+            ProductAdded(this, new ModelAddedEventArgs<ProductDefection>(newProductDefection));
         }
 
         public void RemoveProduct(int defectionId, int productId)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var defectionRepository = new Repository<Defection>(context);
-                var defectionProductRepository = new Repository<ProductDefection>(context);
-                Defection currentDefection = defectionRepository.Single(defection => defection.Id == defectionId);
+                Defection currentDefection = _defectionRepository.Single(defection => defection.Id == defectionId);
                 ProductDefection currentDefectionProduct =
                     currentDefection.ProductDefections.First(
                         defectionProduct =>
                         defectionProduct.Defection.Id == defectionId && defectionProduct.Id == productId);
                 int id = currentDefectionProduct.Id;
-                defectionProductRepository.Delete(currentDefectionProduct);
-                context.Commit();
+                _defectionProductRepository.Delete(currentDefectionProduct);
+                Context.Commit();
                 ProductRemoved(this, new ModelRemovedEventArgs(id));
-            }
         }
     }
 }

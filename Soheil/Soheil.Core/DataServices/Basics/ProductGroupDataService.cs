@@ -14,19 +14,15 @@ namespace Soheil.Core.DataServices
 	public class ProductGroupDataService : DataServiceBase, IDataService<ProductGroup>
 	{
 		public event EventHandler<ModelAddedEventArgs<ProductGroup>> ProductGroupAdded;
-		Repository<ProductGroup> _productGroupRepository;
+	    readonly Repository<ProductGroup> _productGroupRepository;
 
-		public ProductGroupDataService()
-			: this(new SoheilEdmContext())
-		{
-		}
 		public ProductGroupDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_productGroupRepository = new Repository<ProductGroup>(context);
+		    this.Context = context ?? new SoheilEdmContext();
+            _productGroupRepository = new Repository<ProductGroup>(Context);
 		}
 
-		#region IDataService<ProductGroup> Members
+	    #region IDataService<ProductGroup> Members
 
 		public ProductGroup GetSingle(int id)
 		{
@@ -57,8 +53,8 @@ namespace Soheil.Core.DataServices
 		public IEnumerable<ProductGroup> GetActivesRecursive(int stationId)
 		{
 			List<ProductGroup> pgCopies = new List<ProductGroup>();
-			var repository = new Repository<Product>(context);
-			var station = new Repository<Station>(context).Single(x => x.Id == stationId);
+			var repository = new Repository<Product>(Context);
+			var station = new Repository<Station>(Context).Single(x => x.Id == stationId);
 			var allProducts = repository.Find(
 				x => x.Status == (byte)Status.Active,
 				"ProductGroup",
@@ -146,7 +142,7 @@ namespace Soheil.Core.DataServices
 		{
 			int id;
 			_productGroupRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (ProductGroupAdded != null)
 				ProductGroupAdded(this, new ModelAddedEventArgs<ProductGroup>(model));
 			id = model.Id;
@@ -157,7 +153,7 @@ namespace Soheil.Core.DataServices
 		{
 			model.ModifiedBy = LoginInfo.Id;
 			model.ModifiedDate = DateTime.Now;
-			context.Commit();
+			Context.Commit();
 		}
 
 		public void DeleteModel(ProductGroup model)

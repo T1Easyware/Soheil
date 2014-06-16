@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -17,12 +18,13 @@ namespace Soheil.Core.ViewModels
         public ProductReworksVM(ProductVM product, AccessType access)
             : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentProduct = product;
-            ProductDataService = new ProductDataService();
+            ProductDataService = new ProductDataService(UnitOfWork);
             ProductDataService.ReworkAdded += OnReworkAdded;
             ProductDataService.ReworkRemoved += OnReworkRemoved;
-            ReworkDataService = new ReworkDataService();
-            ProductReworkDataService = new ProductReworkDataService();
+            ReworkDataService = new ReworkDataService(UnitOfWork);
+            ProductReworkDataService = new ProductReworkDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<ProductReworkVM>();
             foreach (var productRework in ProductDataService.GetReworks(product.Id))

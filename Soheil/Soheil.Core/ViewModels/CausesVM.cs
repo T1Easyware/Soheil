@@ -5,6 +5,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -62,7 +63,8 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            CauseDataService = new CauseDataService();
+            UnitOfWork = new SoheilEdmContext();
+            CauseDataService = new CauseDataService(UnitOfWork);
             CauseDataService.CauseAdded += OnCauseAdded;
             CauseDataService.CauseUpdated += OnCauseUpdated;
 

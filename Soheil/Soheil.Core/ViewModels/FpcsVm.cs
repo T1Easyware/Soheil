@@ -8,6 +8,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -80,9 +81,10 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
+            UnitOfWork = new SoheilEdmContext();
 			FpcDataService = new FPCDataService();
-			ProductDataService = new ProductDataService();
-			ProductGroupDataService = new ProductGroupDataService();
+            ProductDataService = new ProductDataService(UnitOfWork);
+            ProductGroupDataService = new ProductGroupDataService(UnitOfWork);
 			FpcDataService.FpcAdded += OnFpcAdded;
 
             ColumnHeaders = new List<ColumnInfo> 

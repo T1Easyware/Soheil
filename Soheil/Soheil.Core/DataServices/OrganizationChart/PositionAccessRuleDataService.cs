@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
@@ -7,8 +8,14 @@ using Soheil.Model;
 
 namespace Soheil.Core.DataServices
 {
-    public class PositionAccessRuleDataService : IDataService<Position_AccessRule>
+    public class PositionAccessRuleDataService : DataServiceBase, IDataService<Position_AccessRule>
     {
+        private readonly Repository<Position_AccessRule> _positionAccessRepository; 
+        public PositionAccessRuleDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _positionAccessRepository = new Repository<Position_AccessRule>(context);
+        }
         public event EventHandler<ModelAddedEventArgs<Position_AccessRule>> ModelUpdated;
         /// <summary>
         /// Gets a single view model.
@@ -17,13 +24,7 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public Position_AccessRule GetSingle(int id)
         {
-            Position_AccessRule entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Position_AccessRule>(context);
-                entity = repository.Single(positionAccessRule => positionAccessRule.Id == id);
-            }
-            return entity;
+                return _positionAccessRepository.Single(positionAccessRule => positionAccessRule.Id == id);
         }
 
         /// <summary>
@@ -34,13 +35,7 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public Position_AccessRule GetSingle(int positionId, int accessRuleId)
         {
-            Position_AccessRule entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Position_AccessRule>(context);
-                entity = repository.FirstOrDefault(positionAccessRule => positionAccessRule.Position.Id == positionId && positionAccessRule.AccessRule.Id == accessRuleId, "Position","AccessRule", "AccessRule.Parent");
-            }
-            return entity;
+                return _positionAccessRepository.FirstOrDefault(positionAccessRule => positionAccessRule.Position.Id == positionId && positionAccessRule.AccessRule.Id == accessRuleId, "Position","AccessRule", "AccessRule.Parent");
         }
 
         /// <summary>
@@ -68,14 +63,10 @@ namespace Soheil.Core.DataServices
 
         public void UpdateModel(Position_AccessRule model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<Position_AccessRule>(context);
-                Position_AccessRule entity = repository.Single(positionAccessRule => positionAccessRule.Id == model.Id);
+                Position_AccessRule entity = _positionAccessRepository.Single(positionAccessRule => positionAccessRule.Id == model.Id);
 
-                context.Commit();
+                Context.Commit();
                 if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<Position_AccessRule>(entity));
-            }
         }
 
         public void DeleteModel(Position_AccessRule model)

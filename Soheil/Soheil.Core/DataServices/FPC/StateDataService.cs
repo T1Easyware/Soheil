@@ -25,7 +25,7 @@ namespace Soheil.Core.DataServices
 		}
 		public StateDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_stateRepository = new Repository<State>(context);
 			_stateStationRepository = new Repository<StateStation>(context);
 			_stateStationActivityRepository = new Repository<StateStationActivity>(context);
@@ -98,7 +98,7 @@ namespace Soheil.Core.DataServices
 		public int AddModel(State model)
 		{
 			_stateRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			return model.Id;
 		}
 
@@ -106,7 +106,7 @@ namespace Soheil.Core.DataServices
 		{
 			if (model.Name == null) model.Name = "";
 			if (model.Code == null) model.Code = "";
-			context.Commit();
+			Context.Commit();
 		}
 
 		/// <summary>
@@ -132,7 +132,7 @@ namespace Soheil.Core.DataServices
 				_stateStationRepository.Delete(ss);
 			}
 			//Delete connectors
-			Repository<Connector> connectorRepository = new Repository<Connector>(context);
+			Repository<Connector> connectorRepository = new Repository<Connector>(Context);
 			var connectors = connectorRepository.Find(x => x.StartState.Id == model.Id || x.EndState.Id == model.Id).ToArray();
 			foreach (var connector in connectors)
 			{
@@ -141,7 +141,7 @@ namespace Soheil.Core.DataServices
 			//Delete State
 			model.FPC.States.Remove(model);
 			_stateRepository.Delete(model);
-			context.Commit();
+			Context.Commit();
 		}
 
 		/// <summary>

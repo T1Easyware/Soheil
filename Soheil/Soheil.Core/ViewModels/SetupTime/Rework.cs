@@ -101,7 +101,7 @@ namespace Soheil.Core.ViewModels.SetupTime
 		public static Rework InvalidMainProduct(Product product, bool isRowHeader)
 		{
 			Rework rework = new Rework();
-			rework.ProductReworkId = new DataServices.ProductReworkDataService().GetMainForProduct(product.Id).Id;
+			rework.ProductReworkId = new DataServices.ProductReworkDataService(null).GetMainForProduct(product.Id).Id;
 			rework.ReworkId = -1;
 			rework.CellType = isRowHeader ? CellType.ProductRowHeaderCell : CellType.ProductColumnHeaderCell;
 			rework.IsRework = false;

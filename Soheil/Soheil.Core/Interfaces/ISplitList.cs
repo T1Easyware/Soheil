@@ -5,7 +5,7 @@ using Soheil.Core.Commands;
 
 namespace Soheil.Core.Interfaces
 {
-    public interface ISplitList
+    public interface ISplitList: IEntityCollection
     {
         Command AddCommand { get; set; }
         Command AddGroupCommand { get; set; }

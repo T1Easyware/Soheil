@@ -23,7 +23,7 @@ namespace Soheil.Core.DataServices
 		}
 		public HolidayDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_holidayRepository = new Repository<Holiday>(context);
 		}
 
@@ -54,7 +54,7 @@ namespace Soheil.Core.DataServices
            // model.ModifiedDate = DateTime.Now;
            // model.CreatedDate = DateTime.Now;
             _holidayRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 
             HolidayAdded(this, new ModelAddedEventArgs<Holiday>(model));
 			return model.Id;
@@ -64,13 +64,13 @@ namespace Soheil.Core.DataServices
 		{
            // model.ModifiedBy = LoginInfo.Id;
            // model.ModifiedDate = DateTime.Now;
-			context.Commit();
+			Context.Commit();
 		}
 
         public void DeleteModel(Holiday model)
 		{
             _holidayRepository.Delete(model);
-			context.Commit();
+			Context.Commit();
 		}
 
         public void AttachModel(Holiday model)
@@ -87,13 +87,13 @@ namespace Soheil.Core.DataServices
 		{
             var model = _holidayRepository.Single(x => x.Id == id);
 			var clone = cloneModel(model);
-			context.Commit();
+			Context.Commit();
 			return clone;
 		}
 		public /*override*/ Holiday Clone(Holiday model)
         {
 			var clone = cloneModel(model);
-			context.Commit();
+			Context.Commit();
 			return clone;
         }
 		/*

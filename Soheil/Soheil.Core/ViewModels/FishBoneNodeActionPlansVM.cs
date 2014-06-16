@@ -7,6 +7,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -17,11 +18,12 @@ namespace Soheil.Core.ViewModels
         public FishboneNodeActionPlansVM(FishboneNodeVM defection, AccessType access)
             : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentFishboneNode = defection;
-            FishboneNodeDataService = new FishboneNodeDataService();
+            FishboneNodeDataService = new FishboneNodeDataService(UnitOfWork);
             FishboneNodeDataService.ActionPlanAdded += OnActionPlanAdded;
             FishboneNodeDataService.ActionPlanRemoved += OnActionPlanRemoved;
-            ActionPlanDataService = new ActionPlanDataService();
+            ActionPlanDataService = new ActionPlanDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<ActionPlanFishboneVM>();
             foreach (var productFishboneNode in FishboneNodeDataService.GetActionPlans(defection.Id))

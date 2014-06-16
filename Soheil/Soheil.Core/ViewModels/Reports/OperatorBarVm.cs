@@ -54,6 +54,12 @@ namespace Soheil.Core.ViewModels.Reports
             set { SetValue(StoppageValueProperty, value); }
         }
 
+	    public double RemainingValue
+	    {
+	        get { return Value - (ProductionValue + StoppageValue + DefectionValue); }
+	    }
+
+
 	    public static readonly DependencyProperty TipProperty =
             DependencyProperty.Register("Tip", typeof(string), typeof(OperatorBarVm), new PropertyMetadata(default(string)));
 

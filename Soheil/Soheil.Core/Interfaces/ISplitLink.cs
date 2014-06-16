@@ -9,7 +9,7 @@ namespace Soheil.Core.Interfaces
         Visibility LinkVisibility { get; set; }
     }
 
-    public interface ISplitCollectionLink : ISplitLink, IEntityCollection
+    public interface ISplitCollectionLink : ISplitLink, IEntityRelationCollection
     {
         ISplitDetail Details { get; set; }
         Command ViewDetailsCommand { get; set; }
@@ -17,10 +17,10 @@ namespace Soheil.Core.Interfaces
         bool CanViewDetails();
 
     }
-    public interface ISplitItemCollectionLink : ISplitCollectionLink, IEntityItemCollection
+    public interface ISplitItemCollectionLink : ISplitCollectionLink, IEntityItemRelationCollection
     {
     }
-    public interface ISplitNodeCollectionLink : ISplitCollectionLink, IEntityNodeCollection
+    public interface ISplitNodeCollectionLink : ISplitCollectionLink, IEntityNodeRelationCollection
     {
     }
 

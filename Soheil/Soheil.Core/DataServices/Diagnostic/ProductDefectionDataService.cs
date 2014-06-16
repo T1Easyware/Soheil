@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Soheil.Common;
+using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
@@ -10,9 +11,21 @@ using Soheil.Model;
 
 namespace Soheil.Core.DataServices
 {
-    public class ProductDefectionDataService : IDataService<ProductDefection>
+    public class ProductDefectionDataService :DataServiceBase, IDataService<ProductDefection>
     {
         public event EventHandler<ModelAddedEventArgs<ProductDefection>> ModelUpdated;
+        private readonly Repository<ProductDefection> _productDefectionRepository;
+
+        public ProductDefectionDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _productDefectionRepository = new Repository<ProductDefection>(context);
+        }
+        public ProductDefectionDataService()
+        {
+            Context = new SoheilEdmContext();
+            _productDefectionRepository = new Repository<ProductDefection>(Context);
+        }
         /// <summary>
         /// Gets a single view model.
         /// </summary>
@@ -20,13 +33,7 @@ namespace Soheil.Core.DataServices
         /// <returns></returns>
         public ProductDefection GetSingle(int id)
         {
-            ProductDefection entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<ProductDefection>(context);
-                entity = repository.Single(productDefection => productDefection.Id == id);
-            }
-            return entity;
+               return _productDefectionRepository.Single(productDefection => productDefection.Id == id);
         }
 
         /// <summary>
@@ -54,14 +61,8 @@ namespace Soheil.Core.DataServices
 
         public void UpdateModel(ProductDefection model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<ProductDefection>(context);
-                ProductDefection entity = repository.Single(productDefection => productDefection.Id == model.Id);
-
-                context.Commit();
-                if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<ProductDefection>(entity));
-            }
+            Context.Commit();
+            if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<ProductDefection>(model));
         }
 
         public void DeleteModel(ProductDefection model)
@@ -76,15 +77,9 @@ namespace Soheil.Core.DataServices
 
 		public ProductDefection[] GetActivesForProduct(int productId)
 		{
-			ProductDefection[] models;
-			using (var context = new SoheilEdmContext())
-			{
-				var repository = new Repository<ProductDefection>(context);
-				models = repository.Find(
+				return _productDefectionRepository.Find(
 					x => x.Product.Id == productId && x.Defection.Status == (byte)Status.Active,
 					"Defection").ToArray();
-			}
-			return models;
 		}
 	}
 }

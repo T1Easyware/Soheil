@@ -2293,9 +2293,11 @@
                         </GradientStopCollection>
                     </GradientBrush.GradientStops>
                 </LinearGradientBrush>
+                <SolidColorBrush x:Key="l0Brush" Color="#B6B6B6"/>
                 <SolidColorBrush x:Key="l1Brush" Color="#0091B0"/>
                 <SolidColorBrush x:Key="l2Brush" Color="#D95A00"/>
                 <SolidColorBrush x:Key="l3Brush" Color="#AC0404"/>
+                <SolidColorBrush x:Key="e0Brush" Color="LightGray"/>
                 <SolidColorBrush x:Key="e1Brush" Color="#2DBAD8"/>
                 <SolidColorBrush x:Key="e2Brush" Color="#F47F2D"/>
                 <SolidColorBrush x:Key="e3Brush" Color="#D41D1D"/>
@@ -2549,16 +2551,19 @@
                                                                                 <RowDefinition Height="*"/>
                                                                                 <RowDefinition Height="*"/>
                                                                                 <RowDefinition Height="*"/>
+                                                                                <RowDefinition Height="*"/>
                                                                             </Grid.RowDefinitions>
+                                                                            <Rectangle x:Name="Color0" Height="{Binding RemainingValue}" Fill="{StaticResource l0Brush}" Grid.Column="0" Grid.Row="0"/>
+                                                                            <Rectangle x:Name="Bar0" Height="{Binding RemainingValue}" Fill="{StaticResource e0Brush}" Grid.Column="1" Grid.Row="0"/>
                                                                             <TextBlock x:Name="Color3" Height="{Binding StoppageValue}" Background="{StaticResource l3Brush}" Text="{Binding StoppageTip}" 
-                                                                                       TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="0"/>
-                                                                            <Rectangle x:Name="Bar3" Height="{Binding StoppageValue}" Fill="{StaticResource e3Brush}" Grid.Column="1" Grid.Row="0"/>
-                                                                            <TextBlock x:Name="Color2" Height="{Binding DefectionValue}" Background="{StaticResource l2Brush}" Text="{Binding DefectionTip}" 
                                                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="1"/>
-                                                                            <Rectangle x:Name="Bar2" Height="{Binding DefectionValue}" Fill="{StaticResource e2Brush}" Grid.Column="1" Grid.Row="1"/>
-                                                                            <TextBlock x:Name="Color1" Height="{Binding ProductionValue}" Background="{StaticResource l1Brush}" Text="{Binding ProductionTip}" 
+                                                                            <Rectangle x:Name="Bar3" Height="{Binding StoppageValue}" Fill="{StaticResource e3Brush}" Grid.Column="1" Grid.Row="1"/>
+                                                                            <TextBlock x:Name="Color2" Height="{Binding DefectionValue}" Background="{StaticResource l2Brush}" Text="{Binding DefectionTip}" 
                                                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="2"/>
-                                                                            <Rectangle x:Name="Bar1" Height="{Binding ProductionValue}" Fill="{StaticResource e1Brush}" Grid.Column="1" Grid.Row="2"/>
+                                                                            <Rectangle x:Name="Bar2" Height="{Binding DefectionValue}" Fill="{StaticResource e2Brush}" Grid.Column="1" Grid.Row="2"/>
+                                                                            <TextBlock x:Name="Color1" Height="{Binding ProductionValue}" Background="{StaticResource l1Brush}" Text="{Binding ProductionTip}" 
+                                                                                       TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="3"/>
+                                                                            <Rectangle x:Name="Bar1" Height="{Binding ProductionValue}" Fill="{StaticResource e1Brush}" Grid.Column="1" Grid.Row="3"/>
                                                                         </Grid>
                                                                         <Grid x:Name="Shade" Background="White" Opacity="0">
                                                                             <Grid.Effect>

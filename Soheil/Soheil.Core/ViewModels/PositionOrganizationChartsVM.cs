@@ -5,6 +5,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -14,12 +15,13 @@ namespace Soheil.Core.ViewModels
         public PositionOrganizationChartsVM(PositionVM position, AccessType access)
             : base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentPosition = position;
-            PositionDataService = new PositionDataService();
+            PositionDataService = new PositionDataService(UnitOfWork);
             PositionDataService.OrganizationChartAdded += OnOrganizationChartAdded;
             PositionDataService.OrganizationChartRemoved += OnOrganizationChartRemoved;
-            OrganizationChartDataService = new OrganizationChartDataService();
-            OrganizationChartPositionDataService = new OrganizationChartPositionDataService();
+            OrganizationChartDataService = new OrganizationChartDataService(UnitOfWork);
+            OrganizationChartPositionDataService = new OrganizationChartPositionDataService(UnitOfWork);
 
             var selectedVms = new ObservableCollection<OrganizationChartPositionVM>();
             foreach (var positionOrganizationChart in PositionDataService.GetOrganizationCharts(position.Id))

@@ -12,113 +12,67 @@ namespace Soheil.Core.DataServices
 {
     public class PartWarehouseDataService : DataServiceBase, IDataService<PartWarehouse>
     {
+        private readonly Repository<PartWarehouse> _partRepository;
+        private readonly Repository<PartWarehouseGroup> _groupRepository;
+
+        public PartWarehouseDataService(SoheilEdmContext context)
+        {
+            Context = context;
+            _partRepository = new Repository<PartWarehouse>(context);
+            _groupRepository = new Repository<PartWarehouseGroup>(context);
+        }
+
         public event EventHandler<ModelAddedEventArgs<PartWarehouse>> PartWarehouseAdded;
 
         #region IDataService<PartWarehouse> Members
 
         public PartWarehouse GetSingle(int id)
         {
-            PartWarehouse entity;
-            using (var context = new SoheilEdmContext())
-            {
-                var costRepository = new Repository<PartWarehouse>(context);
-                entity = costRepository.Single(cost => cost.Id == id);
-            }
-            return entity;
+            return _partRepository.Single(cost => cost.Id == id);
         }
 
         public ObservableCollection<PartWarehouse> GetAll()
         {
-            ObservableCollection<PartWarehouse> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<PartWarehouse>(context);
-                IEnumerable<PartWarehouse> entityList =
-                    repository.Find(
-                        cost => cost.Status != (decimal)Status.Deleted, "PartWarehouseGroup");
-                models = new ObservableCollection<PartWarehouse>(entityList);
-            }
-            return models;
+            IEnumerable<PartWarehouse> entityList =
+                _partRepository.Find(
+                    cost => cost.Status != (decimal) Status.Deleted, "PartWarehouseGroup");
+            return new ObservableCollection<PartWarehouse>(entityList);
         }
 
         public int AddModel(PartWarehouse model)
         {
-            int id;
-            using (var context = new SoheilEdmContext())
-            {
-                var groupRepository = new Repository<PartWarehouseGroup>(context);
-                PartWarehouseGroup costCenter = groupRepository.Single(group => group.Id == model.PartWarehouseGroup.Id);
+                PartWarehouseGroup costCenter = _groupRepository.Single(group => group.Id == model.PartWarehouseGroup.Id);
                 costCenter.PartWarehouses.Add(model);
-                context.Commit();
+                Context.Commit();
                 if (PartWarehouseAdded != null)
                     PartWarehouseAdded(this, new ModelAddedEventArgs<PartWarehouse>(model));
-                id = model.Id;
-            }
-            return id;
+                return model.Id;
         }
 
         public int AddModel(PartWarehouse model, int groupId)
         {
-            int id;
-            using (var context = new SoheilEdmContext())
-            {
-                var groupRepository = new Repository<PartWarehouseGroup>(context);
-                PartWarehouseGroup costCenter = groupRepository.Single(group => group.Id == groupId);
-                model.PartWarehouseGroup = costCenter;
-                costCenter.PartWarehouses.Add(model);
-                context.Commit();
-                if (PartWarehouseAdded != null)
-                    PartWarehouseAdded(this, new ModelAddedEventArgs<PartWarehouse>(model));
-                id = model.Id;
-            }
-            return id;
+            PartWarehouseGroup costCenter = _groupRepository.Single(group => group.Id == groupId);
+            model.PartWarehouseGroup = costCenter;
+            costCenter.PartWarehouses.Add(model);
+            Context.Commit();
+            if (PartWarehouseAdded != null)
+                PartWarehouseAdded(this, new ModelAddedEventArgs<PartWarehouse>(model));
+            return model.Id;
         }
 
         public void UpdateModel(PartWarehouse model)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var costRepository = new Repository<PartWarehouse>(context);
-                PartWarehouse entity = costRepository.FirstOrDefault(cost => cost.Id == model.Id);
-
-                entity.Code = model.Code;
-                entity.Name = model.Name;
-                entity.CreatedDate = model.CreatedDate;
-                entity.ModifiedBy = LoginInfo.Id;
-                entity.ModifiedDate = DateTime.Now;
-                entity.Status = model.Status;
-                entity.Quantity = model.Quantity;
-                entity.OriginalQuantity = model.OriginalQuantity;
-                entity.TotalCost = model.TotalCost;
-
-                context.Commit();
-            }
+            Context.Commit();
         }
 
         public void UpdateModel(PartWarehouse model, int groupId)
         {
-            using (var context = new SoheilEdmContext())
-            {
-                var costRepository = new Repository<PartWarehouse>(context);
-                var costCenterRepository = new Repository<PartWarehouseGroup>(context);
-                PartWarehouse entity = costRepository.Single(cost => cost.Id == model.Id);
-                PartWarehouseGroup group =
-                    costCenterRepository.Single(costCenter => costCenter.Id == groupId);
-
-                entity.Code = model.Code;
-                entity.Name = model.Name;
-                entity.CreatedDate = model.CreatedDate;
-                entity.ModifiedBy = LoginInfo.Id;
-                entity.ModifiedDate = DateTime.Now;
-                entity.Status = model.Status;
-                entity.Quantity = model.Quantity;
-                entity.OriginalQuantity = model.OriginalQuantity;
-                entity.TotalCost = model.TotalCost;
-
-                entity.PartWarehouseGroup = group;
-
-                context.Commit();
-            }
+            PartWarehouseGroup group =
+                _groupRepository.Single(costCenter => costCenter.Id == groupId);
+            model.ModifiedBy = LoginInfo.Id;
+            model.ModifiedDate = DateTime.Now;
+            model.PartWarehouseGroup = group;
+            Context.Commit();
         }
 
         public void DeleteModel(PartWarehouse model)
@@ -127,33 +81,25 @@ namespace Soheil.Core.DataServices
 
         public void AttachModel(PartWarehouse model)
         {
-            using (var context = new SoheilEdmContext())
+            if (_partRepository.Exists(cost => cost.Id == model.Id))
             {
-                var repository = new Repository<PartWarehouse>(context);
-                if (repository.Exists(cost => cost.Id == model.Id))
-                {
-                    UpdateModel(model);
-                }
-                else
-                {
-                    AddModel(model);
-                }
+                UpdateModel(model);
+            }
+            else
+            {
+                AddModel(model);
             }
         }
 
         public void AttachModel(PartWarehouse model, int groupId)
         {
-            using (var context = new SoheilEdmContext())
+            if (_partRepository.Exists(cost => cost.Id == model.Id))
             {
-                var repository = new Repository<PartWarehouse>(context);
-                if (repository.Exists(cost => cost.Id == model.Id))
-                {
-                    UpdateModel(model, groupId);
-                }
-                else
-                {
-                    AddModel(model, groupId);
-                }
+                UpdateModel(model, groupId);
+            }
+            else
+            {
+                AddModel(model, groupId);
             }
         }
 
@@ -161,26 +107,15 @@ namespace Soheil.Core.DataServices
 
         public ObservableCollection<PartWarehouse> GetActives()
         {
-            ObservableCollection<PartWarehouse> models;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<PartWarehouse>(context);
                 IEnumerable<PartWarehouse> entityList =
-                    repository.Find(
+                    _partRepository.Find(
                         cost => cost.Status == (decimal) Status.Active,"PartWarehouseGroup");
-                models = new ObservableCollection<PartWarehouse>(entityList);
-            }
-            return models;
+                return new ObservableCollection<PartWarehouse>(entityList);
         }
+
         public bool HasCost(int id)
         {
-            bool hasCost;
-            using (var context = new SoheilEdmContext())
-            {
-                var repository = new Repository<PartWarehouse>(context);
-                hasCost = repository.Exists(part => part.Id == id && part.Cost != null && part.Cost.Status != (decimal)Status.Deleted);
-            }
-            return hasCost;
+            return _partRepository.Exists(part => part.Id == id && part.Cost != null && part.Cost.Status != (decimal) Status.Deleted);
         }
 
     }

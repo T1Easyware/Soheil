@@ -19,16 +19,11 @@ namespace Soheil.Core.DataServices
 		Repository<Activity> _activityRepository;
 		Repository<ActivityGroup> _activityGroupRepository;
 
-		public ActivityDataService()
-			:this(new SoheilEdmContext())
-		{
-
-		}
 		public ActivityDataService(SoheilEdmContext context)
 		{
-			this.context = context;
-			_activityRepository = new Repository<Activity>(context);
-			_activityGroupRepository = new Repository<ActivityGroup>(context);
+			this.Context = context ?? new SoheilEdmContext();
+            _activityRepository = new Repository<Activity>(Context);
+            _activityGroupRepository = new Repository<ActivityGroup>(Context);
 		}
 
         #region IDataService<Activity> Members
@@ -49,7 +44,7 @@ namespace Soheil.Core.DataServices
 			int id;
 			var activityGroup = _activityGroupRepository.Single(group => group.Id == model.ActivityGroup.Id);
 			activityGroup.Activities.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (ActivityAdded != null)
 				ActivityAdded(this, new ModelAddedEventArgs<Activity>(model));
 			id = model.Id;
@@ -61,7 +56,7 @@ namespace Soheil.Core.DataServices
 			int id;
 			var activityGroup = _activityGroupRepository.Single(group => group.Id == groupId);
 			activityGroup.Activities.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (ActivityAdded != null)
 				ActivityAdded(this, new ModelAddedEventArgs<Activity>(model));
 			id = model.Id;
@@ -72,7 +67,7 @@ namespace Soheil.Core.DataServices
         {
 			model.ModifiedBy = LoginInfo.Id;
 			model.ModifiedDate = DateTime.Now;
-            context.Commit();
+            Context.Commit();
         }
 		public void UpdateModel(Activity model, int groupId)
 		{
@@ -84,7 +79,7 @@ namespace Soheil.Core.DataServices
 
 			model.ActivityGroup = group;
 
-			context.Commit();
+			Context.Commit();
 		}
 
         public void DeleteModel(Activity model)
@@ -153,7 +148,7 @@ namespace Soheil.Core.DataServices
 
 		public void AddOperator(int activityId, int operatorId)
 		{
-			var operatorRepository = new Repository<Operator>(context);
+			var operatorRepository = new Repository<Operator>(Context);
 			var currentActivity = _activityRepository.Single(activity => activity.Id == activityId);
 			var newOperator = operatorRepository.Single(opr => opr.Id == operatorId);
 			if (currentActivity.ActivitySkills.Any(activityOperator => 
@@ -168,7 +163,7 @@ namespace Soheil.Core.DataServices
 				ModifiedDate = DateTime.Now,
 			};
 			currentActivity.ActivitySkills.Add(newGeneralActivitySkill);
-			context.Commit();
+			Context.Commit();
 			OperatorAdded(this, new ModelAddedEventArgs<ActivitySkill>(newGeneralActivitySkill));
 		}
 
@@ -180,9 +175,9 @@ namespace Soheil.Core.DataServices
 					&& activityOperator.Id == operatorId);
 
 			int id = currentActivityOperator.Id;
-			var activityOperatorRepository = new Repository<ActivitySkill>(context);
+			var activityOperatorRepository = new Repository<ActivitySkill>(Context);
 			activityOperatorRepository.Delete(currentActivityOperator);
-			context.Commit();
+			Context.Commit();
 			OperatorRemoved(this, new ModelRemovedEventArgs(id));
 		}
     }

@@ -12,7 +12,7 @@ namespace Soheil.Core.DataServices
 {
 	public class CauseDataService : RecursiveDataServiceBase, IDataService<Cause>
 	{
-		Repository<Cause> _causeRepository;
+	    readonly Repository<Cause> _causeRepository;
 
 		public CauseDataService()
 			: this(new SoheilEdmContext())
@@ -20,7 +20,7 @@ namespace Soheil.Core.DataServices
 		}
 		public CauseDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_causeRepository = new Repository<Cause>(context);
 		}
 
@@ -58,7 +58,7 @@ namespace Soheil.Core.DataServices
 		{
 			int id;
 			_causeRepository.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (CauseAdded != null)
 				CauseAdded(this, new ModelAddedEventArgs<Cause>(model));
 			id = model.Id;
@@ -71,7 +71,7 @@ namespace Soheil.Core.DataServices
 			var parent = _causeRepository.FirstOrDefault(cause => cause.Id == parentId);
 			model.Parent = parent;
 			parent.Children.Add(model);
-			context.Commit();
+			Context.Commit();
 			if (CauseAdded != null)
 				CauseAdded(this, new ModelAddedEventArgs<Cause>(model));
 			id = model.Id;
@@ -85,7 +85,7 @@ namespace Soheil.Core.DataServices
 			entity.Code = model.Code;
 			entity.Name = model.Name;
 		    entity.Status = model.Status;
-			context.Commit();
+			Context.Commit();
             if (CauseUpdated != null)
                 CauseUpdated(this, new ModelUpdatedEventArgs<Cause>(model,null));
 		}

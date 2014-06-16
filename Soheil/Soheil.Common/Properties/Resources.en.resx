@@ -862,7 +862,7 @@
   <data name="txtIncludeChecked" xml:space="preserve">
     <value>Include selected items</value>
   </data>
-  <data name="txtUncheckAll" xml:space="preserve">
+  <data name="txtUnCheckAll" xml:space="preserve">
     <value>Deselect all</value>
   </data>
   <data name="txtStart" xml:space="preserve">

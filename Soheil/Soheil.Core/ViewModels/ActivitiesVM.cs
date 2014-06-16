@@ -6,6 +6,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -67,8 +68,9 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            ActivityGroupDataService = new ActivityGroupDataService();
-            ActivityDataService = new ActivityDataService();
+            UnitOfWork = new SoheilEdmContext();
+            ActivityGroupDataService = new ActivityGroupDataService(UnitOfWork);
+            ActivityDataService = new ActivityDataService(UnitOfWork);
             ActivityDataService.ActivityAdded += OnActivityAdded;
             ActivityGroupDataService.ActivityGroupAdded += OnActivityGroupAdded;
             

@@ -31,7 +31,7 @@ namespace Soheil.Core.DataServices
 		}
 		internal FPCDataService(SoheilEdmContext context)
 		{
-			this.context = context;
+			this.Context = context;
 			_fpcRepository = new Repository<FPC>(context);
 
 			//other dataservices
@@ -63,7 +63,7 @@ namespace Soheil.Core.DataServices
 		/// </summary>
 		public void ApplyChanges()
 		{
-			context.Commit();
+			Context.Commit();
 		}
 
 		public FPC GetSingleWithStates(int id)
@@ -96,11 +96,11 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(FPC model, int groupId)
 		{
-			var product = new Repository<Product>(context).Single(group => group.Id == groupId);
+			var product = new Repository<Product>(Context).Single(group => group.Id == groupId);
 			product.FPCs.Add(model);
 			model.Product = product;
 			model.CreatedDate = DateTime.Now;
-			context.Commit();
+			Context.Commit();
 
 			if (FpcAdded != null)
 				FpcAdded(this, new ModelAddedEventArgs<FPC>(model));
@@ -121,7 +121,7 @@ namespace Soheil.Core.DataServices
 		{
 			model.ModifiedDate = DateTime.Now;
 			model.ModifiedBy = LoginInfo.Id;
-			context.Commit();
+			Context.Commit();
 		} 
 		#endregion
 
@@ -148,7 +148,7 @@ namespace Soheil.Core.DataServices
 				"Product.ProductGroup",
 				"Product.ProductReworks");
 			var clone = cloneModel(model);
-			context.Commit();
+			Context.Commit();
 			return clone;
 		}
 		protected FPC cloneModel(FPC model)
@@ -269,13 +269,13 @@ namespace Soheil.Core.DataServices
 					throw new Exception("این تنها FPC برای این محصول است.\nلذا به ناچار همین FPC پیش فرض است");
 			}
 
-			context.Commit();
+			Context.Commit();
 		}
 
 		public IEnumerable<ProductRework> GetProductReworks(FPC model, bool includeMainProduct)
 		{
 			var list = new List<ProductRework>();
-			var cRepos = new Repository<ProductRework>(context);
+			var cRepos = new Repository<ProductRework>(Context);
 			var models = cRepos.Find(x =>
 				x.Product.Id == model.Product.Id
 				&& (includeMainProduct || x.Rework != null),
@@ -375,7 +375,7 @@ namespace Soheil.Core.DataServices
 				state.OnProductRework = model.Product.ProductReworks.First(x => x.Rework == null);
 			}
 			//...
-			if(corrected) context.Commit();
+			if(corrected) Context.Commit();
 		}
 	}
 }

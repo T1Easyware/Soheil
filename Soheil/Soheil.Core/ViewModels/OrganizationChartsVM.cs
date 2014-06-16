@@ -6,6 +6,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -50,7 +51,8 @@ namespace Soheil.Core.ViewModels
 
         private void InitializeData()
         {
-            OrganizationChartDataService = new OrganizationChartDataService();
+            UnitOfWork = new SoheilEdmContext();
+            OrganizationChartDataService = new OrganizationChartDataService(UnitOfWork);
             OrganizationChartDataService.OrganizationChartAdded += OnOrganizationChartAdded;
 
             ColumnHeaders = new List<ColumnInfo> 

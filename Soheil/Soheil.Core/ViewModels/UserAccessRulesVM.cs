@@ -9,6 +9,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -17,12 +18,13 @@ namespace Soheil.Core.ViewModels
     {
         public UserAccessRulesVM(UserVM user, AccessType access):base(access)
         {
+            UnitOfWork = new SoheilEdmContext();
             CurrentUser = user;
-            UserDataService = new UserDataService();
+            UserDataService = new UserDataService(UnitOfWork);
             UserDataService.AccessRuleChanged += OnAccessRuleChanged;
-            AccessRuleDataService = new AccessRuleDataService();
-            UserAccessRuleDataService = new UserAccessRuleDataService();
-            PositionAccessRuleDataService = new PositionAccessRuleDataService();
+            AccessRuleDataService = new AccessRuleDataService(UnitOfWork);
+            UserAccessRuleDataService = new UserAccessRuleDataService(UnitOfWork);
+            PositionAccessRuleDataService = new PositionAccessRuleDataService(UnitOfWork);
 
             RootNode = new UserAccessNodeVM(Access) { Title = string.Empty, Id = -1, ParentId = -2 };
 
