@@ -93,6 +93,5 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty SaveCommandProperty =
 			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(NPTVm), new UIPropertyMetadata(null)); 
 		#endregion
-
 	}
 }

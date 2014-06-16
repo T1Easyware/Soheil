@@ -226,6 +226,7 @@ namespace Soheil.Core.DataServices
 				time = time.AddSeconds(task.DurationSeconds);
 				task.EndDateTime = time;
 
+				//delete empty processes
 				foreach (var process in task.Processes.ToArray())
 				{
 					if (process.TargetCount == 0 || process.StateStationActivity == null)
@@ -637,6 +638,158 @@ namespace Soheil.Core.DataServices
 					EndDateTime = setupStartDateTime.AddSeconds(delaySeconds),
 				});
 				Context.Commit();
+				#endregion
+
+				result.IsSaved = true;
+			}
+			catch (Exception exp)
+			{
+				result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+					InsertSetupBeforeBlockErrors.ErrorSource.This,
+					exp.Message,
+					0));
+				return result;
+			}
+			return result;
+		}
+		public InsertSetupBeforeBlockErrors InsertSetupBetweenBlocks(int fromId, int blockId)
+		{
+			var result = new InsertSetupBeforeBlockErrors();
+
+			try
+			{
+				var fromBlock = _blockRepository.FirstOrDefault(x => x.Id == fromId,
+					"StateStation", "StateStation.Station", "StateStation.State", "StateStation.State.OnProductRework");
+				var toBlock = _blockRepository.FirstOrDefault(x => x.Id == blockId,
+					"StateStation", "StateStation.Station", "StateStation.State", "StateStation.State.OnProductRework");
+
+				if(fromBlock == null || toBlock == null)
+				{
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						InsertSetupBeforeBlockErrors.ErrorSource.This,
+						"Task انتخاب شده وجود ندارد",
+						fromId));
+					result.IsSaved = false;
+					return result;
+				}
+
+				var setupStartDateTime = fromBlock.EndDateTime;
+
+				int delaySeconds = 0;
+
+				//check changeover
+				var changeover = findChangeover(toBlock, fromBlock, result);
+				if (changeover != null)
+					delaySeconds += changeover.Seconds;
+
+				//check warmup
+				var warmup = findWarmup(toBlock, result);
+				if (warmup != null)
+					delaySeconds += warmup.Seconds; 
+
+				//if it's zero seconds
+				if (delaySeconds == 0)
+				{
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						InsertSetupBeforeBlockErrors.ErrorSource.This,
+						"زمان کل برابر با صفر است، لذا راه اندازی افزوده نشد",
+						0));
+					result.IsSaved = false;
+					return result;
+				}
+				if ((toBlock.StartDateTime - fromBlock.EndDateTime).Seconds >= delaySeconds)
+				{
+					//no need to move anything
+					setupStartDateTime = toBlock.StartDateTime.AddSeconds(-delaySeconds);
+				}
+
+
+				//re-evaluate movingItems
+				var movingBlocks = _blockRepository.Find(x =>
+					x.StateStation.Station.Id == toBlock.StateStation.Station.Id
+					&& x.StartDateTime >= setupStartDateTime)
+					.OrderBy(x => x.StartDateTime).ToArray();
+				var movingNpts = _nptRepository.Find(x =>
+					x.StartDateTime >= setupStartDateTime)
+					.OrderBy(x => x.StartDateTime);//this has no station
+				var movingSetups = movingNpts.OfType<Setup>().Where(x =>
+					x.Warmup.Station.Id == toBlock.StateStation.Station.Id);
+				//var movingEducations = movingNpts.OfType<Education>().Where(x => x.Task.StateStation.Station.Id == task.StateStation.Station.Id);
+				//etc...
+
+
+				#region Problems
+
+
+
+				//if any of them have report, quit
+				if (movingBlocks.Any(x => x.Tasks.Any(t => t.TaskReports.Any())))
+				{
+					//find the task with report
+					int errorousId = 0;
+					foreach (var movingBlock in movingBlocks)
+					{
+						var tmp = movingBlock.Tasks.FirstOrDefault(x => x.TaskReports.Any());
+						if (tmp != null) { errorousId = tmp.Id; break; }
+					}
+					//create error
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						InsertSetupBeforeBlockErrors.ErrorSource.Task,
+						"این Task گزارش دارد و قابل جابجایی نیست.",
+						errorousId));
+					result.IsSaved = false;
+					return result;
+				}
+				if (movingSetups.Any(x => x.NonProductiveTaskReport != null))
+				{
+					//find the setup with report
+					int errorousId = movingSetups.First(x => x.NonProductiveTaskReport != null).Id;
+					//create error
+					result.Errors.Add(new Tuple<InsertSetupBeforeBlockErrors.ErrorSource, string, int>(
+						InsertSetupBeforeBlockErrors.ErrorSource.NPT,
+						"این Task گزارش دارد و قابل جابجایی نیست.",
+						errorousId));
+					result.IsSaved = false;
+					return result;
+				}
+				//etc... 
+				#endregion
+
+				#region Move
+				//move...
+				foreach (var movingBlock in movingBlocks)
+				{
+					movingBlock.StartDateTime = movingBlock.StartDateTime.AddSeconds(delaySeconds);
+					movingBlock.EndDateTime = movingBlock.EndDateTime.AddSeconds(delaySeconds);
+					if (movingBlock.Tasks.Any())
+					{
+						foreach (var task in movingBlock.Tasks)
+						{
+							task.StartDateTime = task.StartDateTime.AddSeconds(delaySeconds);
+							task.EndDateTime = task.EndDateTime.AddSeconds(delaySeconds);
+						}
+					}
+					movingBlock.ModifiedDate = DateTime.Now;
+				}
+				foreach (var movingSetup in movingSetups)
+				{
+					movingSetup.StartDateTime = movingSetup.StartDateTime.AddSeconds(delaySeconds);
+					movingSetup.EndDateTime = movingSetup.EndDateTime.AddSeconds(delaySeconds);
+				}
+				//etc... 
+				#endregion
+
+				#region Add & Save Setup
+				//add setuptime
+				_nptRepository.Add(new Setup
+				{
+					Changeover = changeover,
+					Warmup = warmup,
+					StartDateTime = setupStartDateTime,
+					DurationSeconds = delaySeconds,
+					EndDateTime = setupStartDateTime.AddSeconds(delaySeconds),
+				});
+				context.Commit();
 				#endregion
 
 				result.IsSaved = true;

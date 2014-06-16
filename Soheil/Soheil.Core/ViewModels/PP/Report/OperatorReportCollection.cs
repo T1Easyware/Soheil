@@ -30,7 +30,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 		{
 			operatorReportVm.ProduceG1Changed += () =>
 			{
-				Parent.ProducedG1 = List.Sum(x => x.ProducedG1);
+				Parent.SumOfProducedG1 = List.Sum(x => x.ProducedG1);
 			};
 			List.Add(operatorReportVm);
 		}

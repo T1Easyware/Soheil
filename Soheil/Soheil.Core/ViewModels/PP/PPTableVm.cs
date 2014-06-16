@@ -219,7 +219,6 @@ namespace Soheil.Core.ViewModels.PP
 					//Loads PPItems
 					_suppressUpdateRange = false;
 					GoToNowCommand.Execute(null);
-					BackupZoom();
 				})), null, _initialTimerInterval, System.Threading.Timeout.Infinite);
 		}
 
@@ -449,18 +448,6 @@ namespace Soheil.Core.ViewModels.PP
 		/// Gets or sets Width of screen
 		/// </summary>
 		public double GridWidth { get; set; }
-		/// <summary>
-		/// Backup value for HoursPassed (to restore to)
-		/// </summary>
-		private double _hoursPassedBackup = 0;
-		/// <summary>
-		/// Backup value for HourZoom (to restore to)
-		/// </summary>
-		private double _hourZoomBackup = 36;
-		/// <summary>
-		/// Backup value for VerticalScreenOffset (to restore to)
-		/// </summary>
-		private double _verticalScreenOffsetBackup = 0;
 
 		/// <summary>
 		/// Sets the DayZoom according to SelectedMonth
@@ -487,11 +474,8 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="blockVm"></param>
 		public void ZoomToBlock(BlockVm blockVm)
 		{
-			BackupZoom();
-
 			var start = blockVm.StartDateTime;
 			HoursPassed = start.GetPersianDayOfMonth() * 24 + start.Hour + start.Minute / 60d + start.Second / 3600d - 24;
-
 			HourZoom = (GridWidth * 3600) / blockVm.DurationSeconds;
 		}
 		/// <summary>
@@ -501,29 +485,15 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="end"></param>
 		public void ZoomToRange(DateTime start, DateTime end)
 		{
-			BackupZoom();
-
 			HoursPassed = start.GetPersianDayOfMonth() * 24 + start.Hour + start.Minute / 60d + start.Second / 3600d - 24;
-
 			HourZoom = (GridWidth * 3600) / end.Subtract(start).TotalSeconds;
-		}
-		/// <summary>
-		/// Backs up values of HoursPassed, HourZoom and VerticalScreenOffset into their backup values
-		/// </summary>
-		public void BackupZoom()
-		{
-			_hoursPassedBackup = HoursPassed;
-			_hourZoomBackup = HourZoom;
-			_verticalScreenOffsetBackup = VerticalScreenOffset;
 		}
 		/// <summary>
 		/// Restores values of HoursPassed, HourZoom and VerticalScreenOffset to their backup values
 		/// </summary>
 		public void RestoreZoom()
 		{
-			HourZoom = _hourZoomBackup;
-			HoursPassed = _hoursPassedBackup;
-			VerticalScreenOffset = _verticalScreenOffsetBackup;
+			HourZoom = (double)HourZoomProperty.DefaultMetadata.DefaultValue;
 		}
 		#endregion
 
@@ -558,14 +528,14 @@ namespace Soheil.Core.ViewModels.PP
 		public int SelectedJobId { get; set; }
 
 		/// <summary>
-		/// Gets or sets the Selected Block
+		/// Gets or sets the Selected Block (if same block is set again, a reset to null happens before setting the value to ensure callback)
 		/// <para>sets the ViewMode of previous and current SelectedBlock</para>
 		/// <para>Restores zoom if null and Zooms to block if otherwise</para>
 		/// </summary>
 		public BlockVm SelectedBlock
 		{
 			get { return (BlockVm)GetValue(SelectedBlockProperty); }
-			set { SetValue(SelectedBlockProperty, value); }
+			set { SetValue(SelectedBlockProperty, null); SetValue(SelectedBlockProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedBlockProperty =
 			DependencyProperty.Register("SelectedBlock", typeof(BlockVm), typeof(PPTableVm),
@@ -618,6 +588,7 @@ namespace Soheil.Core.ViewModels.PP
 				if (!(bool)v)
 				{
 					vm.SelectedBlock = null;
+					vm.RestoreZoom();
 					return false;
 				}
 				//otherwise allow to show block report
@@ -716,14 +687,13 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			GoToNowCommand = new Commands.Command(o =>
 			{
-				BackupZoom();
 				DateTime now = DateTime.Now;
 				int month = (int)now.GetPersianMonth() - 1;
 				SelectedMonth = Months.First(x => x.ColumnIndex == month);
 				HoursPassed = now.GetPersianDayOfMonth() * 24 + now.Hour + now.Minute / 60d + now.Second / 3600d - 24;
 				UpdateRange(true);
 			});
-			ZoomStartedCommand = new Commands.Command(o => BackupZoom());
+			ZoomStartedCommand = new Commands.Command(o => { });
 			UndoZoomCommand = new Commands.Command(o => RestoreZoom());
 			CloseBlockReportCommand = new Commands.Command(o => ShowBlockReport = false);
 		}

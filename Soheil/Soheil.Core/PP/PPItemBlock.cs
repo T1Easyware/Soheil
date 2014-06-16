@@ -41,7 +41,8 @@ namespace Soheil.Core.PP
 			End = Model.EndDateTime;
 
 			ReportData = blockDataService.GetProductionReportData(Model);
-			CanAddSetupBefore = blockDataService.CanAddSetupBeforeBlock(Model);
+			//CanAddSetupBefore = blockDataService.CanAddSetupBeforeBlock(Model);
+			CanAddSetupBefore = true;
 		}
 	}
 }

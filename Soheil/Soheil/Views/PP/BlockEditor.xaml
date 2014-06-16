@@ -4,7 +4,7 @@
              xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core" 
              xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Editor;assembly=Soheil.Core" 
 			 xmlns:local="clr-namespace:Soheil.Views.PP"
-             xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
+             xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit" 
              xmlns:sys="clr-namespace:System;assembly=mscorlib" 
              xmlns:fpcView="clr-namespace:Soheil.Views.Fpc" 
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -63,7 +63,7 @@
 					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
 						<WrapPanel>
 							<TextBlock Text="{Loc txtDate}" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-							<cal:PersianDatePicker SelectedDate="{Binding StartDate}"/>
+							<cal:DatePicker SelectedDate="{Binding StartDate}" DisplayDate="{Binding StartDate}"/>
 							<Button Margin="0,1" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" Style="{StaticResource Button3DTextStyle}"/>
 							<Button Margin="0,1" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}" Style="{StaticResource Button3DTextStyle}"/>
 						</WrapPanel>
@@ -199,7 +199,7 @@
 				<GridSplitter Grid.Column="0" Width="5" Background="#6AA" BorderBrush="White" BorderThickness="1,0"/>
 			
 				<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="2,5,2,0">
-					<local:OperatorManager DataContext="{Binding OperatorManager}"/>
+					<local:OperatorManager DataContext="{Binding OperatorManager}" IsEnabled="{Binding IsEnabled}"/>
 				</ScrollViewer>
 			</Grid>
 			<!-- status bar -->

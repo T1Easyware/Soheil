@@ -17,6 +17,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public event Action<OperatorEditorVm, bool, bool> SelectedOperatorChanged;
 		
 		#region Ctor
+		protected OperatorEditorVm()
+		{
+			initializeCommands();
+		}
 		/// <summary>
 		/// Use this constructor to create an operator outside a process
 		/// </summary>
@@ -37,6 +41,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			IsSelected = true;
 			initializeCommands();
 		}
+		internal static OperatorEditorVm CreateAnonymous()
+		{
+			return new OperatorEditorVm
+			{
+				Name = "اپراتور نامعلوم",
+				Code = "",
+			};
+		}
+
 
 		bool _changeOperatorCount = false;
 		void initializeCommands()
@@ -96,5 +109,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SelectCommandProperty =
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(OperatorEditorVm), new UIPropertyMetadata(null));
+
+
 	}
 }

@@ -277,6 +277,9 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="vm"></param>
 		private void initializeCommands(BlockVm vm)
 		{
+			/*vm.InsertSetup = new Commands.Command(o =>
+			{
+			});*/
 			vm.InsertSetupBefore = new Commands.Command(o =>
 			{
 				var id = vm.Id;
@@ -286,6 +289,16 @@ namespace Soheil.Core.ViewModels.PP
 				if (result.IsSaved) Manager.ForceReload();
 				else vm.InsertSetupBeforeCallback(result);
 			});
+			/*vm.InsertSetupBetween = new Commands.Command(o =>
+			{
+				var id = vm.Id;
+				var before = ((BlockVm)o).Id;
+				var result = new DataServices.BlockDataService().InsertSetupBetweenBlocks(before, id);
+
+				//in case of error callback with result
+				if (result.IsSaved) Manager.ForceReload();
+				else vm.InsertSetupBeforeCallback(result);
+			}); */
 			vm.DeleteItemCommand = new Commands.Command(o =>
 			{
 				lock (Manager)

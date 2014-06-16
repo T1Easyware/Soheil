@@ -542,9 +542,15 @@
 					
 					<!-- tools -->
 					<ToolBar Background="Transparent">
-						<!-- time -->
+						<!-- zoom -->
 						<Button Command="{Binding GoToNowCommand}" ToolTip="برو به الان">
 							<Image Style="{StaticResource NowImage}"/>
+						</Button>
+						<Button Command="{Binding UndoZoomCommand}">
+							<Image Style="{StaticResource ZoomUndoImage}"/>
+							<Button.ToolTip>
+								<ToolTip>بزرگنمایی پیش فرض</ToolTip>
+							</Button.ToolTip>
 						</Button>
 						<WrapPanel VerticalAlignment="Center">
 							<Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
@@ -559,12 +565,7 @@
 								<ToolTip>بزرگنمایی زمان</ToolTip>
 							</WrapPanel.ToolTip>
 						</WrapPanel>
-						<Button Command="{Binding UndoZoomCommand}">
-							<Image Style="{StaticResource ZoomUndoImage}"/>
-							<Button.ToolTip>
-								<ToolTip>بزرگنمایی قبلی</ToolTip>
-							</Button.ToolTip>
-						</Button>
+						
 						<Separator/>
 					
 						<!-- extra tools -->

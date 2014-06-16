@@ -37,23 +37,5 @@ namespace Soheil.Views.PP
 		}
 		public static readonly DependencyProperty PPTableProperty =
 			DependencyProperty.Register("PPTable", typeof(PPTableVm), typeof(Block), new UIPropertyMetadata(null));
-
-		private void MouseEnters(object sender, MouseEventArgs e)
-		{
-			var block = sender.GetDataContext<BlockVm>();
-			if(block!=null)
-			{
-				block.ShowTasks = true;
-			}
-		}
-		private void MouseLeaves(object sender, MouseEventArgs e)
-		{
-			var block = sender.GetDataContext<BlockVm>();
-			if(block!=null)
-			{
-				if (block.Parent.PPTable.SelectedBlock != block)
-					block.ShowTasks = false;
-			}
-		}
 	}
 }
