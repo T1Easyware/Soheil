@@ -77,7 +77,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			_taskReportDataService = new DataServices.TaskReportDataService(UOW);
 
 			//properties
-			Model.ProducedG1 = Model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);//??? can be different than sum
+			//Model.ProducedG1 = Model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);//??? can be different than sum
 			ProducedG1 = Model.ProducedG1;
 			Timing = new TimingSet(this);
 			Timing.Saved += () => Save();
@@ -86,9 +86,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 			Timing.EndChanged += v => Model.EndDateTime = v;
 			Timing.TargetPointChanged += tp =>
 			{
-				TargetPointForOperator = string.Format("{0:F2}", (float)tp / Model.OperatorProcessReports.Count);
+				TargetPointForOperator = Model.OperatorProcessReports.Any() ?
+					string.Format("{0:F2}", (float)tp / Model.OperatorProcessReports.Count) :
+					"---";
 				Model.ProcessReportTargetPoint = tp;
 			};
+			TargetPointForOperator = Model.OperatorProcessReports.Any() ?
+				string.Format("{0:F2}", (float)Model.ProcessReportTargetPoint / Model.OperatorProcessReports.Count) :
+				"---";
 			//reports
 			OperatorReports = new OperatorReportCollection(this);
 			DefectionReports = new DefectionReportCollection(this);
@@ -116,7 +121,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				OperatorReports.Add(new OperatorReportVm(opr));
 			}
-			Model.ProducedG1 = Model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);//??? can be different than sum
+			if (Model.OperatorProcessReports.Any())
+				SumOfProducedG1 = Model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);
 
 			DefectionReports.Reset();
 			foreach (var def in Model.DefectionReports)
@@ -201,8 +207,22 @@ namespace Soheil.Core.ViewModels.PP.Report
 				vm.Model.ProducedG1 = (int)e.NewValue;
 				vm.Save();
 			}));
-
-
+		//SumOfProducedG1 Dependency Property
+		public int SumOfProducedG1
+		{
+			get { return (int)GetValue(SumOfProducedG1Property); }
+			set { SetValue(SumOfProducedG1Property, value); }
+		}
+		public static readonly DependencyProperty SumOfProducedG1Property =
+			DependencyProperty.Register("SumOfProducedG1", typeof(int), typeof(ProcessReportVm),
+			new UIPropertyMetadata(0, (d, e) =>
+			{
+				var vm = (ProcessReportVm)d;
+				if ((int)e.NewValue > vm.ProducedG1) 
+					vm.ProducedG1 = (int)e.NewValue;
+				vm.Model.ProducedG1 = (int)e.NewValue;
+				vm.Save();
+			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates the TargetPoint for each operator
 		/// </summary>

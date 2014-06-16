@@ -8,7 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:I="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 x:Name="root"  MouseEnter="MouseEnters" MouseLeave="MouseLeaves"
+			 x:Name="root"
              mc:Ignorable="d" d:DesignHeight="50" d:DesignWidth="300">
 	<UserControl.Resources>
 		
@@ -159,11 +159,11 @@
 
 				<DockPanel>
 					<TextBlock Text="{Loc txtStartDate}" Style="{StaticResource titles}"/>
-					<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+					<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="RightToLeft"/>
 				</DockPanel>
 				<DockPanel>
 					<TextBlock Text="{Loc txtEndDate}" Style="{StaticResource titles}"/>
-					<TextBlock Text="{Binding Model.EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+					<TextBlock Text="{Binding Model.EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="RightToLeft"/>
 				</DockPanel>
 				<DockPanel>
 					<TextBlock Text="{Loc txtDuration}" Style="{StaticResource titles}"/>
@@ -244,7 +244,7 @@
 				<TextBlock Text="{Binding BlockProducedG1}" VerticalAlignment="Center"/>
 			</StackPanel>
 
-			<Button Margin="0,0,0,20" Style="{StaticResource taskOverlay}" Command="{Binding EditReportCommand}" Visibility="{Binding ShowTasks, Converter={StaticResource booleanToVisibilityConverter}}">
+			<Button Margin="0,0,0,20" Style="{StaticResource taskOverlay}" Command="{Binding EditReportCommand}" x:Name="reportButton" Opacity="0">
 				<TextBlock Text="گزارش تولید" HorizontalAlignment="Center"/>
 			</Button>
 
@@ -260,8 +260,7 @@
 				<Button.Template>
 					<ControlTemplate>
 						<Grid Opacity="0.5" x:Name="grid">
-							<Ellipse Height="40" Width="40" Fill="#222" Stroke="#444"/>
-							<Ellipse x:Name="ellipse" Height="40" Width="40" Fill="White" Opacity="0"/>
+							<Ellipse x:Name="ellipse" Height="40" Width="40" Fill="#222" Stroke="#444"/>
 							<Image Style="{StaticResource AddSetupImage}"/>
 							<Grid.Triggers>
 								<EventTrigger RoutedEvent="MouseEnter">
@@ -281,7 +280,7 @@
 								<EventTrigger RoutedEvent="MouseDown">
 									<BeginStoryboard>
 										<Storyboard>
-											<DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ellipse" From="1" To="0" Duration="0:0:0.5"/>
+											<ColorAnimation Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)" From="#0FF" To="#222" Duration="0:0:0.5"/>
 										</Storyboard>
 									</BeginStoryboard>
 								</EventTrigger>
@@ -295,12 +294,33 @@
 							<Image Style="{StaticResource AddSetupImage}"/>
 							<TextBlock Text="درج خودکار آماده سازی جدید در اینجا" VerticalAlignment="Bottom"/>
 						</WrapPanel>
+						<!--TextBlock Foreground="DarkGray" FontSize="10" Text="برای درج خودکار، دوبار کلیک کنید"/-->
+						<!--TextBlock Foreground="DarkGray" FontSize="10" Text="برای درج دستی، یکبار کلیک کنید و سپس روی محصول قبلی کلیک کنید"/-->
 						<TextBlock Foreground="DarkGray" FontSize="10" Text="آیتمهایی که در این ایستگاه بعد از این آماده سازی قرار دارند، بطور خودکار در زمان جابجا می شوند"/>
 					</StackPanel>
 				</Button.ToolTip>
 			</Button>
+			<Popup>
+				
+			</Popup>
 		</Grid>
 
+		<Border.Triggers>
+			<EventTrigger RoutedEvent="MouseEnter">
+				<BeginStoryboard>
+					<Storyboard Duration="0:0:.1">
+						<DoubleAnimation Storyboard.TargetName="reportButton" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:.1"/>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+			<EventTrigger RoutedEvent="MouseLeave">
+				<BeginStoryboard>
+					<Storyboard Duration="0:0:.3">
+						<DoubleAnimation Storyboard.TargetName="reportButton" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:.3"/>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+		</Border.Triggers>
 		<!-- Triggers for different view modes -->
 		<Border.Style>
 			<Style TargetType="Border">

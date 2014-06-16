@@ -30,6 +30,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public override void Reload(PPItemNpt item)
 		{
+			VIndex = item.VIndex;
 			reloadFromModel();//???
 		}
 		void reloadFromModel()

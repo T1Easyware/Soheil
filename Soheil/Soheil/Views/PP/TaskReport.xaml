@@ -26,9 +26,9 @@
 	<UserControl.ToolTip>
 		<UniformGrid Rows="4" Columns="2" FlowDirection="RightToLeft">
 			<TextBlock Text="شروع بازه گزارش ایستگاه "/>
-			<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+			<TextBlock Text="{Binding StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="RightToLeft"/>
 			<TextBlock Text="پایان بازه گزارش ایستگاه "/>
-			<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}"/>
+			<TextBlock Text="{Binding EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="RightToLeft"/>
 			<WrapPanel>
 				<Image Style="{StaticResource TargetPointImage}"/>
 				<TextBlock Text="مقدار هدف ایستگاه در بازه زمانی "/>

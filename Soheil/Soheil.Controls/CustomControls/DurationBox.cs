@@ -26,6 +26,7 @@ namespace Soheil.Controls.CustomControls
 			SetDurationMinutesCommand = new CustomCommand(this);
 		}
 
+		private bool _suppress = false;
 		//DurationSeconds Dependency Property
 		public int DurationSeconds
 		{
@@ -60,9 +61,11 @@ namespace Soheil.Controls.CustomControls
 
 				if (vm.DurationSeconds != (int)val.TotalSeconds) vm.DurationSeconds = (int)val.TotalSeconds;
 
+				vm._suppress = true;
 				vm.Hour = (int)val.TotalHours;
 				vm.Minute = val.Minutes;
 				vm.Second = val.Seconds;
+				vm._suppress = false;
 			}));
 
 		//Hour Dependency Property
@@ -76,7 +79,7 @@ namespace Soheil.Controls.CustomControls
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
 				var vm = (DurationBox)d;
-
+				if (vm._suppress) return;
 				if (e.NewValue == DependencyProperty.UnsetValue) return;
 				var val = (int)e.NewValue;
 
@@ -99,7 +102,7 @@ namespace Soheil.Controls.CustomControls
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
 				var vm = (DurationBox)d;
-
+				if (vm._suppress) return;
 				if (e.NewValue == DependencyProperty.UnsetValue) return;
 				var val = (int)e.NewValue;
 
@@ -122,7 +125,7 @@ namespace Soheil.Controls.CustomControls
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
 				var vm = (DurationBox)d;
-
+				if (vm._suppress) return;
 				if (e.NewValue == DependencyProperty.UnsetValue) return;
 				var val = (int)e.NewValue;
 

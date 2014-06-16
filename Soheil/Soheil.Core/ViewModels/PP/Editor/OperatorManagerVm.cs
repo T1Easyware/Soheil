@@ -37,7 +37,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public OperatorManagerVm(Dal.SoheilEdmContext uow)
 		{
 			_uow = uow;
-
+			//OperatorsList.Add(OperatorEditorVm.CreateAnonymous());
 			#region get all operators and convert them to VM
 			OperatorDataService = new DataServices.OperatorDataService(_uow);
 			var allOperators = OperatorDataService.GetActives();
@@ -73,8 +73,18 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <param name="processVm"></param>
 		public void Refresh(ProcessEditorVm processVm)
 		{
-			Process = processVm.Model;
-			Activity = processVm.ActivityModel;
+			if (processVm != null)
+			{
+				Process = processVm.Model;
+				Activity = processVm.ActivityModel;
+				IsEnabled = true;
+			}
+			else
+			{
+				Process = null;
+				Activity = null;
+				IsEnabled = false;
+			}
 			refresh();
 		}
 		/// <summary>
@@ -90,6 +100,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					bool[] status;
 					var operModel = oper.OperatorModel;
+					if (operModel == null) continue;
+
+					//get data
 					if (Process == null)
 					{
 						status = await Task.Run(() => OperatorDataService.GetOperatorStatus(operModel, Block.Tasks.FirstOrDefault()));
@@ -98,6 +111,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					{
 						status = await Task.Run(() => OperatorDataService.GetOperatorStatus(operModel, Process));
 					}
+
+					//set data
 					oper.IsSelected = status[0];
 					oper.IsInTask = status[1];
 					oper.IsInTimeRange = status[2];
@@ -177,6 +192,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public ObservableCollection<OperatorEditorVm> OperatorsSelectedList { get { return _operatorsSelectedList; } }
 		private ObservableCollection<OperatorEditorVm> _operatorsSelectedList = new ObservableCollection<OperatorEditorVm>();
 
+		//IsEnabled Dependency Property
+		public bool IsEnabled
+		{
+			get { return (bool)GetValue(IsEnabledProperty); }
+			set { SetValue(IsEnabledProperty, value); }
+		}
+		public static readonly DependencyProperty IsEnabledProperty =
+			DependencyProperty.Register("IsEnabled", typeof(bool), typeof(OperatorManagerVm), new UIPropertyMetadata(false));
 
 		/// <summary>
 		/// Gets or sets a bindable command to clear search query

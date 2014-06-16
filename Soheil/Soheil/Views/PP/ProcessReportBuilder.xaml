@@ -7,7 +7,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="900">
+             d:DesignHeight="500" d:DesignWidth="900">
 	<Border BorderBrush="{StaticResource BorderBrushNormal}" BorderThickness="1" CornerRadius="1" TextBlock.Foreground="Silver" Padding="4">
 		<Border.Effect>
 			<DropShadowEffect ShadowDepth="0" BlurRadius="6" Color="Gainsboro"/>
@@ -19,47 +19,54 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*"/>
-					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<DockPanel>
 					<!-- main buttons -->
-					<TextBlock DockPanel.Dock="Left" Text="نام محصول: "/>
-					<Rectangle Width="16" Height="16" DockPanel.Dock="Left" Margin="2">
-						<Rectangle.Fill>
-							<SolidColorBrush Color="{Binding ProductColor}"/>
-						</Rectangle.Fill>
-					</Rectangle>
-					<TextBlock DockPanel.Dock="Left" Text="{Binding ProductName}"/>
-					<TextBlock DockPanel.Dock="Left" Text="     نام فعالیت: "/>
-					<TextBlock Text="{Binding ActivityName}"/>
-				</DockPanel>
+					<DockPanel DockPanel.Dock="Right" Margin="0,0,0,-18">
+						<Button DockPanel.Dock="Right" Command="{Binding SaveCommand}">
+							<DockPanel>
+								<Image DockPanel.Dock="Left" Style="{StaticResource Save16Image}"/>
+								<TextBlock Text="ذخیره تغییرات و بستن" Foreground="Black"/>
+							</DockPanel>
+						</Button>
+						<Button DockPanel.Dock="Right" Command="{Binding CloseCommand}">
+							<DockPanel>
+								<Image DockPanel.Dock="Left" Style="{StaticResource Undo16Image}"/>
+								<TextBlock Text="بستن" Foreground="Black"/>
+							</DockPanel>
+						</Button>
+						<!-- g1 -->
+						<WrapPanel DockPanel.Dock="Right" VerticalAlignment="Bottom">
+							<TextBlock Text="خروجی سالم فعالیت: "/>
+							<TextBox Text="{Binding ProducedG1}" MinWidth="100"/>
+						</WrapPanel>
 
-				<DockPanel LastChildFill="False" Grid.RowSpan="2" HorizontalAlignment="Right" Margin="0,0,0,-18">
-					<Button DockPanel.Dock="Right" Command="{Binding SaveCommand}">
-						<DockPanel>
-							<Image DockPanel.Dock="Left" Style="{StaticResource Save16Image}"/>
-							<TextBlock Text="ذخیره تغییرات و بستن" Foreground="Black"/>
-						</DockPanel>
-					</Button>
-					<Button DockPanel.Dock="Right" Command="{Binding CloseCommand}">
-						<DockPanel>
-							<Image DockPanel.Dock="Left" Style="{StaticResource Undo16Image}"/>
-							<TextBlock Text="بستن" Foreground="Black"/>
-						</DockPanel>
-					</Button>
+					</DockPanel>
+
+					<!-- title -->
+					<DockPanel>
+						<TextBlock DockPanel.Dock="Left" Text="نام محصول: "/>
+						<Rectangle Width="16" Height="16" DockPanel.Dock="Left" Margin="2">
+							<Rectangle.Fill>
+								<SolidColorBrush Color="{Binding ProductColor}"/>
+							</Rectangle.Fill>
+						</Rectangle>
+						<TextBlock DockPanel.Dock="Left" Text="{Binding ProductName}"/>
+						<TextBlock DockPanel.Dock="Left" Text="     نام فعالیت: "/>
+						<TextBlock Text="{Binding ActivityName}"/>
+					</DockPanel>
 				</DockPanel>
 
 				<!-- Operator produced G1 -->
-				<Border Grid.Row="2" BorderBrush="#CCC" Background="#08F"
+				<Border Grid.Row="1" BorderBrush="#CCC" Background="#08F"
 										    BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
-					<TextBlock Text="خروجی تفکیک شده (تولید سالم هر اپراتور)" Foreground="Black" Margin="2,2,2,0"/>
+					<TextBlock Text="خروجی سالم هر اپراتور" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
-				<Border Grid.Row="3" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+				<Border Grid.Row="2" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White" Height="25">
 							<Grid.ColumnDefinitions>
@@ -100,11 +107,11 @@
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
 							<TextBlock Margin="2" Grid.Column="0" Text="مقدار هدف فعالیت = "/>
-							<TextBlock Margin="2,0" Grid.Column="1" Text="{Binding TargetPoint}" Foreground="Gold" FontWeight="Bold" FontSize="14"/>
+							<TextBlock Margin="2,0" Grid.Column="1" Text="{Binding Timing.TargetPoint}" Foreground="Gold" FontWeight="Bold" FontSize="14"/>
 							<TextBlock Margin="2" Grid.Column="2" Text="برای هر اپراتور = "/>
 							<TextBlock Margin="2,0" Grid.Column="3" Text="{Binding TargetPointForOperator}" Foreground="Gold" FontWeight="Bold" FontSize="14"/>
 							<TextBlock Margin="2" Grid.Column="5" Text="مجموع تولید سالم"/>
-							<TextBlock Margin="2" Grid.Column="6" Text="{Binding ProducedG1}" TextAlignment="Center" HorizontalAlignment="Center"/>
+							<TextBlock Margin="2" Grid.Column="6" Text="{Binding SumOfProducedG1}" TextAlignment="Center" HorizontalAlignment="Center"/>
 						</Grid>
 						<!-- operator report List -->
 						<ItemsControl ItemsSource="{Binding OperatorReports.List}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
@@ -154,11 +161,11 @@
 				</Border>
 
 				<!-- Defections -->
-				<Border Grid.Row="4" BorderBrush="#CCC" Background="#E64"
+				<Border Grid.Row="3" BorderBrush="#CCC" Background="#E64"
 						BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
 					<TextBlock Text="گزارش کیفی (ضایعات)" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
-				<Border Grid.Row="5" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+				<Border Grid.Row="4" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
 							<Grid.ColumnDefinitions>
@@ -337,11 +344,11 @@
 				</Border>
 
 				<!-- Stoppage -->
-				<Border Grid.Row="6" BorderBrush="#CCC" Background="#FC0"
+				<Border Grid.Row="5" BorderBrush="#CCC" Background="#FC0"
 										    BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
 					<TextBlock Text="گزارش توقفات" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
-				<Border Grid.Row="7" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
+				<Border Grid.Row="6" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Background="#185C54" TextBlock.Foreground="White">
 							<Grid.ColumnDefinitions>

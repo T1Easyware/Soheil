@@ -17,9 +17,10 @@ namespace Soheil.Core.ViewModels.PP
 
 
 		internal Model.Operator OperatorModel { get; private set; }
-		public int OperatorId { get { return OperatorModel.Id; } }
+		public int OperatorId { get { return OperatorModel == null ? -1 : OperatorModel.Id; } }
 
 		#region Ctor
+		protected OperatorVm() { }
 		/// <summary>
 		/// Use this constructor to create an operator free of a process
 		/// </summary>
@@ -84,7 +85,7 @@ namespace Soheil.Core.ViewModels.PP
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
-			private set { SetValue(NameProperty, value); }
+			protected set { SetValue(NameProperty, value); }
 		}
 		public static readonly DependencyProperty NameProperty =
 			DependencyProperty.Register("Name", typeof(string), typeof(OperatorVm), new UIPropertyMetadata(null));
@@ -94,7 +95,7 @@ namespace Soheil.Core.ViewModels.PP
 		public string Code
 		{
 			get { return (string)GetValue(CodeProperty); }
-			private set { SetValue(CodeProperty, value); }
+			protected set { SetValue(CodeProperty, value); }
 		}
 		public static readonly DependencyProperty CodeProperty =
 			DependencyProperty.Register("Code", typeof(string), typeof(OperatorVm), new UIPropertyMetadata(null));

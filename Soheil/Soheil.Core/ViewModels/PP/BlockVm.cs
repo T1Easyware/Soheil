@@ -41,7 +41,7 @@ namespace Soheil.Core.ViewModels.PP
 			UOW = data.UOW;
 			Parent = parent;
 			_fullData = data;
-			this.ViewModeChanged += v => ShowTasks = v == PPViewMode.Report;
+			//this.ViewModeChanged += v => ShowTasks = v == PPViewMode.Report;
 			load();
 		}
 
@@ -85,6 +85,7 @@ namespace Soheil.Core.ViewModels.PP
 			//Block background texts
 			BlockTargetPoint = Model.BlockTargetPoint;
 			BlockProducedG1 = _fullData.ReportData[0];
+			CanAddSetupBefore = _fullData.CanAddSetupBefore;
 			ReportFillPercent = string.Format("{0:D2}%", _fullData.ReportData[1]);
 			IsReportFilled = (_fullData.ReportData[1] >= 100);
 			
@@ -271,21 +272,6 @@ namespace Soheil.Core.ViewModels.PP
 
 		#region Other Props
 		/// <summary>
-		/// Gets or sets a bindable value that indicates whether this block shows its tasks
-		/// </summary>
-		public bool ShowTasks
-		{
-			get { return (bool)GetValue(ShowTasksProperty); }
-			set { SetValue(ShowTasksProperty, value); }
-		}
-		public static readonly DependencyProperty ShowTasksProperty =
-			DependencyProperty.Register("ShowTasks", typeof(bool), typeof(BlockVm),
-			new UIPropertyMetadata(false, (d, e) =>
-			{
-				/*if ((bool)e.NewValue)
-					((BlockVm)d).reloadTasks();*/
-			}));
-		/// <summary>
 		/// Gets a bindable value that indicates if a new Setup can be added before this Block
 		/// </summary>
 		public bool CanAddSetupBefore
@@ -415,6 +401,15 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DeleteBlockWithReportsCommandProperty =
 			DependencyProperty.Register("DeleteBlockWithReportsCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
+
+		//InsertSetup Dependency Property
+		public Commands.Command InsertSetup
+		{
+			get { return (Commands.Command)GetValue(InsertSetupProperty); }
+			set { SetValue(InsertSetupProperty, value); }
+		}
+		public static readonly DependencyProperty InsertSetupProperty =
+			DependencyProperty.Register("InsertSetup", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets a bindable command to insert a setup before this Block
 		/// </summary>
@@ -425,6 +420,14 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty InsertSetupBeforeProperty =
 			DependencyProperty.Register("InsertSetupBefore", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
+		//InsertSetupBetween Dependency Property
+		public Commands.Command InsertSetupBetween
+		{
+			get { return (Commands.Command)GetValue(InsertSetupBetweenProperty); }
+			set { SetValue(InsertSetupBetweenProperty, value); }
+		}
+		public static readonly DependencyProperty InsertSetupBetweenProperty =
+			DependencyProperty.Register("InsertSetupBetween", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

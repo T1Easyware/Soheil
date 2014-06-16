@@ -97,7 +97,7 @@ namespace Soheil.Core.ViewModels.PP
 
 			//find causes and create FilterBoxVm instances for each level
 			var causeDs = new DataServices.CauseDataService();
-			var causeL1Models = causeDs.GetRoot().Children.ToArray();
+			var causeL1Models = causeDs.GetRoot().Children.Where(x => x.Status == (byte)Common.Status.Active).ToArray();
 			var causeL3Box = FilterBoxVm.CreateForCause(null);
 			var causeL2Box = FilterBoxVm.CreateForCause(causeL3Box);
 			var causeL1Box = FilterBoxVm.CreateForCause(causeL2Box, causeL1Models);
@@ -132,7 +132,7 @@ namespace Soheil.Core.ViewModels.PP
 
 				causeL3Box.FilteredList.Clear();
 				if (v == null) return;
-				foreach (var item in ((CauseVm)v.ViewModel).ChildrenModels)
+				foreach (var item in ((CauseVm)v.ViewModel).ChildrenModels.Where(x => x.Status == (byte)Common.Status.Active))
 				{
 					causeL3Box.FilteredList.Add(FilterableItemVm.CreateForCause(causeL3Box, item));
 				}
@@ -144,7 +144,7 @@ namespace Soheil.Core.ViewModels.PP
 
 				causeL2Box.FilteredList.Clear();
 				if (v == null) return;
-				foreach (var item in ((CauseVm)v.ViewModel).ChildrenModels)
+				foreach (var item in ((CauseVm)v.ViewModel).ChildrenModels.Where(x => x.Status == (byte)Common.Status.Active))
 				{
 					causeL2Box.FilteredList.Add(FilterableItemVm.CreateForCause(causeL2Box, item));
 				}

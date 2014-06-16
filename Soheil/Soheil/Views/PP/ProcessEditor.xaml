@@ -4,7 +4,7 @@
              xmlns:I="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Editor;assembly=Soheil.Core"
              xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
-             xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"
+             xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:Soheil.Views.PP"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -50,6 +50,43 @@
 
 	<UserControl.ContextMenu>
 		<ContextMenu>
+			<MenuItem ItemsSource="{Binding Choices}" Header="انتخاب نفرساعت فعالیت" 
+					  Height="30">
+				<MenuItem.Icon>
+					<Image Style="{StaticResource ManHourImage}"/>
+				</MenuItem.Icon>
+				<MenuItem.ItemTemplate>
+					<DataTemplate>
+						<WrapPanel TextBlock.Foreground="White">
+							<TextBlock Text="{Binding ManHour}"/>
+							<TextBlock Text="(*)" Visibility="{Binding IsMany, Converter={StaticResource booleanToVisibilityConverter}}"/>
+							<TextBlock Text="{Loc txtManHour}" Margin="4,0"/>
+							<Border Margin="2,0" Background="#1FFF" CornerRadius="2" BorderBrush="#4FFF" BorderThickness="1">
+								<WrapPanel>
+									<TextBlock Text="{Loc txtCycleTime}" Margin="0,0,4,0"/>
+									<TextBlock Text="{Binding CycleTime}"/>
+								</WrapPanel>
+							</Border>
+						</WrapPanel>
+					</DataTemplate>
+				</MenuItem.ItemTemplate>
+				<MenuItem.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel/>
+					</ItemsPanelTemplate>
+				</MenuItem.ItemsPanel>
+				<MenuItem.ItemContainerStyle>
+					<Style TargetType="MenuItem">
+						<Setter Property="Command" Value="{Binding SelectCommand}"/>
+						<Setter Property="Icon">
+							<Setter.Value>
+								<Image Style="{StaticResource ManHourImage}"/>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</MenuItem.ItemContainerStyle>
+			</MenuItem>
+			<Separator/>
 			<MenuItem Command="{Binding DeleteCommand}" Header="حذف فعالیت">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>False</sys:Boolean>
@@ -120,9 +157,9 @@
 					<StackPanel.ToolTip>
 						<UniformGrid Rows="3" Columns="2">
 							<TextBlock Text="{Loc txtStartTime}"/>
-							<TextBlock Text="{Binding Timing.StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
+							<TextBlock Text="{Binding Timing.StartDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="RightToLeft" Margin="8,0"/>
 							<TextBlock Text="{Loc txtEndTime}"/>
-							<TextBlock Text="{Binding Timing.EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
+							<TextBlock Text="{Binding Timing.EndDateTime, Converter={StaticResource dateTimeToCompactConverter}}" FlowDirection="RightToLeft" Margin="8,0"/>
 							<TextBlock Text="{Loc txtDuration}"/>
 							<TextBlock Text="{Binding Timing.DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight" Margin="8,0"/>
 						</UniformGrid>
@@ -133,13 +170,13 @@
 						<CustomControls:TimeBox Time="{Binding Timing.StartTime, Mode=TwoWay}"/>
 					</DockPanel>
 					<DockPanel x:Name="startDatePanel" Height="0">
-						<cal:PersianDatePicker SelectedDate="{Binding Timing.StartDate}"/>
+						<cal:DatePicker SelectedDate="{Binding Timing.StartDate}" DisplayDate="{Binding Timing.StartDate}"/>
 					</DockPanel>
 					<DockPanel>
 						<Image Style="{StaticResource QuantityImage}" Margin="2,3" DockPanel.Dock="Left" ToolTip="{Loc txtTargetPoint}"/>
-						<Grid DockPanel.Dock="Right" Width="49">
-							<Image Style="{StaticResource OperatorImage}" DockPanel.Dock="Right" ToolTip="{Loc txtOperatorsCount}" HorizontalAlignment="Right"/>
-							<TextBlock Text="{Binding SelectedOperatorsCount}" Foreground="#048" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,0"/>
+						<Grid DockPanel.Dock="Right" Width="32">
+							<Image Style="{StaticResource ManHourImage}" DockPanel.Dock="Right" ToolTip="{Loc txtOperatorsCount}" HorizontalAlignment="Right"/>
+							<TextBlock Text="{Binding SelectedChoice.ManHour}" Foreground="#048" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,0"/>
 							<Image Style="{StaticResource Warning16Image}" Visibility="{Binding OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right"
 								ToolTip="تعداد اپراتورهای تخصیص داده شده نامعتبر می باشد"/>
 						</Grid>

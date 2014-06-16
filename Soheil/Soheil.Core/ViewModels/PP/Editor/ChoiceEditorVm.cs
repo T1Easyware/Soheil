@@ -14,6 +14,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 	/// </summary>
 	public class ChoiceEditorVm : DependencyObject
 	{
+		public event Action<ChoiceEditorVm> Selected;
 		/// <summary>
 		/// Gets the model for StateStationActivity
 		/// </summary>
@@ -38,8 +39,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			CycleTime = Model.CycleTime;
 			ManHour = Model.ManHour;
 			IsMany = model.IsMany;
+			SelectCommand = new Commands.Command(o => { if (Selected != null)Selected(this); });
 		}
-
 
 		/// <summary>
 		/// Gets or sets the bindable CycleTime of this choice
@@ -72,5 +73,17 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty IsManyProperty =
 			DependencyProperty.Register("IsMany", typeof(bool), typeof(ChoiceEditorVm), new UIPropertyMetadata(false));
+
+		/// <summary>
+		/// For use in ProcessEditorVm to select a choice
+		/// </summary>
+		public Commands.Command SelectCommand
+		{
+			get { return (Commands.Command)GetValue(SelectCommandProperty); }
+			set { SetValue(SelectCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SelectCommandProperty =
+			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(ChoiceEditorVm), new UIPropertyMetadata(null));
+
 	}
 }

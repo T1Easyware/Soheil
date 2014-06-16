@@ -82,6 +82,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit">
+      <HintPath>..\External Assemblies\WPFToolkit.dll</HintPath>
+    </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock">
       <HintPath>..\packages\Extended.Wpf.Toolkit.2.1.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>

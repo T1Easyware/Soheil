@@ -16,8 +16,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public event Action<ProcessEditorVm, DateTime, DateTime> TimesChanged;
 		/// <summary>
 		/// Occurs when the specifed process is selected in this activity
+		/// <para>Also when last process is deleted and therefore no selected process exists</para>
 		/// </summary>
-		public event Action<ProcessEditorVm> Selected;
+		public event Action<ProcessEditorVm, bool> Selected;
 		/// <summary>
 		/// Occurs when selected choice of SSAs for this Process is changed
 		/// <para>second parameter can be null</para>
@@ -43,7 +44,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				if (e.NewItems != null)
 					foreach (ProcessEditorVm processVm in e.NewItems)
+					{
 						ProcessList_Added(processVm);
+					}
 			};
 
 			//Add Choices
@@ -83,6 +86,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		#region Event Handlers
 		void ProcessList_Added(ProcessEditorVm processVm)
 		{
+			//create choice menuitems for process
+			processVm.Choices.Clear();
+			foreach (var choice in Choices)
+			{
+				var choiceVm = new ChoiceEditorVm(choice.Model);
+				choiceVm.Selected += ch =>
+					processVm.SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == ch.ManHour);
+				processVm.Choices.Add(choiceVm);
+			}
+
 			//notify Block about selection and delete
 			processVm.Selected += Process_Selected;
 			processVm.Deleted += Process_Deleted;
@@ -99,20 +112,28 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (processVm.Model.StateStationActivity != null)
 			{
 				//select the right choice based on manHour
-				processVm.SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == processVm.SelectedOperatorsCount);
+				//processVm.SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == processVm.SelectedOperatorsCount);
+
+				//select the right choice based on SSA
+				processVm.SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == processVm.Model.StateStationActivity.ManHour);
 			}
 		}
 
 		void Process_Selected(ProcessEditorVm processVm)
 		{
-			if (Selected != null) 
-				Selected(processVm);
+			if (Selected != null)
+				Selected(processVm, true);
 		}
 		void Process_Deleted(ProcessEditorVm processVm)
 		{
 			processVm.IsSelected = false;
 			ProcessList.Remove(processVm);
 			if (ProcessList.Any()) ProcessList.First().IsSelected = true;
+			else
+			{
+				if (Selected != null)
+					Selected(processVm, false);
+			}
 		}
 		
 		void Process_TimesChanged(ProcessEditorVm processVm, DateTime start, DateTime end)

@@ -97,10 +97,16 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var task = Model.Tasks.First();
 			if (task.Processes.Any())
 			{
-				if(task.Processes.AreAllEqual(x => x.DurationSeconds))
-					IsDurationFixed = true;
-				else if (task.Processes.AreAllEqual(x => x.TargetCount))
+				if (task.Processes.AreAllEqual(x => x.TargetCount))
+				{
+					FixedTargetPoint = task.Processes.First().TargetCount;
 					IsTargetPointFixed = true;
+				}
+				else if (task.Processes.AreAllEqual(x => x.DurationSeconds))
+				{
+					FixedDurationSeconds = task.Processes.First().DurationSeconds;
+					IsDurationFixed = true;
+				}
 				else IsDeferred = true;
 			}
 
@@ -123,8 +129,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			OperatorManager.refresh();
 		}
+		#endregion
 
-		void activityVm_SelectedChoiceChanged(ProcessEditorVm processVm, ChoiceEditorVm newChoice)
+		#region Event Handlers
+		void activityVm_SelectedChoiceChanged(ProcessEditorVm processVm, ChoiceEditorVm newChoice) 
 		{
 			if (newChoice == null) return;
 
@@ -148,9 +156,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					processVm.Timing.DurationSeconds = (int)(processVm.Timing.TargetPoint * newChoice.CycleTime);
 			}
 		}
-		#endregion
-
-		#region Event Handlers
+	
 		//Selection is for user selection only (not automatic selection)
 		void OperatorManager_SelectionChanged(OperatorEditorVm vm, bool isSelected, bool updateCount)
 		{
@@ -176,16 +182,23 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}
 		}
 
-		void Activity_Selected(ProcessEditorVm processVm)
+		void Activity_Selected(ProcessEditorVm processVm, bool isSelected)
 		{
-			foreach (var activity in ActivityList)
+			if (isSelected)
 			{
-				foreach (var process in activity.ProcessList)
+				foreach (var activity in ActivityList)
 				{
-					if (process != processVm) process.IsSelected = false;
+					foreach (var process in activity.ProcessList)
+					{
+						if (process != processVm) process.IsSelected = false;
+					}
 				}
+				OperatorManager.Refresh(processVm);
 			}
-			OperatorManager.Refresh(processVm);
+			else
+			{
+				OperatorManager.Refresh(null);
+			}
 		}
 		void Activity_TimesChanged(ProcessEditorVm process, DateTime start, DateTime end)
 		{
@@ -253,11 +266,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				process.EndDateTime = process.StartDateTime.AddSeconds(process.DurationSeconds);
 			}
 			Model.EndDateTime = task.Processes.Max(x => x.EndDateTime);
+			if (Model.EndDateTime - Model.StartDateTime < TimeSpan.FromMinutes(1))
+				Model.EndDateTime = Model.StartDateTime.AddMinutes(1);
 			Model.DurationSeconds = (int)(Model.EndDateTime - Model.StartDateTime).TotalSeconds;
 
 			task.StartDateTime = Model.StartDateTime;
 			task.EndDateTime = Model.EndDateTime;
 			task.DurationSeconds = Model.DurationSeconds;
+			task.TaskTargetPoint = Model.BlockTargetPoint;
 
 			//check how it should be placed
 			if (IsParallel)//parallel
@@ -267,17 +283,20 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			else//serial
 			{
 				//check if it fits
-				bool wasAutoStart = IsAutoStart;
 				bool fits = true;
-				if (!IsAutoStart)
-				{
-					var inRangeBlocks = _blockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
-					var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
 
-					//if not fit, make it auto start
-					if (inRangeBlocks.Any(x => x != Model) || inRangeNPTs.Any())
-						fits = false;
+				var inRangeBlocks = _blockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
+				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
+				var prevItem = _blockDataService.FindPreviousBlock(StationId, Model.StartDateTime);
+				DateTime closestDt = prevItem.Item1.EndDateTime;
+				if (prevItem.Item2 != null)
+				{
+					if(prevItem.Item2.EndDateTime > closestDt)
+					closestDt = prevItem.Item2.EndDateTime;
 				}
+				//if not fit, make it auto start
+				if (inRangeBlocks.Any(x => x != Model) || inRangeNPTs.Any())
+					fits = false;
 
 				//check if should use auto start
 				if (IsAutoStart || !fits)
@@ -287,7 +306,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					var seq = sman.FindNextFreeSpace(
 						StationId,
 						State.ProductRework.Id,
-						!wasAutoStart ? StartDate.Add(StartTime) : DateTime.Now, //put it after specifed time if it wasn't auto start
+						IsAutoStart ? closestDt : StartDate.Add(StartTime), //put it after specifed time if it wasn't auto start
 						(int)Duration.TotalSeconds);
 					var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
 

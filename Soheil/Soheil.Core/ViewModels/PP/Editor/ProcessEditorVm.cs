@@ -161,7 +161,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				SelectedOperators.Add(new OperatorVm(oper.Operator));
 			}
 			SelectedOperatorsCount = model.ProcessOperators.Count;
-			SelectedOperators.CollectionChanged += (s, e) => SelectedOperatorsCount = SelectedOperators.Count;
+			SelectedOperators.CollectionChanged += (s, e) =>
+			{
+				SelectedOperatorsCount = SelectedOperators.Count;
+			};
 			#endregion
 
 			//command
@@ -256,20 +259,40 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		private ObservableCollection<OperatorVm> _selectedOperators = new ObservableCollection<OperatorVm>();
 		/// <summary>
 		/// Gets or sets the bindable number of used operators in this process
+		/// <para>If set to same value again, before happening a reset to -1 happens to ensure callback</para>
 		/// </summary>
 		public int SelectedOperatorsCount
 		{
 			get { return (int)GetValue(SelectedOperatorsCountProperty); }
-			set { SetValue(SelectedOperatorsCountProperty, value); }
+			set { SetValue(SelectedOperatorsCountProperty, -1); SetValue(SelectedOperatorsCountProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedOperatorsCountProperty =
 			DependencyProperty.Register("SelectedOperatorsCount", typeof(int), typeof(ProcessEditorVm),
 			new UIPropertyMetadata(0, (d, e) =>
 			{
 				var vm = (ProcessEditorVm)d;
+				if ((int)e.NewValue == -1) return;
 				if (vm.SelectedOperatorsCountChanged != null)
 					vm.SelectedOperatorsCountChanged(vm, (int)e.NewValue);
 			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicate whether Manhour does not match the number of operators assigned to this choice
+		/// <para>This could be true when an auto planning considered this choice but not able to assign operators yet</para>
+		/// </summary>
+		public bool OperatorCountError
+		{
+			get { return (bool)GetValue(OperatorCountErrorProperty); }
+			set { SetValue(OperatorCountErrorProperty, value); }
+		}
+		public static readonly DependencyProperty OperatorCountErrorProperty =
+			DependencyProperty.Register("OperatorCountError", typeof(bool), typeof(ProcessEditorVm), new UIPropertyMetadata(true));
+
+
+		/// <summary>
+		/// Gets a bindable collection of choices to select from
+		/// </summary>
+		public ObservableCollection<ChoiceEditorVm> Choices { get { return _choices; } }
+		private ObservableCollection<ChoiceEditorVm> _choices = new ObservableCollection<ChoiceEditorVm>();
 		/// <summary>
 		/// Gets or sets a bindable value to represent the StateStationActivity compatible with the number of used operators
 		/// <para>Changing this value updates Model.StateStationActivity and valid machines vm</para>
@@ -288,17 +311,6 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var oldVal = e.OldValue as ChoiceEditorVm;
 				vm.choiceIsChanged(oldVal, newVal);
 			}));
-		/// <summary>
-		/// Gets or sets a bindable value that indicate whether Manhour does not match the number of operators assigned to this choice
-		/// <para>This could be true when an auto planning considered this choice but not able to assign operators yet</para>
-		/// </summary>
-		public bool OperatorCountError
-		{
-			get { return (bool)GetValue(OperatorCountErrorProperty); }
-			set { SetValue(OperatorCountErrorProperty, value); }
-		}
-		public static readonly DependencyProperty OperatorCountErrorProperty =
-			DependencyProperty.Register("OperatorCountError", typeof(bool), typeof(ProcessEditorVm), new UIPropertyMetadata(true));
 		#endregion
 
 		#region Machines
@@ -373,7 +385,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						vm.Selected(vm);
 				}
 				else
+				{
 					vm.ShowAllMachines = false;
+				}
 			}));
 		//SelectCommand Dependency Property
 		public Commands.Command SelectCommand
