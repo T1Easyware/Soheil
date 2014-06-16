@@ -155,7 +155,11 @@ namespace Soheil.Core.DataServices
 
 			//correct G1
 			if (model.OperatorProcessReports.Any())
-				model.ProducedG1 = model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);
+			{
+				var sum = model.OperatorProcessReports.Sum(x => x.OperatorProducedG1);
+				if (sum < model.ProducedG1)
+					model.ProducedG1 = sum;
+			}
 			Context.Commit();
 		}
 
