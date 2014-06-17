@@ -167,15 +167,6 @@ namespace Soheil.Core.ViewModels.PP
 					};
 					PPItems.Manager.WorkTimesRemoved += () =>
 					{
-						/*var vms = ShiftsAndBreaks.Where(x => x.IsShift && x.Start == item.Start).ToArray();
-						foreach (var vm in vms)
-						{
-							foreach (var breakVm in vm.Children)
-							{
-								ShiftsAndBreaks.Remove(breakVm);
-							}
-							ShiftsAndBreaks.Remove(vm);
-						}*/
 						ShiftsAndBreaks.Clear();
 					};
 					PPItems.BlockAdded += vm =>
@@ -186,6 +177,10 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						if (SelectedBlock != null && SelectedBlock.Id == id)
 							SelectedBlock = null;
+					};
+					PPItems.NptAdded += vm =>
+					{
+						initializeCommands(vm);
 					};
 					PPItems.NptRemoved += id =>
 					{
@@ -821,7 +816,22 @@ namespace Soheil.Core.ViewModels.PP
 			//		}
 			//};
 		}
-
+		void initializeCommands(NPTVm vm)
+		{
+			vm.SelectionChanged += (nptVm, isSelected) =>
+			{
+				if (!isSelected)
+					if (SelectedNPT == nptVm) 
+						SelectedNPT = null;
+			};
+			vm.EditItemCommand = new Commands.Command(o =>
+			{
+				if (SelectedNPT != null)
+					SelectedNPT.IsEditMode = false;
+				SelectedNPT = vm;
+				vm.IsEditMode = true;
+			});
+		}
 		//ToggleTaskEditorCommand Dependency Property
 		/// <summary>
 		/// Gets a bindable command that toggles task editor's visiblity

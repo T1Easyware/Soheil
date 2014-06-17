@@ -30,6 +30,10 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		public event Action<int> BlockRemoved;
 		/// <summary>
+		/// Occurs when a new npt is added to collection
+		/// </summary>
+		public event Action<NPTVm> NptAdded;
+		/// <summary>
 		/// Occurs when an npt is removed from this collection. parameter is nptId
 		/// </summary>
 		public event Action<int> NptRemoved;
@@ -106,12 +110,21 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						//add
 						vm = AddNPT(item.Id);
-						if (vm != null) vm.ViewMode = ViewMode;
+						if (vm != null)
+						{
+							vm.ViewMode = ViewMode;
+							if (NptAdded != null) NptAdded(vm);
+						}
 					}
 					else
 					{
 						//update
-						vm.Reload(item);
+						if (parent.SelectedNPT != null)
+						{
+							if (parent.SelectedNPT.Id != item.Id)
+								vm.Reload(item);
+						}
+						else vm.Reload(item);
 					}
 				}
 			};

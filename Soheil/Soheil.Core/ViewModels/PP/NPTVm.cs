@@ -10,18 +10,21 @@ namespace Soheil.Core.ViewModels.PP
 {
 	public abstract class NPTVm : PPItemVm
 	{
+		public event Action<NPTVm, bool> SelectionChanged;
 		public NPTVm(PPItemCollection parent)
 			: base()
 		{
 			Parent = parent;
 			StartDateTimeChanged += newVal =>
 			{
+				_suppress = true;
 				StartDate = newVal.Date;
 				StartTime = newVal.TimeOfDay;
+				_suppress = false;
 			};
 			initializeCommands();
 		}
-
+		bool _suppress = false;
 		public abstract void Reload(PPItemNpt item);
 
 		//StartDate Dependency Property
@@ -35,6 +38,7 @@ namespace Soheil.Core.ViewModels.PP
 			new UIPropertyMetadata(DateTime.Now, (d, e) =>
 			{
 				var vm = d as NPTVm;
+				if (vm._suppress) return;
 				var val = (DateTime)e.NewValue;
 				vm.StartDateTime = val.Add(vm.StartTime);
 			}));
@@ -49,6 +53,7 @@ namespace Soheil.Core.ViewModels.PP
 			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
 			{
 				var vm = d as NPTVm;
+				if (vm._suppress) return;
 				var val = (TimeSpan)e.NewValue;
 				vm.StartDateTime = vm.StartDate.Add(val);
 			}));
@@ -77,7 +82,13 @@ namespace Soheil.Core.ViewModels.PP
 			set { SetValue(IsEditModeProperty, value); }
 		}
 		public static readonly DependencyProperty IsEditModeProperty =
-			DependencyProperty.Register("IsEditMode", typeof(bool), typeof(NPTVm), new UIPropertyMetadata(false));
+			DependencyProperty.Register("IsEditMode", typeof(bool), typeof(NPTVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = (NPTVm)d;
+				var val = (bool)e.NewValue;
+				if (vm.SelectionChanged != null) vm.SelectionChanged(vm, val);
+			}));
 
 		#region Commands
 		protected virtual void initializeCommands()

@@ -260,14 +260,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				if (process.StartDateTime < Model.StartDateTime)
 					process.StartDateTime = Model.StartDateTime;
-			}
-			foreach (var process in task.Processes)
-			{
 				process.EndDateTime = process.StartDateTime.AddSeconds(process.DurationSeconds);
 			}
-			Model.EndDateTime = task.Processes.Max(x => x.EndDateTime);
+
+			if (task.Processes.Any())
+				Model.EndDateTime = task.Processes.Max(x => x.EndDateTime);
 			if (Model.EndDateTime - Model.StartDateTime < TimeSpan.FromMinutes(1))
 				Model.EndDateTime = Model.StartDateTime.AddMinutes(1);
+
 			Model.DurationSeconds = (int)(Model.EndDateTime - Model.StartDateTime).TotalSeconds;
 
 			task.StartDateTime = Model.StartDateTime;
@@ -314,10 +314,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					var change = block.StartDT - Model.StartDateTime;
 					//apply start change to block
 					Model.StartDateTime = block.StartDT;
-					Model.EndDateTime = block.EndDT;
+					Model.EndDateTime += change;
 					//apply start change to task
 					task.StartDateTime = block.StartDT;
-					task.EndDateTime = block.EndDT;
+					task.EndDateTime += change;
 					//apply start change to processes
 					foreach (var process in task.Processes)
 					{
