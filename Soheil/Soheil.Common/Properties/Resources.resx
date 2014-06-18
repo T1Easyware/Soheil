@@ -634,7 +634,7 @@
     <value>زمان یا مقدار هدف</value>
   </data>
   <data name="PPE_FirstEmptySpace" xml:space="preserve">
-    <value>اولین زمان خالی</value>
+    <value>اولین زمان خالی پس از</value>
   </data>
   <data name="PPE_InvalidDuration" xml:space="preserve">
     <value>مدت نامعتبر</value>
@@ -872,5 +872,23 @@
   </data>
   <data name="txtStart" xml:space="preserve">
     <value>شروع</value>
+  </data>
+  <data name="PPE_AfterLast" xml:space="preserve">
+    <value>پس از آخرین برنامه</value>
+  </data>
+  <data name="PPE_Parallel" xml:space="preserve">
+    <value>موازی</value>
+  </data>
+  <data name="PPE_SameStartOffsetForActivities" xml:space="preserve">
+    <value>افزودن به زمان شروع تمام فعالیتها</value>
+  </data>
+  <data name="PPE_SameStartOffsetForActivitiesNegative" xml:space="preserve">
+    <value>کاستن از زمان شروع تمام فعالیتها</value>
+  </data>
+  <data name="PPE_SameStartTimeForActivities" xml:space="preserve">
+    <value>تغییر زمان شروع تمام فعالیتها</value>
+  </data>
+  <data name="txtAdd1Day" xml:space="preserve">
+    <value>روز بعد</value>
   </data>
 </root>

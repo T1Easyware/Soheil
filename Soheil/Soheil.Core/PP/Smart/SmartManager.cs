@@ -90,10 +90,10 @@ namespace Soheil.Core.PP.Smart
 		/// <param name="durationOftask"></param>
 		/// <param name="snapToLast">indicates if setups after an auto task should snap to its next task(true) or to the auto task(false)</param>
 		/// <returns></returns>
-		internal List<SmartRange> FindNextFreeSpace(int stationId, int productReworkId, DateTime startFrom, int durationOftask, bool snapToLast = true)
+		internal List<SmartRange> FindNextFreeSpace(int stationId, int productReworkId, DateTime startFrom, int durationOftask, Model.Block excludeModel = null)
 		{
 			//Find all tasks in database, which end after startFrom
-			var inRangeItems = _blockDataService.GetInRange(startFrom, stationId)
+			var inRangeItems = _blockDataService.GetInRange(startFrom, stationId, excludeModel)
 				.Select(x => SmartRange.ExistingBlock(x)).ToList();
 			var inRangeNPTs = _nptDataService.GetInRange(startFrom, stationId)
 				.Select(x => SmartRange.ExistingSetup(x))

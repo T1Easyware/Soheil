@@ -55,9 +55,14 @@ namespace Soheil.Core.ViewModels.PP
 			GetUpperBound = () => DateTime.MaxValue;
 
 			_suppress = true;
+			vm.Model.TargetCount = vm.Model.TargetCount <= 0 ? 1 : vm.Model.TargetCount;
+			vm.Model.DurationSeconds = vm.Model.DurationSeconds < GetCycleTime() ? (int)GetCycleTime() : vm.Model.DurationSeconds;
+			vm.Model.EndDateTime = vm.Model.EndDateTime - vm.Model.StartDateTime < TimeSpan.FromSeconds(GetCycleTime()) ?
+				vm.Model.StartDateTime + TimeSpan.FromSeconds(GetCycleTime()) :
+				vm.Model.EndDateTime;
 			TargetPoint = vm.Model.TargetCount;
-			DurationSeconds = vm.Model.DurationSeconds;
 			StartDateTime = vm.Model.StartDateTime;
+			DurationSeconds = vm.Model.DurationSeconds;
 			EndDateTime = vm.Model.EndDateTime;
 
 			AutoDurationCommand = new Commands.Command(o =>

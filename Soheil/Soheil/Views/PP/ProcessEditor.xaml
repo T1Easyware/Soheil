@@ -169,7 +169,7 @@
 						<TextBlock Text="{Loc txtStart}" VerticalAlignment="Center"/>
 						<CustomControls:TimeBox Time="{Binding Timing.StartTime, Mode=TwoWay}"/>
 					</DockPanel>
-					<DockPanel x:Name="startDatePanel" Height="0">
+					<DockPanel>
 						<cal:DatePicker SelectedDate="{Binding Timing.StartDate}" DisplayDate="{Binding Timing.StartDate}"/>
 					</DockPanel>
 					<DockPanel>
@@ -189,22 +189,6 @@
 						<CustomControls:DurationBox DurationSeconds="{Binding Timing.DurationSeconds, Mode=TwoWay}" ToolTip="{Loc txtDuration}" MaxWidth="80" HorizontalAlignment="Left"/>
 					</DockPanel>
 				</StackPanel>
-				<DockPanel.Triggers>
-					<EventTrigger RoutedEvent="MouseEnter">
-						<BeginStoryboard>
-							<Storyboard Duration="0:0:.1">
-								<DoubleAnimation Storyboard.TargetName="startDatePanel" Storyboard.TargetProperty="Height" Duration="0:0:.1" To="25"/>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-					<EventTrigger RoutedEvent="MouseLeave">
-						<BeginStoryboard>
-							<Storyboard Duration="0:0:.1">
-								<DoubleAnimation Storyboard.TargetName="startDatePanel" Storyboard.TargetProperty="Height" Duration="0:0:.1" To="0"/>
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger>
-				</DockPanel.Triggers>
             </DockPanel>
 
 

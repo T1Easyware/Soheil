@@ -57,6 +57,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var stateEntity = new Soheil.Core.DataServices.StateDataService(_uow).GetSingle(stateModel.Id);
 			State = new StateVm(stateEntity);
 			SelectedStateStation = State.StateStationList.FirstOrDefault();
+			EditorStartDate = DateTime.Now.Date;
+			EditorStartTime = DateTime.Now.TimeOfDay;
 
 			initOperatorManager();
 			initializeCommands();
@@ -76,8 +78,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		void initTask()
 		{
 			OperatorManager.Block = Model;
+			EditorStartDate = DateTime.Now.Date;
+			EditorStartTime = DateTime.Now.TimeOfDay;
 			StartDate = Model.StartDateTime.Date;
 			StartTime = Model.StartDateTime.TimeOfDay;
+			EndDate = Model.EndDateTime.Date;
+			EndTime = Model.EndDateTime.TimeOfDay;
+			Duration = TimeSpan.FromSeconds(Model.DurationSeconds);
 			
 			if (!Model.Tasks.Any())
 			{
@@ -114,6 +121,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			foreach (var group in Model.StateStation.StateStationActivities.GroupBy(x => x.Activity))
 			{
 				var activityVm = new ActivityEditorVm(Model.Tasks.First(), _uow, group);
+				activityVm.GetTaskStart = () => StartDateForAll.Add(StartTimeForAll);
 
 				//refresh operator manager upon selecting a process
 				activityVm.Selected += Activity_Selected;
@@ -230,19 +238,37 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			if (task != null)
 			{
 				task.StartDateTime = newVal;
-
-				foreach (var act in ActivityList)
-				{
-					foreach (var process in act.ProcessList.Where(x => !x.HasReport && x.Model.StartDateTime < newVal))
-					{
-						process.Timing.StartDateTime = newVal;
-					}
-				}
 			}
 		}
 		#endregion
 
 		#region Methods (Save)
+
+		internal void Move(TimeSpan diff)
+		{
+			Model.StartDateTime += diff;
+			Model.EndDateTime += diff;
+			foreach (var task in Model.Tasks)
+			{
+				task.StartDateTime += diff;
+				task.EndDateTime += diff;
+				foreach (var taskReport in task.TaskReports)
+				{
+					taskReport.ReportStartDateTime += diff;
+					taskReport.ReportEndDateTime += diff;
+				}
+				foreach (var process in task.Processes)
+				{
+					process.StartDateTime += diff;
+					process.EndDateTime += diff;
+					foreach (var processReport in process.ProcessReports)
+					{
+						processReport.StartDateTime += diff;
+						processReport.EndDateTime += diff;
+					}
+				}
+			}
+		}
 		/// <summary>
 		/// Saves this block and also finds the best empty space if needed
 		/// </summary>
@@ -251,24 +277,23 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var task = Model.Tasks.FirstOrDefault();
 			if (task == null) throw new Exception("Task not found.");
 
+			var prId = Model.StateStation.State.OnProductRework.Id;
+
 			#region Evaluate times and space
 			var nptDs = new DataServices.NPTDataService(_uow);
 
 			//recalc Start/End/Duration
 			Model.StartDateTime = StartDate.Add(StartTime);
-			foreach (var process in task.Processes)
-			{
-				if (process.StartDateTime < Model.StartDateTime)
-					process.StartDateTime = Model.StartDateTime;
-				process.EndDateTime = process.StartDateTime.AddSeconds(process.DurationSeconds);
-			}
-
 			if (task.Processes.Any())
 				Model.EndDateTime = task.Processes.Max(x => x.EndDateTime);
-			if (Model.EndDateTime - Model.StartDateTime < TimeSpan.FromMinutes(1))
-				Model.EndDateTime = Model.StartDateTime.AddMinutes(1);
-
+			else
+				Model.EndDateTime = EndDate.Add(EndTime);
 			Model.DurationSeconds = (int)(Model.EndDateTime - Model.StartDateTime).TotalSeconds;
+			if(Model.DurationSeconds < 300)
+			{
+				if (MessageBox.Show("طول برنامه کمتر از 5 دقیقه است", "هشدار", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes)
+					== MessageBoxResult.No) return;
+			}
 
 			task.StartDateTime = Model.StartDateTime;
 			task.EndDateTime = Model.EndDateTime;
@@ -276,38 +301,46 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			task.TaskTargetPoint = Model.BlockTargetPoint;
 
 			//check how it should be placed
-			if (IsParallel)//parallel
+			if(IsLastSpace)
 			{
+				var lastItem = _blockDataService.GetLastItem(Model, StationId);
+				if (lastItem.Item1 != null)
+				{
+					var setupDs = new DataServices.SetupDataService(_uow);
+					if (lastItem.Item2 != null)
+						setupDs.DeleteModel(lastItem.Item2);
+					var setup = setupDs.AddModel(StationId, lastItem.Item1.StateStation.State.OnProductRework.Id, prId, lastItem.Item1.EndDateTime);
 
+					var diff = setup.EndDateTime - Model.StartDateTime;
+					Move(diff);
+					_blockDataService.AddModel(Model);
+				}
+				else
+					throw new Exception("هیچ برنامه ای در ایستگاه وجود ندارد (گزینه موازی را انتخاب کنید)");
 			}
-			else//serial
+			else if (IsFirstSpace)
 			{
 				//check if it fits
 				bool fits = true;
+				DateTime start = EditorStartDate.Add(EditorStartTime);
 
-				var inRangeBlocks = _blockDataService.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
-				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, Model.EndDateTime, StationId);
-				var prevItem = _blockDataService.FindPreviousBlock(StationId, Model.StartDateTime);
-				DateTime closestDt = prevItem.Item1.EndDateTime;
-				if (prevItem.Item2 != null)
-				{
-					if(prevItem.Item2.EndDateTime > closestDt)
-					closestDt = prevItem.Item2.EndDateTime;
-				}
+				var inRangeBlocks = _blockDataService.GetInRange(Model, StationId);
+				var inRangeNPTs = nptDs.GetInRange(Model.StartDateTime, StationId);
 				//if not fit, make it auto start
 				if (inRangeBlocks.Any(x => x != Model) || inRangeNPTs.Any())
 					fits = false;
 
 				//check if should use auto start
-				if (IsAutoStart || !fits)
+				if (!fits)
 				{
 					// Updates the start datetime of this block to fit the first empty space
 					Core.PP.Smart.SmartManager sman = new Core.PP.Smart.SmartManager(_blockDataService, nptDs);
 					var seq = sman.FindNextFreeSpace(
 						StationId,
 						State.ProductRework.Id,
-						IsAutoStart ? closestDt : StartDate.Add(StartTime), //put it after specifed time if it wasn't auto start
-						(int)Duration.TotalSeconds);
+						start, //put it after specifed time if it wasn't auto start
+						(int)Duration.TotalSeconds,
+						Model);
 					var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
 
 					//measure start change
@@ -504,6 +537,23 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}));
 
 
+		public DateTime EditorStartDate
+		{
+			get { return (DateTime)GetValue(EditorStartDateProperty); }
+			set { SetValue(EditorStartDateProperty, value); }
+		}
+		public static readonly DependencyProperty EditorStartDateProperty =
+			DependencyProperty.Register("EditorStartDate", typeof(DateTime), typeof(BlockEditorVm),
+			new UIPropertyMetadata(DateTime.Now.Date));
+		//EditorStartTime Dependency Property
+		public TimeSpan EditorStartTime
+		{
+			get { return (TimeSpan)GetValue(EditorStartTimeProperty); }
+			set { SetValue(EditorStartTimeProperty, value); }
+		}
+		public static readonly DependencyProperty EditorStartTimeProperty =
+			DependencyProperty.Register("EditorStartTime", typeof(TimeSpan), typeof(BlockEditorVm),
+			new UIPropertyMetadata(TimeSpan.Zero));
 
 		/// <summary>
 		/// Gets or sets the bindable auto-calculated EndDate of this block
@@ -516,7 +566,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty EndDateProperty =
 			DependencyProperty.Register("EndDate", typeof(DateTime), typeof(BlockEditorVm),
-			new UIPropertyMetadata(DateTime.Now, (d, e) =>
+			new UIPropertyMetadata(DateTime.Now.Date, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
 				if (vm._isInitializing) return;
@@ -574,19 +624,22 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <summary>
 		/// Gets or sets the bindable value that indicates whether this block will fit in the earliest possible space
 		/// </summary>
-		public bool IsAutoStart
+		public bool IsFirstSpace
 		{
-			get { return (bool)GetValue(IsAutoStartProperty); }
-			set { SetValue(IsAutoStartProperty, value); }
+			get { return (bool)GetValue(IsFirstSpaceProperty); }
+			set { SetValue(IsFirstSpaceProperty, value); }
 		}
-		public static readonly DependencyProperty IsAutoStartProperty =
-			DependencyProperty.Register("IsAutoStart", typeof(bool), typeof(BlockEditorVm),
+		public static readonly DependencyProperty IsFirstSpaceProperty =
+			DependencyProperty.Register("IsFirstSpace", typeof(bool), typeof(BlockEditorVm),
 			new PropertyMetadata(false, (d, e) =>
 			{
 				var vm = d as BlockEditorVm;
 				var val = (bool)e.NewValue;
 				if (val)
+				{
 					vm.IsParallel = false;
+					vm.IsLastSpace = false;
+				}
 			}));
 		//IsParallel Dependency Property
 		public bool IsParallel
@@ -601,7 +654,28 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = d as BlockEditorVm;
 				var val = (bool)e.NewValue;
 				if (val)
-					vm.IsAutoStart = false;
+				{
+					vm.IsFirstSpace = false;
+					vm.IsLastSpace = false;
+				}
+			}));
+		//IsLastSpace Dependency Property
+		public bool IsLastSpace
+		{
+			get { return (bool)GetValue(IsLastSpaceProperty); }
+			set { SetValue(IsLastSpaceProperty, value); }
+		}
+		public static readonly DependencyProperty IsLastSpaceProperty =
+			DependencyProperty.Register("IsLastSpace", typeof(bool), typeof(BlockEditorVm),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = (BlockEditorVm)d;
+				var val = (bool)e.NewValue;
+				if (val)
+				{
+					vm.IsParallel = false;
+					vm.IsFirstSpace = false;
+				}
 			}));
 		#endregion
 
@@ -698,7 +772,37 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						process.Timing.DurationSeconds = val;
 					}
 				}
-			})); 
+			}));
+
+		//StartDateForAll Dependency Property
+		public DateTime StartDateForAll
+		{
+			get { return (DateTime)GetValue(StartDateForAllProperty); }
+			set { SetValue(StartDateForAllProperty, value); }
+		}
+		public static readonly DependencyProperty StartDateForAllProperty =
+			DependencyProperty.Register("StartDateForAll", typeof(DateTime), typeof(BlockEditorVm), new UIPropertyMetadata(DateTime.Now.Date));
+		//StartTimeForAll Dependency Property
+		public TimeSpan StartTimeForAll
+		{
+			get { return (TimeSpan)GetValue(StartTimeForAllProperty); }
+			set { SetValue(StartTimeForAllProperty, value); }
+		}
+		public static readonly DependencyProperty StartTimeForAllProperty =
+			DependencyProperty.Register("StartTimeForAll", typeof(TimeSpan), typeof(BlockEditorVm), new UIPropertyMetadata(TimeSpan.Zero));
+		//StartOffsetForAll Dependency Property
+		public TimeSpan StartOffsetForAll
+		{
+			get { return (TimeSpan)GetValue(StartOffsetForAllProperty); }
+			set { SetValue(StartOffsetForAllProperty, value); }
+		}
+		public static readonly DependencyProperty StartOffsetForAllProperty =
+			DependencyProperty.Register("StartOffsetForAll", typeof(TimeSpan), typeof(BlockEditorVm),
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) =>
+			{
+				var vm = (BlockEditorVm)d;
+				var val = (TimeSpan)e.NewValue;
+			}));
 		#endregion
 
 
@@ -735,8 +839,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var planEditor = vm as PlanEditorVm;
 				if (planEditor != null) planEditor.RemoveBlock(this);
 			});
-			SelectTodayCommand = new Commands.Command(o => StartDate = DateTime.Now.Date);
-			SelectTomorrowCommand = new Commands.Command(o => StartDate = DateTime.Now.AddDays(1).Date);
+			SelectTodayCommand = new Commands.Command(o => StartDateForAll = DateTime.Now.Date);
+			SelectTomorrowCommand = new Commands.Command(o => StartDateForAll += TimeSpan.FromDays(1));
 			SelectThisHourCommand = new Commands.Command(o =>
 			{
 				SelectTodayCommand.Execute(o);
@@ -760,6 +864,49 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				}
 				else
 					StartTime = StartTime.Add(TimeSpan.FromHours(-1));
+			});
+			SetStartForAllCommand = new Commands.Command(o =>
+			{
+				var start = StartDateForAll.Add(StartTimeForAll);
+				var end = DateTime.MinValue;
+				foreach (var act in ActivityList)
+				{
+					foreach (var process in act.ProcessList)
+					{
+						if (!process.HasReport)
+							process.Timing.StartDateTime = start;
+						if (process.Timing.EndDateTime > end)
+							end = process.Timing.EndDateTime;
+					}
+				}
+				StartDate = start.Date;
+				StartTime = start.TimeOfDay;
+				EndDate = end.Date;
+				EndTime = end.TimeOfDay;
+				Duration = end - start;
+			});
+			SetOffsetForAllCommand = new Commands.Command(o =>
+			{
+				var start = DateTime.MaxValue;
+				var end = DateTime.MinValue;
+				var offset = o == null ? StartOffsetForAll : -StartOffsetForAll;
+				foreach (var act in ActivityList)
+				{
+					foreach (var process in act.ProcessList)
+					{
+						if (!process.HasReport)
+							process.Timing.StartDateTime += offset;
+						if (process.Timing.StartDateTime < start)
+							start = process.Timing.StartDateTime; 
+						if (process.Timing.EndDateTime > end)
+							end = process.Timing.EndDateTime;
+					}
+				}
+				StartDate = start.Date;
+				StartTime = start.TimeOfDay;
+				EndDate = end.Date;
+				EndTime = end.TimeOfDay;
+				Duration = end - start;
 			});
 		}
 
@@ -841,6 +988,22 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		public static readonly DependencyProperty SubtractOneHourCommandProperty =
 			DependencyProperty.Register("SubtractOneHourCommand", typeof(Commands.Command), typeof(BlockEditorVm), new UIPropertyMetadata(null));
+		//SetStartForAllCommand Dependency Property
+		public Commands.Command SetStartForAllCommand
+		{
+			get { return (Commands.Command)GetValue(SetStartForAllCommandProperty); }
+			set { SetValue(SetStartForAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SetStartForAllCommandProperty =
+			DependencyProperty.Register("SetStartForAllCommand", typeof(Commands.Command), typeof(BlockEditorVm), new UIPropertyMetadata(null));
+		//SetOffsetForAllCommand Dependency Property
+		public Commands.Command SetOffsetForAllCommand
+		{
+			get { return (Commands.Command)GetValue(SetOffsetForAllCommandProperty); }
+			set { SetValue(SetOffsetForAllCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SetOffsetForAllCommandProperty =
+			DependencyProperty.Register("SetOffsetForAllCommand", typeof(Commands.Command), typeof(BlockEditorVm), new UIPropertyMetadata(null));
 		#endregion
 
 	}

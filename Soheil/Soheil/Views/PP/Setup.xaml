@@ -49,7 +49,7 @@
 				</WrapPanel>
 				<WrapPanel>
 					<TextBlock Text="مدت آماده سازی: " Foreground="DarkGray"/>
-					<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+					<TextBlock Text="{Binding DurationSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight"/>
 				</WrapPanel>
 				<Separator/>
 				<WrapPanel>
@@ -67,11 +67,11 @@
 				<Separator/>
 				<WrapPanel>
 					<TextBlock Text="مدت آغاز به کار: " Foreground="DarkGray"/>
-					<TextBlock Text="{Binding WarmupSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+					<TextBlock Text="{Binding WarmupSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight"/>
 				</WrapPanel>
 				<WrapPanel>
 					<TextBlock Text="مدت تعویض: " Foreground="DarkGray"/>
-					<TextBlock Text="{Binding ChangeoverSeconds, Converter={StaticResource secondsToStringConverter}}"/>
+					<TextBlock Text="{Binding ChangeoverSeconds, Converter={StaticResource secondsToStringConverter}}" FlowDirection="LeftToRight"/>
 				</WrapPanel>
 			</StackPanel>
 		</Border.ToolTip>

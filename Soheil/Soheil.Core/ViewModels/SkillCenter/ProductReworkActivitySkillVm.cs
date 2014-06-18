@@ -25,7 +25,16 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			: base()
 		{
 			Data = model.Iluo;
+			GeneralData = model.ActivitySkill.Iluo;
 			Model = model;
 		}
+		//GeneralData Dependency Property
+		public ILUO GeneralData
+		{
+			get { return (ILUO)GetValue(GeneralDataProperty); }
+			set { SetValue(GeneralDataProperty, value); }
+		}
+		public static readonly DependencyProperty GeneralDataProperty =
+			DependencyProperty.Register("GeneralData", typeof(ILUO), typeof(ProductReworkActivitySkillVm), new UIPropertyMetadata(ILUO.N));
 	}
 }

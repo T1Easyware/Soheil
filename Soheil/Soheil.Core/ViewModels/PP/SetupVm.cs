@@ -105,7 +105,7 @@ namespace Soheil.Core.ViewModels.PP
 		#region Commands
 		DateTime? earliestTime()
 		{
-			var prev = new DataServices.BlockDataService(UOW).FindPreviousBlock(Model.Warmup.Station.Id, StartDateTime);
+			var prev = new DataServices.BlockDataService(UOW).FindPreviousBlock(Model);
 			if (prev.Item1 != null) return prev.Item1.EndDateTime;
 			return null;
 		}

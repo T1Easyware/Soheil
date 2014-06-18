@@ -46,13 +46,21 @@ namespace Soheil.Core.ViewModels.PP
 
 		public void Update(Model.StateStationActivity ssa)
 		{
+			if(ssa == null)
+			{
+				GeneralSkill = ILUO.N;
+				SpecialSkill = ILUO.N;
+				EffectiveSkill = ILUO.N;
+				return;
+			}
+
 			//find special skill
 			var productRework = ssa.StateStation.State.OnProductRework;
-			var specialSkill = productRework.ProductActivitySkills.FirstOrDefault(skill => skill.ActivitySkill.Operator.Id == ssa.Id);
+			var specialSkill = productRework.ProductActivitySkills.FirstOrDefault(skill => skill.ActivitySkill.Operator.Id == OperatorId);
 
 			//find general skill
 			var activity = ssa.Activity;
-			var generalSkill = activity.ActivitySkills.FirstOrDefault(skill => skill.Operator.Id == ssa.Id);
+			var generalSkill = activity.ActivitySkills.FirstOrDefault(skill => skill.Operator.Id == OperatorId);
 
 			//set skill propdps
 			if (generalSkill == null)

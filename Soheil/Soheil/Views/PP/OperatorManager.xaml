@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:common="clr-namespace:Soheil.Common;assembly=Soheil.Common" 
 			 xmlns:local="clr-namespace:Soheil.Views.PP"
              xmlns:I="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -76,13 +77,30 @@
 						<I:InvokeCommandAction Command="{Binding SelectCommand}"/>
 					</I:EventTrigger>
 				</I:Interaction.Triggers>
-				<TextBlock Text="{Binding EffectiveSkill}" FontWeight="Bold" Margin="5,0" VerticalAlignment="Center"/>
+				<TextBlock Text="{Binding EffectiveSkill}" FontWeight="Bold" Margin="5,0" VerticalAlignment="Center" x:Name="iluoText"/>
 				<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
 				<TextBlock Text="{Binding Code}" Foreground="Gray" VerticalAlignment="Center"/>
 				<Image Visibility="{Binding IsSelected, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInProcessImage}" DockPanel.Dock="Right"/>
 				<Image Visibility="{Binding IsInTask, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTaskImage}" DockPanel.Dock="Right"/>
 				<Image Visibility="{Binding IsInTimeRange, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTimeRangeImage}" DockPanel.Dock="Right"/>
 			</DockPanel>
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.O}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#5F5"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.U}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#5BF"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.L}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#FD0"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.I}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#F44"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.N}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#444"/>
+				</DataTrigger>
+			</DataTemplate.Triggers>
 		</DataTemplate>
 		<DataTemplate x:Key="selectedOperatorTemplate">
 			<StackPanel>
@@ -115,7 +133,7 @@
 						<Image Visibility="{Binding IsInTimeRange, Converter={StaticResource booleanToVisibilityConverter}}" Style="{StaticResource OperatorInTimeRangeImage}" DockPanel.Dock="Right"/>
 						<TextBlock Text="{Binding Code}" Foreground="Gray"/>
 						<TextBlock Text="{Binding Role}" Foreground="Green"/>
-						<TextBlock Text="{Binding EffectiveSkill}" FontWeight="Bold" Margin="5,0"/>
+						<TextBlock Text="{Binding EffectiveSkill}" FontWeight="Bold" Margin="5,0" x:Name="iluoText"/>
 					</DockPanel>
 				</Grid>
 				<StackPanel Name="rolesPanel">
@@ -131,6 +149,23 @@
 				</StackPanel>
 
 			</StackPanel>
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.O}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#5F5"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.U}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#5BF"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.L}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#FD0"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.I}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#F44"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding EffectiveSkill}" Value="{x:Static common:ILUO.N}">
+					<Setter TargetName="iluoText" Property="Foreground" Value="#444"/>
+				</DataTrigger>
+			</DataTemplate.Triggers>
 		</DataTemplate>
 	</UserControl.Resources>
 	
