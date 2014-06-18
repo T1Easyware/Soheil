@@ -159,7 +159,13 @@ namespace Soheil.Core.ViewModels.Reports
         void OperationReportsVmCenterDateChanged(double barHOffset)
         {
             HorizontalOffset = barHOffset;
-        }  
+        }
+
+	    public void InitializeProviders(DateTime start, DateTime end)
+	    {
+            var barInfo = new OperatorBarInfo { StartDate = start, EndDate = end };
+	        InitializeProviders(null);
+	    }
 		public void InitializeProviders(object param)
 		{
             var barInfo = new OperatorBarInfo {StartDate = StartDate, EndDate = EndDate};

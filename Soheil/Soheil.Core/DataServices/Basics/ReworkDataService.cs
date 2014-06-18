@@ -33,7 +33,7 @@ namespace Soheil.Core.DataServices
 
 		public ObservableCollection<Rework> GetAll()
 		{
-			IEnumerable<Rework> entityList = _reworkRepository.GetAll();
+            IEnumerable<Rework> entityList = _reworkRepository.Find(rework => rework.Status != (decimal)Status.Deleted);
 			return new ObservableCollection<Rework>(entityList);
 		}
 

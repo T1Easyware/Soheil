@@ -873,4 +873,7 @@
   <data name="txtStart" xml:space="preserve">
     <value>شروع</value>
   </data>
+  <data name="txtLevel" xml:space="preserve">
+    <value>مرحله :</value>
+  </data>
 </root>

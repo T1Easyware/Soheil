@@ -32,6 +32,8 @@
         <SolidColorBrush x:Key="UpdateColor">Gold</SolidColorBrush>
         <SolidColorBrush x:Key="InsertColor">DodgerBlue</SolidColorBrush>
         <SolidColorBrush x:Key="FullColor">LimeGreen</SolidColorBrush>
+        <SolidColorBrush x:Key="CodeColor">#007ACC</SolidColorBrush>
+        <SolidColorBrush x:Key="CodeSecColor">#CC5500</SolidColorBrush>
         <Converters:InsertAccessTypeConverter x:Key="InsertConverter"/>
         <Converters:UpdateAccessTypeConverter x:Key="UpdateConverter"/>
         <Converters:PrintAccessTypeConverter x:Key="PrintConverter"/>
@@ -138,7 +140,7 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:UserPositionVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=PositionCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=PositionCode}" />
                                     <TextBlock Text="{Binding Path=PositionName}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -184,7 +186,7 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:UserAccessRuleVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=AccessRuleCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=AccessRuleCode}" />
                                     <TextBlock Text="{Binding Path=AccessRuleName}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -208,7 +210,7 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:PositionAccessRuleVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=AccessRuleCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=AccessRuleCode}" />
                                     <TextBlock Text="{Binding Path=AccessRuleName}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -232,7 +234,7 @@
                             <ContentPresenter.ContentTemplate>
                                 <DataTemplate DataType="ViewModels:ProductDefectionVM">
                                     <StackPanel>
-                                        <TextBlock Text="{Binding Path=DefectionCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=DefectionCode}" />
                                         <TextBlock Text="{Binding Path=DefectionName}" />
                                     </StackPanel>
                                 </DataTemplate>
@@ -254,7 +256,7 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ProductDefectionVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=ProductCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=ProductCode}" />
                                     <TextBlock Text="{Binding Path=ProductName}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -278,9 +280,9 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ProductReworkVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=ReworkCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=ReworkCode}" />
                                     <TextBlock Text="{Binding Path=ReworkName}" />
-                                    <TextBlock Text="{Binding Path=Code}" />
+                                        <TextBlock Foreground="{StaticResource CodeSecColor}" Text="{Binding Path=Code}" />
                                     <TextBlock Text="{Binding Path=Name}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -302,9 +304,9 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ProductReworkVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=ProductCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=ProductCode}" />
                                     <TextBlock Text="{Binding Path=ProductName}" />
-                                    <TextBlock Text="{Binding Path=Code}" />
+                                        <TextBlock Foreground="{StaticResource CodeSecColor}" Text="{Binding Path=Code}" />
                                     <TextBlock Text="{Binding Path=Name}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -376,7 +378,7 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:StationMachineVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=MachineCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=MachineCode}" />
                                     <TextBlock Text="{Binding Path=MachineName}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -398,7 +400,7 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:StationMachineVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=StationCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=StationCode}" />
                                     <TextBlock Text="{Binding Path=StationName}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -422,7 +424,7 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ActionPlanFishboneVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=FishboneNodeId}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=FishboneNodeId}" />
                                     <TextBlock Text="{Binding Path=FishboneNodeName}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -444,7 +446,7 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ActionPlanFishboneVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=ActionPlanCode}" />
+                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=ActionPlanCode}" />
                                     <TextBlock Text="{Binding Path=ActionPlanName}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -501,32 +503,35 @@
                     ItemsSource="{Binding CurrentContent.CurrentLink.AllItems}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="Interfaces:ISplitContent">
-                            <Border Style="{StaticResource SoheilDarkCoverBorder}">
+                            <Border Style="{StaticResource SoheilMediumCoverBorder}">
                                 <DockPanel>
                                 <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/Include.png" DockPanel.Dock="Left" Foreground="{StaticResource DefaultSelectionBrush}" Width="20"
                                              Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.IncludeCommand}"
                                              CommandParameter="{Binding}"/>
-                                    <ToggleButton Name="linkItem" IsChecked="{Binding IsChecked, Mode=TwoWay}">
-                                    <ContentPresenter>
+                                <ToggleButton HorizontalContentAlignment="Left" Name="linkItem" IsChecked="{Binding IsChecked, Mode=TwoWay}">
+                                    <ContentPresenter >
                                         <ContentPresenter.ContentTemplate>
                                             <DataTemplate>
-                                                <WrapPanel>
-                                                    <TextBlock>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock x:Name="CodeBlock" Grid.Row="0" Foreground="{StaticResource BlueDefaultBrush}">
                                                         <TextBlock.Text>
                                                             <Binding>
                                                                 <Binding.Path>Code</Binding.Path>
                                                             </Binding>
                                                         </TextBlock.Text>
                                                     </TextBlock>
-                                                    <TextBlock Text=" - " />
-                                                    <TextBlock>
+                                                    <TextBlock Grid.Row="1" >
                                                         <TextBlock.Text>
                                                             <Binding>
                                                                 <Binding.Path>Name</Binding.Path>
                                                             </Binding>
                                                         </TextBlock.Text>
                                                     </TextBlock>
-                                                </WrapPanel>
+                                                </Grid>
                                             </DataTemplate>
                                         </ContentPresenter.ContentTemplate>
                                     </ContentPresenter>
@@ -707,7 +712,7 @@
                     <StackPanel Orientation="Horizontal">
                         <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/IncludeAll.png" ToolTip="{Loc txtIncludeChecked}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.IncludeRangeCommand}" HorizontalAlignment="Right"/>
                         <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForIncludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
-                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUncheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForIncludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForIncludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
                     </StackPanel>
                 </Border>
                 <ItemsControl Template="{StaticResource IncludeList}"/>
@@ -2872,14 +2877,14 @@
                             Content="{Loc txtOperators}"
                             ImageSource="/Soheil.Controls;component/Images/Menus/operator.png"
                             Tag="241" />
-                <CustomControls:ImageRadioButton Click="ListUpdated"
+                <!--<CustomControls:ImageRadioButton Click="ListUpdated"
                             Content="{Loc txtGenSkills}"
                             ImageSource="/Soheil.Controls;component/Images/Menus/Report.png"
                             Tag="242" />
                 <CustomControls:ImageRadioButton Click="ListUpdated"
                             Content="{Loc txtSpeSkills}"
                             ImageSource="/Soheil.Controls;component/Images/Menus/Report.png"
-                            Tag="243" />
+                            Tag="243" />-->
             </WrapPanel>
         </DataTemplate>
 

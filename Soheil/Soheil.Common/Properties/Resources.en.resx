@@ -868,4 +868,7 @@
   <data name="txtStart" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="txtLevel" xml:space="preserve">
+    <value>Level :</value>
+  </data>
 </root>

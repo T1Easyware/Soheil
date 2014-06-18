@@ -20,14 +20,14 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/usersAccess.png"
                         Tag="11" />
-                <CustomControls:ImageButton Background="Transparent"
+                <!--<CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtModules}"
                         IsEnabled="{Binding Path=CanAddTab,
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/orgChart.png"
-                        Tag="12" />
+                        Tag="12" />-->
                 <CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
@@ -297,11 +297,11 @@
                                         <MenuItem.Icon>
                                             <Image Source="/Soheil.Controls;component/Images/Menus/pc2.png"/>
                                         </MenuItem.Icon>
-                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtAccessRules}" Tag="121" >
+                                        <!--<MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtAccessRules}" Tag="121" >
                                             <MenuItem.Icon>
                                                 <Image Source="/Soheil.Controls;component/Images/Menus/pc2.png"/>
                                             </MenuItem.Icon>
-                                        </MenuItem>
+                                        </MenuItem>-->
                                     </MenuItem>
 									<MenuItem Header="{Loc txtOrganizationCalendar}">
                                         <MenuItem.Icon>
@@ -399,10 +399,10 @@
                                                 <Image Source="/Soheil.Controls;component/Images/Menus/operator.png"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtGenSkills}" Tag="242" >
+                                        <!--<MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtGenSkills}" Tag="242" >
                                         </MenuItem>
                                         <MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSpeSkills}" Tag="243" >
-                                        </MenuItem>
+                                        </MenuItem>-->
                                     </MenuItem>
                                     <MenuItem Header="{Loc txtCosts}">
                                         <MenuItem.Icon>
