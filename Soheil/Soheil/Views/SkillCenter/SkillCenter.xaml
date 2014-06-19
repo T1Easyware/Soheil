@@ -164,6 +164,7 @@
 						</I:EventTrigger>
 					</I:Interaction.Triggers>
 				</Polygon>
+				<TextBlock Text="{Binding GeneralData}" Margin="10" FontWeight="Black" FontSize="16" IsHitTestVisible="False" x:Name="generalIluoText"/>
 			</Canvas>
 			<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding Data}" Value="{x:Static common:ILUO.O}">
@@ -210,6 +211,21 @@
 							</Style>
 						</Setter.Value>
 					</Setter>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.O}">
+					<Setter TargetName="generalIluoText" Property="Foreground" Value="#2C3"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.U}">
+					<Setter TargetName="generalIluoText" Property="Foreground" Value="#3AE"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.L}">
+					<Setter TargetName="generalIluoText" Property="Foreground" Value="#FD0"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.I}">
+					<Setter TargetName="generalIluoText" Property="Foreground" Value="#C22"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.N}">
+					<Setter TargetName="generalIluoText" Property="Foreground" Value="Transparent"/>
 				</DataTrigger>
 			</DataTemplate.Triggers>
 		</DataTemplate>

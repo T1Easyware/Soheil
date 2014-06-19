@@ -90,6 +90,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 					string.Format("{0:F2}", (float)tp / Model.OperatorProcessReports.Count) :
 					"---";
 				Model.ProcessReportTargetPoint = tp;
+				updateEmptyCount(tp: tp);
 			};
 			TargetPointForOperator = Model.OperatorProcessReports.Any() ?
 				string.Format("{0:F2}", (float)Model.ProcessReportTargetPoint / Model.OperatorProcessReports.Count) :
@@ -205,6 +206,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				var vm = (ProcessReportVm)d;
 				vm.Model.ProducedG1 = (int)e.NewValue;
+				vm.updateEmptyCount(g1: (int)e.NewValue);
 				vm.Save();
 			}));
 		//SumOfProducedG1 Dependency Property
@@ -267,7 +269,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(DefectionCountProperty, value); }
 		}
 		public static readonly DependencyProperty DefectionCountProperty =
-			DependencyProperty.Register("DefectionCount", typeof(int), typeof(ProcessReportVm), new UIPropertyMetadata(0));
+			DependencyProperty.Register("DefectionCount", typeof(int), typeof(ProcessReportVm),
+			new UIPropertyMetadata(0, (d, e) => ((ProcessReportVm)d).updateEmptyCount(def: (int)e.NewValue)));
 
 		/// <summary>
 		/// Gets or sets the bindable Stoppage reports
@@ -288,8 +291,26 @@ namespace Soheil.Core.ViewModels.PP.Report
 			set { SetValue(StoppageCountProperty, value); }
 		}
 		public static readonly DependencyProperty StoppageCountProperty =
-			DependencyProperty.Register("StoppageCount", typeof(int), typeof(ProcessReportVm), new UIPropertyMetadata(0));
+			DependencyProperty.Register("StoppageCount", typeof(int), typeof(ProcessReportVm), 
+			new UIPropertyMetadata(0, (d, e) => ((ProcessReportVm)d).updateEmptyCount(stop: (int)e.NewValue)));
 
+		//EmptyCount Dependency Property
+		public int EmptyCount
+		{
+			get { return (int)GetValue(EmptyCountProperty); }
+			set { SetValue(EmptyCountProperty, value); }
+		}
+		public static readonly DependencyProperty EmptyCountProperty =
+			DependencyProperty.Register("EmptyCount", typeof(int), typeof(ProcessReportVm),
+			new UIPropertyMetadata(0, (d, e) => { }, (d, v) => ((int)v < 0) ? 0 : v));
+		void updateEmptyCount(int tp = -1, int g1 = -1, int def = -1, int stop = -1)
+		{
+			EmptyCount =
+				(tp < 0 ? Model.ProcessReportTargetPoint : tp) -
+				(g1 < 0 ? Model.ProducedG1 : g1) -
+				(def < 0 ? DefectionCount : def) -
+				(stop < 0 ? StoppageCount : stop);
+		}
 		#endregion
 
 		#region Other Members

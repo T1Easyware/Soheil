@@ -80,6 +80,7 @@
 						<ColumnDefinition Width="{Binding ProducedG1, Converter={StaticResource portionToStarConverter}}"/>
 						<ColumnDefinition Width="{Binding DefectionCount, Converter={StaticResource portionToStarConverter}}"/>
 						<ColumnDefinition Width="{Binding StoppageCount, Converter={StaticResource portionToStarConverter}}"/>
+						<ColumnDefinition Width="{Binding EmptyCount, Converter={StaticResource portionToStarConverter}}"/>
 					</Grid.ColumnDefinitions>
 					<Border Background="#4AF" BorderBrush="Black" BorderThickness="1">
 						<DockPanel HorizontalAlignment="Center" ClipToBounds="True">
@@ -100,6 +101,9 @@
 					</Border>
 					<Border Background="#FD5" BorderBrush="Black" BorderThickness="1" Grid.Column="2">
 						<TextBlock Text="{Binding StoppageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
+					</Border>
+					<Border Background="#CCC" BorderBrush="Black" BorderThickness="1" Grid.Column="3">
+						<TextBlock Text="{Binding EmptyCount}" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True"/>
 					</Border>
 				</Grid>
 				<Border Grid.ColumnSpan="3" Background="#4FFF" Margin="0,0,0,5"/>

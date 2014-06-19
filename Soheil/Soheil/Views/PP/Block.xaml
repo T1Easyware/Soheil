@@ -33,32 +33,32 @@
 						<ControlTemplate.Triggers>
 							<EventTrigger RoutedEvent="MouseEnter">
 								<BeginStoryboard>
-									<Storyboard Duration="0:0:0.1">
+									<Storyboard Duration="0:0:0.5">
 										<DoubleAnimation Storyboard.TargetName="content" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
-										<DoubleAnimation Storyboard.TargetName="taskBackgroundColor" Storyboard.TargetProperty="Opacity" To="0.6" Duration="0:0:0.1"/>
+										<DoubleAnimation Storyboard.TargetName="taskBackgroundColor" Storyboard.TargetProperty="Opacity" To="0.6" Duration="0:0:0.5"/>
 									</Storyboard>
 								</BeginStoryboard>
 							</EventTrigger>
 							<EventTrigger RoutedEvent="MouseLeave">
 								<BeginStoryboard>
-									<Storyboard Duration="0:0:0.1">
+									<Storyboard Duration="0:0:0.5">
 										<DoubleAnimation Storyboard.TargetName="content" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.1"/>
-										<DoubleAnimation Storyboard.TargetName="taskBackgroundColor" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.1"/>
+										<DoubleAnimation Storyboard.TargetName="taskBackgroundColor" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.5"/>
 									</Storyboard>
 								</BeginStoryboard>
 							</EventTrigger>
 							<EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
 								<BeginStoryboard>
-									<Storyboard Duration="0:0:0.1">
-										<DoubleAnimation Storyboard.TargetName="taskBackgroundColor" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.05"/>
-										<ColorAnimation Storyboard.TargetName="taskBackgroundMainColor" Storyboard.TargetProperty="Color" To="#9FFF" Duration="0:0:0.1"/>
+									<Storyboard Duration="0:0:0.5">
+										<DoubleAnimation Storyboard.TargetName="taskBackgroundColor" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+										<ColorAnimation Storyboard.TargetName="taskBackgroundMainColor" Storyboard.TargetProperty="Color" To="#9FFF" Duration="0:0:0.5"/>
 									</Storyboard>
 								</BeginStoryboard>
 							</EventTrigger>
 							<EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
 								<BeginStoryboard>
-									<Storyboard Duration="0:0:0.1">
-										<ColorAnimation Storyboard.TargetName="taskBackgroundMainColor" Storyboard.TargetProperty="Color" To="Transparent" Duration="0:0:0.1"/>
+									<Storyboard Duration="0:0:0.5">
+										<ColorAnimation Storyboard.TargetName="taskBackgroundMainColor" Storyboard.TargetProperty="Color" To="Transparent" Duration="0:0:0.5"/>
 									</Storyboard>
 								</BeginStoryboard>
 							</EventTrigger>

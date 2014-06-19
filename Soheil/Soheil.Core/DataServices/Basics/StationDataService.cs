@@ -180,7 +180,8 @@ namespace Soheil.Core.DataServices
 			{
 				all[i].Index = i;
 			}
-            Context.Commit();
+
+			Context.Commit();
 			return all;
 		}
 	}

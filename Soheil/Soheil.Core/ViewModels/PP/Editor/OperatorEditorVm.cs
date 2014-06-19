@@ -17,39 +17,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public event Action<OperatorEditorVm, bool, bool> SelectedOperatorChanged;
 		
 		#region Ctor
-		protected OperatorEditorVm()
-		{
-			initializeCommands();
-		}
 		/// <summary>
 		/// Use this constructor to create an operator outside a process
 		/// </summary>
 		/// <param name="model"></param>
-		public OperatorEditorVm(Model.Operator model, Model.StateStationActivity ssa = null)
-			: base(model, ssa)
-		{
-			initializeCommands();
-		}
-
-		/// <summary>
-		/// Use this constructor to create an operator inside a process
-		/// </summary>
-		/// <param name="model"></param>
-		public OperatorEditorVm(Model.ProcessOperator model)
+		public OperatorEditorVm(Model.Operator model)
 			: base(model)
 		{
-			IsSelected = true;
 			initializeCommands();
 		}
-		internal static OperatorEditorVm CreateAnonymous()
-		{
-			return new OperatorEditorVm
-			{
-				Name = "اپراتور نامعلوم",
-				Code = "",
-			};
-		}
-
 
 		bool _changeOperatorCount = false;
 		void initializeCommands()

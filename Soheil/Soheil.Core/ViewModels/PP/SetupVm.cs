@@ -16,6 +16,7 @@ namespace Soheil.Core.ViewModels.PP
 		public int WarmupId { get; set; }
 		public Model.Setup Model { get; protected set; }
 		public override int Id { get { return Model.Id; } }
+		DateTime _startBackup = DateTime.MinValue;
 		private int _id;
 
 
@@ -37,6 +38,9 @@ namespace Soheil.Core.ViewModels.PP
 		{
 			//update model from database with new UOW
 			Model = new Dal.Repository<Model.NonProductiveTask>(UOW).OfType<Model.Setup>().Single(x => x.Id == _id);
+			
+			if(_startBackup == DateTime.MinValue)
+				_startBackup = Model.StartDateTime;
 
 			StartDateTime = Model.StartDateTime;
 			EndDateTime = Model.EndDateTime;
@@ -101,7 +105,7 @@ namespace Soheil.Core.ViewModels.PP
 		#region Commands
 		DateTime? earliestTime()
 		{
-			var prev = new DataServices.BlockDataService(UOW).FindPreviousBlock(Model.Warmup.Station.Id, StartDateTime);
+			var prev = new DataServices.BlockDataService(UOW).FindPreviousBlock(Model);
 			if (prev.Item1 != null) return prev.Item1.EndDateTime;
 			return null;
 		}
@@ -132,10 +136,12 @@ namespace Soheil.Core.ViewModels.PP
 				else
 				{
 					Model.StartDateTime = StartDateTime;
+					Model.EndDateTime = StartDateTime.AddSeconds(DurationSeconds);
 					reloadFromModel();
+					UOW.Commit();
 				}
 			});
-			CancelCommand = new Commands.Command(o => { StartDateTime = Model.StartDateTime; IsEditMode = false; });
+			CancelCommand = new Commands.Command(o => { StartDateTime = _startBackup; IsEditMode = false; });
 			SetToEarliestTimeCommand = new Commands.Command(o =>
 			{
 				var dt = earliestTime();
@@ -146,11 +152,7 @@ namespace Soheil.Core.ViewModels.PP
 				var dt = lastestTime();
 				if (dt.HasValue) StartDateTime = dt.Value;
 			});
-			EditItemCommand = new Commands.Command(o =>
-			{
-				Parent.PPTable.SelectedNPT = this;
-				IsEditMode = true;
-			});
+
 			DeleteItemCommand = new Commands.Command(o =>
 			{
 				try

@@ -564,6 +564,18 @@
   <ItemGroup>
     <Resource Include="Images\Check.png" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\PP\ppe_afterlast.png" />
+    <Resource Include="Images\PP\ppe_firstemptyspace.png" />
+    <Resource Include="Images\PP\ppe_parallel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ppe_setoffset.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\ppe_setstart.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

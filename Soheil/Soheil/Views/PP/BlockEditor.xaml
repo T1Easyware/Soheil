@@ -51,27 +51,35 @@
 					</Border>
 
 					<Canvas Width="10"/>
+
 					<Border Style="{StaticResource tipTabBorderStyle}">
-						<TextBlock Text="زمان شروع: " FontSize="14" FontWeight="Bold" Foreground="White"/>
-					</Border>
-					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
-						<CheckBox Margin="3" Content="موازی" ToolTip="برنامه می تواند همزمان با برنامه های دیگر همین ایستگاه تعریف شود. در اینصورت برنامه در زیر برنامه های دیگر قرار می گیرد" Foreground="White" IsChecked="{Binding IsParallel}"/>
-					</Border>
-					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsParallel, Converter={StaticResource booleanToInvisibilityConverter}}">
-						<CheckBox Content="{Loc PPE_FirstEmptySpace}" Margin="3" IsChecked="{Binding IsAutoStart}"/>
-					</Border>
-					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
 						<WrapPanel>
-							<TextBlock Text="{Loc txtDate}" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-							<cal:DatePicker SelectedDate="{Binding StartDate}" DisplayDate="{Binding StartDate}"/>
-							<Button Margin="0,1" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" Style="{StaticResource Button3DTextStyle}"/>
-							<Button Margin="0,1" Content="{Loc txtTomorrow}" Command="{Binding SelectTomorrowCommand}" Style="{StaticResource Button3DTextStyle}"/>
+							<ToggleButton Margin="3" ToolTip="{Loc PPE_AfterLast}" IsChecked="{Binding IsLastSpace}">
+								<WrapPanel>
+									<Image Style="{StaticResource PPE_AfterLast}"/>
+									<TextBlock Text="{Loc PPE_AfterLast}" Visibility="{Binding IsLastSpace, Converter={StaticResource booleanToVisibilityConverter}}"/>
+								</WrapPanel>
+							</ToggleButton>
+							<ToggleButton Margin="3" ToolTip="{Loc PPE_Parallel}" IsChecked="{Binding IsParallel}">
+								<WrapPanel>
+									<Image Style="{StaticResource PPE_Parallel}"/>
+									<TextBlock Text="{Loc PPE_Parallel}" Visibility="{Binding IsParallel, Converter={StaticResource booleanToVisibilityConverter}}"/>
+								</WrapPanel>
+							</ToggleButton>
+							<ToggleButton Margin="3" ToolTip="{Loc PPE_FirstEmptySpace}" IsChecked="{Binding IsFirstSpace}">
+								<WrapPanel>
+									<Image Style="{StaticResource PPE_FirstEmptySpace}"/>
+									<TextBlock Text="{Loc PPE_FirstEmptySpace}" Visibility="{Binding IsFirstSpace, Converter={StaticResource booleanToVisibilityConverter}}"/>
+								</WrapPanel>
+							</ToggleButton>
 						</WrapPanel>
 					</Border>
-					<Border Style="{StaticResource tipTabBorderStyle}" Visibility="{Binding IsAutoStart, Converter={StaticResource booleanToInvisibilityConverter}}">
+					<Border Style="{StaticResource tipTabBorderStyle}"  Visibility="{Binding IsFirstSpace, Converter={StaticResource booleanToVisibilityConverter}}">
 						<WrapPanel>
-							<TextBlock Margin="3,0,0,0" Text="{Loc txtTime}" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
-							<CustomControls:TimeBox Time="{Binding StartTime, Mode=TwoWay}"/>
+							<TextBlock Text="{Loc txtDate}" Width="35" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+							<cal:DatePicker SelectedDate="{Binding EditorStartDate}" DisplayDate="{Binding EditorStartDate}"/>
+							<TextBlock Margin="10,0,0,0" Text="{Loc txtTime}" Width="40" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+							<CustomControls:TimeBox Time="{Binding EditorStartTime, Mode=TwoWay}"/>
 						</WrapPanel>
 					</Border>
 				</DockPanel>
@@ -87,6 +95,7 @@
 				</Grid.ColumnDefinitions>
 
 				<DockPanel MinWidth="400" MaxWidth="600" Margin="2,5,7,0">
+					<TextBlock Text="فعالیتها:" DockPanel.Dock="Top" FontSize="14" FontWeight="Bold" Margin="5,0"/>
 					<!-- toolbar -->
 					<Grid DockPanel.Dock="Top">
 						<Grid.ColumnDefinitions>
@@ -95,7 +104,7 @@
 							<ColumnDefinition Width="4*"/>
 							<ColumnDefinition Width="60"/>
 						</Grid.ColumnDefinitions>
-						<TextBlock Text="فعالیتها:" VerticalAlignment="Center"/>
+						<TextBlock Text="مدت/هدف:" VerticalAlignment="Center" TextWrapping="Wrap"/>
 						<!-- same qty -->
 						<ToggleButton Grid.Column="1" IsChecked="{Binding IsTargetPointFixed}"
 								  ToolTip="{Loc PPE_SameQtyForActivites}">
@@ -119,6 +128,42 @@
 								<Image Style="{StaticResource IndependentTPImage}" Margin="5,0" IsHitTestVisible="False"/>
 							</WrapPanel>
 						</ToggleButton>
+					</Grid>
+					<Grid DockPanel.Dock="Top">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="60"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="60"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="زمان شروع:" TextWrapping="Wrap" VerticalAlignment="Center"/>
+						<WrapPanel Grid.Column="1">
+							<CustomControls:TimeBox Time="{Binding StartTimeForAll, Mode=TwoWay}" Margin="0,0,5,0"/>
+							<cal:DatePicker SelectedDate="{Binding StartDateForAll}" DisplayDate="{Binding StartDateForAll}"/>
+						</WrapPanel>
+						<Button Margin="0,1" Grid.Column="2" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" Style="{StaticResource Button3DTextStyle}"/>
+						<Button Margin="0,1" Grid.Column="3" Content="{Loc txtAdd1Day}" Command="{Binding SelectTomorrowCommand}" Style="{StaticResource Button3DTextStyle}"/>
+						<Button Command="{Binding SetStartForAllCommand}" Grid.Column="4" ToolTip="{Loc PPE_SameStartTimeForActivities}">
+							<Image Style="{StaticResource PPE_SetStart}"/>
+						</Button>
+					</Grid>
+					<Grid DockPanel.Dock="Top">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="60"/>
+							<ColumnDefinition Width="60"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="تغییر شروع:" Grid.Column="0" VerticalAlignment="Center"/>
+						<CustomControls:DurationBox Time="{Binding StartOffsetForAll, Mode=TwoWay}" Grid.Column="1" Margin="5,0"/>
+						<Button Command="{Binding SetOffsetForAllCommand}" ToolTip="{Loc PPE_SameStartOffsetForActivities}" Grid.Column="3">
+							<Image Style="{StaticResource PPE_SetOffset}"/>
+						</Button>
+						<Button Command="{Binding SetOffsetForAllCommand}" CommandParameter="-" ToolTip="{Loc PPE_SameStartOffsetForActivitiesNegative}" Grid.Column="4">
+							<Image Style="{StaticResource PPE_SetOffset}" FlowDirection="RightToLeft"/>
+						</Button>
 					</Grid>
 					<!-- Activity List -->
 					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -239,9 +284,16 @@
 					</WrapPanel.Resources>
 					<StatusBarItem>
 						<StackPanel>
+							<TextBlock Text="{Loc txtStartTime}"/>
+							<TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
+							<TextBlock Text="{Binding StartDate, Converter={StaticResource dateToLocalStringConverter}}"/>
+						</StackPanel>
+					</StatusBarItem>
+					<StatusBarItem>
+						<StackPanel>
 							<TextBlock Text="{Loc txtEndTime}"/>
 							<TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
-							<TextBlock Text="{Binding EndDate, Converter={StaticResource dateToPersianDateConverter}}"/>
+							<TextBlock Text="{Binding EndDate, Converter={StaticResource dateToLocalStringConverter}}"/>
 						</StackPanel>
 					</StatusBarItem>
 					<StatusBarItem>
@@ -250,12 +302,7 @@
 							<TextBlock Text="{Binding Duration, Converter={StaticResource fullTimeSpanToStringConverter}}" FlowDirection="LeftToRight"/>
 						</StackPanel>
 					</StatusBarItem>
-					<StatusBarItem>
-						<StackPanel>
-							<TextBlock Text="{Loc PPE_SumOfTP}"/>
-							<TextBlock Text="{Binding BlockTargetPoint}"/>
-						</StackPanel>
-					</StatusBarItem>
+
 					<Border Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" BorderBrush="#6EE2" Background="#2FFF" CornerRadius="2" BorderThickness="1" Margin="4,0">
 						<TextBlock Text="{Binding Message.MainExceptionText}" ToolTip="{Binding Message.FullExceptionText}" Foreground="#EE2"/>
 					</Border>

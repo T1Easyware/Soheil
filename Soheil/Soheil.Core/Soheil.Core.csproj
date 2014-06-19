@@ -175,6 +175,7 @@
     <Compile Include="ViewModels\SkillCenter\ProductGroupVm.cs" />
     <Compile Include="ViewModels\SkillCenter\SkillCenterContentVm.cs" />
     <Compile Include="ViewModels\SkillCenter\SkillCenterVm.cs" />
+    <Compile Include="ViewModels\StartPageVm.cs" />
     <Compile Include="ViewModels\WorkProfilePlansVM.cs" />
     <Compile Include="ViewModels\WorkProfilesVM.cs" />
     <Compile Include="ViewModels\InfoViewModels\ActivityInfoVM.cs" />

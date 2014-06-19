@@ -629,7 +629,7 @@
     <value>Duration or Target point</value>
   </data>
   <data name="PPE_FirstEmptySpace" xml:space="preserve">
-    <value>First empty space</value>
+    <value>First empty space after</value>
   </data>
   <data name="PPE_InvalidDuration" xml:space="preserve">
     <value>Invalid Duration</value>
@@ -870,5 +870,24 @@
   </data>
   <data name="txtLevel" xml:space="preserve">
     <value>Level :</value>
+  </data>
+
+  <data name="PPE_AfterLast" xml:space="preserve">
+    <value>After the last</value>
+  </data>
+  <data name="PPE_Parallel" xml:space="preserve">
+    <value>Parallel</value>
+  </data>
+  <data name="PPE_SameStartOffsetForActivities" xml:space="preserve">
+    <value>Add to start time of all activities</value>
+  </data>
+  <data name="PPE_SameStartOffsetForActivitiesNegative" xml:space="preserve">
+    <value>Subtract from start time of all activities</value>
+  </data>
+  <data name="PPE_SameStartTimeForActivities" xml:space="preserve">
+    <value>Set start time of all activities</value>
+  </data>
+  <data name="txtAdd1Day" xml:space="preserve">
+    <value>Next day</value>
   </data>
 </root>

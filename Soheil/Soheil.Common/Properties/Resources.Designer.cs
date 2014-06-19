@@ -448,6 +448,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to پس از آخرین برنامه.
+        /// </summary>
+        public static string PPE_AfterLast {
+            get {
+                return ResourceManager.GetString("PPE_AfterLast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مقادیر مستقل برای هر فعالیت.
         /// </summary>
         public static string PPE_DeferToActivites {
@@ -466,7 +475,7 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to اولین زمان خالی.
+        ///   Looks up a localized string similar to اولین زمان خالی پس از.
         /// </summary>
         public static string PPE_FirstEmptySpace {
             get {
@@ -502,6 +511,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to موازی.
+        /// </summary>
+        public static string PPE_Parallel {
+            get {
+                return ResourceManager.GetString("PPE_Parallel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ساعت -1.
         /// </summary>
         public static string PPE_PreviousHour {
@@ -516,6 +534,33 @@ namespace Soheil.Common.Properties {
         public static string PPE_SameQtyForActivites {
             get {
                 return ResourceManager.GetString("PPE_SameQtyForActivites", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to افزودن به زمان شروع تمام فعالیتها.
+        /// </summary>
+        public static string PPE_SameStartOffsetForActivities {
+            get {
+                return ResourceManager.GetString("PPE_SameStartOffsetForActivities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to کاستن از زمان شروع تمام فعالیتها.
+        /// </summary>
+        public static string PPE_SameStartOffsetForActivitiesNegative {
+            get {
+                return ResourceManager.GetString("PPE_SameStartOffsetForActivitiesNegative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to تغییر زمان شروع تمام فعالیتها.
+        /// </summary>
+        public static string PPE_SameStartTimeForActivities {
+            get {
+                return ResourceManager.GetString("PPE_SameStartTimeForActivities", resourceCulture);
             }
         }
         
@@ -777,6 +822,15 @@ namespace Soheil.Common.Properties {
         public static string txtActualCostReports {
             get {
                 return ResourceManager.GetString("txtActualCostReports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to روز بعد.
+        /// </summary>
+        public static string txtAdd1Day {
+            get {
+                return ResourceManager.GetString("txtAdd1Day", resourceCulture);
             }
         }
         

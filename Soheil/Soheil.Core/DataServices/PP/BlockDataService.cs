@@ -68,7 +68,8 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(Block model)
 		{
-			_blockRepository.Add(model);
+			if (!_blockRepository.Exists(x => x.Id == model.Id))
+				_blockRepository.Add(model);
 			return model.Id;
 		}
 
@@ -157,14 +158,28 @@ namespace Soheil.Core.DataServices
 		}
 
 		//blocks in specified station, after (or partially after) startDate
-		public IEnumerable<Block> GetInRange(DateTime startDate, int stationId)
+		public IEnumerable<Block> GetInRange(DateTime startDate, int stationId, Block exclude = null)
+		{
+			if(exclude == null)
+				return _blockRepository.Find(
+					x => x.StateStation.Station.Id == stationId
+					&& x.EndDateTime >= startDate
+					, y => y.StartDateTime);
+			else
+				return _blockRepository.Find(
+					x => x.StateStation.Station.Id == stationId
+					&& x.EndDateTime >= startDate
+					&& x.Id != exclude.Id
+					, y => y.StartDateTime);
+		}
+		public IEnumerable<Block> GetInRange(Block exclude, int stationId)
 		{
 			return _blockRepository.Find(
 				x => x.StateStation.Station.Id == stationId
-				&& x.EndDateTime >= startDate
+				&& x.EndDateTime >= exclude.StartDateTime
+				&& x.Id != exclude.Id
 				, y => y.StartDateTime);
 		}
-
 		internal IEnumerable<Block> GetJobBlocks(int jobId)
 		{
 			return _blockRepository.Find(x => x.Job != null && x.Job.Id == jobId).ToList();
@@ -205,21 +220,22 @@ namespace Soheil.Core.DataServices
 			var time = block.StartDateTime;
 			foreach (var task in block.Tasks)
 			{
-				//check for report
-				if (task.TaskReports.Any())
-				{
-					var diff = task.StartDateTime - task.TaskReports.First().ReportStartDateTime;
-					foreach (var taskReport in task.TaskReports)
-					{
-						taskReport.ReportStartDateTime += diff;
-						taskReport.ReportEndDateTime += diff;
-						if(taskReport.ReportEndDateTime > task.EndDateTime)
-							throw new Soheil.Common.SoheilException.RoutedException(
-										"مدت گزارش ایستگاه از مدت برنامه طولانی تر است",
-										Common.SoheilException.ExceptionLevel.Error,
-										task);
-					}
-				}
+				////check for report
+				//if (task.TaskReports.Any())
+				//{
+				//	var diff = task.StartDateTime -
+				//		task.TaskReports.OrderBy(x => x.ReportStartDateTime).First().ReportStartDateTime;
+				//	foreach (var taskReport in task.TaskReports)
+				//	{
+				//		taskReport.ReportStartDateTime += diff;
+				//		taskReport.ReportEndDateTime += diff;
+				//		if(taskReport.ReportEndDateTime > task.EndDateTime)
+				//			throw new Soheil.Common.SoheilException.RoutedException(
+				//						"مدت گزارش ایستگاه از مدت برنامه طولانی تر است",
+				//						Common.SoheilException.ExceptionLevel.Error,
+				//						task);
+				//	}
+				//}
 
 				//fix time
 				task.StartDateTime = time;
@@ -234,12 +250,14 @@ namespace Soheil.Core.DataServices
 						foreach (var po in process.ProcessOperators.ToArray())
 						{
 							process.ProcessOperators.Remove(po);
-                            new Repository<ProcessOperator>(Context).Delete(po);
+
+							new Repository<ProcessOperator>(Context).Delete(po);
 						}
 						foreach (var sm in process.SelectedMachines.ToArray())
 						{
 							process.SelectedMachines.Remove(sm);
-                            new Repository<SelectedMachine>(Context).Delete(sm);
+
+							new Repository<SelectedMachine>(Context).Delete(sm);
 						}
 						task.Processes.Remove(process);
 						new Repository<Process>(Context).Delete(process);
@@ -270,9 +288,17 @@ namespace Soheil.Core.DataServices
 		/// <param name="stationId"></param>
 		/// <param name="start"></param>
 		/// <returns></returns>
+		public Tuple<Block, Setup> FindPreviousBlock(int stationId, Block model)
+		{
+			return findPreviousPPItem(stationId, model);
+		}
 		public Tuple<Block, Setup> FindPreviousBlock(int stationId, DateTime start)
 		{
 			return findPreviousPPItem(stationId, start);
+		}
+		public Tuple<Block, Setup> FindPreviousBlock(Setup model)
+		{
+			return findPreviousPPItem(model.Warmup.Station.Id, model);
 		}
 		/// <summary>
 		///Checks if a setup can be added before this block (due to its previous block's state)
@@ -283,7 +309,7 @@ namespace Soheil.Core.DataServices
 		/// <returns></returns>
 		public bool CanAddSetupBeforeBlock(Model.Block model)
 		{
-			var previousBlock = FindPreviousBlock(model.StateStation.Station.Id, model.StartDateTime);
+			var previousBlock = FindPreviousBlock(model.StateStation.Station.Id, model);
 			if (previousBlock.Item2 == null)
 			{
 				if (previousBlock.Item1 == null) return true;
@@ -311,12 +337,12 @@ namespace Soheil.Core.DataServices
 		/// <param name="stationId"></param>
 		/// <param name="start"></param>
 		/// <returns>Task or Setup</returns>
-		private Tuple<Block, Setup> findPreviousPPItem(int stationId, DateTime start)
+		private Tuple<Block, Setup> findPreviousPPItem(int stationId, Block model)
 		{
-			var tmp = start.AddSeconds(1);
 			var previousTask = _blockRepository.LastOrDefault(x =>
 				x.StateStation.Station.Id == stationId
-				&& x.EndDateTime <= tmp,
+				&& x.EndDateTime <= model.StartDateTime
+				&& x.Id != model.Id,
 				dt => dt.EndDateTime,
 				"StateStation.Station", "StateStation.State.OnProductRework");
 
@@ -325,7 +351,48 @@ namespace Soheil.Core.DataServices
 				.OrderByDescending(x => x.EndDateTime)
 				.FirstOrDefault(x =>
 					x.Warmup.Station.Id == stationId
-					&& x.EndDateTime <= tmp);
+					&& x.EndDateTime <= model.StartDateTime);
+
+			if (previousSetup == null || previousTask == null)
+				return new Tuple<Block, Setup>(previousTask, previousSetup);
+			return new Tuple<Block, Setup>(previousTask,
+				(previousSetup.EndDateTime >= previousTask.EndDateTime) ? previousSetup : null);
+		}
+		private Tuple<Block, Setup> findPreviousPPItem(int stationId, DateTime start)
+		{
+			var previousTask = _blockRepository.LastOrDefault(x =>
+				x.StateStation.Station.Id == stationId
+				&& x.EndDateTime <= start,
+				dt => dt.EndDateTime,
+				"StateStation.Station", "StateStation.State.OnProductRework");
+
+			var previousSetup = _nptRepository
+				.OfType<Setup>("Warmup.Station", "Warmup.ProductRework", "Changeover.FromProductRework", "Changeover.Station")
+				.OrderByDescending(x => x.EndDateTime)
+				.FirstOrDefault(x =>
+					x.Warmup.Station.Id == stationId
+					&& x.EndDateTime <= start);
+
+			if (previousSetup == null || previousTask == null)
+				return new Tuple<Block, Setup>(previousTask, previousSetup);
+			return new Tuple<Block, Setup>(previousTask,
+				(previousSetup.EndDateTime >= previousTask.EndDateTime) ? previousSetup : null);
+		}
+		private Tuple<Block, Setup> findPreviousPPItem(int stationId, NonProductiveTask model)
+		{
+			var previousTask = _blockRepository.LastOrDefault(x =>
+				x.StateStation.Station.Id == stationId
+				&& x.EndDateTime <= model.StartDateTime,
+				dt => dt.EndDateTime,
+				"StateStation.Station", "StateStation.State.OnProductRework");
+
+			var previousSetup = _nptRepository
+				.OfType<Setup>("Warmup.Station", "Warmup.ProductRework", "Changeover.FromProductRework", "Changeover.Station")
+				.OrderByDescending(x => x.EndDateTime)
+				.FirstOrDefault(x =>
+					x.Id != model.Id &&
+					x.Warmup.Station.Id == stationId
+					&& x.EndDateTime <= model.StartDateTime);
 
 			if (previousSetup == null || previousTask == null)
 				return new Tuple<Block, Setup>(previousTask, previousSetup);
@@ -494,7 +561,7 @@ namespace Soheil.Core.DataServices
 
 				#region Prev
 				//find previous thing
-				var previousItem = findPreviousPPItem(block.StateStation.Station.Id, setupStartDateTime);
+				var previousItem = findPreviousPPItem(block.StateStation.Station.Id, block);
 
 				int delaySeconds = 0;
 
@@ -789,7 +856,8 @@ namespace Soheil.Core.DataServices
 					DurationSeconds = delaySeconds,
 					EndDateTime = setupStartDateTime.AddSeconds(delaySeconds),
 				});
-                Context.Commit();
+
+				Context.Commit();
 				#endregion
 
 				result.IsSaved = true;
@@ -807,5 +875,22 @@ namespace Soheil.Core.DataServices
 
 		#endregion
 
+
+		internal Tuple<Block,Setup> GetLastItem(Block exclude, int StationId)
+		{
+			var block = _blockRepository.LastOrDefault(x =>
+				x.StateStation.Station.Id == StationId
+				&& x.Id != exclude.Id
+				, x => x.EndDateTime);
+
+			var setup = _nptRepository.OfType<Setup>().
+				OrderByDescending(x => x.EndDateTime).
+				FirstOrDefault(x => x.Warmup.Station.Id == StationId);
+
+			if (setup == null || block == null)
+				return new Tuple<Block, Setup>(block, setup);
+			return new Tuple<Block, Setup>(block,
+				(setup.EndDateTime >= block.EndDateTime) ? setup : null);
+		}
 	}
 }

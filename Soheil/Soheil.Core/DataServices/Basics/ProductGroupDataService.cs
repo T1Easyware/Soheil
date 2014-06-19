@@ -16,6 +16,8 @@ namespace Soheil.Core.DataServices
 		public event EventHandler<ModelAddedEventArgs<ProductGroup>> ProductGroupAdded;
 	    readonly Repository<ProductGroup> _productGroupRepository;
 
+		public ProductGroupDataService()
+			: this(new Dal.SoheilEdmContext()) { }
 		public ProductGroupDataService(SoheilEdmContext context)
 		{
 		    this.Context = context ?? new SoheilEdmContext();

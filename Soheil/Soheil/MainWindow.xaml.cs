@@ -17,7 +17,6 @@ using Soheil.Core.Interfaces;
 using Soheil.Core.ViewModels;
 using Soheil.Core.ViewModels.Index;
 using Soheil.Core.ViewModels.Reports;
-using Soheil.Core.ViewModels.SkillCenter;
 using Soheil.Views;
 
 namespace Soheil
@@ -149,7 +148,7 @@ namespace Soheil
 					chrometabs.AddTab(CreateSplitTab(type), true);
 					break;
 				case SoheilEntityType.SkillCenter:
-					SingularList = new SkillCenterVm(access);
+					SingularList = new Soheil.Core.ViewModels.SkillCenter.SkillCenterVm(access);
 					chrometabs.AddTab(CreateSingularTab(type), true);
 					break;
                 case SoheilEntityType.DefinitionsMenu:
@@ -495,8 +494,6 @@ namespace Soheil
                     return Common.Properties.Resources.txtCostReports;
                 case SoheilEntityType.ActualCostReportsSubMenu:
                     return Common.Properties.Resources.txtActualCostReports;
-                case SoheilEntityType.OperationReportsSubMenu:
-                    return Common.Properties.Resources.txtOperationReports;
                 case SoheilEntityType.SettingsSubMenu:
                     return Common.Properties.Resources.txtSettings;
                 case SoheilEntityType.HelpSubMenu:

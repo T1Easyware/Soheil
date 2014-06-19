@@ -116,6 +116,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					oper.IsSelected = status[0];
 					oper.IsInTask = status[1];
 					oper.IsInTimeRange = status[2];
+					//iluo
+					if (Process != null)
+						oper.Update(Process.StateStationActivity);
+					else
+						oper.Update(null);
 				}
 				catch { }
 			}

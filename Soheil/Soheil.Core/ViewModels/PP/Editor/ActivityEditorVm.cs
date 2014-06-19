@@ -24,7 +24,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <para>second parameter can be null</para>
 		/// </summary>
 		public event Action<ProcessEditorVm, ChoiceEditorVm> SelectedChoiceChanged;
-
+		public Func<DateTime> GetTaskStart;
 		public ActivityEditorVm(
 			Model.Task task, 
 			Dal.SoheilEdmContext uow,
@@ -64,11 +64,17 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			//Add process command
 			AddProcessCommand = new Commands.Command(o =>
 			{
-				var dt = ProcessList.Any() ? 
-					ProcessList
-						.Where(x => x.ActivityModel.Id == ssaGroup.Key.Id)
-						.Max(x => x.Model.EndDateTime)
-					: task.StartDateTime;
+				
+				DateTime dt;
+				if (GetTaskStart == null)
+					dt = ProcessList.Any() ?
+						ProcessList
+							.Where(x => x.ActivityModel.Id == ssaGroup.Key.Id)
+							.Max(x => x.Model.EndDateTime)
+						: task.StartDateTime;
+				else
+					dt = GetTaskStart();
+
 				var processVm = new ProcessEditorVm(
 					new Model.Process
 					{
