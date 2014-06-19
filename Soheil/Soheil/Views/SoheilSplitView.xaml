@@ -32,8 +32,10 @@
         <SolidColorBrush x:Key="UpdateColor">Gold</SolidColorBrush>
         <SolidColorBrush x:Key="InsertColor">DodgerBlue</SolidColorBrush>
         <SolidColorBrush x:Key="FullColor">LimeGreen</SolidColorBrush>
-        <SolidColorBrush x:Key="CodeColor">#007ACC</SolidColorBrush>
-        <SolidColorBrush x:Key="CodeSecColor">#CC5500</SolidColorBrush>
+        <SolidColorBrush x:Key="CodeColor">#007FD6</SolidColorBrush>
+        <SolidColorBrush x:Key="CodeSecColor">#D7610D</SolidColorBrush>
+        <SolidColorBrush x:Key="CodeColorGlow">#7FCAFF</SolidColorBrush>
+        <SolidColorBrush x:Key="CodeSecColorGlow">#FFB580</SolidColorBrush>
         <Converters:InsertAccessTypeConverter x:Key="InsertConverter"/>
         <Converters:UpdateAccessTypeConverter x:Key="UpdateConverter"/>
         <Converters:PrintAccessTypeConverter x:Key="PrintConverter"/>
@@ -140,10 +142,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:UserPositionVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=PositionCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=PositionCode}" />
                                     <TextBlock Text="{Binding Path=PositionName}" />
                                 </StackPanel>
-                            </DataTemplate>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -162,10 +169,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:UserPositionVM">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Path=UserCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=UserCode}" />
                                     <TextBlock Text="{Binding Path=UserName}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -186,10 +198,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:UserAccessRuleVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=AccessRuleCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=AccessRuleCode}" />
                                     <TextBlock Text="{Binding Path=AccessRuleName}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -210,10 +227,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:PositionAccessRuleVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=AccessRuleCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=AccessRuleCode}" />
                                     <TextBlock Text="{Binding Path=AccessRuleName}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -234,9 +256,14 @@
                             <ContentPresenter.ContentTemplate>
                                 <DataTemplate DataType="ViewModels:ProductDefectionVM">
                                     <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=DefectionCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=DefectionCode}" />
                                         <TextBlock Text="{Binding Path=DefectionName}" />
                                     </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
                                 </DataTemplate>
                             </ContentPresenter.ContentTemplate>
                         </ContentPresenter>
@@ -256,10 +283,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ProductDefectionVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=ProductCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=ProductCode}" />
                                     <TextBlock Text="{Binding Path=ProductName}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                     </ToggleButton>
@@ -271,7 +303,7 @@
         <DataTemplate x:Key="ProductReworkTemplate">
             <Border Style="{StaticResource SoheilItemBorder}">
                 <StackPanel>
-                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
+                    <ContentControl IsEnabled="{Binding HasStateLink}" Template="{StaticResource ConfirmExcludeButton}"/>
                     <ToggleButton IsChecked="{Binding IsChecked, Mode=TwoWay}"
                                   CommandParameter="{Binding}"
                                   Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
@@ -280,12 +312,18 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ProductReworkVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=ReworkCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=ReworkCode}" />
                                     <TextBlock Text="{Binding Path=ReworkName}" />
-                                        <TextBlock Foreground="{StaticResource CodeSecColor}" Text="{Binding Path=Code}" />
+                                        <TextBlock x:Name="CodeSecBlock" Foreground="{StaticResource CodeSecColor}" Text="{Binding Path=Code}" />
                                     <TextBlock Text="{Binding Path=Name}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                            <Setter TargetName="CodeSecBlock" Property="Foreground" Value="{StaticResource CodeSecColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -295,7 +333,7 @@
         <DataTemplate x:Key="ReworkProductTemplate">
             <Border Style="{StaticResource SoheilItemBorder}">
                 <StackPanel>
-                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
+                    <ContentControl  IsEnabled="{Binding HasStateLink}" Template="{StaticResource ConfirmExcludeButton}"/>
                     <ToggleButton IsChecked="{Binding IsChecked, Mode=TwoWay}"
                                   CommandParameter="{Binding}"
                                   Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
@@ -304,12 +342,18 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ProductReworkVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=ProductCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=ProductCode}" />
                                     <TextBlock Text="{Binding Path=ProductName}" />
-                                        <TextBlock Foreground="{StaticResource CodeSecColor}" Text="{Binding Path=Code}" />
+                                        <TextBlock x:Name="CodeSecBlock" Foreground="{StaticResource CodeSecColor}" Text="{Binding Path=Code}" />
                                     <TextBlock Text="{Binding Path=Name}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                            <Setter TargetName="CodeSecBlock" Property="Foreground" Value="{StaticResource CodeSecColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -378,10 +422,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:StationMachineVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=MachineCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=MachineCode}" />
                                     <TextBlock Text="{Binding Path=MachineName}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -400,10 +449,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:StationMachineVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=StationCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=StationCode}" />
                                     <TextBlock Text="{Binding Path=StationName}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -424,10 +478,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ActionPlanFishboneVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=FishboneNodeId}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=FishboneNodeId}" />
                                     <TextBlock Text="{Binding Path=FishboneNodeName}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -446,10 +505,15 @@
                         <ContentPresenter.ContentTemplate>
                             <DataTemplate DataType="ViewModels:ActionPlanFishboneVM">
                                 <StackPanel>
-                                        <TextBlock Foreground="{StaticResource CodeColor}" Text="{Binding Path=ActionPlanCode}" />
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=ActionPlanCode}" />
                                     <TextBlock Text="{Binding Path=ActionPlanName}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
                 </ToggleButton>
@@ -517,7 +581,7 @@
                                                         <RowDefinition Height="*"/>
                                                         <RowDefinition Height="*"/>
                                                     </Grid.RowDefinitions>
-                                                    <TextBlock x:Name="CodeBlock" Grid.Row="0" Foreground="{StaticResource BlueDefaultBrush}">
+                                                    <TextBlock x:Name="CodeBlock" Grid.Row="0" Foreground="{StaticResource CodeColor}">
                                                         <TextBlock.Text>
                                                             <Binding>
                                                                 <Binding.Path>Code</Binding.Path>
@@ -532,13 +596,18 @@
                                                         </TextBlock.Text>
                                                     </TextBlock>
                                                 </Grid>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                                        <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
                                             </DataTemplate>
                                         </ContentPresenter.ContentTemplate>
                                     </ContentPresenter>
                                 </ToggleButton>
                                 </DockPanel>
                             </Border>
-                        </DataTemplate>
+                    </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -696,11 +765,11 @@
         <ControlTemplate x:Key="ExcludeBox">
             <DockPanel>
                 <ContentControl DockPanel.Dock="Top" Template="{StaticResource ReturnPanel}"/>
-                <Border DockPanel.Dock="Bottom" Style="{StaticResource SoheilDarkCoverBorder}" Height="30">
+                <Border DockPanel.Dock="Bottom" Style="{StaticResource SoheilSimpleFillBorder}" Height="30">
                     <StackPanel Orientation="Horizontal">
-                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
-                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
-                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
+                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                            <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
                     </StackPanel>
                 </Border>
                 <ItemsControl DockPanel.Dock="Top" Template="{StaticResource ExcludeList}"/>
@@ -708,11 +777,11 @@
         </ControlTemplate>
         <ControlTemplate x:Key="IncludeBox">
             <DockPanel>
-                <Border DockPanel.Dock="Bottom" Style="{StaticResource SoheilDarkCoverBorder}" Height="30">
+                <Border DockPanel.Dock="Bottom" Style="{StaticResource SoheilSimpleFillBorder}" Height="30">
                     <StackPanel Orientation="Horizontal">
-                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/IncludeAll.png" ToolTip="{Loc txtIncludeChecked}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.IncludeRangeCommand}" HorizontalAlignment="Right"/>
-                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForIncludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
-                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForIncludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/IncludeAll.png" ToolTip="{Loc txtIncludeChecked}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.IncludeRangeCommand}" HorizontalAlignment="Right"/>
+                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForIncludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForIncludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
                     </StackPanel>
                 </Border>
                 <ItemsControl Template="{StaticResource IncludeList}"/>
@@ -1863,35 +1932,39 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="35"/>
                         </Grid.RowDefinitions>
                         <ContentControl Grid.Row="0"  Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Grid.Row="1" Template="{StaticResource ExcludeList}"/>
-                        <Border Grid.Row="2" Style="{StaticResource SoheilDarkCoverBorder}" >
-                            <UniformGrid Margin="5"
-                                         Columns="2"
-                                         FlowDirection="{Loc enumDirection}"
-                                         Rows="4">
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
-                                <TextBox Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Code}"/>
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
-                                <TextBox Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Name}"/>
-                                <Canvas />
-                                <Canvas />
-                                <Button Content="{Loc txtEdit}">
+                        <Border Grid.Row="2" Style="{StaticResource SoheilSimpleFillBorder}" >
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="4*"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="4*"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
+                                <TextBox Grid.Column="1" Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Code}"/>
+                                <Canvas Grid.Column="2"/>
+                                <TextBlock Grid.Column="3" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+                                <TextBox Grid.Column="4" Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Name}"/>
+                                <CustomControls:ImageButton ToolTip="{Loc txtEdit}" ImageSource="/Soheil.Controls;component/Images/Check.png" Grid.Column="5">
                                     <Button.Command>
                                         <Binding>
                                             <Binding.Path>CurrentContent.CurrentLink.Details.SaveCommand</Binding.Path>
                                         </Binding>
                                     </Button.Command>
-                                </Button>
-                            </UniformGrid>
+                                </CustomControls:ImageButton>
+                            </Grid>
                         </Border>
-                        <Border Grid.Row="3" Style="{StaticResource SoheilDarkCoverBorder}" >
+                        <Border Grid.Row="3"  Height="30" Style="{StaticResource SoheilSimpleFillBorder}" >
                             <StackPanel Orientation="Horizontal">
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -1958,35 +2031,39 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="35"/>
                         </Grid.RowDefinitions>
                         <ContentControl Grid.Row="0"  Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Grid.Row="1" Template="{StaticResource ExcludeList}"/>
-                        <Border Grid.Row="2" Style="{StaticResource SoheilDarkCoverBorder}" >
-                            <UniformGrid Margin="5"
-                                         Columns="2"
-                                         FlowDirection="{Loc enumDirection}"
-                                         Rows="4">
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
-                                <TextBox Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Code}"/>
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
-                                <TextBox Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Name}"/>
-                                <Canvas />
-                                <Canvas />
-                                <Button Content="{Loc txtEdit}">
+                        <Border Grid.Row="2" Style="{StaticResource SoheilSimpleFillBorder}" >
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="4*"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="4*"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}" />
+                                <TextBox Grid.Column="1" Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Code}"/>
+                                <Canvas Grid.Column="2"/>
+                                <TextBlock Grid.Column="3" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+                                <TextBox Grid.Column="4" Margin="2" Text="{Binding CurrentContent.CurrentLink.Details.Name}"/>
+                                <CustomControls:ImageButton ToolTip="{Loc txtEdit}" ImageSource="/Soheil.Controls;component/Images/Check.png" Grid.Column="5">
                                     <Button.Command>
                                         <Binding>
                                             <Binding.Path>CurrentContent.CurrentLink.Details.SaveCommand</Binding.Path>
                                         </Binding>
                                     </Button.Command>
-                                </Button>
-                            </UniformGrid>
+                                </CustomControls:ImageButton>
+                            </Grid>
                         </Border>
-                        <Border Grid.Row="3" Style="{StaticResource SoheilDarkCoverBorder}" >
+                        <Border Grid.Row="3" Height="30" Style="{StaticResource SoheilSimpleFillBorder}" >
                             <StackPanel Orientation="Horizontal">
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -2668,25 +2745,27 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="35"/>
                         </Grid.RowDefinitions>
                         <ContentControl Grid.Row="0"  Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Grid.Row="1" Template="{StaticResource ExcludeList}"/>
-                        <Border Grid.Row="2" Style="{StaticResource SoheilDarkCoverBorder}" >
-                            <UniformGrid Margin="5"
-                                         Columns="2"
-                                         Rows="2">
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStatus}" />
-                                <ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedValue="{Binding Path=CurrentContent.CurrentLink.Details.Status}" />
-                                <Canvas />
-                                <Canvas />
-                            </UniformGrid>
+                        <Border Grid.Row="2" Style="{StaticResource SoheilSimpleFillBorder}" >
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="6*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStatus}" />
+                                <ComboBox Grid.Column="1" Margin="2" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedValue="{Binding Path=CurrentContent.CurrentLink.Details.Status}" />
+                                <Canvas Grid.Column="2"/>
+                            </Grid>
                         </Border>
-                        <Border Grid.Row="3" Style="{StaticResource SoheilDarkCoverBorder}" >
+                        <Border Grid.Row="3"  Height="30" Style="{StaticResource SoheilSimpleFillBorder}" >
                             <StackPanel Orientation="Horizontal">
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -2819,27 +2898,29 @@
                         </Grid.RowDefinitions>
                         <ContentControl Grid.Row="0"  Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Grid.Row="1" Template="{StaticResource ExcludeList}"/>
-                        <Border Grid.Row="2" Style="{StaticResource SoheilDarkCoverBorder}" >
-                            <UniformGrid Margin="5"
-                                         Columns="2"
-                                         Rows="2">
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="ILUO :" />
-                                <ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource IluoValues}}">
+                        <Border Grid.Row="2" Style="{StaticResource SoheilSimpleFillBorder}" >
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="6*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Style="{StaticResource EntryBoxHeader}" Text="ILUO :" />
+                                <ComboBox Grid.Column="1" Margin="2" ItemsSource="{Binding Source={StaticResource IluoValues}}">
                                     <ComboBox.SelectedValue>
                                         <Binding>
                                             <Binding.Path>CurrentContent.CurrentLink.Details.SkillPoint</Binding.Path>
                                         </Binding>
                                     </ComboBox.SelectedValue>
                                 </ComboBox>
-                                <Canvas />
-                                <Canvas />
-                            </UniformGrid>
+                                <Canvas Grid.Column="2" />
+                            </Grid>
                         </Border>
-                        <Border Grid.Row="3" Style="{StaticResource SoheilDarkCoverBorder}" >
+                        <Border Grid.Row="3" Style="{StaticResource SoheilSimpleFillBorder}" >
                             <StackPanel Orientation="Horizontal">
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -2929,27 +3010,29 @@
                         </Grid.RowDefinitions>
                         <ContentControl Grid.Row="0"  Template="{StaticResource ReturnPanel}"/>
                         <ItemsControl Grid.Row="1" Template="{StaticResource ExcludeList}"/>
-                        <Border Grid.Row="2" Style="{StaticResource SoheilDarkCoverBorder}" >
-                            <UniformGrid Margin="5"
-                                         Columns="2"
-                                         Rows="2">
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="ILUO :" />
-                                <ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource IluoValues}}">
+                        <Border Grid.Row="2" Style="{StaticResource SoheilSimpleFillBorder}" >
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="6*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Style="{StaticResource EntryBoxHeader}" Text="ILUO :" />
+                                <ComboBox Grid.Column="1" Margin="2" ItemsSource="{Binding Source={StaticResource IluoValues}}">
                                     <ComboBox.SelectedValue>
                                         <Binding>
                                             <Binding.Path>CurrentContent.CurrentLink.Details.SkillPoint</Binding.Path>
                                         </Binding>
                                     </ComboBox.SelectedValue>
                                 </ComboBox>
-                                <Canvas />
-                                <Canvas />
-                            </UniformGrid>
+                                <Canvas Grid.Column="2" />
+                            </Grid>
                         </Border>
-                        <Border Grid.Row="3" Style="{StaticResource SoheilDarkCoverBorder}" >
+                        <Border Grid.Row="3" Style="{StaticResource SoheilSimpleFillBorder}" >
                             <StackPanel Orientation="Horizontal">
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
-                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Width="25" Margin="5,0,5,0" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/excludeAll.png" ToolTip="{Loc txtExcludeChecked}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.ExcludeRangeCommand}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/CheckAll.png" ToolTip="{Loc txtCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource TrueValue}" HorizontalAlignment="Right"/>
+                                <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/UnCheckAll.png" ToolTip="{Loc txtUnCheckAll}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.CurrentLink.CheckAllForExcludeCommand}" CommandParameter="{StaticResource FalseValue}" HorizontalAlignment="Right"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -3146,7 +3229,7 @@
                             </Border>
                             <Border Style="{StaticResource SoheilMediumCoverBorder}" >
                                 <DockPanel>
-                                    <Border DockPanel.Dock="Top" Margin="1,1,1,25" Style="{StaticResource SoheilFillBorder}">
+                                    <Border DockPanel.Dock="Top" Margin="1,1,1,25" Style="{StaticResource SoheilGradientFillBorder}">
                                         <DockPanel Margin="5" >
                                             <TextBlock DockPanel.Dock="Left" Style="{StaticResource EntryBoxHeader}" Foreground="{StaticResource BlueHoverBrush}" Text="{Loc txtCostType}" />
                                             <WrapPanel IsEnabled="{Binding CurrentContent.AllowChangeCostType}"  DockPanel.Dock="Right">

@@ -1568,7 +1568,7 @@
     </Style>
 
     <!--  Soheil Fill Border  -->
-    <Style x:Key="SoheilFillBorder" TargetType="{x:Type Border}">
+    <Style x:Key="SoheilGradientFillBorder" TargetType="{x:Type Border}">
         <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="1,1,1,1" />
@@ -1578,7 +1578,7 @@
 
     <!--  Soheil Simple Fill Border  -->
     <Style x:Key="SoheilSimpleFillBorder" TargetType="{x:Type Border}">
-        <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ThemeLightBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="1,1,1,1" />
         <Setter Property="Margin" Value="2" />
@@ -2721,5 +2721,12 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+    
+    <!-- Image Button Default Style -->
+    <Style TargetType="CustomControls:ImageButton" x:Key="ImageButtonDefaultStyle">
+        <Setter Property="Width" Value="25"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Margin" Value="5,0,5,0"/>
+    </Style>
 </ResourceDictionary>
 

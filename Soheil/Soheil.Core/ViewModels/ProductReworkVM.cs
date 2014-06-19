@@ -27,6 +27,11 @@ namespace Soheil.Core.ViewModels
             get { return LoginInfo.GetUsername(_model.ModifiedBy); }
         }
 
+        public bool HasStateLink
+        {
+            get { return DataService.HasStateLink(_model.Id); }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductGroupVM"/> class initialized with default values.
         /// </summary>

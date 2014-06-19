@@ -122,16 +122,21 @@ namespace Soheil.Core.DataServices
 		public void RemoveProduct(int reworkId, int productId)
 		{
 			var reworkProductRepository = new Repository<ProductRework>(Context);
+		    var stateRepository = new Repository<State>(Context);
             Rework currentRework = _reworkRepository.Single(rework => rework.Id == reworkId);
 			ProductRework currentReworkProduct =
 				currentRework.ProductReworks.First(
 					reworkProduct =>
 					reworkProduct.Rework.Id == reworkId && reworkProduct.Id == productId);
 			int id = currentReworkProduct.Id;
+		    if (stateRepository.Exists(item=> item.OnProductRework.Id == currentReworkProduct.Id))
+		    {
+		        return; // ?? if state is not active or deleted, the link should be removed
+		    }
 			reworkProductRepository.Delete(currentReworkProduct);
 			Context.Commit();
 			ProductRemoved(this, new ModelRemovedEventArgs(id));
-
 		}
+
 	}
 }
