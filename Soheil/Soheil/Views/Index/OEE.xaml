@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="Soheil.Views.Index.OEE"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Soheil.Views.Index"
+			 xmlns:System="clr-namespace:System;assembly=mscorlib"
+			 xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+
+	<DockPanel>
+		<!-- machine tree -->
+		<TreeView ItemsSource="{Binding MachineFamilies}" DockPanel.Dock="Left">
+			<TreeView.ItemTemplate>
+				<DataTemplate>
+					<Border>
+						<Expander>
+							<Expander.Header>
+								<TextBlock Text="{Binding Name}"/>
+							</Expander.Header>
+							<ItemsControl ItemsSource="{Binding Machines}">
+								<DataTemplate>
+									<DockPanel>
+										<Button Width="60" Content="Select" DockPanel.Dock="Right"/>
+										<TextBlock Text="{Binding Name}"/>
+									</DockPanel>
+								</DataTemplate>
+							</ItemsControl>
+						</Expander>
+					</Border>
+				</DataTemplate>
+			</TreeView.ItemTemplate>
+		</TreeView>
+		
+		<!-- time -->
+		<WrapPanel Margin="10" DockPanel.Dock="Top">
+			<TextBlock Text="بازه زمانی"/>
+			<ComboBox/>
+			<TextBlock Text="{Loc txtStart}"/>
+			<cc:TimeBox Time="{Binding SelectedTime, Mode=TwoWay}"/>
+			<cal:DatePicker SelectedDate="{Binding SelectedDate}" DisplayDate="{Binding SelectedDate}"/>
+		</WrapPanel>
+		
+		<!-- oee -->
+		<local:MachineOEE/>
+	</DockPanel>
+
+</UserControl>

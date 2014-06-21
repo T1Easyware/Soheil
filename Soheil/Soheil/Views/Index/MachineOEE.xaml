@@ -1,0 +1,304 @@
+﻿<UserControl x:Class="Soheil.Views.Index.MachineOEE"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800" FlowDirection="LeftToRight">
+	<UserControl.Resources>
+		<Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+			<Setter Property="Width" Value="80"/>
+		</Style>
+		<Style x:Key="baseTimeStyle" TargetType="Border">
+			<Setter Property="BorderBrush" Value="#222"/>
+			<Setter Property="BorderThickness" Value="1,1,0,1"/>
+		</Style>
+		<Style x:Key="invalidTimeStyle" TargetType="Border" BasedOn="{StaticResource baseTimeStyle}">
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+						<GradientStop Color="#7777" Offset="0"/>
+						<GradientStop Color="#BBBB" Offset=".02"/>
+						<GradientStop Color="#CCCC" Offset=".1"/>
+						<GradientStop Color="#CDDD" Offset=".5"/>
+						<GradientStop Color="#CEEE" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="commonTimeStyle" TargetType="Border" BasedOn="{StaticResource baseTimeStyle}">
+			<Setter Property="Background" Value="SkyBlue"/>
+		</Style>
+		<Style x:Key="unschedTimeStyle" TargetType="Border" BasedOn="{StaticResource baseTimeStyle}">
+			<Setter Property="Background" Value="Thistle"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<SolidColorBrush x:Key="reworkBackground" Color="#EE0"/>
+		<Style x:Key="reworkTimeStyle" TargetType="Border" BasedOn="{StaticResource baseTimeStyle}">
+			<Setter Property="Background" Value="{StaticResource reworkBackground}"/>
+			<Setter Property="BorderThickness" Value="1,1,0,1"/>
+		</Style>
+		<Style x:Key="stoppageTimeStyle" TargetType="Border" BasedOn="{StaticResource baseTimeStyle}">
+			<Setter Property="Background" Value="Gold"/>
+		</Style>
+		<Style x:Key="idleTimeStyle" TargetType="Border" BasedOn="{StaticResource baseTimeStyle}">
+			<Setter Property="Background" Value="#789"/>
+		</Style>
+		<Style x:Key="defectionTimeStyle" TargetType="Border" BasedOn="{StaticResource baseTimeStyle}">
+			<Setter Property="Background" Value="Crimson"/>
+		</Style>
+		<Style x:Key="okTimeStyle" TargetType="Border" BasedOn="{StaticResource baseTimeStyle}">
+			<Setter Property="Background" Value="YellowGreen"/>
+		</Style>
+
+		<Style x:Key="textsPanelStyle" TargetType="Panel">
+			<Setter Property="TextBlock.Foreground" Value="White"/>
+			<Setter Property="Margin" Value="3,2"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" ShadowDepth="1" RenderingBias="Quality"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="rateTextsPanelStyle" TargetType="Panel">
+			<Setter Property="TextBlock.Foreground" Value="White"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="10,0"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="White" ShadowDepth="1"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="rateBarBorderStyle" TargetType="Border">
+			<Setter Property="BorderBrush" Value="WhiteSmoke"/>
+			<Setter Property="BorderThickness" Value="4"/>
+			<Setter Property="CornerRadius" Value="3"/>
+			<Setter Property="Margin" Value="50,5"/>
+		</Style>
+		<Style x:Key="percentStyle" TargetType="TextBlock">
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="18"/>
+		</Style>
+		<Style x:Key="timesBkgGlowStyle" TargetType="Border">
+			<Setter Property="IsHitTestVisible" Value="False"/>
+			<Setter Property="Grid.ColumnSpan" Value="2"/>
+			<Setter Property="Background" Value="#5FFF"/>
+			<Setter Property="Margin" Value="1,45,0,1"/>
+		</Style>
+
+		<!-- Data Providers -->
+		<ObjectDataProvider x:Key="IndexIntervals"
+                        MethodName="GetValues"
+                        ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="Common:DateTimeIntervals" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+
+	</UserControl.Resources>
+
+	<Border BorderBrush="Gray" BorderThickness="2" CornerRadius="4" Padding="5" Background="#567">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="50"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+
+			<!-- OEE -->
+			<TextBlock Text="{Binding OEE, StringFormat=OEE : {0}%}" Foreground="White" FontWeight="Bold" FontSize="24" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,0">
+				<TextBlock.Effect>
+					<DropShadowEffect Color="White" ShadowDepth="1" BlurRadius="8"/>
+				</TextBlock.Effect>
+			</TextBlock>
+
+			<!-- scheduling rate -->
+			<Border Style="{StaticResource rateBarBorderStyle}" Grid.Row="1" Grid.Column="1">
+				<Grid Height="65">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="15*"/>
+						<ColumnDefinition Width="1*"/>
+						<ColumnDefinition Width="1*"/>
+					</Grid.ColumnDefinitions>
+					<Border Style="{StaticResource reworkTimeStyle}" Grid.Column="1" ClipToBounds="True" MouseEnter="Rework_MouseEnter" MouseLeave="Rework_MouseLeave">
+						<Canvas HorizontalAlignment="Left" FlowDirection="LeftToRight" Margin="3,2">
+							<StackPanel TextBlock.Foreground="Black" Background="{StaticResource reworkBackground}">
+								<TextBlock Text="زمان دوباره کاری"/>
+								<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+								<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}" FlowDirection="RightToLeft" HorizontalAlignment="Left"/>
+							</StackPanel>
+						</Canvas>
+					</Border>
+					<Border Style="{StaticResource commonTimeStyle}">
+						<Canvas HorizontalAlignment="Right" FlowDirection="RightToLeft" Style="{StaticResource textsPanelStyle}">
+							<StackPanel>
+								<TextBlock Text="زمان برنامه ریزی شده"/>
+								<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+								<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}"/>
+							</StackPanel>
+						</Canvas>
+					</Border>
+					<Border Style="{StaticResource unschedTimeStyle}" Grid.Column="2">
+						<Canvas HorizontalAlignment="Left" FlowDirection="LeftToRight" Style="{StaticResource textsPanelStyle}">
+							<StackPanel>
+								<TextBlock Text="زمان برنامه ریزی نشده"/>
+								<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+								<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}" FlowDirection="RightToLeft" HorizontalAlignment="Left"/>
+							</StackPanel>
+						</Canvas>
+					</Border>
+					<Border Style="{StaticResource timesBkgGlowStyle}" Grid.ColumnSpan="3"/>
+				</Grid>
+			</Border>
+			<StackPanel Grid.Row="1" Style="{StaticResource rateTextsPanelStyle}">
+				<TextBlock Text="نرخ زمان بندی"/>
+				<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+			</StackPanel>
+
+			<!-- accessibility rate -->
+			<Border Style="{StaticResource rateBarBorderStyle}" Grid.Row="2" Grid.Column="1">
+				<Grid Height="65">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="11*"/>
+						<ColumnDefinition Width="4*"/>
+						<ColumnDefinition Width="1*"/>
+					</Grid.ColumnDefinitions>
+					<Border Style="{StaticResource invalidTimeStyle}" Grid.Column="2"/>
+					<Border Style="{StaticResource commonTimeStyle}">
+						<Canvas HorizontalAlignment="Right" FlowDirection="RightToLeft" Style="{StaticResource textsPanelStyle}">
+							<StackPanel>
+								<TextBlock Text="زمان در دسترس"/>
+								<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+								<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}"/>
+							</StackPanel>
+						</Canvas>
+					</Border>
+					<Border Style="{StaticResource stoppageTimeStyle}" Grid.Column="1">
+						<Canvas HorizontalAlignment="Left" FlowDirection="LeftToRight" Style="{StaticResource textsPanelStyle}">
+							<StackPanel>
+								<TextBlock Text="زمان توقفات"/>
+								<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+								<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}" FlowDirection="RightToLeft" HorizontalAlignment="Left"/>
+							</StackPanel>
+						</Canvas>
+					</Border>
+					<Border Style="{StaticResource timesBkgGlowStyle}"/>
+				</Grid>
+			</Border>
+			<StackPanel Grid.Row="2" Style="{StaticResource rateTextsPanelStyle}">
+				<TextBlock Text="نرخ دسترسی"/>
+				<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+			</StackPanel>
+
+			<!-- working rate -->
+			<Border Style="{StaticResource rateBarBorderStyle}" Grid.Row="3" Grid.Column="1">
+				<Grid Height="65">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="8*"/>
+						<ColumnDefinition Width="3*"/>
+						<ColumnDefinition Width="5*"/>
+					</Grid.ColumnDefinitions>
+					<Border Style="{StaticResource invalidTimeStyle}" Grid.Column="2"/>
+					<Border Style="{StaticResource commonTimeStyle}">
+						<Canvas HorizontalAlignment="Right" FlowDirection="RightToLeft" Style="{StaticResource textsPanelStyle}">
+							<StackPanel>
+								<TextBlock Text="زمان کارکرد"/>
+								<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+								<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}"/>
+							</StackPanel>
+						</Canvas>
+					</Border>
+					<Border Style="{StaticResource idleTimeStyle}" Grid.Column="1">
+						<Canvas HorizontalAlignment="Left" FlowDirection="LeftToRight" Style="{StaticResource textsPanelStyle}">
+							<StackPanel>
+								<TextBlock Text="زمان بدون گزارش"/>
+								<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+								<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}" FlowDirection="RightToLeft" HorizontalAlignment="Left"/>
+							</StackPanel>
+						</Canvas>
+					</Border>
+					<Border Style="{StaticResource timesBkgGlowStyle}"/>
+				</Grid>
+			</Border>
+			<StackPanel Grid.Row="3" Style="{StaticResource rateTextsPanelStyle}">
+				<TextBlock Text="نرخ کارایی"/>
+				<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+			</StackPanel>
+
+			<!-- quality rate -->
+			<Border Style="{StaticResource rateBarBorderStyle}" Grid.Row="4" Grid.Column="1">
+				<StackPanel>
+					<Grid Height="65">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="4*"/>
+							<ColumnDefinition Width="3*"/>
+							<ColumnDefinition Width="7*"/>
+						</Grid.ColumnDefinitions>
+						<Border Style="{StaticResource invalidTimeStyle}" Grid.Column="2"/>
+						<Border Style="{StaticResource okTimeStyle}">
+							<Canvas HorizontalAlignment="Right" FlowDirection="RightToLeft" Style="{StaticResource textsPanelStyle}">
+								<StackPanel>
+									<TextBlock Text="زمان تولید سالم"/>
+									<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+									<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}"/>
+								</StackPanel>
+							</Canvas>
+						</Border>
+						<Border Style="{StaticResource defectionTimeStyle}" Grid.Column="1">
+							<Canvas HorizontalAlignment="Left" FlowDirection="LeftToRight" Style="{StaticResource textsPanelStyle}">
+								<StackPanel>
+									<TextBlock Text="زمان ضایعات"/>
+									<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+									<TextBlock Text="{Binding Duration, StringFormat={}{0} ساعت}" FlowDirection="RightToLeft" HorizontalAlignment="Left"/>
+								</StackPanel>
+							</Canvas>
+						</Border>
+						<Border Style="{StaticResource timesBkgGlowStyle}"/>
+					</Grid>
+					<Border Background="#678">
+						<DockPanel Margin="1">
+							<WrapPanel DockPanel.Dock="Bottom">
+								<ToggleButton Content="تولید ناسالم" IsChecked="True"/>
+								<ToggleButton Content="درجه 2"/>
+								<ToggleButton Content="ضایعات"/>
+							</WrapPanel>
+							<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100">
+								<ItemsControl ItemsSource="{Binding Defections}">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<cc:OEEVerticalBar DataContext="{Binding}"/>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+									<ItemsControl.ItemsPanel>
+										<ItemsPanelTemplate>
+											<StackPanel Orientation="Horizontal" HorizontalAlignment="Left"/>
+										</ItemsPanelTemplate>
+									</ItemsControl.ItemsPanel>
+								</ItemsControl>
+							</ScrollViewer>
+						</DockPanel>
+					</Border>
+				</StackPanel>
+			</Border>
+			<StackPanel Grid.Row="4" Style="{StaticResource rateTextsPanelStyle}">
+				<TextBlock Text="نرخ کیفی"/>
+				<TextBlock Text="{Binding Perc, StringFormat={}{0}%}" Style="{StaticResource percentStyle}"/>
+			</StackPanel>
+
+		</Grid>
+	</Border>
+
+</UserControl>
