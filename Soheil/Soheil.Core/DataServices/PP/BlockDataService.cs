@@ -250,11 +250,13 @@ namespace Soheil.Core.DataServices
 						foreach (var po in process.ProcessOperators.ToArray())
 						{
 							process.ProcessOperators.Remove(po);
+
 							new Repository<ProcessOperator>(Context).Delete(po);
 						}
 						foreach (var sm in process.SelectedMachines.ToArray())
 						{
 							process.SelectedMachines.Remove(sm);
+
 							new Repository<SelectedMachine>(Context).Delete(sm);
 						}
 						task.Processes.Remove(process);
@@ -854,6 +856,7 @@ namespace Soheil.Core.DataServices
 					DurationSeconds = delaySeconds,
 					EndDateTime = setupStartDateTime.AddSeconds(delaySeconds),
 				});
+
 				Context.Commit();
 				#endregion
 

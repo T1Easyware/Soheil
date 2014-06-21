@@ -17,9 +17,9 @@
             <Thickness x:Key="dualMargin">0,0,5,0</Thickness>
             <Thickness x:Key="detailMargin">10,10,10,10</Thickness>
             <Thickness x:Key="barMargin">2,2,2,2</Thickness>
-            <Sys:Double x:Key="leftSideGap">160</Sys:Double>
+            <Sys:Double x:Key="leftSideGap">200</Sys:Double>
             <Sys:Double x:Key="noGap">10</Sys:Double>
-            <Sys:Double x:Key="listWidth">140</Sys:Double>
+            <Sys:Double x:Key="listWidth">180</Sys:Double>
             <Sys:Double x:Key="halfWidth">65</Sys:Double>
             <Sys:Double x:Key="groupBoxHGap">25</Sys:Double>
             <Sys:Double x:Key="groupBoxVGap">60</Sys:Double>
@@ -1568,7 +1568,7 @@
     </Style>
 
     <!--  Soheil Fill Border  -->
-    <Style x:Key="SoheilFillBorder" TargetType="{x:Type Border}">
+    <Style x:Key="SoheilGradientFillBorder" TargetType="{x:Type Border}">
         <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="1,1,1,1" />
@@ -1578,7 +1578,7 @@
 
     <!--  Soheil Simple Fill Border  -->
     <Style x:Key="SoheilSimpleFillBorder" TargetType="{x:Type Border}">
-        <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ThemeLightBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="1,1,1,1" />
         <Setter Property="Margin" Value="2" />
@@ -1717,11 +1717,6 @@
 
     <!--  Soheil DetailView Border  -->
     <Style x:Key="SoheilDetailViewBorder" BasedOn="{StaticResource SoheilContentGroupBox}" TargetType="{x:Type GroupBox}">
-        <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Margin" Value="{StaticResource detailMargin}" />
-        <Setter Property="HorizontalAlignment" Value="Right" />
-        <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
         <Setter Property="Width">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource SizeConverter}">
@@ -1796,12 +1791,9 @@
     
     <!--  Soheil DetailListView Border  -->
     <Style x:Key="SoheilDetailListViewBorder" BasedOn="{StaticResource SoheilContentGroupBox}" TargetType="{x:Type GroupBox}">
-        <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="{StaticResource listMargin}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="Width" Value="{StaticResource listWidth}" />
-        <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
     </Style>
 
     <!--  Soheil DualLeftView Border  -->
@@ -2729,5 +2721,12 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+    
+    <!-- Image Button Default Style -->
+    <Style TargetType="CustomControls:ImageButton" x:Key="ImageButtonDefaultStyle">
+        <Setter Property="Width" Value="25"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Margin" Value="5,0,5,0"/>
+    </Style>
 </ResourceDictionary>
 

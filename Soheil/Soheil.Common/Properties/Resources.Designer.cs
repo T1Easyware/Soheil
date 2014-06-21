@@ -1375,6 +1375,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to مرحله :.
+        /// </summary>
+        public static string txtLevel {
+            get {
+                return ResourceManager.GetString("txtLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ورود.
         /// </summary>
         public static string txtLogin {

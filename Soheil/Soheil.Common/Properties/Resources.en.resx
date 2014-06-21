@@ -868,6 +868,10 @@
   <data name="txtStart" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="txtLevel" xml:space="preserve">
+    <value>Level :</value>
+  </data>
+
   <data name="PPE_AfterLast" xml:space="preserve">
     <value>After the last</value>
   </data>

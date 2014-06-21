@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using Soheil.Common.Annotations;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Dal;
@@ -79,5 +80,17 @@ namespace Soheil.Core.DataServices
 		{
 			throw new System.NotImplementedException();
 		}
+
+        public bool HasStateLink(int id)
+	    {
+	        bool hasLink = false;
+	        using (var context = new SoheilEdmContext())
+	        {
+                var stateRepository = new Repository<State>(context);
+	            if (stateRepository.Exists(item => item.OnProductRework != null && item.OnProductRework.Id == id)) 
+                    hasLink = true;
+	        }
+	        return hasLink;
+	    }
 	}
 }

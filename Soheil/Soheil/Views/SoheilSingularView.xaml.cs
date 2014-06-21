@@ -374,6 +374,7 @@ namespace Soheil.Views
         }
         private void OnSelectedDateChanged(object sender, RoutedEventArgs e)
         {
+            
             ((OperationReportsVm)ViewModel).InitializeProviders(null);
         }
 

@@ -873,6 +873,10 @@
   <data name="txtStart" xml:space="preserve">
     <value>شروع</value>
   </data>
+  <data name="txtLevel" xml:space="preserve">
+    <value>مرحله :</value>
+  </data>
+
   <data name="PPE_AfterLast" xml:space="preserve">
     <value>پس از آخرین برنامه</value>
   </data>

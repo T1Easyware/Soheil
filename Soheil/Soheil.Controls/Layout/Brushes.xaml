@@ -417,6 +417,8 @@
     <SolidColorBrush x:Key="BorderBrushNormal" Color="#54545C"/>
 
     <SolidColorBrush x:Key="BlueDefaultBrush" Color="#007ACC"/>
+    <SolidColorBrush x:Key="OrangeDefaultBrush" Color="#CC5500"/>
+    
     <SolidColorBrush x:Key="BlueHoverBrush" Color="#1C97EA"/>
     <SolidColorBrush x:Key="BlueSelectedBrush" Color="#4DAFF2"/>
     <!--Text Box-->

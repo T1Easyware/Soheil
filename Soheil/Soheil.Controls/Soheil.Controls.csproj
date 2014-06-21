@@ -567,6 +567,10 @@
     <Resource Include="Images\UnCheckAll.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Check.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\PP\ppe_afterlast.png" />
     <Resource Include="Images\PP\ppe_firstemptyspace.png" />
     <Resource Include="Images\PP\ppe_parallel.png" />
