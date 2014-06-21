@@ -4,6 +4,7 @@
              xmlns:Mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:D="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Views="clr-namespace:Soheil.Views"
+             xmlns:indexView="clr-namespace:Soheil.Views.Index"
              xmlns:I="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:Behavior="clr-namespace:Soheil.Core.DataValidation.Behavior;assembly=Soheil.Core"
              xmlns:TemplateSelectors="clr-namespace:Soheil.TemplateSelectors"
@@ -1451,7 +1452,7 @@
         <!-- 3.2. Performance  -->
 
         <!-- 3.3. Indices  -->
-        <DataTemplate x:Key="IndexTemplate" DataType="IndexViewModels:IndicesVm">
+		<DataTemplate x:Key="Index1Template" DataType="IndexViewModels:IndicesVm">
 			<DataTemplate.Resources>
 				<LinearGradientBrush x:Key="SlideWindowBackground" StartPoint="0,0" EndPoint="1,0.001">
 					<GradientBrush.GradientStops>
@@ -1695,8 +1696,10 @@
                 </DockPanel>
             </Border>
         </DataTemplate>
-
-        <!--................................................ 5.Reports ...............................................-->
+		<DataTemplate x:Key="IndexTemplate" DataType="IndexViewModels:IndicesVm">
+			<indexView:OEE/>
+		</DataTemplate>
+		<!--................................................ 5.Reports ...............................................-->
 
         <!-- 5.1. Cost Reports -->
         <DataTemplate x:Key="CostReportTemplate" DataType="Reports:CostReportsVm">
