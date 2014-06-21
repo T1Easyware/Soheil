@@ -34,8 +34,8 @@
         <SolidColorBrush x:Key="FullColor">LimeGreen</SolidColorBrush>
         <SolidColorBrush x:Key="CodeColor">#007FD6</SolidColorBrush>
         <SolidColorBrush x:Key="CodeSecColor">#D7610D</SolidColorBrush>
-        <SolidColorBrush x:Key="CodeColorGlow">#7FCAFF</SolidColorBrush>
-        <SolidColorBrush x:Key="CodeSecColorGlow">#FFB580</SolidColorBrush>
+        <SolidColorBrush x:Key="CodeColorGlow">#19C5A5</SolidColorBrush>
+        <SolidColorBrush x:Key="CodeSecColorGlow">#19C5A5</SolidColorBrush>
         <Converters:InsertAccessTypeConverter x:Key="InsertConverter"/>
         <Converters:UpdateAccessTypeConverter x:Key="UpdateConverter"/>
         <Converters:PrintAccessTypeConverter x:Key="PrintConverter"/>
@@ -303,7 +303,19 @@
         <DataTemplate x:Key="ProductReworkTemplate">
             <Border Style="{StaticResource SoheilItemBorder}">
                 <StackPanel>
-                    <ContentControl IsEnabled="{Binding HasStateLink}" Template="{StaticResource ConfirmExcludeButton}"/>
+                    <Border Style="{StaticResource SoheilDarkCoverBorder}">
+                        <DockPanel>
+                            <ToggleButton IsEnabled="{Binding CanExclude}" Style="{StaticResource ConfirmCancelButton}" DockPanel.Dock="Left" Width="20" Content="X" Margin="1">
+                                <I:Interaction.Triggers>
+                                    <I:EventTrigger EventName="Indeterminate">
+                                        <I:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
+                                            CommandParameter="{Binding}" />
+                                    </I:EventTrigger>
+                                </I:Interaction.Triggers>
+                            </ToggleButton>
+                            <Canvas/>
+                        </DockPanel>
+                    </Border>
                     <ToggleButton IsChecked="{Binding IsChecked, Mode=TwoWay}"
                                   CommandParameter="{Binding}"
                                   Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
@@ -333,7 +345,19 @@
         <DataTemplate x:Key="ReworkProductTemplate">
             <Border Style="{StaticResource SoheilItemBorder}">
                 <StackPanel>
-                    <ContentControl  IsEnabled="{Binding HasStateLink}" Template="{StaticResource ConfirmExcludeButton}"/>
+                    <Border Style="{StaticResource SoheilDarkCoverBorder}">
+                        <DockPanel>
+                            <ToggleButton IsEnabled="{Binding CanExclude}" Style="{StaticResource ConfirmCancelButton}" DockPanel.Dock="Left" Width="20" Content="X" Margin="1">
+                                <I:Interaction.Triggers>
+                                    <I:EventTrigger EventName="Indeterminate">
+                                        <I:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentLink.ExcludeCommand}"
+                                            CommandParameter="{Binding}" />
+                                    </I:EventTrigger>
+                                </I:Interaction.Triggers>
+                            </ToggleButton>
+                            <Canvas/>
+                        </DockPanel>
+                    </Border>
                     <ToggleButton IsChecked="{Binding IsChecked, Mode=TwoWay}"
                                   CommandParameter="{Binding}"
                                   Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
@@ -2637,17 +2661,12 @@
                         <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentMiddleBorder}">
                             <UniformGrid Margin="5"
                              Columns="2"
-                             Rows="3">
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtGroup}" />
-                                <ComboBox Margin="2" DisplayMemberPath="Name"
-                              ItemsSource="{Binding Path=CurrentContent.Groups}"
-                              SelectedValue="{Binding Path=CurrentContent.SelectedGroupVM,
-                                                      Mode=TwoWay}"
-                              SelectedValuePath="." />
+                             Rows="2">
                                 <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStatus}" />
                                 <ComboBox Margin="2" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedValue="{Binding Path=CurrentContent.Status}" />
                                 <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtLevel}" />
-                                <ComboBox Margin="2" IsReadOnly="True" ItemsSource="{Binding Source={StaticResource CauseLevels}}" SelectedValue="{Binding Path=CurrentContent.Level}" />
+                                <!--<ComboBox  Margin="2" IsReadOnly="True" ItemsSource="{Binding Source={StaticResource CauseLevels}}" SelectedValue="{Binding Path=CurrentContent.Level}" />-->
+                                <TextBlock  Margin="2"  Text="{Binding Path=CurrentContent.Level}" />
                             </UniformGrid>
                         </Border>
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />

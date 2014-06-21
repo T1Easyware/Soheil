@@ -494,6 +494,8 @@ namespace Soheil
                     return Common.Properties.Resources.txtCostReports;
                 case SoheilEntityType.ActualCostReportsSubMenu:
                     return Common.Properties.Resources.txtActualCostReports;
+                case SoheilEntityType.OperationReportsSubMenu:
+                    return Common.Properties.Resources.txtOperationReports;
                 case SoheilEntityType.SettingsSubMenu:
                     return Common.Properties.Resources.txtSettings;
                 case SoheilEntityType.HelpSubMenu:

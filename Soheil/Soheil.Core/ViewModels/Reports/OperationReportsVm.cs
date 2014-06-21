@@ -139,8 +139,6 @@ namespace Soheil.Core.ViewModels.Reports
         {
             CenterPoint = 0;
             StartingPoint = 0;
-            StartDate = DateTime.Now.AddDays(-1);
-            EndDate = DateTime.Now;
             Access = access;
             _history = new Stack<OperatorBarInfo>();
             DataService = new OperatorReportDataService();
@@ -161,11 +159,6 @@ namespace Soheil.Core.ViewModels.Reports
             HorizontalOffset = barHOffset;
         }
 
-	    public void InitializeProviders(DateTime start, DateTime end)
-	    {
-            var barInfo = new OperatorBarInfo { StartDate = start, EndDate = end };
-	        InitializeProviders(null);
-	    }
 		public void InitializeProviders(object param)
 		{
             var barInfo = new OperatorBarInfo {StartDate = StartDate, EndDate = EndDate};
@@ -346,8 +339,23 @@ namespace Soheil.Core.ViewModels.Reports
 		public static int StartingPoint { get; private set; }
         private const double Step = 5;
 
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+	    public static readonly DependencyProperty StartDateProperty = DependencyProperty.Register(
+	        "StartDate", typeof (DateTime), typeof (OperationReportsVm), new PropertyMetadata(DateTime.Now.AddDays(-1)));
+
+	    public DateTime StartDate
+	    {
+	        get { return (DateTime) GetValue(StartDateProperty); }
+	        set { SetValue(StartDateProperty, value); }
+	    }
+
+	    public static readonly DependencyProperty EndDateProperty = DependencyProperty.Register(
+	        "EndDate", typeof (DateTime), typeof (OperationReportsVm), new PropertyMetadata(DateTime.Now));
+
+	    public DateTime EndDate
+	    {
+	        get { return (DateTime) GetValue(EndDateProperty); }
+	        set { SetValue(EndDateProperty, value); }
+	    }
 
 		public void MoveCenterBy(double offset, double scrollableRange)
 		{

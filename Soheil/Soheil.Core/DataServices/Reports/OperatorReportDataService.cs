@@ -92,15 +92,21 @@ namespace Soheil.Core.DataServices
                                let ct = ssActivity == null ? 0 : ssActivity.CycleTime
                                let productionTime = opr == null || ssActivity == null ? 0 : opr.OperatorProducedG1 * ct
                                let productionCount = opr == null || ssActivity == null ? 0 : opr.OperatorProducedG1
-                               select new { oprId, prId, oId, productionTime, productionCount, ct, opr.OperatorProducedG1 };
+                               select new { oprId, prId, oId, productionTime, productionCount, ct };
+
+                var srQuery = from sReport in srList
+                              from osReport in osrList.Where(odr => sReport != null && odr.StoppageReport != null && odr.StoppageReport.Id == sReport.Id)
+                              from pReport in processReportList.Where(pr => sReport != null && sReport.ProcessReport != null && sReport.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate)
+                              from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && osReport != null && osReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == osReport.Operator.Id)
+                              select new { sReport.Id, sReport.LostCount, sReport.LostTime };
 
                 var sQuery = from opr in oprQuery
-                             from osReport in osrList.Where(osr=> osr.Operator != null && osr.Operator.Id == opr.oId).DefaultIfEmpty()
-                             from sReport in srList.Where(sr=> osReport != null && osReport.StoppageReport != null && sr.Id == osReport.StoppageReport.Id).DefaultIfEmpty()
+                             from osReport in osrList.Where(osr=> osr.Operator != null && osr.Operator.Id == opr.oId && opr.ct > 0).DefaultIfEmpty()
+                             from sReport in srQuery.Where(sr => osReport != null && osReport.StoppageReport != null && sr.Id == osReport.StoppageReport.Id).DefaultIfEmpty()
                              let oprId = opr == null ? -1 : opr.oprId
                              let ct = opr == null ? 0 : opr.ct
                              let lostTime = sReport == null ? 0 : (sReport.LostCount * ct) + sReport.LostTime
-                             let lostCount = sReport == null ? 0 : sReport.LostCount + (sReport.LostTime / ct)
+                             let lostCount = sReport == null ? 0 : ct == 0 ? 0 : sReport.LostCount + (sReport.LostTime / ct)
                              let prId = opr == null ? -1 : opr.prId
                              let oId = opr == null ? -1 : opr.oId
                              let productionTime = opr == null ? 0 : opr.productionTime
@@ -114,13 +120,19 @@ namespace Soheil.Core.DataServices
                             let stoppageCount = g.Any() ? g.Sum(item => item.lostCount) : 0
                             select new {g.Key.oId, g.Key.oprId, g.Key.prId, g.Key.productionTime, g.Key.productionCount, g.Key.ct, stoppageTime, stoppageCount};
 
+                var drQuery = from dReport in drList
+                              from odReport in odrList.Where(odr=> dReport != null && odr.DefectionReport != null && odr.DefectionReport.Id == dReport.Id)
+                              from pReport in processReportList.Where(pr => dReport != null && dReport.ProcessReport != null && dReport.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate)
+                              from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && odReport != null && odReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == odReport.Operator.Id)
+                              select new { dReport.Id, dReport.LostCount, dReport.LostTime };
+
                 var dQuery = from sg in sgQuery
                              from odReport in odrList.Where(odr=> odr.Operator != null && odr.Operator.Id == sg.oId).DefaultIfEmpty()
-                             from dReport in drList.Where(dr=> odReport != null && odReport.DefectionReport != null && odReport.DefectionReport.Id == dr.Id).DefaultIfEmpty()
+                             from dReport in drQuery.Where(dr => odReport != null && odReport.DefectionReport != null && odReport.DefectionReport.Id == dr.Id).DefaultIfEmpty()
                              let oprId = sg == null ? -1 : sg.oprId
                              let ct = sg == null ? 0 : sg.ct
                              let lostTime = dReport == null ? 0 : (dReport.LostCount * ct) + dReport.LostTime
-                             let lostCount = dReport == null ? 0 : dReport.LostCount + (dReport.LostTime / ct)
+                             let lostCount = dReport == null ? 0 : ct == 0 ? 0 : dReport.LostCount + (dReport.LostTime / ct)
                              let prId = sg == null ? -1 : sg.prId
                              let oId = sg == null ? -1 : sg.oId
                              let productionTime = sg == null? 0 : sg.productionTime
@@ -137,10 +149,10 @@ namespace Soheil.Core.DataServices
                                   select new { g.Key.oId, g.Key.oprId, g.Key.prId, g.Key.productionTime, g.Key.ct, g.Key.stoppageTime, defectionTime, g.Key.productionCount, g.Key.stoppageCount, defectionCount };
 
                 var prQuery = from opr in dgQuery
-                              from processReport in processReportList.Where(pr=> opr.prId == pr.Id).DefaultIfEmpty()
+                              from processReport in processReportList.Where(pr => opr.prId == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate).DefaultIfEmpty()
                               group processReport by new { opr.oId, opr.oprId, operatorId = opr.oId, opr.productionTime, opr.stoppageTime, opr.defectionTime, opr.productionCount, opr.stoppageCount, opr.defectionCount } into g
-                              let duration = g.Sum(item => item == null ? 0 : item.DurationSeconds / item.OperatorProcessReports.Count)
-                              let target = g.Sum(item => item == null ? 0 : item.ProcessReportTargetPoint / item.OperatorProcessReports.Count)
+                              let duration = g.Sum(item => item == null ? 0 : item.OperatorProcessReports.Count == 0 ? 0 : item.DurationSeconds / item.OperatorProcessReports.Count)
+                              let target = g.Sum(item => item == null ? 0 : item.OperatorProcessReports.Count == 0 ? 0 : item.ProcessReportTargetPoint / item.OperatorProcessReports.Count)
                               select new { g.Key.oprId, g.Key.operatorId, g.Key.productionTime, g.Key.stoppageTime, g.Key.defectionTime, duration, g.Key.productionCount, g.Key.stoppageCount, g.Key.defectionCount, target };
 
                 var query = from oprt in indexList
@@ -159,7 +171,7 @@ namespace Soheil.Core.DataServices
 
                             select new { g.Key.interval, g.Key.Id, g.Key.Code, g.Key.Name, stoppageTime, defectionTime, productionTime, targetTime, stoppageCount, defectionCount, productionCount, targetCount };
 
-                var sortedQuery = query.OrderBy(item => item.productionTime / item.targetTime).ToList();
+                var sortedQuery = query.OrderBy(item => item.targetTime == 0 ? item.productionTime  : item.productionTime / item.targetTime).ToList();
 
                 for (int i = startIndex; i < count; i++)
                 {
@@ -397,25 +409,33 @@ namespace Soheil.Core.DataServices
             {
                 var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
                 var processReportRepository = new Repository<ProcessReport>(context);
+                var operatorRepository = new Repository<Operator>(context);
 
                 var oprList = operatorProcessReportRepository.GetAll();
                 var processReportList = processReportRepository.GetAll();
+                var operatorList = operatorRepository.Find(o => o.Status != (decimal) Status.Deleted);
 
-
-                var query = from opr in oprList
-                              from processReport in processReportList.Where(pr=> opr.ProcessReport != null && opr.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate).DefaultIfEmpty()
+                var oprQuery = from opr in oprList
+                            from processReport in processReportList.Where(pr=> opr.ProcessReport != null && opr.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate).DefaultIfEmpty()
 							group processReport by new { opr.Id, operatorId = opr.ProcessOperator.Operator.Id, opr.OperatorProducedG1 } into g
                             let duration = g.Sum(item => item == null ? 0 : item.DurationSeconds / item.OperatorProcessReports.Count)
                             let target = g.Sum(item => item == null ? 0 : item.ProcessReportTargetPoint / item.OperatorProcessReports.Count)
-                              select new { g.Key.Id, duration, target };
+                            select new { g.Key.Id, g.Key.operatorId, duration, target };
 
+                var query = from oprt in operatorList
+                    from opReport in oprQuery.Where(opr => opr.operatorId == oprt.Id).DefaultIfEmpty()
+                    group opReport by new {oprt.Id}
+                    into g
+                    let targetTime = g.Any() ? g.Sum(item => item == null ? 0 : item.duration) : 0
+                    let targetCount = g.Any() ? g.Sum(item => item == null ? 0 : item.target) : 0
+                    select new {g.Key.Id, targetCount, targetTime};
 
                 var result = query.ToList();
                 if (oprInfo.IsCountBase)
                 {
-                    return result.Any() ? result.Max(item => item == null ? 100 : item.target) : 100;
+                    return result.Any() ? result.Max(item => item == null ? 100 : item.targetCount) : 100;
                 }
-                return result.Any() ? result.Max(item => item == null ? 100000 : item.duration) : 100000;
+                return result.Any() ? result.Max(item => item == null ? 100000 : item.targetTime) : 100000;
 
             }
         }

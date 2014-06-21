@@ -372,11 +372,15 @@ namespace Soheil.Views
         {
            
         }
-        private void OnSelectedDateChanged(object sender, RoutedEventArgs e)
+        private void OnDateChanged(object sender, RoutedEventArgs e)
         {
-            
             ((OperationReportsVm)ViewModel).InitializeProviders(null);
         }
+
+        //private void OnEndDateChanged(object sender, RoutedEventArgs e)
+        //{
+        //    ((OperationReportsVm)ViewModel).InitializeProviders(null);
+        //}
 
         private void OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
@@ -390,6 +394,8 @@ namespace Soheil.Views
                 e.Cancel = true;
             }
         }
+
+
         #endregion
 
 		private void line_Loaded(object sender, RoutedEventArgs e)

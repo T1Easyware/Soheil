@@ -27,9 +27,9 @@ namespace Soheil.Core.ViewModels
             get { return LoginInfo.GetUsername(_model.ModifiedBy); }
         }
 
-        public bool HasStateLink
+        public bool CanExclude
         {
-            get { return DataService.HasStateLink(_model.Id); }
+            get { return !DataService.HasStateLink(_model.Id); }
         }
 
         /// <summary>

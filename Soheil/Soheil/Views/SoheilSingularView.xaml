@@ -18,6 +18,7 @@
              xmlns:Virtualizing="clr-namespace:Soheil.Core.Virtualizing;assembly=Soheil.Core"
              xmlns:Reports="clr-namespace:Soheil.Core.ViewModels.Reports;assembly=Soheil.Core"
              xmlns:persianDateControls="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"
+             xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit" 
              Mc:Ignorable="D">
     <UserControl.Resources>
         <SolidColorBrush x:Key="ClickedTransparent" Color="#3000" />
@@ -2416,9 +2417,9 @@
                         <DockPanel>
                             <WrapPanel Height="25" DockPanel.Dock="Left">
                                 <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtStartDate}" />
-                                <persianDateControls:PersianDatePicker Margin="5,0,5,0" SelectedDate="{Binding StartDate}" SelectedDateChanged="OnSelectedDateChanged"/>
+                                <cal:DatePicker Margin="5,0,5,0" SelectedDate="{Binding StartDate}" SelectedDateChanged="OnDateChanged"/>
                                 <TextBlock Margin="25,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtEndDate}" />
-                                <persianDateControls:PersianDatePicker Margin="5,0,5,0" SelectedDate="{Binding EndDate}" SelectedDateChanged="OnSelectedDateChanged"/>
+                                <cal:DatePicker Margin="5,0,5,0" SelectedDate="{Binding EndDate}" SelectedDateChanged="OnDateChanged"/>
                                 <TextBlock Margin="25,2,5,0" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtIndexType}" />
                                 <ComboBox Margin="5,0,5,0" ItemsSource="{Binding Source={StaticResource OETypes}}" SelectedValue="{Binding Path=CurrentType}">
                                     <I:Interaction.Triggers>
