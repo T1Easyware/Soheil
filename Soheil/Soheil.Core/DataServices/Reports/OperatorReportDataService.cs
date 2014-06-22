@@ -95,14 +95,14 @@ namespace Soheil.Core.DataServices
                                select new { oprId, prId, oId, productionTime, productionCount, ct };
 
                 var srQuery = from sReport in srList
-                              from osReport in osrList.Where(odr => sReport != null && odr.StoppageReport != null && odr.StoppageReport.Id == sReport.Id)
+                              from osReport in osrList.Where(osr => sReport != null && osr.StoppageReport != null && osr.StoppageReport.Id == sReport.Id)
                               from pReport in processReportList.Where(pr => sReport != null && sReport.ProcessReport != null && sReport.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate)
                               from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && osReport != null && osReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == osReport.Operator.Id)
-                              select new { sReport.Id, sReport.LostCount, sReport.LostTime };
+                              let oId = osReport == null ? -1 : osReport.Operator == null ? -1 : osReport.Operator.Id
+                              select new { sReport.Id, oId, sReport.LostCount, sReport.LostTime };
 
                 var sQuery = from opr in oprQuery
-                             from osReport in osrList.Where(osr=> osr.Operator != null && osr.Operator.Id == opr.oId && opr.ct > 0).DefaultIfEmpty()
-                             from sReport in srQuery.Where(sr => osReport != null && osReport.StoppageReport != null && sr.Id == osReport.StoppageReport.Id).DefaultIfEmpty()
+                             from sReport in srQuery.Where(sr => sr.oId == opr.oId).DefaultIfEmpty()
                              let oprId = opr == null ? -1 : opr.oprId
                              let ct = opr == null ? 0 : opr.ct
                              let lostTime = sReport == null ? 0 : (sReport.LostCount * ct) + sReport.LostTime
@@ -124,11 +124,11 @@ namespace Soheil.Core.DataServices
                               from odReport in odrList.Where(odr=> dReport != null && odr.DefectionReport != null && odr.DefectionReport.Id == dReport.Id)
                               from pReport in processReportList.Where(pr => dReport != null && dReport.ProcessReport != null && dReport.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate)
                               from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && odReport != null && odReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == odReport.Operator.Id)
-                              select new { dReport.Id, dReport.LostCount, dReport.LostTime };
+                              let oId = odReport == null ? -1 : odReport.Operator == null ? -1 : odReport.Operator.Id
+                              select new { dReport.Id, oId, dReport.LostCount, dReport.LostTime };
 
                 var dQuery = from sg in sgQuery
-                             from odReport in odrList.Where(odr=> odr.Operator != null && odr.Operator.Id == sg.oId).DefaultIfEmpty()
-                             from dReport in drQuery.Where(dr => odReport != null && odReport.DefectionReport != null && odReport.DefectionReport.Id == dr.Id).DefaultIfEmpty()
+                             from dReport in drQuery.Where(dr => sg.oId == dr.oId).DefaultIfEmpty()
                              let oprId = sg == null ? -1 : sg.oprId
                              let ct = sg == null ? 0 : sg.ct
                              let lostTime = dReport == null ? 0 : (dReport.LostCount * ct) + dReport.LostTime
@@ -222,6 +222,7 @@ namespace Soheil.Core.DataServices
                 var stateRepository = new Repository<State>(context);
                 var fpcRepository = new Repository<FPC>(context);
                 var productRepository = new Repository<Product>(context);
+                var productDefectionRepository = new Repository<ProductDefection>(context);
                 var productReworkRepository = new Repository<ProductRework>(context);
                 var activityRepository = new Repository<Activity>(context);
                 var srRepository = new Repository<StoppageReport>(context);
@@ -238,6 +239,7 @@ namespace Soheil.Core.DataServices
                 var stateList = stateRepository.GetAll();
                 var fpcList = fpcRepository.GetAll();
                 var productList = productRepository.GetAll();
+                var productDefectionList = productDefectionRepository.GetAll();
                 var productReworkList = productReworkRepository.GetAll();
                 var activityList = activityRepository.GetAll();
                 var srList = srRepository.GetAll();
@@ -276,9 +278,15 @@ namespace Soheil.Core.DataServices
                                let date = processReport == null ? DateTime.MinValue : processReport.StartDateTime
                                select new { oprId, prId, oId, productionTime, productionCount, ct, pdId, pdCode, pdName, snId, snName, aId, aCode, aName, rId, tp, date };
 
+                var srQuery = from sReport in srList
+                              from osReport in osrList.Where(osr => sReport != null && osr.StoppageReport != null && osr.Operator != null && osr.Operator.Id == operatorId && osr.StoppageReport.Id == sReport.Id)
+                              from pReport in processReportList.Where(pr => sReport != null && sReport.ProcessReport != null && sReport.ProcessReport.Id == pr.Id)
+                              from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && osReport != null && osReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == osReport.Operator.Id)
+                              let oId = osReport == null ? -1 : osReport.Operator == null ? -1 : osReport.Operator.Id
+                              select new { sReport.Id, oId, sReport.LostCount, sReport.LostTime };
+
                 var sQuery = from opr in oprQuery
-                             from osReport in osrList.Where(osr => osr.Operator != null && osr.Operator.Id == opr.oId).DefaultIfEmpty()
-                             from sReport in srList.Where(sr => osReport != null && osReport.StoppageReport != null && sr.Id == osReport.StoppageReport.Id).DefaultIfEmpty()
+                             from sReport in srQuery.Where(sr => sr.oId == opr.oId).DefaultIfEmpty()
                              let oprId = opr == null ? -1 : opr.oprId
                              let ct = opr == null ? 0 : opr.ct
                              let lostTime = sReport == null ? 0 : sReport.LostCount * ct + sReport.LostTime
@@ -307,9 +315,16 @@ namespace Soheil.Core.DataServices
                                   let stoppageCount = g.Any() ? g.Sum(item => item.lostCount) : 0
                                   select new { g.Key.oId, g.Key.oprId, g.Key.prId, g.Key.productionTime, g.Key.productionCount, g.Key.ct, stoppageTime, stoppageCount, g.Key.pdId, g.Key.pdCode, g.Key.pdName, g.Key.snId, g.Key.snName, g.Key.aId, g.Key.aCode, g.Key.aName, g.Key.rId, g.Key.tp, g.Key.date };
 
+                var drQuery = from dReport in drList
+                              from pdReport in productDefectionList.Where(pd=> dReport.ProductDefection != null && pd.Id == dReport.ProductDefection.Id)
+                              from odReport in odrList.Where(odr => dReport != null && odr.DefectionReport != null && odr.Operator != null && odr.Operator.Id == operatorId && odr.DefectionReport.Id == dReport.Id)
+                              from pReport in processReportList.Where(pr => dReport != null && dReport.ProcessReport != null && dReport.ProcessReport.Id == pr.Id)
+                              from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && odReport != null && odReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == odReport.Operator.Id)
+                              let pId = dReport == null ? -1 : dReport.ProductDefection == null ? -1 : dReport.ProductDefection.Product == null ? -1 : dReport.ProductDefection.Product.Id
+                              select new { dReport.Id, pId, dReport.LostCount, dReport.LostTime };
+
                 var dQuery = from sg in sgQuery
-                             from odReport in odrList.Where(odr => odr.Operator != null && odr.Operator.Id == sg.oId).DefaultIfEmpty()
-                             from dReport in drList.Where(dr => odReport != null && odReport.DefectionReport != null && odReport.DefectionReport.Id == dr.Id).DefaultIfEmpty()
+                             from dReport in drQuery.Where(dr => sg.pdId == dr.pId).DefaultIfEmpty()
                              let oprId = sg == null ? -1 : sg.oprId
                              let ct = sg == null ? 0 : sg.ct
                              let lostTime = dReport == null ? 0 : dReport.LostCount * ct + dReport.LostTime
@@ -334,7 +349,7 @@ namespace Soheil.Core.DataServices
                              select new { oId, oprId, prId, lostTime, lostCount, stoppageTime, productionTime, stoppageCount, productionCount, ct, pdId, pdCode, pdName, snId, snName, aId, aCode, aName, rId, tp, date };
 
                 var dgQuery = from d in dQuery
-                              group d by new { d.oId, d.oprId, d.prId, d.productionTime, d.stoppageTime, d.productionCount, d.stoppageCount, d.ct, d.pdId, d.pdCode, d.pdName, d.snId, d.snName, d.aId, d.aCode, d.aName, d.rId, d.tp, d.date } into g
+                              group d by new {d.oId, d.pdId, d.oprId, d.prId, d.productionTime, d.stoppageTime, d.productionCount, d.stoppageCount, d.ct, d.pdCode, d.pdName, d.snId, d.snName, d.aId, d.aCode, d.aName, d.rId, d.tp, d.date } into g
                               let defectionTime = g.Any() ? g.Sum(item => item.lostTime) : 0
                               let defectionCount = g.Any() ? g.Sum(item => item.lostCount) : 0
                               select new { g.Key.oId, g.Key.oprId, g.Key.prId, g.Key.productionTime, g.Key.ct, g.Key.stoppageTime, defectionTime, g.Key.productionCount, g.Key.stoppageCount, defectionCount, g.Key.pdId, g.Key.pdCode, g.Key.pdName, g.Key.snId, g.Key.snName, g.Key.aId, g.Key.aCode, g.Key.aName, g.Key.rId, g.Key.tp, g.Key.date };
@@ -348,37 +363,12 @@ namespace Soheil.Core.DataServices
 
 
                 result.Id = operatorId;
+                result.Code = operatorRepository.FirstOrDefault(o => o.Id == operatorId).Code; 
                 result.Title = operatorRepository.FirstOrDefault(o => o.Id == operatorId).Name;
-
-                // dummy data
-
-                //for (int i = 0; i < 80; i++)
-                //{
-                //    var detail = new OprDetailVM
-                //    {
-                //        Id = i,
-                //        Date = DateTime.Now.AddHours(3*i),
-                //        Product = "p" + i,
-                //        Station = "s" + i,
-                //        Activity = "a" + i,
-                //        IsRework = Math.IEEERemainder(i, 5) == 0 ? "*" : string.Empty,
-
-                //        TargetTime = Format.ConvertToHMS(Convert.ToInt32("100" + i * 100)),
-                //        DefectionTime = Format.ConvertToHMS(Convert.ToInt32("5" + i * 100)),
-                //        ProductionTime = Format.ConvertToHMS(Convert.ToInt32("80" + i * 100)),
-                //        StoppageTime = Format.ConvertToHMS(Convert.ToInt32("1" + i * 100)),
-                //        TargetCount = "100" + i ,
-                //        DefectionCount = "5" + i ,
-                //        ProductionCount = "80" + i ,
-                //        StoppageCount = "1" + i
-                //    };
-                //    result.Details.Add(detail);
-                //}
-                //
 
                 foreach (var line in query)
                 {
-                    var detail = new OprDetailVM
+                    var detail = new OprActivityDetailVM
                     {
                         Id = line.oprId,
                         Date = line.date,
@@ -396,7 +386,7 @@ namespace Soheil.Core.DataServices
                         ProductionCount = line.productionCount.ToString(CultureInfo.InvariantCulture),
                         StoppageCount = line.stoppageCount.ToString(CultureInfo.InvariantCulture)
                     };
-                    result.Details.Add(detail);
+                    result.ActivityItems.Add(detail);
                 }
 
             }

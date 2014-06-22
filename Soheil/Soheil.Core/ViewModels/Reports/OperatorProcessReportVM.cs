@@ -8,11 +8,12 @@ namespace Soheil.Core.ViewModels.Reports
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public ObservableCollection<OprDetailVM> Details { get; set; }
+        public string Code { get; set; }
+        public ObservableCollection<OprActivityDetailVM> ActivityItems { get; set; }
 
         public OperatorProcessReportVm()
         {
-            Details = new ObservableCollection<OprDetailVM>();
+            ActivityItems = new ObservableCollection<OprActivityDetailVM>();
         }
     }
 }

@@ -3,7 +3,7 @@ using Soheil.Core.Base;
 
 namespace Soheil.Core.ViewModels.Reports
 {
-    public class OprDetailVM : ViewModelBase
+    public class OprTechnicalDetailVM : ViewModelBase
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }

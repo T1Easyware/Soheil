@@ -13,6 +13,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Core.Printing;
 using Soheil.Core.Reports;
 using Soheil.Core.Virtualizing;
 using System.Windows.Xps.Packaging;
@@ -193,38 +194,66 @@ namespace Soheil.Core.ViewModels.Reports
 
 	    public void LoadOperatorProcessReport(int operatorId)
 	    {
-	       /* var dataService = new OperatorReportDataService();
+	        var dataService = new OperatorReportDataService();
 	        OperatorProcessReport = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
 
-            var reportDocument = new ReportDocument();
+	        var reportDocument = new ReportDocument();
 
-            var reader = new StreamReader(new FileStream(@"D:\Work\SoheilGit\Soheil\Soheil\Views\Reports\SimpleReport.xaml", FileMode.Open, FileAccess.Read));
-            reportDocument.XamlData = reader.ReadToEnd();
-            reportDocument.XamlImagePath = Path.Combine(Environment.CurrentDirectory, @"D:\Work\SoheilGit\Soheil\Soheil\Views\Reports\");
-            reader.Close();
+	        var reader =
+                new StreamReader(new FileStream(@"Views\Reporting\OperatorProcessReport.xaml", FileMode.Open, FileAccess.Read));
+	        reportDocument.XamlData = reader.ReadToEnd();
+	        reportDocument.XamlImagePath = Path.Combine(Environment.CurrentDirectory, @"Views\Reporting\");
+	        reader.Close();
 
-            var data = new ReportData();
+	        var data = new ReportData();
 
-            // set constant document values
-            data.ReportDocumentValues.Add("PrintDate", DateTime.Now); // print date is now
+	        // set constant document values
+	        data.ReportDocumentValues.Add("PrintDate", DateTime.Now);
 
-            // sample table "Ean"
-            var table = new DataTable("Ean");
-            table.Columns.Add("Position", typeof(string));
-            table.Columns.Add("Item", typeof(string));
-            table.Columns.Add("EAN", typeof(string));
-            table.Columns.Add("Count", typeof(int));
-            var rnd = new Random(1234);
-            for (int i = 1; i <= 100; i++)
-            {
-                // randomly create some articles
-                table.Rows.Add(new object[] { i, "Item " + i.ToString("0000"), "123456790123", rnd.Next(9) + 1 });
-            }
-            data.DataTables.Add(table);
+	        var titleTabel = new DataTable("TitleTable");
+	        titleTabel.Columns.Add("ReportTitle", typeof(string));
+            var name = Common.Properties.Resources.ResourceManager.GetString("txtName") + OperatorProcessReport.Title;
+            var code = Common.Properties.Resources.ResourceManager.GetString("txtCode");
+	        var date = DateTime.Now.ToPersianCompactDateTimeString();
+            titleTabel.Rows.Add(new object[] { name });
+            titleTabel.Rows.Add(new object[] { code });
+            titleTabel.Rows.Add(new object[] { date });
 
-            XpsDocument xps = reportDocument.CreateXpsDocument(data);
+            data.DataTables.Add(titleTabel);
 
-	        Document = xps.GetFixedDocumentSequence();*/
+	        var activitiesTable = new DataTable("ActivitiesReport");
+
+	        activitiesTable.Columns.Add("Date", typeof (DateTime));
+	        activitiesTable.Columns.Add("Product", typeof (string));
+	        activitiesTable.Columns.Add("Station", typeof (string));
+	        activitiesTable.Columns.Add("Activity", typeof (string));
+	        activitiesTable.Columns.Add("TargetValue", typeof (string));
+	        activitiesTable.Columns.Add("ProductionValue", typeof (string));
+	        activitiesTable.Columns.Add("DefectionValue", typeof (string));
+	        activitiesTable.Columns.Add("StoppageValue", typeof (string));
+	        activitiesTable.Columns.Add("IsRework", typeof (string));
+
+	        foreach (var item in OperatorProcessReport.ActivityItems)
+	        {
+	            activitiesTable.Rows.Add(CurrentType == OEType.CountBased
+	                ? new object[]
+	                {
+	                    item.Date, item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
+	                    item.DefectionCount, item.StoppageCount, item.IsRework
+	                }
+	                : new object[]
+	                {
+	                    item.Date, item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
+	                    item.DefectionTime, item.StoppageTime, item.IsRework
+	                });
+	        }
+
+	        data.DataTables.Add(activitiesTable);
+
+	        XpsDocument xps = reportDocument.CreateXpsDocument(data);
+
+	        Document = xps.GetFixedDocumentSequence();
+            
 	    }
 
 	    private int GetIntervalCount()
