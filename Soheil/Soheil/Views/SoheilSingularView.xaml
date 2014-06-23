@@ -2502,9 +2502,9 @@
                                    Visibility="{Binding OprVisibility}">
                             <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel.OperatorProcessReport}"
                                       Style="{StaticResource SoheilGroupBox}" Header="{Binding Title}" DockPanel.Dock="Top">
-                                <DataGrid>
+                                <Grid>
                                     <DocumentViewer Name="documentViewer" Document="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel.Document}" />
-                                </DataGrid>
+                                </Grid>
                             </GroupBox>
                             <Border Style="{StaticResource SoheilDarkCoverBorder}" DockPanel.Dock="Bottom">
                                 <WrapPanel Height="40">

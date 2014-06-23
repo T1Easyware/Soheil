@@ -610,6 +610,33 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string QualitiveStatus_None {
+            get {
+                return ResourceManager.GetString("QualitiveStatus_None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Second Grade.
+        /// </summary>
+        public static string QualitiveStatus_SecondGrade {
+            get {
+                return ResourceManager.GetString("QualitiveStatus_SecondGrade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waste.
+        /// </summary>
+        public static string QualitiveStatus_Waste {
+            get {
+                return ResourceManager.GetString("QualitiveStatus_Waste", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to اطلاعات بیشتر....
         /// </summary>
         public static string splitContentMoreInfo {
@@ -795,6 +822,15 @@ namespace Soheil.Common.Properties {
         public static string txtActivities {
             get {
                 return ResourceManager.GetString("txtActivities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to فعالیت های انجام شده :.
+        /// </summary>
+        public static string txtActivitiesReport {
+            get {
+                return ResourceManager.GetString("txtActivitiesReport", resourceCulture);
             }
         }
         
@@ -1645,6 +1681,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to مجموع تعداد تولید :.
+        /// </summary>
+        public static string txTotalProductionCount {
+            get {
+                return ResourceManager.GetString("txTotalProductionCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to سایر.
         /// </summary>
         public static string txtOther {
@@ -1825,6 +1870,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to اخطارهای کیفی :.
+        /// </summary>
+        public static string txtQuantitiveReport {
+            get {
+                return ResourceManager.GetString("txtQuantitiveReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تعداد : .
         /// </summary>
         public static string txtQuantity {
@@ -1956,6 +2010,15 @@ namespace Soheil.Common.Properties {
         public static string txtSearch {
             get {
                 return ResourceManager.GetString("txtSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to درجه دو.
+        /// </summary>
+        public static string txtSecondGrade {
+            get {
+                return ResourceManager.GetString("txtSecondGrade", resourceCulture);
             }
         }
         
@@ -2230,6 +2293,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to اخطارهای فنی :.
+        /// </summary>
+        public static string txtTechnicalReport {
+            get {
+                return ResourceManager.GetString("txtTechnicalReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to زمان.
         /// </summary>
         public static string txtTime {
@@ -2266,11 +2338,110 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to مجموع تعداد تولید معیوب :.
+        /// </summary>
+        public static string txtTotalDefectionCount {
+            get {
+                return ResourceManager.GetString("txtTotalDefectionCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع زمان تولید معیوب :.
+        /// </summary>
+        public static string txtTotalDefectionTime {
+            get {
+                return ResourceManager.GetString("txtTotalDefectionTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع تعداد تولید اضافی :.
+        /// </summary>
+        public static string txtTotalExtraCount {
+            get {
+                return ResourceManager.GetString("txtTotalExtraCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع زمان تولید اضافی :.
+        /// </summary>
+        public static string txtTotalExtraTime {
+            get {
+                return ResourceManager.GetString("txtTotalExtraTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع زمان تولید :.
+        /// </summary>
+        public static string txtTotalProductionTime {
+            get {
+                return ResourceManager.GetString("txtTotalProductionTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تعداد کل :.
         /// </summary>
         public static string txtTotalQty {
             get {
                 return ResourceManager.GetString("txtTotalQty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع درجه دو :.
+        /// </summary>
+        public static string txtTotalSecondGrade {
+            get {
+                return ResourceManager.GetString("txtTotalSecondGrade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع تعداد کسر تولید :.
+        /// </summary>
+        public static string txtTotalShortageCount {
+            get {
+                return ResourceManager.GetString("txtTotalShortageCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع زمان تولید کسری :.
+        /// </summary>
+        public static string txtTotalShortageTime {
+            get {
+                return ResourceManager.GetString("txtTotalShortageTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع تعداد هدف :.
+        /// </summary>
+        public static string txtTotalTargetCount {
+            get {
+                return ResourceManager.GetString("txtTotalTargetCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع زمان هدف :.
+        /// </summary>
+        public static string txtTotalTargetTime {
+            get {
+                return ResourceManager.GetString("txtTotalTargetTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع ضایعات :.
+        /// </summary>
+        public static string txtTotalWaste {
+            get {
+                return ResourceManager.GetString("txtTotalWaste", resourceCulture);
             }
         }
         
@@ -2334,6 +2505,15 @@ namespace Soheil.Common.Properties {
         public static string txtUsersAccess {
             get {
                 return ResourceManager.GetString("txtUsersAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ضایعات.
+        /// </summary>
+        public static string txtWaste {
+            get {
+                return ResourceManager.GetString("txtWaste", resourceCulture);
             }
         }
         

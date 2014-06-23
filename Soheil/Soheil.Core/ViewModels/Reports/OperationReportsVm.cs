@@ -13,6 +13,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.Interfaces;
+using Soheil.Core.Printing;
 using Soheil.Core.Reports;
 using Soheil.Core.Virtualizing;
 using System.Windows.Xps.Packaging;
@@ -62,13 +63,13 @@ namespace Soheil.Core.ViewModels.Reports
 	        }   
 	    }
 
-        public static readonly DependencyProperty OperatorProcessReportProperty =
-            DependencyProperty.Register("OperatorProcessReport", typeof(OperatorProcessReportVm), typeof(OperationReportsVm), new PropertyMetadata(default(OperatorProcessReportVm)));
+        public static readonly DependencyProperty reportProperty =
+            DependencyProperty.Register("report", typeof(OperatorProcessReportVm), typeof(OperationReportsVm), new PropertyMetadata(default(OperatorProcessReportVm)));
 
-        public OperatorProcessReportVm OperatorProcessReport
+        public OperatorProcessReportVm report
         {
-            get { return (OperatorProcessReportVm)GetValue(OperatorProcessReportProperty); }
-            set { SetValue(OperatorProcessReportProperty, value); }
+            get { return (OperatorProcessReportVm)GetValue(reportProperty); }
+            set { SetValue(reportProperty, value); }
         }
 
         public static readonly DependencyProperty OprVisibilityProperty =
@@ -193,38 +194,123 @@ namespace Soheil.Core.ViewModels.Reports
 
 	    public void LoadOperatorProcessReport(int operatorId)
 	    {
-	       /* var dataService = new OperatorReportDataService();
-	        OperatorProcessReport = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
+	        var dataService = new OperatorReportDataService();
+	        report = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
 
-            var reportDocument = new ReportDocument();
+	        var reportDocument = new ReportDocument();
 
-            var reader = new StreamReader(new FileStream(@"D:\Work\SoheilGit\Soheil\Soheil\Views\Reports\SimpleReport.xaml", FileMode.Open, FileAccess.Read));
-            reportDocument.XamlData = reader.ReadToEnd();
-            reportDocument.XamlImagePath = Path.Combine(Environment.CurrentDirectory, @"D:\Work\SoheilGit\Soheil\Soheil\Views\Reports\");
-            reader.Close();
+	        var reader =
+                new StreamReader(new FileStream(@"Views\Reporting\OperatorProcessReport.xaml", FileMode.Open, FileAccess.Read));
+	        reportDocument.XamlData = reader.ReadToEnd();
+	        reportDocument.XamlImagePath = Path.Combine(Environment.CurrentDirectory, @"Views\Reporting\");
+	        reader.Close();
 
-            var data = new ReportData();
+	        var data = new ReportData();
 
-            // set constant document values
-            data.ReportDocumentValues.Add("PrintDate", DateTime.Now); // print date is now
+	        // set constant document values
+	        data.ReportDocumentValues.Add("PrintDate", DateTime.Now);
 
-            // sample table "Ean"
-            var table = new DataTable("Ean");
-            table.Columns.Add("Position", typeof(string));
-            table.Columns.Add("Item", typeof(string));
-            table.Columns.Add("EAN", typeof(string));
-            table.Columns.Add("Count", typeof(int));
-            var rnd = new Random(1234);
-            for (int i = 1; i <= 100; i++)
+	        var titleTabel = new DataTable("TitleTable");
+	        titleTabel.Columns.Add("ReportTitle", typeof(string));
+            var name = Common.Properties.Resources.ResourceManager.GetString("txtName") + report.Title;
+            var code = Common.Properties.Resources.ResourceManager.GetString("txtCode");
+	        var date = DateTime.Now.ToPersianCompactDateTimeString();
+            titleTabel.Rows.Add(new object[] { name });
+            titleTabel.Rows.Add(new object[] { code });
+            titleTabel.Rows.Add(new object[] { date });
+
+            data.DataTables.Add(titleTabel);
+
+            var totalTabel = new DataTable("TotalTable");
+            totalTabel.Columns.Add("TimeTotal", typeof(string));
+            totalTabel.Columns.Add("CountTotal", typeof(string));
+
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetTime") + Format.ConvertToHMS((int) report.TotalTargetTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetCount") + report.TotalTargetCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalProductionTime") + Format.ConvertToHMS((int)report.TotalProductionTime), Common.Properties.Resources.ResourceManager.GetString("txTotalProductionCount") + report.TotalProductionCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraTime") + Format.ConvertToHMS((int)report.TotalExtraTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraCount") + report.TotalExtraCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageTime") + Format.ConvertToHMS((int)report.TotalShortageTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageCount") + report.TotalShortageCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionTime") + Format.ConvertToHMS((int)report.TotalDefectionTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionCount") + report.TotalDefectionCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalWaste") + report.TotalWaste, Common.Properties.Resources.ResourceManager.GetString("txtTotalSecondGrade") + report.TotalSecondGrade });
+
+
+            data.DataTables.Add(totalTabel);
+
+	        var activitiesTable = new DataTable("ActivitiesReport");
+
+	        activitiesTable.Columns.Add("Date", typeof (DateTime));
+	        activitiesTable.Columns.Add("Product", typeof (string));
+	        activitiesTable.Columns.Add("Station", typeof (string));
+	        activitiesTable.Columns.Add("Activity", typeof (string));
+	        activitiesTable.Columns.Add("TargetValue", typeof (string));
+	        activitiesTable.Columns.Add("ProductionValue", typeof (string));
+	        activitiesTable.Columns.Add("DefectionValue", typeof (string));
+	        activitiesTable.Columns.Add("StoppageValue", typeof (string));
+	        activitiesTable.Columns.Add("IsRework", typeof (string));
+
+	        foreach (var item in report.ActivityItems)
+	        {
+	            activitiesTable.Rows.Add(CurrentType == OEType.CountBased
+	                ? new object[]
+	                {
+	                    item.Date, item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
+	                    item.DefectionCount, item.StoppageCount, item.IsRework
+	                }
+	                : new object[]
+	                {
+	                    item.Date, item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
+	                    item.DefectionTime, item.StoppageTime, item.IsRework
+	                });
+	        }
+
+	        data.DataTables.Add(activitiesTable);
+
+            var qualitiveTable = new DataTable("QualitiveReport");
+
+            qualitiveTable.Columns.Add("Date", typeof(DateTime));
+            qualitiveTable.Columns.Add("Product", typeof(string));
+            qualitiveTable.Columns.Add("Station", typeof(string));
+            qualitiveTable.Columns.Add("Activity", typeof(string));
+            qualitiveTable.Columns.Add("DefectionValue", typeof(string));
+            qualitiveTable.Columns.Add("SecondGrade", typeof(string));
+            qualitiveTable.Columns.Add("Waste", typeof(string));
+
+            foreach (var item in report.QualitiveItems)
             {
-                // randomly create some articles
-                table.Rows.Add(new object[] { i, "Item " + i.ToString("0000"), "123456790123", rnd.Next(9) + 1 });
+                var waste = item.Status == QualitiveStatus.Waste ? "*" : string.Empty;
+                var secondGrade = item.Status == QualitiveStatus.SecondGrade ? "*" : string.Empty;
+                var defection = CurrentType == OEType.CountBased ? item.DefectionCount : item.DefectionTime;
+                qualitiveTable.Rows.Add(new object[]
+                    {
+                        item.Date, item.Product, item.Station, item.Activity, defection, secondGrade, waste
+	                });
             }
-            data.DataTables.Add(table);
 
-            XpsDocument xps = reportDocument.CreateXpsDocument(data);
+            data.DataTables.Add(qualitiveTable);
 
-	        Document = xps.GetFixedDocumentSequence();*/
+            var technicalTable = new DataTable("TechnicalReport");
+
+            technicalTable.Columns.Add("Date", typeof(DateTime));
+            technicalTable.Columns.Add("Product", typeof(string));
+            technicalTable.Columns.Add("Station", typeof(string));
+            technicalTable.Columns.Add("Activity", typeof(string));
+            technicalTable.Columns.Add("DefectionValue", typeof(string));
+
+            foreach (var item in report.TechnicalItems)
+            {
+                var stoppage = CurrentType == OEType.CountBased ? item.StoppageCount : item.StoppageTime;
+                qualitiveTable.Rows.Add(new object[]
+                    {
+                        item.Date, item.Product, item.Station, item.Activity, stoppage
+	                });
+            }
+
+            data.DataTables.Add(technicalTable);
+
+
+	        XpsDocument xps = reportDocument.CreateXpsDocument(data);
+
+	        Document = xps.GetFixedDocumentSequence();
+            
 	    }
 
 	    private int GetIntervalCount()

@@ -871,7 +871,6 @@
   <data name="txtLevel" xml:space="preserve">
     <value>Level :</value>
   </data>
-
   <data name="PPE_AfterLast" xml:space="preserve">
     <value>After the last</value>
   </data>
@@ -889,5 +888,65 @@
   </data>
   <data name="txtAdd1Day" xml:space="preserve">
     <value>Next day</value>
+  </data>
+  <data name="txTotalProductionCount" xml:space="preserve">
+    <value>Total production count :</value>
+  </data>
+  <data name="txtTotalDefectionCount" xml:space="preserve">
+    <value>total defection count :</value>
+  </data>
+  <data name="txtTotalDefectionTime" xml:space="preserve">
+    <value>Total defection time :</value>
+  </data>
+  <data name="txtTotalExtraCount" xml:space="preserve">
+    <value>Total extra count :</value>
+  </data>
+  <data name="txtTotalExtraTime" xml:space="preserve">
+    <value>Total extra time :</value>
+  </data>
+  <data name="txtTotalProductionTime" xml:space="preserve">
+    <value>Total production time :</value>
+  </data>
+  <data name="txtTotalSecondGrade" xml:space="preserve">
+    <value>Total second grades :</value>
+  </data>
+  <data name="txtTotalShortageCount" xml:space="preserve">
+    <value>Total shortage count :</value>
+  </data>
+  <data name="txtTotalShortageTime" xml:space="preserve">
+    <value>Total shortage time :</value>
+  </data>
+  <data name="txtTotalTargetCount" xml:space="preserve">
+    <value>Total target count :</value>
+  </data>
+  <data name="txtTotalTargetTime" xml:space="preserve">
+    <value>Total target time :</value>
+  </data>
+  <data name="txtTotalWaste" xml:space="preserve">
+    <value>Total waste :</value>
+  </data>
+  <data name="QualitiveStatus_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="QualitiveStatus_SecondGrade" xml:space="preserve">
+    <value>Second Grade</value>
+  </data>
+  <data name="QualitiveStatus_Waste" xml:space="preserve">
+    <value>Waste</value>
+  </data>
+  <data name="txtActivitiesReport" xml:space="preserve">
+    <value>Activity List :</value>
+  </data>
+  <data name="txtQuantitiveReport" xml:space="preserve">
+    <value>Quantitive Warnings :</value>
+  </data>
+  <data name="txtSecondGrade" xml:space="preserve">
+    <value>Second Grade</value>
+  </data>
+  <data name="txtTechnicalReport" xml:space="preserve">
+    <value>Technical Warnings :</value>
+  </data>
+  <data name="txtWaste" xml:space="preserve">
+    <value>Waste</value>
   </data>
 </root>
