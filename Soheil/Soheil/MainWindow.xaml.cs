@@ -76,8 +76,8 @@ namespace Soheil
 
 			if (Environment.UserName == "Bizhan" || Environment.UserName == "Bizz")
 			{
-				SingularList = new Core.ViewModels.PP.PPTableVm(AccessType.Full);
-				chrometabs.AddTab(CreateSingularTab(SoheilEntityType.ProductPlanTable), true);
+				//SingularList = new Core.ViewModels.PP.PPTableVm(AccessType.Full);
+				//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.ProductPlanTable), true);
 			}
 		}
 

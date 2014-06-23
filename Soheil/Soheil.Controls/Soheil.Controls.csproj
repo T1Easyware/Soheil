@@ -103,6 +103,7 @@
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\AccessTypeVisibilityConverter.cs" />
     <Compile Include="Converters\DeleteColorConverter.cs" />
+    <Compile Include="Converters\IndexConverters.cs" />
     <Compile Include="Converters\PPTableConvertors.cs" />
     <Compile Include="Converters\SearchValueConverter.cs" />
     <Compile Include="Converters\TreeNodeAlignmentConverter.cs" />
@@ -569,7 +570,6 @@
   <ItemGroup>
     <Resource Include="Images\Check.png" />
   </ItemGroup>
-
   <ItemGroup>
     <Resource Include="Images\PP\ppe_afterlast.png" />
     <Resource Include="Images\PP\ppe_firstemptyspace.png" />

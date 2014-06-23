@@ -129,6 +129,7 @@ namespace Soheil.Core.DataServices
 				if (dr.ProductDefection == null)
 				{
 					model.DefectionReports.Remove(dr);
+					if(dr.Id != 0)
 					drRepo.Delete(dr);
 				}
 			}

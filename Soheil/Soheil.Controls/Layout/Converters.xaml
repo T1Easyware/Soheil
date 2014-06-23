@@ -15,8 +15,9 @@
 	<VisualBrush x:Key="fpcBackBrush" Viewport="0,0,64,64" TileMode="Tile" ViewportUnits="Absolute" Visual="{StaticResource fpcBackBrushVisual}"/>
 
 
-
-
+	<!-- oee -->
+	<Converters:PercentConverter x:Key="percentConverter"/>
+	<Converters:OeeHoursConverter x:Key="oeeHoursConverter"/>
 
 	<!-- work times -->
 	<Converters:ColorToRgbBrush x:Key="ColorToRgbBrush"/>

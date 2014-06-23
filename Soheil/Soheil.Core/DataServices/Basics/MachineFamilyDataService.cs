@@ -16,7 +16,11 @@ namespace Soheil.Core.DataServices
         readonly Repository<MachineFamily> _machineFamilyRepository;
         readonly Repository<Machine> _machineRepository;
 
+		public MachineFamilyDataService()
+			: this(new Dal.SoheilEdmContext())
+		{
 
+		}
 		public MachineFamilyDataService(SoheilEdmContext context)
 		{
 			this.Context = context ?? new SoheilEdmContext();

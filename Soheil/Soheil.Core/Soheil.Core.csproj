@@ -105,6 +105,12 @@
     <Compile Include="Reports\OperatorBarInfo.cs" />
     <Compile Include="Reports\OperatorBarProvider.cs" />
     <Compile Include="Reports\OperatorBarSlideProvider.cs" />
+    <Compile Include="ViewModels\Index\IndexTime.cs" />
+    <Compile Include="Index\OeeRecord.cs" />
+    <Compile Include="ViewModels\Index\OeeMachineDetailVm.cs" />
+    <Compile Include="ViewModels\Index\OeeMachineFamilyVm.cs" />
+    <Compile Include="ViewModels\Index\OeeMachineVm.cs" />
+    <Compile Include="ViewModels\Index\OeeVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
     <Compile Include="ViewModels\Reports\OprDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />

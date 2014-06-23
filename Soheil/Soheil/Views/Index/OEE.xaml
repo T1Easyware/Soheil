@@ -12,39 +12,41 @@
 
 	<DockPanel>
 		<!-- machine tree -->
-		<TreeView ItemsSource="{Binding MachineFamilies}" DockPanel.Dock="Left">
-			<TreeView.ItemTemplate>
+		<ItemsControl ItemsSource="{Binding MachineFamilies}" DockPanel.Dock="Left">
+			<ItemsControl.ItemTemplate>
 				<DataTemplate>
-					<Border>
-						<Expander>
-							<Expander.Header>
-								<TextBlock Text="{Binding Name}"/>
-							</Expander.Header>
-							<ItemsControl ItemsSource="{Binding Machines}">
+					<Expander>
+						<Expander.Header>
+							<TextBlock Text="{Binding Name}"/>
+						</Expander.Header>
+						<ItemsControl ItemsSource="{Binding Machines}">
+							<ItemsControl.ItemTemplate>
 								<DataTemplate>
 									<DockPanel>
-										<Button Width="60" Content="Select" DockPanel.Dock="Right"/>
+										<Button Width="60" Content="Select" DockPanel.Dock="Right" Command="{Binding SelectCommand}"/>
 										<TextBlock Text="{Binding Name}"/>
 									</DockPanel>
 								</DataTemplate>
-							</ItemsControl>
-						</Expander>
-					</Border>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</Expander>
 				</DataTemplate>
-			</TreeView.ItemTemplate>
-		</TreeView>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 		
 		<!-- time -->
 		<WrapPanel Margin="10" DockPanel.Dock="Top">
-			<TextBlock Text="بازه زمانی"/>
+			<TextBlock Text="بازه زمانی" VerticalAlignment="Center"/>
 			<ComboBox/>
-			<TextBlock Text="{Loc txtStart}"/>
+			<TextBlock Text="{Loc txtStart}" VerticalAlignment="Center"/>
 			<cc:TimeBox Time="{Binding SelectedTime, Mode=TwoWay}"/>
 			<cal:DatePicker SelectedDate="{Binding SelectedDate}" DisplayDate="{Binding SelectedDate}"/>
+			<CheckBox Grid.Row="1" Grid.Column="1" Content="زمان دوباره کاری" IsChecked="{Binding ShowReworks}" VerticalAlignment="Center"/>
+			<CheckBox Grid.Row="1" Grid.Column="1" Content="زمان گزارش نشده" IsChecked="{Binding ShowUnreported}" VerticalAlignment="Center"/>
 		</WrapPanel>
 		
 		<!-- oee -->
-		<local:MachineOEE/>
+		<local:MachineOEE DataContext="{Binding CurrentMachine}"/>
 	</DockPanel>
 
 </UserControl>

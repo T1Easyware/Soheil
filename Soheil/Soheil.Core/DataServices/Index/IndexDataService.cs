@@ -252,7 +252,73 @@ namespace Soheil.Core.DataServices
             }
             return records;
         }
+		public void FillOEEByMachine(OeeRecord record)
+		{
+			using (var context = new SoheilEdmContext())
+			{
+				var machineRepository = new Repository<Machine>(context);
+				var selectedMachineRepository = new Repository<SelectedMachine>(context);
+				var ssamRepository = new Repository<StateStationActivityMachine>(context);
+				var ssaRepository = new Repository<StateStationActivity>(context);
+				var processRepository = new Repository<Process>(context);
+				var processReportRepository = new Repository<ProcessReport>(context);
+				var stoppageReportRepository = new Repository<StoppageReport>(context);
 
+				var machine = machineRepository.FirstOrDefault(x => x.Id == record.MachineId);
+				if (machine == null) return;
+				var selectedMachineList = selectedMachineRepository.Find(x =>
+					x.StateStationActivityMachine != null &&
+					x.StateStationActivityMachine.Machine.Id == machine.Id &&
+					x.Process != null &&
+					x.Process.StateStationActivity != null);
+				var processReportList = processReportRepository.GetAll();
+				var stoppageReportList = stoppageReportRepository.GetAll();
+
+				var pQuery = from selmachine in selectedMachineList.Where(x =>
+								x.Process.StartDateTime < record.End &&
+								x.Process.EndDateTime > record.Start)
+							 let process = selmachine.Process
+							 let start = (process.StartDateTime < record.Start) ? record.Start : process.StartDateTime
+							 let end = (process.EndDateTime < record.End) ? record.End : process.EndDateTime
+							 select new
+							 {
+								 model = process,
+								 rew = process.StateStationActivity.StateStation.State.OnProductRework.Rework,
+								 start,
+								 end,
+							 };
+
+				record.MainScheduledTime = pQuery.Where(x => x.rew == null).Sum(x => (x.end - x.start).TotalHours);
+				record.ReworkScheduledTime = pQuery.Where(x => x.rew != null).Sum(x => (x.end - x.start).TotalHours);
+
+				var prQuery = from process in pQuery
+							  from processReport in processReportList.Where(pr =>
+								  process != null &&
+								  pr.Process != null &&
+								  pr.Process.Id == process.model.Id &&
+								  pr.StartDateTime < record.End &&
+								  pr.EndDateTime > record.Start
+								  )
+							  let start = (processReport.StartDateTime < record.Start) ? record.Start : processReport.StartDateTime
+							  let end = (processReport.EndDateTime < record.End) ? record.End : processReport.EndDateTime
+							  select new
+							  {
+								  PrId = processReport.Id,
+								  model = processReport,
+								  start,
+								  end,
+								  whole = processReport.DurationSeconds,
+								  sr = processReport.StoppageReports.Sum(x => x.TimeEquivalence),
+								  dr = processReport.DefectionReports.Sum(x => x.TimeEquivalence),
+								  g1 = processReport.ProducedG1,
+							  };
+
+				record.ProductionTime = prQuery.Sum(x => x.g1 * (x.end - x.start).TotalSeconds / x.whole);
+				record.ReportedTime = prQuery.Sum(x => (x.end - x.start).TotalHours);
+				record.DefectionTime = prQuery.Sum(x => x.dr * (x.end - x.start).TotalSeconds / x.whole);
+				record.StoppageTime = prQuery.Sum(x => x.sr * (x.end - x.start).TotalSeconds / x.whole);
+			}
+		}
         private IList<Record> GetPPMByDateTime(DateTimeIntervals intervalType, int startIndex, int count)
         {
             IList<Record> records = new List<Record>();
