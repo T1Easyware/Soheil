@@ -329,4 +329,11 @@ namespace Soheil.Common
 		Add5Minutes,
 		Add1Minute,
 	}
+
+    public enum QualitiveStatus
+    {
+        None,
+        Waste,
+        SecondGrade
+    }
 }
