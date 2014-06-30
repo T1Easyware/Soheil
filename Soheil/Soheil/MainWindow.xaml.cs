@@ -345,21 +345,21 @@ namespace Soheil
                 case 1:
                     btnControls.IsChecked = false;
                     btnDefinitions.IsChecked = false;
-                    btnOptions.IsChecked = false;
+                    //btnOptions.IsChecked = false;
                     btnReports.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("usersTemplate");
                     break;
                 case 2:
                     btnControls.IsChecked = false;
                     btnUsers.IsChecked = false;
-                    btnOptions.IsChecked = false;
+                    //btnOptions.IsChecked = false;
                     btnReports.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("definitionsTemplate");
                     break;
                 case 3:
                     btnUsers.IsChecked = false;
                     btnDefinitions.IsChecked = false;
-                    btnOptions.IsChecked = false;
+                    //btnOptions.IsChecked = false;
                     btnReports.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("controlsTemplate");
                     break;
@@ -367,7 +367,7 @@ namespace Soheil
                     btnUsers.IsChecked = false;
                     btnDefinitions.IsChecked = false;
                     btnControls.IsChecked = false;
-                    btnOptions.IsChecked = false;
+                    //btnOptions.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("reportsTemplate");
                     break;
                 case 5:

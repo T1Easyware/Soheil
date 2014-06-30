@@ -651,6 +651,7 @@
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="HasOEE" Type="bit" Nullable="false" DefaultValue="true" />
     <Property Name="MachineFamily_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="MachineFamilies">
@@ -3155,6 +3156,7 @@
           <NavigationProperty Name="StationMachines" Relationship="SoheilEdm.MachineStationMachine" FromRole="Machine" ToRole="StationMachine" />
           <NavigationProperty Name="StateStationActivityMachines" Relationship="SoheilEdm.MachineStateStationActivityMachine" FromRole="Machine" ToRole="StateStationActivityMachine" />
           <NavigationProperty Name="Costs" Relationship="SoheilEdm.MachineCost" FromRole="Machine" ToRole="Cost" />
+          <Property Name="HasOEE" Type="Boolean" Nullable="false" DefaultValue="True" />
         </EntityType>
         <EntityType Name="MachineFamily">
           <Key>
@@ -4369,6 +4371,7 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="Status" ColumnName="Status" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="HasOEE" ColumnName="HasOEE" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5988,15 +5991,15 @@
         <AssociationConnector ManuallyRouted="false" Association="SoheilEdm.StateStationActivityProcess">
         </AssociationConnector>
         <AssociationConnector Association="SoheilEdm.OperatorCost" ManuallyRouted="true" >
-          <ConnectorPoint PointX="46.28125" PointY="32.518616536458332" />
-          <ConnectorPoint PointX="46.28125" PointY="37.491547037760412" />
-          <ConnectorPoint PointX="36.177083333333336" PointY="37.491547037760412" />
-          <ConnectorPoint PointX="36.010416666666664" PointY="37.491547037760412" />
-          <ConnectorPoint PointX="31.083333333333332" PointY="37.491547037760412" />
-          <ConnectorPoint PointX="30.916666666666668" PointY="37.491547037760412" />
-          <ConnectorPoint PointX="13.270833333333334" PointY="37.491547037760412" />
-          <ConnectorPoint PointX="13.104166666666666" PointY="37.491547037760412" />
-          <ConnectorPoint PointX="10.625" PointY="37.491547037760412" />
+          <ConnectorPoint PointX="46.28125" PointY="32.912903645833332" />
+          <ConnectorPoint PointX="46.28125" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="36.177083333333336" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="36.010416666666664" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="31.083333333333332" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="30.916666666666668" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="13.270833333333334" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="13.104166666666666" PointY="37.629547526041662" />
+          <ConnectorPoint PointX="10.625" PointY="37.629547526041662" />
         </AssociationConnector>
         <AssociationConnector Association="SoheilEdm.ProductDefectionDefectionReport" />
         <AssociationConnector Association="SoheilEdm.OperatorPersonalSkill" />

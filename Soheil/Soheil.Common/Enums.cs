@@ -172,6 +172,14 @@ namespace Soheil.Common
         HelpSubMenu = 52,
         AboutSubMenu = 53,
     }
+	public enum Direction
+	{
+		Left,
+		Up,
+		Right,
+		Down,
+		None
+	}
     public enum RelationDirection
     {
         Straight,

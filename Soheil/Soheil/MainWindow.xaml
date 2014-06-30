@@ -4,7 +4,7 @@
         xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
         xmlns:Common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
         xmlns:Soheil="clr-namespace:Soheil"
-        Title="MasterPages" FontFamily="Monaco"
+        Title="MasterPages" FontFamily="Tahoma"
         Width="800"
         Height="600"
         Style="{DynamicResource SkinWindowStyle}"
@@ -107,14 +107,14 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/pp.png"
                         Tag="31" />
-                <CustomControls:ImageButton Background="Transparent"
+                <!--CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtPerformance}"
                         IsEnabled="{Binding Path=CanAddTab,
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/Performance.png"
-                        Tag="32" />
+                        Tag="32" /-->
                 <CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
@@ -127,22 +127,22 @@
         </DataTemplate>
         <DataTemplate x:Key="reportsTemplate">
             <WrapPanel Grid.Column="3" FlowDirection="RightToLeft">
-                <CustomControls:ImageButton Background="Transparent"
+                <!--CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtCostReports}"
                         IsEnabled="{Binding Path=CanAddTab,
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/CostReport.png"
-                        Tag="41" />
-                <CustomControls:ImageButton Background="Transparent"
+                        Tag="41" /-->
+                <!--CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtActualCostReports}"
                         IsEnabled="{Binding Path=CanAddTab,
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/CostReport.png"
-                        Tag="42" />
+                        Tag="42" /-->
                 <CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
@@ -225,10 +225,10 @@
                                       Checked="QuickAccessMenuChecked"
                                       Content="{Loc txtReports}"
                                       Tag="4" />
-                        <ToggleButton x:Name="btnOptions"
+                        <!--ToggleButton x:Name="btnOptions"
                                       Checked="QuickAccessMenuChecked"
                                       Content="{Loc txtOptions}"
-                                      Tag="5" />
+                                      Tag="5" check xaml.cs too for commented codes /-->
                     </WrapPanel>
                     <GridSplitter Grid.Column="4"
                                   Width="3"
@@ -241,7 +241,7 @@
 					          <ContentControl x:Name="quickAccessSubMenu"
                                               Grid.Column="3"
                                               FlowDirection="RightToLeft" />
-					          <!-- login panel -->
+					<!-- login panel -->
                     <Menu  Grid.Column="2" Margin="50,-5,0,0" Background="Transparent" Height="25">
                         <MenuItem Foreground="{StaticResource TextBrush}" Header="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=LoginHeader}" Height="25">
                             <WrapPanel>
@@ -439,7 +439,7 @@
                                         <MenuItem.Icon>
                                             <Image Source="/Soheil.Controls;component/Images/Menus/Performance.png"/>
                                         </MenuItem.Icon>
-                                    </MenuItem>
+									</MenuItem>
                                     <MenuItem Header="{Loc txtIndices}" Click="HandleAddTabAndSelect" Tag="33">
                                         <MenuItem.Icon>
                                             <Image Source="/Soheil.Controls;component/Images/Menus/Index.png"/>
@@ -454,8 +454,8 @@
                                         <MenuItem.Icon>
                                             <Image Source="/Soheil.Controls;component/Images/Menus/CostReport.png"/>
                                         </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="{Loc txtActualCostReports}" Click="HandleAddTabAndSelect" Tag="42"/>
+									</MenuItem>
+									<MenuItem Header="{Loc txtActualCostReports}" Click="HandleAddTabAndSelect" Tag="42"/>
                                     <MenuItem Header="{Loc txtOperationReports}" Click="HandleAddTabAndSelect" Tag="43"/>
                                     </MenuItem>
                                 <MenuItem Header="{Loc txtOptions}">
@@ -515,7 +515,17 @@
 				</Grid>
             </DockPanel>
             <CustomControls:ChromeTabControl x:Name="chrometabs">
-                <CustomControls:ChromeTabItem Header="{Loc txtStartPage}" />
+				<CustomControls:ChromeTabItem Header="{Loc txtStartPage}" DockPanel.Dock="Top"/>
+				<!--DockPanel>
+					<WrapPanel>
+						<Button Click="HandleAddTabAndSelect" Tag="311" Width="100" Height="100" Margin="50">
+							<StackPanel>
+								<Image Source="/Soheil.Controls;component/Images/Menus/pp.png"/>
+								<TextBlock Text="{Loc txtProductPlan}"/>
+							</StackPanel>
+						</Button>
+					</WrapPanel>
+				</-->
             </CustomControls:ChromeTabControl>
         </DockPanel>
     </Border>

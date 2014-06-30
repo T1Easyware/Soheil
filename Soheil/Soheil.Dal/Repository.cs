@@ -125,13 +125,15 @@ namespace Soheil.Dal
 
         public void Delete(TModel entity)
         {
-            _context.CreateObjectSet<TModel>().DeleteObject(entity);
+			var set = _context.CreateObjectSet<TModel>();
+			set.DeleteObject(entity);
         }
 
-        public void Add(TModel entity)
-        {
-            _context.CreateObjectSet<TModel>().AddObject(entity);
-        }
+		public void Add(TModel entity)
+		{
+			var set = _context.CreateObjectSet<TModel>();
+			set.AddObject(entity);
+		}
 
         #endregion
 

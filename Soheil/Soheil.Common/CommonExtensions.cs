@@ -27,6 +27,10 @@ namespace Soheil.Common
 				+ _persianCalendar.GetMonth(dateTime).ToString("00") + "/"
 				+ _persianCalendar.GetDayOfMonth(dateTime).ToString("00");
 		}
+		public static string ToPersianCompactDateString(this DateTime dateTime)
+		{
+			return _persianCalendar.GetDayOfMonth(dateTime).ToString("00") + " " + dateTime.GetPersianMonth().ToString();
+		}
 		public static string ToPersianCompactDateTimeString(this DateTime dateTime)
 		{
 			return string.Format("{0} {1} - {2}:{3}:{4}", 
@@ -89,11 +93,16 @@ namespace Soheil.Common
 		{
 			return _persianCalendar.ToDateTime(_persianCalendar.GetYear(dateTime),1,1,0,0,0,0);
 		}
+		/// <summary>
+		/// zero biased
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
 		public static int GetPersianWeekOfYear(this DateTime dateTime)
 		{
 			int x = (int)dateTime.GetNorooz().GetPersianDayOfWeek();
 			if (x > 0) x = 7 - x;
-			return (dateTime.DayOfYear - x) / 7;
+			return (dateTime.GetPersianDayOfYear() - x) / 7;
 		} 
 		public static DateTime TruncateMilliseconds(this DateTime dateTime)
 		{

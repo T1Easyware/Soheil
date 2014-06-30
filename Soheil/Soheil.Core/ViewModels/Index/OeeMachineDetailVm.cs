@@ -19,11 +19,15 @@ namespace Soheil.Core.ViewModels.Index
 				if (Selected != null) Selected();
 			});
 		}
-
+		OeeRecord _data;
 		public void Load(OeeRecord data)
 		{
+			_data = data;
+			refresh(data);
+		}
+		private void refresh(OeeRecord data)
+		{
 			TimeText = data.TimeRange;
-
 			OEE = data.OEE;
 			AvailabilityRate = data.AvailabilityRate;
 			EfficiencyRate = data.EfficiencyRate;
@@ -42,6 +46,49 @@ namespace Soheil.Core.ViewModels.Index
 			ProductionTime = new IndexTime(data.ProductionTime, data.TotalHours);
 			DefectionTime = new IndexTime(data.DefectionTime, data.TotalHours);
 			LostTime = new IndexTime(data.TotalHours - data.WorkingTime, data.TotalHours);
+
+			//commands
+			DefectionTime.Selected += item =>
+			{
+				
+			};
+			StoppageTime.Selected += item =>
+			{
+				data.LoadStoppageDetails();
+				this.StoppageTime.SubItems.Clear();
+				foreach (var l1 in data.StoppageDetails)
+				{
+					var vm1 = new IndexTime(l1.Hours, l1.ParentHours, l1.Text);
+					vm1.Selected += i => StoppageTime.CurrentItem = vm1;
+					foreach (var l2 in l1.SubRecords)
+					{
+						var vm2 = new IndexTime(l2.Hours, l2.ParentHours, l2.Text);
+						vm2.Selected += i =>
+						{
+							if (StoppageTime.CurrentItem != null)
+								StoppageTime.CurrentItem.CurrentItem = vm2;
+						};
+						foreach (var l3 in l2.SubRecords)
+						{
+							var vm3 = new IndexTime(l3.Hours, l3.ParentHours, l3.Text);
+							//vm3.Selected += i => vm2.CurrentItem = vm3;
+							vm2.SubItems.Add(vm3);
+						}
+						vm1.SubItems.Add(vm2);
+					}
+					this.StoppageTime.SubItems.Add(vm1);
+				}
+			};
+		}
+		internal void ShowUnreported(bool val)
+		{
+			if (_data == null) return;
+			if (val) refresh(_data);
+			else
+			{
+				var newData = OeeRecord.CreateUnreportedFrom(_data);
+				refresh(newData);
+			}
 		}
 
 		/// <summary>
@@ -66,7 +113,7 @@ namespace Soheil.Core.ViewModels.Index
 		public static readonly DependencyProperty IsSelectedProperty =
 			DependencyProperty.Register("IsSelected", typeof(bool), typeof(OeeMachineDetailVm), new PropertyMetadata(false));
 		/// <summary>
-		/// Gets or sets a bindable value that indicates SelectCommand
+		/// Gets or sets a bindable command that handles the selection of a timeline item in OEE
 		/// </summary>
 		public Commands.Command SelectCommand
 		{
@@ -75,6 +122,7 @@ namespace Soheil.Core.ViewModels.Index
 		}
 		public static readonly DependencyProperty SelectCommandProperty =
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(OeeMachineDetailVm), new PropertyMetadata(null));
+
 
 
 		#region Rates
@@ -254,5 +302,6 @@ namespace Soheil.Core.ViewModels.Index
 		public static readonly DependencyProperty LostTimeProperty =
 			DependencyProperty.Register("LostTime", typeof(IndexTime), typeof(OeeMachineDetailVm), new PropertyMetadata(null));
 		#endregion
+
 	}
 }

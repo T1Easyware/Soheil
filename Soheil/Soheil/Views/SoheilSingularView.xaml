@@ -671,12 +671,12 @@
 						<Separator/>
 					
 						<!-- extra tools -->
-						<ToggleButton IsChecked="{Binding AutoRefresh}">
-							<Image Style="{StaticResource AutoLoadTaskImage}"/>
-							<ToggleButton.ToolTip>
-								<ToolTip>لود اتوماتیک</ToolTip>
-							</ToggleButton.ToolTip>
-						</ToggleButton>
+						<Button Command="{Binding RefreshCommand}">
+							<Image Style="{StaticResource Refresh16Image}"/>
+							<Button.ToolTip>
+								<ToolTip>بارگذاری مجدد</ToolTip>
+							</Button.ToolTip>
+						</Button>
 						<ToggleButton Margin="2" IsChecked="{Binding ShowInsertSetupButton}">
 							<Image Style="{StaticResource AddSetupImage}"/>
 							<ToggleButton.ToolTip>
@@ -689,7 +689,7 @@
 						<ToggleButton IsChecked="{Binding ShowProductCodes}">
 							<Image Style="{StaticResource ToggleShowCodeImage}"/>
 							<ToggleButton.ToolTip>
-								<ToolTip>نمایش کد بجای نام محصولات</ToolTip>
+								<ToolTip>نمایش کد/نام محصولات</ToolTip>
 							</ToggleButton.ToolTip>
 						</ToggleButton>
 						<Separator/>
@@ -1557,14 +1557,14 @@
 			<DockPanel>
 				<!-- radioButtons set the Tag of control -->
 				<WrapPanel Height="22" Margin="2" DockPanel.Dock="Top" FlowDirection="RightToLeft">
-					<customControls:ImageRadioButton Checked="generalClicked"
+					<!--customControls:ImageRadioButton Checked="generalClicked"
 													 Tag="{Binding ElementName=control}"
 													 Content="{Loc txtGeneralIndex}"
-													 ImageSource="/Soheil.Controls;component/Images/Menus/users.png"/>
+													 ImageSource="/Soheil.Controls;component/Images/Menus/users.png"/-->
 					<customControls:ImageRadioButton Checked="oeeClicked"
 													 Tag="{Binding ElementName=control}"
 													 Content="{Loc txtOEEIndex}"
-													 ImageSource="/Soheil.Controls;component/Images/Menus/Position.png"/>
+													 ImageSource="/Soheil.Controls;component/Images/Menus/Index.png"/>
 				</WrapPanel>
 				<!-- Control change its template according to its Tag -->
 				<Control x:Name="control" Tag="oee">

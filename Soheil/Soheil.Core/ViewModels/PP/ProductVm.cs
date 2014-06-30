@@ -87,5 +87,11 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		public ObservableCollection<ProductReworkVm> ProductReworks { get { return _productReworks; } }
 		private ObservableCollection<ProductReworkVm> _productReworks = new ObservableCollection<ProductReworkVm>();
+
+		/// <summary>
+		/// Gets or sets a bindable collection that indicates Connectors
+		/// </summary>
+		//public ObservableCollection<PPConnectorVm> Connectors { get { return _connectors; } }
+		//private ObservableCollection<PPConnectorVm> _connectors = new ObservableCollection<PPConnectorVm>();
 	}
 }

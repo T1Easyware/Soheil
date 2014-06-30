@@ -6,6 +6,7 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using Soheil.Core.Index;
+using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.Index
 {
@@ -17,6 +18,7 @@ namespace Soheil.Core.ViewModels.Index
 		{
 			Model = model;
 			Name = model.Name;
+			Code = model.Code;
 			_data = new List<OeeRecord>();
 
 			SelectCommand = new Commands.Command(o =>
@@ -28,30 +30,117 @@ namespace Soheil.Core.ViewModels.Index
 		/// <summary>
 		/// View calls this method to load its index infromation from database
 		/// </summary>
-		public void Load()
+		public void Load(OeeType ot)
 		{
 			Timeline.Clear();
-			for (int i = -5; i < 5; i++)
+			var dt = DateTime.Now.GetNorooz();
+			switch (ot.Interval)
 			{
-				var vm = new OeeMachineDetailVm();
-				vm.Selected += () =>
-				{
-					if (SelectedDetail != null)
-						SelectedDetail.IsSelected = false;
-					SelectedDetail = vm;
-				};
-				Timeline.Add(vm);
+				case OeeType.OeeInterval.Monthly:
+					dt = dt.AddDays(ot.MonthStart - 1);
+					int months = (int)DateTime.Now.GetPersianMonth();
+					for (int i = 0; i < months; i++)
+					{
+						var vm = new OeeMachineDetailVm();
+						vm.Selected += () =>
+						{
+							if (SelectedDetail != null)
+								SelectedDetail.IsSelected = false;
+							SelectedDetail = vm;
+						};
+						Timeline.Add(vm);
 
-				//load data
-				var data = new OeeRecord(Model.Id, DateTime.Now.AddDays(i), DateTime.Now.AddDays(i+1));
-				_data.Add(data);
-				vm.Load(data);
+						//load data
+						var start = dt;
+						if (i == months - 1)
+						{
+							dt = DateTime.Now;
+						}
+						else
+						{
+							dt = dt.AddDays(dt.GetPersianMonthDays());
+						}
+						var end = dt;
+
+						var data = new OeeRecord(Model.Id, start, end);
+						data.TimeRange = start.GetPersianMonth().ToString();
+						_data.Add(data);
+						vm.Load(data);
+					}
+					break;
+				case OeeType.OeeInterval.Weekly:
+					dt = dt.AddDays(-(int)dt.GetPersianDayOfWeek());
+					int weeks = DateTime.Now.GetPersianWeekOfYear() + 2;
+					for (int i = 0; i < weeks; i++)
+					{
+						var vm = new OeeMachineDetailVm();
+						vm.Selected += () =>
+						{
+							if (SelectedDetail != null)
+								SelectedDetail.IsSelected = false;
+							SelectedDetail = vm;
+						};
+						Timeline.Add(vm);
+
+						//load data
+						var start = dt;
+						if (i == weeks - 1)
+						{
+							dt = DateTime.Now;
+						}
+						else
+						{
+							dt = dt.AddDays(7);
+						}
+						var end = dt;
+
+						var data = new OeeRecord(Model.Id, start, end);
+						data.TimeRange = string.Format("از {0} الی {1}", start.ToPersianDateString(), end.ToPersianDateString());
+						_data.Add(data);
+						vm.Load(data);
+					}
+					break;
+				case OeeType.OeeInterval.Daily:
+					dt = dt.Add(ot.DayStart);
+					int days = DateTime.Now.GetPersianDayOfYear();
+					for (int i = 0; i < days; i++)
+					{
+						var vm = new OeeMachineDetailVm();
+						vm.Selected += () =>
+						{
+							if (SelectedDetail != null)
+								SelectedDetail.IsSelected = false;
+							SelectedDetail = vm;
+						};
+						Timeline.Add(vm);
+
+						//load data
+						var start = dt;
+						if (i == days - 1)
+						{
+							dt = DateTime.Now;
+						}
+						else
+						{
+							dt = dt.AddDays(1);
+						}
+						var end = dt;
+
+						var data = new OeeRecord(Model.Id, start, end);
+						data.TimeRange = start.ToPersianCompactDateString();
+						_data.Add(data);
+						vm.Load(data);
+					}
+					break;
+				default:
+					break;
 			}
 
-			SelectedDetail = Timeline.LastOrDefault();
+
+			if (Timeline.Any()) Timeline.LastOrDefault().SelectCommand.Execute();
 		}
 
-		#region Machine in list
+		#region Machine props as an item from list
 		/// <summary>
 		/// Get or sets the bindable name
 		/// </summary>
@@ -62,6 +151,16 @@ namespace Soheil.Core.ViewModels.Index
 		}
 		public static readonly DependencyProperty NameProperty =
 			DependencyProperty.Register("Name", typeof(string), typeof(OeeMachineVm), new PropertyMetadata(""));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Code
+		/// </summary>
+		public string Code
+		{
+			get { return (string)GetValue(CodeProperty); }
+			set { SetValue(CodeProperty, value); }
+		}
+		public static readonly DependencyProperty CodeProperty =
+			DependencyProperty.Register("Code", typeof(string), typeof(OeeMachineVm), new PropertyMetadata(""));
 
 		/// <summary>
 		/// Gets or sets a bindable command to Select a machine
@@ -75,54 +174,6 @@ namespace Soheil.Core.ViewModels.Index
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(OeeMachineVm), new PropertyMetadata(null)); 
 		#endregion
 
-		#region Switch view
-		/// <summary>
-		/// Gets or sets a bindable value that indicates whether reworks are shown in a different column
-		/// </summary>
-		public bool ShowReworks
-		{
-			get { return (bool)GetValue(ShowReworksProperty); }
-			set { SetValue(ShowReworksProperty, value); }
-		}
-		public static readonly DependencyProperty ShowReworksProperty =
-			DependencyProperty.Register("ShowReworks", typeof(bool), typeof(OeeMachineVm),
-			new PropertyMetadata(true, (d, e) =>
-			{
-				var vm = (OeeMachineVm)d;
-				var val = (bool)e.NewValue;
-				if (val)
-				{
-
-				}
-				else
-				{
-
-				}
-			}));
-		/// <summary>
-		/// Gets or sets a bindable value that indicates ShowUnreported
-		/// </summary>
-		public bool ShowUnreported
-		{
-			get { return (bool)GetValue(ShowUnreportedProperty); }
-			set { SetValue(ShowUnreportedProperty, value); }
-		}
-		public static readonly DependencyProperty ShowUnreportedProperty =
-			DependencyProperty.Register("ShowUnreported", typeof(bool), typeof(OeeMachineVm),
-			new PropertyMetadata(true, (d, e) =>
-			{
-				var vm = (OeeMachineVm)d;
-				var val = (bool)e.NewValue;
-				if (val)
-				{
-
-				}
-				else
-				{
-
-				}
-			}));
-		#endregion
 
 		#region Timeline and data
 		List<OeeRecord> _data;

@@ -20,17 +20,24 @@ namespace Soheil.Core.Index
 			End = end;
 
 			TotalHours = (end - start).TotalHours;
-			TimeRange = string.Format("بازه زمانی: از {0} تا {1}", start, end);
 
 			var ds = new DataServices.IndexDataService();
 			ds.FillOEEByMachine(this);
 		}
+		private OeeRecord() { }
 		private double caliber(double input)
 		{
 			return input > 0 ? input : 0;
 		}
 
-		public string TimeRange { get; private set; }
+		internal void LoadStoppageDetails()
+		{
+			StoppageDetails = new List<OeeRecordDetail>();
+			var ds = new DataServices.IndexDataService();
+			ds.FillOEEStoppageByMachine(this);
+		}
+
+		public string TimeRange { get; set; }
 
 		public double TotalHours { get; private set; }
 		public double ScheduledTime { get { return MainScheduledTime + ReworkScheduledTime; } }
@@ -40,11 +47,11 @@ namespace Soheil.Core.Index
 
 		public double AvailableTime { get { return caliber(ScheduledTime - StoppageTime); } }
 		public double StoppageTime { get; set; }
+		public List<OeeRecordDetail> StoppageDetails { get; private set; }
 
 		public double WorkingTime { get { return ProductionTime + DefectionTime; } }
-		public double ReportedTime { get; set; }
-		public double UnreportedTime { get { return caliber(ScheduledTime - ReportedTime - StoppageTime); } }
-		public double IdleTime { get { return caliber(AvailableTime - WorkingTime - UnreportedTime); } }
+		public double UnreportedTime { get { return caliber(AvailableTime - WorkingTime - IdleTime); } }
+		public double IdleTime { get; set; }
 
 		public double ProductionTime { get; set; }
 		public double DefectionTime { get; set; }
@@ -56,6 +63,23 @@ namespace Soheil.Core.Index
 		public double EfficiencyRate { get { return AvailableTime > 0 ? 100 * WorkingTime / AvailableTime : 0; } }
 		public double QualityRate { get { return WorkingTime > 0 ? 100 * ProductionTime / WorkingTime : 0; } }
 
+
+
+		internal static OeeRecord CreateUnreportedFrom(OeeRecord data)
+		{
+			var newData = new OeeRecord();
+			newData.TimeRange = data.TimeRange;
+
+			newData.TotalHours = data.TotalHours - data.UnreportedTime;
+			newData.MainScheduledTime = data.MainScheduledTime - data.UnreportedTime;
+			newData.ReworkScheduledTime = data.ReworkScheduledTime;
+			newData.StoppageTime = data.StoppageTime;
+			newData.IdleTime = data.IdleTime;
+			newData.ProductionTime = data.ProductionTime;
+			newData.DefectionTime = data.DefectionTime;
+
+			return newData;
+		}
 
 	}
 }

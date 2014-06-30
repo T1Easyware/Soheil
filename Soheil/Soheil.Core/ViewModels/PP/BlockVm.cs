@@ -139,6 +139,8 @@ namespace Soheil.Core.ViewModels.PP
 		/// Gets the Product Id
 		/// </summary>
 		public int ProductId { get; protected set; }
+		
+
 		/// <summary>
 		/// Gets a bindable Product Code
 		/// </summary>
@@ -340,16 +342,6 @@ namespace Soheil.Core.ViewModels.PP
 				}
 			}
 		}
-		/// <summary>
-		/// Gets or sets a bindable command to reload this block
-		/// </summary>
-		public Commands.Command ReloadBlockCommand
-		{
-			get { return (Commands.Command)GetValue(ReloadBlockCommandProperty); }
-			set { SetValue(ReloadBlockCommandProperty, value); }
-		}
-		public static readonly DependencyProperty ReloadBlockCommandProperty =
-			DependencyProperty.Register("ReloadBlockCommand", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets a bindable command to add this block to TaskEditor
 		/// </summary>

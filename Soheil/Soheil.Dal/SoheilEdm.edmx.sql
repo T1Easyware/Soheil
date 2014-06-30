@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 06/22/2014 14:18:06
+-- Date Created: 06/24/2014 16:46:05
 -- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -710,6 +710,7 @@ CREATE TABLE [dbo].[Machines] (
     [CreatedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
     [ModifiedBy] int  NOT NULL,
+    [HasOEE] bit  NOT NULL,
     [MachineFamily_Id] int  NOT NULL
 );
 GO

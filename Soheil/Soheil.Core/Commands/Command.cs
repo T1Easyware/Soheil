@@ -83,17 +83,28 @@ namespace Soheil.Core.Commands
             return true;
         }
 
-        /// <summary>
-        ///     Execution of the command
-        /// </summary>
+		/// <summary>
+		///     Execution of the command
+		/// </summary>
 		[System.Diagnostics.DebuggerStepThrough]
 		public void Execute(object param)
-        {
-            if (_executeMethod != null)
-            {
-                _executeMethod(param);
-            }
-        }
+		{
+			if (_executeMethod != null)
+			{
+				_executeMethod(param);
+			}
+		}
+		/// <summary>
+		///     Execution of the command
+		/// </summary>
+		[System.Diagnostics.DebuggerStepThrough]
+		public void Execute()
+		{
+			if (_executeMethod != null)
+			{
+				_executeMethod(null);
+			}
+		}
 
         /// <summary>
         ///     Raises the CanExecuteChaged event

@@ -215,8 +215,8 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Layout\IndexStyles.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Layout\PPStyles.xaml">
       <SubType>Designer</SubType>

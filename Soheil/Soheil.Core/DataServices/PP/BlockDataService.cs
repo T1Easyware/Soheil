@@ -242,6 +242,14 @@ namespace Soheil.Core.DataServices
 				time = time.AddSeconds(task.DurationSeconds);
 				task.EndDateTime = time;
 
+				if(task.Processes.Any(x=>x.TargetCount == 0 || x.StateStationActivity == null))
+				{
+					if (System.Windows.MessageBox.Show(
+						"برخی از فعالیتها نفرساعت نامعتبر دارند و ذخیره نخواهند شد.\nآیا می خواهید ادامه دهید؟",
+						"هشدار", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No)
+							== System.Windows.MessageBoxResult.No) return;
+				}
+
 				//delete empty processes
 				foreach (var process in task.Processes.ToArray())
 				{

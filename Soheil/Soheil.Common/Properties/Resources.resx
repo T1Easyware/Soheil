@@ -954,4 +954,19 @@
   <data name="txtWaste" xml:space="preserve">
     <value>ضایعات</value>
   </data>
+  <data name="txtGeneralIndex" xml:space="preserve">
+    <value>سایر شاخصها</value>
+  </data>
+  <data name="txtOEEIndex" xml:space="preserve">
+    <value>OEE</value>
+  </data>
+  <data name="ttHasOEE" xml:space="preserve">
+    <value>اگر این ماشین بطور مستقیم در تولید استفاده نمی شود این گزینه را انتخاب نکنید</value>
+  </data>
+  <data name="txtHasOEE" xml:space="preserve">
+    <value>آیا شاخص OEE برای این ماشین محاسبه می گردد؟</value>
+  </data>
+  <data name="msgDeleteConfirm" xml:space="preserve">
+    <value>آیا این آیتم حذف شود؟</value>
+  </data>
 </root>

@@ -46,15 +46,15 @@ namespace Soheil.Core.ViewModels.PP.Report
 				else
 				{
 					//update existing OSR
-					vm.Model.Operator = newOp.Model;
+					(vm.Model as Model.OperatorStoppageReport).Operator = newOp.Model;
 				}
 			};
 			GuiltyOperators.OperatorRemoved += vm =>
 			{
 				if (vm.Model != null)
 				{
-					model.OperatorStoppageReports.Remove(vm.Model);
-					osrRepo.Delete(vm.Model);
+					model.OperatorStoppageReports.Remove((vm.Model as Model.OperatorStoppageReport));
+					osrRepo.Delete((vm.Model as Model.OperatorStoppageReport));
 				}
 			};
 
@@ -74,7 +74,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				//delete
 				Parent.List.Remove(this);
 				Model.ProcessReport.StoppageReports.Remove(Model);
-				if (Model.Id > 0) new Dal.Repository<Model.StoppageReport>(Parent.Parent.UOW).Delete(Model);
+				new DataServices.ProcessReportDataService(Parent.Parent.UOW).Delete(Model);
 
 				//reset indices
 				for (int i = 0; i < Parent.List.Count; i++)

@@ -15,7 +15,7 @@ namespace Soheil.Core.ViewModels.Index
 		public OeeMachineFamilyVm(Model.MachineFamily model)
 		{
 			Name = model.Name;
-			foreach (var item in model.Machines.Where(x=>x.Status == (byte)Status.Active))
+			foreach (var item in model.Machines.Where(x=>x.Status == (byte)Status.Active && x.HasOEE))
 			{
 				var vm = new OeeMachineVm(item);
 				vm.Selected += () =>

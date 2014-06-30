@@ -26,6 +26,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			var pdrepo = new Dal.Repository<Model.ProductDefection>(Parent.Parent.UOW);
 			ProductDefection.FilterableItemSelected += (s, old, v) => 
 				Model.ProductDefection = pdrepo.FirstOrDefault(x => x.Id == v.Id);
+			if (ProductDefection.SelectedItem == null) ProductDefection.SelectedItem = ProductDefection.FilteredList.FirstOrDefault();
 
 			//create and load OperatorDefectionReports
 			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorDefectionReports, Parent.Parent.UOW);
@@ -34,12 +35,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				if (newOp.Model == null) return;
 
-				//reload ODR model
 				if (vm.Model == null)
-				{
-				}
-
-				if (oldOp == null)
 				{
 					//create and add new ODR
 					var odr = new Model.OperatorDefectionReport
@@ -54,15 +50,15 @@ namespace Soheil.Core.ViewModels.PP.Report
 				else
 				{
 					//update existing ODR
-					vm.Model.Operator = newOp.Model;
+					(vm.Model as Model.OperatorDefectionReport).Operator = newOp.Model;
 				}
 			};
 			GuiltyOperators.OperatorRemoved += vm =>
 			{
 				if (vm.Model != null)
 				{
-					model.OperatorDefectionReports.Remove(vm.Model);
-					odrRepo.Delete(vm.Model);
+					model.OperatorDefectionReports.Remove(vm.Model as Model.OperatorDefectionReport);
+					odrRepo.Delete(vm.Model as Model.OperatorDefectionReport);
 				}
 			};
 	
@@ -82,7 +78,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				//delete
 				Parent.List.Remove(this);
 				Model.ProcessReport.DefectionReports.Remove(Model);
-				if (Model.Id > 0) new Dal.Repository<Model.DefectionReport>(Parent.Parent.UOW).Delete(Model);
+				new DataServices.ProcessReportDataService(Parent.Parent.UOW).Delete(Model);
 
 				//reset indices
 				for (int i = 0; i < Parent.List.Count; i++)

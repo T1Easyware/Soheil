@@ -16,6 +16,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		public event Action<OperatorEditorVm, bool, bool> SelectionChanged;
 
+		public event Action<string> ErrorOccured;
+
 		#region Data
 		Dal.SoheilEdmContext _uow;
 		public DataServices.OperatorDataService OperatorDataService { get; private set; }
@@ -132,37 +134,46 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			if(Process == null || Activity == null || Block == null)
 			{
-				MessageBox.Show("ابتدا فعالیت را انتخاب کنید");
+				if (ErrorOccured != null)
+					ErrorOccured("ابتدا فعالیت را انتخاب کنید");
+				//operVm.IsSelected = false;
 				return;
 			}
-
-			//find ProcessOperator in uow
-			var poModel = Process.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operVm.OperatorId);
-			//add/remove them
-			if (poModel == null)
+			if (Process.ProcessReports.Any())
 			{
-				if (isSelected)
-				{
-					//if not exist but selected, add it to uow
-					poModel = new Model.ProcessOperator
-					{
-						Operator = operVm.OperatorModel,
-						Process = Process,
-						Code = Process.Code + operVm.Code,
-					};
-					Process.ProcessOperators.Add(poModel);
-				}
+				if (ErrorOccured != null)
+					ErrorOccured("این فعالیت گزارش دارد");
+				//operVm.IsSelected = false;
 			}
 			else
 			{
-				if (!isSelected)
+				//find ProcessOperator in uow
+				var poModel = Process.ProcessOperators.FirstOrDefault(x => x.Operator.Id == operVm.OperatorId);
+				//add/remove them
+				if (poModel == null)
 				{
-					//if exist but not selected, remove it from uow
-					Process.ProcessOperators.Remove(poModel);
-					new Dal.Repository<Model.ProcessOperator>(_uow).Delete(poModel);
+					if (isSelected)
+					{
+						//if not exist but selected, add it to uow
+						poModel = new Model.ProcessOperator
+						{
+							Operator = operVm.OperatorModel,
+							Process = Process,
+							Code = Process.Code + operVm.Code,
+						};
+						Process.ProcessOperators.Add(poModel);
+					}
+				}
+				else
+				{
+					if (!isSelected)
+					{
+						//if exist but not selected, remove it from uow
+						Process.ProcessOperators.Remove(poModel);
+						new Dal.Repository<Model.ProcessOperator>(_uow).Delete(poModel);
+					}
 				}
 			}
-
 			//notify about selection (to update operators quicklist and SelectedOperatorsCount in process)
 			if (SelectionChanged != null)
 				SelectionChanged(operVm, isSelected, updateCount);
@@ -170,7 +181,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			//update OperatorsSelectedList
 			if (isSelected)
 			{
-				OperatorsSelectedList.Add(operVm);
+				if (!OperatorsSelectedList.Any(x => x.OperatorId == operVm.OperatorId))
+					OperatorsSelectedList.Add(operVm);
 			}
 			else
 			{

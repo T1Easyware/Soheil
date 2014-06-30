@@ -9,7 +9,7 @@
              xmlns:local="clr-namespace:Soheil.Views.PP"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" FlowDirection="RightToLeft"
+             mc:Ignorable="d" FlowDirection="RightToLeft" x:Name="root"
              MaxWidth="600" >
 	<UserControl.Resources>
 		<DataTemplate DataType="{x:Type ppevm:MachineEditorVm}">
@@ -57,7 +57,19 @@
 				</MenuItem.Icon>
 				<MenuItem.ItemTemplate>
 					<DataTemplate>
-						<WrapPanel TextBlock.Foreground="White">
+						<WrapPanel>
+							<!--<WrapPanel.Background>
+								<MultiBinding Converter="{StaticResource isEqualToBrushConverter}">
+									<Binding Path="ManHour"/>
+									<Binding RelativeSource="{RelativeSource AncestorType={x:Type local:ProcessEditor}}" Path="DataContext.SelectedChoice.ManHour"/>
+									<MultiBinding.ConverterParameter>
+										<x:Array Type="SolidColorBrush">
+											<SolidColorBrush Color="#3DD"/>
+											<SolidColorBrush Color="Transparent"/>
+										</x:Array>
+									</MultiBinding.ConverterParameter>
+								</MultiBinding>
+							</WrapPanel.Background>-->
 							<TextBlock Text="{Binding ManHour}"/>
 							<TextBlock Text="(*)" Visibility="{Binding IsMany, Converter={StaticResource booleanToVisibilityConverter}}"/>
 							<TextBlock Text="{Loc txtManHour}" Margin="4,0"/>
@@ -78,11 +90,6 @@
 				<MenuItem.ItemContainerStyle>
 					<Style TargetType="MenuItem">
 						<Setter Property="Command" Value="{Binding SelectCommand}"/>
-						<Setter Property="Icon">
-							<Setter.Value>
-								<Image Style="{StaticResource ManHourImage}"/>
-							</Setter.Value>
-						</Setter>
 					</Style>
 				</MenuItem.ItemContainerStyle>
 			</MenuItem>
@@ -99,7 +106,7 @@
 			</MenuItem>
 		</ContextMenu>
 	</UserControl.ContextMenu>
-	<Border CornerRadius="10" Margin="2" IsEnabled="{Binding HasReport, Converter={StaticResource inverter}}">
+	<Border CornerRadius="10" Margin="2">
 		<Border.Style>
 			<Style TargetType="{x:Type Border}">
 				<Style.Triggers>
@@ -152,7 +159,7 @@
         <DockPanel>
 			
             <!-- basic -->
-            <DockPanel DockPanel.Dock="Left" Background="Transparent">
+			<DockPanel DockPanel.Dock="Left" Background="Transparent" IsEnabled="{Binding HasReport, Converter={StaticResource inverter}}">
                 <StackPanel DockPanel.Dock="Left">
 					<StackPanel.ToolTip>
 						<UniformGrid Rows="3" Columns="2">
@@ -175,6 +182,7 @@
 					<DockPanel>
 						<Image Style="{StaticResource QuantityImage}" Margin="2,3" DockPanel.Dock="Left" ToolTip="{Loc txtTargetPoint}"/>
 						<Grid DockPanel.Dock="Right" Width="32">
+							<Border Background="#800" Margin="2" Visibility="{Binding SelectedChoice, Converter={StaticResource isNullToVisibility}}" ToolTip="نفرساعت انتخاب شده نامعتبر می باشد"/>
 							<Image Style="{StaticResource ManHourImage}" DockPanel.Dock="Right" ToolTip="{Loc txtOperatorsCount}" HorizontalAlignment="Right"/>
 							<TextBlock Text="{Binding SelectedChoice.ManHour}" Foreground="#048" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,0"/>
 							<Image Style="{StaticResource Warning16Image}" Visibility="{Binding OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right"
@@ -239,6 +247,7 @@
 			<ItemsControl Visibility="{Binding Path=DataContext.ShowOperators,
 										RelativeSource={RelativeSource AncestorType={x:Type local:PlanEditor}}, 
 										Converter={StaticResource booleanToVisibilityConverter}}"
+						  IsEnabled="{Binding HasReport, Converter={StaticResource inverter}}"
 						  Background="#1000" Margin="1,0"
 						  ItemsSource="{Binding SelectedOperators}" 
 						  HorizontalContentAlignment="Stretch"
