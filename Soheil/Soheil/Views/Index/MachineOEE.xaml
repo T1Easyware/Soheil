@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
              xmlns:I="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:beh="clr-namespace:Soheil.Controls.Behaviors;assembly=Soheil.Controls"
 			 xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
@@ -328,8 +329,8 @@
 							</Grid>
 							<Border Background="#678" Visibility="{Binding StoppageTime.ShowSubItems, Converter={StaticResource booleanToVisibilityConverter}}">
 								<StackPanel>
-									<!--ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100"-->
-									<ItemsControl ItemsSource="{Binding StoppageTime.SubItems}" Margin="2" Background="#3000">
+									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100">
+										<ItemsControl ItemsSource="{Binding StoppageTime.SubItems}" Margin="2" Background="#3000">
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
 													<cc:OEEVerticalBar DataContext="{Binding}"/>
@@ -341,9 +342,29 @@
 												</ItemsPanelTemplate>
 											</ItemsControl.ItemsPanel>
 										</ItemsControl>
+									</ScrollViewer>
+									
+												  
+									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100">
+										<ItemsControl ItemsSource="{Binding StoppageTime.CurrentItem.SubItems}" Margin="2" Background="#3000">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<cc:OEEVerticalBar DataContext="{Binding}"/>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<StackPanel Orientation="Horizontal" HorizontalAlignment="Left"/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+									</ScrollViewer>
 
-									<!--ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100"!-->
-									<ItemsControl ItemsSource="{Binding StoppageTime.CurrentItem.SubItems}" Margin="2" Background="#3000">
+									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100">
+										<I:Interaction.Behaviors>
+											<beh:IgnoreMouseWheelBehavior />
+										</I:Interaction.Behaviors>
+										<ItemsControl ItemsSource="{Binding StoppageTime.CurrentItem.CurrentItem.SubItems}" Margin="2" Background="#3000">
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
 													<cc:OEEVerticalBar DataContext="{Binding}"/>
@@ -355,20 +376,7 @@
 												</ItemsPanelTemplate>
 											</ItemsControl.ItemsPanel>
 										</ItemsControl>
-
-									<!--ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100"!-->
-									<ItemsControl ItemsSource="{Binding StoppageTime.CurrentItem.CurrentItem.SubItems}" Margin="2" Background="#3000">
-											<ItemsControl.ItemTemplate>
-												<DataTemplate>
-													<cc:OEEVerticalBar DataContext="{Binding}"/>
-												</DataTemplate>
-											</ItemsControl.ItemTemplate>
-											<ItemsControl.ItemsPanel>
-												<ItemsPanelTemplate>
-													<StackPanel Orientation="Horizontal" HorizontalAlignment="Left"/>
-												</ItemsPanelTemplate>
-											</ItemsControl.ItemsPanel>
-										</ItemsControl>
+									</ScrollViewer>
 								</StackPanel>
 							</Border>
 						</StackPanel>

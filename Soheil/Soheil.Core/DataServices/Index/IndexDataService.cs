@@ -370,15 +370,136 @@ namespace Soheil.Core.DataServices
 							  };
 
 				var s1Query = from stpr in prQuery
-							 group stpr by stpr.l1 into g1
-							 let h = g1.Sum(x => x.h)
+							  group stpr by stpr.l1 into g1
+							  let h = g1.Sum(x => x.h)
 							  orderby h descending
-							 select new
-							 {
-								 h,
-								 txt = g1.Key.Name,
-								 g = g1,
-							 };
+							  select new
+							  {
+								  h,
+								  txt = g1.Key.Name,
+								  g = g1,
+							  };
+
+
+				double total1 = s1Query.Sum(x => x.h);
+				foreach (var rowC1 in s1Query)
+				{
+					var detail1 = new OeeRecordDetail
+					{
+						ParentHours = total1,
+						Hours = rowC1.h,
+						Text = rowC1.g.Key.Name,
+						Id = rowC1.g.Key.Id
+					};
+					record.StoppageDetails.Add(detail1);
+
+
+					var s2Query = from stpr in prQuery
+								  where stpr.l1 == rowC1.g.Key
+								  group stpr by stpr.l2 into g2
+								  let h = g2.Sum(x => x.h)
+								  orderby h descending
+								  select new
+								  {
+									  h,
+									  txt = g2.Key.Name,
+									  g = g2
+								  };
+					double total2 = s2Query.Sum(x => x.h);
+					foreach (var rowC2 in s2Query)
+					{
+						var detail2 = new OeeRecordDetail
+						{
+							ParentHours = total2,
+							Hours = rowC2.h,
+							Text = rowC2.g.Key.Name,
+							Id = rowC2.g.Key.Id,
+							ParentId = rowC1.g.Key.Id
+						};
+						detail1.SubRecords.Add(detail2);
+
+						var s3Query = from stpr in prQuery
+									  where stpr.l2 == rowC2.g.Key
+									  group stpr by stpr.l3 into g3
+									  let h = g3.Sum(x => x.h)
+									  orderby h descending
+									  select new
+									  {
+										  h,
+										  txt = g3.Key.Name,
+										  g = g3
+									  };
+						double total3 = s3Query.Sum(x => x.h);
+
+						foreach (var rowC3 in s3Query)
+						{
+							var detail3 = new OeeRecordDetail
+							{
+								ParentHours = total3,
+								Hours = rowC3.h,
+								Text = rowC3.g.Key.Name,
+								Id = rowC3.g.Key.Id,
+								ParentId = rowC2.g.Key.Id
+							};
+							detail2.SubRecords.Add(detail3);
+						}
+					}
+				}
+			}
+		}
+		public void FillOEEDefectionByMachine(OeeRecord record)
+		{
+			using (var context = new SoheilEdmContext())
+			{
+				var selectedMachineRepository = new Repository<SelectedMachine>(context);
+				var processRepository = new Repository<Process>(context);
+				var processReportRepository = new Repository<ProcessReport>(context);
+				var causeRepository = new Repository<Cause>(context);
+
+				var selectedMachineList = selectedMachineRepository.GetAll();
+				var processReportList = processReportRepository.GetAll();
+				var causeList = causeRepository.GetAll();
+
+				var prQuery = from selmachine in selectedMachineList.Where(x =>
+								x.StateStationActivityMachine != null &&
+								x.StateStationActivityMachine.Machine.Id == record.MachineId &&
+								x.Process != null &&
+								x.Process.StateStationActivity != null &&
+								x.Process.StartDateTime < record.End &&
+								x.Process.EndDateTime > record.Start)
+							  from processReport in processReportList.Where(pr =>
+								  selmachine.Process != null &&
+								  pr.Process != null &&
+								  pr.Process.Id == selmachine.Process.Id &&
+								  pr.StartDateTime < record.End &&
+								  pr.EndDateTime > record.Start)
+							  from stpr in processReport.StoppageReports
+							  let start = (processReport.StartDateTime < record.Start) ? record.Start : processReport.StartDateTime
+							  let end = (processReport.EndDateTime > record.End) ? record.End : processReport.EndDateTime
+							  let hours = (end - start).TotalHours
+							  let ratio = hours / processReport.DurationSeconds
+							  let cycleTime = processReport.Process.StateStationActivity.CycleTime
+							  select new
+							  {
+								  PrId = processReport.Id,
+								  l3 = stpr.Cause,
+								  l2 = stpr.Cause.Parent,
+								  l1 = stpr.Cause.Parent.Parent,
+
+								  //stoppage hours
+								  h = (stpr.LostTime + stpr.LostCount * cycleTime) * ratio,
+							  };
+
+				var s1Query = from stpr in prQuery
+							  group stpr by stpr.l1 into g1
+							  let h = g1.Sum(x => x.h)
+							  orderby h descending
+							  select new
+							  {
+								  h,
+								  txt = g1.Key.Name,
+								  g = g1,
+							  };
 
 
 				double total1 = s1Query.Sum(x => x.h);
