@@ -50,7 +50,19 @@ namespace Soheil.Core.ViewModels.Index
 			//commands
 			DefectionTime.Selected += item =>
 			{
-				
+				data.LoadDefectionDetails(item.IsByProduct);
+				this.DefectionTime.SubItems.Clear();
+				foreach (var l1 in data.DefectionDetails)
+				{
+					var vm1 = new IndexTime(l1.Hours, l1.ParentHours, l1.Text);
+					vm1.Selected += i => DefectionTime.CurrentItem = vm1;
+					foreach (var l2 in l1.SubRecords)
+					{
+						var vm2 = new IndexTime(l2.Hours, l2.ParentHours, l2.Text);
+						vm1.SubItems.Add(vm2);
+					}
+					this.DefectionTime.SubItems.Add(vm1);
+				}
 			};
 			StoppageTime.Selected += item =>
 			{
@@ -122,7 +134,7 @@ namespace Soheil.Core.ViewModels.Index
 		}
 		public static readonly DependencyProperty SelectCommandProperty =
 			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(OeeMachineDetailVm), new PropertyMetadata(null));
-
+		
 
 
 		#region Rates

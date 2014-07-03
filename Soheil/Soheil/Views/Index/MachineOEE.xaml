@@ -9,7 +9,7 @@
              xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="800" FlowDirection="LeftToRight">
+             d:DesignHeight="800" d:DesignWidth="800" FlowDirection="LeftToRight">
 	<UserControl.Resources>
 		<Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
 			<Setter Property="Width" Value="80"/>
@@ -329,7 +329,7 @@
 							</Grid>
 							<Border Background="#678" Visibility="{Binding StoppageTime.ShowSubItems, Converter={StaticResource booleanToVisibilityConverter}}">
 								<StackPanel>
-									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100">
+									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1">
 										<ItemsControl ItemsSource="{Binding StoppageTime.SubItems}" Margin="2" Background="#3000">
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
@@ -345,7 +345,7 @@
 									</ScrollViewer>
 									
 												  
-									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100">
+									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1">
 										<ItemsControl ItemsSource="{Binding StoppageTime.CurrentItem.SubItems}" Margin="2" Background="#3000">
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
@@ -360,10 +360,7 @@
 										</ItemsControl>
 									</ScrollViewer>
 
-									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100">
-										<I:Interaction.Behaviors>
-											<beh:IgnoreMouseWheelBehavior />
-										</I:Interaction.Behaviors>
+									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1">
 										<ItemsControl ItemsSource="{Binding StoppageTime.CurrentItem.CurrentItem.SubItems}" Margin="2" Background="#3000">
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
@@ -489,20 +486,48 @@
 								<Border Style="{StaticResource timesBkgGlowStyle}" Grid.ColumnSpan="1" Grid.Column="1" x:Name="defectionGlow"/>
 							</Grid>
 							<Border Background="#678" Visibility="{Binding DefectionTime.ShowSubItems, Converter={StaticResource booleanToVisibilityConverter}}">
-								<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1" Height="100">
-									<ItemsControl ItemsSource="{Binding DefectionTime.SubItems}">
-										<ItemsControl.ItemTemplate>
-											<DataTemplate>
-												<cc:OEEVerticalBar DataContext="{Binding}"/>
-											</DataTemplate>
-										</ItemsControl.ItemTemplate>
-										<ItemsControl.ItemsPanel>
-											<ItemsPanelTemplate>
-												<StackPanel Orientation="Horizontal" HorizontalAlignment="Left"/>
-											</ItemsPanelTemplate>
-										</ItemsControl.ItemsPanel>
-									</ItemsControl>
-								</ScrollViewer>
+								<StackPanel>
+									<DockPanel LastChildFill="False" Margin="1">
+										<Button DockPanel.Dock="Left" Command="{Binding DefectionTime.SelectCommand}" CommandParameter="ppmByProduct">
+											<TextBlock Text="برحسب محصولات"/>
+										</Button>
+										<Button DockPanel.Dock="Left" Command="{Binding DefectionTime.SelectCommand}" CommandParameter="ppmByDefection">
+											<TextBlock Text="برحسب نوع عیب"/>
+										</Button>
+									</DockPanel>
+									<!-- main & defection -->
+									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1">
+										<ItemsControl ItemsSource="{Binding DefectionTime.SubItems}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<cc:OEEVerticalBar DataContext="{Binding}"/>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<StackPanel Orientation="Horizontal" HorizontalAlignment="Left"/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+									</ScrollViewer>
+									
+									<!-- sub items -->
+									<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="1">
+										<ItemsControl ItemsSource="{Binding DefectionTime.CurrentItem.SubItems}" Margin="2" Background="#3000" PreviewMouseWheel="ItemsControl_PreviewMouseWheel">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<cc:OEEVerticalBar DataContext="{Binding}"/>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+											<ItemsControl.ItemsPanel>
+												<ItemsPanelTemplate>
+													<StackPanel Orientation="Horizontal" HorizontalAlignment="Left"/>
+												</ItemsPanelTemplate>
+											</ItemsControl.ItemsPanel>
+										</ItemsControl>
+									</ScrollViewer>
+								</StackPanel>
+
 							</Border>
 						</StackPanel>
 					</Border>

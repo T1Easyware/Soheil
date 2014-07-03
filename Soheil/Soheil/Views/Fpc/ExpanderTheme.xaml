@@ -1,6 +1,8 @@
 ﻿<ResourceDictionary x:Class="Soheil.Views.Fpc.ExpanderTheme"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	xmlns:v="clr-namespace:Soheil.Views.Fpc"
+	xmlns:common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<!-- Fill Brushes -->
 
 	<LinearGradientBrush x:Key="NormalBrush" StartPoint="0,0" EndPoint="0,1">
@@ -210,6 +212,12 @@
                             Visibility="{Binding IsFixed, Converter={StaticResource booleanToInvisibilityConverter}}"
 						Tag="{Binding Path=Tag, RelativeSource={RelativeSource TemplatedParent}}"
 						Template="{StaticResource ExpanderDeleteButton}"
+						IsEnabled="{Binding 
+							RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, 
+							Path=DataContext.Access, 
+							Converter={StaticResource AccessTypeToBooleanConverter},
+							ConverterParameter={x:Static common:AccessType.Update}
+						}"
 						Click="DeleteButton_Click">
 					</Button>
 				</Grid>

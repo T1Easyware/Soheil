@@ -472,10 +472,15 @@ namespace Soheil
                     return Common.Properties.Resources.txtOperators;
                 case SoheilEntityType.Operators:
                     return Common.Properties.Resources.txtOperators;
-                case SoheilEntityType.GeneralSkills:
-                    return Common.Properties.Resources.txtGenSkills;
-                case SoheilEntityType.SpecialSkills:
+				case SoheilEntityType.GeneralSkills:
+					return Common.Properties.Resources.txtGenSkills;
+				case SoheilEntityType.SpecialSkills:
                     return Common.Properties.Resources.txtSpeSkills;
+				case SoheilEntityType.SkillCenter:
+					return Common.Properties.Resources.txtSkillCenter;
+				case SoheilEntityType.SetupTimes:
+					return Common.Properties.Resources.txtSetupTimes;
+
                 case SoheilEntityType.CostsSubMenu:
                     return Common.Properties.Resources.txtCosts;
                 case SoheilEntityType.Costs:

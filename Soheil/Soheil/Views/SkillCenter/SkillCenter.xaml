@@ -275,10 +275,10 @@
 			</ScrollViewer>
 			<!-- iluos -->
 			<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" x:Name="scrollBar" ScrollChanged="scrollBar_ScrollChanged">
-				<ItemsControl ItemsSource="{Binding Content.Rows}" ItemTemplate="{StaticResource operatorRow}"/>
+				<ItemsControl ItemsSource="{Binding Content.Rows}" ItemTemplate="{StaticResource operatorRow}" IsEnabled="{Binding CanEdit}"/>
 			</ScrollViewer>
 		</DockPanel>
-		<Grid Background="#4FFF" Visibility="{Binding IsLoading, Converter={StaticResource booleanToVisibilityConverter}}">
+		<Grid Background="#2FFF" Visibility="{Binding IsLoading, Converter={StaticResource booleanToVisibilityConverter}}">
 			<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Loading..." Foreground="White" FontWeight="Bold" FontSize="22"/>
 		</Grid>
 		<Grid Background="#4F88" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}">

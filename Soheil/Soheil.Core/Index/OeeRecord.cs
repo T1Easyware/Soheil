@@ -30,6 +30,13 @@ namespace Soheil.Core.Index
 			return input > 0 ? input : 0;
 		}
 
+		internal void LoadDefectionDetails(bool isByProduct)
+		{
+			DefectionDetails = new List<OeeRecordDetail>();
+			var ds = new DataServices.IndexDataService();
+			ds.FillPPMByMachine(this, isByProduct);
+		}
+		
 		internal void LoadStoppageDetails()
 		{
 			StoppageDetails = new List<OeeRecordDetail>();
@@ -48,6 +55,7 @@ namespace Soheil.Core.Index
 		public double AvailableTime { get { return caliber(ScheduledTime - StoppageTime); } }
 		public double StoppageTime { get; set; }
 		public List<OeeRecordDetail> StoppageDetails { get; private set; }
+		public List<OeeRecordDetail> DefectionDetails { get; private set; }
 
 		public double WorkingTime { get { return ProductionTime + DefectionTime; } }
 		public double UnreportedTime { get { return caliber(AvailableTime - WorkingTime - IdleTime); } }

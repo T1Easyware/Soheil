@@ -71,7 +71,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 				}
 
 				//if any change to Data occurs fire the IluoChanged event
-				if (previousData != Data && IluoChanged != null) 
+				if (previousData != Data && IluoChanged != null)
 					IluoChanged(this);
 			});
 		}

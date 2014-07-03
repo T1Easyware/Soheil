@@ -28,12 +28,30 @@ namespace Soheil.Controls.Behaviors
 			base.OnDetaching();
 		}
 
+
+		public static UIElement GetScrollTarget(DependencyObject obj)
+		{
+			return (UIElement)obj.GetValue(ScrollTargetProperty);
+		}
+
+		public static void SetScrollTarget(DependencyObject obj, UIElement value)
+		{
+			obj.SetValue(ScrollTargetProperty, value);
+		}
+
+		// Using a DependencyProperty as the backing store for ScrollTarget.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty ScrollTargetProperty =
+			DependencyProperty.RegisterAttached("ScrollTarget", typeof(UIElement), typeof(IgnoreMouseWheelBehavior), new PropertyMetadata(null));
+
+
+
 		void AssociatedObject_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
 		{
 
 			e.Handled = true;
 
 			var e2 = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+			//e2.
 			e2.RoutedEvent = UIElement.MouseWheelEvent;
 
 			AssociatedObject.RaiseEvent(e2);

@@ -14,6 +14,12 @@
     <Border x:Key="fpcBackBrushVisual" BorderBrush="#5FFF" BorderThickness="0.1" Width="64" Height="64"/>
 	<VisualBrush x:Key="fpcBackBrush" Viewport="0,0,64,64" TileMode="Tile" ViewportUnits="Absolute" Visual="{StaticResource fpcBackBrushVisual}"/>
 
+	<Converters:AccessTypeToBooleanConverter x:Key="AccessTypeToBooleanConverter"/>
+	<Converters:InsertAccessTypeConverter x:Key="InsertAccessTypeConverter"/>
+	<Converters:UpdateAccessTypeConverter x:Key="UpdateAccessTypeConverter"/>
+	<Converters:PrintAccessTypeConverter x:Key="PrintAccessTypeConverter"/>
+	<Converters:ViewAccessTypeConverter x:Key="ViewAccessTypeConverter"/>
+	<Converters:FullAccessTypeConverter x:Key="FullAccessTypeConverter"/>
 
 	<!-- oee -->
 	<Converters:PercentConverter x:Key="percentConverter"/>

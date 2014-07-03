@@ -97,6 +97,7 @@
     <Compile Include="Behaviors\IgnoreMouseWheelBehavior.cs" />
     <Compile Include="Behaviors\LinqToVisualTree.cs" />
     <Compile Include="Behaviors\ScrollOffsetBinding.cs" />
+    <Compile Include="Converters\AccessTypeToBooleanConverter.cs" />
     <Compile Include="Converters\BooleanToLengthConverter.cs" />
     <Compile Include="Converters\ColorToBrushConvertor.cs" />
     <Compile Include="Converters\ColumnVisibilityConverter.cs" />

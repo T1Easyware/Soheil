@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					x:Class="Soheil.Views.Fpc.Connector"
 					xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
-             xmlns:I="http://schemas.microsoft.com/expression/2010/interactivity"
+					xmlns:v="clr-namespace:Soheil.Views.Fpc"
+				    xmlns:I="http://schemas.microsoft.com/expression/2010/interactivity"
 					xmlns:my="clr-namespace:System;assembly=mscorlib"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -101,7 +102,11 @@
 						<!--For a bug-->
 						<Canvas/>
 					</DockPanel>
-					<Image Style="{StaticResource Delete16Image}" Name="deleteConnectorButton" ToolTip="حذف اتصال" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0">
+					<Image Style="{StaticResource Delete16Image}" Name="deleteConnectorButton" ToolTip="حذف اتصال" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0"
+						   Visibility="{Binding 
+								RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, 
+								Path=DataContext.Access,
+								Converter={StaticResource UpdateAccessTypeConverter}}">
 						<I:Interaction.Triggers>
 							<I:EventTrigger EventName="MouseDown">
 								<I:InvokeCommandAction Command="{Binding DeleteCommand}"/>

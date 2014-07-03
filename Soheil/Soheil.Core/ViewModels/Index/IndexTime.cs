@@ -24,6 +24,13 @@ namespace Soheil.Core.ViewModels.Index
 			Text = text;
 			SelectCommand = new Commands.Command(o =>
 			{
+				if (o != null)
+				{
+					IsByProduct = o.ToString() == "ppmByProduct";
+					if (Selected != null) Selected(this);
+					return;
+				}
+
 				//for detailed indices
 				if (!string.IsNullOrWhiteSpace(Text)) { if (Selected != null) Selected(this); }
 
@@ -89,6 +96,17 @@ namespace Soheil.Core.ViewModels.Index
 		public static readonly DependencyProperty ShowSubItemsProperty =
 			DependencyProperty.Register("ShowSubItems", typeof(bool), typeof(IndexTime),
 			new PropertyMetadata(false));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates IsByProduct
+		/// </summary>
+		public bool IsByProduct
+		{
+			get { return (bool)GetValue(IsByProductProperty); }
+			set { SetValue(IsByProductProperty, value); }
+		}
+		public static readonly DependencyProperty IsByProductProperty =
+			DependencyProperty.Register("IsByProduct", typeof(bool), typeof(IndexTime), new PropertyMetadata(true));
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates CurrentItem

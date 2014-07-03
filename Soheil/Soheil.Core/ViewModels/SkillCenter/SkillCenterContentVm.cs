@@ -22,7 +22,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		/// Specifies the content mode of current Vm
 		/// </summary>
 		TargetMode _targetMode;
-		
+
 		/// <summary>
 		/// Occures when an error occures in this Vm (parameter contains the error message)
 		/// </summary>

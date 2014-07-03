@@ -40,5 +40,10 @@ namespace Soheil.Views.Index
 			Panel.SetZIndex(fe, -10);
 		}
 
+		private void ItemsControl_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			e.Handled = true;
+		}
+
 	}
 }
