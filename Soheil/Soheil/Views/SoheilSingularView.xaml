@@ -2439,6 +2439,11 @@
                                 <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l2Brush}"/>
                                 <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtStoppageValue}" />
                                 <Rectangle Margin="5,2,50,0" Width="15" Fill="{StaticResource l3Brush}"/>
+                                <customControls:ImageButton 
+                                    ImageSource="/Soheil.Controls;component/Images/Return.png" 
+                                    Command="{Binding NavigateBackCommand}"
+                                    Visibility="{Binding OprVisibility}"
+                                    ToolTip="{Loc txtBack}"/>
                             </WrapPanel>
                             <Canvas/>
                         </DockPanel>
@@ -2449,18 +2454,11 @@
                                    DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}"
                                    Visibility="{Binding OprVisibility}">
                             <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel.OperatorProcessReport}"
-                                      Style="{StaticResource SoheilGroupBox}" Header="{Binding Title}" DockPanel.Dock="Top">
+                                      Style="{StaticResource SoheilCoverGroupBox}" Header="{Binding Title}">
                                 <Grid>
                                     <DocumentViewer Name="documentViewer" Document="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel.Document}" />
                                 </Grid>
                             </GroupBox>
-                            <Border Style="{StaticResource SoheilDarkCoverBorder}" DockPanel.Dock="Bottom">
-                                <WrapPanel Height="40">
-                                    <Button Content="{Loc txtPrint}" Command="{Binding PrintCommand}" CommandParameter="{Binding ElementName=dataGrid}"/>
-                                    <Button Content="{Loc txtBack}" Command="{Binding NavigateBackCommand}"/>
-                                </WrapPanel>
-                            </Border>
-                            <Canvas/>
                         </DockPanel>
                         <!-- operatorsReport -->
                         <DockPanel DockPanel.Dock="Right" >

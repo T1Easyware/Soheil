@@ -97,6 +97,7 @@
                     </Style>
                 </Table.Resources>
                 <Table.Columns>
+                    <TableColumn Width="80" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
@@ -104,8 +105,7 @@
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
+                    <TableColumn Width="50" />
                 </Table.Columns>
                 <TableRowGroup Style="{StaticResource headerFooterRowStyle}">
                     <TableRow>
@@ -446,7 +446,7 @@
                         </TableCell>
                         <TableCell>
                             <Paragraph>
-                                <document:InlineTableCellValue PropertyName="DefectionValue"/>
+                                <document:InlineTableCellValue PropertyName="StoppageValue"/>
                             </Paragraph>
                         </TableCell>
                     </document:TableRowForDataTable>
