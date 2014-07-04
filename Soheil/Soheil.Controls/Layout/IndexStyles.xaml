@@ -3,50 +3,77 @@
 					xmlns:I="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	
-	<Style x:Key="baseDetailStyle" TargetType="Border">
+	<Style x:Key="emptyDetailStyle" TargetType="Border">
+		<Setter Property="Background" Value="#2000"/>
 		<Setter Property="BorderBrush" Value="#222"/>
-		<Setter Property="Width" Value="30"/>
+		<Setter Property="BorderThickness" Value="1,1,1,0"/>
+		<Setter Property="Height" Value="100"/>
+		<Setter Property="Width" Value="48"/>
 	</Style>
-	<Style x:Key="emptyDetailStyle" TargetType="Border" BasedOn="{StaticResource baseDetailStyle}">
-		<Setter Property="Background" Value="Transparent"/>
-		<Setter Property="BorderThickness" Value="1"/>
-	</Style>
-	<Style x:Key="filledDetailStyle" TargetType="Border" BasedOn="{StaticResource baseDetailStyle}">
+	<Style x:Key="filledDetailStyle" TargetType="Border">
+		<Setter Property="VerticalAlignment" Value="Bottom"/>
+		<Setter Property="HorizontalAlignment" Value="Center"/>
 		<Setter Property="Background" Value="#ABC"/>
-		<Setter Property="BorderThickness" Value="1,0,1,1"/>
-	</Style>
-	<Style x:Key="filledDetailStyleHover" TargetType="Border" BasedOn="{StaticResource baseDetailStyle}">
-		<Setter Property="Background" Value="#CDE"/>
-		<Setter Property="BorderThickness" Value="1,0,1,1"/>
+		<Setter Property="BorderBrush" Value="#222"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Width" Value="48"/>
+		<Setter Property="Height" Value="{Binding Perc}"/>
 	</Style>
 
 	<Style TargetType="{x:Type local:OEEVerticalBar}">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type local:OEEVerticalBar}">
-					<DockPanel Width="40" ClipToBounds="True" Background="Transparent" ToolTip="{Binding Name}">
-						<TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" HorizontalAlignment="Center"/>
-						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="{Binding EmptyHeight, Converter={StaticResource portionToStarConverter}}"/>
-								<RowDefinition Height="{Binding FilledHeight, Converter={StaticResource portionToStarConverter}}"/>
-							</Grid.RowDefinitions>
-							<Border Style="{StaticResource emptyDetailStyle}"/>
-							<Border Style="{StaticResource filledDetailStyle}" Grid.Row="1" x:Name="filledBar">
-								<I:Interaction.Triggers>
-									<I:EventTrigger EventName="MouseDown">
-										<I:InvokeCommandAction Command="{Binding DeleteCommand}"/>
-									</I:EventTrigger>
-								</I:Interaction.Triggers>
+					<!-- one column -->
+					<StackPanel Background="#00CC" ToolTipService.ShowDuration="10000" ToolTipService.BetweenShowDelay="0" ToolTipService.InitialShowDelay="0" Margin="2">
+						<I:Interaction.Triggers>
+							<I:EventTrigger EventName="MouseDown">
+								<I:InvokeCommandAction Command="{Binding SelectCommand}"/>
+							</I:EventTrigger>
+						</I:Interaction.Triggers>
+						<StackPanel.Triggers>
+							<EventTrigger RoutedEvent="MouseEnter">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:.1">
+										<ColorAnimation Storyboard.TargetProperty="(StackPanel.Background).(SolidColorBrush.Color)" To="#50CC" Duration="0:0:.1"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+							<EventTrigger RoutedEvent="MouseLeave">
+								<BeginStoryboard>
+									<Storyboard Duration="0:0:.3">
+										<ColorAnimation Storyboard.TargetProperty="(StackPanel.Background).(SolidColorBrush.Color)" To="#00CC" Duration="0:0:.3"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</EventTrigger>
+						</StackPanel.Triggers>
+						<StackPanel.ToolTip>
+							<StackPanel>
+								<TextBlock Text="{Binding Text}"/>
+								<TextBlock Text="{Binding Perc, Converter={StaticResource percentConverter}}"/>
+								<TextBlock Text="{Binding Hours, Converter={StaticResource oeeHoursConverter}}"/>
+							</StackPanel>
+						</StackPanel.ToolTip>
+
+							<!-- cell -->
+							<Border Style="{StaticResource emptyDetailStyle}" IsHitTestVisible="False">
+								<Border Style="{StaticResource filledDetailStyle}">
+									<Canvas Width="0" Height="0" VerticalAlignment="Top" HorizontalAlignment="Left" IsHitTestVisible="False">
+										<Canvas.Effect>
+											<DropShadowEffect Color="White" BlurRadius="2" ShadowDepth="1"/>
+										</Canvas.Effect>
+										<TextBlock Text="{Binding Perc, Converter={StaticResource percentConverter}}" ClipToBounds="False"/>
+									</Canvas>
+								</Border>
 							</Border>
-							<TextBlock Text="{Binding Qty}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.RowSpan="2"/>
-						</Grid>
-					</DockPanel>
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsMouseOver" Value="True">
-							<Setter TargetName="filledBar" Property="Style" Value="{StaticResource filledDetailStyleHover}"/>
-						</Trigger>
-					</ControlTemplate.Triggers>
+							
+						
+						<TextBlock Text="{Binding Text}" Width="50" Height="40" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Gainsboro" TextWrapping="Wrap" TextAlignment="Center">
+							<TextBlock.Effect>
+								<DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1"/>
+							</TextBlock.Effect>
+						</TextBlock>
+					</StackPanel>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>

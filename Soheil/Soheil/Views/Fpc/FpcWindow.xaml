@@ -14,15 +14,18 @@
 			<ToolBar DockPanel.Dock="Top" Panel.ZIndex="999">
 				<!--main tools-->
 				<ToggleButton IsChecked="{Binding ToolSelection}">
-					<Image Style="{StaticResource SelectToolImage}"/>
+					<WrapPanel>
+						<Image Style="{StaticResource SelectToolImage}"/>
+						<TextBlock Text="انتخاب یا حرکت دادن" TextWrapping="Wrap" Width="50" FontSize="10"/>
+					</WrapPanel>
 				</ToggleButton>
-				<ToggleButton IsChecked="{Binding ToolState}">
+				<ToggleButton IsChecked="{Binding ToolState}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
 					<Grid>
-						<Rectangle Width="48" Height="16" Stroke="#00AAFF" Fill="#C0E0FF" RadiusX="5" RadiusY="5" />
-						<TextBlock Text="مرحله" Margin="9,0,0,0" />
+						<Rectangle Width="50" Height="20" Stroke="#00AAFF" Fill="#C0E0FF" RadiusX="5" RadiusY="5" />
+						<TextBlock Text="درج مرحله" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 					</Grid>
 				</ToggleButton>
-				<ToggleButton IsChecked="{Binding ToolConnector}">
+				<ToggleButton IsChecked="{Binding ToolConnector}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
 					<Grid>
 						<Line Width="40" Height="14"
 								X1="40" Y1="0" X2="0" Y2="13" 
@@ -33,6 +36,19 @@
 						<Line Width="40" Height="14"
 								X1="8.5" Y1="13.5" X2="0" Y2="13" 
 								Stroke="{StaticResource cyanBrush}" StrokeThickness="2" />
+						<TextBlock Text="اتصال" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+					</Grid>
+				</ToggleButton>
+				<ToggleButton IsChecked="{Binding ShowToolbox}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
+					<Grid Width="68">
+						<Image Style="{StaticResource ActivityImage}" HorizontalAlignment="Left"/>
+						<TextBlock Text="نمایش اجزای سازنده FPC" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
+					</Grid>
+				</ToggleButton>
+				<ToggleButton IsChecked="{Binding ShowAllMachines}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
+					<Grid Width="65">
+						<Image Style="{StaticResource MachineImage}" HorizontalAlignment="Left"/>
+						<TextBlock Text="نمایش همه ماشین ها" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
 					</Grid>
 				</ToggleButton>
 				<Separator/>
@@ -51,7 +67,8 @@
 				</ToggleButton>
 				<Separator/>
 				<!--save all Button-->
-				<Button Command="{Binding SaveAllCommand}">
+				<Button Command="{Binding SaveAllCommand}"
+					Visibility="{Binding Path=Access, Converter={StaticResource FullAccessTypeConverter}}">
 					<WrapPanel>
 						<Image Style="{StaticResource SaveImage}"/>
 						<TextBlock Text="ذخیره تغییرات"/>
@@ -59,7 +76,7 @@
 				</Button>
 				<Separator/>
 				<!--isDefault Button-->
-				<ToggleButton IsChecked="{Binding IsDefault}">
+				<ToggleButton IsChecked="{Binding IsDefault}" Visibility="{Binding Path=Access, Converter={StaticResource FullAccessTypeConverter}}">
 					<WrapPanel>
 						<TextBlock Text="FPC پیش فرض:" VerticalAlignment="Center"/>
 						<Image Style="{StaticResource IsDefaultImageStyle}"/>
@@ -69,7 +86,8 @@
 			<!--WorkArea-->
 			<Border BorderBrush="#5FFF" BorderThickness="2,0,2,2" CornerRadius="0,0,2,2">
 				<DockPanel>
-					<local:Toolbox DockPanel.Dock="Left" Panel.ZIndex="5" DataContext="{Binding}" DrawingArea="{Binding ElementName=DrawingArea}"/>
+					<local:Toolbox DockPanel.Dock="Left" Panel.ZIndex="5" DataContext="{Binding}" DrawingArea="{Binding ElementName=DrawingArea}"
+								   Visibility="{Binding Path=ShowToolbox, Converter={StaticResource booleanToVisibilityConverter}}"/>
 					<Canvas Style="{StaticResource GrabCanvasStyle}" TextBlock.Foreground="Black" Background="Transparent" Name="DrawingArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" MouseDown="DrawingArea_MouseDown" MouseWheel="DrawingArea_MouseWheel">
 						<Canvas.LayoutTransform>
 							<ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"/>

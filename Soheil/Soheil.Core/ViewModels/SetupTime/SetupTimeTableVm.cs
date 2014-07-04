@@ -17,6 +17,7 @@ namespace Soheil.Core.ViewModels.SetupTime
 		public SetupTimeTableVm(AccessType access)
 		{
 			Access = access;
+			CanEdit = (int)access >= (int)AccessType.Update;
 
 			RefreshAllCommand = new Commands.Command(o =>
 			{
@@ -30,11 +31,7 @@ namespace Soheil.Core.ViewModels.SetupTime
 					if (SelectedStation != null)
 					{
 						SelectedStation = Stations.FirstOrDefault(x => x.Id == SelectedStation.Id);
-						if (SelectedStation == null)
-							SelectedStation = Stations.First();
 					}
-					else
-						SelectedStation = Stations.First();
 				}
 			});
 
@@ -67,5 +64,16 @@ namespace Soheil.Core.ViewModels.SetupTime
 		}
 		public static readonly DependencyProperty RefreshAllCommandProperty =
 			DependencyProperty.Register("RefreshAllCommand", typeof(Commands.Command), typeof(SetupTimeTableVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates CanEdit
+		/// </summary>
+		public bool CanEdit
+		{
+			get { return (bool)GetValue(CanEditProperty); }
+			set { SetValue(CanEditProperty, value); }
+		}
+		public static readonly DependencyProperty CanEditProperty =
+			DependencyProperty.Register("CanEdit", typeof(bool), typeof(SetupTimeTableVm), new PropertyMetadata(true));
+
 	}
 }

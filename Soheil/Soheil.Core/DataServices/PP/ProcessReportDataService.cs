@@ -14,7 +14,7 @@ namespace Soheil.Core.DataServices
 	{
 		Repository<ProcessReport> _processReportRepository;
 		public ProcessReportDataService()
-			:this(new SoheilEdmContext())
+			: this(new SoheilEdmContext())
 		{
 		}
 		public ProcessReportDataService(SoheilEdmContext context)
@@ -40,7 +40,8 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(ProcessReport model)
 		{
-			_processReportRepository.Add(model);
+			if (!_processReportRepository.Exists(x => x.Id == model.Id))
+				_processReportRepository.Add(model);
 			return 0;
 		}
 
@@ -72,6 +73,77 @@ namespace Soheil.Core.DataServices
 			_processReportRepository.Delete(model);
 			Context.Commit();
 		}
+		/// <summary>
+		/// Delete all inner objects of a processReport but leave itself intact
+		/// </summary>
+		/// <param name="processReportModel"></param>
+		/// <param name="processReportRepository"></param>
+		/// <param name="defectionReportRepository"></param>
+		/// <param name="operatorDefectionReportRepository"></param>
+		/// <param name="stoppageReportRepository"></param>
+		/// <param name="operatorStoppageReportRepository"></param>
+		/// <param name="context"></param>
+		internal void ClearModel(
+			ProcessReport processReportModel,
+			Repository<ProcessReport> processReportRepository,
+			Repository<OperatorProcessReport> operatorProcessReportRepository,
+			Repository<DefectionReport> defectionReportRepository,
+			Repository<OperatorDefectionReport> operatorDefectionReportRepository,
+			Repository<StoppageReport> stoppageReportRepository,
+			Repository<OperatorStoppageReport> operatorStoppageReportRepository,
+			SoheilEdmContext context)
+		{
+			var operatorReports = processReportModel.OperatorProcessReports.ToArray();
+			foreach (var operatorReport in operatorReports)
+			{
+				operatorProcessReportRepository.Delete(operatorReport);
+			}
+			var defectionReports = processReportModel.DefectionReports.ToArray();
+			foreach (var defectionReportModel in defectionReports)
+			{
+				var operatorDefectionReports = defectionReportModel.OperatorDefectionReports.ToArray();
+				foreach (var operatorDefectionReportModel in operatorDefectionReports)
+				{
+					operatorDefectionReportRepository.Delete(operatorDefectionReportModel);
+				}
+				defectionReportRepository.Delete(defectionReportModel);
+			}
+			var stoppageReports = processReportModel.StoppageReports.ToArray();
+			foreach (var stoppageReportModel in stoppageReports)
+			{
+				var operatorStoppageReports = stoppageReportModel.OperatorStoppageReports.ToArray();
+				foreach (var operatorStoppageReportModel in operatorStoppageReports)
+				{
+					operatorStoppageReportRepository.Delete(operatorStoppageReportModel);
+				}
+				stoppageReportRepository.Delete(stoppageReportModel);
+			}
+		}
+		internal void Delete(StoppageReport Model)
+		{
+			var stoppageReportRepository = new Repository<StoppageReport>(Context);
+			var operatorStoppageReportRepository = new Repository<OperatorStoppageReport>(Context);
+
+			var operatorStoppageReports = Model.OperatorStoppageReports.ToArray();
+			foreach (var operatorStoppageReportModel in operatorStoppageReports)
+			{
+				operatorStoppageReportRepository.Delete(operatorStoppageReportModel);
+			}
+			stoppageReportRepository.Delete(Model);
+		}
+		internal void Delete(DefectionReport Model)
+		{
+			var defectionReportRepository = new Repository<DefectionReport>(Context);
+			var operatorDefectionReportRepository = new Repository<OperatorDefectionReport>(Context);
+
+			var operatorDefectionReports = Model.OperatorDefectionReports.ToArray();
+			foreach (var operatorDefectionReportModel in operatorDefectionReports)
+			{
+				operatorDefectionReportRepository.Delete(operatorDefectionReportModel);
+			}
+			defectionReportRepository.Delete(Model);
+		}
+
 
 		public void AttachModel(ProcessReport model)
 		{
@@ -114,43 +186,37 @@ namespace Soheil.Core.DataServices
 		public void Save(ProcessReport model)
 		{
 			//correct Defections
-			var drRepo = new Repository<DefectionReport>(Context);
 			var odrRepo = new Repository<OperatorDefectionReport>(Context);
-			foreach (var dr in model.DefectionReports.ToArray())
+			var garbage = odrRepo.Find(x => x.DefectionReport == null || x.DefectionReport.ProductDefection == null || x.Operator == null).ToArray();
+			foreach (var item in garbage)
 			{
-				foreach (var odr in dr.OperatorDefectionReports.ToArray())
-				{
-					if(odr.Operator == null)
-					{
-						dr.OperatorDefectionReports.Remove(odr);
-						odrRepo.Delete(odr);
-					}
-				}
-				if (dr.ProductDefection == null)
-				{
-					model.DefectionReports.Remove(dr);
-					drRepo.Delete(dr);
-				}
+				if (item.DefectionReport != null) item.DefectionReport.OperatorDefectionReports.Remove(item);
+				odrRepo.Delete(item);
+			}
+
+			var drRepo = new Repository<DefectionReport>(Context);
+			var garb = drRepo.Find(x => x.ProcessReport == null || x.ProductDefection == null).ToArray();
+			foreach (var item in garb)
+			{
+				if (item.ProcessReport != null) item.ProcessReport.DefectionReports.Remove(item);
+				drRepo.Delete(item);
 			}
 
 			//correct Stoppages
-			var srRepo = new Repository<StoppageReport>(Context);
 			var osrRepo = new Repository<OperatorStoppageReport>(Context);
-			foreach (var sr in model.StoppageReports.ToArray())
+			var garbage2 = osrRepo.Find(x => x.StoppageReport == null || x.StoppageReport.Cause == null || x.Operator == null).ToArray();
+			foreach (var item in garbage2)
 			{
-				foreach (var osr in sr.OperatorStoppageReports.ToArray())
-				{
-					if (osr.Operator == null)
-					{
-						sr.OperatorStoppageReports.Remove(osr);
-						osrRepo.Delete(osr);
-					}
-				}
-				if (sr.Cause == null)
-				{
-					model.StoppageReports.Remove(sr);
-					srRepo.Delete(sr);
-				}
+				if (item.StoppageReport != null) item.StoppageReport.OperatorStoppageReports.Remove(item);
+				osrRepo.Delete(item);
+			}
+
+			var srRepo = new Repository<StoppageReport>(Context);
+			var garb2 = srRepo.Find(x => x.ProcessReport == null || x.Cause == null).ToArray();
+			foreach (var item in garb2)
+			{
+				if (item.ProcessReport != null) item.ProcessReport.StoppageReports.Remove(item);
+				srRepo.Delete(item);
 			}
 
 			//correct G1
@@ -163,49 +229,6 @@ namespace Soheil.Core.DataServices
 			Context.Commit();
 		}
 
-		/// <summary>
-		/// Delete all inner objects of a processReport but leave itself intact
-		/// </summary>
-		/// <param name="processReportModel"></param>
-		/// <param name="processReportRepository"></param>
-		/// <param name="defectionReportRepository"></param>
-		/// <param name="operatorDefectionReportRepository"></param>
-		/// <param name="stoppageReportRepository"></param>
-		/// <param name="operatorStoppageReportRepository"></param>
-		/// <param name="context"></param>
-		internal void ClearModel(
-			ProcessReport processReportModel,
-			Repository<ProcessReport> processReportRepository,
-			Repository<OperatorProcessReport> operatorProcessReportRepository, 
-			Repository<DefectionReport> defectionReportRepository, 
-			Repository<OperatorDefectionReport> operatorDefectionReportRepository, 
-			Repository<StoppageReport> stoppageReportRepository, 
-			Repository<OperatorStoppageReport> operatorStoppageReportRepository, 
-			SoheilEdmContext context)
-		{
-			var operatorReports = processReportModel.OperatorProcessReports.ToArray();
-			foreach (var operatorReport in operatorReports)
-			{
-				operatorProcessReportRepository.Delete(operatorReport);
-			}
-			var defectionReports = processReportModel.DefectionReports.ToArray();
-			foreach (var defectionReportModel in defectionReports)
-			{
-				var operatorDefectionReports = defectionReportModel.OperatorDefectionReports.ToArray();
-				foreach (var operatorDefectionReportModel in operatorDefectionReports)
-					operatorDefectionReportRepository.Delete(operatorDefectionReportModel);
-				defectionReportRepository.Delete(defectionReportModel);
-			}
-			var stoppageReports = processReportModel.StoppageReports.ToArray();
-			foreach (var stoppageReportModel in stoppageReports)
-			{
-				var operatorStoppageReports = stoppageReportModel.OperatorStoppageReports.ToArray();
-				foreach (var operatorStoppageReportModel in operatorStoppageReports)
-					operatorStoppageReportRepository.Delete(operatorStoppageReportModel);
-				stoppageReportRepository.Delete(stoppageReportModel);
-			}
-		}
-
-
+	
 	}
 }

@@ -116,12 +116,12 @@
 
 		<DataTemplate x:Key="templateCheckboxCell" DataType="{x:Type vm:CheckboxCell}">
 			<Border Background="{Binding Row.Product.Color}">
-				<CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center" IsEnabled="{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType={x:Type v:SetupTimeTable}}}"/>
 			</Border>
 		</DataTemplate>
 		<DataTemplate x:Key="templateWarmupCell" DataType="{x:Type vm:WarmupCell}">
 			<Border Background="{Binding Row.Product.Color}" MinWidth="75">
-				<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7"
+				<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7" IsEnabled="{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType={x:Type v:SetupTimeTable}}}"
 						 Visibility="{Binding Row.IsDurationsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 					<TextBox.Triggers>
 						<EventTrigger RoutedEvent="MouseEnter">
@@ -161,7 +161,7 @@
 				<Grid>
 					<Border Background="{Binding CrossColors.HorColor}" Height="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 					<Border Background="{Binding CrossColors.VertColor}" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
-					<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7" x:Name="txt"
+					<TextBox Text="{Binding DurationText}" Margin="2" Opacity="0.7" x:Name="txt" IsEnabled="{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType={x:Type v:SetupTimeTable}}}"
 								Visibility="{Binding Path=Row.IsDurationsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 						<TextBox.Triggers>
 							<EventTrigger RoutedEvent="MouseEnter">

@@ -95,7 +95,6 @@
 		<Border.ContextMenu>
 			<ContextMenu FlowDirection="RightToLeft">
 				<MenuItem Header="گزارش" Command="{Binding EditReportCommand}"/>
-				<MenuItem Header="بارگذاری مجدد" Command="{Binding ReloadBlockCommand}"/>
 				<Separator/>
 				<MenuItem Header="ویرایش Task" Command="{Binding EditItemCommand}"/>
 				<MenuItem Header="افزودن Task به ویرایشگر" Command="{Binding AddBlockToEditorCommand}"/>

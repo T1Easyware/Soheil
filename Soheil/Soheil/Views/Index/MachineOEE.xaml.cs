@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soheil.Core.ViewModels.Index;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,11 @@ namespace Soheil.Views.Index
 			var fe = sender as UIElement;
 			fe.ClipToBounds = true;
 			Panel.SetZIndex(fe, -10);
+		}
+
+		private void ItemsControl_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			e.Handled = true;
 		}
 
 	}

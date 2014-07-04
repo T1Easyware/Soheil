@@ -133,32 +133,18 @@ namespace Soheil.Views
             _mouseIsUp = true;
         }
 
-        private void RepeatButtonLClick(object sender, RoutedEventArgs e)
-        {
-            _dragStartX = -1;
-            _mouseIsUp = true;
-            const double offset = -0.2;
+		private void RepeatButtonClick(object sender, RoutedEventArgs e)
+		{
+			_dragStartX = -1;
+			_mouseIsUp = true;
 
-            _currentSlider = (FrameworkElement)sender;
-            _currentScrollViewer = (DateTimeScrollViewer)((FrameworkElement)_currentSlider.TemplatedParent).TemplatedParent;
+			_currentSlider = (FrameworkElement)sender;
+			_currentScrollViewer = (DateTimeScrollViewer)((FrameworkElement)_currentSlider.TemplatedParent).TemplatedParent;
 
-            BarChartViewer.MoveCenterBy(5 * offset, _currentScrollViewer.ScrollableWidth);
-                //BarChartViewer.CenterPoint += (5 * offset);
-
-        }
-        private void RepeatButtonRClick(object sender, RoutedEventArgs e)
-        {
-            _dragStartX = -1;
-            _mouseIsUp = true;
-            const double offset = 0.2;
-
-            _currentSlider = (FrameworkElement)sender;
-            _currentScrollViewer = (DateTimeScrollViewer)((FrameworkElement)_currentSlider.TemplatedParent).TemplatedParent;
-
-            BarChartViewer.MoveCenterBy(5 * offset, _currentScrollViewer.ScrollableWidth);
-                //BarChartViewer.CenterPoint += (5 * offset);
-
-        }
+			double offset = (_currentSlider.Tag == "L") ? -0.2 : 0.2;
+			BarChartViewer.MoveCenterBy(5 * offset, _currentScrollViewer.ScrollableWidth);
+			//BarChartViewer.CenterPoint += (5 * offset);
+		}
         private void RectangleMouseDown(object sender, MouseButtonEventArgs e)
         {
             _currentSlider = (FrameworkElement)sender;
@@ -398,9 +384,19 @@ namespace Soheil.Views
 
         #endregion
 
-		private void line_Loaded(object sender, RoutedEventArgs e)
-		{
 
+		private void oeeClicked(object sender, RoutedEventArgs e)
+		{
+			var control = (sender as FrameworkElement).Tag as Control;
+			if (control != null)
+				control.Tag = "oee";
+		}
+
+		private void generalClicked(object sender, RoutedEventArgs e)
+		{
+			var control = (sender as FrameworkElement).Tag as Control;
+			if (control != null)
+				control.Tag = "general";
 		}
 
 	}

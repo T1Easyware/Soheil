@@ -70,7 +70,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			//update operators quicklist (readonly list inside a process rectangle)
 			//also update SelectedOperatorsCount of a process
 			OperatorManager.SelectionChanged += OperatorManager_SelectionChanged;
+			OperatorManager.ErrorOccured += OperatorManager_ErrorOccured;
 		}
+
 
 		/// <summary>
 		/// Performs required operations for a new task (or after station is changed)
@@ -164,7 +166,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					processVm.Timing.DurationSeconds = (int)(processVm.Timing.TargetPoint * newChoice.CycleTime);
 			}
 		}
-	
+		void OperatorManager_ErrorOccured(string msg)
+		{
+			Message.ResetEmbeddedException();
+			Message.AddEmbeddedException(msg);
+		}
+
 		//Selection is for user selection only (not automatic selection)
 		void OperatorManager_SelectionChanged(OperatorEditorVm vm, bool isSelected, bool updateCount)
 		{
@@ -283,7 +290,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			var nptDs = new DataServices.NPTDataService(_uow);
 
 			//recalc Start/End/Duration
-			Model.StartDateTime = StartDate.Add(StartTime);
+			Model.StartDateTime = task.Processes.Min(x => x.StartDateTime);
 			if (task.Processes.Any())
 				Model.EndDateTime = task.Processes.Max(x => x.EndDateTime);
 			else
@@ -291,7 +298,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			Model.DurationSeconds = (int)(Model.EndDateTime - Model.StartDateTime).TotalSeconds;
 			if(Model.DurationSeconds < 300)
 			{
-				if (MessageBox.Show("طول برنامه کمتر از 5 دقیقه است", "هشدار", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes)
+				if (MessageBox.Show("طول برنامه کمتر از 5 دقیقه است.\nپیشنهاد می شود که گزینه خیر را انتخاب و اطلاعات وارد شده را دوباره بررسی کنید", "هشدار", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No)
 					== MessageBoxResult.No) return;
 			}
 
@@ -316,7 +323,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					_blockDataService.AddModel(Model);
 				}
 				else
-					throw new Exception("هیچ برنامه ای در ایستگاه وجود ندارد (گزینه موازی را انتخاب کنید)");
+					throw new Exception("هیچ برنامه ای در ایستگاه وجود ندارد (گزینه موازی را از بالای صفحه انتخاب کنید)");
 			}
 			else if (IsFirstSpace)
 			{

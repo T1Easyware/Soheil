@@ -57,11 +57,17 @@ namespace Soheil.Core.ViewModels
             set { _model.Code = value; OnPropertyChanged("Code"); }
         }
 
-        public Status Status
-        {
-            get { return (Status) _model.Status; }
-            set { _model.Status = (byte)value; }
-        }
+		public bool HasOEE
+		{
+			get { return _model.HasOEE; }
+			set { _model.HasOEE = value; }
+		}
+
+		public Status Status
+		{
+			get { return (Status)_model.Status; }
+			set { _model.Status = (byte)value; }
+		}
 
         public DateTime CreatedDate
         {

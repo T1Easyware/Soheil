@@ -75,12 +75,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				else
 					dt = GetTaskStart();
 
+				var minMH = ssaGroup.Min(x => x.ManHour);
+
 				var processVm = new ProcessEditorVm(
 					new Model.Process
 					{
 						StartDateTime = dt,
 						EndDateTime = dt,
-						StateStationActivity = ssaGroup.First(),
+						StateStationActivity = ssaGroup.First(x=>x.ManHour == minMH),
 						TargetCount = 0,
 						Task = task,
 					}, Model, uow);//activity Model is set here

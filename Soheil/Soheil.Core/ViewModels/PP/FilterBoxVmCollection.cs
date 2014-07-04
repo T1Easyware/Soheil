@@ -62,11 +62,24 @@ namespace Soheil.Core.ViewModels.PP
 		/// </summary>
 		/// <param name="operatorVms">ViewModels for operators to be added to the filterBox</param>
 		/// <param name="model">Model of an existing ODR or OSR model used to create this FilterBox</param>
-		private void AddOperator(FilterableItemVm[] operatorVms, dynamic model = null)
+		private void AddOperator(FilterableItemVm[] operatorVms, object model = null)
 		{
-			int operId = model == null ? 0 : model.Operator.Id;
+			int operId = 0;
+			if (model is Model.OperatorDefectionReport)
+			{
+				var odr = (model as Model.OperatorDefectionReport);
+				operId = odr.Operator.Id;
+			}
+			else if (model is Model.OperatorStoppageReport)
+			{
+				var osr = (model as Model.OperatorStoppageReport);
+				operId = osr.Operator.Id;
+			}
+
+
 			var fb = FilterBoxVm.CreateForGuiltyOperators(this, operId, operatorVms);
 			fb.Model = model;
+
 
 			fb.FilterableItemSelected += (vm, oldOp, newOp) =>
 			{
@@ -82,6 +95,9 @@ namespace Soheil.Core.ViewModels.PP
 				if (OperatorRemoved != null)
 					OperatorRemoved(vm);
 			};
+
+			if (fb.SelectedItem == null) fb.SelectedItem = fb.FilteredList.FirstOrDefault();
+
 			FilterBoxes.Add(fb);
 		}
 
@@ -156,16 +172,23 @@ namespace Soheil.Core.ViewModels.PP
 			vm.FilterBoxes.Add(causeL3Box);
 
 			//select the default cause
-			if (selectedIds != null)
+			try
 			{
-				try
+				if (selectedIds != null)
 				{
+
 					causeL1Box.SelectedItem = causeL1Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[0]);
 					causeL2Box.SelectedItem = causeL2Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[1]);
 					causeL3Box.SelectedItem = causeL3Box.FilteredList.FirstOrDefault(x => x.Id == selectedIds[2]);
 				}
-				catch { }
+				else
+				{
+					causeL1Box.SelectedItem = causeL1Box.FilteredList.FirstOrDefault();
+					causeL2Box.SelectedItem = causeL2Box.FilteredList.FirstOrDefault();
+					causeL3Box.SelectedItem = causeL3Box.FilteredList.FirstOrDefault();
+				}
 			}
+			catch { }
 
 			vm.AddCommand = new Commands.Command(o => { });
 			return vm;

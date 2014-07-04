@@ -110,8 +110,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					return;
 				}
 
-				ShowAllMachines = true;
 				IsSelected = true;
+
+				if (ShowAllMachines) return;
+				ShowAllMachines = true;
 				MachineFamilyList.Clear();
 
 				//Load Model
@@ -164,6 +166,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			SelectedOperators.CollectionChanged += (s, e) =>
 			{
 				SelectedOperatorsCount = SelectedOperators.Count;
+				if (SelectedOperatorsCountChanged != null)
+					SelectedOperatorsCountChanged(this, SelectedOperators.Count);
 			};
 			#endregion
 
@@ -259,22 +263,15 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		private ObservableCollection<OperatorVm> _selectedOperators = new ObservableCollection<OperatorVm>();
 		/// <summary>
 		/// Gets or sets the bindable number of used operators in this process
-		/// <para>If set to same value again, before happening a reset to -1 happens to ensure callback</para>
 		/// </summary>
 		public int SelectedOperatorsCount
 		{
 			get { return (int)GetValue(SelectedOperatorsCountProperty); }
-			set { SetValue(SelectedOperatorsCountProperty, -1); SetValue(SelectedOperatorsCountProperty, value); }
+			set { SetValue(SelectedOperatorsCountProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedOperatorsCountProperty =
 			DependencyProperty.Register("SelectedOperatorsCount", typeof(int), typeof(ProcessEditorVm),
-			new UIPropertyMetadata(0, (d, e) =>
-			{
-				var vm = (ProcessEditorVm)d;
-				if ((int)e.NewValue == -1) return;
-				if (vm.SelectedOperatorsCountChanged != null)
-					vm.SelectedOperatorsCountChanged(vm, (int)e.NewValue);
-			}));
+			new UIPropertyMetadata(0));
 		/// <summary>
 		/// Gets or sets a bindable value that indicate whether Manhour does not match the number of operators assigned to this choice
 		/// <para>This could be true when an auto planning considered this choice but not able to assign operators yet</para>
@@ -300,7 +297,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public ChoiceEditorVm SelectedChoice
 		{
 			get { return (ChoiceEditorVm)GetValue(SelectedChoiceProperty); }
-			set { SetValue(SelectedChoiceProperty, value); }
+			set { SetValue(SelectedChoiceProperty, null); SetValue(SelectedChoiceProperty, value); }
 		}
 		public static readonly DependencyProperty SelectedChoiceProperty =
 			DependencyProperty.Register("SelectedChoice", typeof(ChoiceEditorVm), typeof(ProcessEditorVm),

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,5 +64,12 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DescriptionProperty =
 			DependencyProperty.Register("Description", typeof(string), typeof(JobVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable collection that indicates Products
+		/// </summary>
+		public ObservableCollection<ProductVm> Products { get { return _productdVm; } }
+		private ObservableCollection<ProductVm> _productdVm = new ObservableCollection<ProductVm>();
+
+
 	}
 }

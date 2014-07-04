@@ -114,8 +114,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 		/// </summary>
 		public void LoadInnerData()
 		{
-			var model = _processReportDataService.GetSingleFull(Id);
-			if (model != null) Model = model;
+			_isInInitializingPhase = true;
+
 			_processReportDataService.CorrectOperatorReports(Model);
 			OperatorReports.Reset();
 			foreach (var opr in Model.OperatorProcessReports)
@@ -138,23 +138,43 @@ namespace Soheil.Core.ViewModels.PP.Report
 				StoppageReports.List.Add(new StoppageReportVm(StoppageReports, stp));
 			}
 			StoppageCount = (int)Model.StoppageReports.Sum(x => x.CountEquivalence);
+			_isInInitializingPhase = false;
 		}
 		/// <summary>
 		/// Saves this viewModel
 		/// </summary>
-		public void Save(bool onlyCommit = true)
+		public bool Save(bool onlyCommit = true)
 		{
-			if (_isInInitializingPhase || IsUserDrag) return;
-			
-			//attach
-			if (Model.Id == 0)
+			if (_isInInitializingPhase || IsUserDrag) return false;
+
+			try
+			{
+				//attach
 				_processReportDataService.AddModel(Model);
-			
-			//saving scope
-			if (onlyCommit)
-				UOW.Commit();
-			else
-				_processReportDataService.Save(Model);
+
+				//saving scope
+				if (onlyCommit)
+					UOW.Commit();
+				else
+				{
+					if (StoppageReports.List.Any(x => x.StoppageLevels.FilterBoxes.Last().SelectedItem == null))
+						throw new Exception("علت توقف سطح سوم انتخاب نشده است");
+					if (DefectionReports.List.Any(x => x.ProductDefection.SelectedItem == null))
+						throw new Exception("نوع عیب انتخاب نشده است");
+					if (StoppageReports.List.Any(x => x.GuiltyOperators.FilterBoxes.Any(f => f.SelectedItem == null)))
+						throw new Exception("اپراتور مقصر در توقفات انتخاب نشده است");
+					if (DefectionReports.List.Any(x => x.GuiltyOperators.FilterBoxes.Any(f => f.SelectedItem == null)))
+						throw new Exception("اپراتور مقصر در ضایعات انتخاب نشده است");
+					else
+						_processReportDataService.Save(Model);
+				}
+			}
+			catch (Exception ex)
+			{
+				Message.AddEmbeddedException(ex);
+				return false;
+			}
+			return true;
 		}
 		#endregion
 
@@ -209,6 +229,27 @@ namespace Soheil.Core.ViewModels.PP.Report
 				vm.updateEmptyCount(g1: (int)e.NewValue);
 				vm.Save();
 			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ReportInconsistency
+		/// </summary>
+		public string ReportInconsistency
+		{
+			get { return (string)GetValue(ReportInconsistencyProperty); }
+			set { SetValue(ReportInconsistencyProperty, value); }
+		}
+		public static readonly DependencyProperty ReportInconsistencyProperty =
+			DependencyProperty.Register("ReportInconsistency", typeof(string), typeof(ProcessReportVm), new PropertyMetadata("---"));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ReportInconsistencyDuration
+		/// </summary>
+		public string ReportInconsistencyDuration
+		{
+			get { return (string)GetValue(ReportInconsistencyDurationProperty); }
+			set { SetValue(ReportInconsistencyDurationProperty, value); }
+		}
+		public static readonly DependencyProperty ReportInconsistencyDurationProperty =
+			DependencyProperty.Register("ReportInconsistencyDuration", typeof(string), typeof(ProcessReportVm), new PropertyMetadata(""));
+
 		//SumOfProducedG1 Dependency Property
 		public int SumOfProducedG1
 		{
@@ -220,10 +261,9 @@ namespace Soheil.Core.ViewModels.PP.Report
 			new UIPropertyMetadata(0, (d, e) =>
 			{
 				var vm = (ProcessReportVm)d;
-				if ((int)e.NewValue > vm.ProducedG1) 
-					vm.ProducedG1 = (int)e.NewValue;
-				vm.Model.ProducedG1 = (int)e.NewValue;
-				vm.Save();
+				var val = (int)e.NewValue;
+				if (vm._isInInitializingPhase) return;
+				vm.ProducedG1 = val;
 			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates the TargetPoint for each operator
@@ -310,6 +350,31 @@ namespace Soheil.Core.ViewModels.PP.Report
 				(g1 < 0 ? Model.ProducedG1 : g1) -
 				(def < 0 ? DefectionCount : def) -
 				(stop < 0 ? StoppageCount : stop);
+
+			var ri = Model.ProcessReportTargetPoint - Model.ProducedG1 - DefectionCount - StoppageCount;
+			if (ri == 0)
+			{
+				ReportInconsistency = "ندارد";
+				ReportInconsistencyDuration = "";
+			}
+			else if (ri > 0)
+			{
+				ReportInconsistency = string.Format("{0} کسری", ri);
+				var ts = TimeSpan.FromSeconds(ri * Model.Process.StateStationActivity.CycleTime);
+				if (ts.TotalDays < 1)
+					ReportInconsistencyDuration = string.Format("({0:hh\\:mm\\:ss})", ts);
+				else
+					ReportInconsistencyDuration = string.Format("({0:dd\\:hh\\:mm\\:ss})", ts);
+			}
+			else if (ri < 0)
+			{
+				ReportInconsistency = string.Format("{0} مازاد", -ri);
+				var ts = TimeSpan.FromSeconds(-ri * Model.Process.StateStationActivity.CycleTime);
+				if (ts.TotalDays < 1)
+					ReportInconsistencyDuration = string.Format("({0:hh\\:mm\\:ss})", ts);
+				else
+					ReportInconsistencyDuration = string.Format("({0:dd\\:hh\\:mm\\:ss})", ts);
+			}
 		}
 		#endregion
 
@@ -353,8 +418,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			CloseCommand = new Commands.Command(o => IsSelected = false);
 			SaveCommand = new Commands.Command(o =>
 			{
-				Save(o != null);
-				IsSelected = false;
+				IsSelected = !Save(o != null);
 				//reload all process reports for the block
 				if (LayoutChanged != null) 
 					LayoutChanged();

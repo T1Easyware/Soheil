@@ -35,7 +35,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Selected OperatorDefectionReport Model or OperatorStoppageReport Model
 		/// </summary>
-		public dynamic Model { get; set; }
+		public object Model { get; set; }
 
 		/// <summary>
 		/// Creates an instance of FilterBoxVm

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
@@ -121,11 +122,23 @@ namespace Soheil.Core.ViewModels
             ChildNodes = new ObservableCollection<IEntityNode>();
         }
 
-        public override void Save(object param)
-        {
-            CauseDataService.AttachModel(_model);
-            _model = CauseDataService.GetSingle(_model.Id); OnPropertyChanged("ModifiedBy");OnPropertyChanged("ModifiedDate");Mode = ModificationStatus.Saved;
-        }
+		public override void Save(object param)
+		{
+			var cobranches = CauseDataService.GetActives().Where(x => x != _model && x.Parent == _model.Parent);
+			var duplicate = cobranches.FirstOrDefault(x => x.Code == Code);
+			if (duplicate != null)
+			{
+				Code = (byte)(cobranches.Max(x => x.Code) + 1);
+				System.Windows.MessageBox.Show("تمام زیرشاخه های هر علت توقف، بایستی کد منحصر به فرد داشته باشند", duplicate.Name, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+			}
+			if (_model.Code > 99)
+			{
+				Code = 99;
+				System.Windows.MessageBox.Show("کد بایستی بین 0 و 99 باشد", Name, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+			}
+			CauseDataService.AttachModel(_model);
+			_model = CauseDataService.GetSingle(_model.Id); OnPropertyChanged("ModifiedBy"); OnPropertyChanged("ModifiedDate"); Mode = ModificationStatus.Saved;
+		}
 
         public override bool CanSave()
         {

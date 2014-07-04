@@ -21,6 +21,18 @@ namespace Soheil.Core.ViewModels.Fpc
 		Dal.SoheilEdmContext _uow;
 
 		/// <summary>
+		/// Gets or sets a bindable value that indicates Access
+		/// </summary>
+		public AccessType Access
+		{
+			get { return (AccessType)GetValue(AccessProperty); }
+			set { SetValue(AccessProperty, value); }
+		}
+		public static readonly DependencyProperty AccessProperty =
+			DependencyProperty.Register("Access", typeof(AccessType), typeof(FpcWindowVm), new PropertyMetadata(AccessType.None));
+
+
+		/// <summary>
 		/// Gets the DataService instance for this fpc
 		/// </summary>
 		public FPCDataService fpcDataService { get; protected set; }
@@ -133,8 +145,10 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// Updates the ViewModel to FPC Model with the given Id
 		/// </summary>
 		/// <param name="id">The id of the FPC Model which is used for updating the FpcWindowVm</param>
-		public void ChangeFpcByFpcId(int fpcId)
+		public void ChangeFpcByFpcId(int fpcId, AccessType access)
 		{
+			Access = access;
+			ShowToolbox = true;//if access denied, value will be coerced
 			//clear all fpc data from the view model and reloads stations and activities
 			ResetFPC();
 			//set model
@@ -316,6 +330,57 @@ namespace Soheil.Core.ViewModels.Fpc
 
 		#region OnScreenToolbox (stations, activities, machines)
 		/// <summary>
+		/// Gets or sets a bindable value that indicates ShowToolbox
+		/// </summary>
+		public bool ShowToolbox
+		{
+			get { return (bool)GetValue(ShowToolboxProperty); }
+			set { SetValue(ShowToolboxProperty, value); }
+		}
+		public static readonly DependencyProperty ShowToolboxProperty =
+			DependencyProperty.Register("ShowToolbox", typeof(bool), typeof(FpcWindowVm), new PropertyMetadata(false, (d, e) => { }, (d, v) =>
+			{
+				var vm = (FpcWindowVm)d;
+				var val = (bool)v;
+				if ((vm.Access & AccessType.Update) == AccessType.Update) return v;
+				else return false;
+			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ShowAllMachines
+		/// </summary>
+		public bool ShowAllMachines
+		{
+			get { return (bool)GetValue(ShowAllMachinesProperty); }
+			set { SetValue(ShowAllMachinesProperty, value); }
+		}
+		public static readonly DependencyProperty ShowAllMachinesProperty =
+			DependencyProperty.Register("ShowAllMachines", typeof(bool), typeof(FpcWindowVm),
+			new PropertyMetadata(false, (d, e) =>
+			{
+				var vm = (FpcWindowVm)d;
+				if ((bool)e.NewValue)
+				{
+					IEnumerable<Model.MachineFamily> list;
+					if (vm._uow == null)
+						list = new DataServices.MachineFamilyDataService().GetActives();
+					else
+						list = new DataServices.MachineFamilyDataService(vm._uow).GetActives();
+					vm._allMachineFamilies = new List<MachineFamilyVm>();
+					foreach (var mf in list)
+					{
+						var mfvm = new MachineFamilyVm(mf);
+						foreach (var m in mf.Machines.Where(x=>x.Status == (byte)Status.Active))
+						{
+							mfvm.Machines.Add(new MachineVm(m, mfvm));
+						}
+						vm._allMachineFamilies.Add(mfvm);
+					}
+				}
+				vm.OnStationSelected(vm.FocusedStateStation);
+			}));
+
+
+		/// <summary>
 		/// The bindable clone of a ToolboxItem which is being dragged by the mouse
 		/// </summary>
 		public ToolboxItemVm SelectedToolboxItem
@@ -431,7 +496,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// </summary>
 		public ObservableCollection<MachineFamilyVm> MachineFamilies { get { return _machineFamilies; } }
 		private ObservableCollection<MachineFamilyVm> _machineFamilies = new ObservableCollection<MachineFamilyVm>();
-
+		List<MachineFamilyVm> _allMachineFamilies;
 		#endregion
 
 		#region Menu bar items
@@ -614,23 +679,33 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			MachineFamilies.Clear();
 			if (ss == null) return;
-			foreach (var item in (ss.Containment as StationVm).StationMachines)
+			if (ShowAllMachines)
 			{
-				//find existing family
-				var family = MachineFamilies.FirstOrDefault(x => x.Id == item.Machine.Family.Id);
-
-				//if family is not yet added, clear its machines and then add it
-				if (family == null)
+				foreach (var mf in _allMachineFamilies)
 				{
-					family = item.Machine.Family;
-					family.Machines.Clear();
-					MachineFamilies.Add(family);
+					MachineFamilies.Add(mf);
 				}
-
-				//make sure the machine exists in that family
-				if (!family.Machines.Any(x => x.Id == item.Machine.Id))
+			}
+			else
+			{
+				foreach (var item in (ss.Containment as StationVm).StationMachines)
 				{
-					family.Machines.Add(item.Machine);
+					//find existing family
+					var family = MachineFamilies.FirstOrDefault(x => x.Id == item.Machine.Family.Id);
+
+					//if family is not yet added, clear its machines and then add it
+					if (family == null)
+					{
+						family = item.Machine.Family;
+						family.Machines.Clear();
+						MachineFamilies.Add(family);
+					}
+
+					//make sure the machine exists in that family
+					if (!family.Machines.Any(x => x.Id == item.Machine.Id))
+					{
+						family.Machines.Add(item.Machine);
+					}
 				}
 			}
 		}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soheil.Core.ViewModels.Index;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,9 @@ namespace Soheil.Views.Index
 		public OEE()
 		{
 			InitializeComponent();
+			ViewModel = new OeeVm(Common.AccessType.Full);
+			DataContext = ViewModel;
 		}
-
+		public OeeVm ViewModel { get; set; }
 	}
 }

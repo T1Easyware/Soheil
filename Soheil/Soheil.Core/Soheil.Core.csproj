@@ -98,6 +98,8 @@
     <Compile Include="DataServices\SetupTime\WarmupDataService.cs" />
     <Compile Include="DataServices\OrganizationCalendar\WorkProfileDataService.cs" />
     <Compile Include="Fpc\StateTemplateSelector.cs" />
+    <Compile Include="Index\OeeRecordDetail.cs" />
+    <Compile Include="Index\OeeType.cs" />
     <Compile Include="Interfaces\IBarChartViewer.cs" />
     <Compile Include="Interfaces\IEntityCollection.cs" />
     <Compile Include="Interfaces\IReportBarVm.cs" />
@@ -141,6 +143,12 @@
     <Compile Include="Reports\OperatorBarInfo.cs" />
     <Compile Include="Reports\OperatorBarProvider.cs" />
     <Compile Include="Reports\OperatorBarSlideProvider.cs" />
+    <Compile Include="ViewModels\Index\IndexTime.cs" />
+    <Compile Include="Index\OeeRecord.cs" />
+    <Compile Include="ViewModels\Index\OeeMachineDetailVm.cs" />
+    <Compile Include="ViewModels\Index\OeeMachineFamilyVm.cs" />
+    <Compile Include="ViewModels\Index\OeeMachineVm.cs" />
+    <Compile Include="ViewModels\Index\OeeVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
     <Compile Include="ViewModels\Reports\OprActivityDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />

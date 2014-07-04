@@ -357,7 +357,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 
 			//notify parents to save database
-			if (stateVm != null)
+			if (stateVm != null && (stateVm.ParentWindowVm.Access & AccessType.Update) == AccessType.Update)
 				stateVm.OnModelChanged();
 		}
 		#endregion

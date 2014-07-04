@@ -25,6 +25,10 @@
 				</Grid.RowDefinitions>
 
 				<DockPanel>
+					<Border DockPanel.Dock="Top" Visibility="{Binding Message.HasException, Converter={StaticResource booleanToVisibilityConverter}}" BorderBrush="#6EE2" Background="#5300" CornerRadius="2" BorderThickness="1" Margin="20,0">
+						<TextBlock Text="{Binding Message.MainExceptionText}" ToolTip="{Binding Message.FullExceptionText}" Foreground="#EE2"/>
+					</Border>
+					
 					<!-- main buttons -->
 					<DockPanel DockPanel.Dock="Right" Margin="0,0,0,-18">
 						<Button DockPanel.Dock="Right" Command="{Binding SaveCommand}">
@@ -42,7 +46,12 @@
 						<!-- g1 -->
 						<WrapPanel DockPanel.Dock="Right" VerticalAlignment="Bottom">
 							<TextBlock Text="خروجی سالم فعالیت: "/>
-							<TextBox Text="{Binding ProducedG1}" MinWidth="100"/>
+							<TextBox Text="{Binding ProducedG1, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>
+						</WrapPanel>
+						<WrapPanel VerticalAlignment="Bottom" Margin="20,3">
+							<TextBlock Text="مغایرت گزارش: " VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding ReportInconsistency}" Margin="3,0" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding ReportInconsistencyDuration}" Margin="3,0" VerticalAlignment="Center"/>
 						</WrapPanel>
 
 					</DockPanel>
@@ -281,7 +290,7 @@
 											<CustomControls:DurationBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
-											<TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
+											<TextBox Text="{Binding LostCount, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
 										</ContentControl>
 										<ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
 											<CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>
@@ -472,7 +481,7 @@
 											<CustomControls:DurationBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
 										</ContentControl>
 										<ContentControl Grid.Column="4" Template="{StaticResource hoverStyle}">
-											<TextBox Text="{Binding LostCount}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
+											<TextBox Text="{Binding LostCount, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
 										</ContentControl>
 										<ContentControl Grid.Column="5" Template="{StaticResource hoverStyle}">
 											<CheckBox IsChecked="{Binding AffectsTaskReport}" HorizontalAlignment="Center"/>

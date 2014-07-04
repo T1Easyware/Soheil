@@ -2823,6 +2823,7 @@
                     </Border>
                     <DockPanel DockPanel.Dock="Top">
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
+						<CheckBox DockPanel.Dock="Top" IsChecked="{Binding CurrentContent.HasOEE}" Content="{Loc txtHasOEE}" ToolTip="{Loc ttHasOEE}"/>
                         <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>

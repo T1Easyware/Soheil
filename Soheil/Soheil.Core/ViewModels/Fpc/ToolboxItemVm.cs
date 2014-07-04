@@ -51,8 +51,16 @@ namespace Soheil.Core.ViewModels.Fpc
 			var states = _parentWindowVm.States.Where(x => x.ShowDetails && x.Config != null);
 			foreach (var state in states)
 			{
-				var station = state.Config.ContentsList.SingleOrDefault(x => x.IsExpanded
-					&& (x.Containment as StationVm).StationMachines.Any(y => y.Machine.Id == this.ContentData.Id));
+				TreeItemVm station;
+				if(_parentWindowVm.ShowAllMachines)
+				{
+					station = state.Config.ContentsList.SingleOrDefault(x => x.IsExpanded);
+				}
+				else
+				{
+					station = state.Config.ContentsList.SingleOrDefault(x => x.IsExpanded
+						&& (x.Containment as StationVm).StationMachines.Any(y => y.Machine.Id == this.ContentData.Id));
+				}
 				if (station == null) continue;
 				var activity = station.ContentsList.SingleOrDefault(x => x.IsExpanded) as StateStationActivityVm;
 				if (activity == null) continue;

@@ -76,6 +76,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		public SkillCenterVm(AccessType access)
 		{
 			Access = access;
+			CanEdit = (int)Access >= (int)AccessType.Update;
 			Message = new EmbeddedException();
 			InitializeData();
 			initializeCommands();
@@ -180,6 +181,17 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		}
 		public static readonly DependencyProperty CloseMessageCommandProperty =
 			DependencyProperty.Register("CloseMessageCommand", typeof(Commands.Command), typeof(SkillCenterVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates CanEdit
+		/// </summary>
+		public bool CanEdit
+		{
+			get { return (bool)GetValue(CanEditProperty); }
+			set { SetValue(CanEditProperty, value); }
+		}
+		public static readonly DependencyProperty CanEditProperty =
+			DependencyProperty.Register("CanEdit", typeof(bool), typeof(SkillCenterVm), new PropertyMetadata(true));
 
 		#endregion
 	}

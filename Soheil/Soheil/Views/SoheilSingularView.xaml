@@ -25,6 +25,106 @@
         <SolidColorBrush x:Key="ClickedTransparent" Color="#3000" />
 		<SolidColorBrush x:Key="ShadowTransparent" Color="#3FFF" />
 		<SolidColorBrush x:Key="SingularViewBackground" Color="#1000" />
+		
+		<!-- general index resources [these are moved here because of a system bug ]-->
+		<!-- http://stackoverflow.com/questions/7730333/the-event-lostfocus-cannot-be-specified-on-a-target-tag-in-a-style-use-an-eve -->
+		<Style TargetType="Rectangle" x:Key="transparentBarEventsStyle">
+			<EventSetter Event="MouseMove" Handler="AreaMouseMove"/>
+			<EventSetter Event="MouseUp" Handler="AreaMouseUp"/>
+			<EventSetter Event="MouseDown" Handler="RectangleMouseDown"/>
+		</Style>
+		<Style TargetType="ItemsControl" x:Key="sliderItemsControlEventsStyle">
+			<EventSetter Event="MouseMove" Handler="AreaMouseMove"/>
+			<EventSetter Event="MouseUp" Handler="AreaMouseUp"/>
+		</Style>
+		
+		<LinearGradientBrush x:Key="SlideWindowBackground" StartPoint="0,0" EndPoint="1,0.001">
+			<GradientBrush.GradientStops>
+				<GradientStopCollection>
+					<GradientStop Color="White" Offset="0" />
+					<GradientStop Color="#6FFF" Offset="0.5" />
+					<GradientStop Color="#1FFF" Offset="0.6" />
+					<GradientStop Color="Transparent" Offset="1"/>
+				</GradientStopCollection>
+			</GradientBrush.GradientStops>
+		</LinearGradientBrush>
+		<LinearGradientBrush x:Key="SlideWindowBorder" StartPoint="0,0" EndPoint="0,1">
+			<GradientBrush.GradientStops>
+				<GradientStopCollection>
+					<GradientStop Color="#FFF" Offset="0.0"/>
+					<GradientStop Color="#CCC" Offset="1.0"/>
+				</GradientStopCollection>
+			</GradientBrush.GradientStops>
+		</LinearGradientBrush>
+		<!-- Data Providers -->
+		<ObjectDataProvider x:Key="IndexTypes"
+                        MethodName="GetValues"
+                        ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="Common:IndexType" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+		<ObjectDataProvider x:Key="IndexIntervals"
+                        MethodName="GetValues"
+                        ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="Common:DateTimeIntervals" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+		<!--Slider Repeat Button-->
+		<Style x:Key="ScrollBarLineButton" TargetType="{x:Type RepeatButton}">
+			<Setter Property="SnapsToDevicePixels" Value="True"/>
+			<Setter Property="OverridesDefaultStyle" Value="true"/>
+			<Setter Property="Focusable" Value="false"/>
+			<Setter Property="Width" Value="40"/>
+			<Setter Property="Delay" Value="0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type RepeatButton}">
+						<Rectangle Name="Border" Fill="Transparent"/>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="true">
+								<Setter TargetName="Border" Property="Fill" Value="{StaticResource ShadowTransparent}" />
+							</Trigger>
+							<Trigger Property="IsPressed" Value="true">
+								<Setter TargetName="Border" Property="Fill" Value="{StaticResource ClickedTransparent}" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!--Slider Template-->
+		<ControlTemplate x:Key="SliderTemplate" TargetType="{x:Type ScrollViewer}">
+			<Grid Background="{TemplateBinding Background}" Height="600" >
+				<ScrollContentPresenter  x:Name="PART_ScrollContentPresenter"  CanContentScroll="True" CanHorizontallyScroll="True"  ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
+				<ScrollBar x:Name="PART_HorizontalScrollBar"  VerticalAlignment="Bottom" AutomationProperties.AutomationId="HorizontalScrollBar"  Maximum="{TemplateBinding ScrollableWidth}"  Minimum="0"  Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"  Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}">
+					<ScrollBar.Template>
+						<ControlTemplate TargetType="ScrollBar">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition MaxWidth="40"/>
+									<ColumnDefinition Width="0.00001*"/>
+									<ColumnDefinition MaxWidth="40"/>
+								</Grid.ColumnDefinitions>
+								<Border Grid.ColumnSpan="3" Background="#01000000" />
+								<!--Little Window-->
+								<Border Grid.Column="1" Cursor="ScrollWE" Background="{StaticResource SlideWindowBackground}" BorderBrush="{StaticResource SlideWindowBorder}" BorderThickness="2" CornerRadius="2" HorizontalAlignment="Center" Margin="0,-2" Width="{Binding RelativeSource={RelativeSource AncestorType=Virtualizing:DateTimeScrollViewer}, Path=LittleWindowWidth}">
+								</Border>
+								<!--Transparent Bar-->
+								<Rectangle Grid.Column="1"  Margin="-1" Cursor="/Images/openhand.cur" Fill="Transparent" Style="{StaticResource transparentBarEventsStyle}"/>
+								<!-- << | >> -->
+								<RepeatButton Grid.Column="0" Cursor="ScrollW"  Style="{StaticResource ScrollBarLineButton}" Tag="L" Click="RepeatButtonClick"/>
+								<RepeatButton Grid.Column="3" Cursor="ScrollE"  Style="{StaticResource ScrollBarLineButton}" Tag="R" Click="RepeatButtonClick"/>
+							</Grid>
+						</ControlTemplate>
+					</ScrollBar.Template>
+				</ScrollBar>
+			</Grid>
+		</ControlTemplate>
+		<!-- [end] -->
+
 
 		<!--................................................ 2.Basic .................................................-->
 
@@ -571,12 +671,12 @@
 						<Separator/>
 					
 						<!-- extra tools -->
-						<ToggleButton IsChecked="{Binding AutoRefresh}">
-							<Image Style="{StaticResource AutoLoadTaskImage}"/>
-							<ToggleButton.ToolTip>
-								<ToolTip>لود اتوماتیک</ToolTip>
-							</ToggleButton.ToolTip>
-						</ToggleButton>
+						<Button Command="{Binding RefreshCommand}">
+							<Image Style="{StaticResource Refresh16Image}"/>
+							<Button.ToolTip>
+								<ToolTip>بارگذاری مجدد</ToolTip>
+							</Button.ToolTip>
+						</Button>
 						<ToggleButton Margin="2" IsChecked="{Binding ShowInsertSetupButton}">
 							<Image Style="{StaticResource AddSetupImage}"/>
 							<ToggleButton.ToolTip>
@@ -589,7 +689,7 @@
 						<ToggleButton IsChecked="{Binding ShowProductCodes}">
 							<Image Style="{StaticResource ToggleShowCodeImage}"/>
 							<ToggleButton.ToolTip>
-								<ToolTip>نمایش کد بجای نام محصولات</ToolTip>
+								<ToolTip>نمایش کد/نام محصولات</ToolTip>
 							</ToggleButton.ToolTip>
 						</ToggleButton>
 						<Separator/>
@@ -1453,180 +1553,124 @@
         <!-- 3.2. Performance  -->
 
         <!-- 3.3. Indices  -->
-		<DataTemplate x:Key="Index1Template" DataType="IndexViewModels:IndicesVm">
-			<DataTemplate.Resources>
-				<LinearGradientBrush x:Key="SlideWindowBackground" StartPoint="0,0" EndPoint="1,0.001">
-					<GradientBrush.GradientStops>
-						<GradientStopCollection>
-							<GradientStop Color="White" Offset="0" />
-							<GradientStop Color="#6FFF" Offset="0.5" />
-							<GradientStop Color="#1FFF" Offset="0.6" />
-							<GradientStop Color="Transparent" Offset="1"/>
-						</GradientStopCollection>
-					</GradientBrush.GradientStops>
-				</LinearGradientBrush>
-				<LinearGradientBrush x:Key="SlideWindowBorder" StartPoint="0,0" EndPoint="0,1">
-					<GradientBrush.GradientStops>
-						<GradientStopCollection>
-							<GradientStop Color="#FFF" Offset="0.0"/>
-							<GradientStop Color="#CCC" Offset="1.0"/>
-						</GradientStopCollection>
-					</GradientBrush.GradientStops>
-				</LinearGradientBrush>
-				<!-- Data Providers -->
-				<ObjectDataProvider x:Key="IndexTypes"
-                            MethodName="GetValues"
-                            ObjectType="{x:Type System:Enum}">
-					<ObjectDataProvider.MethodParameters>
-						<x:Type TypeName="Common:IndexType" />
-					</ObjectDataProvider.MethodParameters>
-				</ObjectDataProvider>
-				<ObjectDataProvider x:Key="IndexIntervals"
-                            MethodName="GetValues"
-                            ObjectType="{x:Type System:Enum}">
-					<ObjectDataProvider.MethodParameters>
-						<x:Type TypeName="Common:DateTimeIntervals" />
-					</ObjectDataProvider.MethodParameters>
-				</ObjectDataProvider>
-				<!--Slider Repeat Button-->
-				<Style x:Key="ScrollBarLineButton" TargetType="{x:Type RepeatButton}">
-					<Setter Property="SnapsToDevicePixels" Value="True"/>
-					<Setter Property="OverridesDefaultStyle" Value="true"/>
-					<Setter Property="Focusable" Value="false"/>
-					<Setter Property="Width" Value="40"/>
-					<Setter Property="Delay" Value="0"/>
-					<Setter Property="Template">
-						<Setter.Value>
-							<ControlTemplate TargetType="{x:Type RepeatButton}">
-								<Rectangle Name="Border" Fill="Transparent"/>
-								<ControlTemplate.Triggers>
-									<Trigger Property="IsMouseOver" Value="true">
-										<Setter TargetName="Border" Property="Fill" Value="{StaticResource ShadowTransparent}" />
-									</Trigger>
-									<Trigger Property="IsPressed" Value="true">
-										<Setter TargetName="Border" Property="Fill" Value="{StaticResource ClickedTransparent}" />
-									</Trigger>
-								</ControlTemplate.Triggers>
-							</ControlTemplate>
-						</Setter.Value>
-					</Setter>
-				</Style>
-				<!--Slider Template-->
-				<ControlTemplate x:Key="SliderTemplate" TargetType="{x:Type ScrollViewer}">
-					<Grid Background="{TemplateBinding Background}" Height="600" >
-						<ScrollContentPresenter  x:Name="PART_ScrollContentPresenter"  CanContentScroll="True" CanHorizontallyScroll="True"  ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
-						<ScrollBar x:Name="PART_HorizontalScrollBar"  VerticalAlignment="Bottom" AutomationProperties.AutomationId="HorizontalScrollBar"  Maximum="{TemplateBinding ScrollableWidth}"  Minimum="0"  Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"  Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}">
-							<ScrollBar.Template>
-								<ControlTemplate TargetType="ScrollBar">
-									<Grid>
-										<Grid.ColumnDefinitions>
-											<ColumnDefinition MaxWidth="40"/>
-											<ColumnDefinition Width="0.00001*"/>
-											<ColumnDefinition MaxWidth="40"/>
-										</Grid.ColumnDefinitions>
-										<Border Grid.ColumnSpan="3" Background="#01000000" />
-										<!--Little Window-->
-										<Border Grid.Column="1" Cursor="ScrollWE" Background="{StaticResource SlideWindowBackground}" BorderBrush="{StaticResource SlideWindowBorder}" BorderThickness="2" CornerRadius="2" HorizontalAlignment="Center" Margin="0,-2" Width="{Binding RelativeSource={RelativeSource AncestorType=Virtualizing:DateTimeScrollViewer}, Path=LittleWindowWidth}">
-										</Border>
-										<!--Transparent Bar-->
-										<Rectangle Grid.Column="1"  Margin="-1" Cursor="/Images/openhand.cur" Fill="Transparent" MouseMove="AreaMouseMove" MouseUp="AreaMouseUp" MouseDown="RectangleMouseDown"/>
-										<!-- << | >> -->
-										<RepeatButton Grid.Column="0" Cursor="ScrollW"  Style="{StaticResource ScrollBarLineButton}" Click="RepeatButtonLClick"/>
-										<RepeatButton Grid.Column="3" Cursor="ScrollE"  Style="{StaticResource ScrollBarLineButton}" Click="RepeatButtonRClick"/>
-									</Grid>
-								</ControlTemplate>
-							</ScrollBar.Template>
-						</ScrollBar>
-					</Grid>
-				</ControlTemplate>
-			</DataTemplate.Resources>
-            <Border DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}" Style="{StaticResource SoheilSingularViewBorder}">
-                <I:Interaction.Behaviors>
-                    <Behavior:ValidationExceptionBehavior />
-                </I:Interaction.Behaviors>
-                <DockPanel D:DataContext="{D:DesignInstance IndexViewModels:IndicesVm}">
-                    <Border DockPanel.Dock="Top">
-                        <WrapPanel>
-                            <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtIndexType}" />
-                            <ComboBox ItemsSource="{Binding Source={StaticResource IndexTypes}}" SelectedValue="{Binding Path=CurrentType}">
-                                <I:Interaction.Triggers>
-                                    <I:EventTrigger EventName="SelectionChanged">
-                                        <I:InvokeCommandAction Command="{Binding InitializeProviderCommand}"/>
-                                    </I:EventTrigger>
-                                </I:Interaction.Triggers>
-                            </ComboBox>
-                            <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtIndexInterval}" />
-                            <ComboBox ItemsSource="{Binding Source={StaticResource IndexIntervals}}" SelectedValue="{Binding Path=CurrentInterval}" >
-                                <I:Interaction.Triggers>
-                                    <I:EventTrigger EventName="SelectionChanged">
-                                        <I:InvokeCommandAction Command="{Binding InitializeProviderCommand}"/>
-                                    </I:EventTrigger>
-                                </I:Interaction.Triggers>
-                            </ComboBox>
-                            <TextBox Text="{Binding HorizontalOffset, Mode=TwoWay}"></TextBox>
-                        </WrapPanel>
-                    </Border>
-                    <DockPanel DockPanel.Dock="Bottom">
-                        <DockPanel Width="50" DockPanel.Dock="Right">
-                            <Button DockPanel.Dock="Bottom" Margin="2" Height="18" Command="{Binding NavigateBackCommand}" Content="←"></Button>
-                            <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding Scales}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}"  Height="100" Width="50" Text="{Binding}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </DockPanel>
-                        <Border>
-                            <Grid x:Name="adornedControl" >
-                                <Grid.Resources>
-                                    <Common:BindingProxy x:Key="Proxy" Data="{Binding}" />
-                                </Grid.Resources>
-                                <ItemsControl x:Name="_ScaleLines" ItemsSource="{Binding ScaleLines}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <UniformGrid Height="100" Rows="2" Columns="1">
-                                                <Canvas Background="{StaticResource ThemeDarkBrush}" />
-                                                <Canvas Background="{StaticResource ThemeMediumBrush}" />
-                                            </UniformGrid>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                    <ItemsControl x:Name="_slider" ItemsSource="{Binding Bars}" MouseMove="AreaMouseMove" MouseUp="AreaMouseUp" FlowDirection="LeftToRight"               VerticalAlignment="Bottom" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <VirtualizingStackPanel Orientation="Horizontal"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate DataType="IndexViewModels:IndexBarVm">
-                                                <Grid Width="80">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="*"/>
-                                                        <RowDefinition Height="30"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="20"/>
-                                                    </Grid.RowDefinitions>
-                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Tip}" Foreground="{StaticResource TextBrush}" Grid.Row="1" Margin="1"/>
-                                                <StackPanel Grid.Row="2"  >
-                                                    <ItemsControl x:Name="indexBtns" Height="0" HorizontalAlignment="Center"
+		<DataTemplate x:Key="IndexTemplate" DataType="IndexViewModels:IndicesVm">
+			<DockPanel>
+				<!-- radioButtons set the Tag of control -->
+				<WrapPanel Height="22" Margin="2" DockPanel.Dock="Top" FlowDirection="RightToLeft">
+					<!--customControls:ImageRadioButton Checked="generalClicked"
+													 Tag="{Binding ElementName=control}"
+													 Content="{Loc txtGeneralIndex}"
+													 ImageSource="/Soheil.Controls;component/Images/Menus/users.png"/-->
+					<customControls:ImageRadioButton Checked="oeeClicked"
+													 Tag="{Binding ElementName=control}"
+													 Content="{Loc txtOEEIndex}"
+													 ImageSource="/Soheil.Controls;component/Images/Menus/Index.png"/>
+				</WrapPanel>
+				<!-- Control change its template according to its Tag -->
+				<Control x:Name="control" Tag="oee">
+					<Control.Style>
+						<Style TargetType="Control">
+							<Style.Triggers>
+								<Trigger Property="Tag" Value="oee">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate>
+												<indexView:OEE/>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+								</Trigger>
+								<Trigger Property="Tag" Value="general">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate>
+												<Border DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}" Style="{StaticResource SoheilSingularViewBorder}">
+													<I:Interaction.Behaviors>
+														<Behavior:ValidationExceptionBehavior />
+													</I:Interaction.Behaviors>
+													<DockPanel D:DataContext="{D:DesignInstance IndexViewModels:IndicesVm}">
+														<Border DockPanel.Dock="Top">
+															<WrapPanel>
+																<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtIndexType}" />
+																<ComboBox ItemsSource="{Binding Source={StaticResource IndexTypes}}" SelectedValue="{Binding Path=CurrentType}">
+																	<I:Interaction.Triggers>
+																		<I:EventTrigger EventName="SelectionChanged">
+																			<I:InvokeCommandAction Command="{Binding InitializeProviderCommand}"/>
+																		</I:EventTrigger>
+																	</I:Interaction.Triggers>
+																</ComboBox>
+																<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtIndexInterval}" />
+																<ComboBox ItemsSource="{Binding Source={StaticResource IndexIntervals}}" SelectedValue="{Binding Path=CurrentInterval}" >
+																	<I:Interaction.Triggers>
+																		<I:EventTrigger EventName="SelectionChanged">
+																			<I:InvokeCommandAction Command="{Binding InitializeProviderCommand}"/>
+																		</I:EventTrigger>
+																	</I:Interaction.Triggers>
+																</ComboBox>
+																<TextBox Text="{Binding HorizontalOffset, Mode=TwoWay}"></TextBox>
+															</WrapPanel>
+														</Border>
+														<DockPanel DockPanel.Dock="Bottom">
+															<DockPanel Width="50" DockPanel.Dock="Right">
+																<Button DockPanel.Dock="Bottom" Margin="2" Height="18" Command="{Binding NavigateBackCommand}" Content="←"></Button>
+																<ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding Scales}">
+																	<ItemsControl.ItemTemplate>
+																		<DataTemplate>
+																			<TextBlock Style="{StaticResource EntryBoxHeader}"  Height="100" Width="50" Text="{Binding}"/>
+																		</DataTemplate>
+																	</ItemsControl.ItemTemplate>
+																</ItemsControl>
+															</DockPanel>
+															<Border>
+																<Grid x:Name="adornedControl" >
+																	<Grid.Resources>
+																		<Common:BindingProxy x:Key="Proxy" Data="{Binding}" />
+																	</Grid.Resources>
+																	<ItemsControl x:Name="_ScaleLines" ItemsSource="{Binding ScaleLines}">
+																		<ItemsControl.ItemTemplate>
+																			<DataTemplate>
+																				<UniformGrid Height="100" Rows="2" Columns="1">
+																					<Canvas Background="{StaticResource ThemeDarkBrush}" />
+																					<Canvas Background="{StaticResource ThemeMediumBrush}" />
+																				</UniformGrid>
+																			</DataTemplate>
+																		</ItemsControl.ItemTemplate>
+																	</ItemsControl>
+																	<ItemsControl x:Name="_slider" ItemsSource="{Binding Bars}" Style="{StaticResource sliderItemsControlEventsStyle}" FlowDirection="LeftToRight" VerticalAlignment="Bottom" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True">
+																		<ItemsControl.ItemsPanel>
+																			<ItemsPanelTemplate>
+																				<VirtualizingStackPanel Orientation="Horizontal"/>
+																			</ItemsPanelTemplate>
+																		</ItemsControl.ItemsPanel>
+																		<ItemsControl.ItemTemplate>
+																			<DataTemplate DataType="IndexViewModels:IndexBarVm">
+																				<Grid Width="80">
+																					<Grid.RowDefinitions>
+																						<RowDefinition Height="*"/>
+																						<RowDefinition Height="30"/>
+																						<RowDefinition Height="Auto"/>
+																						<RowDefinition Height="20"/>
+																					</Grid.RowDefinitions>
+																					<TextBlock HorizontalAlignment="Center" Text="{Binding Tip}" Foreground="{StaticResource TextBrush}" Grid.Row="1" Margin="1"/>
+																					<StackPanel Grid.Row="2"  >
+																						<ItemsControl x:Name="indexBtns" Height="0" HorizontalAlignment="Center"
                                                                   ItemsSource="{Binding MenuItems}">
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Button Content="{Binding Text}"
+																							<ItemsControl.ItemTemplate>
+																								<DataTemplate>
+																									<Button Content="{Binding Text}"
                                                                         Background="{Binding Color}"
                                                                         Style="{StaticResource IndexButton}"
                                                                         Command= "{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}"
                                                                         CommandParameter="{Binding }" />
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                        <ItemsControl.ItemsPanel>
-                                                            <ItemsPanelTemplate>
-                                                                <StackPanel Orientation="Horizontal"/>
-                                                            </ItemsPanelTemplate>
-                                                        </ItemsControl.ItemsPanel>
-                                                    </ItemsControl>
-                                                    <ToggleButton x:Name="_bar" 
+																								</DataTemplate>
+																							</ItemsControl.ItemTemplate>
+																							<ItemsControl.ItemsPanel>
+																								<ItemsPanelTemplate>
+																									<StackPanel Orientation="Horizontal"/>
+																								</ItemsPanelTemplate>
+																							</ItemsControl.ItemsPanel>
+																						</ItemsControl>
+																						<ToggleButton x:Name="_bar" 
                                                                   Foreground ="{Binding DetailsColor}"  
                                                                   Background="{Binding MainColor}" 
                                                                   Style="{StaticResource SimpleBar}" 
@@ -1634,49 +1678,49 @@
                                                                   Margin="5,0,5,0"
                                                                   Command="{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}"
                                                                   CommandParameter="{Binding }">
-                                                    </ToggleButton>
-                                                    <!--<I:Interaction.Triggers>
+																						</ToggleButton>
+																						<!--<I:Interaction.Triggers>
                                                         <I:EventTrigger EventName="MouseUp">
                                                             <I:InvokeCommandAction Command= "{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}"
                                                                                    CommandParameter="{Binding }"/>
                                                         </I:EventTrigger>
                                                     </I:Interaction.Triggers>-->
-                                                    <StackPanel.Triggers>
-                                                        <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="_bar">
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="indexBtns" 
+																						<StackPanel.Triggers>
+																							<EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="_bar">
+																								<BeginStoryboard>
+																									<Storyboard>
+																										<DoubleAnimationUsingKeyFrames Storyboard.TargetName="indexBtns" 
                                                                             Storyboard.TargetProperty="Height">
-                                                                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="30" />
-                                                                    </DoubleAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                        <EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="_bar">
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="indexBtns" 
+																											<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="30" />
+																										</DoubleAnimationUsingKeyFrames>
+																									</Storyboard>
+																								</BeginStoryboard>
+																							</EventTrigger>
+																							<EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="_bar">
+																								<BeginStoryboard>
+																									<Storyboard>
+																										<DoubleAnimationUsingKeyFrames Storyboard.TargetName="indexBtns" 
                                                                             Storyboard.TargetProperty="Height">
-                                                                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0" />
-                                                                    </DoubleAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                    </StackPanel.Triggers>
-                                                </StackPanel>    
-                                                <Border Grid.Row="3" BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1">
-                                                    <TextBlock Text="{Binding Header}" HorizontalAlignment="Center"
+																											<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0" />
+																										</DoubleAnimationUsingKeyFrames>
+																									</Storyboard>
+																								</BeginStoryboard>
+																							</EventTrigger>
+																						</StackPanel.Triggers>
+																					</StackPanel>
+																					<Border Grid.Row="3" BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1">
+																						<TextBlock Text="{Binding Header}" HorizontalAlignment="Center"
                                                                Foreground="{StaticResource TextBrush}" 
                                                                Background="{StaticResource ThemeDarkBrush}" />
-                                                </Border>
-                                                <Canvas Grid.Row="0"/>
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                        <ItemsControl.Template>
-                                            <ControlTemplate>
-                                                <Border>
-                                                    <Virtualizing:DateTimeScrollViewer 
+																					</Border>
+																					<Canvas Grid.Row="0"/>
+																				</Grid>
+																			</DataTemplate>
+																		</ItemsControl.ItemTemplate>
+																		<ItemsControl.Template>
+																			<ControlTemplate>
+																				<Border>
+																					<Virtualizing:DateTimeScrollViewer 
 							                    HorizontalScrollBarVisibility="Visible" 
                                                 VerticalScrollBarVisibility="Disabled"
                                                 Behaviors:ScrollViewerBinding.HorizontalOffset="{Binding HorizontalOffset, Mode=TwoWay}"
@@ -1685,20 +1729,28 @@
 							                    Focusable="False"
 							                    OverridesDefaultStyle="True"
 							                    Template="{StaticResource SliderTemplate}">
-                                                        <ItemsPresenter SnapsToDevicePixels="True"/>
-                                                    </Virtualizing:DateTimeScrollViewer>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </ItemsControl.Template>
-                                    </ItemsControl>
-                            </Grid>
-                        </Border>
-                    </DockPanel>
-                </DockPanel>
-            </Border>
-        </DataTemplate>
-		<DataTemplate x:Key="IndexTemplate" DataType="IndexViewModels:IndicesVm">
-			<indexView:OEE/>
+																						<ItemsPresenter SnapsToDevicePixels="True"/>
+																					</Virtualizing:DateTimeScrollViewer>
+																				</Border>
+																			</ControlTemplate>
+																		</ItemsControl.Template>
+																	</ItemsControl>
+																</Grid>
+															</Border>
+														</DockPanel>
+													</DockPanel>
+												</Border>
+
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+								</Trigger>
+							</Style.Triggers>
+						</Style>
+					</Control.Style>
+				</Control>
+
+			</DockPanel>
 		</DataTemplate>
 		<!--................................................ 5.Reports ...............................................-->
 
@@ -1814,12 +1866,12 @@
 									Grid.Column="0"
 									Cursor="ScrollW" 
 									Style="{StaticResource ScrollBarLineButton}"
-									Click="RepeatButtonLClick"/>
+									Tag="L" Click="RepeatButtonClick"/>
                                         <RepeatButton
 									Grid.Column="3"
 									Cursor="ScrollE" 
 									Style="{StaticResource ScrollBarLineButton}"
-									Click="RepeatButtonRClick"/>
+									Tag="R" Click="RepeatButtonClick"/>
                                     </Grid>
                                 </ControlTemplate>
                             </ScrollBar.Template>
@@ -2105,12 +2157,12 @@
 									Grid.Column="0"
 									Cursor="ScrollW" 
 									Style="{StaticResource ScrollBarLineButton}"
-									Click="RepeatButtonLClick"/>
+									Tag="L" Click="RepeatButtonClick"/>
                                         <RepeatButton
 									Grid.Column="3"
 									Cursor="ScrollE" 
 									Style="{StaticResource ScrollBarLineButton}"
-									Click="RepeatButtonRClick"/>
+									Tag="R" Click="RepeatButtonClick"/>
                                     </Grid>
                                 </ControlTemplate>
                             </ScrollBar.Template>
@@ -2398,12 +2450,12 @@
 									Grid.Column="0"
 									Cursor="ScrollW" 
 									Style="{StaticResource ScrollBarLineButton}"
-									Click="RepeatButtonLClick"/>
+									Tag="L" Click="RepeatButtonClick"/>
                                         <RepeatButton
 									Grid.Column="3"
 									Cursor="ScrollE" 
 									Style="{StaticResource ScrollBarLineButton}"
-									Click="RepeatButtonRClick"/>
+									Tag="R" Click="RepeatButtonClick"/>
                                     </Grid>
                                 </ControlTemplate>
                             </ScrollBar.Template>

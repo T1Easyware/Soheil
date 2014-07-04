@@ -2,6 +2,7 @@
 					x:Class="Soheil.Views.Fpc.MidStateConfig"
 					xmlns:vm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
 					xmlns:v="clr-namespace:Soheil.Views.Fpc"
+					xmlns:common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
 					xmlns:my="clr-namespace:System;assembly=mscorlib"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -34,7 +35,11 @@
 	</DataTemplate>
 
 	<DataTemplate x:Key="stateSubItemTemplate" DataType="{x:Type vm:StateConfigVm}">
-		<Grid>
+		<Grid IsEnabled="{Binding 
+							RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, 
+							Path=DataContext.Access, 
+							Converter={StaticResource AccessTypeToBooleanConverter},
+							ConverterParameter={x:Static common:AccessType.Update}}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="*" MinWidth="50"/>
@@ -70,7 +75,12 @@
 	</DataTemplate>
 	<DataTemplate x:Key="activitySubItemTemplate" DataType="{x:Type vm:StateStationActivityVm}">
 		<StackPanel>
-			<Grid>
+			<Grid IsEnabled="{Binding 
+							RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, 
+							Path=DataContext.Access, 
+							Converter={StaticResource AccessTypeToBooleanConverter},
+							ConverterParameter={x:Static common:AccessType.Update}
+						}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
@@ -81,10 +91,10 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<TextBlock Margin="4" Text="زمان سیکل(ثانیه)"/>
-                <TextBox Margin="2" IsReadOnly="{Binding IsFixed}" Text="{Binding CycleTime, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
-				<TextBlock Margin="4" Text="نفر ساعت" Grid.Row="1"/>
-                <TextBox Margin="2" IsReadOnly="{Binding IsFixed}" Text="{Binding ManHour, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
-				<CheckBox Margin="4" Grid.Row="2" Grid.ColumnSpan="2" Content="{Loc txtIsMany}" IsChecked="{Binding IsMany}" IsEnabled="{Binding IsFixed, Converter={StaticResource inverter}}"/>
+				<TextBox Margin="2" IsReadOnly="{Binding IsFixed}" Text="{Binding CycleTime, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+					<TextBlock Margin="4" Text="نفر ساعت" Grid.Row="1"/>
+				<TextBox Margin="2" IsReadOnly="{Binding IsFixed}" Text="{Binding ManHour, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
+				<CheckBox Margin="4" Grid.Row="4" Grid.ColumnSpan="2" Content="{Loc txtIsMany}" IsChecked="{Binding IsMany}" IsEnabled="{Binding IsFixed, Converter={StaticResource inverter}}"/>
 			</Grid>
 		</StackPanel>
 	</DataTemplate>
@@ -106,7 +116,8 @@
 							   Foreground="Black" TextWrapping="Wrap"
 							   Text="{Binding Name}" Opacity="{Binding TextOpacity}"/>
 					<ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsDefault}" ToolTip="آیا این ماشین بطور پیش فرض استفاده می شود؟"
-						Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=3}">
+								  Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=3}"
+								  IsEnabled="{Binding RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, Path=DataContext.Access, Converter={StaticResource AccessTypeToBooleanConverter}, ConverterParameter={x:Static common:AccessType.Update}}">
 						<Image Style="{StaticResource IsDefaultImageStyle}"/>
 					</ToggleButton>
 				</DockPanel>

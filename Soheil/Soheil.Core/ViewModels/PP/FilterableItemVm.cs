@@ -24,7 +24,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Item's Operator Model (in guilty operators collection)
 		/// </summary>
-		public dynamic Model { get; set; }
+		public Model.Operator Model { get; set; }
 
 		/// <summary>
 		/// Creates an instance of FilterableItemVm

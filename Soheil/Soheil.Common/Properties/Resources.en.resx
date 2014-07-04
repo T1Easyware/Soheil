@@ -949,4 +949,19 @@
   <data name="txtWaste" xml:space="preserve">
     <value>Waste</value>
   </data>
+  <data name="txtGeneralIndex" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="txtOEEIndex" xml:space="preserve">
+    <value>OEE</value>
+  </data>
+  <data name="ttHasOEE" xml:space="preserve">
+    <value>Uncheck if this machine is not directly being used in production.</value>
+  </data>
+  <data name="txtHasOEE" xml:space="preserve">
+    <value>Should OEE be calculated for this machine?</value>
+  </data>
+  <data name="msgDeleteConfirm" xml:space="preserve">
+    <value>Are you sure to delete this item?</value>
+  </data>
 </root>

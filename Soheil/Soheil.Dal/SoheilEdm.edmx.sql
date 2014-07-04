@@ -2,8 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 07/03/2014 17:09:34
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
+
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -710,6 +709,7 @@ CREATE TABLE [dbo].[Machines] (
     [CreatedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
     [ModifiedBy] int  NOT NULL,
+    [HasOEE] bit  NOT NULL,
     [MachineFamily_Id] int  NOT NULL
 );
 GO

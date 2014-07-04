@@ -175,18 +175,18 @@ insert into dbo.MachineFamilies (Id, Code, Name, ModifiedDate, CreatedDate, [Sta
 SET IDENTITY_INSERT dbo.MachineFamilies OFF
 
 SET IDENTITY_INSERT dbo.Machines ON
-insert into dbo.Machines (Id, Code, Name, MachineFamily_Id, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
-(1, 'PE1', N'PEBM01', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(2, 'PE2', N'PEBM02', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(3, 'PE3', N'PEBM03', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(4, 'PE4', N'PEBM04', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(5, 'PE5', N'PEBM05', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(6, 'PVC1', N'PVCBM06', 2, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(7, 'PVC2', N'PVCBM07', 2, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(8, 'PVC3', N'PVCBM08', 2, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(9, 'Cut1', N'کاتر برقی', 3, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(10, 'Cut2', N'فرز', 3, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
-(11, 'PE_', N'خالی', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
+insert into dbo.Machines (Id, Code,  Name,HasOEE, MachineFamily_Id, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
+(1, 'PE1', N'PEBM01', 'True', 1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(2, 'PE2', N'PEBM02', 'True',1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(3, 'PE3', N'PEBM03', 'True',1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(4, 'PE4', N'PEBM04', 'True',1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(5, 'PE5', N'PEBM05', 'True',1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(6, 'PVC1', N'PVCBM06', 'True',2, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(7, 'PVC2', N'PVCBM07', 'True',2, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(8, 'PVC3', N'PVCBM08', 'True',2, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(9, 'Cut1', N'کاتر برقی', 'True',3, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(10, 'Cut2', N'فرز','True',3, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),
+(11, 'PE_', N'خالی','True',1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
 SET IDENTITY_INSERT dbo.Machines OFF
 
 SET IDENTITY_INSERT dbo.ActivityGroups ON

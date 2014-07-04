@@ -39,7 +39,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			CycleTime = Model.CycleTime;
 			ManHour = Model.ManHour;
 			IsMany = model.IsMany;
-			SelectCommand = new Commands.Command(o => { if (Selected != null)Selected(this); });
+			SelectCommand = new Commands.Command(o =>
+			{
+				if (Selected != null)
+					Selected(this);
+			});
 		}
 
 		/// <summary>

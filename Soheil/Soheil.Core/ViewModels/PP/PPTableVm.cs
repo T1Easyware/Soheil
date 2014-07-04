@@ -219,22 +219,6 @@ namespace Soheil.Core.ViewModels.PP
 
 
 		/// <summary>
-		/// When set to true, PPItems.Manager will refresh PPItems automatically
-		/// </summary>
-		public bool AutoRefresh
-		{
-			get { return (bool)GetValue(AutoRefreshProperty); }
-			set { SetValue(AutoRefreshProperty, value); }
-		}
-		public static readonly DependencyProperty AutoRefreshProperty =
-			DependencyProperty.Register("AutoRefresh", typeof(bool), typeof(PPTableVm),
-			new UIPropertyMetadata(true, (d, e) =>
-			{
-				var vm = (PPTableVm)d;
-				vm.PPItems.Manager.IsAutoRefresh = (bool)e.NewValue;
-			}));
-
-		/// <summary>
 		/// Updates current TimeRange of items (hours, shifts, tasks...) which are visible in PPTable
 		/// </summary>
 		/// <remarks>
@@ -253,7 +237,7 @@ namespace Soheil.Core.ViewModels.PP
 			Hours.FetchRange(start, end);
 
 			//Loads PPItems
-			if (loadItemsAsWell || AutoRefresh)
+			if (loadItemsAsWell)
 				PPItems.Manager.AutoFetchRange(start, end);
 		}
 		#endregion
@@ -690,6 +674,7 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			ZoomStartedCommand = new Commands.Command(o => { });
 			UndoZoomCommand = new Commands.Command(o => RestoreZoom());
+			RefreshCommand = new Commands.Command(o => PPItems.Manager.ForceReload());
 			CloseBlockReportCommand = new Commands.Command(o => ShowBlockReport = false);
 		}
 		/// <summary>
@@ -698,27 +683,6 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="vm"></param>
 		void initializeCommands(BlockVm vm)
 		{
-			vm.ReloadBlockCommand = new Commands.Command(o =>
-			{
-				vm.Reload();
-
-				//check for selected things
-
-				//check if the SelectedJobId in PPTable is the same as this Job
-				if (vm.Job != null)
-				{
-					if (SelectedJobId == vm.Job.Id)
-					{
-						vm.IsJobSelected = true;
-					}
-				}
-				//check if the SelectedBlock in PPTable is the same as this block
-				if (SelectedBlock == null)
-				{
-					PPItems.ViewMode = PPViewMode.Simple;
-				}
-				else PPItems.ViewMode = (SelectedBlock.Id == vm.Id) ? PPViewMode.Report : PPViewMode.Simple;
-			});
 			//Task editor
 			vm.AddBlockToEditorCommand = new Commands.Command(o =>
 			{
@@ -914,6 +878,18 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty UndoZoomCommandProperty =
 			DependencyProperty.Register("UndoZoomCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
 
+		/// <summary>
+		/// Gets or sets a bindable value that indicates RefreshCommand
+		/// </summary>
+		public Commands.Command RefreshCommand
+		{
+			get { return (Commands.Command)GetValue(RefreshCommandProperty); }
+			set { SetValue(RefreshCommandProperty, value); }
+		}
+		public static readonly DependencyProperty RefreshCommandProperty =
+			DependencyProperty.Register("RefreshCommand", typeof(Commands.Command), typeof(PPTableVm), new PropertyMetadata(null));
+
+
 		//CloseBlockReportCommand Dependency Property
 		public Commands.Command CloseBlockReportCommand
 		{
@@ -935,7 +911,7 @@ namespace Soheil.Core.ViewModels.PP
 			protected set { SetValue(ShowProductCodesProperty, value); }
 		}
 		public static readonly DependencyProperty ShowProductCodesProperty =
-			DependencyProperty.Register("ShowProductCodes", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(true));
+			DependencyProperty.Register("ShowProductCodes", typeof(bool), typeof(PPTableVm), new UIPropertyMetadata(false));
 		/// <summary>
 		/// Gets a value that indicates whether "Insert Setup Button" should be visible in PPTable between Blocks
 		/// </summary>

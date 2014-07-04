@@ -61,6 +61,13 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual bool HasOEE
+        {
+            get { return _hasOEE; }
+            set { _hasOEE = value; }
+        }
+        private bool _hasOEE = true;
 
         #endregion
 
