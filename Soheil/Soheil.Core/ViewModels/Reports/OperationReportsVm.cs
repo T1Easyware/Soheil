@@ -63,13 +63,13 @@ namespace Soheil.Core.ViewModels.Reports
 	        }   
 	    }
 
-        public static readonly DependencyProperty reportProperty =
-            DependencyProperty.Register("report", typeof(OperatorProcessReportVm), typeof(OperationReportsVm), new PropertyMetadata(default(OperatorProcessReportVm)));
+        public static readonly DependencyProperty ReportProperty =
+            DependencyProperty.Register("Report", typeof(OperatorProcessReportVm), typeof(OperationReportsVm), new PropertyMetadata(default(OperatorProcessReportVm)));
 
-        public OperatorProcessReportVm report
+        public OperatorProcessReportVm Report
         {
-            get { return (OperatorProcessReportVm)GetValue(reportProperty); }
-            set { SetValue(reportProperty, value); }
+            get { return (OperatorProcessReportVm)GetValue(ReportProperty); }
+            set { SetValue(ReportProperty, value); }
         }
 
         public static readonly DependencyProperty OprVisibilityProperty =
@@ -150,7 +150,6 @@ namespace Soheil.Core.ViewModels.Reports
             CenterDateChanged += OperationReportsVmCenterDateChanged;
             NavigateInsideCommand = new Command(NavigateInside, CanNavigateInside);
             NavigateBackCommand = new Command(NavigateBack,CanNavigateBack);
-            PrintCommand = new Command(Print, CanPrint);
             InitializeProviderCommand = new Command(InitializeProviders);
             RefreshCommand = new Command(Refresh,CanRefresh);
         }
@@ -171,31 +170,34 @@ namespace Soheil.Core.ViewModels.Reports
 
 		    barInfo.IsCountBase = CurrentType == OEType.CountBased;
 
+
             LittleWindowWidth = 20;
-            int intervalCount = GetIntervalCount();
 
-            BarSlides = new VirtualizingCollection<BarSlideItemVm>(new OperatorBarSlideProvider(intervalCount), 12);
+		    int intervalCount = GetIntervalCount();
 
-            var barProvider = new OperatorBarProvider(intervalCount, 600, CurrentInterval, DataService, barInfo);
-            Bars = new VirtualizingCollection<OperatorBarVm>(barProvider, 12);
+		    BarSlides = new VirtualizingCollection<BarSlideItemVm>(new OperatorBarSlideProvider(intervalCount), 100);
 
-            Scales.Clear();
-            ScaleLines.Clear();
-            ScaleHeight = barProvider.ScaleHeight;
+		    var barProvider = new OperatorBarProvider(intervalCount, 600, CurrentInterval, DataService, barInfo);
+		    Bars = new VirtualizingCollection<OperatorBarVm>(barProvider, 100);
 
-            for (int i = barProvider.MaxScale; i >= 0; i -= barProvider.StepScale)
-            {
-                Scales.Add(i);
-                ScaleLines.Add(0);
-            }
-            ScaleLines.RemoveAt(0);
-            OnPropertyChanged("ScaleHeaders");
+		    Scales.Clear();
+		    ScaleLines.Clear();
+		    ScaleHeight = barProvider.ScaleHeight;
+
+		    for (int i = barProvider.MaxScale; i >= 0; i -= barProvider.StepScale)
+		    {
+		        Scales.Add(i);
+		        ScaleLines.Add(0);
+		    }
+		    ScaleLines.RemoveAt(0);
+		    
+		    OnPropertyChanged("ScaleHeaders");
 		}
 
 	    public void LoadOperatorProcessReport(int operatorId)
 	    {
 	        var dataService = new OperatorReportDataService();
-	        report = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
+	        Report = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
 
 	        var reportDocument = new ReportDocument();
 
@@ -212,8 +214,8 @@ namespace Soheil.Core.ViewModels.Reports
 
 	        var titleTabel = new DataTable("TitleTable");
 	        titleTabel.Columns.Add("ReportTitle", typeof(string));
-            var name = Common.Properties.Resources.ResourceManager.GetString("txtName") + report.Title;
-            var code = Common.Properties.Resources.ResourceManager.GetString("txtCode");
+            var name = Common.Properties.Resources.ResourceManager.GetString("txtName") + Report.Title;
+            var code = Common.Properties.Resources.ResourceManager.GetString("txtCode") + Report.Code;
 	        var date = DateTime.Now.ToPersianCompactDateTimeString();
             titleTabel.Rows.Add(new object[] { name });
             titleTabel.Rows.Add(new object[] { code });
@@ -225,19 +227,19 @@ namespace Soheil.Core.ViewModels.Reports
             totalTabel.Columns.Add("TimeTotal", typeof(string));
             totalTabel.Columns.Add("CountTotal", typeof(string));
 
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetTime") + Format.ConvertToHMS((int) report.TotalTargetTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetCount") + report.TotalTargetCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalProductionTime") + Format.ConvertToHMS((int)report.TotalProductionTime), Common.Properties.Resources.ResourceManager.GetString("txTotalProductionCount") + report.TotalProductionCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraTime") + Format.ConvertToHMS((int)report.TotalExtraTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraCount") + report.TotalExtraCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageTime") + Format.ConvertToHMS((int)report.TotalShortageTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageCount") + report.TotalShortageCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionTime") + Format.ConvertToHMS((int)report.TotalDefectionTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionCount") + report.TotalDefectionCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalWaste") + report.TotalWaste, Common.Properties.Resources.ResourceManager.GetString("txtTotalSecondGrade") + report.TotalSecondGrade });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetTime") + Format.ConvertToHMS((int) Report.TotalTargetTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetCount") + Report.TotalTargetCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalProductionTime") + Format.ConvertToHMS((int)Report.TotalProductionTime), Common.Properties.Resources.ResourceManager.GetString("txTotalProductionCount") + Report.TotalProductionCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraTime") + Format.ConvertToHMS((int)Report.TotalExtraTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraCount") + Report.TotalExtraCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageTime") + Format.ConvertToHMS((int)Report.TotalShortageTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageCount") + Report.TotalShortageCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionTime") + Format.ConvertToHMS((int)Report.TotalDefectionTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionCount") + Report.TotalDefectionCount });
+            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalWaste") + Report.TotalWaste, Common.Properties.Resources.ResourceManager.GetString("txtTotalSecondGrade") + Report.TotalSecondGrade });
 
 
             data.DataTables.Add(totalTabel);
 
 	        var activitiesTable = new DataTable("ActivitiesReport");
 
-	        activitiesTable.Columns.Add("Date", typeof (DateTime));
+            activitiesTable.Columns.Add("Date", typeof(string));
 	        activitiesTable.Columns.Add("Product", typeof (string));
 	        activitiesTable.Columns.Add("Station", typeof (string));
 	        activitiesTable.Columns.Add("Activity", typeof (string));
@@ -247,17 +249,17 @@ namespace Soheil.Core.ViewModels.Reports
 	        activitiesTable.Columns.Add("StoppageValue", typeof (string));
 	        activitiesTable.Columns.Add("IsRework", typeof (string));
 
-	        foreach (var item in report.ActivityItems)
+	        foreach (var item in Report.ActivityItems)
 	        {
 	            activitiesTable.Rows.Add(CurrentType == OEType.CountBased
 	                ? new object[]
 	                {
-	                    item.Date, item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
+	                    item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
 	                    item.DefectionCount, item.StoppageCount, item.IsRework
 	                }
 	                : new object[]
 	                {
-	                    item.Date, item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
+	                    item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
 	                    item.DefectionTime, item.StoppageTime, item.IsRework
 	                });
 	        }
@@ -266,7 +268,7 @@ namespace Soheil.Core.ViewModels.Reports
 
             var qualitiveTable = new DataTable("QualitiveReport");
 
-            qualitiveTable.Columns.Add("Date", typeof(DateTime));
+            qualitiveTable.Columns.Add("Date", typeof(string));
             qualitiveTable.Columns.Add("Product", typeof(string));
             qualitiveTable.Columns.Add("Station", typeof(string));
             qualitiveTable.Columns.Add("Activity", typeof(string));
@@ -274,14 +276,14 @@ namespace Soheil.Core.ViewModels.Reports
             qualitiveTable.Columns.Add("SecondGrade", typeof(string));
             qualitiveTable.Columns.Add("Waste", typeof(string));
 
-            foreach (var item in report.QualitiveItems)
+            foreach (var item in Report.QualitiveItems)
             {
                 var waste = item.Status == QualitiveStatus.Waste ? "*" : string.Empty;
                 var secondGrade = item.Status == QualitiveStatus.SecondGrade ? "*" : string.Empty;
                 var defection = CurrentType == OEType.CountBased ? item.DefectionCount : item.DefectionTime;
                 qualitiveTable.Rows.Add(new object[]
                     {
-                        item.Date, item.Product, item.Station, item.Activity, defection, secondGrade, waste
+                        item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, defection, secondGrade, waste
 	                });
             }
 
@@ -289,18 +291,18 @@ namespace Soheil.Core.ViewModels.Reports
 
             var technicalTable = new DataTable("TechnicalReport");
 
-            technicalTable.Columns.Add("Date", typeof(DateTime));
+            technicalTable.Columns.Add("Date", typeof(string));
             technicalTable.Columns.Add("Product", typeof(string));
             technicalTable.Columns.Add("Station", typeof(string));
             technicalTable.Columns.Add("Activity", typeof(string));
-            technicalTable.Columns.Add("DefectionValue", typeof(string));
+            technicalTable.Columns.Add("StoppageValue", typeof(string));
 
-            foreach (var item in report.TechnicalItems)
+            foreach (var item in Report.TechnicalItems)
             {
                 var stoppage = CurrentType == OEType.CountBased ? item.StoppageCount : item.StoppageTime;
-                qualitiveTable.Rows.Add(new object[]
+                technicalTable.Rows.Add(new object[]
                     {
-                        item.Date, item.Product, item.Station, item.Activity, stoppage
+                        item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, stoppage
 	                });
             }
 
@@ -357,19 +359,6 @@ namespace Soheil.Core.ViewModels.Reports
 
 	    public void Print(object param)
 	    {
-            //var printDialog = new PrintDialog();
-
-            //if (printDialog.ShowDialog() == false)
-            //    return;
-            //var barInfo = _history.Pop();
-            //string documentTitle = barInfo.Text;
-            //var pageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
-
-            //var paginator = new CustomDataGridDocumentPaginator(param as DataGrid, documentTitle, pageSize, new Thickness(30, 20, 30, 20));
-            //printDialog.PrintDocument(paginator, "Grid");
-
-
-
 	    }
 
 	    public bool CanPrint()

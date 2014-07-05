@@ -97,12 +97,14 @@ namespace Soheil.Core.DataServices
                 var srQuery = from sReport in srList
                               from osReport in osrList.Where(osr => sReport != null && osr.StoppageReport != null && osr.StoppageReport.Id == sReport.Id)
                               from pReport in processReportList.Where(pr => sReport != null && sReport.ProcessReport != null && sReport.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate)
-                              from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && osReport != null && osReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == osReport.Operator.Id)
+                              from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null 
+                                  && opr.ProcessReport.Id == pReport.Id && (osReport == null || osReport.Operator == null || opr.ProcessOperator.Operator.Id == osReport.Operator.Id))
                               let oId = osReport == null ? -1 : osReport.Operator == null ? -1 : osReport.Operator.Id
-                              select new { sReport.Id, oId, sReport.LostCount, sReport.LostTime };
+                              let prId = pReport == null ? -1 : pReport.Id
+                              select new { sReport.Id, oId, prId, sReport.LostCount, sReport.LostTime };
 
                 var sQuery = from opr in oprQuery
-                             from sReport in srQuery.Where(sr => sr.oId == opr.oId).DefaultIfEmpty()
+                             from sReport in srQuery.Where(sr => sr.oId == opr.oId && sr.prId == opr.prId).DefaultIfEmpty()
                              let oprId = opr == null ? -1 : opr.oprId
                              let ct = opr == null ? 0 : opr.ct
                              let lostTime = sReport == null ? 0 : (sReport.LostCount * ct) + sReport.LostTime
@@ -125,7 +127,8 @@ namespace Soheil.Core.DataServices
                               from pReport in processReportList.Where(pr => dReport != null && dReport.ProcessReport != null && dReport.ProcessReport.Id == pr.Id && pr.StartDateTime >= oprInfo.StartDate && pr.StartDateTime < oprInfo.EndDate)
                               from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && odReport != null && odReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == odReport.Operator.Id)
                               let oId = odReport == null ? -1 : odReport.Operator == null ? -1 : odReport.Operator.Id
-                              select new { dReport.Id, oId, dReport.LostCount, dReport.LostTime };
+                              let prId = pReport == null ? -1 : pReport.Id
+                              select new { dReport.Id, oId, prId, dReport.LostCount, dReport.LostTime };
 
                 var dQuery = from sg in sgQuery
                              from dReport in drQuery.Where(dr => sg.oId == dr.oId).DefaultIfEmpty()
@@ -274,7 +277,7 @@ namespace Soheil.Core.DataServices
                                select new { prId, ct, pdId, pdCode, pdName, snId, snName, aId, aCode, aName, rId, tp, date };
 
                 var oprQuery = from opr in oprList.Where(opr => opr.ProcessOperator.Operator != null && opr.ProcessOperator.Operator.Id == operatorId)
-                               from gen in genQuery.Where(pr => opr.ProcessReport != null && opr.ProcessReport.Id == pr.prId).DefaultIfEmpty()
+                               from gen in genQuery.Where(pr => opr.ProcessReport != null && opr.ProcessReport.Id == pr.prId)
                                let oprId = opr == null ? -1 : opr.Id
                                let prId = opr == null ? -1 : opr.ProcessReport == null ? -1 : opr.ProcessReport.Id
                                let oId = opr == null ? -1 : opr.ProcessOperator.Operator == null ? -1 : opr.ProcessOperator.Operator.Id
@@ -299,10 +302,11 @@ namespace Soheil.Core.DataServices
                               from pReport in processReportList.Where(pr => sReport != null && sReport.ProcessReport != null && sReport.ProcessReport.Id == pr.Id)
                               from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && osReport != null && osReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == osReport.Operator.Id)
                               let oId = osReport == null ? -1 : osReport.Operator == null ? -1 : osReport.Operator.Id
-                              select new { sReport.Id, oId, sReport.LostCount, sReport.LostTime };
+                              let prId = pReport == null ? -1 : pReport.Id
+                              select new { sReport.Id, oId, prId, sReport.LostCount, sReport.LostTime };
 
                 var sQuery = from opr in oprQuery
-                             from sReport in srQuery.Where(sr => sr.oId == opr.oId).DefaultIfEmpty()
+                             from sReport in srQuery.Where(sr => sr.oId == opr.oId && sr.prId == opr.prId).DefaultIfEmpty()
                              let oprId = opr == null ? -1 : opr.oprId
                              let ct = opr == null ? 0 : opr.ct
                              let lostTime = sReport == null ? 0 : sReport.LostCount * ct + sReport.LostTime
@@ -337,10 +341,11 @@ namespace Soheil.Core.DataServices
                               from pReport in processReportList.Where(pr => dReport != null && dReport.ProcessReport != null && dReport.ProcessReport.Id == pr.Id)
                               from opReport in oprList.Where(opr => pReport != null && opr.ProcessReport != null && opr.ProcessOperator != null && opr.ProcessOperator.Operator != null && odReport != null && odReport.Operator != null && opr.ProcessReport.Id == pReport.Id && opr.ProcessOperator.Operator.Id == odReport.Operator.Id)
                               let pId = dReport == null ? -1 : dReport.ProductDefection == null ? -1 : dReport.ProductDefection.Product == null ? -1 : dReport.ProductDefection.Product.Id
-                              select new { dReport.Id, pId, dReport.LostCount, dReport.LostTime };
+                              let prId = pReport == null ? -1 : pReport.Id
+                              select new { dReport.Id, pId, prId, dReport.LostCount, dReport.LostTime };
 
                 var dQuery = from sg in sgQuery
-                             from dReport in drQuery.Where(dr => sg.pdId == dr.pId).DefaultIfEmpty()
+                             from dReport in drQuery.Where(dr => sg.pdId == dr.pId && sg.prId == dr.prId).DefaultIfEmpty()
                              let oprId = sg == null ? -1 : sg.oprId
                              let ct = sg == null ? 0 : sg.ct
                              let lostTime = dReport == null ? 0 : dReport.LostCount * ct + dReport.LostTime
@@ -475,10 +480,10 @@ namespace Soheil.Core.DataServices
 
                 var qualitiveList = qualitiveQuery.ToList();
                 result.TotalWaste = qualitiveList.Any()
-                    ? qualitiveList.Count(record => record.pStatus == (decimal) QualitiveStatus.Waste)
+                    ? qualitiveList.Sum(record => record.pStatus == (decimal) QualitiveStatus.Waste ? record.lostCount : 0)
                     : 0;
                 result.TotalSecondGrade = qualitiveList.Any()
-                    ? qualitiveList.Count(record => record.pStatus == (decimal) QualitiveStatus.SecondGrade)
+                    ? qualitiveList.Sum(record => record.pStatus == (decimal)QualitiveStatus.SecondGrade ? record.lostCount : 0)
                     : 0;
 
                 foreach (var line in qualitiveList)

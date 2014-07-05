@@ -1552,36 +1552,24 @@
     </Style>
 
     <!--  Soheil Medium Cover Border  -->
-    <Style x:Key="SoheilMediumCoverBorder" TargetType="{x:Type Border}">
+    <Style x:Key="SoheilMediumCoverBorder" TargetType="{x:Type Border}" BasedOn="{StaticResource SoheilCoverBorder}">
         <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="1,1,1,1" />
-        <Setter Property="Margin" Value="2" />
     </Style>
 
     <!--  Soheil Dark Cover Border  -->
-    <Style x:Key="SoheilDarkCoverBorder" TargetType="{x:Type Border}">
+    <Style x:Key="SoheilDarkCoverBorder" TargetType="{x:Type Border}" BasedOn="{StaticResource SoheilCoverBorder}">
         <Setter Property="BorderBrush" Value="{StaticResource ThemeDarkBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="1,1,1,1" />
-        <Setter Property="Margin" Value="2" />
     </Style>
 
     <!--  Soheil Fill Border  -->
-    <Style x:Key="SoheilGradientFillBorder" TargetType="{x:Type Border}">
+    <Style x:Key="SoheilGradientFillBorder" TargetType="{x:Type Border}" BasedOn="{StaticResource SoheilCoverBorder}">
         <Setter Property="BorderBrush" Value="{StaticResource ThemeMediumBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="1,1,1,1" />
-        <Setter Property="Margin" Value="2" />
         <Setter Property="Background" Value="{StaticResource GroupGradientBrush}" />
     </Style>
 
     <!--  Soheil Simple Fill Border  -->
-    <Style x:Key="SoheilSimpleFillBorder" TargetType="{x:Type Border}">
+    <Style x:Key="SoheilSimpleFillBorder" TargetType="{x:Type Border}" BasedOn="{StaticResource SoheilCoverBorder}">
         <Setter Property="BorderBrush" Value="{StaticResource ThemeLightBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="1,1,1,1" />
-        <Setter Property="Margin" Value="2" />
         <Setter Property="Background" Value="{StaticResource ThemeMediumBrush}" />
     </Style>
 
@@ -1595,8 +1583,8 @@
         <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
     </Style>
 
-    <!--  Soheil GroupBox  -->
-    <Style x:Key="SoheilGroupBox" TargetType="{x:Type GroupBox}">
+    <!--  Soheil Cover GroupBox  -->
+    <Style x:Key="SoheilCoverGroupBox" TargetType="{x:Type GroupBox}">
         <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="{StaticResource detailMargin}" />
@@ -1606,6 +1594,40 @@
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="tahoma" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type GroupBox}">
+                    <Grid SnapsToDevicePixels="true">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Header" Grid.Column="0" Grid.Row="0" Padding="3" Background="{StaticResource ThemeMediumBrush}" 
+                                CornerRadius="4,4,0,0" BorderBrush="{StaticResource ThemeDarkBrush}" BorderThickness="1,1,1,0">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentSource="Header" 
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <Border x:Name="Container" Grid.Column="0" Grid.Row="1" Padding="3" CornerRadius="0,0,4,4" 
+                                Background="Transparent" BorderBrush="{StaticResource ThemeLightBrush}" 
+                                BorderThickness="1,1,1,1">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="Header" Property="Background" Value="{StaticResource ThemeDarkBrush}"/>
+                            <Setter TargetName="Container" Property="Background" Value="{StaticResource DisabledBackground}"/>
+                            <Setter Property="Foreground" Value="{StaticResource NormalOuterBorder}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Soheil GroupBox  -->
+    <Style x:Key="SoheilGroupBox" TargetType="{x:Type GroupBox}" BasedOn="{StaticResource SoheilCoverGroupBox}">
         <Setter Property="Width">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource SizeConverter}">
@@ -1626,50 +1648,11 @@
                 </MultiBinding>
             </Setter.Value>
         </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type GroupBox}">
-                    <Grid SnapsToDevicePixels="true">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Border x:Name="Header" Grid.Column="0" Grid.Row="0" Padding="3" Background="{StaticResource ThemeMediumBrush}" 
-                                CornerRadius="4,4,0,0" BorderBrush="{StaticResource ThemeDarkBrush}" BorderThickness="1,1,1,0">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentSource="Header" 
-                                              RecognizesAccessKey="True"/>
-                        </Border>
-                        <Border x:Name="Container" Grid.Column="0" Grid.Row="1" Padding="3" CornerRadius="0,0,4,4" 
-                                Background="Transparent" BorderBrush="{StaticResource ThemeLightBrush}" 
-                                BorderThickness="1,1,1,1">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="{TemplateBinding Padding}"/>
-                        </Border>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="Header" Property="Background" Value="{StaticResource ThemeDarkBrush}"/>
-                            <Setter TargetName="Container" Property="Background" Value="{StaticResource DisabledBackground}"/>
-                            <Setter Property="Foreground" Value="{StaticResource NormalOuterBorder}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!--  Soheil Content GroupBox  -->
-    <Style x:Key="SoheilContentGroupBox" TargetType="{x:Type GroupBox}">
-        <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Margin" Value="{StaticResource detailMargin}" />
-        <Setter Property="HorizontalAlignment" Value="Right" />
-        <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
-        <Setter Property="Foreground" Value="{StaticResource BlueSelectedBrush}"/>
+    <Style x:Key="SoheilContentGroupBox" TargetType="{x:Type GroupBox}" BasedOn="{StaticResource SoheilCoverGroupBox}">
         <Setter Property="Height" Value="{StaticResource contentHeight}"/>
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="FontFamily" Value="tahoma" />
         <Setter Property="Width">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource SizeConverter}">
@@ -1678,39 +1661,6 @@
                         <Binding Source="{StaticResource detailGap}" />
                     </MultiBinding.Bindings>
                 </MultiBinding>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type GroupBox}">
-                    <Grid SnapsToDevicePixels="true">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Border x:Name="Header" Grid.Column="0" Grid.Row="0" Padding="3" Background="{StaticResource ThemeMediumBrush}" 
-                                CornerRadius="4,4,0,0" BorderBrush="{StaticResource ThemeDarkBrush}" BorderThickness="1,1,1,0">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentSource="Header" 
-                                              RecognizesAccessKey="True"/>
-                        </Border>
-                        <Border x:Name="Container" Grid.Column="0" Grid.Row="1" Padding="3" CornerRadius="0,0,4,4" 
-                                Background="Transparent" BorderBrush="{StaticResource ThemeLightBrush}" 
-                                BorderThickness="1,1,1,1">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="{TemplateBinding Padding}"/>
-                        </Border>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="Header" Property="Background" Value="{StaticResource ThemeDarkBrush}"/>
-                            <Setter TargetName="Container" Property="Background" Value="{StaticResource DisabledBackground}"/>
-                            <Setter Property="Foreground" Value="{StaticResource NormalOuterBorder}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-
             </Setter.Value>
         </Setter>
     </Style>
@@ -1731,17 +1681,8 @@
     </Style>
 
     <!--  Soheil ContentSplit GroupBox  -->
-    <Style x:Key="SoheilContentSplitGroupBox" TargetType="{x:Type GroupBox}">
-        <Setter Property="BorderBrush" Value="{StaticResource LightBackGroundBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Margin" Value="{StaticResource detailMargin}" />
-        <Setter Property="HorizontalAlignment" Value="Right" />
-        <Setter Property="FlowDirection" Value="{DynamicResource flowDirection}" />
-        <Setter Property="Foreground" Value="{StaticResource BlueSelectedBrush}"/>
+    <Style x:Key="SoheilContentSplitGroupBox" TargetType="{x:Type GroupBox}" BasedOn="{StaticResource SoheilCoverGroupBox}">
         <Setter Property="Height" Value="{StaticResource contentHeight}"/>
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="FontFamily" Value="tahoma" />
         <Setter Property="Width">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource SizeConverter}">
@@ -1751,39 +1692,6 @@
                         <Binding Source="{StaticResource leftSideGap}" />
                     </MultiBinding.Bindings>
                 </MultiBinding>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type GroupBox}">
-                    <Grid SnapsToDevicePixels="true">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Border x:Name="Header" Grid.Column="0" Grid.Row="0" Padding="3" Background="{StaticResource ThemeMediumBrush}" 
-                                CornerRadius="4,4,0,0" BorderBrush="{StaticResource ThemeDarkBrush}" BorderThickness="1,1,1,0">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentSource="Header" 
-                                              RecognizesAccessKey="True"/>
-                        </Border>
-                        <Border x:Name="Container" Grid.Column="0" Grid.Row="1" Padding="3" CornerRadius="0,0,4,4" 
-                                Background="Transparent" BorderBrush="{StaticResource ThemeDarkBrush}" 
-                                BorderThickness="1,1,1,1">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="{TemplateBinding Padding}"/>
-                        </Border>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="Header" Property="Background" Value="{StaticResource ThemeDarkBrush}"/>
-                            <Setter TargetName="Container" Property="Background" Value="{StaticResource DisabledBackground}"/>
-                            <Setter Property="Foreground" Value="{StaticResource NormalOuterBorder}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-
             </Setter.Value>
         </Setter>
     </Style>
