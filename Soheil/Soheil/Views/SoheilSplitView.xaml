@@ -1585,7 +1585,7 @@
             </WrapPanel>
 		</DataTemplate>
 		
-		<!--  1.2.1. Work Profile  -->
+		<!--  1.3.1. Work Profile  -->
 		<DataTemplate x:Key="WorkProfileTemplate" DataType="wt:WorkProfileVm"
 					  xmlns:wt="clr-namespace:Soheil.Core.ViewModels.OrganizationCalendar"
 					  xmlns:ocv="clr-namespace:Soheil.Views.OrganizationCalendar">
@@ -1614,7 +1614,7 @@
 							</Grid.ColumnDefinitions>
 							<!--Name-->
 							<TextBlock Margin="0,5" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
-							<TextBox Margin="5" Grid.Column="1"
+							<TextBox Margin="5" Grid.Column="1" IsEnabled="{Binding CurrentContent.IsReadonly, Converter={StaticResource inverter}}"
 									Text="{Binding Path=CurrentContent.Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 							<!--Week-->
 							<UniformGrid Rows="3" Columns="1" Grid.Row="1" Margin="0,10,0,20">
@@ -1623,7 +1623,7 @@
 								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtBusinessDayState}"/>
 							</UniformGrid>
 							<ScrollViewer Margin="5" Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-								<ItemsControl Margin="2" ItemsSource="{Binding CurrentContent.Week}">
+								<ItemsControl Margin="2" ItemsSource="{Binding CurrentContent.Week}" IsEnabled="{Binding CurrentContent.IsReadonly, Converter={StaticResource inverter}}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<Border BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1" Margin="1"
@@ -1694,7 +1694,7 @@
 							</ScrollViewer>
 							<!--Protos count-->
 							<TextBlock Margin="0,5" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtNumberOfShifts}" Grid.Row="3"/>
-							<DockPanel Grid.Column="1" Grid.Row="3" Margin="5">
+							<DockPanel Grid.Column="1" Grid.Row="3" Margin="5" IsEnabled="{Binding CurrentContent.IsReadonly, Converter={StaticResource inverter}}">
 								<Grid DockPanel.Dock="Left" Width="40">
 									<Button Margin="2" Command="{Binding CurrentContent.AskForIncreaseNumberOfShifts}"
 											ToolTip="افزودن شیفت">
@@ -1714,7 +1714,7 @@
 								<TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtShiftPrototypeColor}"/>
 							</StackPanel>
 							<ScrollViewer Margin="5" Grid.Row="4" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-								<ItemsControl Margin="2" ItemsSource="{Binding CurrentContent.ShiftPrototypes}">
+								<ItemsControl Margin="2" ItemsSource="{Binding CurrentContent.ShiftPrototypes}" IsEnabled="{Binding CurrentContent.IsReadonly, Converter={StaticResource inverter}}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<Border BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1" Margin="1"
@@ -1747,7 +1747,7 @@
 							</ScrollViewer>
 							<!--shifts-->
 							<ScrollViewer Margin="5" Grid.Row="6" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-								<ItemsControl ItemsSource="{Binding CurrentContent.WorkDays}">
+								<ItemsControl ItemsSource="{Binding CurrentContent.WorkDays}" IsEnabled="{Binding CurrentContent.IsReadonly, Converter={StaticResource inverter}}">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<DockPanel Height="50">
@@ -1806,6 +1806,56 @@
 			</GroupBox>
 		</DataTemplate>
 
+		<!--  1.3.2. Holiday  -->
+		<DataTemplate x:Key="HolidayTemplate" DataType="wt:HolidayVm"
+					  xmlns:wt="clr-namespace:Soheil.Core.ViewModels.OrganizationCalendar"
+					  xmlns:ocv="clr-namespace:Soheil.Views.OrganizationCalendar"
+					  xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit">
+			<GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+				<I:Interaction.Behaviors>
+					<Behavior:ValidationExceptionBehavior />
+				</I:Interaction.Behaviors>
+				<DockPanel FlowDirection="{Loc enumDirection}">
+					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+					<ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+					<Border Style="{StaticResource SoheilContentUpperBorder}">
+						<Grid Margin="5">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<!--Name-->
+							<TextBlock Margin="0,5" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+							<TextBox Margin="5" Grid.Column="1"
+									Text="{Binding Path=CurrentContent.Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+							<!--Date-->
+							<TextBlock Grid.Row="1" Margin="0,5" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtDate}" />
+							<cal:DatePicker Margin="5" Grid.Row="1" Grid.Column="1"
+									SelectedDate="{Binding Path=CurrentContent.Date, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" 
+									DisplayDate="{Binding Path=CurrentContent.Date}"/>
+							<!-- Business state -->
+							<TextBlock Grid.Row="2" Margin="0,5" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtBusinessDayState}" />
+							<ComboBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"
+									ItemsSource="{Binding CurrentContent.DayStates}"
+									SelectedItem="{Binding CurrentContent.SelectedState}"/>
+							<!-- is recurrent -->
+							<CheckBox Grid.Row="3" Grid.ColumnSpan="2" Margin="0,5" Content="{Loc txtIsRecurrentDesc}"
+									  IsChecked="{Binding CurrentContent.IsRecurrent}"/>
+						</Grid>
+					</Border>
+				</DockPanel>
+			</GroupBox>
+		</DataTemplate>
+
+
+		<!--  1.3.2. Work Profile Plan  -->
 		<DataTemplate x:Key="WorkProfilePlanTemplate" DataType="wt:WorkProfilePlanVm"
 					  xmlns:wt="clr-namespace:Soheil.Core.ViewModels.OrganizationCalendar"
 					  xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"

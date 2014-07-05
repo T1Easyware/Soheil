@@ -54,6 +54,22 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			set { _model.IsRecurrent = value; OnPropertyChanged("IsRecurrent"); }
 		}
 
+		public ObservableCollection<BusinessDayType> DayStates { get { return _dayStates; } }
+		private ObservableCollection<BusinessDayType> _dayStates = new ObservableCollection<BusinessDayType>();
+		public BusinessDayType SelectedState
+		{
+			get { return (BusinessDayType)GetValue(SelectedStateProperty); }
+			set { SetValue(SelectedStateProperty, value); }
+		}
+		public static readonly DependencyProperty SelectedStateProperty =
+			DependencyProperty.Register("SelectedState", typeof(BusinessDayType), typeof(HolidayVm),
+			new UIPropertyMetadata(BusinessDayType.None, (d, e) =>
+			{
+				var vm = (HolidayVm)d;
+				var val = (BusinessDayType)e.NewValue;
+				vm.BusinessState = val;
+			}));
+
       /*  #region Create/Modify Properties
         public DateTime CreatedDate
         {
@@ -105,6 +121,15 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
         {
             HolidayDataService = dataService;
             SaveCommand = new Command(Save, CanSave);
+
+			//combo box issues
+			DayStates.Add(BusinessDayType.Open);
+			DayStates.Add(BusinessDayType.Closed);
+			DayStates.Add(BusinessDayType.HalfClosed);
+			DayStates.Add(BusinessDayType.SpecialDay1);
+			DayStates.Add(BusinessDayType.SpecialDay2);
+			DayStates.Add(BusinessDayType.SpecialDay3);
+			SelectedState = DayStates.FirstOrDefault(x => x == BusinessState);
         }
 
         public override void Save(object param)
@@ -117,7 +142,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 
         public override bool CanSave()
         {
-            return AllDataValid() && base.CanSave();
+			return (Access >= AccessType.Update) && AllDataValid() && base.CanSave();
         }
 
 

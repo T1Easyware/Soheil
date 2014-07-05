@@ -74,6 +74,11 @@ namespace Soheil.Views
 				var tmpl = (DataTemplate)FindResource("WorkProfileTemplate");
 				_itemContentView.ContentTemplate = tmpl;
 			}
+			else if (ViewModel.CurrentContent is Soheil.Core.ViewModels.OrganizationCalendar.HolidayVm)
+			{
+				var tmpl = (DataTemplate)FindResource("HolidayTemplate");
+				_itemContentView.ContentTemplate = tmpl;
+			}
 			else if (ViewModel.CurrentContent is Soheil.Core.ViewModels.OrganizationCalendar.WorkProfilePlanVm)
 			{
 				var tmpl = (DataTemplate)FindResource("WorkProfilePlanTemplate");

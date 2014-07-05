@@ -26,6 +26,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			Name = model.Name;
 			Color = model.Color;
 			BusinessState = model.BusinessState;
+
 			foreach (var workShift in model.WorkShifts)
 			{
 				var shift = new WorkShiftVm(workShift, prototypes.First(x => x.Id == workShift.WorkShiftPrototype.Id));

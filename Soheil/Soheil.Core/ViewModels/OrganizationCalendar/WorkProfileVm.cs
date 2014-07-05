@@ -31,10 +31,9 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		/// Initializes a new instance of the <see cref="WorkProfileVm"/> class initialized with default values.
 		/// </summary>
 		public WorkProfileVm(AccessType access)
-			: base(access)
+			: this(null, access)
 		{
-			_model = null;//filled in InitializeData()
-			InitializeData();
+			//_model filled in InitializeData()
 		}
 
 		/// <summary>
@@ -46,6 +45,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		public WorkProfileVm(WorkProfile entity, AccessType access)
 			: base(access)
 		{
+			IsReadonly = (access < AccessType.Update);
 			_model = entity;
 			InitializeData();
 		}
@@ -222,7 +222,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 
 		public override bool CanSave()
 		{
-			return AllDataValid() && base.CanSave();
+			return (Access >= AccessType.Update) && AllDataValid() && base.CanSave();
 		}
 		#endregion
 
@@ -282,6 +282,15 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		/// </summary>
 		public ObservableCollection<ShiftColorVm> ShiftColors { get { return _shiftColors; } }
 		private ObservableCollection<ShiftColorVm> _shiftColors = new ObservableCollection<ShiftColorVm>();
+
+		//IsReadonly Dependency Property
+		public bool IsReadonly
+		{
+			get { return (bool)GetValue(IsReadonlyProperty); }
+			set { SetValue(IsReadonlyProperty, value); }
+		}
+		public static readonly DependencyProperty IsReadonlyProperty =
+			DependencyProperty.Register("IsReadonly", typeof(bool), typeof(WorkProfileVm), new UIPropertyMetadata(false));
 
 		#region Shifts props and commands
 		/// <summary>

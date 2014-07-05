@@ -142,7 +142,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 
         public override bool CanSave()
         {
-            return AllDataValid() && base.CanSave();
+            return (Access >= AccessType.Update) && AllDataValid() && base.CanSave();
         }
         #endregion
 

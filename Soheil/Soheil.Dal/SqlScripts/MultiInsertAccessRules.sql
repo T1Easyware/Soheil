@@ -56,7 +56,7 @@ ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);
 
 
 INSERT INTO Users(Code,CreatedBy,CreatedDate,ModifiedBy,ModifiedDate,Username,[Password],Title,[Status]) VALUES
-(0,0,'2013-01-01',0,'2013-01-01','Admin','fromdust','Admin',1);
+(0,0,'2013-01-01',0,'2013-01-01','Admin','soheil','Admin',1);
 
 INSERT INTO User_AccessRules(AccessRule_Id, [User_Id], ModifiedBy,ModifiedDate,[Type]) VALUES
 (1,1,0,'2013-01-01',31),

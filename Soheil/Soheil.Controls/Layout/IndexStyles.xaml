@@ -51,21 +51,21 @@
 							<StackPanel>
 								<TextBlock Text="{Binding Text}"/>
 								<TextBlock Text="{Binding Perc, Converter={StaticResource percentConverter}}"/>
-								<TextBlock Text="{Binding Hours, Converter={StaticResource oeeHoursConverter}}"/>
+								<TextBlock Text="{Binding Hours, Converter={StaticResource oeeHoursConverter}, ConverterParameter=full}"/>
 							</StackPanel>
 						</StackPanel.ToolTip>
 
-							<!-- cell -->
-							<Border Style="{StaticResource emptyDetailStyle}" IsHitTestVisible="False">
-								<Border Style="{StaticResource filledDetailStyle}">
-									<Canvas Width="0" Height="0" VerticalAlignment="Top" HorizontalAlignment="Left" IsHitTestVisible="False">
-										<Canvas.Effect>
-											<DropShadowEffect Color="White" BlurRadius="2" ShadowDepth="1"/>
-										</Canvas.Effect>
-										<TextBlock Text="{Binding Perc, Converter={StaticResource percentConverter}}" ClipToBounds="False"/>
-									</Canvas>
-								</Border>
+						<!-- cell -->
+						<Border Style="{StaticResource emptyDetailStyle}" IsHitTestVisible="False">
+							<Border Style="{StaticResource filledDetailStyle}">
+								<Canvas Width="0" Height="0" VerticalAlignment="Top" HorizontalAlignment="Left" IsHitTestVisible="False">
+									<Canvas.Effect>
+										<DropShadowEffect Color="White" BlurRadius="2" ShadowDepth="1"/>
+									</Canvas.Effect>
+									<TextBlock Text="{Binding Hours, Converter={StaticResource oeeHoursConverter}}" ClipToBounds="False"/>
+								</Canvas>
 							</Border>
+						</Border>
 							
 						
 						<TextBlock Text="{Binding Text}" Width="50" Height="40" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Gainsboro" TextWrapping="Wrap" TextAlignment="Center">

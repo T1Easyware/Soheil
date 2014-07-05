@@ -43,6 +43,10 @@ namespace Soheil
         public static readonly DependencyProperty AccessListProperty =
             DependencyProperty.Register("AccessList", typeof (List<Tuple<string,AccessType>>), typeof (MainWindow), null);
 
+		//Login Dependency Property
+		public static readonly DependencyProperty LoginProperty =
+			DependencyProperty.Register("Login", typeof(bool), typeof(MainWindow), new UIPropertyMetadata(false));
+
         public List<Tuple<string, AccessType>> AccessList
         {
             get { return (List<Tuple<string, AccessType>>)GetValue(AccessListProperty); }
@@ -69,7 +73,8 @@ namespace Soheil
 			_newTabNumber = 1;
 
 			// temp
-			Login(null);
+			//Login(null);
+			//SetValue(LoginProperty, true);
 			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
@@ -430,6 +435,8 @@ namespace Soheil
                     return Common.Properties.Resources.txtPositions;
 				case SoheilEntityType.OrganizationCharts:
 					return Common.Properties.Resources.txtOrgCharts;
+				case SoheilEntityType.Holidays:
+					return Common.Properties.Resources.txtHolidays;
 				case SoheilEntityType.WorkProfiles:
 					return Common.Properties.Resources.txtWorkProfiles;
 				case SoheilEntityType.WorkProfilePlan:
@@ -514,14 +521,15 @@ namespace Soheil
 
         public void Login(object param)
         {
-            //var userInfo = _accessRuleDataService.VerifyLogin(Username, ((PasswordBox)param).Password);
-            var userInfo = _accessRuleDataService.VerifyLogin("Admin", "fromdust");
+            var userInfo = _accessRuleDataService.VerifyLogin(Username, ((PasswordBox)param).Password);
+            //var userInfo = _accessRuleDataService.VerifyLogin("admin", "fromdust");
             LoginInfo.DataService = _userDataService;
             if (userInfo.Item1 >=0)
             {
                 AccessList = _accessRuleDataService.GetAccessOfUser(userInfo.Item1);
                 LoginHeader = userInfo.Item2;
-                LoginInfo.Id = userInfo.Item1;
+				SetValue(LoginProperty, true);
+				LoginInfo.Id = userInfo.Item1;
                 LoginInfo.Title = Username;
                 LoginInfo.Access = AccessList;
             }
@@ -529,10 +537,17 @@ namespace Soheil
             {
                 AccessList = new List<Tuple<string, AccessType>>();
                 LoginHeader = "Login Failed";
+				SetValue(LoginProperty, false);
                 LoginInfo.Id = -1;
                 LoginInfo.Title = string.Empty;
                 LoginInfo.Access = AccessList;
             }
         }
+
+		private void passwordBoxKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter || e.Key == Key.Return)
+				Login(_loginPassword);
+		}
     }
 }

@@ -76,6 +76,7 @@
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SqlScripts\Create Login.sql" />
     <Content Include="SqlScripts\InitDatabaseforTest.sql" />
     <Content Include="SqlScripts\MultiInsertAccessRules.sql" />
     <Content Include="SoheilEdm.edmx.sql" />

@@ -969,4 +969,10 @@
   <data name="msgDeleteConfirm" xml:space="preserve">
     <value>آیا این آیتم حذف شود؟</value>
   </data>
+  <data name="txtIsRecurrent" xml:space="preserve">
+    <value>هر ساله</value>
+  </data>
+  <data name="txtIsRecurrentDesc" xml:space="preserve">
+    <value>این تعطیلی هر سال اتفاق می افتد</value>
+  </data>
 </root>

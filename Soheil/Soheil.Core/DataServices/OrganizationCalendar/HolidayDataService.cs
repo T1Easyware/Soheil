@@ -156,5 +156,5 @@ namespace Soheil.Core.DataServices
 		{
 			return GetAtDate(date).Select(x=>x.BusinessState).ToList();
 		}
-    }
+	}
 }

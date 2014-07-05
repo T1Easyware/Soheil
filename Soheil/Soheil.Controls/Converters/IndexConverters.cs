@@ -24,7 +24,14 @@ namespace Soheil.Controls.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			return string.Format(System.Globalization.CultureInfo.CreateSpecificCulture("fa-ir"), "{0:F2} ساعت", System.Convert.ToDouble(value));
+			double val = System.Convert.ToDouble(value);
+			int h = (int)val;
+			int min = (int)Math.Round((val - h)*60);
+
+			if (parameter == null)
+				return string.Format(System.Globalization.CultureInfo.CreateSpecificCulture("fa-ir"), "{0}:{1}", h, min);
+			else
+				return string.Format(System.Globalization.CultureInfo.CreateSpecificCulture("fa-ir"), "{0} ساعت و {1} دقیقه", h, min);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
