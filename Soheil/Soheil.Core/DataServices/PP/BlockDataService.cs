@@ -194,15 +194,15 @@ namespace Soheil.Core.DataServices
 		internal int[] GetProductionReportData(Block model)
 		{
 			int g1 = 0;
-			int taskTp = 0;
-			int reportedTaskTp = 0;
+			int processDur = 0;
+			int reportedProcessDur = 0;
 			foreach (var task in model.Tasks)
 			{
 				g1 += task.TaskReports.Sum(x => x.TaskProducedG1);
-				taskTp += task.TaskTargetPoint;
-				reportedTaskTp += task.TaskReports.Sum(x => x.TaskReportTargetPoint);
+				processDur += task.Processes.Sum(x => x.DurationSeconds);
+				reportedProcessDur += task.Processes.Sum(x => x.ProcessReports.Sum(y => y.DurationSeconds));
 			}
-			return new int[] { g1, taskTp == 0 ? 0 : 100 * reportedTaskTp / taskTp };
+			return new int[] { g1, processDur == 0 ? 0 : 100 * reportedProcessDur / processDur };
 		}
 
 		internal void SaveBlock(Block block)

@@ -36,6 +36,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// Gets the DataService instance for this fpc
 		/// </summary>
 		public FPCDataService fpcDataService { get; protected set; }
+		public ReworkDataService reworkDataService { get; protected set; }
 
 		/// <summary>
 		/// Gets the Model for this fpc
@@ -177,6 +178,15 @@ namespace Soheil.Core.ViewModels.Fpc
 					ProductReworks.Add(new ProductReworkVm(prodrew));
 				}
 
+				//Reworks
+				Reworks.Clear();
+				var rws = reworkDataService.GetActives();
+				foreach (var item in rws)
+				{
+					Reworks.Add(new ReworkVm(item));
+				}
+
+
 				//-----------
 				//load states
 				//-----------
@@ -228,10 +238,17 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			_lock = false;
 			Message = new DependencyMessageBox();
-			if (_uow == null) 
+
+			if (_uow == null)
+			{
 				fpcDataService = new FPCDataService();
+				reworkDataService = new ReworkDataService();
+			}
 			else
+			{
 				fpcDataService = new FPCDataService(_uow);
+				reworkDataService = new ReworkDataService(_uow);
+			}
 
 			//Stations
 			Stations.Clear();
@@ -497,6 +514,12 @@ namespace Soheil.Core.ViewModels.Fpc
 		public ObservableCollection<MachineFamilyVm> MachineFamilies { get { return _machineFamilies; } }
 		private ObservableCollection<MachineFamilyVm> _machineFamilies = new ObservableCollection<MachineFamilyVm>();
 		List<MachineFamilyVm> _allMachineFamilies;
+
+		/// <summary>
+		/// Gets a bindable collection of all Reworks representing ProductReworks of this FPC
+		/// </summary>
+		public ObservableCollection<ReworkVm> Reworks { get { return _reworks; } }
+		private ObservableCollection<ReworkVm> _reworks = new ObservableCollection<ReworkVm>();
 		#endregion
 
 		#region Menu bar items

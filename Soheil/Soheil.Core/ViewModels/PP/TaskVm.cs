@@ -202,28 +202,6 @@ namespace Soheil.Core.ViewModels.PP
 		private ObservableCollection<Report.TaskReportVm> _taskReports = new ObservableCollection<Report.TaskReportVm>();
 
 		/// <summary>
-		/// Gets a bindable value that shows the % of reports for this Task that are filled
-		/// <para>value is between 0 and 100</para>
-		/// </summary>
-		public string ReportFillPercent
-		{
-			get { return (string)GetValue(ReportFillPercentProperty); }
-			protected set { SetValue(ReportFillPercentProperty, value); }
-		}
-		public static readonly DependencyProperty ReportFillPercentProperty =
-			DependencyProperty.Register("ReportFillPercent", typeof(string), typeof(TaskVm), new UIPropertyMetadata("0"));
-		/// <summary>
-		/// Gets a bindable value that indicates if all reports for this Task are filleds
-		/// </summary>
-		public bool IsReportFilled
-		{
-			get { return (bool)GetValue(IsReportFilledProperty); }
-			protected set { SetValue(IsReportFilledProperty, value); }
-		}
-		public static readonly DependencyProperty IsReportFilledProperty =
-			DependencyProperty.Register("IsReportFilled", typeof(bool), typeof(TaskVm), new UIPropertyMetadata(false));
-
-		/// <summary>
 		/// Bindable command to fill all empty gaps among TaskReports
 		/// </summary>
 		public Commands.Command FillEmptySpacesCommand

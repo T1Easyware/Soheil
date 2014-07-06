@@ -23,6 +23,16 @@ namespace Soheil.Core.ViewModels.PP.Report
 					Cause = null,
 					ModifiedBy = LoginInfo.Id,
 				};
+				foreach (var po in Parent.Model.Process.ProcessOperators)
+				{
+					model.OperatorStoppageReports.Add(new Model.OperatorStoppageReport
+					{
+						Operator = po.Operator,
+						StoppageReport = model,
+						Code = po.Operator.Code,
+						ModifiedBy = LoginInfo.Id,
+					});
+				}
 				parent.Model.StoppageReports.Add(model);
 				var vm = new StoppageReportVm(this, model);
 				List.Add(vm);

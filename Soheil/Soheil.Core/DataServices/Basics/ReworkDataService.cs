@@ -21,7 +21,11 @@ namespace Soheil.Core.DataServices
 		public ReworkDataService(SoheilEdmContext context)
 		{
 			Context = context ?? new SoheilEdmContext();
-            _reworkRepository = new Repository<Rework>(Context);
+			_reworkRepository = new Repository<Rework>(Context);
+		}
+		public ReworkDataService()
+			: this(new SoheilEdmContext())
+		{
 		}
 
 		#region IDataService<Rework> Members
