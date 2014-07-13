@@ -420,6 +420,117 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty InsertSetupBetweenProperty =
 			DependencyProperty.Register("InsertSetupBetween", typeof(Commands.Command), typeof(BlockVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates MarkForCopyCommand
+		/// </summary>
+		public Commands.Command MarkForCopyCommand
+		{
+			get { return (Commands.Command)GetValue(MarkForCopyCommandProperty); }
+			set { SetValue(MarkForCopyCommandProperty, value); }
+		}
+		public static readonly DependencyProperty MarkForCopyCommandProperty =
+			DependencyProperty.Register("MarkForCopyCommand", typeof(Commands.Command), typeof(BlockVm), new PropertyMetadata(null));
+
 		#endregion
+
+		internal void CopyTo(DateTime dateTime)
+		{
+			var diff = dateTime - Model.StartDateTime;
+
+			var newBlock = new Model.Block
+			{
+				Code = Model.Code+"_c",
+				BlockTargetPoint = Model.BlockTargetPoint,
+				DurationSeconds = Model.DurationSeconds,
+				StartDateTime = Model.StartDateTime + diff,
+				EndDateTime = Model.EndDateTime + diff,
+				ModifiedBy = LoginInfo.Id,
+				ModifiedDate = DateTime.Now,
+				StateStation = Model.StateStation,
+			};
+			foreach (var task in Model.Tasks)
+			{
+				var newTask = new Model.Task
+				{
+					Block = newBlock,
+					Code = task.Code + "_c",
+					DurationSeconds = task.DurationSeconds,
+					StartDateTime = task.StartDateTime+diff,
+					EndDateTime = task.EndDateTime + diff,
+					ModifiedBy = LoginInfo.Id,
+					TaskTargetPoint = task.TaskTargetPoint,
+				};
+				foreach (var process in task.Processes)
+				{
+					var newProcess = new Model.Process
+					{
+						Code = process.Code + "_c",
+						DurationSeconds = process.DurationSeconds,
+						StartDateTime = process.StartDateTime + diff,
+						EndDateTime = process.EndDateTime + diff,
+						StateStationActivity = process.StateStationActivity,
+						TargetCount = process.TargetCount,
+					};
+					foreach (var processOperator in process.ProcessOperators)
+					{
+						var newPo = new Model.ProcessOperator
+						{
+							Code = processOperator.Code + "_c",
+							Operator = processOperator.Operator,
+							Process = newProcess,
+							Role = processOperator.Role,
+						};
+						newProcess.ProcessOperators.Add(newPo);
+					}
+					foreach (var selectedMachine in process.SelectedMachines)
+					{
+						var newSm = new Model.SelectedMachine
+						{
+							Process = newProcess,
+							StateStationActivityMachine = selectedMachine.StateStationActivityMachine,
+						};
+						newProcess.SelectedMachines.Add(newSm);
+					}
+					newTask.Processes.Add(newProcess);
+				}
+				newBlock.Tasks.Add(newTask);
+			}
+
+			new DataServices.BlockDataService(UOW).AddModel(newBlock);
+			UOW.Commit();
+		}
+
+		internal void MoveTo(DateTime dateTime)
+		{
+			if (Model.Tasks.Any(x => !x.IsReportEmpty))
+			{
+				MessageBox.Show("این برنامه گزارش دارد و قابل جابجایی نیست");
+				return;
+			}
+			var diff = dateTime - Model.StartDateTime;
+			Model.StartDateTime += diff;
+			Model.EndDateTime += diff;
+			foreach (var task in Model.Tasks)
+			{
+				task.StartDateTime += diff;
+				task.EndDateTime += diff;
+				foreach (var taskreport in task.TaskReports)
+				{
+					taskreport.ReportStartDateTime += diff;
+					taskreport.ReportEndDateTime += diff;
+				}
+				foreach (var process in task.Processes)
+				{
+					foreach (var processReport in process.ProcessReports)
+					{
+						processReport.StartDateTime += diff;
+						processReport.EndDateTime += diff;
+					}
+					process.StartDateTime += diff;
+					process.EndDateTime += diff;
+				}
+			}
+			UOW.Commit();
+		}
 	}
 }

@@ -105,11 +105,16 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// <param name="station"></param>
 		public void AddNewStateStation(FpcWindowVm fpc, StationVm station)
 		{
-			//if no station is already there and no name or code is set, set them to station's
-			if (!ContentsList.Any(x => !x.IsDropIndicator) && State.Name == "*" && State.Code == "*")
+			bool isDefault = false;
+			if (!ContentsList.Any(x => !x.IsDropIndicator))
 			{
-				State.Name = station.Name;
-				State.Code = station.Code;
+				isDefault = true;
+				//if no station is already there and no name or code is set, set them to station's
+				if (State.Name == "*" && State.Code == "*")
+				{
+					State.Name = station.Name;
+					State.Code = station.Code;
+				}
 			}
 
 			//create model for StateStation
@@ -117,6 +122,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				State = this.State.Model,
 				Station = station.Model,
+				IsDefault = isDefault
 			};
 
 			//create vm for StateStation and add it

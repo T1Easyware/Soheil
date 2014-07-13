@@ -29,6 +29,7 @@ namespace Soheil.Core.PP
 
 		public event Action<PPItemNpt> NptAddedOrUpdated;
 		public event Action<PPItemNpt> NptRemoved;
+		public event Action EverythingRemoved;
 
 		/// <summary>
 		/// Occurs when day colors are updated
@@ -218,7 +219,7 @@ namespace Soheil.Core.PP
 			//add days and shifts
 			Task.Factory.StartNew(_actionLoadWorkTimes, data);
 		}
-		public void ForceReload()
+		public void ForceReload(bool clearAll = false)
 		{
 			_qThreadAlive = false;
 			Pause = true;
@@ -230,6 +231,8 @@ namespace Soheil.Core.PP
 				_blocks[i].Clear();
 				_npts[i].Clear();
 			}
+
+			if (clearAll && EverythingRemoved != null) EverythingRemoved();
 
 			//sync load
 			_force = true;

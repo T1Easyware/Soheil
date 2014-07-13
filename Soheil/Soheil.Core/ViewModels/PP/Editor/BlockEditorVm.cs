@@ -56,7 +56,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 
 			var stateEntity = new Soheil.Core.DataServices.StateDataService(_uow).GetSingle(stateModel.Id);
 			State = new StateVm(stateEntity);
-			SelectedStateStation = State.StateStationList.FirstOrDefault();
+			SelectedStateStation = State.StateStationList.FirstOrDefault(x => x.Model.IsDefault);
+			if (SelectedStateStation == null)
+				SelectedStateStation = State.StateStationList.FirstOrDefault();
 			EditorStartDate = DateTime.Now.Date;
 			EditorStartTime = DateTime.Now.TimeOfDay;
 

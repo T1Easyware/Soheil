@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 07/01/2014 16:45:44
--- Generated from EDMX file: C:\Users\Bizhan\Documents\GitHub\Soheil2\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 07/13/2014 19:04:51
+-- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -302,6 +302,27 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_StateStationActivityExternalConnector1]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[ExternalConnectors] DROP CONSTRAINT [FK_StateStationActivityExternalConnector1];
 GO
+IF OBJECT_ID(N'[dbo].[FK_PartMachinePart]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MachineParts] DROP CONSTRAINT [FK_PartMachinePart];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MaintenanceMachinePartMaintenance]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MachinePartMaintenances] DROP CONSTRAINT [FK_MaintenanceMachinePartMaintenance];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MachinePartMachinePartMaintenance]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MachinePartMaintenances] DROP CONSTRAINT [FK_MachinePartMachinePartMaintenance];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MachinePartMaintenanceMaintenanceReport]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MaintenanceReports] DROP CONSTRAINT [FK_MachinePartMaintenanceMaintenanceReport];
+GO
+IF OBJECT_ID(N'[dbo].[FK_RepairMachinePart]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MachineParts] DROP CONSTRAINT [FK_RepairMachinePart];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MachineMachinePart]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MachineParts] DROP CONSTRAINT [FK_MachineMachinePart];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StoppageReportRepair]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Repairs] DROP CONSTRAINT [FK_StoppageReportRepair];
+GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
 GO
@@ -516,6 +537,24 @@ IF OBJECT_ID(N'[dbo].[ActivitySkills]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[ExternalConnectors]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ExternalConnectors];
+GO
+IF OBJECT_ID(N'[dbo].[Parts]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Parts];
+GO
+IF OBJECT_ID(N'[dbo].[MachineParts]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MachineParts];
+GO
+IF OBJECT_ID(N'[dbo].[Maintenances]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Maintenances];
+GO
+IF OBJECT_ID(N'[dbo].[MachinePartMaintenances]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MachinePartMaintenances];
+GO
+IF OBJECT_ID(N'[dbo].[MaintenanceReports]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MaintenanceReports];
+GO
+IF OBJECT_ID(N'[dbo].[Repairs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Repairs];
 GO
 IF OBJECT_ID(N'[dbo].[NonProductiveTasks_PM]', 'U') IS NOT NULL
     DROP TABLE [dbo].[NonProductiveTasks_PM];
@@ -743,6 +782,7 @@ GO
 -- Creating table 'StateStations'
 CREATE TABLE [dbo].[StateStations] (
     [Id] int IDENTITY(1,1) NOT NULL,
+    [IsDefault] bit  NOT NULL,
     [State_Id] int  NOT NULL,
     [Station_Id] int  NOT NULL
 );
@@ -1304,6 +1344,73 @@ CREATE TABLE [dbo].[ExternalConnectors] (
 );
 GO
 
+-- Creating table 'Parts'
+CREATE TABLE [dbo].[Parts] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Name] nvarchar(max)  NOT NULL,
+    [Description] nvarchar(max)  NOT NULL,
+    [Code] nvarchar(max)  NOT NULL,
+    [Status] tinyint  NOT NULL
+);
+GO
+
+-- Creating table 'MachineParts'
+CREATE TABLE [dbo].[MachineParts] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [IsMachine] bit  NOT NULL,
+    [Name] nvarchar(max)  NOT NULL,
+    [Description] nvarchar(max)  NOT NULL,
+    [Code] nvarchar(max)  NOT NULL,
+    [Status] tinyint  NOT NULL,
+    [Part_Id] int  NULL,
+    [Repair_Id] int  NOT NULL,
+    [Machine_Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'Maintenances'
+CREATE TABLE [dbo].[Maintenances] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Name] nvarchar(max)  NOT NULL,
+    [Description] nvarchar(max)  NOT NULL
+);
+GO
+
+-- Creating table 'MachinePartMaintenances'
+CREATE TABLE [dbo].[MachinePartMaintenances] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [IsOnDemand] bit  NOT NULL,
+    [PeriodHours] int  NOT NULL,
+    [Description] nvarchar(max)  NOT NULL,
+    [Maintenance_Id] int  NOT NULL,
+    [MachinePart_Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'MaintenanceReports'
+CREATE TABLE [dbo].[MaintenanceReports] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [MaintenanceDate] datetime  NOT NULL,
+    [PerformedDate] datetime  NOT NULL,
+    [Description] nvarchar(max)  NOT NULL,
+    [PerformanceStatus] tinyint  NOT NULL,
+    [MachinePartMaintenance_Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'Repairs'
+CREATE TABLE [dbo].[Repairs] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [CreatedDate] datetime  NOT NULL,
+    [ModifiedBy] int  NOT NULL,
+    [AcquiredDate] datetime  NOT NULL,
+    [DeliveredDate] datetime  NOT NULL,
+    [RepairStatus] tinyint  NOT NULL,
+    [Description] nvarchar(max)  NOT NULL,
+    [StoppageReport_Id] int  NOT NULL
+);
+GO
+
 -- Creating table 'NonProductiveTasks_PM'
 CREATE TABLE [dbo].[NonProductiveTasks_PM] (
     [Id] int  NOT NULL,
@@ -1730,6 +1837,42 @@ GO
 -- Creating primary key on [Id] in table 'ExternalConnectors'
 ALTER TABLE [dbo].[ExternalConnectors]
 ADD CONSTRAINT [PK_ExternalConnectors]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'Parts'
+ALTER TABLE [dbo].[Parts]
+ADD CONSTRAINT [PK_Parts]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'MachineParts'
+ALTER TABLE [dbo].[MachineParts]
+ADD CONSTRAINT [PK_MachineParts]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'Maintenances'
+ALTER TABLE [dbo].[Maintenances]
+ADD CONSTRAINT [PK_Maintenances]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'MachinePartMaintenances'
+ALTER TABLE [dbo].[MachinePartMaintenances]
+ADD CONSTRAINT [PK_MachinePartMaintenances]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'MaintenanceReports'
+ALTER TABLE [dbo].[MaintenanceReports]
+ADD CONSTRAINT [PK_MaintenanceReports]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'Repairs'
+ALTER TABLE [dbo].[Repairs]
+ADD CONSTRAINT [PK_Repairs]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -3089,6 +3232,104 @@ ADD CONSTRAINT [FK_StateStationActivityExternalConnector1]
 CREATE INDEX [IX_FK_StateStationActivityExternalConnector1]
 ON [dbo].[ExternalConnectors]
     ([EndSSA_Id]);
+GO
+
+-- Creating foreign key on [Part_Id] in table 'MachineParts'
+ALTER TABLE [dbo].[MachineParts]
+ADD CONSTRAINT [FK_PartMachinePart]
+    FOREIGN KEY ([Part_Id])
+    REFERENCES [dbo].[Parts]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_PartMachinePart'
+CREATE INDEX [IX_FK_PartMachinePart]
+ON [dbo].[MachineParts]
+    ([Part_Id]);
+GO
+
+-- Creating foreign key on [Maintenance_Id] in table 'MachinePartMaintenances'
+ALTER TABLE [dbo].[MachinePartMaintenances]
+ADD CONSTRAINT [FK_MaintenanceMachinePartMaintenance]
+    FOREIGN KEY ([Maintenance_Id])
+    REFERENCES [dbo].[Maintenances]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MaintenanceMachinePartMaintenance'
+CREATE INDEX [IX_FK_MaintenanceMachinePartMaintenance]
+ON [dbo].[MachinePartMaintenances]
+    ([Maintenance_Id]);
+GO
+
+-- Creating foreign key on [MachinePart_Id] in table 'MachinePartMaintenances'
+ALTER TABLE [dbo].[MachinePartMaintenances]
+ADD CONSTRAINT [FK_MachinePartMachinePartMaintenance]
+    FOREIGN KEY ([MachinePart_Id])
+    REFERENCES [dbo].[MachineParts]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MachinePartMachinePartMaintenance'
+CREATE INDEX [IX_FK_MachinePartMachinePartMaintenance]
+ON [dbo].[MachinePartMaintenances]
+    ([MachinePart_Id]);
+GO
+
+-- Creating foreign key on [MachinePartMaintenance_Id] in table 'MaintenanceReports'
+ALTER TABLE [dbo].[MaintenanceReports]
+ADD CONSTRAINT [FK_MachinePartMaintenanceMaintenanceReport]
+    FOREIGN KEY ([MachinePartMaintenance_Id])
+    REFERENCES [dbo].[MachinePartMaintenances]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MachinePartMaintenanceMaintenanceReport'
+CREATE INDEX [IX_FK_MachinePartMaintenanceMaintenanceReport]
+ON [dbo].[MaintenanceReports]
+    ([MachinePartMaintenance_Id]);
+GO
+
+-- Creating foreign key on [Repair_Id] in table 'MachineParts'
+ALTER TABLE [dbo].[MachineParts]
+ADD CONSTRAINT [FK_RepairMachinePart]
+    FOREIGN KEY ([Repair_Id])
+    REFERENCES [dbo].[Repairs]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_RepairMachinePart'
+CREATE INDEX [IX_FK_RepairMachinePart]
+ON [dbo].[MachineParts]
+    ([Repair_Id]);
+GO
+
+-- Creating foreign key on [Machine_Id] in table 'MachineParts'
+ALTER TABLE [dbo].[MachineParts]
+ADD CONSTRAINT [FK_MachineMachinePart]
+    FOREIGN KEY ([Machine_Id])
+    REFERENCES [dbo].[Machines]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MachineMachinePart'
+CREATE INDEX [IX_FK_MachineMachinePart]
+ON [dbo].[MachineParts]
+    ([Machine_Id]);
+GO
+
+-- Creating foreign key on [StoppageReport_Id] in table 'Repairs'
+ALTER TABLE [dbo].[Repairs]
+ADD CONSTRAINT [FK_StoppageReportRepair]
+    FOREIGN KEY ([StoppageReport_Id])
+    REFERENCES [dbo].[StoppageReports]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_StoppageReportRepair'
+CREATE INDEX [IX_FK_StoppageReportRepair]
+ON [dbo].[Repairs]
+    ([StoppageReport_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'

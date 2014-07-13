@@ -92,6 +92,14 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/TaskNew.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
+	<Style x:Key="CopyTaskImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/TaskCopy.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="MoveTaskImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/TaskMove.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
 
 	<Style x:Key="ReworkImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Rework.png"/>
@@ -320,6 +328,11 @@
 	</Style>
 	<Style x:Key="SaveWipeUpImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/SaveWipeUp.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	
+	<Style x:Key="SkillCenterImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/SkillCenter.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
 </ResourceDictionary>

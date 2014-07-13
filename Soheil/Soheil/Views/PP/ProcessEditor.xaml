@@ -208,8 +208,9 @@
 						  HorizontalScrollBarVisibility="Disabled"
 						  VerticalScrollBarVisibility="Auto">
 				<Grid Background="#1000" Margin="1,0">
+					<TextBlock Text="برای تخصیص ماشین کلیک کنید" TextWrapping="Wrap" Width="70" FontSize="10" Foreground="Silver" TextAlignment="Center"/>
 					<Grid Visibility="{Binding ShowAllMachines, Converter={StaticResource booleanToInvisibilityConverter}}">
-						<TextBlock Text="[ No Machines ]" VerticalAlignment="Center" Visibility="{Binding NoSelectedMachines, Converter={StaticResource booleanToVisibilityConverter}}"/>
+						<TextBlock Text="[ No Machines ]" Visibility="{Binding NoSelectedMachines, Converter={StaticResource booleanToVisibilityConverter}}" VerticalAlignment="Center"/>
 						<ItemsControl ItemsSource="{Binding SelectedMachines}" ToolTip="برای ویرایش یک بار کلیک کنید" Background="Transparent">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>

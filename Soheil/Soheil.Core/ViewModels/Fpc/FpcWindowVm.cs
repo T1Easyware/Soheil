@@ -15,12 +15,6 @@ namespace Soheil.Core.ViewModels.Fpc
 	public class FpcWindowVm : ViewModelBase
 	{
 		/// <summary>
-		/// Common unit of work used for all fpcs showed in this window
-		/// <para>can be null if not a single one is used</para>
-		/// </summary>
-		Dal.SoheilEdmContext _uow;
-
-		/// <summary>
 		/// Gets or sets a bindable value that indicates Access
 		/// </summary>
 		public AccessType Access
@@ -36,7 +30,6 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// Gets the DataService instance for this fpc
 		/// </summary>
 		public FPCDataService fpcDataService { get; protected set; }
-		public ReworkDataService reworkDataService { get; protected set; }
 
 		/// <summary>
 		/// Gets the Model for this fpc
@@ -47,7 +40,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// Gets the Id for this fpc
 		/// </summary>
 		public int Id { get { return Model == null ? -1 : Model.Id; } }
-		
+
 		/// <summary>
 		/// Occurs when a state is selected
 		/// </summary>
@@ -110,7 +103,7 @@ namespace Soheil.Core.ViewModels.Fpc
 						};
 						newItem.ModelChanged += () =>
 						{
-							if(newItem.IsPlaced)
+							if (newItem.IsPlaced)
 								fpcDataService.ApplyChanges();
 						};
 					}
@@ -135,7 +128,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public void ChangeFpcByProductId(int productId)
 		{
 			//clear all fpc data from the view model and reload stations and activities
-			ResetFPC(); 
+			ResetFPC();
 			//set model
 			Model = fpcDataService.GetActiveForProduct(productId);
 			//update view model from model
@@ -180,10 +173,15 @@ namespace Soheil.Core.ViewModels.Fpc
 
 				//Reworks
 				Reworks.Clear();
-				var rws = reworkDataService.GetActives();
+				var rws = new ReworkDataService(fpcDataService.Context).GetActives();
 				foreach (var item in rws)
 				{
-					Reworks.Add(new ReworkVm(item));
+					var rewVm = new ReworkVm(item);
+					if (item.ProductReworks.Any(x => x.Product.Id == Model.Product.Id))
+						rewVm.IsInProduct = true;
+					if (productReworkModels.Any(x => x.Rework != null && x.Rework.Id == item.Id))
+						rewVm.IsInFpc = true;
+					Reworks.Add(rewVm);
 				}
 
 
@@ -196,19 +194,28 @@ namespace Soheil.Core.ViewModels.Fpc
 				//show all states
 				foreach (var item in states)
 				{
-					States.Add(new StateVm(item, this));
+					var stateVm = new StateVm(item, this);
+					if (!ShowFpcReworks && 
+						(stateVm.IsRework || stateVm.StateType == StateType.Rework))
+						stateVm.IsVisible = false;
+					States.Add(stateVm);
 				}
-
+	
 				//----------
 				//load conns
 				//----------
 				var conns = fpcDataService.connectorDataService.GetByFpcId(Id);
 				foreach (var item in conns)
 				{
-					Connectors.Add(new ConnectorVm(item,
+					var connVm = new ConnectorVm(item,
 						States.FirstOrDefault(x => x.Id == item.StartState.Id),
 						States.FirstOrDefault(x => x.Id == item.EndState.Id),
-						fpcDataService.connectorDataService));
+						fpcDataService.connectorDataService);
+					if(!ShowFpcReworks && 
+						(connVm.Start.IsRework || connVm.Start.StateType == StateType.Rework
+						|| connVm.End.IsRework || connVm.End.StateType == StateType.Rework))
+						connVm.IsVisible = false;
+					Connectors.Add(connVm);
 				}
 			}
 			catch (SoheilExceptionBase exp)
@@ -239,16 +246,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			_lock = false;
 			Message = new DependencyMessageBox();
 
-			if (_uow == null)
-			{
-				fpcDataService = new FPCDataService();
-				reworkDataService = new ReworkDataService();
-			}
-			else
-			{
-				fpcDataService = new FPCDataService(_uow);
-				reworkDataService = new ReworkDataService(_uow);
-			}
+			fpcDataService = new FPCDataService();
 
 			//Stations
 			Stations.Clear();
@@ -283,7 +281,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty ProductProperty =
 			DependencyProperty.Register("Product", typeof(ProductVm), typeof(FpcWindowVm), new UIPropertyMetadata(null));
-		
+
 		/// <summary>
 		/// Gets or sets a bindable value that indicates whether this fpc is default fpc for this product
 		/// <para>Changing the value calls ChangeDefault method of fpcDataService</para>
@@ -378,15 +376,12 @@ namespace Soheil.Core.ViewModels.Fpc
 				if ((bool)e.NewValue)
 				{
 					IEnumerable<Model.MachineFamily> list;
-					if (vm._uow == null)
-						list = new DataServices.MachineFamilyDataService().GetActives();
-					else
-						list = new DataServices.MachineFamilyDataService(vm._uow).GetActives();
+					list = new DataServices.MachineFamilyDataService(vm.fpcDataService.Context).GetActives();
 					vm._allMachineFamilies = new List<MachineFamilyVm>();
 					foreach (var mf in list)
 					{
 						var mfvm = new MachineFamilyVm(mf);
-						foreach (var m in mf.Machines.Where(x=>x.Status == (byte)Status.Active))
+						foreach (var m in mf.Machines.Where(x => x.Status == (byte)Status.Active))
 						{
 							mfvm.Machines.Add(new MachineVm(m, mfvm));
 						}
@@ -395,6 +390,89 @@ namespace Soheil.Core.ViewModels.Fpc
 				}
 				vm.OnStationSelected(vm.FocusedStateStation);
 			}));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ShowFpcReworks
+		/// </summary>
+		public bool ShowFpcReworks
+		{
+			get { return (bool)GetValue(ShowFpcReworksProperty); }
+			set { SetValue(ShowFpcReworksProperty, value); }
+		}
+		public static readonly DependencyProperty ShowFpcReworksProperty =
+			DependencyProperty.Register("ShowFpcReworks", typeof(bool), typeof(FpcWindowVm),
+			new PropertyMetadata(false, (d, e) =>
+			{
+				var vm = (FpcWindowVm)d;
+				var val = (bool)e.NewValue;
+				//find rework states
+				foreach (var state in vm.States.Where(x => x.IsRework || x.StateType == StateType.Rework))
+				{
+					state.IsVisible = val;
+				}
+				//find rework connectors
+				foreach (var conn in vm.Connectors.Where(x => !x.IsLoose && 
+					(x.Start.IsRework || x.Start.StateType == StateType.Rework 
+					|| x.End.IsRework || x.End.StateType == StateType.Rework)))
+				{
+					conn.IsVisible = val;
+				}
+			}));
+
+		public void AddRework(ToolboxItemVm item)
+		{
+			var rewVm = item.ContentData as ReworkVm;
+			if (rewVm == null) return;
+
+			//if(rewVm.IsInFpc)
+			if (Model.States.Any(x =>
+					x.StateTypeNr == (int)StateType.Rework
+					&& x.OnProductRework != null
+					&& x.OnProductRework.Rework != null
+					&& x.OnProductRework.Rework.Id == rewVm.Id))
+			{
+				Message = new DependencyMessageBox("این دوباره کاری در FPC موجود است", "توضیحات", MessageBoxButton.OK, ExceptionLevel.Info);
+				return;
+			}
+
+			//if(!rewVm.IsInProduct)
+			//add to product
+			Model.ProductRework productRework;
+			if (!Model.Product.ProductReworks.Any(x => x.Rework != null && x.Rework.Id == rewVm.Id))
+			{
+				productRework = new Model.ProductRework
+				{
+					Rework = new ReworkDataService(fpcDataService.Context).GetSingle(rewVm.Id),
+					Product = new ProductDataService(fpcDataService.Context).GetSingle(Model.Product.Id),
+					Name = rewVm.Name,
+					Code = rewVm.Code,
+					ModifiedBy = LoginInfo.Id,
+				};
+				new ProductReworkDataService(fpcDataService.Context).AddModel(productRework);
+			}
+			else
+				productRework = rewVm.Model.ProductReworks.FirstOrDefault(x => x.Product.Id == Model.Product.Id);
+
+			//add to fpc
+			var rewState = new Model.State
+			{
+				FPC = Model,
+				X = (float)item.Location.X,
+				Y = (float)item.Location.Y,
+				Name = rewVm.Name,
+				Code = rewVm.Code,
+				OnProductRework = productRework,
+				StateType = StateType.Rework,
+			};
+			fpcDataService.stateDataService.AddModel(rewState);
+
+			rewVm.IsInProduct = true;
+			rewVm.IsInFpc = true;
+
+			//add state vm
+			var rewStateVm = new StateVm(rewState, this);
+			States.Add(rewStateVm);
+		}
 
 
 		/// <summary>
@@ -735,7 +813,7 @@ namespace Soheil.Core.ViewModels.Fpc
 
 		#endregion
 
-		#region Commands 
+		#region Commands
 		/// <summary>
 		/// Initialize Commands
 		/// </summary>
@@ -948,7 +1026,7 @@ namespace Soheil.Core.ViewModels.Fpc
 				if (ToolConnector)
 				{
 					RemoveHalfDrawnConnector();
-					
+
 					//create a temporary state and attach it to the end of connector
 					var end = StateVm.CreateTemp(pos_drawingArea.X, pos_drawingArea.Y, this);
 					DragTarget = end;
@@ -1037,6 +1115,11 @@ namespace Soheil.Core.ViewModels.Fpc
 				item = SelectedToolboxItem.GetUnderlyingStateStation(pos_drawingArea);
 			else if (SelectedToolboxItem.ContentData is MachineVm)
 				item = SelectedToolboxItem.GetUnderlyingStateStationActivity(pos_drawingArea);
+			else if (SelectedToolboxItem.ContentData is ReworkVm)
+			{
+				SelectedToolboxItem.CanDrop = (SelectedToolboxItem.Location.X > 10 && SelectedToolboxItem.Location.Y > 10);
+				return;
+			}
 
 			//remove the indicator if can't drop
 			if (item == null)
@@ -1094,6 +1177,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			}
 		}
 		#endregion
+
 
 
 	}

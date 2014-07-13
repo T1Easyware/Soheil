@@ -125,6 +125,18 @@
     <Compile Include="MachineFamily.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="MachinePart.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MachinePartMaintenance.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Maintenance.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaintenanceReport.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="NonProductiveTask.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
@@ -150,6 +162,9 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="OrganizationChart_Position.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Part.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="PartWarehouse.cs">
@@ -195,6 +210,9 @@
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repair.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Rework.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>

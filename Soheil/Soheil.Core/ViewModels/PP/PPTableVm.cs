@@ -525,7 +525,13 @@ namespace Soheil.Core.ViewModels.PP
 				//set the ViewMode of the previously selected block to Simple
 				var old = (BlockVm)e.OldValue;
 				if (old != null) old.ViewMode = PPViewMode.Simple;
-				
+
+				//don't zoom or anything if copy/cut
+				if (vm.ShowItemEditing)
+				{
+					return;
+				}
+
 				var val = (BlockVm)e.NewValue;
 				//if no block is selected go back to normal
 				if (val == null)
@@ -674,8 +680,24 @@ namespace Soheil.Core.ViewModels.PP
 			});
 			ZoomStartedCommand = new Commands.Command(o => { });
 			UndoZoomCommand = new Commands.Command(o => RestoreZoom());
-			RefreshCommand = new Commands.Command(o => PPItems.Manager.ForceReload());
+			RefreshCommand = new Commands.Command(o => PPItems.Manager.ForceReload(true));
 			CloseBlockReportCommand = new Commands.Command(o => ShowBlockReport = false);
+
+			//copy/cut
+			CopyToCommand = new Commands.Command(o =>
+			{
+				SelectedBlock.CopyTo(ItemEditingDate.Date.Add(ItemEditingTime));
+				PPItems.Manager.ForceReload(true);
+			}, () => SelectedBlock != null);
+			MoveToCommand = new Commands.Command(o =>
+			{
+				SelectedBlock.MoveTo(ItemEditingDate.Date.Add(ItemEditingTime));
+				PPItems.Manager.ForceReload(true);
+			}, () => SelectedBlock != null);
+			CloseItemEditing = new Commands.Command(o =>
+			{
+				ShowItemEditing = false;
+			});
 		}
 		/// <summary>
 		/// Initializes BlockVm commands of vm that can be assigned in this class
@@ -705,6 +727,13 @@ namespace Soheil.Core.ViewModels.PP
 				}
 				catch (Exception exp) { vm.Message.AddEmbeddedException(exp.Message); }
 			});
+
+			vm.MarkForCopyCommand = new Commands.Command(o =>
+			{
+				ShowItemEditing = true;
+				SelectedBlock = vm;
+			});
+
 			//Job editor
 			vm.AddJobToEditorCommand = new Commands.Command(o =>
 			{
@@ -759,6 +788,7 @@ namespace Soheil.Core.ViewModels.PP
 			{
 				try
 				{
+					ShowItemEditing = false;
 					vm.BlockReport = new Report.BlockReportVm(vm);
 					vm.BlockReport.ProcessReportBuilderChanged += val => CurrentProcessReportBuilder = val;
 					SelectedBlock = vm;
@@ -898,6 +928,72 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty CloseBlockReportCommandProperty =
 			DependencyProperty.Register("CloseBlockReportCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
+
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates CopyToCommand
+		/// </summary>
+		public Commands.Command CopyToCommand
+		{
+			get { return (Commands.Command)GetValue(CopyToCommandProperty); }
+			set { SetValue(CopyToCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CopyToCommandProperty =
+			DependencyProperty.Register("CopyToCommand", typeof(Commands.Command), typeof(PPTableVm), new PropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates MoveToCommand
+		/// </summary>
+		public Commands.Command MoveToCommand
+		{
+			get { return (Commands.Command)GetValue(MoveToCommandProperty); }
+			set { SetValue(MoveToCommandProperty, value); }
+		}
+		public static readonly DependencyProperty MoveToCommandProperty =
+			DependencyProperty.Register("MoveToCommand", typeof(Commands.Command), typeof(PPTableVm), new PropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates CloseItemEditing
+		/// </summary>
+		public Commands.Command CloseItemEditing
+		{
+			get { return (Commands.Command)GetValue(CloseItemEditingProperty); }
+			set { SetValue(CloseItemEditingProperty, value); }
+		}
+		public static readonly DependencyProperty CloseItemEditingProperty =
+			DependencyProperty.Register("CloseItemEditing", typeof(Commands.Command), typeof(PPTableVm), new PropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ShowItemEditing
+		/// </summary>
+		public bool ShowItemEditing
+		{
+			get { return (bool)GetValue(ShowItemEditingProperty); }
+			set { SetValue(ShowItemEditingProperty, value); }
+		}
+		public static readonly DependencyProperty ShowItemEditingProperty =
+			DependencyProperty.Register("ShowItemEditing", typeof(bool), typeof(PPTableVm), new PropertyMetadata(false));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ItemEditingDate
+		/// </summary>
+		public DateTime ItemEditingDate
+		{
+			get { return (DateTime)GetValue(ItemEditingDateProperty); }
+			set { SetValue(ItemEditingDateProperty, value); }
+		}
+		public static readonly DependencyProperty ItemEditingDateProperty =
+			DependencyProperty.Register("ItemEditingDate", typeof(DateTime), typeof(PPTableVm), new PropertyMetadata(DateTime.Now));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ItemEditingTime
+		/// </summary>
+		public TimeSpan ItemEditingTime
+		{
+			get { return (TimeSpan)GetValue(ItemEditingTimeProperty); }
+			set { SetValue(ItemEditingTimeProperty, value); }
+		}
+		public static readonly DependencyProperty ItemEditingTimeProperty =
+			DependencyProperty.Register("ItemEditingTime", typeof(TimeSpan), typeof(PPTableVm), new PropertyMetadata(TimeSpan.Zero));
+
 		#endregion
 
 		#region Toolbar extra items

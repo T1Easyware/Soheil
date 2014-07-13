@@ -98,6 +98,8 @@
 				<Separator/>
 				<MenuItem Header="ویرایش Task" Command="{Binding EditItemCommand}"/>
 				<MenuItem Header="افزودن Task به ویرایشگر" Command="{Binding AddBlockToEditorCommand}"/>
+				<MenuItem Header="Cut|Copy to..." Command="{Binding MarkForCopyCommand}"/>
+				<Separator/>
 				<MenuItem Header="حذف Task" Command="{Binding DeleteItemCommand}"/>
 				<MenuItem Header="حذف Task و گزارشها" Command="{Binding DeleteBlockWithReportsCommand}"/>
 				<Separator/>

@@ -16,8 +16,7 @@
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtUsersAccess}"
-                        IsEnabled="{Binding Path=CanAddTab,
-                                            ElementName=chrometabs}"
+                        IsEnabled="{Binding Path=CanAddTab, ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/usersAccess.png"
                         Tag="11" />
                 <!--<CustomControls:ImageButton Background="Transparent"
@@ -88,12 +87,13 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/changeOver.png"
                         Tag="26" />
-                <Button Background="Transparent"
-                        Style="{StaticResource SoheilMenuButton}"
+				<CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtSkillCenter}"
                         IsEnabled="{Binding Path=CanAddTab,
                                             ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/SkillCenter.png"
                         Tag="27" />
             </WrapPanel>
         </DataTemplate>
@@ -424,7 +424,11 @@
                                             <Image Source="/Soheil.Controls;component/Images/Menus/SetupTime.png"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-
+									<MenuItem Click="HandleAddTabAndSelect" Header="{Loc txtSkillCenter}" Tag="27" >
+										<MenuItem.Icon>
+											<Image Source="/Soheil.Controls;component/Images/Menus/SkillCenter.png"/>
+										</MenuItem.Icon>
+									</MenuItem>
 								</MenuItem>
 								<MenuItem Header="{Loc txtProductControl}">
                                     <MenuItem.Icon>

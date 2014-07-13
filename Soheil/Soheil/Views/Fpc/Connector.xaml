@@ -34,7 +34,7 @@
 
 	<!--Connector-->
 	<DataTemplate x:Key="connectorTemplate" DataType="{x:Type vm:ConnectorVm}">
-		<Canvas Width="0" Height="0">
+		<Canvas Width="0" Height="0" Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 			<Canvas.Effect>
 				<DropShadowEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
 			</Canvas.Effect>
@@ -142,7 +142,7 @@
 
 	<!--Connector-->
 	<DataTemplate x:Key="connectorViewerTemplate" DataType="{x:Type vm:ConnectorVm}">
-		<Canvas Width="0" Height="0">
+		<Canvas Width="0" Height="0" Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 			<Canvas.Effect>
 				<DropShadowEffect Opacity="{DynamicResource shadowOpacity}" Direction="225"/>
 			</Canvas.Effect>

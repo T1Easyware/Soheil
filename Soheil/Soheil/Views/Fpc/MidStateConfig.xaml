@@ -120,6 +120,11 @@
 								  IsEnabled="{Binding RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, Path=DataContext.Access, Converter={StaticResource AccessTypeToBooleanConverter}, ConverterParameter={x:Static common:AccessType.Update}}">
 						<Image Style="{StaticResource IsDefaultImageStyle}"/>
 					</ToggleButton>
+					<ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsDefault}" ToolTip="آیا این ایستگاه بطور پیش فرض استفاده می شود؟"
+								  Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=1}"
+								  IsEnabled="{Binding RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, Path=DataContext.Access, Converter={StaticResource AccessTypeToBooleanConverter}, ConverterParameter={x:Static common:AccessType.Update}}">
+						<Image Style="{StaticResource IsDefaultImageStyle}"/>
+					</ToggleButton>
 				</DockPanel>
 			</Expander.Header>
 			<StackPanel

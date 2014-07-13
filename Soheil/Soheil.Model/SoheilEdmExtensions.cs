@@ -169,6 +169,15 @@ namespace Soheil.Model
 	{
 	}
 
+	public partial class MachinePart
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+	}
+
 	public partial class Operator
 	{
 		public Status RecordStatus

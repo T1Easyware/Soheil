@@ -126,6 +126,8 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty DeleteTaskCommandProperty =
 			DependencyProperty.Register("DeleteItemCommand", typeof(Commands.Command), typeof(PPItemVm), new UIPropertyMetadata(null));
+
+
 		#endregion
 	}
 }

@@ -150,7 +150,7 @@
 			xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core"
 			xmlns:report="clr-namespace:Soheil.Core.ViewModels.PP.Report;assembly=Soheil.Core"
 			xmlns:timeline="clr-namespace:Soheil.Core.ViewModels.PP.Timeline;assembly=Soheil.Core"
-			xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls">
+			xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit">
 			<DataTemplate.Resources>
 				<System:Double x:Key="StationOrActivityHeaderWidth">100.0</System:Double>
 				<GridLength x:Key="StationOrActivityHeaderGridLength">100.0</GridLength>
@@ -780,6 +780,26 @@
 							<!-- ProcessReportBuilder -->
 							<local:ProcessReportBuilder Grid.ColumnSpan="2" Grid.Row="1" x:Name="processReportBuilderPanel" Height="0"
 												DataContext="{Binding CurrentProcessReportBuilder}" FlowDirection="RightToLeft"/>
+							
+							<!-- copy/move -->
+							<WrapPanel Visibility="{Binding ShowItemEditing, Converter={StaticResource booleanToVisibilityConverter}}" FlowDirection="RightToLeft">
+								<TextBlock Text="انتقال و کپی برنامه به تاریخ جدید" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
+								<Button Command="{Binding MoveToCommand}" VerticalAlignment="Center">
+									<WrapPanel>
+										<TextBlock Text="منتقل شود به" Foreground="Black"/>
+										<Image Style="{StaticResource MoveTaskImage}"/>
+									</WrapPanel>
+								</Button>
+								<Button Command="{Binding CopyToCommand}" VerticalAlignment="Center">
+									<WrapPanel>
+										<TextBlock Text="کپی شود به" Foreground="Black"/>
+										<Image Style="{StaticResource CopyTaskImage}"/>
+									</WrapPanel>
+								</Button>
+								<cal:DatePicker SelectedDate="{Binding ItemEditingDate}" DisplayDate="{Binding ItemEditingDate}" VerticalAlignment="Center"/>
+								<customControls:TimeBox Time="{Binding ItemEditingTime, Mode=TwoWay}" VerticalAlignment="Center"/>
+								<Button Content="Close" Command="{Binding CloseItemEditing}" TextBlock.Foreground="Black"/>
+							</WrapPanel>
 						</StackPanel>
 						
 						<!-- Shifts and Break hours -->

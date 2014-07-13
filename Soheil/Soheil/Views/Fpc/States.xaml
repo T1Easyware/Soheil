@@ -62,7 +62,7 @@
 	<!-- mid state -->
 	<!--           -->
 	<DataTemplate x:Key="midStateTemplate" DataType="{x:Type vm:StateVm}">
-		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Opacity="{Binding Opacity}" Loaded="midStateLoaded">
+		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Opacity="{Binding Opacity}" Loaded="midStateLoaded" Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 			<AdornerDecorator Margin="{Binding Location}" Style="{StaticResource stateAdorner}"
 							  MouseEnter="stateContainer_MouseEnter" MouseLeave="stateContainer_MouseLeave">
 				<Border MinWidth="40" 
@@ -138,7 +138,7 @@
 	<!-- mid state viewer -->
 	<!--                  -->
 	<DataTemplate x:Key="midStateViewerTemplate" DataType="{x:Type vm:StateVm}">
-		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Opacity="{Binding Opacity}" Loaded="midStateLoaded">
+		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Opacity="{Binding Opacity}" Loaded="midStateLoaded" Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
 			<AdornerDecorator Margin="{Binding Location}" Style="{StaticResource stateAdorner}"
 							MouseEnter="stateContainer_MouseEnter" MouseLeave="stateContainer_MouseLeave">
 				<Border MinWidth="40" 
@@ -202,7 +202,7 @@
 	<!--rework state-->
 	<!--           -->
 	<DataTemplate x:Key="reworkStateTemplate" DataType="{x:Type vm:StateVm}">
-		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Loaded="midStateLoaded"
+		<Canvas Width="0" Height="0" MouseDown="State_MouseDown" Loaded="midStateLoaded" Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}"
 				MouseEnter="stateContainer_MouseEnter" MouseLeave="stateContainer_MouseLeave">
 			<AdornerDecorator Margin="{Binding Location}" Style="{StaticResource stateAdorner}">
 				<Grid Height="34" 

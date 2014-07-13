@@ -54,6 +54,41 @@
 			</Thumb>
 		</DataTemplate>
 
+		<DataTemplate x:Key="reworkToolboxItemTemplate" DataType="{x:Type vm:ReworkVm}">
+			<Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="Rework_DragCompleted">
+				<Thumb.Template>
+					<ControlTemplate>
+						<Border Style="{StaticResource toolboxItemBorderStyle}">
+							<DockPanel>
+								<Image DockPanel.Dock="Left" Width="16">
+									<Image.Style>
+										<Style TargetType="Image">
+											<Style.Triggers>
+												<DataTrigger Binding="{Binding IsInProduct}" Value="True">
+													<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/Default.png"/>
+													<Setter Property="ToolTip" Value="این دوباره کاری برای محصول انتخاب شده تعریف شده است"/>
+												</DataTrigger>
+												<DataTrigger Binding="{Binding IsInProduct}" Value="False">
+													<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/NotDefault.png"/>
+													<Setter Property="ToolTip" Value="این دوباره کاری برای محصول انتخاب شده تعریف نشده است"/>
+												</DataTrigger>
+											</Style.Triggers>
+										</Style>
+									</Image.Style>
+								</Image>
+								<TextBlock Text="{Binding Name}" Foreground="White"/>
+							</DockPanel>
+						</Border>
+					</ControlTemplate>
+				</Thumb.Template>
+			</Thumb>
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding IsInFpc}" Value="True">
+					<Setter Property="IsEnabled" Value="False"/>
+				</DataTrigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
+
 		<!--toolbox groups-->
 		<DataTemplate x:Key="activityGroupToolboxItemTemplate" DataType="{x:Type vm:ActivityGroupVm}">
 			<Border Style="{StaticResource toolboxGroupBorderStyle}">
@@ -111,6 +146,17 @@
 						<TextBox Text="{Binding MachineQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
 						<ItemsControl ItemsSource="{Binding MachineFamilies}"
 									  ItemTemplate="{StaticResource machineFamilyToolboxItemTemplate}"/>
+					</StackPanel>
+				</ScrollViewer>
+			</Expander>
+		</Border>
+		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8BC8">
+			<Expander IsExpanded="True" Header=" دوباره کاری ها ">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<TextBox Text="{Binding ReworkQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
+						<ItemsControl ItemsSource="{Binding Reworks}"
+									  ItemTemplate="{StaticResource reworkToolboxItemTemplate}"/>
 					</StackPanel>
 				</ScrollViewer>
 			</Expander>

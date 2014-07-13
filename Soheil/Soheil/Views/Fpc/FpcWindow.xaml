@@ -51,6 +51,12 @@
 						<TextBlock Text="نمایش همه ماشین ها" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
 					</Grid>
 				</ToggleButton>
+				<ToggleButton IsChecked="{Binding ShowFpcReworks}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
+					<Grid Width="65">
+						<Image Style="{StaticResource ReworkImage}" HorizontalAlignment="Left"/>
+						<TextBlock Text="نمایش همه دوباره کاری ها" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
+					</Grid>
+				</ToggleButton>
 				<Separator/>
 				<!-- other options -->
 				<Button Width="80" Content="همه را باز کن" Command="{Binding ExpandAllCommand}"/>

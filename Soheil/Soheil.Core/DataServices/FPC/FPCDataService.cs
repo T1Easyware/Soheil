@@ -275,14 +275,14 @@ namespace Soheil.Core.DataServices
 		public IEnumerable<ProductRework> GetProductReworks(FPC model, bool includeMainProduct)
 		{
 			var list = new List<ProductRework>();
+			if (includeMainProduct)
+				list.Add(model.Product.MainProductRework);
 			var cRepos = new Repository<ProductRework>(Context);
-			var models = cRepos.Find(x =>
-				x.Product.Id == model.Product.Id
-				&& (includeMainProduct || x.Rework != null),
-				"Product", "Rework");
-			foreach (var item in models)
+			var states = model.States.Where(x => x.StateTypeNr == (int)StateType.Rework);
+			foreach (var item in states)
 			{
-				list.Add(item);
+				if (item.OnProductRework != null)
+					list.Add(item.OnProductRework);
 			}
 			return list;
 		}
@@ -344,28 +344,6 @@ namespace Soheil.Core.DataServices
 				corrected = true;
 			}
 
-			int reworkStateCounter = 0;
-			foreach (var productRework in model.Product.ProductReworks.Where(x => x.Rework != null))
-			{
-				if (!model.States.Any(x =>
-					x.StateTypeNr == (int)StateType.Rework
-					&& x.OnProductRework != null
-					&& x.OnProductRework.Id == productRework.Id))
-				{
-					stateDataService.AddModel(new State
-					{
-						FPC = model,
-						X = 20,
-						Y = reworkStateCounter * 35 + 500,
-						Name = productRework.Name,
-						Code = productRework.Code,
-						OnProductRework = productRework,
-						StateType = StateType.Rework,
-					});
-					corrected = true;
-				}
-				reworkStateCounter++;
-			}
 			//set pr of a state to mainPR if it's null
 			var states = model.States.Where(x =>
 				x.StateTypeNr == (int)StateType.Mid
@@ -373,6 +351,7 @@ namespace Soheil.Core.DataServices
 			foreach (var state in states)
 			{
 				state.OnProductRework = model.Product.ProductReworks.First(x => x.Rework == null);
+				corrected = true;
 			}
 			//...
 			if(corrected) Context.Commit();

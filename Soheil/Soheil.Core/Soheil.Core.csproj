@@ -68,6 +68,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\AccessNodeViewModel.cs" />
+    <Compile Include="DataServices\Basics\MachinePartDataService.cs" />
+    <Compile Include="ViewModels\PM\MachineItemVm.cs" />
+    <Compile Include="ViewModels\PM\MachinePartItemVm.cs" />
+    <Compile Include="ViewModels\PM\PmItemBase.cs" />
+    <Compile Include="ViewModels\PM\PmPageBase.cs" />
+    <Compile Include="ViewModels\PM\PmLevelBase.cs" />
     <Compile Include="Base\ItemLinkViewModel.cs" />
     <Compile Include="Base\NodeLinkViewModel.cs" />
     <Compile Include="Base\NodeContentViewModel.cs" />
@@ -143,12 +149,14 @@
     <Compile Include="Reports\OperatorBarInfo.cs" />
     <Compile Include="Reports\OperatorBarProvider.cs" />
     <Compile Include="Reports\OperatorBarSlideProvider.cs" />
+    <Compile Include="ViewModels\Fpc\ReworkVm.cs" />
     <Compile Include="ViewModels\Index\IndexTime.cs" />
     <Compile Include="Index\OeeRecord.cs" />
     <Compile Include="ViewModels\Index\OeeMachineDetailVm.cs" />
     <Compile Include="ViewModels\Index\OeeMachineFamilyVm.cs" />
     <Compile Include="ViewModels\Index\OeeMachineVm.cs" />
     <Compile Include="ViewModels\Index\OeeVm.cs" />
+    <Compile Include="ViewModels\PM\PmVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
     <Compile Include="ViewModels\Reports\OprActivityDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />
@@ -499,6 +507,7 @@
       <DependentUpon>seqDiag_processReport.sequencediagram</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

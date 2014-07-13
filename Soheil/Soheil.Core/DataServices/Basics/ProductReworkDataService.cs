@@ -61,7 +61,8 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(ProductRework model)
 		{
-			throw new System.NotImplementedException();
+			_productReworkRepository.Add(model);
+			return model.Id;
 		}
 
 		public void UpdateModel(ProductRework model)

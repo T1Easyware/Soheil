@@ -127,6 +127,38 @@ namespace Soheil.Model
             }
         }
         private Cause _cause;
+    
+        public virtual ICollection<Repair> Repairs
+        {
+            get
+            {
+                if (_repairs == null)
+                {
+                    var newCollection = new FixupCollection<Repair>();
+                    newCollection.CollectionChanged += FixupRepairs;
+                    _repairs = newCollection;
+                }
+                return _repairs;
+            }
+            set
+            {
+                if (!ReferenceEquals(_repairs, value))
+                {
+                    var previousValue = _repairs as FixupCollection<Repair>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupRepairs;
+                    }
+                    _repairs = value;
+                    var newValue = value as FixupCollection<Repair>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupRepairs;
+                    }
+                }
+            }
+        }
+        private ICollection<Repair> _repairs;
 
         #endregion
 
@@ -177,6 +209,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (OperatorStoppageReport item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.StoppageReport, this))
+                    {
+                        item.StoppageReport = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupRepairs(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Repair item in e.NewItems)
+                {
+                    item.StoppageReport = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Repair item in e.OldItems)
                 {
                     if (ReferenceEquals(item.StoppageReport, this))
                     {

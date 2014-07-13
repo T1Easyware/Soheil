@@ -30,6 +30,18 @@ namespace Soheil.Core.ViewModels.Fpc
 			new UIPropertyMetadata(new Thickness(0), StateVm.AnyPropertyChangedCallback));
 
 		/// <summary>
+		/// Gets or sets a bindable value that indicates IsVisible
+		/// </summary>
+		public bool IsVisible
+		{
+			get { return (bool)GetValue(IsVisibleProperty); }
+			set { SetValue(IsVisibleProperty, value); }
+		}
+		public static readonly DependencyProperty IsVisibleProperty =
+			DependencyProperty.Register("IsVisible", typeof(bool), typeof(DragTarget), new PropertyMetadata(true));
+
+
+		/// <summary>
 		/// Gets the Id of the model associated with the derived class
 		/// <para>Must be overriden</para>
 		/// </summary>

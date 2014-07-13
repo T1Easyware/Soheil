@@ -73,8 +73,7 @@ namespace Soheil
 			_newTabNumber = 1;
 
 			// temp
-			//Login(null);
-			//SetValue(LoginProperty, true);
+			//  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
 			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
@@ -522,7 +521,6 @@ namespace Soheil
         public void Login(object param)
         {
             var userInfo = _accessRuleDataService.VerifyLogin(Username, ((PasswordBox)param).Password);
-            //var userInfo = _accessRuleDataService.VerifyLogin("admin", "fromdust");
             LoginInfo.DataService = _userDataService;
             if (userInfo.Item1 >=0)
             {

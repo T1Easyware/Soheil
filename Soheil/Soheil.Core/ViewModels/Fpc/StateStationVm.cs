@@ -23,6 +23,34 @@ namespace Soheil.Core.ViewModels.Fpc
 		public override int Id { get { return Model == null ? -1 : Model.Id; } }
 
 		/// <summary>
+		/// Gets or sets a bindable value that indicates IsDefault
+		/// </summary>
+		public bool IsDefault
+		{
+			get { return (bool)GetValue(IsDefaultProperty); }
+			set { SetValue(IsDefaultProperty, value); }
+		}
+		public static readonly DependencyProperty IsDefaultProperty =
+			DependencyProperty.Register("IsDefault", typeof(bool), typeof(StateStationVm),
+			new PropertyMetadata(false, (d, e) =>
+			{
+				var vm = (StateStationVm)d;
+				var val = (bool)e.NewValue;
+				if (val && !vm._isInitializing)
+					foreach (var item in vm.ContainerS.ContentsList)
+					{
+						var ss = item as StateStationVm;
+						if(ss == null) continue;
+						if (ss.Model != vm.Model)
+							ss.IsDefault = false;
+					}
+
+				vm.Model.IsDefault = val;
+			}));
+		private bool _isInitializing = true;
+
+
+		/// <summary>
 		/// Creates a new instance of StateStationVm with given model and parent window
 		/// </summary>
 		/// <param name="parentWindowVm"></param>
@@ -33,6 +61,9 @@ namespace Soheil.Core.ViewModels.Fpc
 			TreeLevel = 1;
 			Model = model;
 			IsFixed = model.Blocks.Any();
+			_isInitializing = true;
+			IsDefault = model.IsDefault;
+			_isInitializing = false;
 			ContentsList.CollectionChanged += ContentsList_CollectionChanged;
 		}
 

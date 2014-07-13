@@ -26,6 +26,12 @@
 			<Button Content="همه را باز کن" Command="{Binding ExpandAllCommand}"/>
 			<Button Content="همه را ببند" Command="{Binding CollapseAllCommand}"/>
 			<Button Content="Reset Zoom" Command="{Binding ResetZoomCommand}"/>
+			<ToggleButton IsChecked="{Binding ShowFpcReworks}">
+				<Grid Width="75">
+					<Image Style="{StaticResource ReworkImage}" HorizontalAlignment="Left"/>
+					<TextBlock Text="نمایش همه دوباره کاری ها" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
+				</Grid>
+			</ToggleButton>
 		</WrapPanel>
 	</Grid>
 </UserControl>

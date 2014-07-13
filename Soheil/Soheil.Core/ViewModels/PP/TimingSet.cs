@@ -244,6 +244,8 @@ namespace Soheil.Core.ViewModels.PP
 				(d, v) =>
 				{
 					var vm = (TimingSet)d;
+					if (vm.IsInitializing()) return v;
+
 					var val = (DateTime)v;
 					//check lower bound
 					if (val < vm.LowerBound)

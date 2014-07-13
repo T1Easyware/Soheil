@@ -24,6 +24,13 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual bool IsDefault
+        {
+            get { return _isDefault; }
+            set { _isDefault = value; }
+        }
+        private bool _isDefault = false;
 
         #endregion
 

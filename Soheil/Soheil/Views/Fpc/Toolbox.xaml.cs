@@ -135,6 +135,15 @@ namespace Soheil.Views.Fpc
 			}
 			VM.StopDragToolboxItem();
 		}
+
+		private void Rework_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+		{
+			if(VM.SelectedToolboxItem.CanDrop == true)
+			{
+				VM.AddRework(VM.SelectedToolboxItem);
+			}
+			VM.StopDragToolboxItem();
+		}
 		#endregion
 
 	}

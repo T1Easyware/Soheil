@@ -34,6 +34,27 @@ namespace Soheil.Core.ViewModels.Fpc
 			get { return Model == null ? "" : Model.Code; }
 			set { Model.Code = value; OnPropertyChanged("Code"); }
 		}
+		/// <summary>
+		/// Gets or sets a bindable value that indicates IsInFpc
+		/// </summary>
+		public bool IsInFpc
+		{
+			get { return (bool)GetValue(IsInFpcProperty); }
+			set { SetValue(IsInFpcProperty, value); }
+		}
+		public static readonly DependencyProperty IsInFpcProperty =
+			DependencyProperty.Register("IsInFpc", typeof(bool), typeof(ReworkVm), new PropertyMetadata(false));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates IsInProduct
+		/// </summary>
+		public bool IsInProduct
+		{
+			get { return (bool)GetValue(IsInProductProperty); }
+			set { SetValue(IsInProductProperty, value); }
+		}
+		public static readonly DependencyProperty IsInProductProperty =
+			DependencyProperty.Register("IsInProduct", typeof(bool), typeof(ReworkVm), new PropertyMetadata(false));
+
 
 		/// <summary>
 		/// Creates an instance of this view model with the given model

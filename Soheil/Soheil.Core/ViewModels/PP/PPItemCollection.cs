@@ -76,6 +76,15 @@ namespace Soheil.Core.ViewModels.PP
 			//manager
 			Manager = new PPItemManager(parent.Dispatcher);
 
+			Manager.EverythingRemoved += () =>
+			{
+				foreach (var item in this)
+				{
+					item.Blocks.Clear();
+					item.NPTs.Clear();
+				}
+			};
+
 			Manager.BlockAddedOrUpdated += item =>
 			{
 				var station = this[item.Model.StateStation.Station.Index];

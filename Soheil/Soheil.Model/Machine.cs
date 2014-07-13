@@ -183,6 +183,38 @@ namespace Soheil.Model
             }
         }
         private ICollection<Cost> _costs;
+    
+        public virtual ICollection<MachinePart> MachineParts
+        {
+            get
+            {
+                if (_machineParts == null)
+                {
+                    var newCollection = new FixupCollection<MachinePart>();
+                    newCollection.CollectionChanged += FixupMachineParts;
+                    _machineParts = newCollection;
+                }
+                return _machineParts;
+            }
+            set
+            {
+                if (!ReferenceEquals(_machineParts, value))
+                {
+                    var previousValue = _machineParts as FixupCollection<MachinePart>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupMachineParts;
+                    }
+                    _machineParts = value;
+                    var newValue = value as FixupCollection<MachinePart>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupMachineParts;
+                    }
+                }
+            }
+        }
+        private ICollection<MachinePart> _machineParts;
 
         #endregion
 
@@ -261,6 +293,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (Cost item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Machine, this))
+                    {
+                        item.Machine = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupMachineParts(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (MachinePart item in e.NewItems)
+                {
+                    item.Machine = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (MachinePart item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Machine, this))
                     {

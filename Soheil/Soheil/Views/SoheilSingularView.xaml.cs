@@ -184,7 +184,8 @@ namespace Soheil.Views
 		}
 		private void ppTable_Unloaded(object sender, RoutedEventArgs e)
 		{
-			sender.GetDataContext<PPTableVm>().Dispose();
+			var pptable = sender.GetDataContext<PPTableVm>();
+			if(pptable!=null) pptable.Dispose();
 		}
 		private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
