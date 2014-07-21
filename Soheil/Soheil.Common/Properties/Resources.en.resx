@@ -970,4 +970,7 @@
   <data name="txtIsRecurrentDesc" xml:space="preserve">
     <value>This holiday occurs each year</value>
   </data>
+  <data name="txtAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
 </root>

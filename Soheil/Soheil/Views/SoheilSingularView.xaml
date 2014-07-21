@@ -1772,6 +1772,117 @@
 
 			</DockPanel>
 		</DataTemplate>
+		
+		<!-- 3.4. PM -->
+		<DataTemplate x:Key="PmTemplate" DataType="{x:Type pmvm:PmVm}"
+			xmlns:pmvm="clr-namespace:Soheil.Core.ViewModels.PM;assembly=Soheil.Core"
+			xmlns:local="clr-namespace:Soheil.Views.PM">
+			<DockPanel FlowDirection="RightToLeft">
+				<ToolBar DockPanel.Dock="Top">
+					<Button Command="{Binding SaveCommand}" Width="120">
+						<WrapPanel>
+							<Image Style="{StaticResource Save16Image}"/>
+							<TextBlock Text="{Loc txtSave}"/>
+						</WrapPanel>
+					</Button>
+				</ToolBar>
+				
+				<!-- PM contents -->
+				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+					<Grid>
+						<Grid.Resources>
+							<Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
+								<Setter Property="TextBlock.FontSize" Value="13"/>
+							</Style>
+							<Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+								<Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+								<Setter Property="TextBlock.Foreground" Value="Black"/>
+							</Style>
+							<Style TargetType="{x:Type ListViewItem}">
+								<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+								<Setter Property="TextBlock.TextAlignment" Value="Left" />
+								<Setter Property="TextBlock.Foreground" Value="Silver"/>
+								<Style.Triggers>
+									<Trigger Property="IsSelected" Value="True">
+										<Setter Property="Background" Value="Green" />
+										<Setter Property="TextBlock.Foreground" Value="White"/>
+										<Setter Property="BorderBrush" Value="{x:Null}" />
+									</Trigger>
+									<Trigger Property="IsMouseOver" Value="True">
+										<Setter Property="Background" Value="#1EEE" />
+										<Setter Property="TextBlock.Foreground" Value="Cyan"/>
+										<Setter Property="BorderBrush" Value="#5FFF" />
+									</Trigger>
+									<MultiTrigger>
+										<MultiTrigger.Conditions>
+											<Condition Property="Selector.IsSelected" Value="True" />
+											<Condition Property="IsMouseOver" Value="True" />
+										</MultiTrigger.Conditions>
+										<Setter Property="Background" Value="Green" />
+										<Setter Property="TextBlock.Foreground" Value="Cyan"/>
+										<Setter Property="BorderBrush" Value="#5FFF" />
+									</MultiTrigger>
+								</Style.Triggers>
+							</Style>
+
+							<!-- bar -->
+							<DataTemplate DataType="{x:Type pmvm:PMBarVm}">
+								<Grid Height="20" VerticalAlignment="Center">
+									<Border Background="#1FFF" BorderBrush="Silver" BorderThickness="1"/>
+									<Border Background="{Binding RemainingPercent, Converter={StaticResource remainingColorConverter}}" Width="{Binding RemainingPercent}" HorizontalAlignment="Left" BorderThickness="0,0,1,0" BorderBrush="Silver"/>
+									<Canvas HorizontalAlignment="Left" IsHitTestVisible="False" Visibility="{Binding IsPastDeadline, Converter={StaticResource booleanToVisibilityConverter}}">
+										<Border Width="{Binding RemainingPercent}" HorizontalAlignment="Right" Background="#8F33" Height="20"/>
+									</Canvas>
+								</Grid>
+							</DataTemplate>
+						</Grid.Resources>
+					
+					
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						
+						<!-- tabs -->
+						<TabControl DataContext="{Binding Levels[0]}">
+							<TabItem Header="ماشین ها">
+								<local:MachinePage DataContext="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded"/>
+							</TabItem>
+						</TabControl>
+						<TabControl Grid.Column="1" DataContext="{Binding Levels[1]}">
+							<TabItem Header="قطعات استفاده شده">
+								<local:MachinePartPage PageVm="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded"/>
+							</TabItem>
+						</TabControl>
+						<TabControl Grid.Column="2" DataContext="{Binding Levels[2]}">
+							<TabItem Header="تمام قطعات">
+								<local:PartPage PageVm="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded"/>
+							</TabItem>
+							<TabItem Header="PM های قطعه" x:Name="usedPMs">
+								<local:MPMPage PageVm="{Binding Pages[1]}" LayoutUpdated="PMPageLoaded"/>
+							</TabItem>
+							<TabItem Header="گزارش PM های قطعه">
+								<local:ReportPage PageVm="{Binding Pages[2]}" LayoutUpdated="PMPageLoaded"/>
+							</TabItem>
+							<TabItem Header="تعمیرات قطعه">
+								<local:RepairPage DataContext="{Binding Pages[3]}" LayoutUpdated="PMPageLoaded"/>
+							</TabItem>
+						</TabControl>
+						<TabControl Grid.Column="3" MinWidth="300" DataContext="{Binding Levels[3]}"
+						Visibility="{Binding ElementName=usedPMs, Path=IsSelected, Converter={StaticResource booleanToVisibilityConverter}}">
+							<TabItem Header="تمام PM ها">
+								<local:PartPage PageVm="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded"/>
+							</TabItem>
+							<TabItem Header="گزارش PM قطعه">
+								<local:ReportPage PageVm="{Binding Pages[1]}" LayoutUpdated="PMPageLoaded"/>
+							</TabItem>
+						</TabControl>
+					</Grid>
+				</ScrollViewer>
+			</DockPanel>
+		</DataTemplate>
 		<!--................................................ 5.Reports ...............................................-->
 
         <!-- 5.1. Cost Reports -->
@@ -2744,6 +2855,7 @@
 		<TemplateSelectors:SingularViewListSelector x:Key="ListTemplateSelector"
 													IndicesVmTemplate="{StaticResource IndexTemplate}"
 													PPTableVmTemplate="{StaticResource PPTableTemplate}"
+													PmVmTemplate="{StaticResource PmTemplate}"
 													SetupTimesVmTemplate="{StaticResource SetupTimesTemplate}"
 													SkillCenterVmTemplate="{StaticResource SkillCenterTemplate}"
 													CostReportsVmTemplate="{StaticResource CostReportTemplate}"

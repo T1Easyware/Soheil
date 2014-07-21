@@ -73,15 +73,15 @@ namespace Soheil
 			_newTabNumber = 1;
 
 			// temp
-			//  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
+			  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
 			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
 
 			if (Environment.UserName == "Bizhan" || Environment.UserName == "Bizz")
 			{
-				//SingularList = new Core.ViewModels.PP.PPTableVm(AccessType.Full);
-				//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.ProductPlanTable), true);
+				SingularList = new Core.ViewModels.PM.PmVm(AccessType.Full);
+				chrometabs.AddTab(CreateSingularTab(SoheilEntityType.PM), true);
 			}
 		}
 
@@ -245,9 +245,13 @@ namespace Soheil
                 case SoheilEntityType.ProductPlanSubMenu:
 				case SoheilEntityType.ProductPlanTable:
 					SingularList = new Core.ViewModels.PP.PPTableVm(access);
-                    chrometabs.AddTab(CreateSingularTab(type), true);
-                    break;
-                case SoheilEntityType.PerformanceSubMenu:
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+				case SoheilEntityType.PM:
+					SingularList = new Core.ViewModels.PM.PmVm(access);
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+				case SoheilEntityType.PerformanceSubMenu:
                     break;
                 case SoheilEntityType.IndicesSubMenu:
                     SingularList = new IndicesVm(access);

@@ -70,6 +70,39 @@ namespace Soheil.Controls.Converters.PP
 		}
 	}
 
+	public class RemainingColorConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			int v = (int)((double)value * 3);
+			if (v <= 100)
+			{
+				byte g = (byte)(v * 2.56);
+				byte b = (byte)(v / 2);
+				return new SolidColorBrush(Color.FromRgb(255, g, b));
+			}
+			else if (v <= 200)
+			{
+				byte r = (byte)((200 - v) * 2.56);
+				byte b = (byte)((200 - v) / 2);
+				return new SolidColorBrush(Color.FromRgb(r, 255, b));
+			}
+			else
+			{
+				byte b = (byte)((v - 200) * 2.56);
+				byte r = (byte)((v - 200) / 2);
+				byte a = (byte)(256 - r);
+				return new SolidColorBrush(Color.FromArgb(a, r, 255, b));
+			}
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+
 	public class ColorFixer : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -139,6 +172,18 @@ namespace Soheil.Controls.Converters.PP
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			return (parameter == value) ? Visibility.Collapsed : Visibility.Visible;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+	public class IsInt32EqualToInvisibilityConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (System.Convert.ToInt32(parameter) == System.Convert.ToInt32(value)) ? Visibility.Collapsed : Visibility.Visible;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -38,12 +38,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="PersianDate">
       <HintPath>..\External Assemblies\PersianDate.dll</HintPath>
     </Reference>
@@ -68,9 +62,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\AccessNodeViewModel.cs" />
-    <Compile Include="DataServices\Basics\MachinePartDataService.cs" />
+    <Compile Include="DataServices\PM\MaintenanceDataService.cs" />
+    <Compile Include="DataServices\PM\PartDataService.cs" />
+    <Compile Include="DataServices\PM\MachinePartDataService.cs" />
     <Compile Include="ViewModels\PM\MachineItemVm.cs" />
     <Compile Include="ViewModels\PM\MachinePartItemVm.cs" />
+    <Compile Include="ViewModels\PM\MaintenanceItemVm.cs" />
+    <Compile Include="ViewModels\PM\MPMItemVm.cs" />
+    <Compile Include="ViewModels\PM\PartItemVm.cs" />
+    <Compile Include="ViewModels\PM\PMBarVm.cs" />
     <Compile Include="ViewModels\PM\PmItemBase.cs" />
     <Compile Include="ViewModels\PM\PmPageBase.cs" />
     <Compile Include="ViewModels\PM\PmLevelBase.cs" />
@@ -157,6 +157,7 @@
     <Compile Include="ViewModels\Index\OeeMachineVm.cs" />
     <Compile Include="ViewModels\Index\OeeVm.cs" />
     <Compile Include="ViewModels\PM\PmVm.cs" />
+    <Compile Include="ViewModels\PM\ReportItemVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
     <Compile Include="ViewModels\Reports\OprActivityDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />

@@ -400,5 +400,13 @@ namespace Soheil.Views
 				control.Tag = "general";
 		}
 
+		private void PMPageLoaded(object sender, EventArgs e)
+		{
+			var control = (sender as FrameworkElement);
+			if (control != null)
+			{
+				var dc = control.DataContext as Soheil.Core.ViewModels.PM.PmPageBase;
+			}
+		}
 	}
 }

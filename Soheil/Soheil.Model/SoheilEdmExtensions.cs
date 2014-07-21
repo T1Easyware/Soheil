@@ -177,6 +177,60 @@ namespace Soheil.Model
 			set { Status = (byte)value; }
 		}
 	}
+	public partial class Part
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+	}
+	public partial class MachinePartMaintenance
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+	}
+	public partial class Maintenance
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+	}
+	public partial class MaintenanceReport
+	{
+		public MaintenanceStatus PerformanceStatus
+		{
+			get { return (MaintenanceStatus)this.Status; }
+			set { this.Status = (byte)value; }
+		}
+		public void UpdateStatus()
+		{
+			var perfenum = (MaintenanceStatus)this.Status;
+			if (perfenum == (int)MaintenanceStatus.Inactive)
+			{
+			}
+			else if (perfenum.HasFlag(MaintenanceStatus.Done))
+			{
+				var diff = (MaintenanceDate - PerformedDate).TotalDays;
+				if (diff < -1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Late;
+				else if (diff > 1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Early;
+				else perfenum = MaintenanceStatus.Done | MaintenanceStatus.OnTime;
+			}
+			else if (perfenum.HasFlag(MaintenanceStatus.NotDone))
+			{
+				var diff = (MaintenanceDate - DateTime.Now).TotalDays;
+				if (diff < -1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Late;
+				else if (diff > 1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Early;
+				else perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.OnTime;
+			}
+			PerformanceStatus = perfenum;
+		}
+	}
 
 	public partial class Operator
 	{

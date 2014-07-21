@@ -7,74 +7,62 @@ using System.Threading.Tasks;
 
 namespace Soheil.Core.ViewModels.PM
 {
-	public class MachinePartItemVm : PmItemBase
+	public class PartItemVm : PmItemBase
 	{
-		public Model.MachinePart Model { get; set; }
+		public Model.Part Model { get; set; }
 		public override int Id { get { return Model.Id; } set { Model.Id = value; } }
-		public MachinePartItemVm(Model.MachinePart model)
+		public PartItemVm(Model.Part model)
 		{
 			Model = model;
 			Name = model.Name;
 			Code = model.Code;
 			Description = model.Description;
 			Status = model.RecordStatus;
-			Bar = new PMBarVm();
 			_isInitialized = true;
 		}
 
-
-
-		#region Callbacks
 		protected override void NameChanged(string val)
 		{
 			Model.Name = val;
 			Model.ModifiedDate = DateTime.Now;
 			Model.ModifiedBy = LoginInfo.Id;
 		}
+
 		protected override void CodeChanged(string val)
 		{
 			Model.Code = val;
 			Model.ModifiedDate = DateTime.Now;
 			Model.ModifiedBy = LoginInfo.Id;
 		}
+
 		protected override void DescriptionChanged(string val)
 		{
 			Model.Description = val;
 			Model.ModifiedDate = DateTime.Now;
 			Model.ModifiedBy = LoginInfo.Id;
 		}
+
 		protected override void StatusChanged(Common.Status val)
 		{
 			Model.RecordStatus = val;
 			Model.ModifiedDate = DateTime.Now;
 			Model.ModifiedBy = LoginInfo.Id;
 		}
-		#endregion
 
-
-		public void CalculateTimings()
+		/// <summary>
+		/// Updates Link counter automatically (should be overriden if needed)
+		/// </summary>
+		/// <param name="linkItemVm">item must be of type machine item vm</param>
+		public override void UpdateLinkCounter(PmItemBase linkItemVm)
 		{
-			var q = Model.MachinePartMaintenances.Where(x => !x.IsOnDemand);
-			if (!q.Any())
-			{
-				Bar.SafeUpdateTimings(0);
-			}
+			//if no machine is selected set to -1
+			if (linkItemVm as MachineItemVm == null) LinkCounter = -1;
 			else
 			{
-				var rem = q.Min(x => x.PeriodDays - (DateTime.Now - x.LastMaintenanceDate).TotalHours);
-				Bar.SafeUpdateTimings(rem);
+				//count the relations to machine parts which relate to the given machine
+				int linkId = linkItemVm.Id;
+				LinkCounter = Model.MachineParts.Count(x => x.Machine.Id == linkId);
 			}
 		}
-		/// <summary>
-		/// Gets or sets a bindable value that indicates Bar
-		/// </summary>
-		public PMBarVm Bar
-		{
-			get { return (PMBarVm)GetValue(BarProperty); }
-			set { SetValue(BarProperty, value); }
-		}
-		public static readonly DependencyProperty BarProperty =
-			DependencyProperty.Register("Bar", typeof(PMBarVm), typeof(MachinePartItemVm), new PropertyMetadata(null));
-
 	}
 }

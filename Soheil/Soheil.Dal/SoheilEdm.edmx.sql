@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 07/13/2014 19:04:51
+-- Date Created: 07/20/2014 18:42:10
 -- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -314,14 +314,14 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_MachinePartMaintenanceMaintenanceReport]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[MaintenanceReports] DROP CONSTRAINT [FK_MachinePartMaintenanceMaintenanceReport];
 GO
-IF OBJECT_ID(N'[dbo].[FK_RepairMachinePart]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[MachineParts] DROP CONSTRAINT [FK_RepairMachinePart];
-GO
 IF OBJECT_ID(N'[dbo].[FK_MachineMachinePart]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[MachineParts] DROP CONSTRAINT [FK_MachineMachinePart];
 GO
 IF OBJECT_ID(N'[dbo].[FK_StoppageReportRepair]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Repairs] DROP CONSTRAINT [FK_StoppageReportRepair];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MachinePartRepair]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Repairs] DROP CONSTRAINT [FK_MachinePartRepair];
 GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
@@ -1350,7 +1350,9 @@ CREATE TABLE [dbo].[Parts] (
     [Name] nvarchar(max)  NOT NULL,
     [Description] nvarchar(max)  NOT NULL,
     [Code] nvarchar(max)  NOT NULL,
-    [Status] tinyint  NOT NULL
+    [Status] tinyint  NOT NULL,
+    [ModifiedBy] int  NOT NULL,
+    [ModifiedDate] datetime  NOT NULL
 );
 GO
 
@@ -1362,8 +1364,9 @@ CREATE TABLE [dbo].[MachineParts] (
     [Description] nvarchar(max)  NOT NULL,
     [Code] nvarchar(max)  NOT NULL,
     [Status] tinyint  NOT NULL,
+    [ModifiedBy] int  NOT NULL,
+    [ModifiedDate] datetime  NOT NULL,
     [Part_Id] int  NULL,
-    [Repair_Id] int  NOT NULL,
     [Machine_Id] int  NOT NULL
 );
 GO
@@ -1372,7 +1375,11 @@ GO
 CREATE TABLE [dbo].[Maintenances] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
-    [Description] nvarchar(max)  NOT NULL
+    [Code] nvarchar(max)  NOT NULL,
+    [Description] nvarchar(max)  NOT NULL,
+    [ModifiedBy] int  NOT NULL,
+    [ModifiedDate] datetime  NOT NULL,
+    [Status] tinyint  NOT NULL
 );
 GO
 
@@ -1380,8 +1387,13 @@ GO
 CREATE TABLE [dbo].[MachinePartMaintenances] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [IsOnDemand] bit  NOT NULL,
-    [PeriodHours] int  NOT NULL,
+    [PeriodDays] int  NOT NULL,
     [Description] nvarchar(max)  NOT NULL,
+    [ModifiedBy] int  NOT NULL,
+    [ModifiedDate] datetime  NOT NULL,
+    [Status] tinyint  NOT NULL,
+    [LastMaintenanceDate] datetime  NOT NULL,
+    [Code] nvarchar(max)  NOT NULL,
     [Maintenance_Id] int  NOT NULL,
     [MachinePart_Id] int  NOT NULL
 );
@@ -1393,7 +1405,10 @@ CREATE TABLE [dbo].[MaintenanceReports] (
     [MaintenanceDate] datetime  NOT NULL,
     [PerformedDate] datetime  NOT NULL,
     [Description] nvarchar(max)  NOT NULL,
-    [PerformanceStatus] tinyint  NOT NULL,
+    [Status] tinyint  NOT NULL,
+    [ModifiedBy] int  NOT NULL,
+    [ModifiedDate] datetime  NOT NULL,
+    [Code] nvarchar(max)  NOT NULL,
     [MachinePartMaintenance_Id] int  NOT NULL
 );
 GO
@@ -1407,7 +1422,8 @@ CREATE TABLE [dbo].[Repairs] (
     [DeliveredDate] datetime  NOT NULL,
     [RepairStatus] tinyint  NOT NULL,
     [Description] nvarchar(max)  NOT NULL,
-    [StoppageReport_Id] int  NOT NULL
+    [StoppageReport_Id] int  NOT NULL,
+    [MachinePart_Id] int  NOT NULL
 );
 GO
 
@@ -3290,20 +3306,6 @@ ON [dbo].[MaintenanceReports]
     ([MachinePartMaintenance_Id]);
 GO
 
--- Creating foreign key on [Repair_Id] in table 'MachineParts'
-ALTER TABLE [dbo].[MachineParts]
-ADD CONSTRAINT [FK_RepairMachinePart]
-    FOREIGN KEY ([Repair_Id])
-    REFERENCES [dbo].[Repairs]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_RepairMachinePart'
-CREATE INDEX [IX_FK_RepairMachinePart]
-ON [dbo].[MachineParts]
-    ([Repair_Id]);
-GO
-
 -- Creating foreign key on [Machine_Id] in table 'MachineParts'
 ALTER TABLE [dbo].[MachineParts]
 ADD CONSTRAINT [FK_MachineMachinePart]
@@ -3330,6 +3332,20 @@ ADD CONSTRAINT [FK_StoppageReportRepair]
 CREATE INDEX [IX_FK_StoppageReportRepair]
 ON [dbo].[Repairs]
     ([StoppageReport_Id]);
+GO
+
+-- Creating foreign key on [MachinePart_Id] in table 'Repairs'
+ALTER TABLE [dbo].[Repairs]
+ADD CONSTRAINT [FK_MachinePartRepair]
+    FOREIGN KEY ([MachinePart_Id])
+    REFERENCES [dbo].[MachineParts]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MachinePartRepair'
+CREATE INDEX [IX_FK_MachinePartRepair]
+ON [dbo].[Repairs]
+    ([MachinePart_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'

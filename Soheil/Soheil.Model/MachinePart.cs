@@ -119,21 +119,6 @@ namespace Soheil.Model
         }
         private ICollection<MachinePartMaintenance> _machinePartMaintenances;
     
-        public virtual Repair Repair
-        {
-            get { return _repair; }
-            set
-            {
-                if (!ReferenceEquals(_repair, value))
-                {
-                    var previousValue = _repair;
-                    _repair = value;
-                    FixupRepair(previousValue);
-                }
-            }
-        }
-        private Repair _repair;
-    
         public virtual Machine Machine
         {
             get { return _machine; }
@@ -148,6 +133,38 @@ namespace Soheil.Model
             }
         }
         private Machine _machine;
+    
+        public virtual ICollection<Repair> Repairs
+        {
+            get
+            {
+                if (_repairs == null)
+                {
+                    var newCollection = new FixupCollection<Repair>();
+                    newCollection.CollectionChanged += FixupRepairs;
+                    _repairs = newCollection;
+                }
+                return _repairs;
+            }
+            set
+            {
+                if (!ReferenceEquals(_repairs, value))
+                {
+                    var previousValue = _repairs as FixupCollection<Repair>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupRepairs;
+                    }
+                    _repairs = value;
+                    var newValue = value as FixupCollection<Repair>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupRepairs;
+                    }
+                }
+            }
+        }
+        private ICollection<Repair> _repairs;
 
         #endregion
 
@@ -165,22 +182,6 @@ namespace Soheil.Model
                 if (!Part.MachineParts.Contains(this))
                 {
                     Part.MachineParts.Add(this);
-                }
-            }
-        }
-    
-        private void FixupRepair(Repair previousValue)
-        {
-            if (previousValue != null && previousValue.MachineParts.Contains(this))
-            {
-                previousValue.MachineParts.Remove(this);
-            }
-    
-            if (Repair != null)
-            {
-                if (!Repair.MachineParts.Contains(this))
-                {
-                    Repair.MachineParts.Add(this);
                 }
             }
         }
@@ -214,6 +215,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (MachinePartMaintenance item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.MachinePart, this))
+                    {
+                        item.MachinePart = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupRepairs(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Repair item in e.NewItems)
+                {
+                    item.MachinePart = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Repair item in e.OldItems)
                 {
                     if (ReferenceEquals(item.MachinePart, this))
                     {

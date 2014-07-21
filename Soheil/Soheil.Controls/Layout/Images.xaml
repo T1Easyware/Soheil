@@ -39,6 +39,14 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/reload.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
+	<Style x:Key="DocumentInfo16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/document_info.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Back16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/back_16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
 
 	<!-- Fpc -->
 

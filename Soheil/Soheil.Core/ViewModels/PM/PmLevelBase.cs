@@ -12,16 +12,6 @@ namespace Soheil.Core.ViewModels.PM
 	{
 		public PmLevelBase()
 		{
-			Pages.CollectionChanged += Pages_CollectionChanged;
-		}
-
-		void Pages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			if(e.NewItems!=null)
-				foreach (PmPageBase item in e.NewItems)
-				{
-					item.Selected += () => Title = item.Title;
-				}
 		}
 
 		/// <summary>

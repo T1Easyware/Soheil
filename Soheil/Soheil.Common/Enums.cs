@@ -12,12 +12,26 @@ namespace Soheil.Common
         Deleted = 0
     }
 
-    public enum ConfirmationStatus
-    {
-        New = 1,
-        Confirmed = 2,
-        Deleted = 0
-    }
+	public enum ConfirmationStatus
+	{
+		New = 1,
+		Confirmed = 2,
+		Deleted = 0
+	}
+	[Flags]
+	public enum MaintenanceStatus
+	{
+		//don't change numbers (see edmExtension)
+
+		Inactive = 0,
+		
+		NotDone = 1,
+		Done = 2,
+
+		Early = 4,
+		OnTime = 8,
+		Late = 16,
+	}
 
     [TypeConverter(typeof(LocalizedEnumConverter))]
     public enum ModificationStatus
@@ -162,7 +176,8 @@ namespace Soheil.Common
         ProductPlanSubMenu = 31,
 		ProductPlanTable = 311,
         PerformanceSubMenu = 32,
-        IndicesSubMenu = 33,
+		IndicesSubMenu = 33,
+		PM = 34,
         ReportsMenu = 4,
         CostReportsSubMenu = 41,
         ActualCostReportsSubMenu = 42,

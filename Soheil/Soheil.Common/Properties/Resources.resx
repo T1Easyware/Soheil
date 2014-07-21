@@ -975,4 +975,7 @@
   <data name="txtIsRecurrentDesc" xml:space="preserve">
     <value>این تعطیلی هر سال اتفاق می افتد</value>
   </data>
+  <data name="txtAdd" xml:space="preserve">
+    <value>افزودن</value>
+  </data>
 </root>

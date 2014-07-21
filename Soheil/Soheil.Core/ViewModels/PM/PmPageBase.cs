@@ -11,10 +11,11 @@ namespace Soheil.Core.ViewModels.PM
 	public class PmPageBase : DependencyObject
 	{
 		public event Action Selected;
+		public event Action Refresh;
+		internal void InvokeRefresh() { if (Refresh != null) Refresh(); }
 
-		public PmPageBase(string title)
+		public PmPageBase()
 		{
-			Title = title;
 		}
 
 		/// <summary>
@@ -34,19 +35,6 @@ namespace Soheil.Core.ViewModels.PM
 				if (vm.Selected != null)
 					vm.Selected();
 			}));
-
-
-		/// <summary>
-		/// Gets or sets a bindable value that indicates Title
-		/// </summary>
-		public string Title
-		{
-			get { return (string)GetValue(TitleProperty); }
-			set { SetValue(TitleProperty, value); }
-		}
-		public static readonly DependencyProperty TitleProperty =
-			DependencyProperty.Register("Title", typeof(string), typeof(PmPageBase), new PropertyMetadata(""));
-
 
 		/// <summary>
 		/// Gets or sets a bindable collection that indicates Items
@@ -68,8 +56,8 @@ namespace Soheil.Core.ViewModels.PM
 			{
 				var vm = (PmPageBase)d;
 				var val = (PmItemBase)e.NewValue;
+				if (val != null) val.InvokeSelected();
 			}));
-
 
 
 		/// <summary>
@@ -82,6 +70,15 @@ namespace Soheil.Core.ViewModels.PM
 		}
 		public static readonly DependencyProperty AddCommandProperty =
 			DependencyProperty.Register("AddCommand", typeof(Commands.Command), typeof(PmPageBase), new PropertyMetadata(null));
-
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DeleteCommand
+		/// </summary>
+		public Commands.Command DeleteCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(PmPageBase), new PropertyMetadata(null));
 	}
 }

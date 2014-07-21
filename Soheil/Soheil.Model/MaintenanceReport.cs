@@ -43,12 +43,12 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual byte PerformanceStatus
+        public virtual byte Status
         {
-            get { return _performanceStatus; }
-            set { _performanceStatus = value; }
+            get { return _status; }
+            set { _status = value; }
         }
-        private byte _performanceStatus = 0;
+        private byte _status = 0;
     
         public virtual int ModifiedBy
         {
@@ -57,6 +57,12 @@ namespace Soheil.Model
         }
     
         public virtual System.DateTime ModifiedDate
+        {
+            get;
+            set;
+        }
+    
+        public virtual string Code
         {
             get;
             set;

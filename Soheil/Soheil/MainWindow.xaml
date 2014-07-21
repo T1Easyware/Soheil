@@ -265,13 +265,12 @@
                             Content="Click Me"
                             ContextMenuService.IsEnabled="False"
                             DockPanel.Dock="Left"
+							x:Name="soheilbutton"
                             Style="{StaticResource SoheilButton}">
                         <Button.ContextMenu>
                             <ContextMenu IsEnabled="True"
                                          Placement="Bottom"
-                                         PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Button},
-                                                                   Path=.,
-                                                                   Converter={StaticResource debugc}}">
+                                         PlacementTarget="{Binding ElementName=soheilbutton}">
                                 <MenuItem Header="{Loc txtOrganization}">
                                     <MenuItem Header="{Loc txtUsersAccess}">
                                         <MenuItem.Icon>

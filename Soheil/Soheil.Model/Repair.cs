@@ -67,38 +67,6 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual ICollection<MachinePart> MachineParts
-        {
-            get
-            {
-                if (_machineParts == null)
-                {
-                    var newCollection = new FixupCollection<MachinePart>();
-                    newCollection.CollectionChanged += FixupMachineParts;
-                    _machineParts = newCollection;
-                }
-                return _machineParts;
-            }
-            set
-            {
-                if (!ReferenceEquals(_machineParts, value))
-                {
-                    var previousValue = _machineParts as FixupCollection<MachinePart>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupMachineParts;
-                    }
-                    _machineParts = value;
-                    var newValue = value as FixupCollection<MachinePart>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupMachineParts;
-                    }
-                }
-            }
-        }
-        private ICollection<MachinePart> _machineParts;
-    
         public virtual StoppageReport StoppageReport
         {
             get { return _stoppageReport; }
@@ -113,6 +81,21 @@ namespace Soheil.Model
             }
         }
         private StoppageReport _stoppageReport;
+    
+        public virtual MachinePart MachinePart
+        {
+            get { return _machinePart; }
+            set
+            {
+                if (!ReferenceEquals(_machinePart, value))
+                {
+                    var previousValue = _machinePart;
+                    _machinePart = value;
+                    FixupMachinePart(previousValue);
+                }
+            }
+        }
+        private MachinePart _machinePart;
 
         #endregion
 
@@ -134,24 +117,18 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupMachineParts(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupMachinePart(MachinePart previousValue)
         {
-            if (e.NewItems != null)
+            if (previousValue != null && previousValue.Repairs.Contains(this))
             {
-                foreach (MachinePart item in e.NewItems)
-                {
-                    item.Repair = this;
-                }
+                previousValue.Repairs.Remove(this);
             }
     
-            if (e.OldItems != null)
+            if (MachinePart != null)
             {
-                foreach (MachinePart item in e.OldItems)
+                if (!MachinePart.Repairs.Contains(this))
                 {
-                    if (ReferenceEquals(item.Repair, this))
-                    {
-                        item.Repair = null;
-                    }
+                    MachinePart.Repairs.Add(this);
                 }
             }
         }

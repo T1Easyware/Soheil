@@ -189,6 +189,19 @@ insert into dbo.Machines (Id, Code,  Name,HasOEE, MachineFamily_Id, ModifiedDate
 (11, 'PE_', N'خالی','True',1, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
 SET IDENTITY_INSERT dbo.Machines OFF
 
+SET IDENTITY_INSERT dbo.Parts ON
+insert into dbo.Parts (Id, Code,  Name, [Description], [Status], ModifiedDate, ModifiedBy) values 
+(1, '1', 'Part1', 'Part1', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(2, '2', 'Part2', 'Part2', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(3, '3', 'Part3', 'Part3', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(4, '4', 'Part4', 'Part4', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(5, '5', 'Part5', 'Part5', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(6, '6', 'Part6', 'Part6', 0, {fn CURRENT_TIMESTAMP()}, 1),
+(7, '7', 'Part7', 'Part7', 2, {fn CURRENT_TIMESTAMP()}, 1),
+(8, '8', 'Part8', 'Part8', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(9, '9', 'Part9', 'Part9', 1, {fn CURRENT_TIMESTAMP()}, 1);
+SET IDENTITY_INSERT dbo.Parts OFF
+
 SET IDENTITY_INSERT dbo.ActivityGroups ON
 insert into dbo.ActivityGroups (Id, Code, Name, ModifiedDate, CreatedDate, [Status]) values 
 (1, 'ActGrp1', N'تولید', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1),
@@ -567,7 +580,7 @@ insert into dbo.StateStations (Id, State_Id, Station_Id, IsDefault) values
 (13,82,9,0),
 (14,85,1,1),
 (15,85,2,0),
-(16,86,2),
+(16,86,2,0),
 (17,86,3,0),
 (18,86,8,1),
 (19,86,9,0),

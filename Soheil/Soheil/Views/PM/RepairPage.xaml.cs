@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Soheil.Views.PM
 {
 	/// <summary>
-	/// Interaction logic for PmPage.xaml
+	/// Interaction logic for RepairPage.xaml
 	/// </summary>
-	public partial class PmPage : UserControl
+	public partial class RepairPage : UserControl
 	{
-		public PmPage()
+		public RepairPage()
 		{
 			InitializeComponent();
 		}
