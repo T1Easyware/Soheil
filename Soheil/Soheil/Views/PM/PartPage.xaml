@@ -58,14 +58,7 @@
 						<GridViewColumn Header="استفاده" Width="Auto">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<Grid>
-										<Grid.Visibility>
-											<Binding Path="LinkCounter" Converter="{StaticResource isInt32EqualToInvisibilityConverter}">
-												<Binding.ConverterParameter>
-													<sys:Int32>-1</sys:Int32>
-												</Binding.ConverterParameter>
-											</Binding>
-										</Grid.Visibility>
+									<Grid Visibility="{Binding ElementName=root, Path=ShowAddButton, Converter={StaticResource booleanToVisibilityConverter}}">
 										<Grid.Triggers>
 											<EventTrigger RoutedEvent="MouseEnter">
 												<BeginStoryboard>
@@ -82,18 +75,7 @@
 												</BeginStoryboard>
 											</EventTrigger>
 										</Grid.Triggers>
-										<DockPanel>
-											<TextBlock Foreground="Silver" Text="{Binding LinkCounter.Value}" FontSize="9" VerticalAlignment="Center" DockPanel.Dock="Right"/>
-											<TextBlock Foreground="Cyan" Text="{Loc txtInUse}" TextWrapping="Wrap" FontSize="9" VerticalAlignment="Center" HorizontalAlignment="Center">
-												<TextBlock.Visibility>
-													<Binding Path="LinkCounter" Converter="{StaticResource isInt32EqualToInvisibilityConverter}">
-														<Binding.ConverterParameter>
-															<sys:Int32>0</sys:Int32>
-														</Binding.ConverterParameter>
-													</Binding>
-												</TextBlock.Visibility>
-											</TextBlock>
-										</DockPanel>
+										<TextBlock Foreground="Cyan" Text="{Loc txtInUse}" TextWrapping="Wrap" FontSize="9" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding IsAdded, Converter={StaticResource booleanToVisibilityConverter}}"/>
 										<Button Command="{Binding UseCommand}" x:Name="button" Opacity="0">
 											<WrapPanel HorizontalAlignment="Left">
 												<Image Style="{StaticResource Back16Image}" DockPanel.Dock="Left"/>

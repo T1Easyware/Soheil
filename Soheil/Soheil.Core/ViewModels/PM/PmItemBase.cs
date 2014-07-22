@@ -63,20 +63,20 @@ namespace Soheil.Core.ViewModels.PM
 			new PropertyMetadata(Status.Active, (d, e) => { if (((PmItemBase)d)._isInitialized) ((PmItemBase)d).StatusChanged((Status)e.NewValue); }));
 
 		/// <summary>
-		/// Gets or sets a bindable value that indicates LinkCounter
+		/// Gets or sets a bindable value that indicates IsAdded
 		/// </summary>
-		public int LinkCounter
+		public bool IsAdded
 		{
-			get { return (int)GetValue(LinkCounterProperty); }
-			set { SetValue(LinkCounterProperty, value); }
+			get { return (bool)GetValue(IsAddedProperty); }
+			set { SetValue(IsAddedProperty, value); }
 		}
 		/// <summary>
 		/// Updates Link counter automatically (should be overriden if needed)
 		/// </summary>
 		/// <param name="machineId"></param>
-		public virtual void UpdateLinkCounter(PmItemBase linkItemVm) { }
-		public static readonly DependencyProperty LinkCounterProperty =
-			DependencyProperty.Register("LinkCounter", typeof(int), typeof(PmItemBase), new PropertyMetadata(-1));
+		public virtual void UpdateIsAdded(PmItemBase linkItemVm) { }
+		public static readonly DependencyProperty IsAddedProperty =
+			DependencyProperty.Register("IsAdded", typeof(bool), typeof(PmItemBase), new PropertyMetadata(false));
 
 		#region CallBacks
 		protected abstract void NameChanged(string val);

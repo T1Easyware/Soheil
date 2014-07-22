@@ -44,6 +44,17 @@ namespace Soheil.Views.PM
 					val.Refresh += vm.RefreshAllColumnWidth;
 				}
 			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ShowAddButton
+		/// </summary>
+		public bool ShowAddButton
+		{
+			get { return (bool)GetValue(ShowAddButtonProperty); }
+			set { SetValue(ShowAddButtonProperty, value); }
+		}
+		public static readonly DependencyProperty ShowAddButtonProperty =
+			DependencyProperty.Register("ShowAddButton", typeof(bool), typeof(PartPage), new PropertyMetadata(false));
+
 		public void RefreshAllColumnWidth()
 		{
 			var columns = (listview.View as GridView).Columns;

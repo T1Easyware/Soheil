@@ -53,15 +53,15 @@ namespace Soheil.Core.ViewModels.PM
 		/// Updates Link counter automatically (should be overriden if needed)
 		/// </summary>
 		/// <param name="linkItemVm">item must be of type machine item vm</param>
-		public override void UpdateLinkCounter(PmItemBase linkItemVm)
+		public override void UpdateIsAdded(PmItemBase linkItemVm)
 		{
 			//if no machine is selected set to -1
-			if (linkItemVm as MachineItemVm == null) LinkCounter = -1;
+			if (linkItemVm as MachineItemVm == null) IsAdded = false;
 			else
 			{
 				//count the relations to machine parts which relate to the given machine
 				int linkId = linkItemVm.Id;
-				LinkCounter = Model.MachineParts.Count(x => x.Machine.Id == linkId);
+				IsAdded = Model.MachineParts.Any(x => x.Machine.Id == linkId);
 			}
 		}
 	}

@@ -1848,17 +1848,17 @@
 						<!-- tabs -->
 						<TabControl DataContext="{Binding Levels[0]}">
 							<TabItem Header="ماشین ها">
-								<local:MachinePage DataContext="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded"/>
+								<local:MachinePage DataContext="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded" x:Name="machinesPage"/>
 							</TabItem>
 						</TabControl>
 						<TabControl Grid.Column="1" DataContext="{Binding Levels[1]}">
 							<TabItem Header="قطعات استفاده شده">
-								<local:MachinePartPage PageVm="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded"/>
+								<local:MachinePartPage PageVm="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded" x:Name="machinePartsPage"/>
 							</TabItem>
 						</TabControl>
 						<TabControl Grid.Column="2" DataContext="{Binding Levels[2]}">
 							<TabItem Header="تمام قطعات">
-								<local:PartPage PageVm="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded"/>
+								<local:PartPage PageVm="{Binding Pages[0]}" ShowAddButton="{Binding ElementName=machinesPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}" LayoutUpdated="PMPageLoaded"/>
 							</TabItem>
 							<TabItem Header="PM های قطعه" x:Name="usedPMs">
 								<local:MPMPage PageVm="{Binding Pages[1]}" LayoutUpdated="PMPageLoaded"/>
@@ -1873,7 +1873,7 @@
 						<TabControl Grid.Column="3" MinWidth="300" DataContext="{Binding Levels[3]}"
 						Visibility="{Binding ElementName=usedPMs, Path=IsSelected, Converter={StaticResource booleanToVisibilityConverter}}">
 							<TabItem Header="تمام PM ها">
-								<local:PartPage PageVm="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded"/>
+								<local:PartPage PageVm="{Binding Pages[0]}" ShowAddButton="{Binding ElementName=machinePartsPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}" LayoutUpdated="PMPageLoaded"/>
 							</TabItem>
 							<TabItem Header="گزارش PM قطعه">
 								<local:ReportPage PageVm="{Binding Pages[1]}" LayoutUpdated="PMPageLoaded"/>

@@ -68,6 +68,7 @@ namespace Soheil.Core.ViewModels.PM
 			{
 				AddCommand = new Commands.Command(o => { }, () => false),
 			};
+
 			page_machineParts.DeleteCommand = new Commands.Command(o =>
 			{
 				var mp = page_machineParts.SelectedItem as MachinePartItemVm;
@@ -76,6 +77,7 @@ namespace Soheil.Core.ViewModels.PM
 				page_machineParts.Items.Remove(mp);
 				page_machineParts.SelectedItem = null;
 			}, () => page_machineParts.SelectedItem != null && !(page_machineParts.SelectedItem as MachinePartItemVm).Model.IsMachine);
+
 			page_machineParts.Items.CollectionChanged += MachineParts_CollectionChanged; 
 			#endregion
 
@@ -109,7 +111,9 @@ namespace Soheil.Core.ViewModels.PM
 						page_parts.Items.Remove(part);
 						page_parts.SelectedItem = null;
 					}, () => page_parts.SelectedItem != null),
-				}; 
+				};
+
+			page_parts.Items.CollectionChanged += Parts_CollectionChanged;
 			#endregion
 
 			//------------------------------------------------------------------------
@@ -119,6 +123,7 @@ namespace Soheil.Core.ViewModels.PM
 			{
 				AddCommand = new Commands.Command(o => { }, () => false),
 			};
+
 			page_macPartMaintenances.DeleteCommand = new Commands.Command(o =>
 			{
 				var mp = page_macPartMaintenances.SelectedItem as MPMItemVm;
@@ -127,6 +132,7 @@ namespace Soheil.Core.ViewModels.PM
 				page_macPartMaintenances.Items.Remove(mp);
 				page_macPartMaintenances.SelectedItem = null;
 			}, () => page_macPartMaintenances.SelectedItem != null && !(page_macPartMaintenances.SelectedItem as MPMItemVm).Model.MaintenanceReports.Any());
+
 			page_macPartMaintenances.Items.CollectionChanged += MachinePartMaintenances_CollectionChanged; 
 			#endregion
 	
@@ -181,6 +187,7 @@ namespace Soheil.Core.ViewModels.PM
 					page_maintenances.SelectedItem = null;
 				}, () => page_maintenances.SelectedItem != null),
 			};
+
 			page_maintenances.Items.CollectionChanged += Maintenances_CollectionChanged; 
 			#endregion
 			
@@ -212,6 +219,7 @@ namespace Soheil.Core.ViewModels.PM
 			Levels[3].Pages.Add(page_maintenances);
 			Levels[3].Pages.Add(page_maintenanceReports); 
 			#endregion
+
 			#endregion
 
 
@@ -272,11 +280,9 @@ namespace Soheil.Core.ViewModels.PM
 					};
 					MachinePartDataService.AddModel(newMachinePartModel);
 					var newMachinePartVm = new MachinePartItemVm(newMachinePartModel);
-					newMachinePartVm.Selected += newMachinePartVm_Selected;
 					page_machineParts.Items.Add(newMachinePartVm);
 				});
 
-				partVm.Selected += part_Selected;
 				page_parts.Items.Add(partVm);
 			}
 
@@ -312,11 +318,9 @@ namespace Soheil.Core.ViewModels.PM
 					};
 					MaintenanceDataService.AddModel(newMachinePartMaintenanceModel);
 					var newMachinePartMaintenanceVm = new MPMItemVm(newMachinePartMaintenanceModel);
-					newMachinePartMaintenanceVm.Selected += newMachinePartMaintenanceVm_Selected;
 					page_macPartMaintenances.Items.Add(newMachinePartMaintenanceVm);
 				});
 
-				maintenanceVm.Selected += maintenance_Selected;
 				page_maintenances.Items.Add(maintenanceVm);
 			}
 
@@ -328,54 +332,97 @@ namespace Soheil.Core.ViewModels.PM
 
 
 
+
+
 		#region Collection|Selections changed
+
 		void MachineParts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			if(_isInitializing) return;
 			if (e.NewItems != null)
+			{
 				foreach (var item in e.NewItems.OfType<MachinePartItemVm>())
 				{
-					item.UpdateLinkCounter(page_machines.SelectedItem);
-					page_machineParts.InvokeRefresh();
+					item.Selected += MachinePartVm_Selected;
+					item.UpdateIsAdded(page_machines.SelectedItem);
 				}
+				if (!_isInitializing)
+				{
+					page_machineParts.InvokeRefresh();
+					page_parts.InvokeRefresh();
+				}
+			}
 			if (e.OldItems != null)
+			{
 				foreach (var item in e.OldItems.OfType<MachinePartItemVm>())
 				{
-					item.UpdateLinkCounter(page_machines.SelectedItem);
-					page_machineParts.InvokeRefresh();
+					item.UpdateIsAdded(page_machines.SelectedItem);
 				}
+				if (!_isInitializing)
+				{
+					page_machineParts.InvokeRefresh();
+					page_parts.InvokeRefresh();
+				}
+			}
+		}
+		void Parts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			if (e.NewItems != null)
+			{
+				foreach (var item in e.NewItems.OfType<MaintenanceItemVm>())
+				{
+					item.Selected += Part_Selected;
+					item.UpdateIsAdded(page_machineParts.SelectedItem);
+				}
+				if (!_isInitializing) page_parts.InvokeRefresh();
+			}
+			if (e.OldItems != null)
+			{
+				foreach (var item in e.OldItems.OfType<MaintenanceItemVm>())
+				{
+					item.UpdateIsAdded(page_machineParts.SelectedItem);
+				}
+				if (!_isInitializing) page_parts.InvokeRefresh();
+			}
 		}
 		void Maintenances_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			if(_isInitializing) return;
 			if (e.NewItems != null)
+			{
 				foreach (var item in e.NewItems.OfType<MaintenanceItemVm>())
 				{
-					item.UpdateLinkCounter(page_machineParts.SelectedItem);
-					page_machineParts.InvokeRefresh();
+					item.Selected += Maintenance_Selected;
+					item.UpdateIsAdded(page_machineParts.SelectedItem);
 				}
+				if (!_isInitializing) page_maintenances.InvokeRefresh();
+			}
 			if (e.OldItems != null)
+			{
 				foreach (var item in e.OldItems.OfType<MaintenanceItemVm>())
 				{
-					item.UpdateLinkCounter(page_machineParts.SelectedItem);
-					page_machineParts.InvokeRefresh();
+					item.UpdateIsAdded(page_machineParts.SelectedItem);
 				}
+				if (!_isInitializing) page_maintenances.InvokeRefresh();
+			}
 		}
 		void MachinePartMaintenances_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			if(_isInitializing) return;
 			if (e.NewItems != null)
+			{
 				foreach (var item in e.NewItems.OfType<MPMItemVm>())
 				{
-					item.UpdateLinkCounter(page_machineParts.SelectedItem);
-					page_macPartMaintenances.InvokeRefresh();
+					item.Selected += MachinePartMaintenanceVm_Selected;
+					item.UpdateIsAdded(page_machineParts.SelectedItem);
 				}
+				if (!_isInitializing) page_macPartMaintenances.InvokeRefresh();
+			}
 			if (e.OldItems != null)
+			{
 				foreach (var item in e.OldItems.OfType<MPMItemVm>())
 				{
-					item.UpdateLinkCounter(page_machineParts.SelectedItem);
-					page_macPartMaintenances.InvokeRefresh();
+					item.UpdateIsAdded(page_machineParts.SelectedItem);
 				}
+				if (!_isInitializing) page_macPartMaintenances.InvokeRefresh();
+			}
 		}
 		
 
@@ -394,7 +441,7 @@ namespace Soheil.Core.ViewModels.PM
 				//machine part is selected
 				machinePartVm.Selected += item_machinePart =>
 				{
-					page_machineParts.SelectedItem = machinePartVm;
+					page_machineParts.SelectedItem = item_machinePart;
 				};
 
 				//machine part is excluded
@@ -407,34 +454,47 @@ namespace Soheil.Core.ViewModels.PM
 				page_machineParts.Items.Add(machinePartVm);
 			}
 
-			//update linkcounter of parts
-			foreach (var partVm in page_parts.Items.OfType<PartItemVm>())
-			{
-				partVm.UpdateLinkCounter(page_machines.SelectedItem);
-			}
 			page_parts.InvokeRefresh();
 		}
 
-		void part_Selected(PmItemBase item_part)
+		void Part_Selected(PmItemBase item_part)
 		{
-			//page_parts.SelectedItem = item_part;
-			//var partVm = item_part as PartItemVm;
-			//if (partVm == null) return;
 		}
-		void maintenance_Selected(PmItemBase item_maintenance)
+		void Maintenance_Selected(PmItemBase item_maintenance)
 		{
-			//page_parts.SelectedItem = item_part;
-			//var partVm = item_part as PartItemVm;
-			//if (partVm == null) return;
 		}
-		
-		void newMachinePartVm_Selected(PmItemBase item_machinePart)
-		{
-			//page_machineParts.SelectedItem = item_machinePart;
-		}
-		void newMachinePartMaintenanceVm_Selected(PmItemBase item_mpm)
-		{
 
+		void MachinePartVm_Selected(PmItemBase item_machinePart)
+		{
+			//load MPMs
+			page_macPartMaintenances.Items.Clear();
+			var machinePart = item_machinePart as MachinePartItemVm;
+			if (machinePart == null) return;
+
+			//create machine parts
+			foreach (var mpmModel in machinePart.Model.MachinePartMaintenances)
+			{
+				var mpmVm = new MPMItemVm(mpmModel);
+
+				//machine part maintenance is selected
+				mpmVm.Selected += item_mpm =>
+				{
+					page_macPartMaintenances.SelectedItem = item_mpm;
+				};
+
+				//machine part maintenance is excluded
+				mpmVm.UseCommand = new Commands.Command(oo =>
+				{
+					if (page_macPartMaintenances.SelectedItem == mpmVm) 
+						page_macPartMaintenances.SelectedItem = null;
+				});
+				page_macPartMaintenances.Items.Add(mpmVm);
+			}
+
+			page_maintenances.InvokeRefresh();
+		}
+		void MachinePartMaintenanceVm_Selected(PmItemBase item_mpm)
+		{
 		}
 		#endregion
 
