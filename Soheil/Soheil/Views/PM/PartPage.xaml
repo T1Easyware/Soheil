@@ -78,7 +78,7 @@
 										<TextBlock Foreground="Cyan" Text="{Loc txtInUse}" TextWrapping="Wrap" FontSize="9" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding IsAdded, Converter={StaticResource booleanToVisibilityConverter}}"/>
 										<Button Command="{Binding UseCommand}" x:Name="button" Opacity="0">
 											<WrapPanel HorizontalAlignment="Left">
-												<Image Style="{StaticResource Back16Image}" DockPanel.Dock="Left"/>
+												<Image Style="{StaticResource Check24Image}" DockPanel.Dock="Left"/>
 												<TextBlock Text="{Loc txtAdd}" Margin="5,0" DockPanel.Dock="Left"/>
 											</WrapPanel>
 										</Button>

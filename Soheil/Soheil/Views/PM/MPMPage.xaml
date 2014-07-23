@@ -9,6 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 	<DockPanel>
+        <TextBlock Text="{Loc txtMachinePartMaintenances}" DockPanel.Dock="Top"/>
 		<!-- details -->
 		<WrapPanel DockPanel.Dock="Bottom" Panel.ZIndex="10">
 			<Button Command="{Binding DeleteCommand}">
@@ -35,10 +36,17 @@
 				</Grid.RowDefinitions>
 				<TextBlock Text="{Loc txtCode}" Grid.Row="0" Foreground="Silver"/>
 				<TextBlock Text="{Loc txtName}" Grid.Row="1" Foreground="Silver"/>
-				<TextBlock Text="{Loc txtDescription}" Grid.Row="2" Foreground="Silver"/>
+                <TextBlock Text="{Loc txtPMType}" Grid.Row="2" Foreground="Silver"/>
+                <TextBlock Text="{Loc txtPeriodDays}" Grid.Row="3" Foreground="Silver"/>
+                <TextBlock Text="{Loc txtDescription}" Grid.Row="4" Foreground="Silver"/>
 				<TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"/>
 				<TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
-				<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" AcceptsReturn="True"/>
+                <UniformGrid Grid.Row="2">
+                    <ToggleButton Content="{Loc txtIsOnDemand}" IsChecked="{Binding IsOnDemand}"/>
+                    <ToggleButton Content="{Loc txtIsPeriodic}" IsChecked="{Binding IsOnDemand, Converter={StaticResource inverter}}"/>
+                </UniformGrid>
+                <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" IsEnabled="{Binding IsOnDemand, Converter={StaticResource inverter}}"/>
+                <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="4" Grid.Column="1" AcceptsReturn="True"/>
 			</Grid>
 		</Border>
 
@@ -68,7 +76,16 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-					</GridView.Columns>
+                        <GridViewColumn Width="20">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button ToolTip="مشاهده گزارشات PM" Command="{Binding GotoReportCommand}">
+                                        <Image Style="{StaticResource ReportImage}"/>
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView.Columns>
 				</GridView>
 			</ListView.View>
 		</ListView>

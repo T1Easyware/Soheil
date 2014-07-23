@@ -32,10 +32,10 @@ namespace Soheil.Core.ViewModels.PM
 			get { return (bool)GetValue(IsOnDemandProperty); }
 			set { SetValue(IsOnDemandProperty, value); }
 		}
-		public static readonly DependencyProperty IsOnDemandProperty =
-			DependencyProperty.Register("IsOnDemand", typeof(bool), typeof(MPMItemVm), 
-			new PropertyMetadata(false, (d, e) => ((MPMItemVm)d).IsOnDemandChanged((bool)e.NewValue)));
-		/// <summary>
+        public static readonly DependencyProperty IsOnDemandProperty =
+            DependencyProperty.Register("IsOnDemand", typeof(bool), typeof(MPMItemVm),
+            new PropertyMetadata(false, (d, e) => { if (((MPMItemVm)d)._isInitialized) ((MPMItemVm)d).IsOnDemandChanged((bool)e.NewValue); }));
+        /// <summary>
 		/// Gets or sets a bindable value that indicates Period
 		/// </summary>
 		public int Period
@@ -43,9 +43,10 @@ namespace Soheil.Core.ViewModels.PM
 			get { return (int)GetValue(PeriodProperty); }
 			set { SetValue(PeriodProperty, value); }
 		}
-		public static readonly DependencyProperty PeriodProperty =
-			DependencyProperty.Register("Period", typeof(int), typeof(MPMItemVm),
-			new PropertyMetadata(30, (d, e) => ((MPMItemVm)d).PeriodChanged((int)e.NewValue)));
+        public static readonly DependencyProperty PeriodProperty =
+            DependencyProperty.Register("Period", typeof(int), typeof(MPMItemVm),
+            new PropertyMetadata(1, (d, e) => { if (((MPMItemVm)d)._isInitialized) ((MPMItemVm)d).PeriodChanged((int)e.NewValue); },
+                (d, v) => { if ((int)v < 1) return 1; return v; }));
 
 		#region Callbacks
 		protected override void NameChanged(string val) { }

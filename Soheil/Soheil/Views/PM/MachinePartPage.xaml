@@ -9,6 +9,7 @@
              mc:Ignorable="d" x:Name="root"
              d:DesignHeight="200" d:DesignWidth="300">
     <DockPanel>
+        <TextBlock Text="{Loc txtMachineParts}" DockPanel.Dock="Top"/>
 		<!-- details -->
 		<WrapPanel DockPanel.Dock="Bottom" Panel.ZIndex="10">
 			<Button Command="{Binding DeleteCommand}">
@@ -68,7 +69,25 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-					</GridView.Columns>
+                        <GridViewColumn Width="20">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button ToolTip="مشاهده گزارشات PM این قطعه" Command="{Binding GotoReportCommand}">
+                                        <Image Style="{StaticResource ReportImage}"/>
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="20">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button ToolTip="مشاهده تعمیرات این قطعه" Command="{Binding GotoRepairCommand}">
+                                        <Image Style="{StaticResource Repair16Image}"/>
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView.Columns>
 				</GridView>
 			</ListView.View>
 		</ListView>

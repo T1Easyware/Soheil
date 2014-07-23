@@ -73,7 +73,6 @@
     <Compile Include="ViewModels\PM\PMBarVm.cs" />
     <Compile Include="ViewModels\PM\PmItemBase.cs" />
     <Compile Include="ViewModels\PM\PmPageBase.cs" />
-    <Compile Include="ViewModels\PM\PmLevelBase.cs" />
     <Compile Include="Base\ItemLinkViewModel.cs" />
     <Compile Include="Base\NodeLinkViewModel.cs" />
     <Compile Include="Base\NodeContentViewModel.cs" />

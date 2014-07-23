@@ -978,4 +978,31 @@
   <data name="txtAdd" xml:space="preserve">
     <value>افزودن</value>
   </data>
+  <data name="txtIsOnDemand" xml:space="preserve">
+    <value>برحسب نیاز</value>
+  </data>
+  <data name="txtIsPeriodic" xml:space="preserve">
+    <value>دوره ای</value>
+  </data>
+  <data name="txtMachinePartMaintenances" xml:space="preserve">
+    <value>PMهای قطعه</value>
+  </data>
+  <data name="txtMachineParts" xml:space="preserve">
+    <value>قطعات ماشین</value>
+  </data>
+  <data name="txtParts" xml:space="preserve">
+    <value>قطعات</value>
+  </data>
+  <data name="txtPeriodDays" xml:space="preserve">
+    <value>مدت دوره (روز)</value>
+  </data>
+  <data name="txtPMReports" xml:space="preserve">
+    <value>گزارشات PM</value>
+  </data>
+  <data name="txtPMType" xml:space="preserve">
+    <value>نوع PM</value>
+  </data>
+  <data name="txtRepairs" xml:space="preserve">
+    <value>تعمیرات</value>
+  </data>
 </root>

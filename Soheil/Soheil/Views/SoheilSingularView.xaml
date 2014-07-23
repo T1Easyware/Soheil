@@ -1789,12 +1789,9 @@
 				
 				<!-- PM contents -->
 				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-					<Grid>
-						<Grid.Resources>
-							<Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
-								<Setter Property="TextBlock.FontSize" Value="13"/>
-							</Style>
-							<Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+					<DockPanel>
+                        <DockPanel.Resources>
+                            <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
 								<Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
 								<Setter Property="TextBlock.Foreground" Value="Black"/>
 							</Style>
@@ -1824,8 +1821,20 @@
 									</MultiTrigger>
 								</Style.Triggers>
 							</Style>
-
-							<!-- bar -->
+                            
+                            <!-- vertical headers -->
+                            <DataTemplate x:Key="verticalTabHeader">
+                                <Grid>
+                                    <ContentPresenter Content="{TemplateBinding Content}" RenderTransformOrigin="0,0" >
+                                        <ContentPresenter.LayoutTransform>
+                                            <TransformGroup>
+                                                <RotateTransform Angle="-90"/>
+                                            </TransformGroup>
+                                        </ContentPresenter.LayoutTransform>
+                                    </ContentPresenter>
+                                </Grid>
+                            </DataTemplate>
+                            <!-- bar -->
 							<DataTemplate DataType="{x:Type pmvm:PMBarVm}">
 								<Grid Height="20" VerticalAlignment="Center">
 									<Border Background="#1FFF" BorderBrush="Silver" BorderThickness="1"/>
@@ -1835,51 +1844,47 @@
 									</Canvas>
 								</Grid>
 							</DataTemplate>
-						</Grid.Resources>
-					
-					
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-						
-						<!-- tabs -->
-						<TabControl DataContext="{Binding Levels[0]}">
-							<TabItem Header="ماشین ها">
-								<local:MachinePage DataContext="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded" x:Name="machinesPage"/>
-							</TabItem>
-						</TabControl>
-						<TabControl Grid.Column="1" DataContext="{Binding Levels[1]}">
-							<TabItem Header="قطعات استفاده شده">
-								<local:MachinePartPage PageVm="{Binding Pages[0]}" LayoutUpdated="PMPageLoaded" x:Name="machinePartsPage"/>
-							</TabItem>
-						</TabControl>
-						<TabControl Grid.Column="2" DataContext="{Binding Levels[2]}">
-							<TabItem Header="تمام قطعات">
-								<local:PartPage PageVm="{Binding Pages[0]}" ShowAddButton="{Binding ElementName=machinesPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}" LayoutUpdated="PMPageLoaded"/>
-							</TabItem>
-							<TabItem Header="PM های قطعه" x:Name="usedPMs">
-								<local:MPMPage PageVm="{Binding Pages[1]}" LayoutUpdated="PMPageLoaded"/>
-							</TabItem>
-							<TabItem Header="گزارش PM های قطعه">
-								<local:ReportPage PageVm="{Binding Pages[2]}" LayoutUpdated="PMPageLoaded"/>
-							</TabItem>
-							<TabItem Header="تعمیرات قطعه">
-								<local:RepairPage DataContext="{Binding Pages[3]}" LayoutUpdated="PMPageLoaded"/>
-							</TabItem>
-						</TabControl>
-						<TabControl Grid.Column="3" MinWidth="300" DataContext="{Binding Levels[3]}"
-						Visibility="{Binding ElementName=usedPMs, Path=IsSelected, Converter={StaticResource booleanToVisibilityConverter}}">
-							<TabItem Header="تمام PM ها">
-								<local:PartPage PageVm="{Binding Pages[0]}" ShowAddButton="{Binding ElementName=machinePartsPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}" LayoutUpdated="PMPageLoaded"/>
-							</TabItem>
-							<TabItem Header="گزارش PM قطعه">
-								<local:ReportPage PageVm="{Binding Pages[1]}" LayoutUpdated="PMPageLoaded"/>
-							</TabItem>
-						</TabControl>
-					</Grid>
+						</DockPanel.Resources>
+
+
+                        <!-- machines -->
+                        <local:MachinePage DataContext="{Binding MachinesPages}" LayoutUpdated="PMPageLoaded" x:Name="machinesPage"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="4"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <!-- machineparts -->
+                            <local:MachinePartPage PageVm="{Binding MachinePartsPage}" LayoutUpdated="PMPageLoaded" x:Name="machinePartsPage"/>
+                            <!-- parts -->
+                            <local:PartPage PageVm="{Binding PartsPage}" Grid.Row="2" LayoutUpdated="PMPageLoaded"
+                                            ShowAddButton="{Binding ElementName=machinesPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}"/>
+                            <GridSplitter Height="4" HorizontalAlignment="Stretch" Background="Cyan" Grid.Row="1"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="4"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <!-- machinepartmaintenancs -->
+                            <local:MPMPage PageVm="{Binding MachinePartMaintenancesPage}" LayoutUpdated="PMPageLoaded"/>
+                            <!-- machineparts tabs -->
+                            <local:PartPage PageVm="{Binding MaintenancesPage}" Grid.Row="2" LayoutUpdated="PMPageLoaded"
+                                            ShowAddButton="{Binding ElementName=machinePartsPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}" />
+                            <GridSplitter Height="4" HorizontalAlignment="Stretch" Background="Cyan" Grid.Row="1"/>
+                        </Grid>
+
+                        <TabControl>
+                            <TabItem Header="{Loc txtPMReports}">
+                                <local:ReportPage PageVm="{Binding ReportsPage}" LayoutUpdated="PMPageLoaded"/>
+                            </TabItem>
+                            <TabItem Header="{Loc txtRepairs}">
+                                <local:RepairPage DataContext="{Binding RepairsPage}" LayoutUpdated="PMPageLoaded"/>
+                            </TabItem>
+                        </TabControl>
+                    </DockPanel>
 				</ScrollViewer>
 			</DockPanel>
 		</DataTemplate>

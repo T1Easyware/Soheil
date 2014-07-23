@@ -973,4 +973,31 @@
   <data name="txtAdd" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="txtIsOnDemand" xml:space="preserve">
+    <value>On demand</value>
+  </data>
+  <data name="txtIsPeriodic" xml:space="preserve">
+    <value>Periodic</value>
+  </data>
+  <data name="txtMachinePartMaintenances" xml:space="preserve">
+    <value>Part PMs</value>
+  </data>
+  <data name="txtMachineParts" xml:space="preserve">
+    <value>Machine Parts</value>
+  </data>
+  <data name="txtParts" xml:space="preserve">
+    <value>Parts</value>
+  </data>
+  <data name="txtPeriodDays" xml:space="preserve">
+    <value>Period (Days)</value>
+  </data>
+  <data name="txtPMReports" xml:space="preserve">
+    <value>PM Reports</value>
+  </data>
+  <data name="txtPMType" xml:space="preserve">
+    <value>PM Type</value>
+  </data>
+  <data name="txtRepairs" xml:space="preserve">
+    <value>Repairs</value>
+  </data>
 </root>

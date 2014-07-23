@@ -19,7 +19,7 @@ namespace Soheil.Core.ViewModels.PM
 		}
 
 		/// <summary>
-		/// Gets or sets a bindable value that indicates IsSelected
+		/// Gets or sets a bindable value that whether this page is IsSelected
 		/// </summary>
 		public bool IsSelected
 		{

@@ -50,6 +50,7 @@ namespace Soheil.Views.PM
 			if (columns != null)
 				foreach (var c in columns)
 				{
+                    if (c.Header == null) continue;
 					// Code below was found in GridViewColumnHeader.OnGripperDoubleClicked() event handler (using Reflector)
 					// i.e. it is the same code that is executed when the gripper is double clicked
 					// if (adjustAllColumns || App.StaticGabeLib.FieldDefsGrid[colNum].DispGrid)
