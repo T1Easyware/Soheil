@@ -23,6 +23,18 @@ namespace Soheil.Views.PM
 		public RepairPage()
 		{
 			InitializeComponent();
+			DataContextChanged += RepairPage_DataContextChanged;
+		}
+		void RepairPage_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			/*		
+				var val = e.NewValue as Core.ViewModels.PM.PmPageBase;
+			if (val != null)
+					val.Refresh += RefreshAllColumnWidth;*/
+		}
+		public Core.ViewModels.PM.PmPageBase PageVm
+		{
+			get { return DataContext as Core.ViewModels.PM.PmPageBase; }
 		}
 	}
 }

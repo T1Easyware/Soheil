@@ -20,6 +20,7 @@ namespace Soheil.Core.ViewModels.PM
 		public DataServices.MachineDataService MachineDataService { get; set; }
 		public DataServices.PM.MachinePartDataService MachinePartDataService { get; set; }
 		public DataServices.PM.MaintenanceDataService MaintenanceDataService { get; set; }
+		public DataServices.PM.ReportDataService ReportDataService { get; set; }
 		public DataServices.PM.PartDataService PartDataService { get; set; }
 
 		private bool _isInitialized = false;
@@ -34,6 +35,7 @@ namespace Soheil.Core.ViewModels.PM
 			MachinePartDataService = new DataServices.PM.MachinePartDataService(_uow);
 			PartDataService = new DataServices.PM.PartDataService(_uow);
 			MaintenanceDataService = new DataServices.PM.MaintenanceDataService(_uow);
+			ReportDataService = new DataServices.PM.ReportDataService(_uow);
 			SaveCommand = new Commands.Command(o =>
 			{
                 MachinesPage.InvokeRefresh();
@@ -92,7 +94,11 @@ namespace Soheil.Core.ViewModels.PM
                 //update LinkCounter when -mp
                 var m = PartsPage.Items.FirstOrDefault(x => x.Id == id);
                 if (m != null) m.UpdateIsAdded(MachinesPage.SelectedItem);
-			}, () => MachinePartsPage.SelectedItem != null && !(MachinePartsPage.SelectedItem as MachinePartItemVm).Model.IsMachine);
+			}, 
+            //can execute
+            () => MachinePartsPage.SelectedItem != null
+                && (MachinePartsPage.SelectedItem as MachinePartItemVm).Model != null
+                && !(MachinePartsPage.SelectedItem as MachinePartItemVm).Model.IsMachine);
             MachinePartsPage.SelectedItemChanged += MachinePartsPage_SelectedItemChanged;
             MachinePartsPage.Items.CollectionChanged += MachineParts_CollectionChanged;
             #endregion
@@ -166,7 +172,10 @@ namespace Soheil.Core.ViewModels.PM
                 //update LinkCounter when -mpm
                 var m = MaintenancesPage.Items.FirstOrDefault(x => x.Id == id);
                 if (m != null) m.UpdateIsAdded(MachinePartsPage.SelectedItem);
-			}, () => MachinePartMaintenancesPage.SelectedItem != null && !(MachinePartMaintenancesPage.SelectedItem as MPMItemVm).Model.MaintenanceReports.Any());
+			}, 
+            //can execute
+            () => MachinePartMaintenancesPage.SelectedItem != null
+                && !(MachinePartMaintenancesPage.SelectedItem as MPMItemVm).Model.MaintenanceReports.Any());
             MachinePartMaintenancesPage.Items.CollectionChanged += MachinePartMaintenances_CollectionChanged;
 			#endregion
 
@@ -235,6 +244,7 @@ namespace Soheil.Core.ViewModels.PM
         void FillPages()
         {
             #region create machines
+            MachinesPage.Items.Add(new MachineItemVm(null));
             var machineModels = MachineDataService.GetActives();
             foreach (var machineModel in machineModels)
             {
@@ -292,10 +302,40 @@ namespace Soheil.Core.ViewModels.PM
             {
                 foreach (var machineVm in e.NewItems.OfType<MachineItemVm>())
                 {
+
                     machineVm.GotoReportCommand = new Commands.Command(o =>
                     {
+						ReportsPage.Items.Clear();
+						IEnumerable<Model.MaintenanceReport> models;
 
-                    });
+						//find all reports regarding the current machineVm
+						if (machineVm.Model == null)
+						{
+							models = ReportDataService.GetActives();
+							ReportsPage.HideMachines = false;
+							ReportsPage.HideMachineParts = false;
+							ReportsPage.HideMachinePartMaintenances = false;
+						}
+						else
+						{
+							models = ReportDataService.GetActivesForMachine(machineVm.Model);
+							ReportsPage.HideMachines = true;
+							ReportsPage.HideMachineParts = false;
+							ReportsPage.HideMachinePartMaintenances = false;
+						}
+
+						//add them to Items
+						foreach (var model in models)
+						{
+							var vm = new ReportItemVm(model,
+								new MPMItemVm(model.MachinePartMaintenance,
+									new MachinePartItemVm(model.MachinePartMaintenance.MachinePart,
+										new MachineItemVm(model.MachinePartMaintenance.MachinePart.Machine,true),true),true));
+							ReportsPage.Items.Add(vm);
+						}
+						ReportsPage.InvokeRefresh();
+					});
+
                     machineVm.GotoRepairCommand = new Commands.Command(o =>
                     {
 
@@ -310,25 +350,62 @@ namespace Soheil.Core.ViewModels.PM
             {
                 foreach (var machinePartVm in e.NewItems.OfType<MachinePartItemVm>())
                 {
+
+
                     machinePartVm.GotoReportCommand = new Commands.Command(o =>
                     {
                         ReportsPage.Items.Clear();
+						IEnumerable<Model.MaintenanceReport> models;
+
+						Model.Machine machineModel = null;
+						if (MachinesPage.SelectedItem != null &&
+								(MachinesPage.SelectedItem as MachineItemVm).Model != null)
+							machineModel = (MachinesPage.SelectedItem as MachineItemVm).Model;
                         //find all reports regarding the current machinePartVm
-                        var models = new List<Model.MaintenanceReport>();
-                        foreach (var mmodel in machinePartVm.Model.MachinePartMaintenances)
-                        {
-                            foreach (var model in mmodel.MaintenanceReports)
-                            {
-                                models.Add(model);
-                            }
-                        }
+						if (machinePartVm.Model == null)
+						{
+							//if no machine part is selected
+							if (machineModel == null)
+							{
+								//if no machine is selected
+								//everything
+								models = ReportDataService.GetActives();
+								ReportsPage.HideMachines = false;
+								ReportsPage.HideMachineParts = false;
+								ReportsPage.HideMachinePartMaintenances = false;
+							}
+							else
+							{
+								//just the machine
+								models = ReportDataService.GetActivesForMachine((MachinesPage.SelectedItem as MachineItemVm).Model);
+								ReportsPage.HideMachines = true;
+								ReportsPage.HideMachineParts = false;
+								ReportsPage.HideMachinePartMaintenances = false;
+							}
+						}
+						else
+						{
+							//just the machinePart (or machine)
+							models = ReportDataService.GetActivesForMachinePart(machinePartVm.Model);
+							ReportsPage.HideMachines = (machineModel != null);
+							ReportsPage.HideMachineParts = true;
+							ReportsPage.HideMachinePartMaintenances = false;
+						}
+
                         //add them to Items
                         foreach (var model in models)
                         {
-                            var vm = new ReportItemVm(model);
+							var vm = new ReportItemVm(model,
+								new MPMItemVm(model.MachinePartMaintenance,
+									new MachinePartItemVm(model.MachinePartMaintenance.MachinePart,
+										new MachineItemVm(model.MachinePartMaintenance.MachinePart.Machine, true), true), true));
                             ReportsPage.Items.Add(vm);
                         }
-                    });
+						ReportsPage.InvokeRefresh();
+					});
+
+
+
                     machinePartVm.GotoRepairCommand = new Commands.Command(o =>
                     {
 
@@ -349,10 +426,16 @@ namespace Soheil.Core.ViewModels.PM
                         ReportsPage.Items.Clear();
                         foreach (var model in mpmVm.Model.MaintenanceReports)
                         {
-                            var vm = new ReportItemVm(model);
+                            var vm = new ReportItemVm(model, mpmVm);
                             ReportsPage.Items.Add(vm);
                         }
+
+						ReportsPage.HideMachines = true;
+						ReportsPage.HideMachineParts = true;
+						ReportsPage.HideMachinePartMaintenances = true;
+						ReportsPage.InvokeRefresh();
                     });
+
                     mpmVm.AddReportCommand = new Commands.Command(o =>
                     {
                         var model = new Model.MaintenanceReport
@@ -364,9 +447,15 @@ namespace Soheil.Core.ViewModels.PM
                             PerformedDate = DateTime.Now.Date,
                         };
                         MaintenanceDataService.AddModel(model);
-                        var vm = new ReportItemVm(model);
+                        var vm = new ReportItemVm(model, mpmVm);
                         ReportsPage.Items.Add(vm);
-                    });
+						ReportsPage.SelectedItem = vm;
+
+						ReportsPage.HideMachines = true;
+						ReportsPage.HideMachineParts = true;
+						ReportsPage.HideMachinePartMaintenances = false;
+						ReportsPage.InvokeRefresh();
+					});
                 }
             }
             if (_isInitialized) MachinePartMaintenancesPage.InvokeRefresh();
@@ -397,14 +486,17 @@ namespace Soheil.Core.ViewModels.PM
                             RecordStatus = Status.Active,
                         };
                         MachinePartDataService.AddModel(newMachinePartModel);
-                        var newMachinePartVm = new MachinePartItemVm(newMachinePartModel);
+						var newMachinePartVm = new MachinePartItemVm(newMachinePartModel, machineVm);
                         MachinePartsPage.Items.Add(newMachinePartVm);
 
                         //update LinkCounter when +machineParts
                         partVm.UpdateIsAdded(machineVm);
                         //update MachinePartsPage layout when +machineParts
                         MachinePartsPage.InvokeRefresh();
-                    });
+                    },
+                    //can execute
+                    () => (MachinesPage.SelectedItem as MachineItemVm)!=null
+                        && (MachinesPage.SelectedItem as MachineItemVm).Model != null);
                 }
             }
             //update PartsPage layout when +-part
@@ -437,14 +529,17 @@ namespace Soheil.Core.ViewModels.PM
                             RecordStatus = Status.Active,
                         };
                         MaintenanceDataService.AddModel(newMachinePartMaintenanceModel);
-                        var newMachinePartMaintenanceVm = new MPMItemVm(newMachinePartMaintenanceModel);
+                        var newMachinePartMaintenanceVm = new MPMItemVm(newMachinePartMaintenanceModel, machinePartVm);
                         MachinePartMaintenancesPage.Items.Add(newMachinePartMaintenanceVm);
 
                         //update LinkCounter when +machinePartMaintenances
                         maintenanceVm.UpdateIsAdded(machinePartVm);
                         //update MachinePartMaintenancesPage layout when +machinePartMaintenances
                         MachinePartMaintenancesPage.InvokeRefresh();
-                    });
+                    },
+                    //can execute
+                    () => (MachinePartsPage.SelectedItem as MachinePartItemVm) != null
+						&& (MachinePartsPage.SelectedItem as MachinePartItemVm).Model != null);
                 }
             }
             //update MaintenancesPage layout when +-maintenances
@@ -453,7 +548,10 @@ namespace Soheil.Core.ViewModels.PM
 
         #endregion
 
-        //Each selected item will affect LinkCounters and causes refresh on some other pages
+		//Each selected item :
+		//1. reloads next level
+        //2. affect LinkCounters 
+		//3. Causes refresh on some pages
         #region SelectedItemChanged
         void MachinesPage_SelectedItemChanged(PmItemBase item_machine)
         {
@@ -462,18 +560,39 @@ namespace Soheil.Core.ViewModels.PM
             var machine = item_machine as MachineItemVm;
             if (machine == null) return;
 
-            //create machine parts
-            foreach (var machinePartModel in machine.Model.MachineParts)
+			MachinePartsPage.Items.Add(new MachinePartItemVm(null, machine));
+			IEnumerable<Model.MachinePart> models;
+
+			//create machine parts
+            if (machine.Model == null)
             {
-                var machinePartVm = new MachinePartItemVm(machinePartModel);
-                MachinePartsPage.Items.Add(machinePartVm);
+				MachinePartsPage.HideMachines = false;
+				MachinePartMaintenancesPage.HideMachines = false;
+				//add all machine parts
+				models = MachinePartDataService.GetActives();
             }
+            else
+            {
+				MachinePartsPage.HideMachines = true;
+				MachinePartMaintenancesPage.HideMachines = true;
+				//add machine's machine parts
+				models = machine.Model.MachineParts;
+            }
+
+			//add parts
+			foreach (var machinePartModel in models)
+			{
+				var machinePartVm = new MachinePartItemVm(machinePartModel,
+					new MachineItemVm(machinePartModel.Machine, true));
+				MachinePartsPage.Items.Add(machinePartVm);
+			}
 
             //update parts
             foreach (var part in PartsPage.Items.OfType<PartItemVm>())
             {
                 part.UpdateIsAdded(machine);
             }
+
             MachinePartsPage.InvokeRefresh();
             PartsPage.InvokeRefresh();
         }
@@ -485,13 +604,35 @@ namespace Soheil.Core.ViewModels.PM
             var machinePart = item_machinePart as MachinePartItemVm;
             if (machinePart == null) return;
 
+			IEnumerable<Model.MachinePartMaintenance> models;
+
             //create machine parts
-            foreach (var mpmModel in machinePart.Model.MachinePartMaintenances)
+            if (machinePart.Model == null)
             {
-                var mpmVm = new MPMItemVm(mpmModel);
-                MachinePartMaintenancesPage.Items.Add(mpmVm);
+				MachinePartMaintenancesPage.HideMachineParts = false;
+				//add all MachinePartMaintenances
+                Model.Machine machineModel = null;
+                if (MachinesPage.SelectedItem as MachineItemVm != null)
+                    machineModel = (MachinesPage.SelectedItem as MachineItemVm).Model;
+				models = MaintenanceDataService.GetActivesMachinePartMaintenancesForMachine(machineModel);
+            }
+            else
+            {
+				MachinePartMaintenancesPage.HideMachineParts = true;
+				//add MachinePart's MachinePartMaintenances
+				models = machinePart.Model.MachinePartMaintenances;
             }
 
+			//add mpms
+			foreach (var mpmModel in models)
+			{
+				var mpmVm = new MPMItemVm(mpmModel,
+					new MachinePartItemVm(mpmModel.MachinePart,
+						new MachineItemVm(mpmModel.MachinePart.Machine, true), true));
+				MachinePartMaintenancesPage.Items.Add(mpmVm);
+			}
+
+			//update mpms
             foreach (var pm in MaintenancesPage.Items.OfType<MaintenanceItemVm>())
             {
                 pm.UpdateIsAdded(machinePart);

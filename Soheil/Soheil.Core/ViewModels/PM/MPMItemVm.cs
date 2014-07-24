@@ -13,17 +13,25 @@ namespace Soheil.Core.ViewModels.PM
 	public class MPMItemVm : PmItemBase
 	{
 		public Model.MachinePartMaintenance Model { get; set; }
-		public override int Id { get { return Model.Id; } set { Model.Id = value; } }
-		public MPMItemVm(Model.MachinePartMaintenance model)
+        public override int Id { get { return Model == null ? -1 : Model.Id; } }
+		public MPMItemVm(Model.MachinePartMaintenance model, MachinePartItemVm machinePartVm, bool quick = false)
 		{
-			Model = model;
-			Name = model.Maintenance.Name;
-			Code = model.Code;
-			Description = model.Description;
-			IsOnDemand = model.IsOnDemand;
-			Period = model.PeriodDays;
-			Status = model.RecordStatus;
-            _isInitialized = true;
+			if (quick) Name = model == null ? "-" : model.Maintenance.Name;
+			else
+			{
+				Model = model;
+				Name = model.Maintenance.Name;
+				Code = model.Code;
+				Description = model.Description;
+				IsOnDemand = model.IsOnDemand;
+				Period = model.PeriodDays;
+				Status = model.RecordStatus;
+
+				Bar = new PMBarVm();
+				Bar.SafeUpdateTimings(0);
+				_isInitialized = true;
+			}
+			MachinePart = machinePartVm;
 		}
 		/// <summary>
 		/// Gets or sets a bindable value that indicates IsOnDemand
@@ -48,6 +56,19 @@ namespace Soheil.Core.ViewModels.PM
             DependencyProperty.Register("Period", typeof(int), typeof(MPMItemVm),
             new PropertyMetadata(1, (d, e) => { if (((MPMItemVm)d)._isInitialized) ((MPMItemVm)d).PeriodChanged((int)e.NewValue); },
                 (d, v) => { if ((int)v < 1) return 1; return v; }));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates MachinePart
+		/// </summary>
+		public MachinePartItemVm MachinePart
+		{
+			get { return (MachinePartItemVm)GetValue(MachinePartProperty); }
+			set { SetValue(MachinePartProperty, value); }
+		}
+		public static readonly DependencyProperty MachinePartProperty =
+			DependencyProperty.Register("MachinePart", typeof(MachinePartItemVm), typeof(MPMItemVm), new PropertyMetadata(null));
+
+
 
 		#region Callbacks
 		protected override void NameChanged(string val) { }

@@ -12,7 +12,7 @@ namespace Soheil.Core.ViewModels.PM
 	{
 		protected bool _isInitialized = false;
 
-		public abstract int Id { get; set; }
+		public abstract int Id { get; }
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Name
@@ -58,6 +58,19 @@ namespace Soheil.Core.ViewModels.PM
 		public static readonly DependencyProperty StatusProperty =
 			DependencyProperty.Register("Status", typeof(Status), typeof(PmItemBase),
 			new PropertyMetadata(Status.Active, (d, e) => { if (((PmItemBase)d)._isInitialized) ((PmItemBase)d).StatusChanged((Status)e.NewValue); }));
+
+        /// <summary>
+        /// Gets or sets a bindable value that indicates Bar
+        /// </summary>
+        public PMBarVm Bar
+        {
+            get { return (PMBarVm)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+        public static readonly DependencyProperty BarProperty =
+            DependencyProperty.Register("Bar", typeof(PMBarVm), typeof(PmItemBase), new PropertyMetadata(null));
+
+
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates IsAdded

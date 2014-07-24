@@ -10,7 +10,7 @@ namespace Soheil.Core.ViewModels.PM
 	public class MaintenanceItemVm : PmItemBase
 	{
 		public Model.Maintenance Model { get; set; }
-		public override int Id { get { return Model.Id; } set { Model.Id = value; } }
+        public override int Id { get { return Model == null ? -1 : Model.Id; } }
 		public MaintenanceItemVm(Model.Maintenance model)
 		{
 			Model = model;
@@ -58,7 +58,8 @@ namespace Soheil.Core.ViewModels.PM
 		public override void UpdateIsAdded(PmItemBase linkItemVm)
 		{
 			//if no machine is selected set to -1
-			if (linkItemVm as MachinePartItemVm == null) IsAdded = false;
+            if (linkItemVm as MachinePartItemVm == null) IsAdded = false;
+            else if ((linkItemVm as MachinePartItemVm).Model == null) IsAdded = false;
 			else
 			{
 				//count the relations to machinePartMaintenance which relate to the given machine part

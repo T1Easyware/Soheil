@@ -59,7 +59,9 @@
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>
-						<GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtMachine}" DisplayMemberBinding="{Binding MachinePart.Machine.Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtMachinePart}" DisplayMemberBinding="{Binding MachinePart.Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
 						<GridViewColumn Header="{Loc txtCode}" DisplayMemberBinding="{Binding Code}" Width="Auto"/>
 						<GridViewColumn Header="{Loc txtDescription}" Width="Auto">
 							<GridViewColumn.CellTemplate>
@@ -81,7 +83,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="افزودن گزارشات PM" Command="{Binding AddReportCommand}" Width="20" Margin="-6,0" Padding="0">
+                                    <Button ToolTip="افزودن گزارشات PM" Command="{Binding AddReportCommand}" Width="22" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource AddReportImage}"/>
                                     </Button>
                                 </DataTemplate>
@@ -90,7 +92,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده گزارشات PM" Command="{Binding GotoReportCommand}" Width="20" Margin="-6,0" Padding="0">
+                                    <Button ToolTip="مشاهده گزارشات PM" Command="{Binding GotoReportCommand}" Width="22" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource ReportImage}"/>
                                     </Button>
                                 </DataTemplate>

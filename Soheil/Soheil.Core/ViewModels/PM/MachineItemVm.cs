@@ -10,14 +10,24 @@ namespace Soheil.Core.ViewModels.PM
 	public class MachineItemVm : PmItemBase
 	{
 		public Model.Machine Model { get; set; }
-		public override int Id { get { return Model.Id; } set { Model.Id = value; } }
-		public MachineItemVm(Model.Machine model)
-		{
-			Model = model;
-			Name = model.Name;
-			Code = model.Code;
-			Status = model.RecordStatus;
-		}
+        public override int Id { get { return Model == null ? -1 : Model.Id; } }
+        public MachineItemVm(Model.Machine model, bool quick = false)
+        {
+			if (quick) Name = model == null ? "-" : model.Name;
+
+            else if (model == null)
+            {
+                Name = "همه";
+            }
+            else
+            {
+                Model = model;
+                Name = model.Name;
+                Code = model.Code;
+                Status = model.RecordStatus;
+            }
+            Bar = new PMBarVm();
+        }
 
 		#region Callbacks
 		protected override void NameChanged(string val)

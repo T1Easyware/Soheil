@@ -50,7 +50,8 @@
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>
-						<GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtMachine}" DisplayMemberBinding="{Binding Machine.Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
 						<GridViewColumn Header="{Loc txtCode}" DisplayMemberBinding="{Binding Code}" Width="Auto"/>
 						<GridViewColumn Header="{Loc txtDescription}" Width="Auto">
 							<GridViewColumn.CellTemplate>
@@ -72,7 +73,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده گزارشات PM این قطعه" Command="{Binding GotoReportCommand}" Width="20" Margin="-6,0" Padding="0">
+                                    <Button ToolTip="مشاهده گزارشات PM این قطعه" Command="{Binding GotoReportCommand}" Width="22" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource ReportImage}"/>
                                     </Button>
                                 </DataTemplate>
@@ -81,7 +82,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده تعمیرات این قطعه" Command="{Binding GotoRepairCommand}" Width="20" Margin="-6,0" Padding="0">
+                                    <Button ToolTip="مشاهده تعمیرات این قطعه" Command="{Binding GotoRepairCommand}" Width="22" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource Repair16Image}"/>
                                     </Button>
                                 </DataTemplate>

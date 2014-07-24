@@ -10,18 +10,40 @@ namespace Soheil.Core.ViewModels.PM
 	public class MachinePartItemVm : PmItemBase
 	{
 		public Model.MachinePart Model { get; set; }
-		public override int Id { get { return Model.Id; } set { Model.Id = value; } }
-		public MachinePartItemVm(Model.MachinePart model)
+        public override int Id { get { return Model == null ? -1 : Model.Id; } }
+		public MachinePartItemVm(Model.MachinePart model, MachineItemVm machineVm, bool quick = false)
 		{
-			Model = model;
-			Name = model.Name;
-			Code = model.Code;
-			Description = model.Description;
-			Status = model.RecordStatus;
-			Bar = new PMBarVm();
-			_isInitialized = true;
+			if (quick) Name = model == null ? "-" : model.Name;
+			else
+			{
+				if (model == null)
+				{
+					Name = "همه";
+				}
+				else
+				{
+					Model = model;
+					Name = model.Name;
+					Code = model.Code;
+					Description = model.Description;
+					Status = model.RecordStatus;
+				}
+				Bar = new PMBarVm();
+				_isInitialized = true;
+			}
+			Machine = machineVm;
 		}
 
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Machine
+		/// </summary>
+		public MachineItemVm Machine
+		{
+			get { return (MachineItemVm)GetValue(MachineProperty); }
+			set { SetValue(MachineProperty, value); }
+		}
+		public static readonly DependencyProperty MachineProperty =
+			DependencyProperty.Register("Machine", typeof(MachineItemVm), typeof(MachinePartItemVm), new PropertyMetadata(null));
 
 
 		#region Callbacks
@@ -65,16 +87,5 @@ namespace Soheil.Core.ViewModels.PM
 				Bar.SafeUpdateTimings(rem);
 			}
 		}
-		/// <summary>
-		/// Gets or sets a bindable value that indicates Bar
-		/// </summary>
-		public PMBarVm Bar
-		{
-			get { return (PMBarVm)GetValue(BarProperty); }
-			set { SetValue(BarProperty, value); }
-		}
-		public static readonly DependencyProperty BarProperty =
-			DependencyProperty.Register("Bar", typeof(PMBarVm), typeof(MachinePartItemVm), new PropertyMetadata(null));
-
 	}
 }

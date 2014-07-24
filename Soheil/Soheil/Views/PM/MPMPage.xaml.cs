@@ -23,34 +23,30 @@ namespace Soheil.Views.PM
 		public MPMPage()
 		{
 			InitializeComponent();
+			DataContextChanged += MPMPage_DataContextChanged;
 		}
-		/// <summary>
-		/// Gets or sets a bindable value that indicates PageVm
-		/// </summary>
+		void MPMPage_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var val = e.NewValue as Core.ViewModels.PM.PmPageBase;
+			if (val != null)
+				val.Refresh += RefreshAllColumnWidth;
+		}
 		public Core.ViewModels.PM.PmPageBase PageVm
 		{
-			get { return (Core.ViewModels.PM.PmPageBase)GetValue(PageVmProperty); }
-			set { SetValue(PageVmProperty, value); }
+			get { return DataContext as Core.ViewModels.PM.PmPageBase; }
 		}
-		public static readonly DependencyProperty PageVmProperty =
-			DependencyProperty.Register("PageVm", typeof(Core.ViewModels.PM.PmPageBase), typeof(MPMPage),
-			new PropertyMetadata(null, (d, e) =>
-			{
-				var vm = (MPMPage)d;
-				var val = (Core.ViewModels.PM.PmPageBase)e.NewValue;
-				if (val != null)
-				{
-					vm.DataContext = val;
-					val.Refresh += vm.RefreshAllColumnWidth;
-				}
-			}));
 		public void RefreshAllColumnWidth()
 		{
+			if (PageVm == null) return;
 			var columns = (listview.View as GridView).Columns;
 			if (columns != null)
-				foreach (var c in columns)
+			{
+				for (int i = 0; i < columns.Count; i++)
 				{
-                    if (c.Header == null) continue;
+					var c = columns[i];
+					if (PageVm.HideMachines && i == 0) { c.Width = 0; continue; }
+					else if (PageVm.HideMachineParts && i == 1) { c.Width = 0; continue; }
+					else if (c.Header == null) continue;
 					// Code below was found in GridViewColumnHeader.OnGripperDoubleClicked() event handler (using Reflector)
 					// i.e. it is the same code that is executed when the gripper is double clicked
 					// if (adjustAllColumns || App.StaticGabeLib.FieldDefsGrid[colNum].DispGrid)
@@ -60,6 +56,7 @@ namespace Soheil.Views.PM
 					}
 					c.Width = double.NaN;
 				}
+			}
 		}
 	}
 }

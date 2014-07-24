@@ -18,7 +18,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده گزارشات PM این ماشین" Command="{Binding GotoReportCommand}" Width="20" Margin="-6,0" Padding="0">
+                                    <Button ToolTip="مشاهده گزارشات PM این ماشین" Command="{Binding GotoReportCommand}" Width="22" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource ReportImage}"/>
                                     </Button>
                                 </DataTemplate>
@@ -27,7 +27,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده تعمیرات این ماشین" Command="{Binding GotoRepairCommand}" Width="20" Margin="-6,0" Padding="0">
+                                    <Button ToolTip="مشاهده تعمیرات این ماشین" Command="{Binding GotoRepairCommand}" Width="22" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource Repair16Image}"/>
                                     </Button>
                                 </DataTemplate>

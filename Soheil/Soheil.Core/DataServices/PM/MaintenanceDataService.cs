@@ -46,7 +46,14 @@ namespace Soheil.Core.DataServices.PM
 			var list = _maintenanceRepository.Find(x=>x.Status == (int)Status.Active).ToList();
 			return new System.Collections.ObjectModel.ObservableCollection<Maintenance>(list);
 		}
-
+        public IEnumerable<Model.MachinePartMaintenance> GetActivesMachinePartMaintenancesForMachine(Machine machineModel)
+        {
+            if (machineModel == null)
+                return _machinePartMaintenanceRepository.Find(x => x.Status == (int)Status.Active);
+            else
+                return _machinePartMaintenanceRepository.Find(x => x.Status == (int)Status.Active 
+                    && x.MachinePart.Machine.Id == machineModel.Id);
+        }
 		public int AddModel(Model.Maintenance model)
 		{
 			_maintenanceRepository.Add(model);
@@ -130,6 +137,5 @@ namespace Soheil.Core.DataServices.PM
 				AddModel(model);
 			}
 		}
-
-	}
+    }
 }

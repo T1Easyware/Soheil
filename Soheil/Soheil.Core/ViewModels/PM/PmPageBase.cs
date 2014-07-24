@@ -43,6 +43,39 @@ namespace Soheil.Core.ViewModels.PM
                     vm.SelectedItemChanged(val);
 			}));
 
+		#region Optional flags
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether to hide Machine column in GridView
+		/// </summary>
+		public bool HideMachines
+		{
+			get { return (bool)GetValue(HideMachinesProperty); }
+			set { SetValue(HideMachinesProperty, value); }
+		}
+		public static readonly DependencyProperty HideMachinesProperty =
+			DependencyProperty.Register("HideMachines", typeof(bool), typeof(PmPageBase), new PropertyMetadata(true));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether to hide MachinePart column in GridView
+		/// </summary>
+		public bool HideMachineParts
+		{
+			get { return (bool)GetValue(HideMachinePartsProperty); }
+			set { SetValue(HideMachinePartsProperty, value); }
+		}
+		public static readonly DependencyProperty HideMachinePartsProperty =
+			DependencyProperty.Register("HideMachineParts", typeof(bool), typeof(PmPageBase), new PropertyMetadata(true));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether to hide MachinePartMaintenance column in GridView
+		/// </summary>
+		public bool HideMachinePartMaintenances
+		{
+			get { return (bool)GetValue(HideMachinePartMaintenancesProperty); }
+			set { SetValue(HideMachinePartMaintenancesProperty, value); }
+		}
+		public static readonly DependencyProperty HideMachinePartMaintenancesProperty =
+			DependencyProperty.Register("HideMachinePartMaintenances", typeof(bool), typeof(PmPageBase), new PropertyMetadata(true));
+
+		#endregion
 
 		/// <summary>
 		/// Gets or sets a bindable command that adds a new source item to this page

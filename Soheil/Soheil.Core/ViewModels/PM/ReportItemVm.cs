@@ -11,8 +11,8 @@ namespace Soheil.Core.ViewModels.PM
 	public class ReportItemVm : PmItemBase
 	{
 		public Model.MaintenanceReport Model { get; set; }
-		public override int Id { get { return Model.Id; } set { Model.Id = value; } }
-		public ReportItemVm(Model.MaintenanceReport model)
+        public override int Id { get { return Model == null ? -1 : Model.Id; } }
+		public ReportItemVm(Model.MaintenanceReport model, MPMItemVm mpmVm)
 		{
 			Model = model;
 			Name = model.MachinePartMaintenance.Maintenance.Name;
@@ -21,8 +21,10 @@ namespace Soheil.Core.ViewModels.PM
 			MaintenanceDate = model.MaintenanceDate;
 			Model.UpdateStatus();
 			MaintenanceStatus = model.PerformanceStatus;
+			MachinePartMaintenance = mpmVm;
 			_isInitialized = true;
 		}
+
 
 		#region Callbacks
 		protected override void NameChanged(string val)
@@ -49,46 +51,15 @@ namespace Soheil.Core.ViewModels.PM
 		#endregion
 
 		/// <summary>
-		/// Gets or sets a bindable value that indicates Machine
+		/// Gets or sets a bindable value that indicates MachinePartMaintenanceProperty
 		/// </summary>
-		public MachineItemVm Machine
+		public MPMItemVm MachinePartMaintenance
 		{
-			get { return (MachineItemVm)GetValue(MachineProperty); }
-			set { SetValue(MachineProperty, value); }
+			get { return (MPMItemVm)GetValue(MachinePartMaintenanceProperty); }
+			set { SetValue(MachinePartMaintenanceProperty, value); }
 		}
-		public static readonly DependencyProperty MachineProperty =
-			DependencyProperty.Register("Machine", typeof(MachineItemVm), typeof(PartItemVm), new PropertyMetadata(null));
-
-		/// <summary>
-		/// Gets or sets a bindable value that indicates MachinePart
-		/// </summary>
-		public MachinePartItemVm MachinePart
-		{
-			get { return (MachinePartItemVm)GetValue(MachinePartProperty); }
-			set { SetValue(MachinePartProperty, value); }
-		}
-		public static readonly DependencyProperty MachinePartProperty =
-			DependencyProperty.Register("MachinePart", typeof(MachinePartItemVm), typeof(PartItemVm), new PropertyMetadata(null));
-		/// <summary>
-		/// Gets or sets a bindable value that indicates Part
-		/// </summary>
-		public PartItemVm Part
-		{
-			get { return (PartItemVm)GetValue(PartProperty); }
-			set { SetValue(PartProperty, value); }
-		}
-		public static readonly DependencyProperty PartProperty =
-			DependencyProperty.Register("Part", typeof(PartItemVm), typeof(PartItemVm), new PropertyMetadata(null));
-		/// <summary>
-		/// Gets or sets a bindable value that indicates Maintenance
-		/// </summary>
-		public MaintenanceItemVm Maintenance
-		{
-			get { return (MaintenanceItemVm)GetValue(MaintenanceProperty); }
-			set { SetValue(MaintenanceProperty, value); }
-		}
-		public static readonly DependencyProperty MaintenanceProperty =
-			DependencyProperty.Register("Maintenance", typeof(MaintenanceItemVm), typeof(PartItemVm), new PropertyMetadata(null));
+		public static readonly DependencyProperty MachinePartMaintenanceProperty =
+			DependencyProperty.Register("MachinePartMaintenance", typeof(MPMItemVm), typeof(ReportItemVm), new PropertyMetadata(null));
 
 
 		/// <summary>

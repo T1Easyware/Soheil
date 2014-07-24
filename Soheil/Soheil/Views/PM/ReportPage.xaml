@@ -59,7 +59,10 @@
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>
-						<GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtMachine}" DisplayMemberBinding="{Binding MachinePartMaintenance.MachinePart.Machine.Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtMachinePart}" DisplayMemberBinding="{Binding MachinePartMaintenance.MachinePart.Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtMachinePartMaintenance}" DisplayMemberBinding="{Binding MachinePartMaintenance.Name}" Width="Auto"/>
+                        <GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
 						<GridViewColumn Header="{Loc txtCode}" DisplayMemberBinding="{Binding Code}" Width="Auto"/>
 						<GridViewColumn Header="{Loc txtDescription}" Width="Auto">
 							<GridViewColumn.CellTemplate>

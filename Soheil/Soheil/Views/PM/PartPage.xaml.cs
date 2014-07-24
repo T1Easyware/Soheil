@@ -23,27 +23,18 @@ namespace Soheil.Views.PM
 		public PartPage()
 		{
 			InitializeComponent();
+			DataContextChanged += PartPage_DataContextChanged;
 		}
-		/// <summary>
-		/// Gets or sets a bindable value that indicates PageVm
-		/// </summary>
+		void PartPage_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var val = e.NewValue as Core.ViewModels.PM.PmPageBase;
+			if (val != null)
+				val.Refresh += RefreshAllColumnWidth;
+		}
 		public Core.ViewModels.PM.PmPageBase PageVm
 		{
-			get { return (Core.ViewModels.PM.PmPageBase)GetValue(PageVmProperty); }
-			set { SetValue(PageVmProperty, value); }
+			get { return DataContext as Core.ViewModels.PM.PmPageBase; }
 		}
-		public static readonly DependencyProperty PageVmProperty =
-			DependencyProperty.Register("PageVm", typeof(Core.ViewModels.PM.PmPageBase), typeof(PartPage),
-			new PropertyMetadata(null, (d, e) =>
-			{
-				var vm = (PartPage)d;
-				var val = (Core.ViewModels.PM.PmPageBase)e.NewValue;
-				if (val != null)
-				{
-					vm.DataContext = val;
-					val.Refresh += vm.RefreshAllColumnWidth;
-				}
-			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates ShowAddButton
 		/// </summary>
