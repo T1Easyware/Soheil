@@ -10,9 +10,6 @@ namespace Soheil.Core.ViewModels.PM
 {
 	public abstract class PmItemBase : DependencyObject
 	{
-		public event Action<PmItemBase> Selected;
-		internal void InvokeSelected() { if (Selected != null)	Selected(this); }
-
 		protected bool _isInitialized = false;
 
 		public abstract int Id { get; set; }
@@ -96,6 +93,29 @@ namespace Soheil.Core.ViewModels.PM
 		}
 		public static readonly DependencyProperty UseCommandProperty =
 			DependencyProperty.Register("UseCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+      
+        /// <summary>
+        /// Gets or sets a bindable value that indicates GotoReportCommand
+        /// </summary>
+        public Commands.Command GotoReportCommand
+        {
+            get { return (Commands.Command)GetValue(GotoReportCommandProperty); }
+            set { SetValue(GotoReportCommandProperty, value); }
+        }
+        public static readonly DependencyProperty GotoReportCommandProperty =
+            DependencyProperty.Register("GotoReportCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets a bindable value that indicates GotoRepairCommand
+        /// </summary>
+        public Commands.Command GotoRepairCommand
+        {
+            get { return (Commands.Command)GetValue(GotoRepairCommandProperty); }
+            set { SetValue(GotoRepairCommandProperty, value); }
+        }
+        public static readonly DependencyProperty GotoRepairCommandProperty =
+            DependencyProperty.Register("GotoRepairCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+
 
 	}
 }

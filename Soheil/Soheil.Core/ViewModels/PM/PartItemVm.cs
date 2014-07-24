@@ -52,7 +52,7 @@ namespace Soheil.Core.ViewModels.PM
 		/// <summary>
 		/// Updates Link counter automatically (should be overriden if needed)
 		/// </summary>
-		/// <param name="linkItemVm">item must be of type machine item vm</param>
+        /// <param name="linkItemVm">item must be of type <see cref="MachineItemVm"/></param>
 		public override void UpdateIsAdded(PmItemBase linkItemVm)
 		{
 			//if no machine is selected set to -1

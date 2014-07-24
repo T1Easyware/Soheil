@@ -1000,4 +1000,7 @@
   <data name="txtRepairs" xml:space="preserve">
     <value>Repairs</value>
   </data>
+  <data name="txtMaintenances" xml:space="preserve">
+    <value>PMs</value>
+  </data>
 </root>

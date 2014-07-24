@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel>
-        <TextBlock Text="{Loc txtMachines}" DockPanel.Dock="Top"/>
+        <TextBlock Text="{Loc txtMachines}" DockPanel.Dock="Top" Foreground="{StaticResource NormalBrush}"/>
         <!-- items -->
         <ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" SelectionMode="Single">
             <ListView.View>
@@ -18,7 +18,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده گزارشات PM این ماشین" Command="{Binding GotoReportCommand}">
+                                    <Button ToolTip="مشاهده گزارشات PM این ماشین" Command="{Binding GotoReportCommand}" Width="20" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource ReportImage}"/>
                                     </Button>
                                 </DataTemplate>
@@ -27,7 +27,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده تعمیرات این ماشین" Command="{Binding GotoRepairCommand}">
+                                    <Button ToolTip="مشاهده تعمیرات این ماشین" Command="{Binding GotoRepairCommand}" Width="20" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource Repair16Image}"/>
                                     </Button>
                                 </DataTemplate>

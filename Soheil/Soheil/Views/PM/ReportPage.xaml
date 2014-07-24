@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		     xmlns:common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
              xmlns:pmvm="clr-namespace:Soheil.Core.ViewModels.PM;assembly=Soheil.Core"
+             xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -36,15 +37,18 @@
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 				<TextBlock Text="{Loc txtCode}" Grid.Row="0" Foreground="Silver"/>
-				<TextBlock Text="{Loc txtName}" Grid.Row="1" Foreground="Silver"/>
-				<TextBlock Text="{Loc txtDescription}" Grid.Row="2" Foreground="Silver"/>
+                <TextBlock Text="تاریخ PM" Grid.Row="1" Foreground="Silver"/>
+                <TextBlock Text="تاریخ اجرا" Grid.Row="2" Foreground="Silver"/>
+				<TextBlock Text="{Loc txtDescription}" Grid.Row="3" Foreground="Silver"/>
 				<TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"/>
-				<TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
-				<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" AcceptsReturn="True"/>
+                <cal:DatePicker DisplayDate="{Binding MaintenanceDate}" SelectedDate="{Binding MaintenanceDate}" Grid.Row="1" Grid.Column="1"/>
+                <cal:DatePicker DisplayDate="{Binding PerformedDate}" SelectedDate="{Binding PerformedDate}" Grid.Row="2" Grid.Column="1"/>
+				<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" AcceptsReturn="True"/>
 			</Grid>
 		</Border>
 

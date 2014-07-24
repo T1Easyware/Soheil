@@ -1,4 +1,4 @@
-﻿<ResourceDsictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     
@@ -47,10 +47,6 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/back_16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
-    <Style x:Key="Check24Image" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Check.png"/>
-        <Setter Property="Width" Value="24"/>
-    </Style>
 
     <!-- Fpc -->
 
@@ -348,7 +344,7 @@
 		<Setter Property="Width" Value="16"/>
 	</Style>
     <Style x:Key="Repair16Image" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/PMRepair16.png"/>
-        <Setter Property="Width" Value="24"/>
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepair16.png"/>
+        <Setter Property="Width" Value="16"/>
     </Style>
-</ResourceDsictionary>
+</ResourceDictionary>

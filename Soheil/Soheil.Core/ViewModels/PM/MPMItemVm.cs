@@ -23,6 +23,7 @@ namespace Soheil.Core.ViewModels.PM
 			IsOnDemand = model.IsOnDemand;
 			Period = model.PeriodDays;
 			Status = model.RecordStatus;
+            _isInitialized = true;
 		}
 		/// <summary>
 		/// Gets or sets a bindable value that indicates IsOnDemand
@@ -81,6 +82,17 @@ namespace Soheil.Core.ViewModels.PM
 			Model.ModifiedBy = LoginInfo.Id;
 		}
 		#endregion
+
+        /// <summary>
+        /// Gets or sets a bindable value that indicates AddReportCommand
+        /// </summary>
+        public Commands.Command AddReportCommand
+        {
+            get { return (Commands.Command)GetValue(AddReportCommandProperty); }
+            set { SetValue(AddReportCommandProperty, value); }
+        }
+        public static readonly DependencyProperty AddReportCommandProperty =
+            DependencyProperty.Register("AddReportCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
 
 	}
 }

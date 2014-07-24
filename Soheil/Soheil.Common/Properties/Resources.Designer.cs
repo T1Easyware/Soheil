@@ -1555,6 +1555,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PM ها.
+        /// </summary>
+        public static string txtMaintenances {
+            get {
+                return ResourceManager.GetString("txtMaintenances", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to نیروی انسانی.
         /// </summary>
         public static string txtMan {

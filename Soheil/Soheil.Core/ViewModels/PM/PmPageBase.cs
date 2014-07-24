@@ -10,31 +10,14 @@ namespace Soheil.Core.ViewModels.PM
 {
 	public class PmPageBase : DependencyObject
 	{
-		public event Action Selected;
 		public event Action Refresh;
-		internal void InvokeRefresh() { if (Refresh != null) Refresh(); }
+        public event Action<PmItemBase> SelectedItemChanged;
+
+        internal void InvokeRefresh() { if (Refresh != null) Refresh(); }
 
 		public PmPageBase()
 		{
 		}
-
-		/// <summary>
-		/// Gets or sets a bindable value that whether this page is IsSelected
-		/// </summary>
-		public bool IsSelected
-		{
-			get { return (bool)GetValue(IsSelectedProperty); }
-			set { SetValue(IsSelectedProperty, value); }
-		}
-		public static readonly DependencyProperty IsSelectedProperty =
-			DependencyProperty.Register("IsSelected", typeof(bool), typeof(PmPageBase),
-			new PropertyMetadata(false, (d, e) =>
-			{
-				var vm = (PmPageBase)d;
-				var val = (bool)e.NewValue;
-				if (vm.Selected != null)
-					vm.Selected();
-			}));
 
 		/// <summary>
 		/// Gets or sets a bindable collection that indicates Items
@@ -56,7 +39,8 @@ namespace Soheil.Core.ViewModels.PM
 			{
 				var vm = (PmPageBase)d;
 				var val = (PmItemBase)e.NewValue;
-				if (val != null) val.InvokeSelected();
+                if (val != null && vm.SelectedItemChanged != null)
+                    vm.SelectedItemChanged(val);
 			}));
 
 

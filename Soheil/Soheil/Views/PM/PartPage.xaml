@@ -8,8 +8,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" x:Name="root"
              d:DesignHeight="200" d:DesignWidth="300">
-	<DockPanel>
-		<!-- details -->
+    <DockPanel>
+        <TextBlock Text="{Binding ElementName=root, Path=Tag}" DockPanel.Dock="Top" Foreground="{StaticResource NormalBrush}"/>
+        <!-- details -->
 		<WrapPanel DockPanel.Dock="Bottom" Panel.ZIndex="10">
 			<Button Command="{Binding DeleteCommand}">
 				<WrapPanel>
@@ -55,7 +56,7 @@
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>
-						<GridViewColumn Header="استفاده" Width="Auto">
+						<GridViewColumn Width="Auto">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<Grid Visibility="{Binding ElementName=root, Path=ShowAddButton, Converter={StaticResource booleanToVisibilityConverter}}">
@@ -75,12 +76,9 @@
 												</BeginStoryboard>
 											</EventTrigger>
 										</Grid.Triggers>
-										<TextBlock Foreground="Cyan" Text="{Loc txtInUse}" TextWrapping="Wrap" FontSize="9" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding IsAdded, Converter={StaticResource booleanToVisibilityConverter}}"/>
-										<Button Command="{Binding UseCommand}" x:Name="button" Opacity="0">
-											<WrapPanel HorizontalAlignment="Left">
-												<Image Style="{StaticResource Check24Image}" DockPanel.Dock="Left"/>
-												<TextBlock Text="{Loc txtAdd}" Margin="5,0" DockPanel.Dock="Left"/>
-											</WrapPanel>
+                                        <Image Style="{StaticResource Add16Image}" ToolTip="{Loc txtInUse}" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding IsAdded, Converter={StaticResource booleanToVisibilityConverter}}"/>
+										<Button Command="{Binding UseCommand}" x:Name="button" Opacity="0" ToolTip="افزودن به آیتمهای بالا">
+											<Image Style="{StaticResource Add16Image}"/>
 										</Button>
 									</Grid>
 								</DataTemplate>

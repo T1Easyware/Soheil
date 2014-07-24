@@ -1005,4 +1005,7 @@
   <data name="txtRepairs" xml:space="preserve">
     <value>تعمیرات</value>
   </data>
+  <data name="txtMaintenances" xml:space="preserve">
+    <value>PM ها</value>
+  </data>
 </root>

@@ -22,7 +22,7 @@ namespace Soheil.Core.ViewModels.PM
 		public DataServices.PM.MaintenanceDataService MaintenanceDataService { get; set; }
 		public DataServices.PM.PartDataService PartDataService { get; set; }
 
-		private bool _isInitializing = true;
+		private bool _isInitialized = false;
 
 		#endregion
 
@@ -46,10 +46,12 @@ namespace Soheil.Core.ViewModels.PM
 				_uow.Commit();
 			});
             CreatePages();
+            FillPages();
             //declare finish
-            _isInitializing = false;
+            _isInitialized = true;
         }
-
+        
+        
         void CreatePages()
         {
             #region Machines
@@ -58,30 +60,8 @@ namespace Soheil.Core.ViewModels.PM
 				AddCommand = new Commands.Command(o => { }, () => false),
 				DeleteCommand = new Commands.Command(o => { }, () => false),
 			};
-            #endregion
-
-            #region create machines
-            var machineModels = MachineDataService.GetActives();
-            foreach (var machineModel in machineModels)
-            {
-                //create default part for machine
-                if (!machineModel.MachineParts.Any(x => x.IsMachine))
-                    MachinePartDataService.AddModel(new Model.MachinePart
-                    {
-                        IsMachine = true,
-                        Machine = machineModel,
-                        Name = machineModel.Name,
-                        Code = machineModel.Code,
-                        Description = "auto",
-                        ModifiedBy = LoginInfo.Id,
-                        ModifiedDate = DateTime.Now,
-                    });
-
-                //create view model for machine and add to items
-                var machineVm = new MachineItemVm(machineModel);
-                machineVm.Selected += machine_Selected;
-                MachinesPage.Items.Add(machineVm);
-            } 
+            MachinesPage.SelectedItemChanged += MachinesPage_SelectedItemChanged;
+            MachinesPage.Items.CollectionChanged += Machines_CollectionChanged;
             #endregion
 
 			//------------------------------------------------------------------------
@@ -94,88 +74,69 @@ namespace Soheil.Core.ViewModels.PM
 
 			MachinePartsPage.DeleteCommand = new Commands.Command(o =>
 			{
+                if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
 				var mp = MachinePartsPage.SelectedItem as MachinePartItemVm;
 				if (mp == null) return;
-				MachinePartDataService.DeleteModel(mp.Model);
+                int id = mp.Model.Part.Id;
+                int idx = MachinePartsPage.Items.IndexOf(mp);
+
+                MachinePartDataService.DeleteModel(mp.Model);
 				MachinePartsPage.Items.Remove(mp);
-				MachinePartsPage.SelectedItem = null;
+                MachinePartsPage.SelectedItem =
+                            idx < MachinePartsPage.Items.Count ?
+                            MachinePartsPage.Items[idx] :
+                            MachinePartsPage.Items.LastOrDefault();
+
+                //update MachinePartPage layout when -mp
+                MachinePartsPage.InvokeRefresh();
+                //update LinkCounter when -mp
+                var m = PartsPage.Items.FirstOrDefault(x => x.Id == id);
+                if (m != null) m.UpdateIsAdded(MachinesPage.SelectedItem);
 			}, () => MachinePartsPage.SelectedItem != null && !(MachinePartsPage.SelectedItem as MachinePartItemVm).Model.IsMachine);
-			#endregion
-			MachinePartsPage.Items.CollectionChanged += MachineParts_CollectionChanged; 
+            MachinePartsPage.SelectedItemChanged += MachinePartsPage_SelectedItemChanged;
+            MachinePartsPage.Items.CollectionChanged += MachineParts_CollectionChanged;
+            #endregion
 
 			//------------------------------------------------------------------------
 
 			#region Parts
 			PartsPage = new PmPageBase
+			{
+				AddCommand = new Commands.Command(o =>
 				{
-					AddCommand = new Commands.Command(o =>
+					var newPartModel = new Model.Part
 					{
-						var newPartModel = new Model.Part
-						{
-							Name = "*",
-							Code = "*",
-							Description = "",
-							RecordStatus = Status.Active,
-							ModifiedBy = LoginInfo.Id,
-							ModifiedDate = DateTime.Now,
-						};
-						newPartModel.Id = PartDataService.AddModel(newPartModel);
-						var newPartVm = new PartItemVm(newPartModel);
-						PartsPage.Items.Add(newPartVm);
-						PartsPage.SelectedItem = newPartVm;
-					}, () => true),
+						Name = "*",
+						Code = "*",
+						Description = "",
+						RecordStatus = Status.Active,
+						ModifiedBy = LoginInfo.Id,
+						ModifiedDate = DateTime.Now,
+					};
+					newPartModel.Id = PartDataService.AddModel(newPartModel);
+					var newPartVm = new PartItemVm(newPartModel);
+					PartsPage.Items.Add(newPartVm);
+					PartsPage.SelectedItem = newPartVm;
+				}, () => true),
 
-					DeleteCommand = new Commands.Command(o =>
-					{
-						var part = PartsPage.SelectedItem as PartItemVm;
-						if (part == null) return;
-						PartDataService.DeleteModel(part.Model);
-						PartsPage.Items.Remove(part);
-						PartsPage.SelectedItem = null;
-					}, () => PartsPage.SelectedItem != null),
-				};
+				DeleteCommand = new Commands.Command(o =>
+				{
+                    if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
+                    var part = PartsPage.SelectedItem as PartItemVm;
+					if (part == null) return;
+                    int idx = PartsPage.Items.IndexOf(part);
 
-			#endregion
+					PartDataService.DeleteModel(part.Model);
+					PartsPage.Items.Remove(part);
+                    PartsPage.SelectedItem =
+                        idx < PartsPage.Items.Count ?
+                        PartsPage.Items[idx] :
+                        PartsPage.Items.LastOrDefault();
+				}, () => PartsPage.SelectedItem != null),
+			};
             PartsPage.Items.CollectionChanged += Parts_CollectionChanged;
-
-            #region create parts
-            PartsPage.Items.Clear();
-            var partModels = PartDataService.GetActives();
-            foreach (var partModel in partModels)
-            {
-                var partVm = new PartItemVm(partModel);
-
-                //part is selected
-                partVm.Selected += item_part =>
-                {
-                };
-
-                //part is included
-                partVm.UseCommand = new Commands.Command(oo =>
-                {
-                    var machineVm = MachinesPage.SelectedItem as MachineItemVm;
-                    if (machineVm == null) return;
-
-                    var newMachinePartModel = new Model.MachinePart
-                    {
-                        Name = machineVm.Name + "." + partVm.Name,
-                        Code = machineVm.Code + "." + partVm.Code,
-                        Description = "",
-                        IsMachine = false,
-                        Machine = machineVm.Model,
-                        Part = partModel,
-                        ModifiedBy = LoginInfo.Id,
-                        ModifiedDate = DateTime.Now,
-                        RecordStatus = Status.Active,
-                    };
-                    MachinePartDataService.AddModel(newMachinePartModel);
-                    var newMachinePartVm = new MachinePartItemVm(newMachinePartModel);
-                    MachinePartsPage.Items.Add(newMachinePartVm);
-                });
-
-                PartsPage.Items.Add(partVm);
-            } 
             #endregion
+
 
 			//------------------------------------------------------------------------
 
@@ -187,16 +148,28 @@ namespace Soheil.Core.ViewModels.PM
 
 			MachinePartMaintenancesPage.DeleteCommand = new Commands.Command(o =>
 			{
-				var mp = MachinePartMaintenancesPage.SelectedItem as MPMItemVm;
+                if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
+                var mp = MachinePartMaintenancesPage.SelectedItem as MPMItemVm;
 				if (mp == null) return;
+                int idx = MachinePartMaintenancesPage.Items.IndexOf(mp);
+                int id = mp.Model.Maintenance.Id;
+
 				MaintenanceDataService.DeleteModel(mp.Model);
 				MachinePartMaintenancesPage.Items.Remove(mp);
-				MachinePartMaintenancesPage.SelectedItem = null;
-			}, () => MachinePartMaintenancesPage.SelectedItem != null && !(MachinePartMaintenancesPage.SelectedItem as MPMItemVm).Model.MaintenanceReports.Any());
+                MachinePartMaintenancesPage.SelectedItem =
+                    idx < MachinePartMaintenancesPage.Items.Count ?
+                    MachinePartMaintenancesPage.Items[idx] :
+                    MachinePartMaintenancesPage.Items.LastOrDefault();
 
+                //update MachinePartMaintenancesPage layout when -mpm
+                MachinePartMaintenancesPage.InvokeRefresh();
+                //update LinkCounter when -mpm
+                var m = MaintenancesPage.Items.FirstOrDefault(x => x.Id == id);
+                if (m != null) m.UpdateIsAdded(MachinePartsPage.SelectedItem);
+			}, () => MachinePartMaintenancesPage.SelectedItem != null && !(MachinePartMaintenancesPage.SelectedItem as MPMItemVm).Model.MaintenanceReports.Any());
+            MachinePartMaintenancesPage.Items.CollectionChanged += MachinePartMaintenances_CollectionChanged;
 			#endregion
-            MachinePartMaintenancesPage.Items.CollectionChanged += MachinePartMaintenances_CollectionChanged; 
-	
+
 			//------------------------------------------------------------------------
 
 			#region Maintenances
@@ -221,56 +194,22 @@ namespace Soheil.Core.ViewModels.PM
 
 				DeleteCommand = new Commands.Command(o =>
 				{
-					var mntn = MaintenancesPage.SelectedItem as MaintenanceItemVm;
+                    if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
+                    var mntn = MaintenancesPage.SelectedItem as MaintenanceItemVm;
 					if (mntn == null) return;
+                    int idx = MaintenancesPage.Items.IndexOf(mntn);
+
 					MaintenanceDataService.DeleteModel(mntn.Model);
 					MaintenancesPage.Items.Remove(mntn);
-					MaintenancesPage.SelectedItem = null;
+                    MaintenancesPage.SelectedItem =
+                        idx < MaintenancesPage.Items.Count ?
+                        MaintenancesPage.Items[idx] :
+                        MaintenancesPage.Items.LastOrDefault();
 				}, () => MaintenancesPage.SelectedItem != null),
 			};
-
+            MaintenancesPage.Items.CollectionChanged += Maintenances_CollectionChanged;
 			#endregion
-            MaintenancesPage.Items.CollectionChanged += Maintenances_CollectionChanged; 
 
-            #region create Maintenances
-            MaintenancesPage.Items.Clear();
-            var maintenanceModels = MaintenanceDataService.GetActives();
-            foreach (var maintenanceModel in maintenanceModels)
-            {
-                var maintenanceVm = new MaintenanceItemVm(maintenanceModel);
-
-                //maintenance is selected
-                maintenanceVm.Selected += item_mntn =>
-                {
-                };
-
-                //maintenance is included
-                maintenanceVm.UseCommand = new Commands.Command(oo =>
-                {
-                    var machinePartVm = MachinePartsPage.SelectedItem as MachinePartItemVm;
-                    if (machinePartVm == null) return;
-
-                    var newMachinePartMaintenanceModel = new Model.MachinePartMaintenance
-                    {
-                        Maintenance = maintenanceModel,
-                        MachinePart = machinePartVm.Model,
-                        IsOnDemand = false,
-                        PeriodDays = 30,
-                        LastMaintenanceDate = DateTime.Now.Date,
-                        Description = "",
-                        Code = maintenanceModel.Code + "." + machinePartVm.Model.Code,
-                        ModifiedBy = LoginInfo.Id,
-                        ModifiedDate = DateTime.Now,
-                        RecordStatus = Status.Active,
-                    };
-                    MaintenanceDataService.AddModel(newMachinePartMaintenanceModel);
-                    var newMachinePartMaintenanceVm = new MPMItemVm(newMachinePartMaintenanceModel);
-                    MachinePartMaintenancesPage.Items.Add(newMachinePartMaintenanceVm);
-                });
-
-                MaintenancesPage.Items.Add(maintenanceVm);
-            } 
-            #endregion
 
 			//------------------------------------------------------------------------
 
@@ -293,166 +232,273 @@ namespace Soheil.Core.ViewModels.PM
             #endregion
 		}
 
+        void FillPages()
+        {
+            #region create machines
+            var machineModels = MachineDataService.GetActives();
+            foreach (var machineModel in machineModels)
+            {
+                //create default part for machine
+                if (!machineModel.MachineParts.Any(x => x.IsMachine))
+                    MachinePartDataService.AddModel(new Model.MachinePart
+                    {
+                        IsMachine = true,
+                        Machine = machineModel,
+                        Name = machineModel.Name,
+                        Code = machineModel.Code,
+                        Description = "auto",
+                        ModifiedBy = LoginInfo.Id,
+                        ModifiedDate = DateTime.Now,
+                    });
 
+                //create view model for machine and add to items
+                var machineVm = new MachineItemVm(machineModel);
+                MachinesPage.Items.Add(machineVm);
+            }
+            #endregion
 
+            #region create parts
+            PartsPage.Items.Clear();
+            var partModels = PartDataService.GetActives();
+            foreach (var partModel in partModels)
+            {
+                var partVm = new PartItemVm(partModel);
+                PartsPage.Items.Add(partVm);
+            }
+            #endregion
 
+            #region create Maintenances
+            MaintenancesPage.Items.Clear();
+            var maintenanceModels = MaintenanceDataService.GetActives();
+            foreach (var maintenanceModel in maintenanceModels)
+            {
+                var maintenanceVm = new MaintenanceItemVm(maintenanceModel);
+                MaintenancesPage.Items.Add(maintenanceVm);
+            }
+            #endregion
+        }
 
+       
+        //Initialize commands for new items in each collection
+        //  Machine,MachinePart,MachinePartMaintenace => GotoReportCommand,GotoRepairCommand
+        //  MachinePartMaintenace => AddReportCommand
+        //  Part,Maintenace => UseCommand
+        //Also refresh layout if _isInitialized
+        #region CollectionChanged
 
+        void Machines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if(e.NewItems!=null)
+            {
+                foreach (var machineVm in e.NewItems.OfType<MachineItemVm>())
+                {
+                    machineVm.GotoReportCommand = new Commands.Command(o =>
+                    {
 
+                    });
+                    machineVm.GotoRepairCommand = new Commands.Command(o =>
+                    {
 
+                    });
+                }
+            }
+        }
+        
+        void MachineParts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (var machinePartVm in e.NewItems.OfType<MachinePartItemVm>())
+                {
+                    machinePartVm.GotoReportCommand = new Commands.Command(o =>
+                    {
+                        ReportsPage.Items.Clear();
+                        //find all reports regarding the current machinePartVm
+                        var models = new List<Model.MaintenanceReport>();
+                        foreach (var mmodel in machinePartVm.Model.MachinePartMaintenances)
+                        {
+                            foreach (var model in mmodel.MaintenanceReports)
+                            {
+                                models.Add(model);
+                            }
+                        }
+                        //add them to Items
+                        foreach (var model in models)
+                        {
+                            var vm = new ReportItemVm(model);
+                            ReportsPage.Items.Add(vm);
+                        }
+                    });
+                    machinePartVm.GotoRepairCommand = new Commands.Command(o =>
+                    {
 
-		#region Collection|Selections changed
+                    });
+                }
+            }
+            if (_isInitialized) MachinePartsPage.InvokeRefresh();
+        }
+        
+        void MachinePartMaintenances_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (var mpmVm in e.NewItems.OfType<MPMItemVm>())
+                {
+                    mpmVm.GotoReportCommand = new Commands.Command(o =>
+                    {
+                        ReportsPage.Items.Clear();
+                        foreach (var model in mpmVm.Model.MaintenanceReports)
+                        {
+                            var vm = new ReportItemVm(model);
+                            ReportsPage.Items.Add(vm);
+                        }
+                    });
+                    mpmVm.AddReportCommand = new Commands.Command(o =>
+                    {
+                        var model = new Model.MaintenanceReport
+                        {
+                            Code = mpmVm.Code,
+                            Description = "",
+                            MachinePartMaintenance = mpmVm.Model,
+                            MaintenanceDate = DateTime.Now.Date,
+                            PerformedDate = DateTime.Now.Date,
+                        };
+                        MaintenanceDataService.AddModel(model);
+                        var vm = new ReportItemVm(model);
+                        ReportsPage.Items.Add(vm);
+                    });
+                }
+            }
+            if (_isInitialized) MachinePartMaintenancesPage.InvokeRefresh();
+        }
+       
+        void Parts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (var partVm in e.NewItems.OfType<PartItemVm>())
+                {
+                    //define UseCommand
+                    partVm.UseCommand = new Commands.Command(oo =>
+                    {
+                        var machineVm = MachinesPage.SelectedItem as MachineItemVm;
+                        if (machineVm == null) return;
 
-		void MachineParts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			if (e.NewItems != null)
-			{
-				foreach (var item in e.NewItems.OfType<MachinePartItemVm>())
-				{
-					item.Selected += MachinePartVm_Selected;
-					item.UpdateIsAdded(MachinesPage.SelectedItem);
-				}
-				if (!_isInitializing)
-				{
-					MachinePartsPage.InvokeRefresh();
-					PartsPage.InvokeRefresh();
-				}
-			}
-			if (e.OldItems != null)
-			{
-				foreach (var item in e.OldItems.OfType<MachinePartItemVm>())
-				{
-					item.UpdateIsAdded(MachinesPage.SelectedItem);
-				}
-				if (!_isInitializing)
-				{
-					MachinePartsPage.InvokeRefresh();
-					PartsPage.InvokeRefresh();
-				}
-			}
-		}
-		void Parts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			if (e.NewItems != null)
-			{
-				foreach (var item in e.NewItems.OfType<MaintenanceItemVm>())
-				{
-					item.Selected += Part_Selected;
-					item.UpdateIsAdded(MachinePartsPage.SelectedItem);
-				}
-				if (!_isInitializing) PartsPage.InvokeRefresh();
-			}
-			if (e.OldItems != null)
-			{
-				foreach (var item in e.OldItems.OfType<MaintenanceItemVm>())
-				{
-					item.UpdateIsAdded(MachinePartsPage.SelectedItem);
-				}
-				if (!_isInitializing) PartsPage.InvokeRefresh();
-			}
-		}
-		void Maintenances_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			if (e.NewItems != null)
-			{
-				foreach (var item in e.NewItems.OfType<MaintenanceItemVm>())
-				{
-					item.Selected += Maintenance_Selected;
-					item.UpdateIsAdded(MachinePartsPage.SelectedItem);
-				}
-				if (!_isInitializing) MaintenancesPage.InvokeRefresh();
-			}
-			if (e.OldItems != null)
-			{
-				foreach (var item in e.OldItems.OfType<MaintenanceItemVm>())
-				{
-					item.UpdateIsAdded(MachinePartsPage.SelectedItem);
-				}
-				if (!_isInitializing) MaintenancesPage.InvokeRefresh();
-			}
-		}
-		void MachinePartMaintenances_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			if (e.NewItems != null)
-			{
-				foreach (var item in e.NewItems.OfType<MPMItemVm>())
-				{
-					item.Selected += MachinePartMaintenanceVm_Selected;
-					item.UpdateIsAdded(MachinePartsPage.SelectedItem);
-				}
-				if (!_isInitializing) MachinePartMaintenancesPage.InvokeRefresh();
-			}
-			if (e.OldItems != null)
-			{
-				foreach (var item in e.OldItems.OfType<MPMItemVm>())
-				{
-					item.UpdateIsAdded(MachinePartsPage.SelectedItem);
-				}
-				if (!_isInitializing) MachinePartMaintenancesPage.InvokeRefresh();
-			}
-		}
-		
+                        var newMachinePartModel = new Model.MachinePart
+                        {
+                            Name = machineVm.Name + "." + partVm.Name,
+                            Code = machineVm.Code + "." + partVm.Code,
+                            Description = "",
+                            IsMachine = false,
+                            Machine = machineVm.Model,
+                            Part = partVm.Model,
+                            ModifiedBy = LoginInfo.Id,
+                            ModifiedDate = DateTime.Now,
+                            RecordStatus = Status.Active,
+                        };
+                        MachinePartDataService.AddModel(newMachinePartModel);
+                        var newMachinePartVm = new MachinePartItemVm(newMachinePartModel);
+                        MachinePartsPage.Items.Add(newMachinePartVm);
 
-		
-		void machine_Selected(PmItemBase item_machine)
-		{
-			MachinePartsPage.Items.Clear();
-			var machine = item_machine as MachineItemVm;
-			if (machine == null) return;
+                        //update LinkCounter when +machineParts
+                        partVm.UpdateIsAdded(machineVm);
+                        //update MachinePartsPage layout when +machineParts
+                        MachinePartsPage.InvokeRefresh();
+                    });
+                }
+            }
+            //update PartsPage layout when +-part
+            if (_isInitialized) PartsPage.InvokeRefresh();
+        }
 
-			//create machine parts
-			foreach (var machinePartModel in machine.Model.MachineParts)
-			{
-				var machinePartVm = new MachinePartItemVm(machinePartModel);
+        void Maintenances_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (var maintenanceVm in e.NewItems.OfType<MaintenanceItemVm>())
+                {
+                    //define UseCommand
+                    maintenanceVm.UseCommand = new Commands.Command(oo =>
+                    {
+                        var machinePartVm = MachinePartsPage.SelectedItem as MachinePartItemVm;
+                        if (machinePartVm == null) return;
 
-				//machine part is selected
-				machinePartVm.Selected += item_machinePart =>
-				{
-					MachinePartsPage.SelectedItem = item_machinePart;
-				};
+                        var newMachinePartMaintenanceModel = new Model.MachinePartMaintenance
+                        {
+                            Maintenance = maintenanceVm.Model,
+                            MachinePart = machinePartVm.Model,
+                            IsOnDemand = false,
+                            PeriodDays = 30,
+                            LastMaintenanceDate = DateTime.Now.Date,
+                            Description = "",
+                            Code = maintenanceVm.Code + "." + machinePartVm.Model.Code,
+                            ModifiedBy = LoginInfo.Id,
+                            ModifiedDate = DateTime.Now,
+                            RecordStatus = Status.Active,
+                        };
+                        MaintenanceDataService.AddModel(newMachinePartMaintenanceModel);
+                        var newMachinePartMaintenanceVm = new MPMItemVm(newMachinePartMaintenanceModel);
+                        MachinePartMaintenancesPage.Items.Add(newMachinePartMaintenanceVm);
 
-				//machine part is excluded
-				machinePartVm.UseCommand = new Commands.Command(oo =>
-				{
-					if (MachinePartsPage.SelectedItem == machinePartVm) MachinePartsPage.SelectedItem = null;
-					// remove machinePart.Model
-					//...
-				});
-				MachinePartsPage.Items.Add(machinePartVm);
-			}
+                        //update LinkCounter when +machinePartMaintenances
+                        maintenanceVm.UpdateIsAdded(machinePartVm);
+                        //update MachinePartMaintenancesPage layout when +machinePartMaintenances
+                        MachinePartMaintenancesPage.InvokeRefresh();
+                    });
+                }
+            }
+            //update MaintenancesPage layout when +-maintenances
+            if (_isInitialized) MaintenancesPage.InvokeRefresh();
+        }
 
-			PartsPage.InvokeRefresh();
-		}
+        #endregion
 
-		void MachinePartVm_Selected(PmItemBase item_machinePart)
-		{
-			//load MPMs
-			MachinePartMaintenancesPage.Items.Clear();
-			var machinePart = item_machinePart as MachinePartItemVm;
-			if (machinePart == null) return;
+        //Each selected item will affect LinkCounters and causes refresh on some other pages
+        #region SelectedItemChanged
+        void MachinesPage_SelectedItemChanged(PmItemBase item_machine)
+        {
+            MachinePartsPage.Items.Clear();
+            MachinePartMaintenancesPage.Items.Clear();
+            var machine = item_machine as MachineItemVm;
+            if (machine == null) return;
 
-			//create machine parts
-			foreach (var mpmModel in machinePart.Model.MachinePartMaintenances)
-			{
-				var mpmVm = new MPMItemVm(mpmModel);
+            //create machine parts
+            foreach (var machinePartModel in machine.Model.MachineParts)
+            {
+                var machinePartVm = new MachinePartItemVm(machinePartModel);
+                MachinePartsPage.Items.Add(machinePartVm);
+            }
 
-				//machine part maintenance is selected
-				mpmVm.Selected += item_mpm =>
-				{
-					MachinePartMaintenancesPage.SelectedItem = item_mpm;
-				};
+            //update parts
+            foreach (var part in PartsPage.Items.OfType<PartItemVm>())
+            {
+                part.UpdateIsAdded(machine);
+            }
+            MachinePartsPage.InvokeRefresh();
+            PartsPage.InvokeRefresh();
+        }
 
-				//machine part maintenance is excluded
-				mpmVm.UseCommand = new Commands.Command(oo =>
-				{
-					if (MachinePartMaintenancesPage.SelectedItem == mpmVm) 
-						MachinePartMaintenancesPage.SelectedItem = null;
-				});
-				MachinePartMaintenancesPage.Items.Add(mpmVm);
-			}
+        void MachinePartsPage_SelectedItemChanged(PmItemBase item_machinePart)
+        {
+            //load MPMs
+            MachinePartMaintenancesPage.Items.Clear();
+            var machinePart = item_machinePart as MachinePartItemVm;
+            if (machinePart == null) return;
 
-			MaintenancesPage.InvokeRefresh();
-		}
+            //create machine parts
+            foreach (var mpmModel in machinePart.Model.MachinePartMaintenances)
+            {
+                var mpmVm = new MPMItemVm(mpmModel);
+                MachinePartMaintenancesPage.Items.Add(mpmVm);
+            }
+
+            foreach (var pm in MaintenancesPage.Items.OfType<MaintenanceItemVm>())
+            {
+                pm.UpdateIsAdded(machinePart);
+            }
+            MachinePartMaintenancesPage.InvokeRefresh();
+            MaintenancesPage.InvokeRefresh();
+        }
 		#endregion
 
         #region Pages

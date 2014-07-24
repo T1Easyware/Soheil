@@ -9,7 +9,7 @@
              mc:Ignorable="d" x:Name="root"
              d:DesignHeight="200" d:DesignWidth="300">
     <DockPanel>
-        <TextBlock Text="{Loc txtMachineParts}" DockPanel.Dock="Top"/>
+        <TextBlock Text="{Loc txtMachineParts}" DockPanel.Dock="Top" Foreground="{StaticResource NormalBrush}"/>
 		<!-- details -->
 		<WrapPanel DockPanel.Dock="Bottom" Panel.ZIndex="10">
 			<Button Command="{Binding DeleteCommand}">
@@ -72,7 +72,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده گزارشات PM این قطعه" Command="{Binding GotoReportCommand}">
+                                    <Button ToolTip="مشاهده گزارشات PM این قطعه" Command="{Binding GotoReportCommand}" Width="20" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource ReportImage}"/>
                                     </Button>
                                 </DataTemplate>
@@ -81,7 +81,7 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده تعمیرات این قطعه" Command="{Binding GotoRepairCommand}">
+                                    <Button ToolTip="مشاهده تعمیرات این قطعه" Command="{Binding GotoRepairCommand}" Width="20" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource Repair16Image}"/>
                                     </Button>
                                 </DataTemplate>

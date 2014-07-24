@@ -1789,10 +1789,9 @@
 				
 				<!-- PM contents -->
 				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-					<DockPanel>
+					<DockPanel TextBlock.FontSize="13">
                         <DockPanel.Resources>
                             <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
-								<Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
 								<Setter Property="TextBlock.Foreground" Value="Black"/>
 							</Style>
 							<Style TargetType="{x:Type ListViewItem}">
@@ -1836,7 +1835,7 @@
                             </DataTemplate>
                             <!-- bar -->
 							<DataTemplate DataType="{x:Type pmvm:PMBarVm}">
-								<Grid Height="20" VerticalAlignment="Center">
+								<Grid Height="12" VerticalAlignment="Center">
 									<Border Background="#1FFF" BorderBrush="Silver" BorderThickness="1"/>
 									<Border Background="{Binding RemainingPercent, Converter={StaticResource remainingColorConverter}}" Width="{Binding RemainingPercent}" HorizontalAlignment="Left" BorderThickness="0,0,1,0" BorderBrush="Silver"/>
 									<Canvas HorizontalAlignment="Left" IsHitTestVisible="False" Visibility="{Binding IsPastDeadline, Converter={StaticResource booleanToVisibilityConverter}}">
@@ -1848,7 +1847,7 @@
 
 
                         <!-- machines -->
-                        <local:MachinePage DataContext="{Binding MachinesPages}" LayoutUpdated="PMPageLoaded" x:Name="machinesPage"/>
+                        <local:MachinePage DataContext="{Binding MachinesPage}" LayoutUpdated="PMPageLoaded" x:Name="machinesPage"/>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="2*"/>
@@ -1858,7 +1857,7 @@
                             <!-- machineparts -->
                             <local:MachinePartPage PageVm="{Binding MachinePartsPage}" LayoutUpdated="PMPageLoaded" x:Name="machinePartsPage"/>
                             <!-- parts -->
-                            <local:PartPage PageVm="{Binding PartsPage}" Grid.Row="2" LayoutUpdated="PMPageLoaded"
+                            <local:PartPage PageVm="{Binding PartsPage}" Grid.Row="2" LayoutUpdated="PMPageLoaded" Tag="{Loc txtParts}"
                                             ShowAddButton="{Binding ElementName=machinesPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}"/>
                             <GridSplitter Height="4" HorizontalAlignment="Stretch" Background="Cyan" Grid.Row="1"/>
                         </Grid>
@@ -1871,7 +1870,7 @@
                             <!-- machinepartmaintenancs -->
                             <local:MPMPage PageVm="{Binding MachinePartMaintenancesPage}" LayoutUpdated="PMPageLoaded"/>
                             <!-- machineparts tabs -->
-                            <local:PartPage PageVm="{Binding MaintenancesPage}" Grid.Row="2" LayoutUpdated="PMPageLoaded"
+                            <local:PartPage PageVm="{Binding MaintenancesPage}" Grid.Row="2" LayoutUpdated="PMPageLoaded" Tag="{Loc txtMaintenances}"
                                             ShowAddButton="{Binding ElementName=machinePartsPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}" />
                             <GridSplitter Height="4" HorizontalAlignment="Stretch" Background="Cyan" Grid.Row="1"/>
                         </Grid>

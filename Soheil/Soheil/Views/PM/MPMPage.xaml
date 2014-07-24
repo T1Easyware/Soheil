@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 	<DockPanel>
-        <TextBlock Text="{Loc txtMachinePartMaintenances}" DockPanel.Dock="Top"/>
+        <TextBlock Text="{Loc txtMachinePartMaintenances}" DockPanel.Dock="Top" Foreground="{StaticResource NormalBrush}"/>
 		<!-- details -->
 		<WrapPanel DockPanel.Dock="Bottom" Panel.ZIndex="10">
 			<Button Command="{Binding DeleteCommand}">
@@ -32,7 +32,9 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 				<TextBlock Text="{Loc txtCode}" Grid.Row="0" Foreground="Silver"/>
 				<TextBlock Text="{Loc txtName}" Grid.Row="1" Foreground="Silver"/>
@@ -41,7 +43,7 @@
                 <TextBlock Text="{Loc txtDescription}" Grid.Row="4" Foreground="Silver"/>
 				<TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"/>
 				<TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
-                <UniformGrid Grid.Row="2">
+                <UniformGrid Grid.Row="2" Grid.Column="1" Rows="1" Columns="2">
                     <ToggleButton Content="{Loc txtIsOnDemand}" IsChecked="{Binding IsOnDemand}"/>
                     <ToggleButton Content="{Loc txtIsPeriodic}" IsChecked="{Binding IsOnDemand, Converter={StaticResource inverter}}"/>
                 </UniformGrid>
@@ -79,7 +81,16 @@
                         <GridViewColumn Width="20">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="مشاهده گزارشات PM" Command="{Binding GotoReportCommand}">
+                                    <Button ToolTip="افزودن گزارشات PM" Command="{Binding AddReportCommand}" Width="20" Margin="-6,0" Padding="0">
+                                        <Image Style="{StaticResource AddReportImage}"/>
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="20">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button ToolTip="مشاهده گزارشات PM" Command="{Binding GotoReportCommand}" Width="20" Margin="-6,0" Padding="0">
                                         <Image Style="{StaticResource ReportImage}"/>
                                     </Button>
                                 </DataTemplate>
