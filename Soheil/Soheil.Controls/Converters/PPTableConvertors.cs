@@ -16,7 +16,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (values[0] == values[1]) return ((Brush[])parameter)[0];
+			if (values[0].Equals(values[1])) return ((Brush[])parameter)[0];
 			else return ((Brush[])parameter)[1];
 		}
 
@@ -171,7 +171,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (parameter == value) ? Visibility.Collapsed : Visibility.Visible;
+			return parameter.Equals(value) ? Visibility.Collapsed : Visibility.Visible;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -195,7 +195,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (parameter == value) ? Visibility.Visible : Visibility.Collapsed;
+			return parameter.Equals(value) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -208,7 +208,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (values[0] == values[1]) ? Visibility.Collapsed : Visibility.Visible;
+			return (values[0].Equals(values[1])) ? Visibility.Collapsed : Visibility.Visible;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -220,7 +220,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (values[0] == values[1]) ? Visibility.Visible : Visibility.Collapsed;
+			return (values[0].Equals(values[1])) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -699,7 +699,7 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (parameter == value);
+			return parameter.Equals(value);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

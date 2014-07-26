@@ -405,7 +405,7 @@
   <data name="txtIndexType" xml:space="preserve">
     <value>نوع شاخص :</value>
   </data>
-  <data name="txtMachine" xml:space="preserve">
+  <data name="txtMachinery" xml:space="preserve">
     <value>ماشین آلات</value>
   </data>
   <data name="txtMaintenance" xml:space="preserve">
@@ -985,13 +985,13 @@
     <value>دوره ای</value>
   </data>
   <data name="txtMachinePartMaintenances" xml:space="preserve">
-    <value>PMهای قطعه</value>
+    <value>PMهای قطعه ی انتخاب شده</value>
   </data>
   <data name="txtMachineParts" xml:space="preserve">
     <value>قطعات ماشین</value>
   </data>
   <data name="txtParts" xml:space="preserve">
-    <value>قطعات</value>
+    <value>تعریف قطعات</value>
   </data>
   <data name="txtPeriodDays" xml:space="preserve">
     <value>مدت دوره (روز)</value>
@@ -1006,6 +1006,36 @@
     <value>تعمیرات</value>
   </data>
   <data name="txtMaintenances" xml:space="preserve">
-    <value>PM ها</value>
+    <value>تعریف PM ها</value>
+  </data>
+  <data name="txtMachine" xml:space="preserve">
+    <value>ماشین</value>
+  </data>
+  <data name="txtMachinePart" xml:space="preserve">
+    <value>قطعه</value>
+  </data>
+  <data name="txtMachinePartMaintenance" xml:space="preserve">
+    <value>PM</value>
+  </data>
+  <data name="txtDone" xml:space="preserve">
+    <value>اجرا شده</value>
+  </data>
+  <data name="txtEarly" xml:space="preserve">
+    <value>زود</value>
+  </data>
+  <data name="txtInactive" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="txtLastPMDate" xml:space="preserve">
+    <value>آخرین زمان اجرا</value>
+  </data>
+  <data name="txtLate" xml:space="preserve">
+    <value>دیر</value>
+  </data>
+  <data name="txtNotDone" xml:space="preserve">
+    <value>اجرا نشده</value>
+  </data>
+  <data name="txtOnTime" xml:space="preserve">
+    <value>به موقع</value>
   </data>
 </root>

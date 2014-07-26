@@ -192,6 +192,12 @@ namespace Soheil.Model
 			get { return (Status)Status; }
 			set { Status = (byte)value; }
 		}
+
+		public void UpdateLastDate()
+		{
+			if (this.MaintenanceReports.Any())
+				LastMaintenanceDate = MaintenanceReports.OrderByDescending(x => x.PerformedDate).FirstOrDefault().PerformedDate;
+		}
 	}
 	public partial class Maintenance
 	{
@@ -217,15 +223,15 @@ namespace Soheil.Model
 			else if (perfenum.HasFlag(MaintenanceStatus.Done))
 			{
 				var diff = (MaintenanceDate - PerformedDate).TotalDays;
-				if (diff < -1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Late;
-				else if (diff > 1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Early;
+				if (diff <= -1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Late;
+				else if (diff >= 1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Early;
 				else perfenum = MaintenanceStatus.Done | MaintenanceStatus.OnTime;
 			}
 			else if (perfenum.HasFlag(MaintenanceStatus.NotDone))
 			{
 				var diff = (MaintenanceDate - DateTime.Now).TotalDays;
-				if (diff < -1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Late;
-				else if (diff > 1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Early;
+				if (diff <= -1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Late;
+				else if (diff >= 1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Early;
 				else perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.OnTime;
 			}
 			PerformanceStatus = perfenum;

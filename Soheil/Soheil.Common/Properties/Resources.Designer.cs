@@ -1213,11 +1213,29 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to اجرا شده.
+        /// </summary>
+        public static string txtDone {
+            get {
+                return ResourceManager.GetString("txtDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مدت.
         /// </summary>
         public static string txtDuration {
             get {
                 return ResourceManager.GetString("txtDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to زود.
+        /// </summary>
+        public static string txtEarly {
+            get {
+                return ResourceManager.GetString("txtEarly", resourceCulture);
             }
         }
         
@@ -1366,6 +1384,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to غیرفعال.
+        /// </summary>
+        public static string txtInactive {
+            get {
+                return ResourceManager.GetString("txtInactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to افزودن همه.
         /// </summary>
         public static string txtIncludeAll {
@@ -1492,6 +1519,24 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to آخرین زمان اجرا.
+        /// </summary>
+        public static string txtLastPMDate {
+            get {
+                return ResourceManager.GetString("txtLastPMDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to دیر.
+        /// </summary>
+        public static string txtLate {
+            get {
+                return ResourceManager.GetString("txtLate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مرحله :.
         /// </summary>
         public static string txtLevel {
@@ -1510,7 +1555,7 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ماشین آلات.
+        ///   Looks up a localized string similar to ماشین.
         /// </summary>
         public static string txtMachine {
             get {
@@ -1519,7 +1564,25 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PMهای قطعه.
+        ///   Looks up a localized string similar to قطعه.
+        /// </summary>
+        public static string txtMachinePart {
+            get {
+                return ResourceManager.GetString("txtMachinePart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PM.
+        /// </summary>
+        public static string txtMachinePartMaintenance {
+            get {
+                return ResourceManager.GetString("txtMachinePartMaintenance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PMهای قطعه ی انتخاب شده.
         /// </summary>
         public static string txtMachinePartMaintenances {
             get {
@@ -1533,6 +1596,15 @@ namespace Soheil.Common.Properties {
         public static string txtMachineParts {
             get {
                 return ResourceManager.GetString("txtMachineParts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ماشین آلات.
+        /// </summary>
+        public static string txtMachinery {
+            get {
+                return ResourceManager.GetString("txtMachinery", resourceCulture);
             }
         }
         
@@ -1555,7 +1627,7 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PM ها.
+        ///   Looks up a localized string similar to تعریف PM ها.
         /// </summary>
         public static string txtMaintenances {
             get {
@@ -1681,6 +1753,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to اجرا نشده.
+        /// </summary>
+        public static string txtNotDone {
+            get {
+                return ResourceManager.GetString("txtNotDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تعداد شیفت.
         /// </summary>
         public static string txtNumberOfShifts {
@@ -1704,6 +1785,15 @@ namespace Soheil.Common.Properties {
         public static string txtOneHour {
             get {
                 return ResourceManager.GetString("txtOneHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to به موقع.
+        /// </summary>
+        public static string txtOnTime {
+            get {
+                return ResourceManager.GetString("txtOnTime", resourceCulture);
             }
         }
         
@@ -1825,7 +1915,7 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to قطعات.
+        ///   Looks up a localized string similar to تعریف قطعات.
         /// </summary>
         public static string txtParts {
             get {

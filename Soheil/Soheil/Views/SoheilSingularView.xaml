@@ -1876,10 +1876,10 @@
                         </Grid>
 
                         <TabControl>
-                            <TabItem Header="{Loc txtPMReports}">
+                            <TabItem Header="{Loc txtPMReports}" TextBlock.FontSize="13">
                                 <local:ReportPage DataContext="{Binding ReportsPage}" LayoutUpdated="PMPageLoaded"/>
                             </TabItem>
-                            <TabItem Header="{Loc txtRepairs}">
+                            <TabItem Header="{Loc txtRepairs}" TextBlock.FontSize="13">
                                 <local:RepairPage DataContext="{Binding RepairsPage}" LayoutUpdated="PMPageLoaded"/>
                             </TabItem>
                         </TabControl>

@@ -405,7 +405,7 @@
   <data name="txtIndexType" xml:space="preserve">
     <value>Index Type :</value>
   </data>
-  <data name="txtMachine" xml:space="preserve">
+  <data name="txtMachinery" xml:space="preserve">
     <value>Machine</value>
   </data>
   <data name="txtMaintenance" xml:space="preserve">
@@ -980,13 +980,13 @@
     <value>Periodic</value>
   </data>
   <data name="txtMachinePartMaintenances" xml:space="preserve">
-    <value>Part PMs</value>
+    <value>Selected Machine Part's PMs</value>
   </data>
   <data name="txtMachineParts" xml:space="preserve">
     <value>Machine Parts</value>
   </data>
   <data name="txtParts" xml:space="preserve">
-    <value>Parts</value>
+    <value>Parts Definition</value>
   </data>
   <data name="txtPeriodDays" xml:space="preserve">
     <value>Period (Days)</value>
@@ -1001,6 +1001,36 @@
     <value>Repairs</value>
   </data>
   <data name="txtMaintenances" xml:space="preserve">
-    <value>PMs</value>
+    <value>PMs definition</value>
+  </data>
+  <data name="txtMachine" xml:space="preserve">
+    <value>Machine</value>
+  </data>
+  <data name="txtMachinePart" xml:space="preserve">
+    <value>Part</value>
+  </data>
+  <data name="txtMachinePartMaintenance" xml:space="preserve">
+    <value>PM</value>
+  </data>
+  <data name="txtDone" xml:space="preserve">
+    <value>Performed</value>
+  </data>
+  <data name="txtEarly" xml:space="preserve">
+    <value>Early</value>
+  </data>
+  <data name="txtInactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="txtLastPMDate" xml:space="preserve">
+    <value>Last Performed Date</value>
+  </data>
+  <data name="txtLate" xml:space="preserve">
+    <value>Late</value>
+  </data>
+  <data name="txtNotDone" xml:space="preserve">
+    <value>Not Performed</value>
+  </data>
+  <data name="txtOnTime" xml:space="preserve">
+    <value>OnTime</value>
   </data>
 </root>

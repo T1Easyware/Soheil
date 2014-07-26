@@ -25,6 +25,8 @@ namespace Soheil.Core.ViewModels.PM
 				Description = model.Description;
 				IsOnDemand = model.IsOnDemand;
 				Period = model.PeriodDays;
+				model.UpdateLastDate();
+				LastDate = model.LastMaintenanceDate;
 				Status = model.RecordStatus;
 
 				Bar = new PMBarVm();
@@ -56,7 +58,23 @@ namespace Soheil.Core.ViewModels.PM
             DependencyProperty.Register("Period", typeof(int), typeof(MPMItemVm),
             new PropertyMetadata(1, (d, e) => { if (((MPMItemVm)d)._isInitialized) ((MPMItemVm)d).PeriodChanged((int)e.NewValue); },
                 (d, v) => { if ((int)v < 1) return 1; return v; }));
-
+		/// <summary>
+		/// Gets or sets a bindable value that indicates LastDate
+		/// </summary>
+		public DateTime LastDate
+		{
+			get { return (DateTime)GetValue(LastDateProperty); }
+			set { SetValue(LastDateProperty, value); }
+		}
+		public static readonly DependencyProperty LastDateProperty =
+			DependencyProperty.Register("LastDate", typeof(DateTime), typeof(MPMItemVm),
+			new UIPropertyMetadata(DateTime.Now.Date, (d, e) =>
+			{
+				var vm = (MPMItemVm)d;
+				var val = (DateTime)e.NewValue;
+				if (vm._isInitialized)
+					vm.Model.LastMaintenanceDate = val.Date;
+			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates MachinePart
 		/// </summary>

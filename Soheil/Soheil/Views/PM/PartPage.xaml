@@ -30,23 +30,25 @@
 			<Border.Effect>
 				<DropShadowEffect Direction="90"/>
 			</Border.Effect>
-			<Grid DataContext="{Binding SelectedItem}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-				<TextBlock Text="{Loc txtCode}" Grid.Row="0" Foreground="Silver"/>
-				<TextBlock Text="{Loc txtName}" Grid.Row="1" Foreground="Silver"/>
-				<TextBlock Text="{Loc txtDescription}" Grid.Row="2" Foreground="Silver"/>
-				<TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"/>
-				<TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
-				<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" AcceptsReturn="True"/>
-			</Grid>
+            <Expander Header="{Loc txtEdit}">
+                <Grid DataContext="{Binding SelectedItem}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{Loc txtCode}" Grid.Row="0" Foreground="Silver"/>
+                    <TextBlock Text="{Loc txtName}" Grid.Row="1" Foreground="Silver"/>
+                    <TextBlock Text="{Loc txtDescription}" Grid.Row="2" Foreground="Silver"/>
+                    <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"/>
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
+                    <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" AcceptsReturn="True"/>
+                </Grid>
+            </Expander>
 		</Border>
 
 		<!-- items -->

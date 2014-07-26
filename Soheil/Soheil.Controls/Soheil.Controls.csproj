@@ -128,6 +128,7 @@
     <Compile Include="CustomControls\FrameworkElementAdorner.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="CustomControls\GridLengthAnimation.cs" />
+    <Compile Include="CustomControls\GridViewSort.cs" />
     <Compile Include="CustomControls\MultiLevelBar.cs" />
     <Compile Include="CustomControls\ImageRadioButton.cs" />
     <Compile Include="CustomControls\ImageButton.cs" />

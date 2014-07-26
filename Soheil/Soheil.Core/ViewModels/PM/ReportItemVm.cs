@@ -81,9 +81,52 @@ namespace Soheil.Core.ViewModels.PM
 					vm.Model.PerformanceStatus = val;
 					vm.Model.UpdateStatus();
 					if (vm.Model.PerformanceStatus != val)
+					{
 						vm.MaintenanceStatus = val;
+						return;
+					}
 					vm.Model.ModifiedDate = DateTime.Now;
 					vm.Model.ModifiedBy = LoginInfo.Id;
+				}
+				vm.OperationwiseStatus = val & (MaintenanceStatus.Done | MaintenanceStatus.NotDone);
+				vm.TimewiseStatus = val & (MaintenanceStatus.Early | MaintenanceStatus.OnTime | MaintenanceStatus.Late);
+			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates OperationwiseStatus
+		/// </summary>
+		public MaintenanceStatus OperationwiseStatus
+		{
+			get { return (MaintenanceStatus)GetValue(OperationwiseStatusProperty); }
+			set { SetValue(OperationwiseStatusProperty, value); }
+		}
+		public static readonly DependencyProperty OperationwiseStatusProperty =
+			DependencyProperty.Register("OperationwiseStatus", typeof(MaintenanceStatus), typeof(ReportItemVm),
+			new UIPropertyMetadata(MaintenanceStatus.Inactive, (d, e) =>
+			{
+				var vm = (ReportItemVm)d;
+				var val = (MaintenanceStatus)e.NewValue;
+				if (vm._isInitialized)
+				{
+					vm.MaintenanceStatus = vm.TimewiseStatus | val;
+				}
+			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates TimewiseStatus
+		/// </summary>
+		public MaintenanceStatus TimewiseStatus
+		{
+			get { return (MaintenanceStatus)GetValue(TimewiseStatusProperty); }
+			set { SetValue(TimewiseStatusProperty, value); }
+		}
+		public static readonly DependencyProperty TimewiseStatusProperty =
+			DependencyProperty.Register("TimewiseStatus", typeof(MaintenanceStatus), typeof(ReportItemVm),
+			new UIPropertyMetadata(MaintenanceStatus.OnTime, (d, e) =>
+			{
+				var vm = (ReportItemVm)d;
+				var val = (MaintenanceStatus)e.NewValue;
+				if (vm._isInitialized)
+				{
+					vm.MaintenanceStatus = vm.OperationwiseStatus | val;
 				}
 			}));
 		/// <summary>
@@ -99,7 +142,7 @@ namespace Soheil.Core.ViewModels.PM
 			new PropertyMetadata(DateTime.Now, (d, e) =>
 			{
 				var vm = (ReportItemVm)d;
-				var val = (DateTime)e.NewValue;
+				var val = ((DateTime)e.NewValue).Date;
 				if (vm._isInitialized)
 				{
 					vm.Model.MaintenanceDate = val;
@@ -123,7 +166,7 @@ namespace Soheil.Core.ViewModels.PM
 			new PropertyMetadata(DateTime.Now, (d, e) =>
 			{
 				var vm = (ReportItemVm)d;
-				var val = (DateTime)e.NewValue;
+				var val = ((DateTime)e.NewValue).Date;
 				if (vm._isInitialized)
 				{
 					vm.Model.PerformedDate = val;
