@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 07/24/2014 00:36:25
--- Generated from EDMX file: D:\Repo\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 07/28/2014 21:25:07
+-- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -1392,7 +1392,7 @@ CREATE TABLE [dbo].[MachinePartMaintenances] (
     [ModifiedBy] int  NOT NULL,
     [ModifiedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
-    [LastMaintenanceDate] datetime  NOT NULL,
+    [LastMaintenanceDate] datetime  NULL,
     [Code] nvarchar(max)  NOT NULL,
     [Maintenance_Id] int  NOT NULL,
     [MachinePart_Id] int  NOT NULL
@@ -1403,7 +1403,7 @@ GO
 CREATE TABLE [dbo].[MaintenanceReports] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [MaintenanceDate] datetime  NOT NULL,
-    [PerformedDate] datetime  NOT NULL,
+    [PerformedDate] datetime  NULL,
     [Description] nvarchar(max)  NOT NULL,
     [Status] tinyint  NOT NULL,
     [ModifiedBy] int  NOT NULL,
@@ -1422,7 +1422,7 @@ CREATE TABLE [dbo].[Repairs] (
     [DeliveredDate] datetime  NOT NULL,
     [RepairStatus] tinyint  NOT NULL,
     [Description] nvarchar(max)  NOT NULL,
-    [StoppageReport_Id] int  NOT NULL,
+    [StoppageReport_Id] int  NULL,
     [MachinePart_Id] int  NOT NULL
 );
 GO

@@ -228,7 +228,9 @@
                        Opacity="1" RadiusX="3" RadiusY="3" Stroke="{x:Null}">
                         </Rectangle>
                         <DockPanel>
-                            <Image Source="{TemplateBinding ImageSource}" Width="16" Height="16" Stretch="Fill"/>
+							<Canvas Width="24" Height="16">
+								<Image Source="{TemplateBinding ImageSource}" Width="24" Height="24" Stretch="Fill"/>
+							</Canvas>
                             <ContentPresenter Margin="1"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="Center" RecognizesAccessKey="True" />

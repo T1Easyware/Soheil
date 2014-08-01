@@ -1785,106 +1785,139 @@
 							<TextBlock Text="{Loc txtSave}"/>
 						</WrapPanel>
 					</Button>
+					<Button Command="{Binding RefreshCommand}" Width="120">
+						<WrapPanel>
+							<Image Style="{StaticResource Refresh16Image}"/>
+							<TextBlock Text="{Loc txtRefresh}"/>
+						</WrapPanel>
+					</Button>
 				</ToolBar>
 				
 				<!-- PM contents -->
-				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-					<DockPanel TextBlock.FontSize="13">
-                        <DockPanel.Resources>
-                            <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
-								<Setter Property="TextBlock.Foreground" Value="Black"/>
-							</Style>
-							<Style TargetType="{x:Type ListViewItem}">
-								<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-								<Setter Property="TextBlock.TextAlignment" Value="Left" />
-								<Setter Property="TextBlock.Foreground" Value="Silver"/>
-								<Style.Triggers>
-									<Trigger Property="IsSelected" Value="True">
-										<Setter Property="Background" Value="Green" />
-										<Setter Property="TextBlock.Foreground" Value="White"/>
-										<Setter Property="BorderBrush" Value="{x:Null}" />
-									</Trigger>
-									<Trigger Property="IsMouseOver" Value="True">
-										<Setter Property="Background" Value="#1EEE" />
-										<Setter Property="TextBlock.Foreground" Value="Cyan"/>
-										<Setter Property="BorderBrush" Value="#5FFF" />
-									</Trigger>
-									<MultiTrigger>
-										<MultiTrigger.Conditions>
-											<Condition Property="Selector.IsSelected" Value="True" />
-											<Condition Property="IsMouseOver" Value="True" />
-										</MultiTrigger.Conditions>
-										<Setter Property="Background" Value="Green" />
-										<Setter Property="TextBlock.Foreground" Value="Cyan"/>
-										<Setter Property="BorderBrush" Value="#5FFF" />
-									</MultiTrigger>
-								</Style.Triggers>
-							</Style>
+				<Grid TextBlock.FontSize="13">
+                    <Grid.Resources>
+                        <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+							<Setter Property="TextBlock.Foreground" Value="Black"/>
+						</Style>
+						<Style TargetType="{x:Type ListViewItem}">
+							<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+							<Setter Property="TextBlock.TextAlignment" Value="Left" />
+							<Setter Property="TextBlock.Foreground" Value="Silver"/>
+							<Style.Triggers>
+								<Trigger Property="IsSelected" Value="True">
+									<Setter Property="Background" Value="Green" />
+									<Setter Property="TextBlock.Foreground" Value="White"/>
+									<Setter Property="BorderBrush" Value="{x:Null}" />
+								</Trigger>
+								<Trigger Property="IsMouseOver" Value="True">
+									<Setter Property="Background" Value="#1EEE" />
+									<Setter Property="TextBlock.Foreground" Value="Cyan"/>
+									<Setter Property="BorderBrush" Value="#5FFF" />
+								</Trigger>
+								<MultiTrigger>
+									<MultiTrigger.Conditions>
+										<Condition Property="Selector.IsSelected" Value="True" />
+										<Condition Property="IsMouseOver" Value="True" />
+									</MultiTrigger.Conditions>
+									<Setter Property="Background" Value="Green" />
+									<Setter Property="TextBlock.Foreground" Value="Cyan"/>
+									<Setter Property="BorderBrush" Value="#5FFF" />
+								</MultiTrigger>
+							</Style.Triggers>
+						</Style>
                             
-                            <!-- vertical headers -->
-                            <DataTemplate x:Key="verticalTabHeader">
-                                <Grid>
-                                    <ContentPresenter Content="{TemplateBinding Content}" RenderTransformOrigin="0,0" >
-                                        <ContentPresenter.LayoutTransform>
-                                            <TransformGroup>
-                                                <RotateTransform Angle="-90"/>
-                                            </TransformGroup>
-                                        </ContentPresenter.LayoutTransform>
-                                    </ContentPresenter>
-                                </Grid>
-                            </DataTemplate>
-                            <!-- bar -->
-							<DataTemplate DataType="{x:Type pmvm:PMBarVm}">
-								<Grid Height="12" VerticalAlignment="Center">
-									<Border Background="#1FFF" BorderBrush="#4CCC" BorderThickness="1"/>
-									<Border Background="{Binding RemainingPercent, Converter={StaticResource remainingColorConverter}}" Width="{Binding RemainingPercent}" HorizontalAlignment="Left" BorderThickness="0,0,1,0" BorderBrush="#4CCC"/>
-									<Canvas HorizontalAlignment="Left" IsHitTestVisible="False" Visibility="{Binding IsPastDeadline, Converter={StaticResource booleanToVisibilityConverter}}">
-										<Border Width="{Binding RemainingPercent}" HorizontalAlignment="Right" Background="#8F33" Height="20"/>
-									</Canvas>
-								</Grid>
-							</DataTemplate>
-						</DockPanel.Resources>
+                        <!-- vertical headers -->
+                        <DataTemplate x:Key="verticalTabHeader">
+                            <Grid>
+                                <ContentPresenter Content="{TemplateBinding Content}" RenderTransformOrigin="0,0" >
+                                    <ContentPresenter.LayoutTransform>
+                                        <TransformGroup>
+                                            <RotateTransform Angle="-90"/>
+                                        </TransformGroup>
+                                    </ContentPresenter.LayoutTransform>
+                                </ContentPresenter>
+                            </Grid>
+                        </DataTemplate>
+                        <!-- bar -->
+						<DataTemplate DataType="{x:Type pmvm:PMBarVm}">
+							<Grid Height="12" VerticalAlignment="Center" Width="100" Visibility="{Binding IsOnDemand, Converter={StaticResource booleanToVisibilityConverter}}">
+								<Border Background="#2FFF"/>
+								<Border Background="{Binding RemainingPercent, Converter={StaticResource remainingColorConverter}}" Width="{Binding RemainingPercent}" HorizontalAlignment="Left"/>
+								<Border Background="Red" Visibility="{Binding IsPastDeadline, Converter={StaticResource booleanToVisibilityConverter}}"/>
+							</Grid>
+						</DataTemplate>
+					</Grid.Resources>
+
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="4"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
 
 
-                        <!-- machines -->
-                        <local:MachinePage DataContext="{Binding MachinesPage}" LayoutUpdated="PMPageLoaded" x:Name="machinesPage"/>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="2*"/>
-                                <RowDefinition Height="4"/>
-                                <RowDefinition Height="1*"/>
-                            </Grid.RowDefinitions>
-                            <!-- machineparts -->
-                            <local:MachinePartPage DataContext="{Binding MachinePartsPage}" LayoutUpdated="PMPageLoaded" x:Name="machinePartsPage"/>
-                            <!-- parts -->
-                            <local:PartPage DataContext="{Binding PartsPage}" Grid.Row="2" LayoutUpdated="PMPageLoaded" Tag="{Loc txtParts}"
-                                            ShowAddButton="{Binding ElementName=machinesPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}"/>
-                            <GridSplitter Height="4" HorizontalAlignment="Stretch" Background="Cyan" Grid.Row="1"/>
-                        </Grid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="2*"/>
-                                <RowDefinition Height="4"/>
-                                <RowDefinition Height="1*"/>
-                            </Grid.RowDefinitions>
-                            <!-- machinepartmaintenancs -->
-                            <local:MPMPage DataContext="{Binding MachinePartMaintenancesPage}" LayoutUpdated="PMPageLoaded"/>
-                            <!-- machineparts tabs -->
-                            <local:PartPage DataContext="{Binding MaintenancesPage}" Grid.Row="2" LayoutUpdated="PMPageLoaded" Tag="{Loc txtMaintenances}"
-                                            ShowAddButton="{Binding ElementName=machinePartsPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}" />
-                            <GridSplitter Height="4" HorizontalAlignment="Stretch" Background="Cyan" Grid.Row="1"/>
-                        </Grid>
+					<GridSplitter Height="4" HorizontalAlignment="Stretch" Background="Cyan" Grid.Row="1"/>
 
-                        <TabControl>
-                            <TabItem Header="{Loc txtPMReports}" TextBlock.FontSize="13">
-                                <local:ReportPage DataContext="{Binding ReportsPage}" LayoutUpdated="PMPageLoaded"/>
-                            </TabItem>
-                            <TabItem Header="{Loc txtRepairs}" TextBlock.FontSize="13">
-                                <local:RepairPage DataContext="{Binding RepairsPage}" LayoutUpdated="PMPageLoaded"/>
-                            </TabItem>
-                        </TabControl>
-                    </DockPanel>
-				</ScrollViewer>
+					<!-- bottom row -->
+					<TabControl Grid.Row="2" x:Name="lowerRow">
+						<I:Interaction.Triggers>
+							<I:EventTrigger EventName="MouseDown">
+								<I:InvokeCommandAction Command="{Binding ExCollapse}"/>
+							</I:EventTrigger>
+						</I:Interaction.Triggers>
+						<TabItem Header="{Loc txtPMReports}" TextBlock.FontSize="13" IsSelected="{Binding FocusOnReports}">
+							<local:ReportPage DataContext="{Binding ReportsPage}" LayoutUpdated="PMPageLoaded"/>
+						</TabItem>
+						<TabItem Header="{Loc txtRepairs}" TextBlock.FontSize="13" IsSelected="{Binding FocusOnReports, Converter={StaticResource inverter}}">
+							<local:RepairPage DataContext="{Binding RepairsPage}" LayoutUpdated="PMPageLoaded"/>
+						</TabItem>
+					</TabControl>
+					
+					<!-- top row -->
+					<Grid ClipToBounds="False">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="4"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="4"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+
+						<!-- machine -->
+						<local:MachinePage DataContext="{Binding MachinesPage}" LayoutUpdated="PMPageLoaded" x:Name="machinesPage"/>
+							
+						<GridSplitter Width="4" VerticalAlignment="Stretch" Background="Cyan" Grid.Column="1"/>
+
+						<!-- part -->
+						<DockPanel Grid.Column="2" ClipToBounds="False">
+							<!-- parts -->
+							<Canvas ClipToBounds="False" DockPanel.Dock="Bottom" Panel.ZIndex="9" Height="30">
+								<Expander Header="{Loc txtParts}" ClipToBounds="False" IsExpanded="{Binding Ex1Expanded,Mode=TwoWay}">
+									<local:PartPage DataContext="{Binding PartsPage}" LayoutUpdated="PMPageLoaded" ClipToBounds="False"
+													MaxHeight="{Binding ElementName=lowerRow, Path=ActualHeight}"
+													ShowAddButton="{Binding ElementName=machinesPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}"/>
+								</Expander>
+							</Canvas>
+							<!-- machineparts -->
+							<local:MachinePartPage DataContext="{Binding MachinePartsPage}" LayoutUpdated="PMPageLoaded" x:Name="machinePartsPage"/>
+						</DockPanel>
+
+						<GridSplitter Width="4" VerticalAlignment="Stretch" Background="Cyan" Grid.Column="3"/>
+
+						<!-- maintenance -->
+						<DockPanel Grid.Column="4">
+							<!-- machineparts tabs -->
+							<Canvas ClipToBounds="False" DockPanel.Dock="Bottom" Panel.ZIndex="9" Height="30">
+								<Expander Header="{Loc txtMaintenances}" ClipToBounds="False" IsExpanded="{Binding Ex2Expanded,Mode=TwoWay}">
+									<local:PartPage DataContext="{Binding MaintenancesPage}" LayoutUpdated="PMPageLoaded"
+													MaxHeight="{Binding ElementName=lowerRow, Path=ActualHeight}"
+													ShowAddButton="{Binding ElementName=machinePartsPage, Path=DataContext.SelectedItem, Converter={StaticResource isNotNull}}" />
+								</Expander>
+							</Canvas>
+							<!-- machinepartmaintenancs -->
+							<local:MPMPage DataContext="{Binding MachinePartMaintenancesPage}" LayoutUpdated="PMPageLoaded"/>
+						</DockPanel>
+					</Grid>
+                </Grid>
 			</DockPanel>
 		</DataTemplate>
 		<!--................................................ 5.Reports ...............................................-->

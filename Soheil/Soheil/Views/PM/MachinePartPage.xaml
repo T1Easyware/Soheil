@@ -8,21 +8,93 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" x:Name="root"
              d:DesignHeight="200" d:DesignWidth="300">
-    <DockPanel>
-        <TextBlock Text="{Loc txtMachineParts}" DockPanel.Dock="Top" Foreground="{StaticResource NormalBrush}"/>
-		<!-- details -->
-		<WrapPanel DockPanel.Dock="Bottom" Panel.ZIndex="10">
-			<Button Command="{Binding DeleteCommand}">
-				<WrapPanel>
-					<Image Style="{StaticResource Delete16Image}"/>
-					<TextBlock Text="{Loc txtDelete}"/>
-				</WrapPanel>
-			</Button>
-		</WrapPanel>
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
 
-		<Border DockPanel.Dock="Bottom" Panel.ZIndex="5" Background="#455" Padding="5" Visibility="{Binding SelectedItem, Converter={StaticResource isNotNullToVisibility}}">
+		<TextBlock Text="{Loc txtMachineParts}" Grid.ColumnSpan="2" Foreground="{StaticResource NormalBrush}"/>
+
+		<!-- items -->
+		<ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" SelectionMode="Single" x:Name="listview" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2">
+
+			<!-- View -->
+			<ListView.View>
+				<GridView>
+					<GridView.Columns>
+						<GridViewColumn Header="{Loc txtMachine}" DisplayMemberBinding="{Binding Machine.Name}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtCode}" DisplayMemberBinding="{Binding Code}" Width="Auto"/>
+
+						<GridViewColumn Header="{Loc txtStatus}" Width="100" >
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<ContentPresenter Content="{Binding Bar}"/>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Width="20">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Button ToolTip="{Loc txtViewPMReports}" Command="{Binding GotoReportCommand}" Width="22" Margin="-6,0" Padding="0">
+										<Image Style="{StaticResource ReportImage}"/>
+									</Button>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Width="20">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Button ToolTip="{Loc txtViewRepairs}" Command="{Binding GotoRepairCommand}" Width="22" Margin="-6,0" Padding="0">
+										<Image Style="{StaticResource Repair16Image}"/>
+									</Button>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Width="20">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Button ToolTip="{Loc txtAddRepair}" Command="{Binding AddRepairCommand}" Width="22" Margin="-6,0" Padding="0">
+										<Image Style="{StaticResource AddRepair16Image}"/>
+									</Button>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Width="20">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Button ToolTip="{Loc txtDeletePartFromMachine}" Command="{Binding DeleteCommand}" Width="22" Margin="-6,0" Padding="0" Visibility="{Binding CanDelete, Converter={StaticResource booleanToVisibilityConverter}}">
+										<Image Style="{StaticResource Delete16Image}"/>
+									</Button>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+
+						<GridViewColumn Header="{Loc txtDescription}" Width="Auto">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<Image Style="{StaticResource DocumentInfo16Image}" DockPanel.Dock="Left" Visibility="{Binding Description, Converter={StaticResource nullToInvisibilityConverter}}"/>
+										<TextBlock Text="{Binding Description}"/>
+									</StackPanel>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+					</GridView.Columns>
+				</GridView>
+			</ListView.View>
+		</ListView>
+
+		<!-- edit -->
+		<Border Grid.Row="2" Grid.Column="1" Visibility="{Binding SelectedItem, Converter={StaticResource isNotNullToVisibility}}">
 			<Border.Effect>
-				<DropShadowEffect Direction="90"/>
+				<DropShadowEffect Direction="135" BlurRadius="8"/>
 			</Border.Effect>
             <Expander Header="{Loc txtEdit}">
                 <Grid DataContext="{Binding SelectedItem}">
@@ -45,54 +117,5 @@
             </Expander>
         </Border>
 
-		<!-- items -->
-		<ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" SelectionMode="Single" x:Name="listview">
-			
-			<!-- View -->
-			<ListView.View>
-				<GridView>
-					<GridView.Columns>
-                        <GridViewColumn Header="{Loc txtMachine}" DisplayMemberBinding="{Binding Machine.Name}" Width="Auto"/>
-                        <GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
-						<GridViewColumn Header="{Loc txtCode}" DisplayMemberBinding="{Binding Code}" Width="Auto"/>
-						<GridViewColumn Header="{Loc txtDescription}" Width="Auto">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<WrapPanel>
-										<Image Style="{StaticResource DocumentInfo16Image}" DockPanel.Dock="Left" Visibility="{Binding Description, Converter={StaticResource nullToInvisibilityConverter}}"/>
-										<TextBlock Text="{Binding Description}"/>
-									</WrapPanel>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-						<GridViewColumn Header="{Loc txtStatus}" Width="100" >
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<ContentPresenter Content="{Binding Bar}"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-                        <GridViewColumn Width="20">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button ToolTip="مشاهده گزارشات PM این قطعه" Command="{Binding GotoReportCommand}" Width="22" Margin="-6,0" Padding="0">
-                                        <Image Style="{StaticResource ReportImage}"/>
-                                    </Button>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Width="20">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button ToolTip="مشاهده تعمیرات این قطعه" Command="{Binding GotoRepairCommand}" Width="22" Margin="-6,0" Padding="0">
-                                        <Image Style="{StaticResource Repair16Image}"/>
-                                    </Button>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView.Columns>
-				</GridView>
-			</ListView.View>
-		</ListView>
-	</DockPanel>
+	</Grid>
 </UserControl>

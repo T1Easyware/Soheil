@@ -1033,4 +1033,49 @@
   <data name="txtOnTime" xml:space="preserve">
     <value>OnTime</value>
   </data>
+  <data name="txtDaysLeft" xml:space="preserve">
+    <value>Days Left</value>
+  </data>
+  <data name="txtPMDate" xml:space="preserve">
+    <value>PM Date</value>
+  </data>
+  <data name="txtPMPerformedDate" xml:space="preserve">
+    <value>Performed Date</value>
+  </data>
+  <data name="txtAcquiredDate" xml:space="preserve">
+    <value>Acquired Date</value>
+  </data>
+  <data name="txtAddPMReport" xml:space="preserve">
+    <value>Add PM Report</value>
+  </data>
+  <data name="txtAddRepair" xml:space="preserve">
+    <value>Add Repair Request</value>
+  </data>
+  <data name="txtDeletePartFromMachine" xml:space="preserve">
+    <value>Delete Part from Machine</value>
+  </data>
+  <data name="txtDeletePMFromPart" xml:space="preserve">
+    <value>Delete PM from Machine Part</value>
+  </data>
+  <data name="txtDeliveredDate" xml:space="preserve">
+    <value>Delivered Date</value>
+  </data>
+  <data name="txtPM" xml:space="preserve">
+    <value>Preventive Maintenance</value>
+  </data>
+  <data name="txtRequestDate" xml:space="preserve">
+    <value>Request Date</value>
+  </data>
+  <data name="txtStoppageCause" xml:space="preserve">
+    <value>Stoppage Cause</value>
+  </data>
+  <data name="txtStoppageReport" xml:space="preserve">
+    <value>Stoppage Report</value>
+  </data>
+  <data name="txtViewPMReports" xml:space="preserve">
+    <value>View PM Reports</value>
+  </data>
+  <data name="txtViewRepairs" xml:space="preserve">
+    <value>View Repair Requests</value>
+  </data>
 </root>

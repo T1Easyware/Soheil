@@ -23,7 +23,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 					Cause = null,
 					ModifiedBy = LoginInfo.Id,
 				};
-				foreach (var po in Parent.Model.Process.ProcessOperators)
+				/*foreach (var po in Parent.Model.Process.ProcessOperators)
 				{
 					model.OperatorStoppageReports.Add(new Model.OperatorStoppageReport
 					{
@@ -33,7 +33,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 						ModifiedBy = LoginInfo.Id,
 					});
 				}
-				parent.Model.StoppageReports.Add(model);
+				parent.Model.StoppageReports.Add(model);*/
 				var vm = new StoppageReportVm(this, model);
 				List.Add(vm);
 			});

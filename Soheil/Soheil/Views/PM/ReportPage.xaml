@@ -9,9 +9,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"  TextBlock.FontSize="13"
              d:DesignHeight="300" d:DesignWidth="300">
-	<DockPanel>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		
 		<!-- details -->
-		<WrapPanel DockPanel.Dock="Bottom" Panel.ZIndex="10">
+		<WrapPanel Grid.Row="2" Grid.ColumnSpan="2">
 			<Button Command="{Binding DeleteCommand}">
 				<WrapPanel>
 					<Image Style="{StaticResource Delete16Image}"/>
@@ -26,9 +36,65 @@
 			</Button>
 		</WrapPanel>
 
-		<Border DockPanel.Dock="Bottom" Panel.ZIndex="5" Background="#455" Padding="5" Visibility="{Binding SelectedItem, Converter={StaticResource isNotNullToVisibility}}">
+		<!-- items -->
+		<ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" x:Name="listview" Grid.ColumnSpan="2" Grid.RowSpan="2">
+			<!-- View -->
+			<ListView.View>
+				<GridView>
+					<GridView.Columns>
+						<GridViewColumn Header="{Loc txtMachine}" DisplayMemberBinding="{Binding MachinePartMaintenance.MachinePart.Machine.Name}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtMachinePart}" DisplayMemberBinding="{Binding MachinePartMaintenance.MachinePart.Name}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtMachinePartMaintenance}" DisplayMemberBinding="{Binding MachinePartMaintenance.Name}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtCode}" DisplayMemberBinding="{Binding Code}" Width="Auto"/>
+
+						<GridViewColumn Header="{Loc txtPMDate}" DisplayMemberBinding="{Binding MaintenanceDate, Converter={StaticResource dateToLocalStringConverter}}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtPMPerformedDate}" DisplayMemberBinding="{Binding PerformedDate, Converter={StaticResource dateToLocalStringConverter}}" Width="Auto"/>
+						<GridViewColumn Width="30">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Image x:Name="img" Visibility="Visible"/>
+									<DataTemplate.Triggers>
+										<DataTrigger Binding="{Binding OperationwiseStatus}" Value="{x:Static common:MaintenanceStatus.Inactive}">
+											<Setter TargetName="img" Property="Visibility" Value="Collapsed"/>
+										</DataTrigger>
+										<DataTrigger Binding="{Binding OperationwiseStatus}" Value="{x:Static common:MaintenanceStatus.Done}">
+											<Setter TargetName="img" Property="Style" Value="{StaticResource ReportOkImage}"/>
+										</DataTrigger>
+										<DataTrigger Binding="{Binding OperationwiseStatus}" Value="{x:Static common:MaintenanceStatus.NotDone}">
+											<Setter TargetName="img" Property="Style" Value="{StaticResource ReportNotOkImage}"/>
+										</DataTrigger>
+									</DataTemplate.Triggers>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Header="{Loc txtDaysLeft}" Width="Auto">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding DiffDate}" FontWeight="Bold" FontSize="14" Foreground="{Binding DiffDate, Converter={StaticResource balanceToBrushConverter}}"/>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+
+						<GridViewColumn Header="{Loc txtDescription}" Width="Auto">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<Image Style="{StaticResource DocumentInfo16Image}" DockPanel.Dock="Left" Visibility="{Binding Description, Converter={StaticResource nullToInvisibilityConverter}}"/>
+										<TextBlock Text="{Binding Description}"/>
+									</StackPanel>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+					</GridView.Columns>
+				</GridView>
+			</ListView.View>
+		</ListView>
+
+		<!-- edit -->
+		<Border Grid.Row="1" Grid.Column="1" Visibility="{Binding SelectedItem, Converter={StaticResource isNotNullToVisibility}}">
 			<Border.Effect>
-				<DropShadowEffect Direction="90"/>
+				<DropShadowEffect Direction="135" BlurRadius="8"/>
 			</Border.Effect>
             <Expander Header="{Loc txtEdit}">
                 <Grid DataContext="{Binding SelectedItem}">
@@ -44,28 +110,25 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Text="{Loc txtCode}" Grid.Row="0" Foreground="Silver"/>
-                    <TextBlock Text="تاریخ PM" Grid.Row="1" Foreground="Silver"/>
-                    <TextBlock Text="تاریخ اجرا" Grid.Row="2" Foreground="Silver"/>
-                    <TextBlock Text="{Loc txtStatus}" Grid.Row="3" Foreground="Silver"/>
+					<TextBlock Text="{Loc txtPMDate}" Grid.Row="1" Foreground="Silver"/>
+					<TextBlock Text="{Loc txtPMPerformedDate}" Grid.Row="2" Foreground="Silver"/>
                     <TextBlock Text="{Loc txtDescription}" Grid.Row="4" Foreground="Silver"/>
                     <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"/>
                     <cal:DatePicker DisplayDate="{Binding MaintenanceDate}" SelectedDate="{Binding MaintenanceDate}" Grid.Row="1" Grid.Column="1"/>
                     <cal:DatePicker DisplayDate="{Binding PerformedDate}" SelectedDate="{Binding PerformedDate}" Grid.Row="2" Grid.Column="1"/>
-                    <UniformGrid Grid.Column="1" Grid.Row="3" Rows="1" Columns="4">
-                        <Grid VerticalAlignment="Center">
-                            <TextBlock Text="{Loc txtEarly}" Visibility="{Binding TimewiseStatus, Converter={StaticResource isEqualToVisibilityConverter}, ConverterParameter={x:Static common:MaintenanceStatus.Early}}" Foreground="Fuchsia"/>
-                            <TextBlock Text="{Loc txtOnTime}" Visibility="{Binding TimewiseStatus, Converter={StaticResource isEqualToVisibilityConverter}, ConverterParameter={x:Static common:MaintenanceStatus.OnTime}}" Foreground="Lime"/>
-                            <TextBlock Text="{Loc txtLate}" Visibility="{Binding TimewiseStatus, Converter={StaticResource isEqualToVisibilityConverter}, ConverterParameter={x:Static common:MaintenanceStatus.Late}}" Foreground="OrangeRed"/>
-                        </Grid>
-                        <ToggleButton IsChecked="{Binding OperationwiseStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:MaintenanceStatus.Done}}">
+                    <UniformGrid Grid.ColumnSpan="2" Grid.Row="3" Rows="1" Columns="6">
+						<TextBlock Text="{Loc txtDaysLeft}" Foreground="Silver"/>
+						<TextBlock Text="{Binding DiffDate}" Foreground="{Binding DiffDate, Converter={StaticResource balanceToBrushConverter}}" VerticalAlignment="Center"/>
+						<TextBlock Text="{Loc txtStatus}" Foreground="Silver"/>
+						<ToggleButton IsChecked="{Binding OperationwiseStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:MaintenanceStatus.Done}}">
                             <WrapPanel>
-                                <Image Style="{StaticResource Save16Image}"/>
+                                <Image Style="{StaticResource ReportOkImage}"/>
                                 <TextBlock Text="{Loc txtDone}"/>
                             </WrapPanel>
                         </ToggleButton>
                         <ToggleButton IsChecked="{Binding OperationwiseStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:MaintenanceStatus.NotDone}}">
                             <WrapPanel>
-                                <Image Style="{StaticResource Delete16Image}"/>
+                                <Image Style="{StaticResource ReportNotOkImage}"/>
                                 <TextBlock Text="{Loc txtNotDone}"/>
                             </WrapPanel>
                         </ToggleButton>
@@ -77,30 +140,5 @@
             </Expander>
         </Border>
 
-		<!-- items -->
-		<ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" x:Name="listview">
-			<!-- View -->
-			<ListView.View>
-				<GridView>
-					<GridView.Columns>
-                        <GridViewColumn Header="{Loc txtMachine}" DisplayMemberBinding="{Binding MachinePartMaintenance.MachinePart.Machine.Name}" Width="Auto"/>
-                        <GridViewColumn Header="{Loc txtMachinePart}" DisplayMemberBinding="{Binding MachinePartMaintenance.MachinePart.Name}" Width="Auto"/>
-                        <GridViewColumn Header="{Loc txtMachinePartMaintenance}" DisplayMemberBinding="{Binding MachinePartMaintenance.Name}" Width="Auto"/>
-                        <GridViewColumn Header="{Loc txtName}" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
-						<GridViewColumn Header="{Loc txtCode}" DisplayMemberBinding="{Binding Code}" Width="Auto"/>
-						<GridViewColumn Header="{Loc txtDescription}" Width="Auto">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<WrapPanel>
-										<Image Style="{StaticResource DocumentInfo16Image}" DockPanel.Dock="Left" Visibility="{Binding Description, Converter={StaticResource nullToInvisibilityConverter}}"/>
-										<TextBlock Text="{Binding Description}"/>
-									</WrapPanel>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-					</GridView.Columns>
-				</GridView>
-			</ListView.View>
-		</ListView>
-	</DockPanel>
+	</Grid>
 </UserControl>

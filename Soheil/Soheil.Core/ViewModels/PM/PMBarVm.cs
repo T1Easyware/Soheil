@@ -9,16 +9,21 @@ namespace Soheil.Core.ViewModels.PM
 {
 	public class PMBarVm : DependencyObject
 	{
-		/// <summary>
-		/// Gets or sets a bindable value that indicates RemainingPercent
-		/// </summary>
-		public void SafeUpdateTimings(double percent)
+		public void Update(double value)
 		{
-			Dispatcher.Invoke(new Action<double>(perc =>
+			if (double.IsNaN(value))
 			{
-				SetValue(IsPastDeadlineProperty, perc < 0);
-				SetValue(RemainingPercentProperty, Math.Abs(perc));
-			}), percent);
+				SetValue(IsPastDeadlineProperty, false);
+				SetValue(RemainingPercentProperty, 0d);
+			}
+			else
+			{
+				SetValue(IsPastDeadlineProperty, value < 0);
+				var x = Math.Abs(value);
+				if (x > 10) x = 10;
+				if (x == 0) x = 10;
+				SetValue(RemainingPercentProperty, x * 10);
+			}
 		}
 		public static readonly DependencyProperty RemainingPercentProperty =
 			DependencyProperty.Register("RemainingPercent", typeof(double), typeof(PMBarVm), new PropertyMetadata(0d));

@@ -233,6 +233,7 @@
 
 	<Style x:Key="ReportImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Report.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
 	<Style x:Key="ViewReportImage" TargetType="Image">
@@ -341,10 +342,42 @@
 	
 	<Style x:Key="SkillCenterImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/SkillCenter.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
     <Style x:Key="Repair16Image" TargetType="Image">
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepair16.png"/>
-        <Setter Property="Width" Value="16"/>
-    </Style>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="AddRepair16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepairAdd16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ReportOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/reportOk.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ReportNotOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/reportNotOk.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="RepairOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepairOk16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="RepairNotOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepairNotOk16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ReportLink" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/report_link.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
 </ResourceDictionary>

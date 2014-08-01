@@ -408,5 +408,12 @@ namespace Soheil.Views
 				var dc = control.DataContext as Soheil.Core.ViewModels.PM.PmPageBase;
 			}
 		}
+
+		//private void PmTabsMouseDown(object sender, EventArgs e)
+		//{
+		//	var arr = (sender as FrameworkElement).Tag as FrameworkElement[];
+		//	(arr[0].Tag as Expander).IsExpanded = false;
+		//	(arr[1].Tag as Expander).IsExpanded = false;
+		//}
 	}
 }

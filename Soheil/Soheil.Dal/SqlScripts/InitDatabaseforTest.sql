@@ -202,6 +202,19 @@ insert into dbo.Parts (Id, Code,  Name, [Description], [Status], ModifiedDate, M
 (9, '9', 'Part9', 'Part9', 1, {fn CURRENT_TIMESTAMP()}, 1);
 SET IDENTITY_INSERT dbo.Parts OFF
 
+SET IDENTITY_INSERT dbo.Maintenances ON
+insert into dbo.Maintenances (Id, Code,  Name, [Description], [Status], ModifiedDate, ModifiedBy) values 
+(1, '1', 'PM.1', 'Maintenance #1', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(2, '2', 'PM.2', 'Maintenance #2', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(3, '3', 'PM.3', 'Maintenance #3', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(4, '4', 'PM.4', 'Maintenance #4', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(5, '5', 'PM.5', '', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(6, '6', 'PM.6', 'Maintenance #6', 0, {fn CURRENT_TIMESTAMP()}, 1),
+(7, '7', 'PM.7', 'Maintenance #7', 2, {fn CURRENT_TIMESTAMP()}, 1),
+(8, '8', 'PM.8', 'Maintenance #8', 1, {fn CURRENT_TIMESTAMP()}, 1),
+(9, '9', 'PM.9', 'Maintenance #9', 1, {fn CURRENT_TIMESTAMP()}, 1);
+SET IDENTITY_INSERT dbo.Maintenances OFF
+
 SET IDENTITY_INSERT dbo.ActivityGroups ON
 insert into dbo.ActivityGroups (Id, Code, Name, ModifiedDate, CreatedDate, [Status]) values 
 (1, 'ActGrp1', N'تولید', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1),

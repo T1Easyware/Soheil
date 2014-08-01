@@ -31,7 +31,7 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual System.DateTime PerformedDate
+        public virtual Nullable<System.DateTime> PerformedDate
         {
             get;
             set;

@@ -7,6 +7,7 @@ using Soheil.Model;
 using Soheil.Dal;
 using Soheil.Core.Interfaces;
 using Soheil.Core.Base;
+using Soheil.Common;
 
 namespace Soheil.Core.DataServices
 {
@@ -116,6 +117,13 @@ namespace Soheil.Core.DataServices
 				{
 					operatorStoppageReportRepository.Delete(operatorStoppageReportModel);
 				}
+				foreach (var repair in stoppageReportModel.Repairs.ToArray())
+				{
+					stoppageReportModel.Repairs.Remove(repair);
+					repair.StoppageReport = null;
+					repair.RepairStatus = (byte)RepairStatus.Inactive;
+					repair.Description = "StoppageReport has been Deleted.\n" + repair.Description;
+				}
 				stoppageReportRepository.Delete(stoppageReportModel);
 			}
 		}
@@ -128,6 +136,14 @@ namespace Soheil.Core.DataServices
 			foreach (var operatorStoppageReportModel in operatorStoppageReports)
 			{
 				operatorStoppageReportRepository.Delete(operatorStoppageReportModel);
+			}
+
+			foreach (var repair in Model.Repairs.ToArray())
+			{
+				Model.Repairs.Remove(repair);
+				repair.StoppageReport = null;
+				repair.RepairStatus = (byte)RepairStatus.Inactive;
+				repair.Description = "StoppageReport has been Deleted.\n" + repair.Description;
 			}
 			stoppageReportRepository.Delete(Model);
 		}
@@ -216,6 +232,13 @@ namespace Soheil.Core.DataServices
 			foreach (var item in garb2)
 			{
 				if (item.ProcessReport != null) item.ProcessReport.StoppageReports.Remove(item);
+				foreach (var repair in item.Repairs.ToArray())
+				{
+					item.Repairs.Remove(repair);
+					repair.StoppageReport = null;
+					repair.RepairStatus = (byte)RepairStatus.Inactive;
+					repair.Description = "StoppageReport has been Deleted.\n" + repair.Description;
+				}
 				srRepo.Delete(item);
 			}
 

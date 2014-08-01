@@ -1328,7 +1328,7 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
-    <Property Name="LastMaintenanceDate" Type="datetime" Nullable="false" />
+    <Property Name="LastMaintenanceDate" Type="datetime" Nullable="true" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Maintenance_Id" Type="int" Nullable="false" />
     <Property Name="MachinePart_Id" Type="int" Nullable="false" />
@@ -1339,7 +1339,7 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="MaintenanceDate" Type="datetime" Nullable="false" />
-    <Property Name="PerformedDate" Type="datetime" Nullable="false" />
+    <Property Name="PerformedDate" Type="datetime" Nullable="true" />
     <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="0" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
@@ -1358,7 +1358,7 @@
     <Property Name="DeliveredDate" Type="datetime" Nullable="false" />
     <Property Name="RepairStatus" Type="tinyint" Nullable="false" DefaultValue="0" />
     <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="StoppageReport_Id" Type="int" Nullable="false" />
+    <Property Name="StoppageReport_Id" Type="int" Nullable="true" />
     <Property Name="MachinePart_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="NonProductiveTasks_PM">
@@ -2591,7 +2591,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="StoppageReportRepair">
-    <End Role="StoppageReport" Type="SoheilEdm.Store.StoppageReports" Multiplicity="1" />
+    <End Role="StoppageReport" Type="SoheilEdm.Store.StoppageReports" Multiplicity="0..1" />
     <End Role="Repair" Type="SoheilEdm.Store.Repairs" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="StoppageReport">
@@ -4486,7 +4486,7 @@
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Status" Type="Byte" Nullable="false" DefaultValue="1" />
-          <Property Name="LastMaintenanceDate" Type="DateTime" Nullable="false" />
+          <Property Name="LastMaintenanceDate" Type="DateTime" Nullable="true" />
           <Property Name="Code" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="MaintenanceReport">
@@ -4495,7 +4495,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="MaintenanceDate" Type="DateTime" Nullable="false" />
-          <Property Name="PerformedDate" Type="DateTime" Nullable="false" />
+          <Property Name="PerformedDate" Type="DateTime" Nullable="true" />
           <Property Name="Description" Type="String" Nullable="false" FixedLength="false" Unicode="true" />
           <Property Name="Status" Type="Byte" Nullable="false" DefaultValue="0" />
           <NavigationProperty Name="MachinePartMaintenance" Relationship="SoheilEdm.MachinePartMaintenanceMaintenanceReport" FromRole="MaintenanceReport" ToRole="MachinePartMaintenance" />
@@ -4538,7 +4538,7 @@
           <End Type="SoheilEdm.MachinePart" Role="MachinePart" Multiplicity="*" />
         </Association>
         <Association Name="StoppageReportRepair">
-          <End Type="SoheilEdm.StoppageReport" Role="StoppageReport" Multiplicity="1" />
+          <End Type="SoheilEdm.StoppageReport" Role="StoppageReport" Multiplicity="0..1" />
           <End Type="SoheilEdm.Repair" Role="Repair" Multiplicity="*" />
         </Association>
         <Association Name="MachinePartRepair">
@@ -6226,6 +6226,7 @@
       <EndProperty Name="Repair">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
+      <Condition ColumnName="StoppageReport_Id" IsNull="false" />
     </AssociationSetMapping>
     <AssociationSetMapping Name="MachinePartRepair" TypeName="SoheilEdm.MachinePartRepair" StoreEntitySet="Repairs">
       <EndProperty Name="MachinePart">

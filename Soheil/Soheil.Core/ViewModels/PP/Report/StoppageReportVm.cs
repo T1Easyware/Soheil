@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,6 +83,37 @@ namespace Soheil.Core.ViewModels.PP.Report
 					Parent.List[i].Index = i + 1;
 				}
 			});
+
+			foreach (var repair in model.Repairs)
+			{
+				AddRepair(repair);
+			}
+			AddRepairCommand = new Commands.Command(o =>
+			{
+				var repairModel = new Model.Repair
+				{
+					CreatedDate = DateTime.Now,
+					DeliveredDate = DateTime.Now,
+					AcquiredDate = DateTime.Now,
+					ModifiedBy = LoginInfo.Id,
+					StoppageReport = Model,
+					RepairStatus = (byte)Common.RepairStatus.NotDone,
+					Description = "",
+				};
+				AddRepair(repairModel);
+				Model.Repairs.Add(repairModel);
+			});
+		}
+		void AddRepair(Model.Repair model)
+		{
+			var vm = new RepairVm(model, Parent.Parent.UOW);
+			vm.DeleteCommand = new Commands.Command(o =>
+			{
+				Model.Repairs.Remove(vm.Model);
+				Repairs.Remove(vm);
+				new Soheil.Core.DataServices.PM.RepairDataService(Parent.Parent.UOW).Delete(vm.Model);
+			});
+			Repairs.Add(vm);
 		}
 
 		internal void SelectCause(int causeId)
@@ -224,6 +256,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public static readonly DependencyProperty GuiltyOperatorsProperty =
 			DependencyProperty.Register("GuiltyOperators", typeof(FilterBoxVmCollection), typeof(StoppageReportVm), new UIPropertyMetadata(null));
 
+		public ObservableCollection<RepairVm> Repairs { get { return _repairs; } }
+		private ObservableCollection<RepairVm> _repairs = new ObservableCollection<RepairVm>();
+
+
 		//DeleteCommand Dependency Property
 		public Commands.Command DeleteCommand
 		{
@@ -232,6 +268,16 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty DeleteCommandProperty =
 			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(StoppageReportVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates AddRepairCommand
+		/// </summary>
+		public Commands.Command AddRepairCommand
+		{
+			get { return (Commands.Command)GetValue(AddRepairCommandProperty); }
+			set { SetValue(AddRepairCommandProperty, value); }
+		}
+		public static readonly DependencyProperty AddRepairCommandProperty =
+			DependencyProperty.Register("AddRepairCommand", typeof(Commands.Command), typeof(StoppageReportVm), new PropertyMetadata(null));
 
 
 	}

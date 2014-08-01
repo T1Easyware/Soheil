@@ -136,6 +136,9 @@
     <Compile Include="CustomControls\OverlayMessageBox.xaml.cs">
       <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\StartPage.xaml.cs">
+      <DependentUpon>StartPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\TimeBox.cs" />
     <Compile Include="DataGridRowDeleting.cs" />
     <Compile Include="DataGridTextSearch.cs" />
@@ -171,6 +174,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CustomControls\StartPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Layout\Converters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -567,9 +574,6 @@
     <Resource Include="Images\PP\ppe_setstart.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Menus\SkillCenter.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\PP\TaskCopy.png" />
     <Resource Include="Images\PP\TaskMove.png" />
   </ItemGroup>
@@ -581,6 +585,29 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PMRepair16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\reportNotOk.png" />
+    <Resource Include="Images\reportOk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PMRepairAdd16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PMRepairNotOk16.png" />
+    <Resource Include="Images\PMRepairOk16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\report_link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\S.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\PM.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\SkillCenter.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

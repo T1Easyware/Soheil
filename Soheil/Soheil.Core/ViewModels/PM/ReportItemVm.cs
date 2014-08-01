@@ -17,9 +17,10 @@ namespace Soheil.Core.ViewModels.PM
 			Model = model;
 			Name = model.MachinePartMaintenance.Maintenance.Name;
 			Code = model.Code;
-			PerformedDate = model.PerformedDate;
+			if (model.PerformedDate.HasValue)
+				PerformedDate = model.PerformedDate.Value;
 			MaintenanceDate = model.MaintenanceDate;
-			Model.UpdateStatus();
+			DiffDate = (int)Model.UpdateStatus();
 			MaintenanceStatus = model.PerformanceStatus;
 			MachinePartMaintenance = mpmVm;
 			_isInitialized = true;
@@ -79,7 +80,7 @@ namespace Soheil.Core.ViewModels.PM
 				if (vm._isInitialized)
 				{
 					vm.Model.PerformanceStatus = val;
-					vm.Model.UpdateStatus();
+					vm.DiffDate = (int)vm.Model.UpdateStatus();
 					if (vm.Model.PerformanceStatus != val)
 					{
 						vm.MaintenanceStatus = val;
@@ -89,7 +90,6 @@ namespace Soheil.Core.ViewModels.PM
 					vm.Model.ModifiedBy = LoginInfo.Id;
 				}
 				vm.OperationwiseStatus = val & (MaintenanceStatus.Done | MaintenanceStatus.NotDone);
-				vm.TimewiseStatus = val & (MaintenanceStatus.Early | MaintenanceStatus.OnTime | MaintenanceStatus.Late);
 			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates OperationwiseStatus
@@ -107,28 +107,13 @@ namespace Soheil.Core.ViewModels.PM
 				var val = (MaintenanceStatus)e.NewValue;
 				if (vm._isInitialized)
 				{
-					vm.MaintenanceStatus = vm.TimewiseStatus | val;
+					vm.MaintenanceStatus =
+						(vm.MaintenanceStatus
+						& (MaintenanceStatus.Early | MaintenanceStatus.Late | MaintenanceStatus.OnTime))
+						| val;
 				}
 			}));
-		/// <summary>
-		/// Gets or sets a bindable value that indicates TimewiseStatus
-		/// </summary>
-		public MaintenanceStatus TimewiseStatus
-		{
-			get { return (MaintenanceStatus)GetValue(TimewiseStatusProperty); }
-			set { SetValue(TimewiseStatusProperty, value); }
-		}
-		public static readonly DependencyProperty TimewiseStatusProperty =
-			DependencyProperty.Register("TimewiseStatus", typeof(MaintenanceStatus), typeof(ReportItemVm),
-			new UIPropertyMetadata(MaintenanceStatus.OnTime, (d, e) =>
-			{
-				var vm = (ReportItemVm)d;
-				var val = (MaintenanceStatus)e.NewValue;
-				if (vm._isInitialized)
-				{
-					vm.MaintenanceStatus = vm.OperationwiseStatus | val;
-				}
-			}));
+
 		/// <summary>
 		/// Gets or sets a bindable value that indicates MaintenanceDate
 		/// </summary>
@@ -146,7 +131,7 @@ namespace Soheil.Core.ViewModels.PM
 				if (vm._isInitialized)
 				{
 					vm.Model.MaintenanceDate = val;
-					vm.Model.UpdateStatus();
+					vm.DiffDate = (int)vm.Model.UpdateStatus();
 					vm.MaintenanceStatus = vm.Model.PerformanceStatus;
 					vm.Model.ModifiedDate = DateTime.Now;
 					vm.Model.ModifiedBy = LoginInfo.Id;
@@ -170,12 +155,31 @@ namespace Soheil.Core.ViewModels.PM
 				if (vm._isInitialized)
 				{
 					vm.Model.PerformedDate = val;
-					vm.Model.UpdateStatus();
+					vm.DiffDate = (int)vm.Model.UpdateStatus();
 					vm.MaintenanceStatus = vm.Model.PerformanceStatus;
 					vm.Model.ModifiedDate = DateTime.Now;
 					vm.Model.ModifiedBy = LoginInfo.Id;
 				}
+			}, (d, v) =>
+			{
+				var val = ((DateTime)v).Date;
+				if (val > DateTime.Now.Date)
+				{
+					MessageBox.Show("زمان اجرا نمی تواند در آینده باشد", "خطا", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+					return DateTime.Now.Date;
+				}
+				return val;
 			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DiffDate
+		/// </summary>
+		public int DiffDate
+		{
+			get { return (int)GetValue(DiffDateProperty); }
+			set { SetValue(DiffDateProperty, value); }
+		}
+		public static readonly DependencyProperty DiffDateProperty =
+			DependencyProperty.Register("DiffDate", typeof(int), typeof(ReportItemVm), new PropertyMetadata(0));
 
 	}
 }

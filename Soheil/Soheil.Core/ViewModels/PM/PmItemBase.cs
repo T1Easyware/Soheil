@@ -128,6 +128,16 @@ namespace Soheil.Core.ViewModels.PM
         }
         public static readonly DependencyProperty GotoRepairCommandProperty =
             DependencyProperty.Register("GotoRepairCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DeleteCommand
+		/// </summary>
+		public Commands.Command DeleteCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
 
 
 	}

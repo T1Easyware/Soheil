@@ -137,5 +137,20 @@ namespace Soheil.Core.DataServices.PM
 				AddModel(model);
 			}
 		}
-    }
+
+		internal void CorrectAll()
+		{
+			var models = _machinePartMaintenanceRepository.GetAll();
+			foreach (var model in models)
+			{
+				if (model.MaintenanceReports.Any())
+					model.LastMaintenanceDate = model.MaintenanceReports.Max(x => x.MaintenanceDate);
+				foreach (var report in model.MaintenanceReports)
+				{
+					report.UpdateStatus();
+				}
+			}
+			Context.SaveChanges();
+		}
+	}
 }

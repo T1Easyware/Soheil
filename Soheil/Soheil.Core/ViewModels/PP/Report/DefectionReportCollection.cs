@@ -23,7 +23,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 					ProductDefection = null,
 					ModifiedBy = LoginInfo.Id,
 				};
-				foreach (var po in Parent.Model.Process.ProcessOperators)
+				/*foreach (var po in Parent.Model.Process.ProcessOperators)
 				{
 					model.OperatorDefectionReports.Add(new Model.OperatorDefectionReport
 					{
@@ -32,7 +32,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 						Code = po.Operator.Code,
 						ModifiedBy = LoginInfo.Id,
 					});
-				}
+				}*/
 				parent.Model.DefectionReports.Add(model);
 				var vm = new DefectionReportVm(this, model);
 				List.Add(vm);

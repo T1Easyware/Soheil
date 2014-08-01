@@ -76,6 +76,7 @@
 	<ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
 
 
+	<ppconv:BalanceToBrushConverter x:Key="balanceToBrushConverter"/>
 	<ppconv:SumOfDoubles x:Key="sumOfDoubles"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier2"/>

@@ -21,6 +21,7 @@ namespace Soheil.Core.ViewModels.PM
 		public DataServices.PM.MachinePartDataService MachinePartDataService { get; set; }
 		public DataServices.PM.MaintenanceDataService MaintenanceDataService { get; set; }
 		public DataServices.PM.ReportDataService ReportDataService { get; set; }
+		public DataServices.PM.RepairDataService RepairDataService { get; set; }
 		public DataServices.PM.PartDataService PartDataService { get; set; }
 
 		private bool _isInitialized = false;
@@ -30,12 +31,8 @@ namespace Soheil.Core.ViewModels.PM
 		public PmVm(AccessType access)
 		{
 			Access = access;
-			_uow = new Dal.SoheilEdmContext();
-			MachineDataService = new DataServices.MachineDataService(_uow);
-			MachinePartDataService = new DataServices.PM.MachinePartDataService(_uow);
-			PartDataService = new DataServices.PM.PartDataService(_uow);
-			MaintenanceDataService = new DataServices.PM.MaintenanceDataService(_uow);
-			ReportDataService = new DataServices.PM.ReportDataService(_uow);
+			initializeDataServices();
+
 			SaveCommand = new Commands.Command(o =>
 			{
                 MachinesPage.InvokeRefresh();
@@ -47,12 +44,54 @@ namespace Soheil.Core.ViewModels.PM
                 ReportsPage.InvokeRefresh();
 				_uow.Commit();
 			});
-            CreatePages();
-            FillPages();
-            //declare finish
-            _isInitialized = true;
-        }
+
+			RefreshCommand = new Commands.Command(o =>
+			{
+				_isInitialized = false;
+				MachinesPage.Items.Clear();
+				MachinePartsPage.Items.Clear();
+				MachinePartMaintenancesPage.Items.Clear();
+				PartsPage.Items.Clear();
+				MaintenancesPage.Items.Clear();
+				ReportsPage.Items.Clear();
+				RepairsPage.Items.Clear();
+				ExCollapse.Execute();
+
+				//refresh database
+				initializeDataServices();
+				MaintenanceDataService.CorrectAll();
+
+				//load items
+				CreatePages();
+				FillPages();
+				//declare finish
+				_isInitialized = true;
+			});
+
+			ExCollapse = new Commands.Command(o =>
+			{
+				Ex1Expanded = false;
+				Ex2Expanded = false;
+			});
+
+			//load items
+			CreatePages();
+			FillPages();
+			//declare finish
+			_isInitialized = true;
+		}
         
+		void initializeDataServices()
+		{
+			//init dataservices
+			_uow = new Dal.SoheilEdmContext();
+			MachineDataService = new DataServices.MachineDataService(_uow);
+			MachinePartDataService = new DataServices.PM.MachinePartDataService(_uow);
+			PartDataService = new DataServices.PM.PartDataService(_uow);
+			MaintenanceDataService = new DataServices.PM.MaintenanceDataService(_uow);
+			ReportDataService = new DataServices.PM.ReportDataService(_uow);
+			RepairDataService = new DataServices.PM.RepairDataService(_uow);
+		}
         
         void CreatePages()
         {
@@ -74,31 +113,6 @@ namespace Soheil.Core.ViewModels.PM
 				AddCommand = new Commands.Command(o => { }, () => false),
 			};
 
-			MachinePartsPage.DeleteCommand = new Commands.Command(o =>
-			{
-                if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
-				var mp = MachinePartsPage.SelectedItem as MachinePartItemVm;
-				if (mp == null) return;
-                int id = mp.Model.Part.Id;
-                int idx = MachinePartsPage.Items.IndexOf(mp);
-
-                MachinePartDataService.DeleteModel(mp.Model);
-				MachinePartsPage.Items.Remove(mp);
-                MachinePartsPage.SelectedItem =
-                            idx < MachinePartsPage.Items.Count ?
-                            MachinePartsPage.Items[idx] :
-                            MachinePartsPage.Items.LastOrDefault();
-
-                //update MachinePartPage layout when -mp
-                MachinePartsPage.InvokeRefresh();
-                //update LinkCounter when -mp
-                var m = PartsPage.Items.FirstOrDefault(x => x.Id == id);
-                if (m != null) m.UpdateIsAdded(MachinesPage.SelectedItem);
-			}, 
-            //can execute
-            () => MachinePartsPage.SelectedItem != null
-                && (MachinePartsPage.SelectedItem as MachinePartItemVm).Model != null
-                && !(MachinePartsPage.SelectedItem as MachinePartItemVm).Model.IsMachine);
             MachinePartsPage.SelectedItemChanged += MachinePartsPage_SelectedItemChanged;
             MachinePartsPage.Items.CollectionChanged += MachineParts_CollectionChanged;
             #endregion
@@ -151,31 +165,6 @@ namespace Soheil.Core.ViewModels.PM
 			{
 				AddCommand = new Commands.Command(o => { }, () => false),
 			};
-
-			MachinePartMaintenancesPage.DeleteCommand = new Commands.Command(o =>
-			{
-                if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
-                var mp = MachinePartMaintenancesPage.SelectedItem as MPMItemVm;
-				if (mp == null) return;
-                int idx = MachinePartMaintenancesPage.Items.IndexOf(mp);
-                int id = mp.Model.Maintenance.Id;
-
-				MaintenanceDataService.DeleteModel(mp.Model);
-				MachinePartMaintenancesPage.Items.Remove(mp);
-                MachinePartMaintenancesPage.SelectedItem =
-                    idx < MachinePartMaintenancesPage.Items.Count ?
-                    MachinePartMaintenancesPage.Items[idx] :
-                    MachinePartMaintenancesPage.Items.LastOrDefault();
-
-                //update MachinePartMaintenancesPage layout when -mpm
-                MachinePartMaintenancesPage.InvokeRefresh();
-                //update LinkCounter when -mpm
-                var m = MaintenancesPage.Items.FirstOrDefault(x => x.Id == id);
-                if (m != null) m.UpdateIsAdded(MachinePartsPage.SelectedItem);
-			}, 
-            //can execute
-            () => MachinePartMaintenancesPage.SelectedItem != null
-                && !(MachinePartMaintenancesPage.SelectedItem as MPMItemVm).Model.MaintenanceReports.Any());
             MachinePartMaintenancesPage.Items.CollectionChanged += MachinePartMaintenances_CollectionChanged;
 			#endregion
 
@@ -226,7 +215,19 @@ namespace Soheil.Core.ViewModels.PM
 			ReportsPage = new PmPageBase
 			{
 				AddCommand = new Commands.Command(o => { }, () => false),
-				DeleteCommand = new Commands.Command(o => { }, () => false),
+				DeleteCommand = new Commands.Command(o => {
+					if (MessageBox.Show("Are you sure?", "Delete Report", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
+					var reportVm = ReportsPage.SelectedItem as ReportItemVm;
+					if (reportVm == null) return;
+					int idx = ReportsPage.Items.IndexOf(reportVm);
+
+					ReportDataService.DeleteModel(reportVm.Model);
+					ReportsPage.Items.Remove(reportVm);
+					ReportsPage.SelectedItem =
+						idx < ReportsPage.Items.Count ?
+						ReportsPage.Items[idx] :
+						ReportsPage.Items.LastOrDefault();
+				}, () => ReportsPage.SelectedItem!=null),
 			};
 			#endregion
 
@@ -236,7 +237,20 @@ namespace Soheil.Core.ViewModels.PM
             RepairsPage = new PmPageBase
             {
                 AddCommand = new Commands.Command(o => { }, () => false),
-                DeleteCommand = new Commands.Command(o => { }, () => false),
+				DeleteCommand = new Commands.Command(o =>
+				{
+					if (MessageBox.Show("Are you sure?", "Delete Repair", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
+					var repairsVm = RepairsPage.SelectedItem as RepairItemVm;
+					if (repairsVm == null) return;
+					int idx = RepairsPage.Items.IndexOf(repairsVm);
+
+					RepairDataService.DeleteModel(repairsVm.Model);
+					RepairsPage.Items.Remove(repairsVm);
+					RepairsPage.SelectedItem =
+						idx < RepairsPage.Items.Count ?
+						RepairsPage.Items[idx] :
+						RepairsPage.Items.LastOrDefault();
+				}, () => RepairsPage.SelectedItem != null),
             };
             #endregion
 		}
@@ -290,7 +304,7 @@ namespace Soheil.Core.ViewModels.PM
 
        
         //Initialize commands for new items in each collection
-        //  Machine,MachinePart,MachinePartMaintenace => GotoReportCommand,GotoRepairCommand
+        //  Machine,MachinePart,MachinePartMaintenace => GotoReportCommand,GotoRepairCommand,DeleteCommand
         //  MachinePartMaintenace => AddReportCommand
         //  Part,Maintenace => UseCommand
         //Also refresh layout if _isInitialized
@@ -333,12 +347,39 @@ namespace Soheil.Core.ViewModels.PM
 										new MachineItemVm(model.MachinePartMaintenance.MachinePart.Machine,true),true),true));
 							ReportsPage.Items.Add(vm);
 						}
+						FocusOnReports = true;
 						ReportsPage.InvokeRefresh();
 					});
 
                     machineVm.GotoRepairCommand = new Commands.Command(o =>
                     {
+						RepairsPage.Items.Clear();
+						IEnumerable<Model.Repair> models;
 
+						//find all repairs regarding the current machineVm
+						if (machineVm.Model == null)
+						{
+							models = RepairDataService.GetActives();
+							RepairsPage.HideMachines = false;
+							RepairsPage.HideMachineParts = false;
+							RepairsPage.HideMachinePartMaintenances = false;
+						}
+						else
+						{
+							models = RepairDataService.GetActivesForMachine(machineVm.Model);
+							RepairsPage.HideMachines = true;
+							RepairsPage.HideMachineParts = false;
+							RepairsPage.HideMachinePartMaintenances = false;
+						}
+
+						//add them to Items
+						foreach (var model in models)
+						{
+							var vm = new RepairItemVm(model);
+							RepairsPage.Items.Add(vm);
+						}
+						FocusOnReports = false;
+						RepairsPage.InvokeRefresh();
                     });
                 }
             }
@@ -350,7 +391,27 @@ namespace Soheil.Core.ViewModels.PM
             {
                 foreach (var machinePartVm in e.NewItems.OfType<MachinePartItemVm>())
                 {
+					machinePartVm.DeleteCommand = new Commands.Command(o =>
+					{
+						if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
+						int id = machinePartVm.Model.Part.Id;
+						int idx = MachinePartsPage.Items.IndexOf(machinePartVm);
 
+						MachinePartDataService.DeleteModel(machinePartVm.Model);
+						MachinePartsPage.Items.Remove(machinePartVm);
+						MachinePartsPage.SelectedItem =
+									idx < MachinePartsPage.Items.Count ?
+									MachinePartsPage.Items[idx] :
+									MachinePartsPage.Items.LastOrDefault();
+
+						//update MachinePartPage layout when -mp
+						MachinePartsPage.InvokeRefresh();
+						//update LinkCounter when -mp
+						var m = PartsPage.Items.FirstOrDefault(x => x.Id == id);
+						if (m != null) m.UpdateIsAdded(MachinesPage.SelectedItem);
+					},
+						//can execute
+						() => machinePartVm.Model != null && !machinePartVm.Model.IsMachine);
 
                     machinePartVm.GotoReportCommand = new Commands.Command(o =>
                     {
@@ -401,14 +462,82 @@ namespace Soheil.Core.ViewModels.PM
 										new MachineItemVm(model.MachinePartMaintenance.MachinePart.Machine, true), true), true));
                             ReportsPage.Items.Add(vm);
                         }
+						FocusOnReports = true;
 						ReportsPage.InvokeRefresh();
 					});
 
+					machinePartVm.AddRepairCommand = new Commands.Command(o =>
+					{
+						var model = new Model.Repair
+						{
+							CreatedDate = DateTime.Now,
+							AcquiredDate = DateTime.Now,
+							DeliveredDate = DateTime.Now,
+							MachinePart = machinePartVm.Model,
+							ModifiedBy = LoginInfo.Id,
+							RepairStatus = (byte)RepairStatus.Inactive,
+							Description = "",
+						};
+						RepairDataService.AddModel(model);
+						var vm = new RepairItemVm(model);
+						RepairsPage.Items.Add(vm);
+						RepairsPage.SelectedItem = vm;
 
+						RepairsPage.HideMachines = false;
+						RepairsPage.HideMachineParts = false;
+						RepairsPage.HideMachinePartMaintenances = false;
+						FocusOnReports = false;
+						RepairsPage.InvokeRefresh();
+					}, () => machinePartVm.Model != null);
 
                     machinePartVm.GotoRepairCommand = new Commands.Command(o =>
                     {
+						RepairsPage.Items.Clear();
+						IEnumerable<Model.Repair> models;
 
+						Model.Machine machineModel = null;
+						if (MachinesPage.SelectedItem != null &&
+								(MachinesPage.SelectedItem as MachineItemVm).Model != null)
+							machineModel = (MachinesPage.SelectedItem as MachineItemVm).Model;
+						//find all repairs regarding the current machinePartVm
+						if (machinePartVm.Model == null)
+						{
+							//if no machine part is selected
+							if (machineModel == null)
+							{
+								//if no machine is selected
+								//everything
+								models = RepairDataService.GetActives();
+								RepairsPage.HideMachines = false;
+								RepairsPage.HideMachineParts = false;
+								RepairsPage.HideMachinePartMaintenances = false;
+							}
+							else
+							{
+								//just the machine
+								models = RepairDataService.GetActivesForMachine((MachinesPage.SelectedItem as MachineItemVm).Model);
+								RepairsPage.HideMachines = true;
+								RepairsPage.HideMachineParts = false;
+								RepairsPage.HideMachinePartMaintenances = false;
+							}
+						}
+						else
+						{
+							//just the machinePart (or machine)
+							models = RepairDataService.GetActivesForMachinePart(machinePartVm.Model);
+							RepairsPage.HideMachines = (machineModel != null);
+							RepairsPage.HideMachineParts = true;
+							RepairsPage.HideMachinePartMaintenances = false;
+						}
+
+						//add them to Items
+						foreach (var model in models)
+						{
+							var vm = new RepairItemVm(model);
+							RepairsPage.Items.Add(vm);
+						}
+						FocusOnReports = false;
+						RepairsPage.InvokeRefresh();
                     });
                 }
             }
@@ -421,6 +550,26 @@ namespace Soheil.Core.ViewModels.PM
             {
                 foreach (var mpmVm in e.NewItems.OfType<MPMItemVm>())
                 {
+					mpmVm.DeleteCommand = new Commands.Command(o =>
+					{
+						if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
+						int idx = MachinePartMaintenancesPage.Items.IndexOf(mpmVm);
+						int id = mpmVm.Model.Maintenance.Id;
+
+						MaintenanceDataService.DeleteModel(mpmVm.Model);
+						MachinePartMaintenancesPage.Items.Remove(mpmVm);
+						MachinePartMaintenancesPage.SelectedItem =
+							idx < MachinePartMaintenancesPage.Items.Count ?
+							MachinePartMaintenancesPage.Items[idx] :
+							MachinePartMaintenancesPage.Items.LastOrDefault();
+
+						//update MachinePartMaintenancesPage layout when -mpm
+						MachinePartMaintenancesPage.InvokeRefresh();
+						//update LinkCounter when -mpm
+						var m = MaintenancesPage.Items.FirstOrDefault(x => x.Id == id);
+						if (m != null) m.UpdateIsAdded(MachinePartsPage.SelectedItem);
+					});
+
                     mpmVm.GotoReportCommand = new Commands.Command(o =>
                     {
                         ReportsPage.Items.Clear();
@@ -433,6 +582,7 @@ namespace Soheil.Core.ViewModels.PM
 						ReportsPage.HideMachines = true;
 						ReportsPage.HideMachineParts = true;
 						ReportsPage.HideMachinePartMaintenances = true;
+						FocusOnReports = true;
 						ReportsPage.InvokeRefresh();
                     });
 
@@ -451,9 +601,10 @@ namespace Soheil.Core.ViewModels.PM
                         ReportsPage.Items.Add(vm);
 						ReportsPage.SelectedItem = vm;
 
-						ReportsPage.HideMachines = true;
-						ReportsPage.HideMachineParts = true;
+						ReportsPage.HideMachines = false;
+						ReportsPage.HideMachineParts = false;
 						ReportsPage.HideMachinePartMaintenances = false;
+						FocusOnReports = true;
 						ReportsPage.InvokeRefresh();
 					});
                 }
@@ -640,6 +791,7 @@ namespace Soheil.Core.ViewModels.PM
             MachinePartMaintenancesPage.InvokeRefresh();
             MaintenancesPage.InvokeRefresh();
         }
+
 		#endregion
 
         #region Pages
@@ -705,9 +857,59 @@ namespace Soheil.Core.ViewModels.PM
 		}
 		public static readonly DependencyProperty SaveCommandProperty =
 			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(PmVm), new PropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates RefreshCommand
+		/// </summary>
+		public Commands.Command RefreshCommand
+		{
+			get { return (Commands.Command)GetValue(RefreshCommandProperty); }
+			set { SetValue(RefreshCommandProperty, value); }
+		}
+		public static readonly DependencyProperty RefreshCommandProperty =
+			DependencyProperty.Register("RefreshCommand", typeof(Commands.Command), typeof(PmVm), new PropertyMetadata(null));
 
 
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Ex1Expanded
+		/// </summary>
+		public bool Ex1Expanded
+		{
+			get { return (bool)GetValue(Ex1ExpandedProperty); }
+			set { SetValue(Ex1ExpandedProperty, value); }
+		}
+		public static readonly DependencyProperty Ex1ExpandedProperty =
+			DependencyProperty.Register("Ex1Expanded", typeof(bool), typeof(PmVm), new PropertyMetadata(false));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Ex2Expanded
+		/// </summary>
+		public bool Ex2Expanded
+		{
+			get { return (bool)GetValue(Ex2ExpandedProperty); }
+			set { SetValue(Ex2ExpandedProperty, value); }
+		}
+		public static readonly DependencyProperty Ex2ExpandedProperty =
+			DependencyProperty.Register("Ex2Expanded", typeof(bool), typeof(PmVm), new PropertyMetadata(false));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ExCollapse
+		/// </summary>	
+		public Commands.Command ExCollapse
+		{
+			get { return (Commands.Command)GetValue(ExCollapseProperty); }
+			set { SetValue(ExCollapseProperty, value); }
+		}
+		public static readonly DependencyProperty ExCollapseProperty =
+			DependencyProperty.Register("ExCollapse", typeof(Commands.Command), typeof(PmVm), new PropertyMetadata(null));
 
+		/// <summary>
+		/// Gets or sets a bindable value that indicates FocusOnReports
+		/// </summary>
+		public bool FocusOnReports
+		{
+			get { return (bool)GetValue(FocusOnReportsProperty); }
+			set { SetValue(FocusOnReportsProperty, value); }
+		}
+		public static readonly DependencyProperty FocusOnReportsProperty =
+			DependencyProperty.Register("FocusOnReports", typeof(bool), typeof(PmVm), new PropertyMetadata(true));
 
 		#endregion
 

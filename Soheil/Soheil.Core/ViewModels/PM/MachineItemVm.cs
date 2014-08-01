@@ -13,20 +13,23 @@ namespace Soheil.Core.ViewModels.PM
         public override int Id { get { return Model == null ? -1 : Model.Id; } }
         public MachineItemVm(Model.Machine model, bool quick = false)
         {
+			Model = model;
 			if (quick) Name = model == null ? "-" : model.Name;
 
-            else if (model == null)
-            {
-                Name = "همه";
-            }
-            else
-            {
-                Model = model;
-                Name = model.Name;
-                Code = model.Code;
-                Status = model.RecordStatus;
-            }
-            Bar = new PMBarVm();
+			else
+			{
+				if (model == null)
+				{
+					Name = "همه";
+				}
+				else
+				{
+					Name = model.Name;
+					Code = model.Code;
+					Status = model.RecordStatus;
+				}
+				Bar = new PMBarVm();
+			}
         }
 
 		#region Callbacks

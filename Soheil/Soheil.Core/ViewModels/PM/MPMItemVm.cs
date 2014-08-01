@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Soheil.Core.ViewModels.PM
 {
@@ -16,24 +17,25 @@ namespace Soheil.Core.ViewModels.PM
         public override int Id { get { return Model == null ? -1 : Model.Id; } }
 		public MPMItemVm(Model.MachinePartMaintenance model, MachinePartItemVm machinePartVm, bool quick = false)
 		{
+			Model = model;
+			MachinePart = machinePartVm;
 			if (quick) Name = model == null ? "-" : model.Maintenance.Name;
 			else
 			{
-				Model = model;
 				Name = model.Maintenance.Name;
 				Code = model.Code;
 				Description = model.Description;
 				IsOnDemand = model.IsOnDemand;
+				if (model.LastMaintenanceDate.HasValue)
+					LastDate = model.LastMaintenanceDate.Value;
 				Period = model.PeriodDays;
-				model.UpdateLastDate();
-				LastDate = model.LastMaintenanceDate;
 				Status = model.RecordStatus;
 
 				Bar = new PMBarVm();
-				Bar.SafeUpdateTimings(0);
+				if (!model.IsOnDemand)
+					Bar.Update(model.DiffDays);
 				_isInitialized = true;
 			}
-			MachinePart = machinePartVm;
 		}
 		/// <summary>
 		/// Gets or sets a bindable value that indicates IsOnDemand

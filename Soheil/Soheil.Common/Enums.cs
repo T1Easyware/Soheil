@@ -18,6 +18,7 @@ namespace Soheil.Common
 		Confirmed = 2,
 		Deleted = 0
 	}
+
 	[Flags]
 	public enum MaintenanceStatus
 	{
@@ -31,6 +32,13 @@ namespace Soheil.Common
 		Early = 4,
 		OnTime = 8,
 		Late = 16,
+	}
+
+	public enum RepairStatus
+	{
+		Inactive = 0,
+		NotDone = 1,
+		Done = 2,
 	}
 
     [TypeConverter(typeof(LocalizedEnumConverter))]

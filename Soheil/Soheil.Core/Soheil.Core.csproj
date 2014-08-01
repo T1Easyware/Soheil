@@ -65,6 +65,7 @@
     <Compile Include="DataServices\PM\MaintenanceDataService.cs" />
     <Compile Include="DataServices\PM\PartDataService.cs" />
     <Compile Include="DataServices\PM\MachinePartDataService.cs" />
+    <Compile Include="DataServices\PM\RepairDataService.cs" />
     <Compile Include="DataServices\PM\ReportDataService.cs" />
     <Compile Include="ViewModels\PM\MachineItemVm.cs" />
     <Compile Include="ViewModels\PM\MachinePartItemVm.cs" />
@@ -157,7 +158,11 @@
     <Compile Include="ViewModels\Index\OeeMachineVm.cs" />
     <Compile Include="ViewModels\Index\OeeVm.cs" />
     <Compile Include="ViewModels\PM\PmVm.cs" />
+    <Compile Include="ViewModels\PM\RepairItemVm.cs" />
     <Compile Include="ViewModels\PM\ReportItemVm.cs" />
+    <Compile Include="ViewModels\PP\Report\RepairMachineVm.cs" />
+    <Compile Include="ViewModels\PP\Report\RepairMachinePartVm.cs" />
+    <Compile Include="ViewModels\PP\Report\RepairVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
     <Compile Include="ViewModels\Reports\OprActivityDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />

@@ -13,6 +13,8 @@ namespace Soheil.Core.ViewModels.PM
         public override int Id { get { return Model == null ? -1 : Model.Id; } }
 		public MachinePartItemVm(Model.MachinePart model, MachineItemVm machineVm, bool quick = false)
 		{
+			Model = model;
+			Machine = machineVm;
 			if (quick) Name = model == null ? "-" : model.Name;
 			else
 			{
@@ -22,17 +24,41 @@ namespace Soheil.Core.ViewModels.PM
 				}
 				else
 				{
-					Model = model;
 					Name = model.Name;
 					Code = model.Code;
 					Description = model.Description;
 					Status = model.RecordStatus;
+					CanDelete = !model.IsMachine;
 				}
-				Bar = new PMBarVm();
+
+				var bar = new PMBarVm();
+				Bar = bar;
 				_isInitialized = true;
+				if (model != null)
+					Task.Run(() =>
+					{
+						var mins = model.MachinePartMaintenances.Where(x => x.LastMaintenanceDate.HasValue && !x.IsOnDemand);
+						var min = mins.Any() ? mins.Min(x => (x.LastMaintenanceDate.Value.AddDays(x.PeriodDays) - DateTime.Now).TotalDays) : double.NaN;
+						//safely update progress bar
+						Dispatcher.Invoke(new Action<double>(perc =>
+						{
+							bar.Update(perc);
+						}),
+						min);
+					});
 			}
-			Machine = machineVm;
 		}
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates CanDelete
+		/// </summary>
+		public bool CanDelete
+		{
+			get { return (bool)GetValue(CanDeleteProperty); }
+			set { SetValue(CanDeleteProperty, value); }
+		}
+		public static readonly DependencyProperty CanDeleteProperty =
+			DependencyProperty.Register("CanDelete", typeof(bool), typeof(MachinePartItemVm), new PropertyMetadata(false));
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Machine
@@ -74,18 +100,16 @@ namespace Soheil.Core.ViewModels.PM
 		#endregion
 
 
-		public void CalculateTimings()
+		/// <summary>
+		/// Gets or sets a bindable value that indicates AddRepairCommand
+		/// </summary>
+		public Commands.Command AddRepairCommand
 		{
-			var q = Model.MachinePartMaintenances.Where(x => !x.IsOnDemand);
-			if (!q.Any())
-			{
-				Bar.SafeUpdateTimings(0);
-			}
-			else
-			{
-				var rem = q.Min(x => x.PeriodDays - (DateTime.Now - x.LastMaintenanceDate).TotalHours);
-				Bar.SafeUpdateTimings(rem);
-			}
+			get { return (Commands.Command)GetValue(AddRepairCommandProperty); }
+			set { SetValue(AddRepairCommandProperty, value); }
 		}
+		public static readonly DependencyProperty AddRepairCommandProperty =
+			DependencyProperty.Register("AddRepairCommand", typeof(Commands.Command), typeof(MachinePartItemVm), new PropertyMetadata(null));
+
 	}
 }

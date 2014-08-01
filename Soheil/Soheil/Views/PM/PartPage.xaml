@@ -8,10 +8,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" x:Name="root"
              d:DesignHeight="200" d:DesignWidth="300">
-    <DockPanel>
-        <TextBlock Text="{Binding ElementName=root, Path=Tag}" DockPanel.Dock="Top" Foreground="{StaticResource NormalBrush}"/>
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		
+		
         <!-- details -->
-		<WrapPanel DockPanel.Dock="Bottom" Panel.ZIndex="10">
+		<WrapPanel Grid.Row="2" Grid.ColumnSpan="2">
 			<Button Command="{Binding DeleteCommand}">
 				<WrapPanel>
 					<Image Style="{StaticResource Delete16Image}"/>
@@ -25,34 +35,10 @@
 				</WrapPanel>
 			</Button>
 		</WrapPanel>
-
-		<Border DockPanel.Dock="Bottom" Panel.ZIndex="5" Background="#455" Padding="5" Visibility="{Binding SelectedItem, Converter={StaticResource isNotNullToVisibility}}">
-			<Border.Effect>
-				<DropShadowEffect Direction="90"/>
-			</Border.Effect>
-            <Expander Header="{Loc txtEdit}">
-                <Grid DataContext="{Binding SelectedItem}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="{Loc txtCode}" Grid.Row="0" Foreground="Silver"/>
-                    <TextBlock Text="{Loc txtName}" Grid.Row="1" Foreground="Silver"/>
-                    <TextBlock Text="{Loc txtDescription}" Grid.Row="2" Foreground="Silver"/>
-                    <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"/>
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
-                    <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" AcceptsReturn="True"/>
-                </Grid>
-            </Expander>
-		</Border>
-
+		
+		
 		<!-- items -->
-		<ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" x:Name="listview">
+		<ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" x:Name="listview" Grid.ColumnSpan="2" Grid.RowSpan="2">
 
 			<!-- View -->
 			<ListView.View>
@@ -78,7 +64,7 @@
 												</BeginStoryboard>
 											</EventTrigger>
 										</Grid.Triggers>
-                                        <Image Style="{StaticResource Add16Image}" ToolTip="{Loc txtInUse}" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding IsAdded, Converter={StaticResource booleanToVisibilityConverter}}"/>
+										<Image Style="{StaticResource Add16Image}" ToolTip="{Loc txtInUse}" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding IsAdded, Converter={StaticResource booleanToVisibilityConverter}}"/>
 										<Button Command="{Binding UseCommand}" x:Name="button" Opacity="0" ToolTip="افزودن به آیتمهای بالا">
 											<Image Style="{StaticResource Add16Image}"/>
 										</Button>
@@ -102,5 +88,31 @@
 				</GridView>
 			</ListView.View>
 		</ListView>
-	</DockPanel>
+
+		<!-- edit -->
+		<Border Grid.Row="1" Grid.Column="1" Visibility="{Binding SelectedItem, Converter={StaticResource isNotNullToVisibility}}">
+			<Border.Effect>
+				<DropShadowEffect Direction="135" BlurRadius="8"/>
+			</Border.Effect>
+			<Expander Header="{Loc txtEdit}">
+				<Grid DataContext="{Binding SelectedItem}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*" MinWidth="100"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					<TextBlock Text="{Loc txtCode}" Grid.Row="0" Foreground="Silver"/>
+					<TextBlock Text="{Loc txtName}" Grid.Row="1" Foreground="Silver"/>
+					<TextBlock Text="{Loc txtDescription}" Grid.Row="2" Foreground="Silver"/>
+					<TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"/>
+					<TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
+					<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" AcceptsReturn="True"/>
+				</Grid>
+			</Expander>
+		</Border>
+	</Grid>
 </UserControl>

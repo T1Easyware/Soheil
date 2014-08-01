@@ -195,8 +195,21 @@ namespace Soheil.Model
 
 		public void UpdateLastDate()
 		{
-			if (this.MaintenanceReports.Any())
-				LastMaintenanceDate = MaintenanceReports.OrderByDescending(x => x.PerformedDate).FirstOrDefault().PerformedDate;
+			var list = this.MaintenanceReports.Where(x => x.PerformedDate.HasValue);
+			if (list.Any())
+				LastMaintenanceDate = list.OrderByDescending(x => x.PerformedDate.Value).FirstOrDefault().PerformedDate;
+		}
+
+		public double DiffDays
+		{
+			get
+			{
+				if (!LastMaintenanceDate.HasValue) return double.NaN;
+				return LastMaintenanceDate.Value
+							.AddDays(PeriodDays)
+							.Subtract(DateTime.Now.Date)
+								.TotalDays;
+			}
 		}
 	}
 	public partial class Maintenance
@@ -214,27 +227,36 @@ namespace Soheil.Model
 			get { return (MaintenanceStatus)this.Status; }
 			set { this.Status = (byte)value; }
 		}
-		public void UpdateStatus()
+		/// <summary>
+		/// Returns the number of days passed since PMDate until PM is preformed (or now if isn't yet)
+		/// </summary>
+		/// <returns></returns>
+		public double UpdateStatus()
 		{
 			var perfenum = (MaintenanceStatus)this.Status;
+			var diff = 0d;
 			if (perfenum == (int)MaintenanceStatus.Inactive)
 			{
 			}
 			else if (perfenum.HasFlag(MaintenanceStatus.Done))
 			{
-				var diff = (MaintenanceDate - PerformedDate).TotalDays;
+				if(!PerformedDate.HasValue) PerformedDate = DateTime.Now.Date;
+				diff = (MaintenanceDate - PerformedDate.Value).TotalDays;
 				if (diff <= -1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Late;
 				else if (diff >= 1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Early;
 				else perfenum = MaintenanceStatus.Done | MaintenanceStatus.OnTime;
 			}
 			else if (perfenum.HasFlag(MaintenanceStatus.NotDone))
 			{
-				var diff = (MaintenanceDate - DateTime.Now).TotalDays;
+				PerformedDate = null;
+				diff = (MaintenanceDate - DateTime.Now.Date).TotalDays;
 				if (diff <= -1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Late;
 				else if (diff >= 1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Early;
 				else perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.OnTime;
+				MachinePartMaintenance.UpdateLastDate();
 			}
 			PerformanceStatus = perfenum;
+			return diff;
 		}
 	}
 

@@ -31,17 +31,20 @@ namespace Soheil.Core.DataServices.PM
 		public System.Collections.ObjectModel.ObservableCollection<Model.MaintenanceReport> GetAll()
 		{
 			return new System.Collections.ObjectModel.ObservableCollection<MaintenanceReport>(
-				_reportRepository.GetAll());
+				_reportRepository.GetAll()
+				.OrderByDescending(x=>x.PerformedDate));
 		}
 
 		public System.Collections.ObjectModel.ObservableCollection<Model.MaintenanceReport> GetActives()
 		{
 			return new System.Collections.ObjectModel.ObservableCollection<MaintenanceReport>(
-				_reportRepository.GetAll());
+				_reportRepository.GetAll()
+				.OrderByDescending(x=>x.PerformedDate));
 		}
 		public IEnumerable<Model.MaintenanceReport> GetActivesForMachine(Machine machineModel)
 		{
-			return _reportRepository.Find(x => x.MachinePartMaintenance.MachinePart.Machine.Id == machineModel.Id);
+			return _reportRepository.Find(x => x.MachinePartMaintenance.MachinePart.Machine.Id == machineModel.Id)
+				.OrderByDescending(x => x.PerformedDate);
 		}
 
 		public IEnumerable<Model.MaintenanceReport> GetActivesForMachinePart(MachinePart machinePartModel)
@@ -71,6 +74,7 @@ namespace Soheil.Core.DataServices.PM
 		{
 			if (_reportRepository.Exists(x => x.Id == model.Id))
 				_reportRepository.Delete(model);
+			else Context.DeleteObject(model);
 			Context.Commit();
 		}
 

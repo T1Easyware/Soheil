@@ -2,12 +2,25 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:common="clr-namespace:Soheil.Common;assembly=Soheil.Common" 
+             xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
+             xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-	<DockPanel>
+             d:DesignHeight="300" d:DesignWidth="700">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		
 		<!-- details -->
-		<Border DockPanel.Dock="Bottom">
+		<Border Grid.Row="2" Grid.ColumnSpan="2">
 			<WrapPanel>
 				<Button Command="{Binding AddCommand}">
 					<WrapPanel>
@@ -25,34 +38,115 @@
 		</Border>
 
 		<!-- items -->
-		<ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
+		<ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" x:Name="listView" Grid.ColumnSpan="2" Grid.RowSpan="2">
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>
-						<GridViewColumn DisplayMemberBinding="{Binding AcquiredDate}">
-							<GridViewColumn.Header>
-								<TextBlock Text="زمان تحویل از تولید" TextWrapping="Wrap" Foreground="Black"/>
-							</GridViewColumn.Header>
+						<GridViewColumn Header="{Loc txtMachine}" DisplayMemberBinding="{Binding MachinePart.Machine.Name}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtMachinePart}" DisplayMemberBinding="{Binding MachinePart.Name}" Width="Auto"/>
+
+						<GridViewColumn Header="{Loc txtRequestDate}" DisplayMemberBinding="{Binding CreatedDateTime, Converter={StaticResource dateTimeToCompactConverter}}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtAcquiredDate}" DisplayMemberBinding="{Binding AcquiredDateTime, Converter={StaticResource dateTimeToCompactConverter}}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtDeliveredDate}" DisplayMemberBinding="{Binding DeliveredDateTime, Converter={StaticResource dateTimeToCompactConverter}}" Width="Auto"/>
+						<GridViewColumn Header="{Loc txtStatus}" Width="30">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Image x:Name="img" Visibility="Visible"/>
+									<DataTemplate.Triggers>
+										<DataTrigger Binding="{Binding RepairStatus}" Value="{x:Static common:RepairStatus.Inactive}">
+											<Setter TargetName="img" Property="Visibility" Value="Collapsed"/>
+										</DataTrigger>
+										<DataTrigger Binding="{Binding RepairStatus}" Value="{x:Static common:RepairStatus.Done}">
+											<Setter TargetName="img" Property="Style" Value="{StaticResource RepairOkImage}"/>
+										</DataTrigger>
+										<DataTrigger Binding="{Binding RepairStatus}" Value="{x:Static common:RepairStatus.NotDone}">
+											<Setter TargetName="img" Property="Style" Value="{StaticResource RepairNotOkImage}"/>
+										</DataTrigger>
+									</DataTemplate.Triggers>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn DisplayMemberBinding="{Binding DeliveredDate}">
-							<GridViewColumn.Header>
-								<TextBlock Text="زمان تحویل به تولید" TextWrapping="Wrap" Foreground="Black"/>
-							</GridViewColumn.Header>
+
+						<GridViewColumn Header="{Loc txtStoppageCause}" Width="Auto">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<Image Style="{StaticResource ReportLink}" ToolTip="{Loc txtStoppageReport}" Visibility="{Binding CauseText, Converter={StaticResource nullToInvisibilityConverter}}"/>
+										<TextBlock Text="{Binding CauseText}"/>
+									</StackPanel>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn DisplayMemberBinding="{Binding Status}">
-							<GridViewColumn.Header>
-								<TextBlock Text="وضعیت تعمیر" TextWrapping="Wrap" Foreground="Black"/>
-							</GridViewColumn.Header>
-						</GridViewColumn>
-						<GridViewColumn DisplayMemberBinding="{Binding Description}">
-							<GridViewColumn.Header>
-								<TextBlock Text="توضیحات" TextWrapping="Wrap" Foreground="Black"/>
-							</GridViewColumn.Header>
+						<GridViewColumn Header="{Loc txtDescription}" Width="Auto">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<Image Style="{StaticResource DocumentInfo16Image}" Visibility="{Binding Description, Converter={StaticResource nullToInvisibilityConverter}}"/>
+										<TextBlock Text="{Binding Description}"/>
+									</StackPanel>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
 					</GridView.Columns>
 				</GridView>
 			</ListView.View>
 		</ListView>
-	</DockPanel>
 
+		<!-- edit -->
+		<Border Grid.Row="1" Grid.Column="1" Visibility="{Binding SelectedItem, Converter={StaticResource isNotNullToVisibility}}">
+			<Border.Effect>
+				<DropShadowEffect Direction="135" BlurRadius="8"/>
+			</Border.Effect>
+			<Expander Header="{Loc txtEdit}" IsExpanded="True">
+				<Grid DataContext="{Binding SelectedItem}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					<TextBlock Text="{Loc txtRequestDate}" Grid.Row="0" Foreground="Silver"/>
+					<TextBlock Text="{Loc txtAcquiredDate}" Grid.Row="1" Foreground="Silver"/>
+					<TextBlock Text="{Loc txtDeliveredDate}" Grid.Row="2" Foreground="Silver"/>
+					<TextBlock Text="{Loc txtStatus}" Grid.Row="3" Foreground="Silver"/>
+					<TextBlock Text="{Loc txtDescription}" Grid.Row="4" Foreground="Silver"/>
+					<UniformGrid Rows="1" Columns="2" Grid.Row="0" Grid.Column="1">
+						<cal:DatePicker DisplayDate="{Binding CreatedDate}" SelectedDate="{Binding CreatedDate}"/>
+						<cc:TimeBox Time="{Binding CreatedTime, Mode=TwoWay}"/>
+					</UniformGrid>
+					<UniformGrid Rows="1" Columns="2" Grid.Row="1" Grid.Column="1">
+						<cal:DatePicker DisplayDate="{Binding AcquiredDate}" SelectedDate="{Binding AcquiredDate}"/>
+						<cc:TimeBox Time="{Binding AcquiredTime, Mode=TwoWay}"/>
+					</UniformGrid>
+					<UniformGrid Rows="1" Columns="2" Grid.Row="2" Grid.Column="1">
+						<cal:DatePicker DisplayDate="{Binding DeliveredDate}" SelectedDate="{Binding DeliveredDate}"/>
+						<cc:TimeBox Time="{Binding DeliveredTime, Mode=TwoWay}"/>
+					</UniformGrid>
+					<UniformGrid Grid.Row="3" Grid.Column="1" Rows="1" Columns="3">
+						<ToggleButton IsChecked="{Binding RepairStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:RepairStatus.Done}}">
+							<WrapPanel>
+								<Image Style="{StaticResource RepairOkImage}"/>
+								<TextBlock Text="{Loc txtDone}"/>
+							</WrapPanel>
+						</ToggleButton>
+						<ToggleButton IsChecked="{Binding RepairStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:RepairStatus.NotDone}}">
+							<WrapPanel>
+								<Image Style="{StaticResource RepairNotOkImage}"/>
+								<TextBlock Text="{Loc txtNotDone}"/>
+							</WrapPanel>
+						</ToggleButton>
+						<ToggleButton Content="{Loc txtInactive}" IsChecked="{Binding RepairStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:RepairStatus.Inactive}}">
+						</ToggleButton>
+					</UniformGrid>
+					<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="4" Grid.Column="1" AcceptsReturn="True"/>
+				</Grid>
+			</Expander>
+		</Border>
+
+	</Grid>
 </UserControl>
