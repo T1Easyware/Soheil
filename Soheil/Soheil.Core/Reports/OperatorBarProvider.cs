@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Linq;
 using Soheil.Common;
 using Soheil.Core.DataServices;
 using Soheil.Core.ViewModels.Reports;
@@ -13,7 +14,7 @@ using Soheil.Core.Virtualizing;
 
 namespace Soheil.Core.Reports
 {
-    public class OperatorBarProvider : IItemsProvider<OperatorBarVm>
+    public class OperatorBarProvider
     {
         private readonly Color _cyan = Color.FromRgb(69, 190, 168);
         private readonly Color _blue = Color.FromRgb(75, 153, 202);
@@ -29,81 +30,69 @@ namespace Soheil.Core.Reports
         private readonly Color _yellowLight = Color.FromRgb(240, 235, 177);
         private readonly Color _nightLight = Color.FromRgb(236, 240, 239);
 
-        private readonly int _count;
         public DateTimeIntervals DateTimeIntervals { get; set; }
 		public Dispatcher Dispatcher { get; set; }
         public double Scale { get; set; }
-        public double ScaleHeight { get; set; }
-        public int MaxValue { get; set; }
-        public int MaxScale { get; set; }
-        public int StepScale { get; set; }
+		public int MaxValue { get; set; }
+		public int MaxScale { get; set; }
         public OperatorBarInfo BarInfo { get; set; }
         public OperatorReportDataService DataService { get; set; }
 
         private readonly Point _startColorPoint = new Point(0,0.5);
         private readonly Point _endColorPoint = new Point(1,0.5);
 
-        public OperatorBarProvider(int count, double pageHeight, DateTimeIntervals dateTimeIntervals, OperatorReportDataService dataService, OperatorBarInfo barInfo)
+        public OperatorBarProvider(DateTimeIntervals dateTimeIntervals, OperatorReportDataService dataService, OperatorBarInfo barInfo)
         {
-            _count = count;
             BarInfo = barInfo;
             DateTimeIntervals = dateTimeIntervals;
             DataService = dataService;
 
-            double max = dataService.GetMax(dateTimeIntervals,barInfo,count);
-            MaxValue = Convert.ToInt32(Math.Ceiling(max));
-
-            int counter = 0;
-            while (max >= 1)
-            {
-                max = max / 10;
-                counter++;
-            }
-            int baseScale = Convert.ToInt32(Math.Floor(max * 10));
-            MaxScale = (int)(baseScale * Math.Pow(10, counter - 1));
-            var baseStep = (int)(Math.Pow(10, counter - 2));
-
-            if (baseScale > 7)
-            {
-                StepScale = 20 * baseStep;
-            }
-            else if (baseScale > 5)
-            {
-                StepScale = 15 * baseStep;
-            }
-            else if (baseScale > 3)
-            {
-                StepScale = 10 * baseStep;
-            }
-            else if (baseScale > 1)
-            {
-                StepScale = 5 * baseStep;
-            }
-            else if (baseScale > 0)
-            {
-                StepScale = 2 * baseStep;
-            }
-            else
-            {
-                StepScale = 2;
-                MaxScale = 10;
-            }
-
-            while (MaxScale < MaxValue)
-            {
-                MaxScale += StepScale;
-            }
-            MaxScale += StepScale;
-
-            Scale = pageHeight / MaxScale;
-            ScaleHeight = StepScale * Scale;
+			//double max = dataService.GetMax(dateTimeIntervals, barInfo);
+			//MaxValue = Convert.ToInt32(Math.Ceiling(max));
+			//MaxScale = GetScale(MaxValue);
+			//scale = windowHeight/maxScale
         }
+		static int[] _scales = new int[]
+		{
+			10,20,50,80,100,200,500,800,1000,1600,2000,2500,3600,5000,7200,8000,10000
+		};
+		public int GetScale(int max)
+		{
+			int divisionsBy10 = 0;
+			while(_scales.Last() <= max)
+			{
+				max /= 10;
+				divisionsBy10++;
+			}
+			var scale = _scales.FirstOrDefault(x => x >= max);
+			return (int)Math.Pow(10, divisionsBy10) * scale;
+		}
+		public IList<OperatorBarInfo> FetchAll()
+		{
+			Thread.Sleep(100);
+			var bars = new List<OperatorBarInfo>();
+			IList<Record> records = DataService.GetAll(DateTimeIntervals, BarInfo);
 
-        public int FetchCount()
-        {
-            Thread.Sleep(1000);
-            return _count;
-        }
+			if (BarInfo.IsCountBase)
+				MaxValue = records.Max(x => (int)x.Data[4]);
+			else 
+				MaxValue = (int)records.Max(x => (float)x.Data[0]);
+			foreach (var record in records)
+			{
+				var currentInfo = new OperatorBarInfo
+				{
+					Id = record.Id,
+					Text = record.Header,
+					StartDate = record.StartDate,
+					EndDate = record.EndDate,
+					Level = BarInfo.Level,
+					Data = record.Data,
+					IsMenuItem = false,
+				};
+				bars.Add(currentInfo);
+			}
+			return bars;
+		}
 
         public IList<OperatorBarVm> FetchRange(int startOperator, int count)
         {

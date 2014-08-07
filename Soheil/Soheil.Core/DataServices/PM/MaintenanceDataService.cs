@@ -152,5 +152,19 @@ namespace Soheil.Core.DataServices.PM
 			}
 			Context.SaveChanges();
 		}
+
+		internal IEnumerable<Model.MachinePartMaintenance> GetAlarms()
+		{
+			var list = _machinePartMaintenanceRepository.Find(x => x.Status == (byte)MaintenanceStatus.NotDone);
+			var returnList = new List<Model.MachinePartMaintenance>();
+			foreach (var mpm in list)
+			{
+				mpm.UpdateLastDate();
+				mpm.UpdateDiffDays();
+				if (mpm.CalculatedDiffDays < 2d)
+					returnList.Add(mpm);
+			}
+			return returnList;
+		}
 	}
 }

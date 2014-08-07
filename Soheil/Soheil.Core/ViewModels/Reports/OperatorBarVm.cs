@@ -54,10 +54,14 @@ namespace Soheil.Core.ViewModels.Reports
             set { SetValue(StoppageValueProperty, value); }
         }
 
-	    public double RemainingValue
-	    {
-	        get { return Value - (ProductionValue + StoppageValue + DefectionValue); }
-	    }
+		public double RemainingValue
+		{
+			get { return Value - (ProductionValue + StoppageValue + DefectionValue); }
+		}
+		public double FillingValue
+		{
+			get { return 1 - Value; }
+		}
 
 
 	    public static readonly DependencyProperty TipProperty =

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 using Soheil.Common;
+using System.Collections.Generic;
 
 namespace Soheil.Core.Reports
 {
@@ -14,5 +15,6 @@ namespace Soheil.Core.Reports
         public LinearGradientBrush Color { get; set; }
         public bool IsMenuItem { get; set; }
         public bool IsCountBase { get; set; }
+		public List<object> Data { get; set; }
     }
 }

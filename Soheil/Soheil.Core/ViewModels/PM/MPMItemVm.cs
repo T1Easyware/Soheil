@@ -26,14 +26,16 @@ namespace Soheil.Core.ViewModels.PM
 				Code = model.Code;
 				Description = model.Description;
 				IsOnDemand = model.IsOnDemand;
-				if (model.LastMaintenanceDate.HasValue)
-					LastDate = model.LastMaintenanceDate.Value;
+				LastDate = model.LastMaintenanceDate;
 				Period = model.PeriodDays;
 				Status = model.RecordStatus;
 
 				Bar = new PMBarVm();
 				if (!model.IsOnDemand)
-					Bar.Update(model.DiffDays);
+				{
+					model.UpdateDiffDays();
+					Bar.Update(model.CalculatedDiffDays);
+				}
 				_isInitialized = true;
 			}
 		}

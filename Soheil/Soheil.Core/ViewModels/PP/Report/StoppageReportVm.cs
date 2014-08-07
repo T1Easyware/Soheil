@@ -97,7 +97,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 					AcquiredDate = DateTime.Now,
 					ModifiedBy = LoginInfo.Id,
 					StoppageReport = Model,
-					RepairStatus = (byte)Common.RepairStatus.NotDone,
+					RepairStatus = (byte)Common.RepairStatus.Reported,
 					Description = "",
 				};
 				AddRepair(repairModel);

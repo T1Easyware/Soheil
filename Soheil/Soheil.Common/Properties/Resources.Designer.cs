@@ -2257,6 +2257,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to گزارش شده.
+        /// </summary>
+        public static string txtReported {
+            get {
+                return ResourceManager.GetString("txtReported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to گزارشات.
         /// </summary>
         public static string txtReports {

@@ -63,7 +63,7 @@ namespace Soheil.Model
         }
         private byte _status = 1;
     
-        public virtual Nullable<System.DateTime> LastMaintenanceDate
+        public virtual System.DateTime LastMaintenanceDate
         {
             get;
             set;

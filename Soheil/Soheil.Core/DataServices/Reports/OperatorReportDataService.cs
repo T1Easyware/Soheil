@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,8 +25,19 @@ namespace Soheil.Core.DataServices
             }
             return new List<Record>();
         }
+		public IList<Record> GetAll(DateTimeIntervals intervalType, OperatorBarInfo barInfo)
+		{
+			switch (barInfo.Level)
+			{
+				case 0:
+					return GetOperatorsEfficiency(barInfo);
+				//case 1:
+				//return GetOperatorProcessReport(barInfo);
+			}
+			return new List<Record>();
+		}
 
-        public double GetMax(DateTimeIntervals intervalType, OperatorBarInfo barInfo, int count)
+        public double GetMax(DateTimeIntervals intervalType, OperatorBarInfo barInfo)
         {
             return GetMaxOperatorEfficiency(barInfo);
         }
@@ -52,6 +62,109 @@ namespace Soheil.Core.DataServices
             }
             return count;
         }
+		private IList<Record> GetOperatorsEfficiency(OperatorBarInfo oprInfo)
+		{
+			IList<Record> records = new List<Record>();
+
+
+			using (var context = new SoheilEdmContext())
+			{
+				var operatorRepository = new Repository<Operator>(context);
+				var oList = operatorRepository.GetAll();
+
+				var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
+				var oprList = operatorProcessReportRepository.Find(x => x != null
+					&& x.ProcessOperator != null && x.ProcessOperator.Operator != null
+					&& x.ProcessReport != null && x.ProcessReport.Process != null && x.ProcessReport.Process.StateStationActivity != null);
+
+				var osrRepository = new Repository<OperatorStoppageReport>(context);
+				var osrList = osrRepository.Find(x => x != null
+					&& x.StoppageReport != null && x.StoppageReport.ProcessReport != null
+					&& x.Operator != null);
+
+				var odrRepository = new Repository<OperatorDefectionReport>(context);
+				var odrList = odrRepository.Find(x => x != null
+					&& x.DefectionReport != null && x.DefectionReport.ProcessReport != null
+					&& x.Operator != null);
+
+				var workProfilePlanDs = new DataServices.WorkProfilePlanDataService(context);
+				var start = workProfilePlanDs.GetShiftStartAt(oprInfo.StartDate);
+				var end = workProfilePlanDs.GetShiftStartAt(oprInfo.EndDate);
+
+				var oprQuery = from opr in oprList
+							   group opr by opr.ProcessOperator.Operator.Id into og
+							   select new
+							   {
+								   operatorId = og.Key,
+								   productionCount = og.Any() ? og.Sum(x => x.OperatorProducedG1) : 0,
+								   productionTime = og.Any() ? og.Sum(x => x.OperatorProducedG1 * x.ProcessReport.Process.StateStationActivity.CycleTime) : 0,
+								   targetCount = og.Any() ? og.Sum(x => x.ProcessReport.ProcessReportTargetPoint / x.ProcessReport.OperatorProcessReports.Count) : 0,
+								   targetTime = og.Any() ? og.Sum(x => x.ProcessReport.ProcessReportTargetPoint * x.ProcessReport.Process.StateStationActivity.CycleTime / x.ProcessReport.OperatorProcessReports.Count) : 0,
+							   };
+
+				var osrQuery = from osr in osrList
+							   where osr.StoppageReport.ProcessReport.Process.ProcessOperators.Any(o => o.Operator.Id == osr.Operator.Id)
+							   group osr by osr.Operator.Id into og
+							   select new
+							   {
+								  operatorId = og.Key,
+								  stoppageTime = og.Any() ? og.Sum(x => x.StoppageReport.TimeEquivalence / x.StoppageReport.OperatorStoppageReports.Count) : 0,
+								  stoppageCount = og.Any() ? og.Sum(x => x.StoppageReport.CountEquivalence / x.StoppageReport.OperatorStoppageReports.Count) : 0,
+							   };
+
+				var odrQuery = from odr in odrList
+							   where odr.DefectionReport.ProcessReport.Process.ProcessOperators.Any(o => o.Operator.Id == odr.Operator.Id)
+							   group odr by odr.Operator.Id into og
+							   select new
+							   {
+								  operatorId = og.Key,
+								  defectionTime = og.Any() ? og.Sum(x => x.DefectionReport.TimeEquivalence / x.DefectionReport.OperatorDefectionReports.Count) : 0,
+								  defectionCount = og.Any() ? og.Sum(x => x.DefectionReport.CountEquivalence / x.DefectionReport.OperatorDefectionReports.Count) : 0,
+							   };
+
+				var query = from o in oList
+							join opr in oprQuery on o.Id equals opr.operatorId
+							join osr in osrQuery on o.Id equals osr.operatorId
+							join odr in odrQuery on o.Id equals odr.operatorId
+							select new
+							{
+								o.Name,
+								opr.operatorId,
+								opr.targetTime,
+								opr.targetCount,
+								opr.productionTime,
+								opr.productionCount,
+								osr.stoppageTime,
+								osr.stoppageCount,
+								odr.defectionTime,
+								odr.defectionCount,
+							};
+
+				var newRecord = new Record();
+				newRecord.Data = new List<object>(8) { 0, 0, 0, 0, 0, 0, 0, 0 };
+				foreach (var line in query)
+				{
+						newRecord.Id = line.operatorId;
+						newRecord.Data = new List<object>
+                        {
+                            line.targetTime,
+                            line.productionTime,
+                            line.defectionTime,
+                            line.stoppageTime,
+                            line.targetCount,
+                            line.productionCount,
+                            line.defectionCount,
+                            line.stoppageCount
+                        };
+
+						newRecord.StartDate = start;
+						newRecord.EndDate = end;
+						newRecord.Header = line.Name;
+				}
+				records.Add(newRecord);
+			}
+			return records;
+		}
 
         private IList<Record> GetOperatorsEfficiency(OperatorBarInfo oprInfo, int startIndex, int count)
         {

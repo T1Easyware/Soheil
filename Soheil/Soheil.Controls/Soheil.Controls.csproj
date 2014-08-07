@@ -136,9 +136,6 @@
     <Compile Include="CustomControls\OverlayMessageBox.xaml.cs">
       <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomControls\StartPage.xaml.cs">
-      <DependentUpon>StartPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CustomControls\TimeBox.cs" />
     <Compile Include="DataGridRowDeleting.cs" />
     <Compile Include="DataGridTextSearch.cs" />
@@ -174,10 +171,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="CustomControls\StartPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Layout\Converters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -608,6 +601,33 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Menus\SkillCenter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\StartPage\StartPage.png" />
+    <Resource Include="Images\StartPage\StartPageButtonDown.png" />
+    <Resource Include="Images\StartPage\StartPageButtonOver.png" />
+    <Resource Include="Images\StartPage\StartPage_i1.png" />
+    <Resource Include="Images\StartPage\StartPage_i2.png" />
+    <Resource Include="Images\StartPage\StartPage_i3.png" />
+    <Resource Include="Images\StartPage\StartPage_i4.png" />
+    <Resource Include="Images\StartPage\StartPage_i5.png" />
+    <Resource Include="Images\StartPage\StartPage_t1.png" />
+    <Resource Include="Images\StartPage\StartPage_t2.png" />
+    <Resource Include="Images\StartPage\StartPage_t3.png" />
+    <Resource Include="Images\StartPage\StartPage_t4.png" />
+    <Resource Include="Images\StartPage\StartPage_t5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\StartPage\StartPageLines.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\StartPage\StartPageSefam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\notification.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PMRepairReported16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

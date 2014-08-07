@@ -78,9 +78,9 @@ namespace Soheil
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
 
-			//if (Environment.UserName == "Bizhan" || Environment.UserName == "Bizz" || Environment.UserName=="Soheil1")
+			//if (Keyboard.GetKeyStates(Key.LeftCtrl) == KeyStates.Down)
 			{
-				SingularList = new Core.ViewModels.PM.PmVm(AccessType.Full);
+				SingularList = new Core.ViewModels.Reports.OperationReportsVm(AccessType.Full);
 				chrometabs.AddTab(CreateSingularTab(SoheilEntityType.PM), true);
 			}
 		}
@@ -90,10 +90,10 @@ namespace Soheil
 
         private void HandleAddTabAndSelect(object sender, RoutedEventArgs e)
         {
-            string code = Convert.ToString(((Control)e.Source).Tag);
+            string code = Convert.ToString(((Control)sender).Tag);
             var accessItem = AccessList.FirstOrDefault(item => item.Item1 == code);
             var access = accessItem == null ? AccessType.None : accessItem.Item2;
-            var type = (SoheilEntityType)Convert.ToInt32(((Control)e.Source).Tag);
+			var type = (SoheilEntityType)Convert.ToInt32(((Control)sender).Tag);
 
             foreach (ChromeTabItem item in chrometabs.Items)
             {

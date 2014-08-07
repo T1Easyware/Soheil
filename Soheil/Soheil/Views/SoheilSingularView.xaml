@@ -2640,18 +2640,13 @@
                         <DockPanel>
                             <WrapPanel Height="25" DockPanel.Dock="Left">
                                 <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtStartDate}" />
-                                <cal:DatePicker Margin="5,0,5,0" SelectedDate="{Binding StartDate}" SelectedDateChanged="OnDateChanged"/>
+                                <cal:DatePicker Margin="5,0,5,0" SelectedDate="{Binding StartDate}"/>
                                 <TextBlock Margin="25,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtEndDate}" />
-                                <cal:DatePicker Margin="5,0,5,0" SelectedDate="{Binding EndDate}" SelectedDateChanged="OnDateChanged"/>
+                                <cal:DatePicker Margin="5,0,5,0" SelectedDate="{Binding EndDate}"/>
                                 <TextBlock Margin="25,2,5,0" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtIndexType}" />
-                                <ComboBox Margin="5,0,5,0" ItemsSource="{Binding Source={StaticResource OETypes}}" SelectedValue="{Binding Path=CurrentType}">
-                                    <I:Interaction.Triggers>
-                                        <I:EventTrigger EventName="SelectionChanged">
-                                            <I:InvokeCommandAction Command="{Binding RefreshCommand}"/>
-                                        </I:EventTrigger>
-                                    </I:Interaction.Triggers>
-                                </ComboBox>
-                            </WrapPanel>
+								<ComboBox Margin="5,0,5,0" ItemsSource="{Binding Source={StaticResource OETypes}}" SelectedValue="{Binding Path=CurrentType}"/>
+								<Button Content="{Loc txtRefresh}" Command="{Binding RefreshCommand}"/>
+							</WrapPanel>
                             <WrapPanel DockPanel.Dock="Right">
                                 <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtProductionValue}" />
                                 <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l1Brush}"/>
@@ -2738,7 +2733,7 @@
                                                     </Grid.RowDefinitions>
                                                     <TextBlock HorizontalAlignment="Center" Text="{Binding Tip}" Foreground="{StaticResource TextBrush}" Grid.Row="1" Margin="1"/>
                                                     <StackPanel Grid.Row="2"  >
-                                                        <ItemsControl x:Name="indexBtns" Height="0" HorizontalAlignment="Center"
+                                                        <!--<ItemsControl x:Name="indexBtns" Height="0" HorizontalAlignment="Center"
                                                                       ItemsSource="{Binding MenuItems}">
                                                             <ItemsControl.ItemTemplate>
                                                                 <DataTemplate>
@@ -2754,7 +2749,7 @@
                                                                     <StackPanel Orientation="Horizontal"/>
                                                                 </ItemsPanelTemplate>
                                                             </ItemsControl.ItemsPanel>
-                                                        </ItemsControl>
+                                                        </ItemsControl>-->
                                                         <ToggleButton x:Name="_bar" 
                                                                       Style="{StaticResource SimpleBar}" 
                                                                       Height="0" >
@@ -2770,22 +2765,23 @@
                                                                                 <ColumnDefinition Width="15"/>
                                                                             </Grid.ColumnDefinitions>
                                                                             <Grid.RowDefinitions>
-                                                                                <RowDefinition Height="{Binding RemainingValue, Converter={StaticResource portionToStarConverter}}"/>
+																				<RowDefinition Height="{Binding FillingValue, Converter={StaticResource portionToStarConverter}}"/>
+																				<RowDefinition Height="{Binding RemainingValue, Converter={StaticResource portionToStarConverter}}"/>
                                                                                 <RowDefinition Height="{Binding StoppageValue, Converter={StaticResource portionToStarConverter}}"/>
                                                                                 <RowDefinition Height="{Binding DefectionValue, Converter={StaticResource portionToStarConverter}}"/>
                                                                                 <RowDefinition Height="{Binding ProductionValue, Converter={StaticResource portionToStarConverter}}"/>
                                                                             </Grid.RowDefinitions>
-                                                                            <Rectangle x:Name="Color0" Height="Auto" Fill="{StaticResource l0Brush}" Grid.Column="0" Grid.Row="0"/>
-                                                                            <Rectangle x:Name="Bar0" Height="Auto" Fill="{StaticResource e0Brush}" Grid.Column="1" Grid.Row="0"/>
+                                                                            <Rectangle x:Name="Color0" Height="Auto" Fill="{StaticResource l0Brush}" Grid.Column="0" Grid.Row="1"/>
+                                                                            <Rectangle x:Name="Bar0" Height="Auto" Fill="{StaticResource e0Brush}" Grid.Column="1" Grid.Row="1"/>
                                                                             <TextBlock x:Name="Color3" Height="Auto" Background="{StaticResource l3Brush}" Text="{Binding StoppageTip}" 
-                                                                                       TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="1"/>
-                                                                            <Rectangle x:Name="Bar3" Height="Auto" Fill="{StaticResource e3Brush}" Grid.Column="1" Grid.Row="1"/>
-                                                                            <TextBlock x:Name="Color2" Height="Auto" Background="{StaticResource l2Brush}" Text="{Binding DefectionTip}" 
                                                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="2"/>
-                                                                            <Rectangle x:Name="Bar2" Height="Auto" Fill="{StaticResource e2Brush}" Grid.Column="1" Grid.Row="2"/>
-                                                                            <TextBlock x:Name="Color1" Height="Auto" Background="{StaticResource l1Brush}" Text="{Binding ProductionTip}" 
+                                                                            <Rectangle x:Name="Bar3" Height="Auto" Fill="{StaticResource e3Brush}" Grid.Column="1" Grid.Row="2"/>
+                                                                            <TextBlock x:Name="Color2" Height="Auto" Background="{StaticResource l2Brush}" Text="{Binding DefectionTip}" 
                                                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="3"/>
-                                                                            <Rectangle x:Name="Bar1" Height="Auto" Fill="{StaticResource e1Brush}" Grid.Column="1" Grid.Row="3"/>
+                                                                            <Rectangle x:Name="Bar2" Height="Auto" Fill="{StaticResource e2Brush}" Grid.Column="1" Grid.Row="3"/>
+                                                                            <TextBlock x:Name="Color1" Height="Auto" Background="{StaticResource l1Brush}" Text="{Binding ProductionTip}" 
+                                                                                       TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="4"/>
+                                                                            <Rectangle x:Name="Bar1" Height="Auto" Fill="{StaticResource e1Brush}" Grid.Column="1" Grid.Row="4"/>
                                                                         </Grid>
                                                                         <Grid x:Name="Shade" Background="White" Opacity="0">
                                                                             <Grid.Effect>

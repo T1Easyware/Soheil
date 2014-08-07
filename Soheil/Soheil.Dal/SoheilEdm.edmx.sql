@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 07/28/2014 21:25:07
+-- Date Created: 08/04/2014 17:53:54
 -- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -1392,7 +1392,7 @@ CREATE TABLE [dbo].[MachinePartMaintenances] (
     [ModifiedBy] int  NOT NULL,
     [ModifiedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
-    [LastMaintenanceDate] datetime  NULL,
+    [LastMaintenanceDate] datetime  NOT NULL,
     [Code] nvarchar(max)  NOT NULL,
     [Maintenance_Id] int  NOT NULL,
     [MachinePart_Id] int  NOT NULL

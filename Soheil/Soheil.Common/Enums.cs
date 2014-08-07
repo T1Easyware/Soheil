@@ -36,9 +36,22 @@ namespace Soheil.Common
 
 	public enum RepairStatus
 	{
+		/// <summary>
+		/// Repair Request is disabled
+		/// </summary>
 		Inactive = 0,
-		NotDone = 1,
-		Done = 2,
+		/// <summary>
+		/// Repair Request is reported but not yet delivered
+		/// </summary>
+		Reported = 1,
+		/// <summary>
+		/// Repair Request is delivered but not yet completed
+		/// </summary>
+		NotDone = 2,
+		/// <summary>
+		/// Repair Request is completed
+		/// </summary>
+		Done = 3,
 	}
 
     [TypeConverter(typeof(LocalizedEnumConverter))]
@@ -367,4 +380,20 @@ namespace Soheil.Common
         Waste,
         SecondGrade
     }
+
+	public enum NotificationType
+	{
+		/// <summary>
+		/// Late, Error, High priority
+		/// </summary>
+		Critical,
+		/// <summary>
+		/// OnTime, Warning, Low priority
+		/// </summary>
+		Alarm,
+		/// <summary>
+		/// Early, Information, No priority
+		/// </summary>
+		Info
+	}
 }

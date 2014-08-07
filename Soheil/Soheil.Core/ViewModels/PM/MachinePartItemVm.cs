@@ -37,8 +37,8 @@ namespace Soheil.Core.ViewModels.PM
 				if (model != null)
 					Task.Run(() =>
 					{
-						var mins = model.MachinePartMaintenances.Where(x => x.LastMaintenanceDate.HasValue && !x.IsOnDemand);
-						var min = mins.Any() ? mins.Min(x => (x.LastMaintenanceDate.Value.AddDays(x.PeriodDays) - DateTime.Now).TotalDays) : double.NaN;
+						var mins = model.MachinePartMaintenances.Where(x => !x.IsOnDemand);
+						var min = mins.Any() ? mins.Min(x => (x.LastMaintenanceDate.AddDays(x.PeriodDays) - DateTime.Now).TotalDays) : double.NaN;
 						//safely update progress bar
 						Dispatcher.Invoke(new Action<double>(perc =>
 						{

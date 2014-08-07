@@ -197,19 +197,25 @@ namespace Soheil.Model
 		{
 			var list = this.MaintenanceReports.Where(x => x.PerformedDate.HasValue);
 			if (list.Any())
-				LastMaintenanceDate = list.OrderByDescending(x => x.PerformedDate.Value).FirstOrDefault().PerformedDate;
+				LastMaintenanceDate = list.OrderByDescending(x => x.PerformedDate.Value).FirstOrDefault().PerformedDate.Value;
 		}
 
-		public double DiffDays
+		/// <summary>
+		/// NaN if first record
+		/// <para>+ if maintenance date is yet to come</para>
+		/// <para>0 if today is maintenance date</para>
+		/// <para>- if already late</para>
+		/// </summary>
+		public double CalculatedDiffDays { get; private set; }
+		/// <summary>
+		/// Updates CalculatedDiffDays (to use CalculatedDiffDays you must first call this method)
+		/// </summary>
+		public void UpdateDiffDays()
 		{
-			get
-			{
-				if (!LastMaintenanceDate.HasValue) return double.NaN;
-				return LastMaintenanceDate.Value
-							.AddDays(PeriodDays)
-							.Subtract(DateTime.Now.Date)
-								.TotalDays;
-			}
+			CalculatedDiffDays = LastMaintenanceDate
+						.AddDays(PeriodDays)
+						.Subtract(DateTime.Now.Date)
+							.TotalDays;
 		}
 	}
 	public partial class Maintenance

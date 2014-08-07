@@ -1083,4 +1083,8 @@
   <data name="txtViewRepairs" xml:space="preserve">
     <value>مشاهده درخواست های تعمیرات</value>
   </data>
+  <data name="txtReported" xml:space="preserve">
+    <value>گزارش شده</value>
+    <comment>repair</comment>
+  </data>
 </root>

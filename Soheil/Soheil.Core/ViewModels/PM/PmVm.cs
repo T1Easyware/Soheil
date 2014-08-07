@@ -672,7 +672,7 @@ namespace Soheil.Core.ViewModels.PM
                             MachinePart = machinePartVm.Model,
                             IsOnDemand = false,
                             PeriodDays = 30,
-                            LastMaintenanceDate = DateTime.Now.Date,
+                            LastMaintenanceDate = DateTime.Now.Date.AddDays(-30),
                             Description = "",
                             Code = maintenanceVm.Code + "." + machinePartVm.Model.Code,
                             ModifiedBy = LoginInfo.Id,

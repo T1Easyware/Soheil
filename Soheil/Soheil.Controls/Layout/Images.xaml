@@ -375,6 +375,11 @@
 		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
+	<Style x:Key="RepairReportedImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepairReported16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
 	<Style x:Key="ReportLink" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/report_link.png"/>
 		<Setter Property="FlowDirection" Value="LeftToRight"/>

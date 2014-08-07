@@ -1328,7 +1328,7 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
-    <Property Name="LastMaintenanceDate" Type="datetime" Nullable="true" />
+    <Property Name="LastMaintenanceDate" Type="datetime" Nullable="false" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Maintenance_Id" Type="int" Nullable="false" />
     <Property Name="MachinePart_Id" Type="int" Nullable="false" />
@@ -4486,7 +4486,7 @@
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Status" Type="Byte" Nullable="false" DefaultValue="1" />
-          <Property Name="LastMaintenanceDate" Type="DateTime" Nullable="true" />
+          <Property Name="LastMaintenanceDate" Type="DateTime" Nullable="false" />
           <Property Name="Code" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="MaintenanceReport">

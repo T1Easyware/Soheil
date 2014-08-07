@@ -67,6 +67,10 @@
     <Compile Include="DataServices\PM\MachinePartDataService.cs" />
     <Compile Include="DataServices\PM\RepairDataService.cs" />
     <Compile Include="DataServices\PM\ReportDataService.cs" />
+    <Compile Include="ViewModels\MessageCenter\NotificationArea.cs" />
+    <Compile Include="ViewModels\MessageCenter\NotificationVm.cs" />
+    <Compile Include="ViewModels\MessageCenter\PMVm.cs" />
+    <Compile Include="ViewModels\MessageCenter\RepairVm.cs" />
     <Compile Include="ViewModels\PM\MachineItemVm.cs" />
     <Compile Include="ViewModels\PM\MachinePartItemVm.cs" />
     <Compile Include="ViewModels\PM\MaintenanceItemVm.cs" />

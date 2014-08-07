@@ -59,6 +59,9 @@
 										<DataTrigger Binding="{Binding RepairStatus}" Value="{x:Static common:RepairStatus.Done}">
 											<Setter TargetName="img" Property="Style" Value="{StaticResource RepairOkImage}"/>
 										</DataTrigger>
+										<DataTrigger Binding="{Binding RepairStatus}" Value="{x:Static common:RepairStatus.Reported}">
+											<Setter TargetName="img" Property="Style" Value="{StaticResource RepairReportedImage}"/>
+										</DataTrigger>
 										<DataTrigger Binding="{Binding RepairStatus}" Value="{x:Static common:RepairStatus.NotDone}">
 											<Setter TargetName="img" Property="Style" Value="{StaticResource RepairNotOkImage}"/>
 										</DataTrigger>
@@ -127,17 +130,23 @@
 						<cal:DatePicker DisplayDate="{Binding DeliveredDate}" SelectedDate="{Binding DeliveredDate}"/>
 						<cc:TimeBox Time="{Binding DeliveredTime, Mode=TwoWay}"/>
 					</UniformGrid>
-					<UniformGrid Grid.Row="3" Grid.Column="1" Rows="1" Columns="3">
-						<ToggleButton IsChecked="{Binding RepairStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:RepairStatus.Done}}">
+					<UniformGrid Grid.Row="3" Grid.Column="1" Rows="1" Columns="4">
+						<ToggleButton IsChecked="{Binding RepairStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:RepairStatus.Reported}}">
 							<WrapPanel>
-								<Image Style="{StaticResource RepairOkImage}"/>
-								<TextBlock Text="{Loc txtDone}"/>
+								<Image Style="{StaticResource RepairReportedImage}"/>
+								<TextBlock Text="{Loc txtReported}"/>
 							</WrapPanel>
 						</ToggleButton>
 						<ToggleButton IsChecked="{Binding RepairStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:RepairStatus.NotDone}}">
 							<WrapPanel>
 								<Image Style="{StaticResource RepairNotOkImage}"/>
 								<TextBlock Text="{Loc txtNotDone}"/>
+							</WrapPanel>
+						</ToggleButton>
+						<ToggleButton IsChecked="{Binding RepairStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:RepairStatus.Done}}">
+							<WrapPanel>
+								<Image Style="{StaticResource RepairOkImage}"/>
+								<TextBlock Text="{Loc txtDone}"/>
 							</WrapPanel>
 						</ToggleButton>
 						<ToggleButton Content="{Loc txtInactive}" IsChecked="{Binding RepairStatus, Converter={StaticResource isEqual}, ConverterParameter={x:Static common:RepairStatus.Inactive}}">

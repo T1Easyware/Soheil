@@ -1078,4 +1078,7 @@
   <data name="txtViewRepairs" xml:space="preserve">
     <value>View Repair Requests</value>
   </data>
+  <data name="txtReported" xml:space="preserve">
+    <value>Reported</value>
+  </data>
 </root>

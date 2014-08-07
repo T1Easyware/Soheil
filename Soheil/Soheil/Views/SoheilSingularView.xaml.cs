@@ -359,10 +359,6 @@ namespace Soheil.Views
         {
            
         }
-        private void OnDateChanged(object sender, RoutedEventArgs e)
-        {
-            ((OperationReportsVm)ViewModel).InitializeProviders(null);
-        }
 
         //private void OnEndDateChanged(object sender, RoutedEventArgs e)
         //{
