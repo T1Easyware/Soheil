@@ -69,27 +69,31 @@ namespace Soheil.Core.DataServices
 
 			using (var context = new SoheilEdmContext())
 			{
+				var workProfilePlanDs = new DataServices.WorkProfilePlanDataService(context);
+				var start = workProfilePlanDs.GetShiftStartAt(oprInfo.StartDate);
+				var end = workProfilePlanDs.GetShiftStartAt(oprInfo.EndDate);
+				
 				var operatorRepository = new Repository<Operator>(context);
 				var oList = operatorRepository.GetAll();
 
 				var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
 				var oprList = operatorProcessReportRepository.Find(x => x != null
 					&& x.ProcessOperator != null && x.ProcessOperator.Operator != null
-					&& x.ProcessReport != null && x.ProcessReport.Process != null && x.ProcessReport.Process.StateStationActivity != null);
+					&& x.ProcessReport != null && x.ProcessReport.StartDateTime>=start && x.ProcessReport.EndDateTime <=end
+					&& x.ProcessReport.Process != null && x.ProcessReport.Process.StateStationActivity != null);
 
 				var osrRepository = new Repository<OperatorStoppageReport>(context);
 				var osrList = osrRepository.Find(x => x != null
 					&& x.StoppageReport != null && x.StoppageReport.ProcessReport != null
+					&& x.StoppageReport.ProcessReport.StartDateTime>=start && x.StoppageReport.ProcessReport.EndDateTime <=end
 					&& x.Operator != null);
 
 				var odrRepository = new Repository<OperatorDefectionReport>(context);
 				var odrList = odrRepository.Find(x => x != null
 					&& x.DefectionReport != null && x.DefectionReport.ProcessReport != null
+					&& x.DefectionReport.ProcessReport.StartDateTime>=start && x.DefectionReport.ProcessReport.EndDateTime <=end
 					&& x.Operator != null);
 
-				var workProfilePlanDs = new DataServices.WorkProfilePlanDataService(context);
-				var start = workProfilePlanDs.GetShiftStartAt(oprInfo.StartDate);
-				var end = workProfilePlanDs.GetShiftStartAt(oprInfo.EndDate);
 
 				var oprQuery = from opr in oprList
 							   group opr by opr.ProcessOperator.Operator.Id into og
@@ -107,9 +111,9 @@ namespace Soheil.Core.DataServices
 							   group osr by osr.Operator.Id into og
 							   select new
 							   {
-								  operatorId = og.Key,
-								  stoppageTime = og.Any() ? og.Sum(x => x.StoppageReport.TimeEquivalence / x.StoppageReport.OperatorStoppageReports.Count) : 0,
-								  stoppageCount = og.Any() ? og.Sum(x => x.StoppageReport.CountEquivalence / x.StoppageReport.OperatorStoppageReports.Count) : 0,
+								   operatorId = og.Key,
+								   stoppageTime = og.Any() ? og.Sum(x => x.StoppageReport.TimeEquivalence / x.StoppageReport.OperatorStoppageReports.Count) : 0,
+								   stoppageCount = og.Any() ? og.Sum(x => x.StoppageReport.CountEquivalence / x.StoppageReport.OperatorStoppageReports.Count) : 0,
 							   };
 
 				var odrQuery = from odr in odrList
@@ -117,35 +121,38 @@ namespace Soheil.Core.DataServices
 							   group odr by odr.Operator.Id into og
 							   select new
 							   {
-								  operatorId = og.Key,
-								  defectionTime = og.Any() ? og.Sum(x => x.DefectionReport.TimeEquivalence / x.DefectionReport.OperatorDefectionReports.Count) : 0,
-								  defectionCount = og.Any() ? og.Sum(x => x.DefectionReport.CountEquivalence / x.DefectionReport.OperatorDefectionReports.Count) : 0,
+								   operatorId = og.Key,
+								   defectionTime = og.Any() ? og.Sum(x => x.DefectionReport.TimeEquivalence / x.DefectionReport.OperatorDefectionReports.Count) : 0,
+								   defectionCount = og.Any() ? og.Sum(x => x.DefectionReport.CountEquivalence / x.DefectionReport.OperatorDefectionReports.Count) : 0,
 							   };
 
-				var query = from o in oList
-							join opr in oprQuery on o.Id equals opr.operatorId
-							join osr in osrQuery on o.Id equals osr.operatorId
-							join odr in odrQuery on o.Id equals odr.operatorId
-							select new
-							{
-								o.Name,
-								opr.operatorId,
-								opr.targetTime,
-								opr.targetCount,
-								opr.productionTime,
-								opr.productionCount,
-								osr.stoppageTime,
-								osr.stoppageCount,
-								odr.defectionTime,
-								odr.defectionCount,
-							};
+				var oQuery = from o in oList
+							 join opr in oprQuery on o.Id equals opr.operatorId into oprg 
+							 join osr in osrQuery on o.Id equals osr.operatorId into osrg 
+							 join odr in odrQuery on o.Id equals odr.operatorId into odrg
+							 from oprgi in oprg.DefaultIfEmpty()
+							 from osrgi in osrg.DefaultIfEmpty()
+							 from odrgi in odrg.DefaultIfEmpty()
+							 select new
+							 {
+								 o.Id,
+								 o.Name,
+								 targetTime = oprgi == null ? 0f : oprgi.targetTime,
+								 targetCount = oprgi == null ? 0 : oprgi.targetCount,
+								 productionTime = oprgi == null ? 0f : oprgi.productionTime,
+								 productionCount = oprgi == null ? 0 : oprgi.productionCount,
+								 stoppageTime = osrgi == null ? 0f : osrgi.stoppageTime,
+								 stoppageCount = osrgi == null ? 0 : (int)osrgi.stoppageCount,
+								 defectionTime = odrgi == null ? 0f : odrgi.defectionTime,
+								 defectionCount = odrgi == null ? 0 : (int)odrgi.defectionCount,
+							 };
 
-				var newRecord = new Record();
-				newRecord.Data = new List<object>(8) { 0, 0, 0, 0, 0, 0, 0, 0 };
-				foreach (var line in query)
+				foreach (var line in oQuery)
 				{
-						newRecord.Id = line.operatorId;
-						newRecord.Data = new List<object>
+					var newRecord = new Record();
+					newRecord.Data = new List<object>(8) { 0f, 0f, 0f, 0f, 0, 0, 0, 0 };
+					newRecord.Id = line.Id;
+					newRecord.Data = new List<object>
                         {
                             line.targetTime,
                             line.productionTime,
@@ -157,11 +164,11 @@ namespace Soheil.Core.DataServices
                             line.stoppageCount
                         };
 
-						newRecord.StartDate = start;
-						newRecord.EndDate = end;
-						newRecord.Header = line.Name;
+					newRecord.StartDate = start;
+					newRecord.EndDate = end;
+					newRecord.Header = line.Name;
+					records.Add(newRecord);
 				}
-				records.Add(newRecord);
 			}
 			return records;
 		}

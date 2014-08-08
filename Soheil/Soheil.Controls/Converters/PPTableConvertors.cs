@@ -303,7 +303,9 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return new GridLength(System.Convert.ToDouble(value), GridUnitType.Star);
+			var val = System.Convert.ToDouble(value);
+			if (double.IsNaN(val)) return new GridLength(1, GridUnitType.Star);
+			return new GridLength(val, GridUnitType.Star);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

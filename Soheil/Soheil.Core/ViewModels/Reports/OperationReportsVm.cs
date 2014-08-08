@@ -220,6 +220,7 @@ namespace Soheil.Core.ViewModels.Reports
 		}
 		void AddBars()
 		{
+			Bars.Clear();
 			foreach (var barInfo in _barInfos)
 			{
 				var bar = new OperatorBarVm

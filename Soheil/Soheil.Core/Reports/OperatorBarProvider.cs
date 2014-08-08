@@ -72,6 +72,7 @@ namespace Soheil.Core.Reports
 			Thread.Sleep(100);
 			var bars = new List<OperatorBarInfo>();
 			IList<Record> records = DataService.GetAll(DateTimeIntervals, BarInfo);
+			if (!records.Any()) return bars;
 
 			if (BarInfo.IsCountBase)
 				MaxValue = records.Max(x => (int)x.Data[4]);
