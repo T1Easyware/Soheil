@@ -296,6 +296,20 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class VisibilityInverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if ((Visibility)value == Visibility.Visible) return Visibility.Collapsed;
+			return Visibility.Visible;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 	#endregion
 
 	#region PP coordinations
@@ -304,7 +318,7 @@ namespace Soheil.Controls.Converters.PP
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			var val = System.Convert.ToDouble(value);
-			if (double.IsNaN(val)) return new GridLength(1, GridUnitType.Star);
+			if (double.IsNaN(val)) return new GridLength(0d);
 			return new GridLength(val, GridUnitType.Star);
 		}
 

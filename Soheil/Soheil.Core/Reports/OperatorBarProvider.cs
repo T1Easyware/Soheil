@@ -35,6 +35,8 @@ namespace Soheil.Core.Reports
         public double Scale { get; set; }
 		public int MaxValue { get; set; }
 		public int MaxScale { get; set; }
+		public double ScaleHeight { get; set; }
+		public int StepScale { get; set; }
         public OperatorBarInfo BarInfo { get; set; }
         public OperatorReportDataService DataService { get; set; }
 
@@ -54,17 +56,70 @@ namespace Soheil.Core.Reports
         }
 		static int[] _scales = new int[]
 		{
-			10,20,50,80,100,200,500,800,1000,1600,2000,2500,3600,5000,7200,8000,10000
+			1,2,5,10,20,50,80,100,150,200,400,500,750,1000,1250,1500,2000,2500,3000,4000,5000,6000,7500,8000,10000
 		};
-		public int GetScale(int max)
+		public int GetMaxScale()
 		{
+			/*int counter = 0;
+			var max = MaxValue;
+			while (max >= 1)
+			{
+				max = max / 10;
+				counter++;
+			}
+			int baseScale = Convert.ToInt32(Math.Floor(max * 10d));
+			MaxScale = (int)(baseScale * Math.Pow(10, counter - 1));
+			var baseStep = (int)(Math.Pow(10, counter - 2));
+
+			if (baseScale > 7)
+			{
+				StepScale = 20 * baseStep;
+			}
+			else if (baseScale > 5)
+			{
+				StepScale = 15 * baseStep;
+			}
+			else if (baseScale > 3)
+			{
+				StepScale = 10 * baseStep;
+			}
+			else if (baseScale > 1)
+			{
+				StepScale = 5 * baseStep;
+			}
+			else if (baseScale > 0)
+			{
+				StepScale = 2 * baseStep;
+			}
+			else
+			{
+				StepScale = 2;
+				MaxScale = 10;
+			}
+
+			while (MaxScale < MaxValue)
+			{
+				MaxScale += StepScale;
+			}
+			MaxScale += StepScale;
+
+			Scale = 1 / MaxScale;
+			ScaleHeight = StepScale * Scale;
+
+			*/
+
 			int divisionsBy10 = 0;
+			int max = MaxValue;
+			if (BarInfo.CurrentType != OEType.CountBased)
+				max /= 3600;
 			while(_scales.Last() <= max)
 			{
 				max /= 10;
 				divisionsBy10++;
 			}
 			var scale = _scales.FirstOrDefault(x => x >= max);
+			if (BarInfo.CurrentType != OEType.CountBased)
+				scale *= 3600;
 			return (int)Math.Pow(10, divisionsBy10) * scale;
 		}
 		public IList<OperatorBarInfo> FetchAll()
@@ -74,7 +129,7 @@ namespace Soheil.Core.Reports
 			IList<Record> records = DataService.GetAll(DateTimeIntervals, BarInfo);
 			if (!records.Any()) return bars;
 
-			if (BarInfo.IsCountBase)
+			if (BarInfo.CurrentType == OEType.CountBased)
 				MaxValue = records.Max(x => (int)x.Data[4]);
 			else 
 				MaxValue = (int)records.Max(x => (float)x.Data[0]);
@@ -94,57 +149,6 @@ namespace Soheil.Core.Reports
 			}
 			return bars;
 		}
-
-        public IList<OperatorBarVm> FetchRange(int startOperator, int count)
-        {
-            if (Dispatcher != null) Thread.Sleep(100);
-            var bars = new List<OperatorBarVm>();
-            IList<Record> records = DataService.GetInRange(DateTimeIntervals, BarInfo, startOperator, startOperator + count);
-
-            for (int i = startOperator; i < startOperator + count; i++)
-            {
-                var currentInfo = new OperatorBarInfo
-                    {
-                        Id = records[i - startOperator].Id,
-                        Text = records[i - startOperator].Header,
-                        StartDate = records[i - startOperator].StartDate,
-                        EndDate = records[i - startOperator].EndDate,
-                        Level = BarInfo.Level,
-                        IsMenuItem = false
-                    };
-                var bar = new OperatorBarVm
-                {
-                    Info = currentInfo,
-                    Header = records[i - startOperator].Header,
-                    MainColor = GetColor(),
-                    MenuItems = GetMenuItems(currentInfo)
-                };
-                if (BarInfo.IsCountBase)
-                {
-                    bar.Value = Convert.ToDouble( records[i - startOperator].Data[4])*Scale;
-                    bar.ProductionValue = Convert.ToDouble( records[i - startOperator].Data[5])*Scale;
-                    bar.DefectionValue = Convert.ToDouble( records[i - startOperator].Data[6])*Scale;
-                    bar.StoppageValue = Convert.ToDouble( records[i - startOperator].Data[7])*Scale;
-                    bar.Tip = Convert.ToString(records[i - startOperator].Data[4]);
-                    bar.ProductionTip = Convert.ToString(records[i - startOperator].Data[5]);
-                    bar.DefectionTip = Convert.ToString(records[i - startOperator].Data[6]);
-                    bar.StoppageTip = Convert.ToString(records[i - startOperator].Data[7]);
-                }
-                else
-                {
-                    bar.Value = Convert.ToDouble(records[i - startOperator].Data[0])*Scale;
-                    bar.ProductionValue = Convert.ToDouble( records[i - startOperator].Data[1])*Scale;
-                    bar.DefectionValue = Convert.ToDouble( records[i - startOperator].Data[2])*Scale;
-                    bar.StoppageValue = Convert.ToDouble( records[i - startOperator].Data[3])*Scale;
-                    bar.Tip = Format.ConvertToHM(Convert.ToInt32(records[i - startOperator].Data[0]));
-                    bar.ProductionTip = Format.ConvertToHM(Convert.ToInt32(records[i - startOperator].Data[1]));
-                    bar.DefectionTip = Format.ConvertToHM(Convert.ToInt32(records[i - startOperator].Data[2]));
-                    bar.StoppageTip = Format.ConvertToHM(Convert.ToInt32(records[i - startOperator].Data[3]));
-                }
-                bars.Add(bar);
-            }
-            return bars;
-        }
 
         private ObservableCollection<OperatorBarInfo> GetMenuItems(OperatorBarInfo currentInfo)
         {

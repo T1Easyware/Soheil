@@ -25,7 +25,9 @@ namespace Soheil.Core.ViewModels.Reports
         public AccessType Access { get; set; }
 	    public Command InitializeProviderCommand { get; set; }
         public Command NavigateInsideCommand { get; set; }
-        public Command NavigateBackCommand { get; set; }
+		public Command NavigateBackCommand { get; set; }
+		public Command NavigateNextCommand { get; set; }
+		public Command NavigatePreviousCommand { get; set; }
         public Command PrintCommand { get; set; }
 	    public Command RefreshCommand { get; set; }
 
@@ -105,16 +107,6 @@ namespace Soheil.Core.ViewModels.Reports
 	        set { SetValue(ScaleHeightProperty, value); }
 	    }
 
-
-	    public static readonly DependencyProperty HorizontalOffsetProperty =
-	        DependencyProperty.Register("HorizontalOffset", typeof (double), typeof (OperationReportsVm), new PropertyMetadata(default(double)));
-
-	    public double HorizontalOffset
-	    {
-	        get { return (double) GetValue(HorizontalOffsetProperty); }
-	        set { SetValue(HorizontalOffsetProperty, value); }
-	    }
-
 	    public static readonly DependencyProperty CurrentIntervalProperty =
 	        DependencyProperty.Register("CurrentInterval", typeof (DateTimeIntervals), typeof (OperationReportsVm), new PropertyMetadata(default(DateTimeIntervals)));
 
@@ -153,17 +145,14 @@ namespace Soheil.Core.ViewModels.Reports
             Scales = new ObservableCollection<int>();
             ScaleLines = new ObservableCollection<int>();
             InitializeProviders(null);
-            CenterDateChanged += OperationReportsVmCenterDateChanged;
             NavigateInsideCommand = new Command(NavigateInside, CanNavigateInside);
-            NavigateBackCommand = new Command(NavigateBack,CanNavigateBack);
+			NavigateBackCommand = new Command(NavigateBack, CanNavigateBack);
+			NavigateNextCommand = new Command(NavigateNext, CanNavigateNext);
+			NavigatePreviousCommand = new Command(NavigatePrevious, CanNavigatePrevious);
             InitializeProviderCommand = new Command(InitializeProviders);
             RefreshCommand = new Command(Refresh,CanRefresh);
         }
 
-        void OperationReportsVmCenterDateChanged(double barHOffset)
-        {
-            HorizontalOffset = barHOffset;
-        }
 
 		public void InitializeProviders(object param)
 		{
@@ -174,7 +163,7 @@ namespace Soheil.Core.ViewModels.Reports
 			else
 				_barInfo = (OperatorBarInfo)param;
 
-			_barInfo.IsCountBase = CurrentType == OEType.CountBased;
+			_barInfo.CurrentType = CurrentType;
 			_currentInterval = CurrentInterval;
 
 			//LittleWindowWidth = 20;
@@ -193,9 +182,12 @@ namespace Soheil.Core.ViewModels.Reports
 			_fetchingThread.Start();
 		}
 
-		double _maxValue = 0;
+		int _currentOperatorIndex = 0;
+		int _operatorsCount = 0;
+		int _maxValue = 0;
 		DateTimeIntervals _currentInterval;
 		OperatorBarInfo _barInfo;
+		List<OperatorBarInfo> _orderedList;
 		IList<OperatorBarInfo> _barInfos;
 		System.Threading.Thread _fetchingThread;
 
@@ -203,25 +195,35 @@ namespace Soheil.Core.ViewModels.Reports
 		{
 			var barProvider = new OperatorBarProvider(_currentInterval, DataService, _barInfo);
 			_barInfos = barProvider.FetchAll();
-			_maxValue = barProvider.MaxValue;
+			_maxValue = barProvider.GetMaxScale();
 
-			//Scales.Clear();
-			//ScaleLines.Clear();
-			//ScaleHeight = barProvider.ScaleHeight;
+			if (_barInfo.CurrentType == OEType.TimeBased)
+				_orderedList = _barInfos.OrderByDescending(x => (float)x.Data[1] / (float)x.Data[0]).ToList();
+			else
+				_orderedList = _barInfos.OrderByDescending(x => (int)x.Data[5] / (double)((int)x.Data[4])).ToList();
 
-			//for (int i = barProvider.MaxScale; i >= 0; i -= barProvider.StepScale)
-			//{
-			//	Scales.Add(i);
-			//	ScaleLines.Add(0);
-			//}
-			//ScaleLines.RemoveAt(0);
+			_operatorsCount = _orderedList.Count;
+			for (int i = 0; i < _operatorsCount; i++)
+			{
+				var x = _orderedList[i];
+				x.Index = i;
+				_orderedList[i] = x;
+			}
 
 			Dispatcher.Invoke(AddBars);
 		}
 		void AddBars()
 		{
+			Scales.Clear();
+			ScaleLines.Clear();
+			for (int i = 10; i > 0; i--)
+			{
+				Scales.Add(i * _maxValue / 10);
+				ScaleLines.Add(i * _maxValue / 10);
+			}
+
 			Bars.Clear();
-			foreach (var barInfo in _barInfos)
+			foreach (var barInfo in _orderedList)
 			{
 				var bar = new OperatorBarVm
 				{
@@ -230,27 +232,29 @@ namespace Soheil.Core.ViewModels.Reports
 					//MainColor
 					//MenuItems = GetMenuItems(currentInfo)
 				};
-				if (barInfo.IsCountBase)
-				{
-					bar.Value = Convert.ToDouble(barInfo.Data[4]) / _maxValue;
-					bar.ProductionValue = Convert.ToDouble(barInfo.Data[5]) / _maxValue;
-					bar.DefectionValue = Convert.ToDouble(barInfo.Data[6]) / _maxValue;
-					bar.StoppageValue = Convert.ToDouble(barInfo.Data[7]) / _maxValue;
-					bar.Tip = Convert.ToString(barInfo.Data[4]);
-					bar.ProductionTip = Convert.ToString(barInfo.Data[5]);
-					bar.DefectionTip = Convert.ToString(barInfo.Data[6]);
-					bar.StoppageTip = Convert.ToString(barInfo.Data[7]);
-				}
-				else
+				if (_barInfo.CurrentType == OEType.TimeBased)
 				{
 					bar.Value = Convert.ToDouble(barInfo.Data[0]) / _maxValue;
 					bar.ProductionValue = Convert.ToDouble(barInfo.Data[1]) / _maxValue;
 					bar.DefectionValue = Convert.ToDouble(barInfo.Data[2]) / _maxValue;
 					bar.StoppageValue = Convert.ToDouble(barInfo.Data[3]) / _maxValue;
 					bar.Tip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[0]));
+					bar.RemainingTip = Format.ConvertToHM((int)((float)barInfo.Data[0] - ((float)barInfo.Data[1] + (float)barInfo.Data[2] + (float)barInfo.Data[3])));
 					bar.ProductionTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[1]));
 					bar.DefectionTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[2]));
 					bar.StoppageTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[3]));
+				}
+				else
+				{
+					bar.Value = Convert.ToDouble(barInfo.Data[4]) / _maxValue;
+					bar.ProductionValue = Convert.ToDouble(barInfo.Data[5]) / _maxValue;
+					bar.DefectionValue = Convert.ToDouble(barInfo.Data[6]) / _maxValue;
+					bar.StoppageValue = Convert.ToDouble(barInfo.Data[7]) / _maxValue;
+					bar.Tip = Convert.ToString(barInfo.Data[4]);
+					bar.RemainingTip = Convert.ToString((int)barInfo.Data[4] - ((int)barInfo.Data[5] + (int)barInfo.Data[6] + (int)barInfo.Data[7]));
+					bar.ProductionTip = Convert.ToString(barInfo.Data[5]);
+					bar.DefectionTip = Convert.ToString(barInfo.Data[6]);
+					bar.StoppageTip = Convert.ToString(barInfo.Data[7]);
 				}
 				Bars.Add(bar);
 			}
@@ -259,10 +263,11 @@ namespace Soheil.Core.ViewModels.Reports
 			OnPropertyChanged("ScaleHeaders");
 		}
 
-	    public void LoadOperatorProcessReport(int operatorId)
+	    public void LoadOperatorProcessReport(OperatorBarInfo operatorInfo)
 	    {
+			_currentOperatorIndex = operatorInfo.Index;
 	        var dataService = new OperatorReportDataService();
-	        Report = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
+			Report = dataService.GetOperatorProcessReport(operatorInfo.Id, StartDate, EndDate);
 
 	        var reportDocument = new ReportDocument();
 
@@ -319,12 +324,12 @@ namespace Soheil.Core.ViewModels.Reports
 	            activitiesTable.Rows.Add(CurrentType == OEType.TimeBased
 	                ? new object[]
 	                {
-	                    item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
+	                    item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
 	                    item.DefectionTime, item.StoppageTime, item.IsRework
 	                }
 					: new object[]
 	                {
-	                    item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
+	                    item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
 	                    item.DefectionCount, item.StoppageCount, item.IsRework
 	                });
 	        }
@@ -338,17 +343,15 @@ namespace Soheil.Core.ViewModels.Reports
             qualitiveTable.Columns.Add("Station", typeof(string));
             qualitiveTable.Columns.Add("Activity", typeof(string));
             qualitiveTable.Columns.Add("DefectionValue", typeof(string));
-            qualitiveTable.Columns.Add("SecondGrade", typeof(string));
-            qualitiveTable.Columns.Add("Waste", typeof(string));
+			qualitiveTable.Columns.Add("DefectionType", typeof(string));
 
             foreach (var item in Report.QualitiveItems)
             {
-                var waste = item.Status == QualitiveStatus.Waste ? "*" : string.Empty;
-                var secondGrade = item.Status == QualitiveStatus.SecondGrade ? "*" : string.Empty;
+                var wasteType = item.Status == QualitiveStatus.Waste ? "ضایعات" : "درجه2";
 				var defection = CurrentType == OEType.TimeBased ? item.DefectionTime : item.DefectionCount;
                 qualitiveTable.Rows.Add(new object[]
                     {
-                        item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, defection, secondGrade, waste
+                        item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, defection, wasteType
 	                });
             }
 
@@ -367,7 +370,7 @@ namespace Soheil.Core.ViewModels.Reports
 				var stoppage = CurrentType == OEType.TimeBased ? item.StoppageTime : item.StoppageCount;
                 technicalTable.Rows.Add(new object[]
                     {
-                        item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, stoppage
+                        item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, stoppage
 	                });
             }
 
@@ -377,7 +380,6 @@ namespace Soheil.Core.ViewModels.Reports
 	        XpsDocument xps = reportDocument.CreateXpsDocument(data);
 
 	        Document = xps.GetFixedDocumentSequence();
-            
 	    }
 
 	    private int GetIntervalCount()
@@ -403,7 +405,7 @@ namespace Soheil.Core.ViewModels.Reports
             indexId.Level++;
             _history.Push(indexId);
             //InitializeProviders(indexId);
-            LoadOperatorProcessReport(indexId.Id);
+            LoadOperatorProcessReport(indexId);
             OprVisibility = Visibility.Visible;
         }
 
@@ -422,6 +424,30 @@ namespace Soheil.Core.ViewModels.Reports
             return _history.Count > 1;
         }
 
+		public void NavigateNext(object param)
+		{
+			var item = _orderedList.FirstOrDefault(x => x.Index == _currentOperatorIndex + 1);
+			if (CanNavigateInside()) NavigateInside(item);
+			OprVisibility = Visibility.Visible;
+		}
+
+		public bool CanNavigateNext()
+		{
+			return _currentOperatorIndex + 1 < _operatorsCount;
+		}
+
+		public void NavigatePrevious(object param)
+		{
+			var item = _orderedList.FirstOrDefault(x => x.Index == _currentOperatorIndex - 1);
+			if (CanNavigateInside()) NavigateInside(item);
+			OprVisibility = Visibility.Visible;
+		}
+
+		public bool CanNavigatePrevious()
+		{
+			return _currentOperatorIndex > 0;
+		}
+
 	    public void Print(object param)
 	    {
 	    }
@@ -437,7 +463,7 @@ namespace Soheil.Core.ViewModels.Reports
 	        {
 	            var info = _history.Pop();
 	            _history.Push(info);
-	            LoadOperatorProcessReport(info.Id);
+	            LoadOperatorProcessReport(info);
 	        }
 	        else
 	            InitializeProviders(null);

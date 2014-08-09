@@ -2,6 +2,7 @@
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:document="clr-namespace:Soheil.Core.Printing.Document;assembly=Soheil.Core"
               PageHeight="29.7cm" PageWidth="21cm" ColumnWidth="21cm" FlowDirection="{Loc enumDirection}">
+    
     <document:ReportProperties>
         <document:ReportProperties.ReportName>OperatorProcessReport</document:ReportProperties.ReportName>
         <document:ReportProperties.ReportTitle>گزارش عملکرد اپراتورها</document:ReportProperties.ReportTitle>
@@ -256,7 +257,6 @@
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
                 </Table.Columns>
                 <TableRowGroup Style="{StaticResource headerFooterRowStyle}">
                     <TableRow>
@@ -298,17 +298,11 @@
                         <TableCell>
                             <Paragraph TextAlignment="Center">
                                 <Bold>
-                                    <Run Text="{Loc txtSecondGrade}"/>
+                                    <Run Text="{Loc txtDefectionType}"/>
                                 </Bold>
                             </Paragraph>
                         </TableCell>
-                        <TableCell>
-                            <Paragraph TextAlignment="Center">
-                                <Bold>
-                                    <Run Text="{Loc txtWaste}"/>
-                                </Bold>
-                            </Paragraph>
-                        </TableCell>
+
                     </TableRow>
                 </TableRowGroup>
                 <TableRowGroup Style="{StaticResource dataRowStyle}">
@@ -340,14 +334,10 @@
                         </TableCell>
                         <TableCell>
                             <Paragraph>
-                                <document:InlineTableCellValue PropertyName="SecondGrade"/>
+                                <document:InlineTableCellValue PropertyName="DefectionType"/>
                             </Paragraph>
                         </TableCell>
-                        <TableCell>
-                            <Paragraph>
-                                <document:InlineTableCellValue PropertyName="Waste"/>
-                            </Paragraph>
-                        </TableCell>
+
                     </document:TableRowForDataTable>
                 </TableRowGroup>
             </Table>

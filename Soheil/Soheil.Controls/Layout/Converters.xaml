@@ -73,7 +73,8 @@
 	<ppconv:IsEqual2 x:Key="isEqual2"/>
 	<ppconv:IsNotEqual2 x:Key="isNotEqual2"/>
 	<ppconv:IsEqualToInvisibilityConverter2 x:Key="isEqualToInvisibilityConverter2"/>
-	<ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
+    <ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
+    <ppconv:VisibilityInverter x:Key="visibilityInverter"/>
 
 
 	<ppconv:BalanceToBrushConverter x:Key="balanceToBrushConverter"/>
