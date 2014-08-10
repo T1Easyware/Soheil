@@ -500,14 +500,17 @@
 					<!-- notifications -->
 					<Menu Grid.Column="3" Margin="0,-5,0,0" HorizontalAlignment="Left" Background="Transparent" Height="25" DataContext="{Binding ., Source={x:Static MessageCenter:NotificationArea.Singleton}}">
 						<MenuItem Header="Notifications" Foreground="{StaticResource TextBrush}" ItemsSource="{Binding List}">
+                            <MenuItem.Icon>
+                                <Image Source="/Soheil.Controls;component/Images/Menus/notification.png" Width="20"/>
+                            </MenuItem.Icon>
 							<MenuItem.ItemContainerStyle>
 								<Style>
 									<Setter Property="MenuItem.FlowDirection" Value="RightToLeft"/>
 									<Setter Property="MenuItem.Header" Value="{Binding Message}"/>
 									<Setter Property="MenuItem.Command" Value="{Binding OpenCommand}"/>
-									<Setter Property="MenuItem.ToolTip" Value="{Binding MoreInfo}"/>
-									<Style.Triggers>
-										<DataTrigger Binding="{Binding NotificationType}" Value="{x:Static Common:NotificationType.Critical}">
+                                    <Setter Property="MenuItem.ToolTip" Value="{Binding MoreInfo}"/>
+                                    <Style.Triggers>
+										<!--<DataTrigger Binding="{Binding NotificationType}" Value="{x:Static Common:NotificationType.Critical}">
 											<Setter Property="MenuItem.Icon">
 												<Setter.Value>
 													<Image Style="{DynamicResource Error16Image}"/>
@@ -527,7 +530,7 @@
 													<Image Style="{DynamicResource DocumentInfo16Image}"/>
 												</Setter.Value>
 											</Setter>
-										</DataTrigger>
+										</DataTrigger>-->
 										<DataTrigger Binding="{Binding IsSeparator}" Value="true">
 											<Setter Property="MenuItem.Template">
 												<Setter.Value>

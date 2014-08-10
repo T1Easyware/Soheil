@@ -405,6 +405,41 @@ namespace Soheil.Views
 			}
 		}
 
+		private void documentViewer_Initialized(object sender, EventArgs e)
+		{
+			var dv = sender as DocumentViewer;
+			if (dv == null)
+				return;
+
+			var tb = FindMenu(dv);
+			if (tb != null)
+			{
+				tb.Items.Add(new Separator { Width = 1, VerticalAlignment = System.Windows.VerticalAlignment.Stretch });
+				tb.Items.Add(new Button { Content = "Next", Command = dv.GetDataContext<OperationReportsVm>().NavigateNextCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
+				tb.Items.Add(new Button { Content = "Previous", Command = dv.GetDataContext<OperationReportsVm>().NavigatePreviousCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
+				tb.Items.Add(new Separator { Width = 1, VerticalAlignment = System.Windows.VerticalAlignment.Stretch });
+				tb.Items.Add(new Button { Content = "Return", Command = dv.GetDataContext<OperationReportsVm>().NavigateBackCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
+			}
+		}
+		public ToolBar FindMenu(System.Windows.FrameworkElement root)
+		{
+			ToolBar target = null;
+			int c = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+			for (int i = 0; i < c; i++)
+			{
+				var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i) as System.Windows.FrameworkElement;
+				if (child == null) continue;
+
+				var menu = child as ToolBar;
+				if (menu != null)
+					if (menu.Items.Count == 10)
+						return menu;
+				
+				target = FindMenu(child);
+				if (target != null) return target;
+			}
+			return target;
+		}
 		//private void PmTabsMouseDown(object sender, EventArgs e)
 		//{
 		//	var arr = (sender as FrameworkElement).Tag as FrameworkElement[];

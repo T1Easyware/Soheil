@@ -1087,4 +1087,7 @@
     <value>گزارش شده</value>
     <comment>repair</comment>
   </data>
+  <data name="txtDefectionType" xml:space="preserve">
+    <value>نوع خروجی</value>
+  </data>
 </root>

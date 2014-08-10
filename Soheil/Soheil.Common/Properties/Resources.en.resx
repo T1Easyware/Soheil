@@ -1081,4 +1081,7 @@
   <data name="txtReported" xml:space="preserve">
     <value>Reported</value>
   </data>
+  <data name="txtDefectionType" xml:space="preserve">
+    <value>Output Type</value>
+  </data>
 </root>

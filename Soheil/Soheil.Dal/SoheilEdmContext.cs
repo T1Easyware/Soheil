@@ -5,11 +5,16 @@ namespace Soheil.Dal
 {
     public class SoheilEdmContext : ObjectContext, IUnitOfWork
     {
-        public SoheilEdmContext()
-            : base("name=EdmContainer", "EdmContainer")
-        {
-            ContextOptions.LazyLoadingEnabled = true;
-        }
+		public SoheilEdmContext(string asd)
+			: base(asd, "EdmContainer")
+		{
+			ContextOptions.LazyLoadingEnabled = true;
+		}
+		public SoheilEdmContext()
+			: base("name=EdmContainer", "EdmContainer")
+		{
+			ContextOptions.LazyLoadingEnabled = true;
+		}
 
         #region IUnitOfWork Members
 
