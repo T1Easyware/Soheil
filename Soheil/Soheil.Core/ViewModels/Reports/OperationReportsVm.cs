@@ -46,6 +46,24 @@ namespace Soheil.Core.ViewModels.Reports
 		public ObservableCollection<OperatorBarVm> Bars { get { return _bars; } }
 		private ObservableCollection<OperatorBarVm> _bars = new ObservableCollection<OperatorBarVm>();
 
+		/// <summary>
+		/// Gets or sets a bindable value that indicates SelectedBar
+		/// </summary>
+		public OperatorBarVm SelectedBar
+		{
+			get { return (OperatorBarVm)GetValue(SelectedBarProperty); }
+			set { SetValue(SelectedBarProperty, value); }
+		}
+		public static readonly DependencyProperty SelectedBarProperty =
+			DependencyProperty.Register("SelectedBar", typeof(OperatorBarVm), typeof(OperationReportsVm), new PropertyMetadata(null, (d, e) =>
+			{
+				var vm = (OperationReportsVm)d;
+				if (vm._ignoreSelectedBarChanged) return;
+				var val = (OperatorBarVm)e.NewValue;
+				if (val == null) return;
+				vm.NavigateInside(val);
+			}));
+		private bool _ignoreSelectedBarChanged = false;
 
 	    public static readonly DependencyProperty ScalesProperty =
             DependencyProperty.Register("Scales", typeof(ObservableCollection<int>), typeof(OperationReportsVm), new PropertyMetadata(default(ObservableCollection<int>)));
@@ -65,7 +83,7 @@ namespace Soheil.Core.ViewModels.Reports
                 {
                     scaleHeaders.Add(CurrentType == OEType.CountBased
                         ? scale.ToString(CultureInfo.InvariantCulture)
-                        : Format.ConvertToHours(scale));
+                        : Format.ConvertToHM(scale));
                 }
                 return scaleHeaders;
 	        }   
@@ -232,29 +250,43 @@ namespace Soheil.Core.ViewModels.Reports
 					//MainColor
 					//MenuItems = GetMenuItems(currentInfo)
 				};
-				if (_barInfo.CurrentType == OEType.TimeBased)
+				switch (_barInfo.CurrentType)
 				{
-					bar.Value = Convert.ToDouble(barInfo.Data[0]) / _maxValue;
-					bar.ProductionValue = Convert.ToDouble(barInfo.Data[1]) / _maxValue;
-					bar.DefectionValue = Convert.ToDouble(barInfo.Data[2]) / _maxValue;
-					bar.StoppageValue = Convert.ToDouble(barInfo.Data[3]) / _maxValue;
-					bar.Tip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[0]));
-					bar.RemainingTip = Format.ConvertToHM((int)((float)barInfo.Data[0] - ((float)barInfo.Data[1] + (float)barInfo.Data[2] + (float)barInfo.Data[3])));
-					bar.ProductionTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[1]));
-					bar.DefectionTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[2]));
-					bar.StoppageTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[3]));
-				}
-				else
-				{
-					bar.Value = Convert.ToDouble(barInfo.Data[4]) / _maxValue;
-					bar.ProductionValue = Convert.ToDouble(barInfo.Data[5]) / _maxValue;
-					bar.DefectionValue = Convert.ToDouble(barInfo.Data[6]) / _maxValue;
-					bar.StoppageValue = Convert.ToDouble(barInfo.Data[7]) / _maxValue;
-					bar.Tip = Convert.ToString(barInfo.Data[4]);
-					bar.RemainingTip = Convert.ToString((int)barInfo.Data[4] - ((int)barInfo.Data[5] + (int)barInfo.Data[6] + (int)barInfo.Data[7]));
-					bar.ProductionTip = Convert.ToString(barInfo.Data[5]);
-					bar.DefectionTip = Convert.ToString(barInfo.Data[6]);
-					bar.StoppageTip = Convert.ToString(barInfo.Data[7]);
+					case OEType.None:
+						bar.Value = Convert.ToDouble(barInfo.Data[0]) / _maxValue;
+						bar.ProductionValue = Convert.ToDouble(barInfo.Data[1]) / _maxValue;
+						bar.DefectionValue = Convert.ToDouble(barInfo.Data[2]) / _maxValue;
+						bar.StoppageValue = Convert.ToDouble(barInfo.Data[3]) / _maxValue;
+						bar.Tip = Convert.ToString(barInfo.Data[4]);
+						bar.RemainingTip = Convert.ToString((int)barInfo.Data[4] - ((int)barInfo.Data[5] + (int)barInfo.Data[6] + (int)barInfo.Data[7]));
+						bar.ProductionTip = Convert.ToString(barInfo.Data[5]);
+						bar.DefectionTip = Convert.ToString(barInfo.Data[6]);
+						bar.StoppageTip = Convert.ToString(barInfo.Data[7]);
+						break;
+					case OEType.TimeBased:
+						bar.Value = Convert.ToDouble(barInfo.Data[0]) / _maxValue;
+						bar.ProductionValue = Convert.ToDouble(barInfo.Data[1]) / _maxValue;
+						bar.DefectionValue = Convert.ToDouble(barInfo.Data[2]) / _maxValue;
+						bar.StoppageValue = Convert.ToDouble(barInfo.Data[3]) / _maxValue;
+						bar.Tip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[0]));
+						bar.RemainingTip = Format.ConvertToHM((int)((float)barInfo.Data[0] - ((float)barInfo.Data[1] + (float)barInfo.Data[2] + (float)barInfo.Data[3])));
+						bar.ProductionTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[1]));
+						bar.DefectionTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[2]));
+						bar.StoppageTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[3]));
+						break;
+					case OEType.CountBased:
+						bar.Value = Convert.ToDouble(barInfo.Data[4]) / _maxValue;
+						bar.ProductionValue = Convert.ToDouble(barInfo.Data[5]) / _maxValue;
+						bar.DefectionValue = Convert.ToDouble(barInfo.Data[6]) / _maxValue;
+						bar.StoppageValue = Convert.ToDouble(barInfo.Data[7]) / _maxValue;
+						bar.Tip = Convert.ToString(barInfo.Data[4]);
+						bar.RemainingTip = Convert.ToString((int)barInfo.Data[4] - ((int)barInfo.Data[5] + (int)barInfo.Data[6] + (int)barInfo.Data[7]));
+						bar.ProductionTip = Convert.ToString(barInfo.Data[5]);
+						bar.DefectionTip = Convert.ToString(barInfo.Data[6]);
+						bar.StoppageTip = Convert.ToString(barInfo.Data[7]);
+						break;
+					default:
+						break;
 				}
 				Bars.Add(bar);
 			}
@@ -283,13 +315,13 @@ namespace Soheil.Core.ViewModels.Reports
 	        data.ReportDocumentValues.Add("PrintDate", DateTime.Now);
 
 	        var titleTabel = new DataTable("TitleTable");
-	        titleTabel.Columns.Add("ReportTitle", typeof(string));
-            var name = Common.Properties.Resources.ResourceManager.GetString("txtName") + Report.Title;
-            var code = Common.Properties.Resources.ResourceManager.GetString("txtCode") + Report.Code;
-	        var date = DateTime.Now.ToPersianCompactDateTimeString();
-            titleTabel.Rows.Add(new object[] { name });
-            titleTabel.Rows.Add(new object[] { code });
-            titleTabel.Rows.Add(new object[] { date });
+	        titleTabel.Columns.Add("ReportTitleName", typeof(string));
+			titleTabel.Columns.Add("ReportTitleCode", typeof(string));
+			titleTabel.Columns.Add("ReportTitleDate", typeof(string));
+			var name = Common.Properties.Resources.ResourceManager.GetString("txtName") + Report.Title;
+			var code = Common.Properties.Resources.ResourceManager.GetString("txtCode") + Report.Code;
+			var date = DateTime.Now.ToPersianCompactDateTimeString();
+			titleTabel.Rows.Add(new object[] { name, code, date });
 
             data.DataTables.Add(titleTabel);
 
@@ -347,7 +379,9 @@ namespace Soheil.Core.ViewModels.Reports
 
             foreach (var item in Report.QualitiveItems)
             {
-                var wasteType = item.Status == QualitiveStatus.Waste ? "ضایعات" : "درجه2";
+                var wasteType = item.Status == QualitiveStatus.Waste ? 
+					Common.Properties.Resources.ResourceManager.GetString("txtDefection"):
+					Common.Properties.Resources.ResourceManager.GetString("txtSecondGrade");
 				var defection = CurrentType == OEType.TimeBased ? item.DefectionTime : item.DefectionCount;
                 qualitiveTable.Rows.Add(new object[]
                     {
@@ -389,25 +423,30 @@ namespace Soheil.Core.ViewModels.Reports
 
 	    public void NavigateInside(object param)
         {
-            OperatorBarInfo indexId;
+			_ignoreSelectedBarChanged = true;
+			OperatorBarInfo indexId;
             if (param is OperatorBarVm)
             {
                 var barVm = param as OperatorBarVm;
                 if(barVm.MenuItems.Count > 0)
                     return;
 
-                indexId = barVm.Info;
+				SelectedBar = barVm;
+				indexId = barVm.Info;
             }
             else
             {
                 indexId = (OperatorBarInfo)param;
-            }
+				SelectedBar = Bars.FirstOrDefault(x => x.Info.Id == indexId.Id);
+			}
             indexId.Level++;
             _history.Push(indexId);
-            //InitializeProviders(indexId);
+            
+			//InitializeProviders(indexId);
             LoadOperatorProcessReport(indexId);
             OprVisibility = Visibility.Visible;
-        }
+			_ignoreSelectedBarChanged = false;
+		}
 
         public bool CanNavigateInside()
         {

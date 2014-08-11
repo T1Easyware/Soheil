@@ -319,6 +319,7 @@ namespace Soheil.Controls.Converters.PP
 		{
 			var val = System.Convert.ToDouble(value);
 			if (double.IsNaN(val)) return new GridLength(0d);
+			if (val < 0) return new GridLength(0d);
 			return new GridLength(val, GridUnitType.Star);
 		}
 

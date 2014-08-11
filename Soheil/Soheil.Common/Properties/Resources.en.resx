@@ -1084,4 +1084,7 @@
   <data name="txtDefectionType" xml:space="preserve">
     <value>Output Type</value>
   </data>
+  <data name="txtHours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
 </root>

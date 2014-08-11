@@ -185,7 +185,7 @@
 							<Border Background="#800" Margin="2" Visibility="{Binding SelectedChoice, Converter={StaticResource isNullToVisibility}}" ToolTip="نفرساعت انتخاب شده نامعتبر می باشد"/>
 							<Image Style="{StaticResource ManHourImage}" DockPanel.Dock="Right" ToolTip="{Loc txtOperatorsCount}" HorizontalAlignment="Right"/>
 							<TextBlock Text="{Binding SelectedChoice.ManHour}" Foreground="#048" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,0"/>
-							<Image Style="{StaticResource Warning16Image}" Visibility="{Binding OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right"
+							<Image Style="{StaticResource Invalid16Image}" Visibility="{Binding OperatorCountError, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right"
 								ToolTip="تعداد اپراتورهای تخصیص داده شده نامعتبر می باشد"/>
 						</Grid>
 						<TextBox Text="{Binding Timing.TargetPoint, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Bottom" VerticalAlignment="Center" ToolTip="{Loc txtTargetPoint}"/>

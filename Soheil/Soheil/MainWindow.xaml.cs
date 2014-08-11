@@ -80,8 +80,8 @@ namespace Soheil
 
 			//if (Keyboard.GetKeyStates(Key.LeftCtrl) == KeyStates.Down)
 			{
-				SingularList = new Core.ViewModels.Reports.OperationReportsVm(AccessType.Full);
-				chrometabs.AddTab(CreateSingularTab(SoheilEntityType.PM), true);
+				//SingularList = new Core.ViewModels.Reports.OperationReportsVm(AccessType.Full);
+				//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.PM), true);
 			}
 		}
 
@@ -424,7 +424,8 @@ namespace Soheil
 		/// <returns></returns>
         private string GetTabHeader(SoheilEntityType type)
         {
-            switch (type)
+			//!@#$
+			switch (type)
             {
                 case SoheilEntityType.None:
                     return string.Empty;
@@ -490,6 +491,8 @@ namespace Soheil
 					return Common.Properties.Resources.txtSkillCenter;
 				case SoheilEntityType.SetupTimes:
 					return Common.Properties.Resources.txtSetupTimes;
+				case SoheilEntityType.PM:
+					return Common.Properties.Resources.txtPM;
 
                 case SoheilEntityType.CostsSubMenu:
                     return Common.Properties.Resources.txtCosts;

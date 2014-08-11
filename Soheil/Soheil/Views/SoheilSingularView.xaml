@@ -2587,11 +2587,10 @@
                                 <Common:BindingProxy x:Key="Proxy" Data="{Binding}" />
                             </DockPanel.Resources>
                             
-                            
-                            <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding ScaleHeaders}" DockPanel.Dock="Right" Width="50" Margin="0,0,0,60">
+                            <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding ScaleHeaders}" DockPanel.Dock="Right" Width="50" Margin="0,0,0,60" HorizontalAlignment="Center">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Width="50" Text="{Binding}"/>
+                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Width="50" Text="{Binding}" HorizontalAlignment="Center"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                                 <ItemsControl.ItemsPanel>
@@ -2602,7 +2601,7 @@
                             </ItemsControl>
                             
                             <Grid x:Name="adornedControl" >
-                                <ItemsControl x:Name="_ScaleLines" Margin="0,0,0,60"
+                                <ItemsControl x:Name="_ScaleLines" Margin="0,0,0,55"
                                                         ItemsSource="{Binding ScaleLines}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -2630,21 +2629,21 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate DataType="Reports:OperatorBarVm">
-                                                <ToggleButton Margin="5,0,5,0" Command="{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}" Width="80"
-                                                                    CommandParameter="{Binding }">
+                                                <ToggleButton Command="{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}" Width="80" Margin="0"
+                                                              CommandParameter="{Binding }">
                                                     <ToggleButton.Template>
                                                         <ControlTemplate>
-                                                            <Grid>
+                                                            <Grid Margin="5,0">
                                                                 <Grid.RowDefinitions>
                                                                     <RowDefinition Height="{Binding FillingValue, Converter={StaticResource portionToStarConverter}}"/>
                                                                     <RowDefinition Height="{Binding RemainingValue, Converter={StaticResource portionToStarConverter}}"/>
                                                                     <RowDefinition Height="{Binding StoppageValue, Converter={StaticResource portionToStarConverter}}"/>
                                                                     <RowDefinition Height="{Binding DefectionValue, Converter={StaticResource portionToStarConverter}}"/>
                                                                     <RowDefinition Height="{Binding ProductionValue, Converter={StaticResource portionToStarConverter}}"/>
-                                                                    <RowDefinition Height="40"/>
+                                                                    <RowDefinition Height="37"/>
                                                                 </Grid.RowDefinitions>
-                                                                <Border Width="80" BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1" Grid.Row="5" Background="{StaticResource ThemeDarkBrush}">
-                                                                    <TextBlock Text="{Binding Header}" TextWrapping="Wrap" Foreground="{StaticResource TextBrush}" x:Name="operatorText"/>
+																<Border BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1" Grid.Row="5" Background="{StaticResource ThemeDarkBrush}" Margin="-5,0">
+                                                                    <TextBlock Text="{Binding Header}" TextWrapping="Wrap" Foreground="{StaticResource TextBrush}" x:Name="operatorText" HorizontalAlignment="Center" TextAlignment="Center"/>
                                                                 </Border>
                                                                 <TextBlock HorizontalAlignment="Center" Text="{Binding Tip}" Foreground="{StaticResource TextBrush}" Margin="1" FontWeight="ExtraBold" VerticalAlignment="Bottom"/>
                                                                 <TextBlock Height="Auto" Background="{StaticResource l0Brush}" Text="{Binding RemainingTip}"

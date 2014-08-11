@@ -13,6 +13,8 @@ using Soheil.Core.ViewModels.Index;
 using Soheil.Core.ViewModels.Reports;
 using Soheil.Core.Virtualizing;
 using Soheil.Core.ViewModels.PP;
+using System.Windows.Data;
+using System.Windows.Controls.Primitives;
 
 namespace Soheil.Views
 {
@@ -408,20 +410,32 @@ namespace Soheil.Views
 		private void documentViewer_Initialized(object sender, EventArgs e)
 		{
 			var dv = sender as DocumentViewer;
+			var dc = sender.GetDataContext<OperationReportsVm>();
 			if (dv == null)
 				return;
 
 			var tb = FindMenu(dv);
 			if (tb != null)
 			{
+				var cb = new ComboBox{ DataContext = dc, DisplayMemberPath = "Header"};
+				cb.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = dc.Bars });
+				Binding cmbBinding = new Binding();
+				cmbBinding.Mode = BindingMode.TwoWay;
+				cmbBinding.Source = dc;
+				cmbBinding.Path = new PropertyPath("SelectedBar");
+				cb.SetBinding(ComboBox.SelectedItemProperty, cmbBinding);
+				TextBlock.SetFontSize(cb, 14);
+
 				tb.Items.Add(new Separator { Width = 1, VerticalAlignment = System.Windows.VerticalAlignment.Stretch });
+				tb.Items.Add(new TextBlock { Text = "اپراتور", VerticalAlignment = System.Windows.VerticalAlignment.Center, Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black), FontSize = 14 });
+				tb.Items.Add(cb);
 				tb.Items.Add(new Button { Content = "Next", Command = dv.GetDataContext<OperationReportsVm>().NavigateNextCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
 				tb.Items.Add(new Button { Content = "Previous", Command = dv.GetDataContext<OperationReportsVm>().NavigatePreviousCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
 				tb.Items.Add(new Separator { Width = 1, VerticalAlignment = System.Windows.VerticalAlignment.Stretch });
 				tb.Items.Add(new Button { Content = "Return", Command = dv.GetDataContext<OperationReportsVm>().NavigateBackCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
 			}
 		}
-		public ToolBar FindMenu(System.Windows.FrameworkElement root)
+		ToolBar FindMenu(System.Windows.FrameworkElement root)
 		{
 			ToolBar target = null;
 			int c = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
@@ -440,11 +454,5 @@ namespace Soheil.Views
 			}
 			return target;
 		}
-		//private void PmTabsMouseDown(object sender, EventArgs e)
-		//{
-		//	var arr = (sender as FrameworkElement).Tag as FrameworkElement[];
-		//	(arr[0].Tag as Expander).IsExpanded = false;
-		//	(arr[1].Tag as Expander).IsExpanded = false;
-		//}
 	}
 }

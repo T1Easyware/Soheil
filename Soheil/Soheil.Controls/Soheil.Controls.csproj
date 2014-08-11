@@ -503,7 +503,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\error16.png" />
-    <Resource Include="Images\warning16.png" />
+    <Resource Include="Images\Invalid16.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Fpc\locationLocked.png" />
@@ -628,6 +628,21 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\PMRepairReported16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\alarm16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\info16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\info.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\star.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Error.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

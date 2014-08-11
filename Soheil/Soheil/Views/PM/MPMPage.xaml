@@ -40,7 +40,7 @@
 								<DataTemplate>
 									<Grid Background="Transparent">
 										<ContentPresenter Content="{Binding Bar}" VerticalAlignment="Center"/>
-										<Button Opacity="0" x:Name="btn" VerticalAlignment="Stretch" Padding="-3" ToolTip="افزودن گزارشات PM" Command="{Binding AddReportCommand}">
+										<Button Opacity="0" x:Name="btn" VerticalAlignment="Stretch" Padding="-3" ToolTip="افزودن گزارش PM" Command="{Binding AddReportCommand}">
 											<Image Style="{StaticResource AddReportImage}"/>
 										</Button>
 										<Grid.Triggers>

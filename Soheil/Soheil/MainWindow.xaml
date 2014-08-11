@@ -13,7 +13,60 @@
         Style="{DynamicResource SkinWindowStyle}"
         WindowState="Maximized">
     <Window.Resources>
-        <DataTemplate x:Key="usersTemplate">
+		<DataTemplate x:Key="notificationErrorTemplate">
+			<Grid FlowDirection="RightToLeft">
+				<Canvas Width="0" HorizontalAlignment="Left">
+					<Image Style="{StaticResource Error16Image}" Margin="-24,-1,0,0"/>
+				</Canvas>
+				<TextBlock Text="{Binding Message}"/>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate x:Key="notificationWarningTemplate">
+			<Grid FlowDirection="RightToLeft">
+				<Canvas Width="0" HorizontalAlignment="Left">
+					<Image Style="{StaticResource Alarm16Image}" Margin="-24,-1,0,0"/>
+				</Canvas>
+				<TextBlock Text="{Binding Message}"/>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate x:Key="notificationInfoTemplate">
+			<Grid FlowDirection="RightToLeft">
+				<Canvas Width="0" HorizontalAlignment="Left">
+					<Image Style="{StaticResource Info16Image}" Margin="-24,-1,0,0"/>
+				</Canvas>
+				<TextBlock Text="{Binding Message}"/>
+			</Grid>
+		</DataTemplate>
+		<Style x:Key="notificationContainerStyle">
+			<Setter Property="MenuItem.FlowDirection" Value="RightToLeft"/>
+			<Setter Property="MenuItem.Command" Value="{Binding OpenCommand}"/>
+			<Setter Property="MenuItem.ToolTip" Value="{Binding MoreInfo}"/>
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding NotificationType}" Value="{x:Static Common:NotificationType.Critical}">
+					<Setter Property="MenuItem.HeaderTemplate" Value="{StaticResource notificationErrorTemplate}"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding NotificationType}" Value="{x:Static Common:NotificationType.Alarm}">
+					<Setter Property="MenuItem.HeaderTemplate" Value="{StaticResource notificationWarningTemplate}"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding NotificationType}" Value="{x:Static Common:NotificationType.Info}">
+					<Setter Property="MenuItem.HeaderTemplate" Value="{StaticResource notificationInfoTemplate}"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding IsSeparator}" Value="true">
+					<Setter Property="MenuItem.Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="{x:Type MenuItem}">
+								<StackPanel>
+									<Separator Height="1" Margin="2,3,2,0"/>
+									<TextBlock Text="{Binding Message}" HorizontalAlignment="Center" Margin="0,-2,0,3"/>
+								</StackPanel>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+
+		<DataTemplate x:Key="usersTemplate">
             <WrapPanel Grid.Column="2" FlowDirection="RightToLeft">
                 <CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
@@ -497,55 +550,13 @@
                         </Button.ContextMenu>
                     </Button>
 
+
 					<!-- notifications -->
 					<Menu Grid.Column="3" Margin="0,-5,0,0" HorizontalAlignment="Left" Background="Transparent" Height="25" DataContext="{Binding ., Source={x:Static MessageCenter:NotificationArea.Singleton}}">
-						<MenuItem Header="Notifications" Foreground="{StaticResource TextBrush}" ItemsSource="{Binding List}">
+						<MenuItem Header="Notifications" Foreground="{StaticResource TextBrush}" ItemsSource="{Binding List}" ItemContainerStyle="{DynamicResource notificationContainerStyle}">
                             <MenuItem.Icon>
                                 <Image Source="/Soheil.Controls;component/Images/Menus/notification.png" Width="20"/>
                             </MenuItem.Icon>
-							<MenuItem.ItemContainerStyle>
-								<Style>
-									<Setter Property="MenuItem.FlowDirection" Value="RightToLeft"/>
-									<Setter Property="MenuItem.Header" Value="{Binding Message}"/>
-									<Setter Property="MenuItem.Command" Value="{Binding OpenCommand}"/>
-                                    <Setter Property="MenuItem.ToolTip" Value="{Binding MoreInfo}"/>
-                                    <Style.Triggers>
-										<!--<DataTrigger Binding="{Binding NotificationType}" Value="{x:Static Common:NotificationType.Critical}">
-											<Setter Property="MenuItem.Icon">
-												<Setter.Value>
-													<Image Style="{DynamicResource Error16Image}"/>
-												</Setter.Value>
-											</Setter>
-										</DataTrigger>
-										<DataTrigger Binding="{Binding NotificationType}" Value="{x:Static Common:NotificationType.Alarm}">
-											<Setter Property="MenuItem.Icon">
-												<Setter.Value>
-													<Image Style="{DynamicResource Warning16Image}"/>
-												</Setter.Value>
-											</Setter>
-										</DataTrigger>
-										<DataTrigger Binding="{Binding NotificationType}" Value="{x:Static Common:NotificationType.Info}">
-											<Setter Property="MenuItem.Icon">
-												<Setter.Value>
-													<Image Style="{DynamicResource DocumentInfo16Image}"/>
-												</Setter.Value>
-											</Setter>
-										</DataTrigger>-->
-										<DataTrigger Binding="{Binding IsSeparator}" Value="true">
-											<Setter Property="MenuItem.Template">
-												<Setter.Value>
-													<ControlTemplate TargetType="{x:Type MenuItem}">
-														<Grid>
-															<Separator Style="{DynamicResource {x:Static MenuItem.SeparatorStyleKey}}"/>
-															<TextBlock Text="{Binding Message}" HorizontalAlignment="Left"/>
-														</Grid>
-													</ControlTemplate>
-												</Setter.Value>
-											</Setter>
-										</DataTrigger>
-									</Style.Triggers>
-								</Style>
-							</MenuItem.ItemContainerStyle>
 						</MenuItem>
 					</Menu>
 					<Grid Grid.Column="3" Margin="5,-5,0,0" HorizontalAlignment="Left" IsHitTestVisible="False" DataContext="{Binding ., Source={x:Static MessageCenter:NotificationArea.Singleton}}">
@@ -567,7 +578,7 @@
 					<ContentPresenter Grid.Column="3" Margin="0,-5,0,0" HorizontalAlignment="Left" Content="{Binding ., Source={x:Static Common:CommitNotifier.Singleton}}">
 						<ContentPresenter.ContentTemplate>
 							<DataTemplate>
-								<Grid Background="{StaticResource ThemeLightBrush}" Height="25" Visibility="{Binding IsCommit, Converter={StaticResource booleanToVisibilityConverter}}">
+								<Grid Background="{StaticResource ThemeLightBrush}" Height="25" Width="150" Visibility="{Binding IsCommit, Converter={StaticResource booleanToVisibilityConverter}}">
 									<WrapPanel>
 										<TextBlock Text="{Loc ModificationStatus_Saved}" Foreground="{StaticResource HoverBrush}" FontWeight="Bold" VerticalAlignment="Center"/>
 										<Image Style="{StaticResource Save24Image}" VerticalAlignment="Center" Margin="10,0"/>
@@ -593,6 +604,7 @@
 					</ContentPresenter>
 				</Grid>
             </DockPanel>
+
 			<CustomControls:ChromeTabControl x:Name="chrometabs" IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=Login}">
 				<CustomControls:ChromeTabItem Header="{Loc txtStartPage}">
 					<View:StartPage AnyButtonClicked="HandleAddTabAndSelect"/>

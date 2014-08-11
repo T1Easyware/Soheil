@@ -27,12 +27,20 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Undo16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
-	<Style x:Key="Warning16Image" TargetType="Image">
-		<Setter Property="Source" Value="/Soheil.Controls;component/Images/warning16.png"/>
+	<Style x:Key="Invalid16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Invalid16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
-	<Style x:Key="Error16Image" TargetType="Image">
+	<Style x:Key="Error16Image" TargetType="Image" x:Shared="False">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/error16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Alarm16Image" TargetType="Image" x:Shared="False">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/alarm16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Info16Image" TargetType="Image" x:Shared="False">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/info16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
 	<Style x:Key="Refresh16Image" TargetType="Image">
@@ -47,8 +55,10 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/back_16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
-
-    <!-- Fpc -->
+	<BitmapImage x:Key="ErrorIconSource" UriSource="pack://application:,,,/Soheil.Controls;component/Images/error.ico" x:Shared="False"/>
+	<BitmapImage x:Key="StarIconSource" UriSource="pack://application:,,,/Soheil.Controls;component/Images/star.ico"  x:Shared="False"/>
+	<BitmapImage x:Key="InfoIconSource" UriSource="pack://application:,,,/Soheil.Controls;component/Images/info.ico"  x:Shared="False"/>
+	<!-- Fpc -->
 
 	<Style x:Key="SelectToolImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Fpc/SelectTool.png"/>

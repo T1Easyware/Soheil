@@ -1090,4 +1090,7 @@
   <data name="txtDefectionType" xml:space="preserve">
     <value>نوع خروجی</value>
   </data>
+  <data name="txtHours" xml:space="preserve">
+    <value>ساعت</value>
+  </data>
 </root>
