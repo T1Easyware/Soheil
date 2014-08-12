@@ -2505,37 +2505,14 @@
         </DataTemplate>
 
         <!-- 5.3. Operation Reports -->
-        <DataTemplate x:Key="OperationReportTemplate" DataType="Reports:OperatorReportsVm">
+        <DataTemplate x:Key="OperationReportTemplate" DataType="Reports:OperatorReportsVm"
+                      xmlns:reportView="clr-namespace:Soheil.Views.Reporting">
             <DataTemplate.Resources>
-                <LinearGradientBrush x:Key="SlideWindowBackground" StartPoint="0,0" EndPoint="1,0.001">
-                    <GradientBrush.GradientStops>
-                        <GradientStopCollection>
-                            <GradientStop Color="White" Offset="0" />
-                            <GradientStop Color="#6FFF" Offset="0.5" />
-                            <GradientStop Color="#1FFF" Offset="0.6" />
-                            <GradientStop Color="Transparent" Offset="1"/>
-                        </GradientStopCollection>
-                    </GradientBrush.GradientStops>
-                </LinearGradientBrush>
                 <SolidColorBrush x:Key="l0Brush" Color="#B6B6B6"/>
                 <SolidColorBrush x:Key="l1Brush" Color="#0091B0"/>
                 <SolidColorBrush x:Key="l2Brush" Color="#D95A00"/>
                 <SolidColorBrush x:Key="l3Brush" Color="#AC0404"/>
-                <SolidColorBrush x:Key="e0Brush" Color="LightGray"/>
-                <SolidColorBrush x:Key="e1Brush" Color="#2DBAD8"/>
-                <SolidColorBrush x:Key="e2Brush" Color="#F47F2D"/>
-                <SolidColorBrush x:Key="e3Brush" Color="#D41D1D"/>
-                <LinearGradientBrush x:Key="SlideWindowBorder" StartPoint="0,0" EndPoint="0,1">
-                    <GradientBrush.GradientStops>
-                        <GradientStopCollection>
-                            <GradientStop Color="#FFF" Offset="0.0"/>
-                            <GradientStop Color="#CCC" Offset="1.0"/>
-                        </GradientStopCollection>
-                    </GradientBrush.GradientStops>
-                </LinearGradientBrush>
-                <ObjectDataProvider x:Key="OETypes"
-                                    MethodName="GetValues"
-                                    ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider x:Key="OETypes" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                     <ObjectDataProvider.MethodParameters>
                         <x:Type TypeName="Common:OEType" />
                     </ObjectDataProvider.MethodParameters>
@@ -2558,13 +2535,15 @@
 								<Button Content="{Loc txtRefresh}" Command="{Binding RefreshCommand}"/>
 							</WrapPanel>
                             <WrapPanel DockPanel.Dock="Right">
+                                <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtRemainingValue}" />
+                                <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l0Brush}"/>
                                 <TextBlock Margin="5,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtProductionValue}" />
                                 <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l1Brush}"/>
                                 <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtDefectionValue}" />
                                 <Rectangle Margin="5,2,5,0" Width="15" Fill="{StaticResource l2Brush}"/>
                                 <TextBlock Margin="15,2,5,0" Style="{StaticResource InfoBoxHeader}" Text="{Loc txtStoppageValue}" />
                                 <Rectangle Margin="5,2,50,0" Width="15" Fill="{StaticResource l3Brush}"/>
-                                <customControls:ImageButton 
+                                <customControls:ImageButton Height="30"
                                     ImageSource="/Soheil.Controls;component/Images/Return.png" 
                                     Command="{Binding NavigateBackCommand}"
                                     Visibility="{Binding OprVisibility}"
@@ -2581,123 +2560,7 @@
                                 </Grid>
                         </Grid>
                         <!-- operatorsReport -->
-                        <DockPanel Visibility="{Binding OprVisibility, Converter={StaticResource visibilityInverter}}">
-                            <DockPanel.Resources>
-                                <Common:BindingProxy x:Key="SHProxy" Data="{Binding ScaleHeight}" />
-                                <Common:BindingProxy x:Key="Proxy" Data="{Binding}" />
-                            </DockPanel.Resources>
-                            
-                            <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding ScaleHeaders}" DockPanel.Dock="Right" Width="50" Margin="0,0,0,60" HorizontalAlignment="Center">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Width="50" Text="{Binding}" HorizontalAlignment="Center"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid Rows="10" Columns="1"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                            
-                            <Grid x:Name="adornedControl" >
-                                <ItemsControl x:Name="_ScaleLines" Margin="0,0,0,55"
-                                                        ItemsSource="{Binding ScaleLines}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <UniformGrid Rows="2" Columns="1">
-                                                <Canvas Background="{StaticResource ThemeDarkBrush}" />
-                                                <Canvas Background="{StaticResource ThemeMediumBrush}" />
-                                            </UniformGrid>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <UniformGrid Rows="10" Columns="1"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                </ItemsControl>
-
-
-                                <!-- Bars -->
-                                <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible">
-                                    <ItemsControl x:Name="_slider" ItemsSource="{Binding Bars}" FlowDirection="LeftToRight">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate DataType="Reports:OperatorBarVm">
-                                                <ToggleButton Command="{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}" Width="80" Margin="0"
-                                                              CommandParameter="{Binding }">
-                                                    <ToggleButton.Template>
-                                                        <ControlTemplate>
-                                                            <Grid Margin="5,0">
-                                                                <Grid.RowDefinitions>
-                                                                    <RowDefinition Height="{Binding FillingValue, Converter={StaticResource portionToStarConverter}}"/>
-                                                                    <RowDefinition Height="{Binding RemainingValue, Converter={StaticResource portionToStarConverter}}"/>
-                                                                    <RowDefinition Height="{Binding StoppageValue, Converter={StaticResource portionToStarConverter}}"/>
-                                                                    <RowDefinition Height="{Binding DefectionValue, Converter={StaticResource portionToStarConverter}}"/>
-                                                                    <RowDefinition Height="{Binding ProductionValue, Converter={StaticResource portionToStarConverter}}"/>
-                                                                    <RowDefinition Height="37"/>
-                                                                </Grid.RowDefinitions>
-																<Border BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1" Grid.Row="5" Background="{StaticResource ThemeDarkBrush}" Margin="-5,0">
-                                                                    <TextBlock Text="{Binding Header}" TextWrapping="Wrap" Foreground="{StaticResource TextBrush}" x:Name="operatorText" HorizontalAlignment="Center" TextAlignment="Center"/>
-                                                                </Border>
-                                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Tip}" Foreground="{StaticResource TextBrush}" Margin="1" FontWeight="ExtraBold" VerticalAlignment="Bottom"/>
-                                                                <TextBlock Height="Auto" Background="{StaticResource l0Brush}" Text="{Binding RemainingTip}"
-                                                                                TextAlignment="Center" FontWeight="ExtraBold" Grid.Row="1"/>
-                                                                <TextBlock Height="Auto" Background="{StaticResource l3Brush}" Text="{Binding StoppageTip}"
-                                                                                TextAlignment="Center" FontWeight="ExtraBold" Grid.Row="2"/>
-                                                                <TextBlock Height="Auto" Background="{StaticResource l2Brush}" Text="{Binding DefectionTip}"
-                                                                                TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="3"/>
-                                                                <TextBlock Height="Auto" Background="{StaticResource l1Brush}" Text="{Binding ProductionTip}"
-                                                                                TextAlignment="Center" FontWeight="ExtraBold" Grid.Row="4"/>
-                                                                <Grid x:Name="SideShade" Grid.Row="1" Grid.RowSpan="4" IsHitTestVisible="False" Background="#4FFF" Width="15" HorizontalAlignment="Right"/>
-                                                                <Grid x:Name="Shade" Background="White" Opacity="0" Grid.Row="1" Grid.RowSpan="4">
-                                                                    <Grid.Effect>
-                                                                        <DropShadowEffect x:Name="Effect"
-                                                                            ShadowDepth="0"
-                                                                            Color= "White"
-                                                                            Opacity="0"
-                                                                            BlurRadius="20"/>
-                                                                    </Grid.Effect>
-                                                                </Grid>
-                                                                <VisualStateManager.VisualStateGroups>
-                                                                    <VisualStateGroup x:Name="CommonStates">
-                                                                        <VisualStateGroup.Transitions>
-                                                                            <VisualTransition To="MouseOver" GeneratedDuration="0:0:0.2"/>
-                                                                            <VisualTransition To="Pressed" GeneratedDuration="0:0:0.2"/>
-                                                                        </VisualStateGroup.Transitions>
-                                                                        <VisualState x:Name="Normal" />
-                                                                        <VisualState x:Name="MouseOver">
-                                                                            <Storyboard>
-                                                                                <DoubleAnimation Storyboard.TargetName="SideShade" Storyboard.TargetProperty="Width" To="20" />
-                                                                                <DoubleAnimation Storyboard.TargetName="Shade" Storyboard.TargetProperty="Opacity" To="0.3" />
-                                                                                <ColorAnimation Storyboard.TargetName="operatorText" Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)" To="Gold" />
-                                                                                <DoubleAnimation Storyboard.TargetName="Effect" Storyboard.TargetProperty="Opacity" To="0.5" />
-                                                                            </Storyboard>
-                                                                        </VisualState>
-                                                                        <VisualState x:Name="Pressed">
-                                                                            <Storyboard>
-                                                                                <DoubleAnimation Storyboard.TargetName="SideShade" Storyboard.TargetProperty="Width" To="80" />
-                                                                                <DoubleAnimation Storyboard.TargetName="Shade" Storyboard.TargetProperty="Opacity" To="0.6" />
-                                                                                <DoubleAnimation Storyboard.TargetName="Effect" Storyboard.TargetProperty="Opacity" To="0.8" />
-                                                                            </Storyboard>
-                                                                        </VisualState>
-                                                                    </VisualStateGroup>
-                                                                </VisualStateManager.VisualStateGroups>
-                                                            </Grid>
-                                                        </ControlTemplate>
-                                                    </ToggleButton.Template>
-                                                </ToggleButton>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
-                            </Grid>
-                        </DockPanel>
+                        <reportView:OperatorReport/>
                     </Grid>
                 </DockPanel>
             </Border>

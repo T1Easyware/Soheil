@@ -1087,4 +1087,25 @@
   <data name="txtHours" xml:space="preserve">
     <value>Hours</value>
   </data>
+  <data name="txtRemainingValue" xml:space="preserve">
+    <value>Deviation</value>
+  </data>
+  <data name="txtExecutionPercent" xml:space="preserve">
+    <value>Plan Execution Percent</value>
+  </data>
+  <data name="txtMajorDefection" xml:space="preserve">
+    <value>Major Defection Type</value>
+  </data>
+  <data name="txtMajorStoppage" xml:space="preserve">
+    <value>Major Stoppage Cause</value>
+  </data>
+  <data name="txtProductionPerHour" xml:space="preserve">
+    <value>Standard Production per hour</value>
+  </data>
+  <data name="txtProductionSupervisor" xml:space="preserve">
+    <value>Production Supervisor</value>
+  </data>
+  <data name="txtSpecialEvents" xml:space="preserve">
+    <value>Special events and Crisis</value>
+  </data>
 </root>

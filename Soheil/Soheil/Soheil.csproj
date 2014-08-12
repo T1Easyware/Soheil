@@ -200,6 +200,12 @@
     <Compile Include="Views\PP\TaskReport.xaml.cs">
       <DependentUpon>TaskReport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Reporting\DailyReport.xaml.cs">
+      <DependentUpon>DailyReport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reporting\OperatorReport.xaml.cs">
+      <DependentUpon>OperatorReport.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SetupTime\Converters.cs" />
     <Compile Include="Views\SetupTime\GridHelper.cs" />
     <Compile Include="Views\SetupTime\SetupTimeTable.xaml.cs">
@@ -367,6 +373,14 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Page Include="Views\Reporting\DailyReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reporting\OperatorReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SetupTime\SetupTimeTable.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
