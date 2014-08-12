@@ -1095,6 +1095,13 @@
   </data>
   <data name="txtRemainingValue" xml:space="preserve">
     <value>میزان انحراف</value>
+    <comment>TP - G1 - defections - stoppages</comment>
+  </data>
+  <data name="txtBuildReport" xml:space="preserve">
+    <value>ساختن گزارش</value>
+  </data>
+  <data name="txtDailyReport" xml:space="preserve">
+    <value>برنامه روزانه تولید</value>
   </data>
   <data name="txtExecutionPercent" xml:space="preserve">
     <value>درصد اجرای برنامه</value>
@@ -1111,7 +1118,14 @@
   <data name="txtProductionSupervisor" xml:space="preserve">
     <value>سرپرست تولید</value>
   </data>
+  <data name="txtShift" xml:space="preserve">
+    <value>شیفت</value>
+  </data>
   <data name="txtSpecialEvents" xml:space="preserve">
     <value>رویدادهای خاص و موارد بحرانی</value>
+  </data>
+  <data name="txtTotalDeviation" xml:space="preserve">
+    <value>مجموع انحرافات</value>
+    <comment>TP - G1</comment>
   </data>
 </root>

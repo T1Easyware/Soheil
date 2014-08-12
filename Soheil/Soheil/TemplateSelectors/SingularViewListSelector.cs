@@ -15,6 +15,7 @@ namespace Soheil.TemplateSelectors
 		public DataTemplate PmVmTemplate { get; set; }
 		public DataTemplate SetupTimesVmTemplate { get; set; }
 		public DataTemplate SkillCenterVmTemplate { get; set; }
+		public DataTemplate DailyReportVmTemplate { get; set; }
 
 		//!@#$
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -35,6 +36,8 @@ namespace Soheil.TemplateSelectors
                 return SetupTimesVmTemplate;
 			if (item is Core.ViewModels.SkillCenter.SkillCenterVm)
 				return SkillCenterVmTemplate;
+			if (item is Core.ViewModels.Reports.DailyReportVm)
+				return DailyReportVmTemplate;
             return null;
         }
     }

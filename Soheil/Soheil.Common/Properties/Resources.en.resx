@@ -1090,6 +1090,12 @@
   <data name="txtRemainingValue" xml:space="preserve">
     <value>Deviation</value>
   </data>
+  <data name="txtBuildReport" xml:space="preserve">
+    <value>Build Report</value>
+  </data>
+  <data name="txtDailyReport" xml:space="preserve">
+    <value>Daily Production Report</value>
+  </data>
   <data name="txtExecutionPercent" xml:space="preserve">
     <value>Plan Execution Percent</value>
   </data>
@@ -1105,7 +1111,13 @@
   <data name="txtProductionSupervisor" xml:space="preserve">
     <value>Production Supervisor</value>
   </data>
+  <data name="txtShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
   <data name="txtSpecialEvents" xml:space="preserve">
     <value>Special events and Crisis</value>
+  </data>
+  <data name="txtTotalDeviation" xml:space="preserve">
+    <value>Total deviation</value>
   </data>
 </root>

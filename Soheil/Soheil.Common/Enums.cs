@@ -203,6 +203,7 @@ namespace Soheil.Common
         CostReportsSubMenu = 41,
         ActualCostReportsSubMenu = 42,
         OperationReportsSubMenu = 43,
+		DailyReport = 44,
         OptionsMenu = 5,
         SettingsSubMenu = 51,
         HelpSubMenu = 52,

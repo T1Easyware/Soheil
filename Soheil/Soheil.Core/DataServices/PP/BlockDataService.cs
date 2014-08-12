@@ -900,5 +900,11 @@ namespace Soheil.Core.DataServices
 			return new Tuple<Block, Setup>(block,
 				(setup.EndDateTime >= block.EndDateTime) ? setup : null);
 		}
+
+		internal Core.Reports.DailyReportData GetDailyReport(DateTime StartDateTime, DateTime EndDateTime)
+		{
+			
+			return null;
+		}
 	}
 }

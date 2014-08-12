@@ -416,11 +416,6 @@ namespace Soheil.Core.ViewModels.Reports
 	        Document = xps.GetFixedDocumentSequence();
 	    }
 
-	    private int GetIntervalCount()
-	    {
-	        return DataService.GetOperatorsCount();
-	    }
-
 	    public void NavigateInside(object param)
         {
 			_ignoreSelectedBarChanged = true;

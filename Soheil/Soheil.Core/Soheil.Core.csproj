@@ -67,6 +67,7 @@
     <Compile Include="DataServices\PM\MachinePartDataService.cs" />
     <Compile Include="DataServices\PM\RepairDataService.cs" />
     <Compile Include="DataServices\PM\ReportDataService.cs" />
+    <Compile Include="Reports\DailyReportData.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationArea.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationVm.cs" />
     <Compile Include="ViewModels\MessageCenter\PMVm.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="ViewModels\PP\Report\RepairMachinePartVm.cs" />
     <Compile Include="ViewModels\PP\Report\RepairVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
+    <Compile Include="ViewModels\Reports\DailyReportVm.cs" />
     <Compile Include="ViewModels\Reports\OprActivityDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />
     <Compile Include="PP\PPRange.cs" />

@@ -73,7 +73,7 @@ namespace Soheil
 			_newTabNumber = 1;
 
 			// temp
-			//  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
+			  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
 			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
@@ -271,6 +271,10 @@ namespace Soheil
                     SingularList = new OperationReportsVm(access);
                     chrometabs.AddTab(CreateSingularTab(type), true);
                     break;
+				case SoheilEntityType.DailyReport:
+					SingularList = new DailyReportVm(access);
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
                 case SoheilEntityType.OptionsMenu:
                     break;
                 case SoheilEntityType.SettingsSubMenu:
@@ -504,9 +508,11 @@ namespace Soheil
                     return Common.Properties.Resources.txtControl;
                 case SoheilEntityType.ProductPlanSubMenu:
                     return Common.Properties.Resources.txtProductPlan;
-                case SoheilEntityType.PerformanceSubMenu:
-                    return Common.Properties.Resources.txtPerformance;
-                case SoheilEntityType.IndicesSubMenu:
+				case SoheilEntityType.PerformanceSubMenu:
+					return Common.Properties.Resources.txtPerformance;
+				case SoheilEntityType.DailyReport:
+					return Common.Properties.Resources.txtDailyReport;
+				case SoheilEntityType.IndicesSubMenu:
                     return Common.Properties.Resources.txtIndices;
                 case SoheilEntityType.CostReportsSubMenu:
                     return Common.Properties.Resources.txtCostReports;

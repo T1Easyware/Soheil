@@ -30,6 +30,7 @@ namespace Soheil.Views
 			SetValue(Command3Property, new Command(o => AnyButtonClicked(new Control { Tag = 222 }, null)));
 			SetValue(Command4Property, new Command(o => AnyButtonClicked(new Control { Tag = 34 }, null)));
 			SetValue(Command5Property, new Command(o => AnyButtonClicked(new Control { Tag = 27 }, null)));
+			SetValue(VersionProperty, System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
 		}
 		public static readonly RoutedEvent AnyButtonClickedEvent;
 		public event RoutedEventHandler AnyButtonClicked;
@@ -39,6 +40,8 @@ namespace Soheil.Views
 		public static readonly DependencyProperty Command3Property = DependencyProperty.Register("Command3", typeof(Command), typeof(StartPage), new PropertyMetadata(null));
 		public static readonly DependencyProperty Command4Property = DependencyProperty.Register("Command4", typeof(Command), typeof(StartPage), new PropertyMetadata(null));
 		public static readonly DependencyProperty Command5Property = DependencyProperty.Register("Command5", typeof(Command), typeof(StartPage), new PropertyMetadata(null));
+
+		public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(string), typeof(StartPage), new PropertyMetadata("0.0.0.0"));
 
 	}
 }

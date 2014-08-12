@@ -1,0 +1,300 @@
+﻿<FlowDocument xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:document="clr-namespace:Soheil.Core.Printing.Document;assembly=Soheil.Core"
+              PageWidth="29.7cm" PageHeight="21cm" ColumnWidth="29.7cm" FlowDirection="{Loc enumDirection}">
+    <FlowDocument.Resources>
+        <!-- Style for data rows. -->
+        <Style x:Key="dataRowStyle" TargetType="{x:Type TableRowGroup}">
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <!-- Style for header/footer rows. -->
+        <Style x:Key="headerFooterRowStyle" TargetType="{x:Type TableRowGroup}">
+            <Setter Property="FontWeight" Value="DemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Background" Value="LightGray"/>
+        </Style>
+        <!-- Style for data cells. -->
+        <Style TargetType="{x:Type TableCell}">
+            <Setter Property="Padding" Value="0.05cm"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="0.01cm"/>
+        </Style>
+    </FlowDocument.Resources>
+    
+    <document:ReportProperties ReportTitle="{Loc txtDailyReport}" ReportName="DailyReport"/>
+    <Section Padding="80,10,40,10" FontSize="12">
+        <Paragraph FontSize="24" FontWeight="Bold">
+            <document:InlineContextValue PropertyName="ReportTitle" />
+        </Paragraph>
+        <document:SectionDataGroup DataGroupName="ItemList">
+
+            <!-- Title Table -->
+            <Table CellSpacing="0" BorderBrush="Black" BorderThickness="0.02cm">
+                <Table.Columns>
+                    <TableColumn Width="Auto" />
+                    <TableColumn Width="Auto" />
+                    <TableColumn Width="Auto" />
+                </Table.Columns>
+                <TableRowGroup Style="{StaticResource dataRowStyle}">
+                    <document:TableRowForDataTable TableName="TitleTable">
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="ReportTitleDate" />
+                            </Paragraph>
+                        </TableCell>
+                    </document:TableRowForDataTable>
+                </TableRowGroup>
+            </Table>
+
+            <!-- Main Table -->
+            <Table CellSpacing="0" BorderBrush="Black" BorderThickness="0.02cm">
+                <Table.Columns>
+                    <TableColumn Width="Auto" />
+                    <TableColumn Width="Auto" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                </Table.Columns>
+                <TableRowGroup Style="{StaticResource headerFooterRowStyle}">
+                    <TableRow>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtProduct}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtActivity}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtShift}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtStation}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtTargetValue}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtProductionPerHour}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtProductionValue}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtExecutionPercent}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtTotalDeviation}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtDefectionValue}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtMajorDefection}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtStoppageValue}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtMajorStoppage}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                    </TableRow>
+                </TableRowGroup>
+                <TableRowGroup Style="{StaticResource dataRowStyle}">
+                    <document:TableRowForDataTable TableName="MainTable">
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="Product" />
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="Activity"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="Shift" />
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="Station"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="TargetValue"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="ProductionPerHour"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="ProductionValue"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="ExecutionPercent"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="TotalDeviationValue"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="DefectionValue"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="MajorDefection"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="StoppageValue"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="MajorStoppage"/>
+                            </Paragraph>
+                        </TableCell>
+                    </document:TableRowForDataTable>
+                </TableRowGroup>
+            </Table>
+
+
+            <!-- Summery Table -->
+            <Table CellSpacing="0" BorderBrush="Black" BorderThickness="0.02cm">
+                <Table.Columns>
+                    <TableColumn Width="80"/>
+                    <TableColumn Width="220"/>
+                    <TableColumn Width="150"/>
+                    <TableColumn/>
+                </Table.Columns>
+                <TableRowGroup Style="{StaticResource headerFooterRowStyle}">
+                    <TableRow>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtShift}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtProductionSupervisor}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtOperatorsCount}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtSpecialEvents}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                    </TableRow>
+                </TableRowGroup>
+                <TableRowGroup Style="{StaticResource dataRowStyle}">
+                    <document:TableRowForDataTable TableName="SummeryTable">
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="Shift" />
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="Supervisor" />
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="OperatorsCount" />
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell RowSpan="10">
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="Description" />
+                            </Paragraph>
+                        </TableCell>
+                    </document:TableRowForDataTable>
+                </TableRowGroup>
+            </Table>
+        </document:SectionDataGroup>
+    </Section>
+</FlowDocument>

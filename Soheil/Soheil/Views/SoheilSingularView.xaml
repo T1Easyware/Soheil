@@ -2566,6 +2566,12 @@
             </Border>
         </DataTemplate>
 
+        <!-- 5.4. Daily Production Reports -->
+        <DataTemplate x:Key="DailyReportTemplate" DataType="Reports:DailyReportVm"
+                      xmlns:reportView="clr-namespace:Soheil.Views.Reporting">
+            <reportView:DailyReport/>
+        </DataTemplate>
+        
         <!--................................................ 4.Options ...............................................-->
 
         <!-- 5.1. Settings and Configurations -->
@@ -2585,6 +2591,7 @@
 													CostReportsVmTemplate="{StaticResource CostReportTemplate}"
 													ActualCostReportsVmTemplate="{StaticResource ActualCostReportTemplate}"
 													OperationReportsVmTemplate="{StaticResource OperationReportTemplate}"
+													DailyReportVmTemplate="{StaticResource DailyReportTemplate}"
                                                     />
 	</UserControl.Resources>
     <Grid>

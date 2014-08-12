@@ -207,6 +207,14 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/Performance.png"
                         Tag="43" />
+                <CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtDailyReport}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/DailyReport.png"
+                        Tag="44" />
             </WrapPanel>
         </DataTemplate>
         <DataTemplate x:Key="optionsTemplate">
@@ -528,7 +536,12 @@
 									</MenuItem>
 									<MenuItem Header="{Loc txtActualCostReports}" Click="HandleAddTabAndSelect" Tag="42"/>
                                     <MenuItem Header="{Loc txtOperationReports}" Click="HandleAddTabAndSelect" Tag="43"/>
+                                    <MenuItem Header="{Loc txtDailyReport}" Click="HandleAddTabAndSelect" Tag="44">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Soheil.Controls;component/Images/Menus/DailyReport.png"/>
+                                        </MenuItem.Icon>
                                     </MenuItem>
+                                </MenuItem>
                                 <MenuItem Header="{Loc txtOptions}">
                                     <MenuItem.Icon>
                                         <Image Source="/Soheil.Controls;component/Images/Menus/Setting.png"/>

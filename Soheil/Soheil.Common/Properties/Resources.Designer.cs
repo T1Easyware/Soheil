@@ -934,6 +934,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ساختن گزارش.
+        /// </summary>
+        public static string txtBuildReport {
+            get {
+                return ResourceManager.GetString("txtBuildReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to وضعیت کاری روز.
         /// </summary>
         public static string txtBusinessDayState {
@@ -1137,6 +1146,15 @@ namespace Soheil.Common.Properties {
         public static string txtCycleTimeSec {
             get {
                 return ResourceManager.GetString("txtCycleTimeSec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to برنامه روزانه تولید.
+        /// </summary>
+        public static string txtDailyReport {
+            get {
+                return ResourceManager.GetString("txtDailyReport", resourceCulture);
             }
         }
         
@@ -2500,6 +2518,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to شیفت.
+        /// </summary>
+        public static string txtShift {
+            get {
+                return ResourceManager.GetString("txtShift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to رنگ هر شیفت.
         /// </summary>
         public static string txtShiftPrototypeColor {
@@ -2811,6 +2838,15 @@ namespace Soheil.Common.Properties {
         public static string txtTotalDefectionTime {
             get {
                 return ResourceManager.GetString("txtTotalDefectionTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مجموع انحرافات.
+        /// </summary>
+        public static string txtTotalDeviation {
+            get {
+                return ResourceManager.GetString("txtTotalDeviation", resourceCulture);
             }
         }
         
