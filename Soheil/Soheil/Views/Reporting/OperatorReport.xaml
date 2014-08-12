@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="Soheil.Views.Reporting.OperatorReport"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Common="clr-namespace:Soheil.Common;assembly=Soheil.Common"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <DockPanel Visibility="{Binding OprVisibility, Converter={StaticResource visibilityInverter}}">
+        <DockPanel.Resources>
+            <Common:BindingProxy x:Key="SHProxy" Data="{Binding ScaleHeight}" />
+            <Common:BindingProxy x:Key="Proxy" Data="{Binding}" />
+            <SolidColorBrush x:Key="l0Brush" Color="#B6B6B6"/>
+            <SolidColorBrush x:Key="l1Brush" Color="#0091B0"/>
+            <SolidColorBrush x:Key="l2Brush" Color="#D95A00"/>
+            <SolidColorBrush x:Key="l3Brush" Color="#AC0404"/>
+        </DockPanel.Resources>
+
+        <ItemsControl x:Name="_ScaleNums" ItemsSource="{Binding ScaleHeaders}" DockPanel.Dock="Right" Width="50" Margin="0,0,0,60" HorizontalAlignment="Center">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Style="{StaticResource EntryBoxHeader}" Width="50" Text="{Binding}" HorizontalAlignment="Center"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="10" Columns="1"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <Grid x:Name="adornedControl" >
+            <ItemsControl x:Name="_ScaleLines" Margin="0,0,0,55" ItemsSource="{Binding ScaleLines}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <UniformGrid Rows="2" Columns="1">
+                            <Canvas Background="{StaticResource ThemeDarkBrush}" />
+                            <Canvas Background="{StaticResource ThemeMediumBrush}" />
+                        </UniformGrid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="10" Columns="1"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+
+            <!-- Bars -->
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible">
+                <ItemsControl x:Name="_slider" ItemsSource="{Binding Bars}" FlowDirection="LeftToRight">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="Reports:OperatorBarVm">
+                            <ToggleButton Command="{Binding Source={StaticResource Proxy}, Path=Data.NavigateInsideCommand}" Width="80" Margin="0"
+                                           CommandParameter="{Binding }">
+                                <ToggleButton.Template>
+                                    <ControlTemplate>
+                                        <Grid Margin="5,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="{Binding FillingValue, Converter={StaticResource portionToStarConverter}}"/>
+                                                <RowDefinition Height="{Binding RemainingValue, Converter={StaticResource portionToStarConverter}}"/>
+                                                <RowDefinition Height="{Binding StoppageValue, Converter={StaticResource portionToStarConverter}}"/>
+                                                <RowDefinition Height="{Binding DefectionValue, Converter={StaticResource portionToStarConverter}}"/>
+                                                <RowDefinition Height="{Binding ProductionValue, Converter={StaticResource portionToStarConverter}}"/>
+                                                <RowDefinition Height="37"/>
+                                            </Grid.RowDefinitions>
+                                            <Border BorderBrush="{StaticResource ThemeLightBrush}" BorderThickness="1" Grid.Row="5" Background="{StaticResource ThemeDarkBrush}" Margin="-5,0">
+                                                <TextBlock Text="{Binding Header}" TextWrapping="Wrap" Foreground="{StaticResource TextBrush}" x:Name="operatorText" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock HorizontalAlignment="Center" Text="{Binding Tip}" Foreground="{StaticResource TextBrush}" Margin="1" FontWeight="ExtraBold" VerticalAlignment="Bottom"/>
+                                            <TextBlock Height="Auto" Background="{StaticResource l0Brush}" Text="{Binding RemainingTip}"
+                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Row="1"/>
+                                            <TextBlock Height="Auto" Background="{StaticResource l3Brush}" Text="{Binding StoppageTip}"
+                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Row="2"/>
+                                            <TextBlock Height="Auto" Background="{StaticResource l2Brush}" Text="{Binding DefectionTip}"
+                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Column="0" Grid.Row="3"/>
+                                            <TextBlock Height="Auto" Background="{StaticResource l1Brush}" Text="{Binding ProductionTip}"
+                                                        TextAlignment="Center" FontWeight="ExtraBold" Grid.Row="4"/>
+                                            <Grid x:Name="SideShade" Grid.Row="1" Grid.RowSpan="4" IsHitTestVisible="False" Background="#4FFF" Width="15" HorizontalAlignment="Right"/>
+                                            <Grid x:Name="Shade" Background="White" Opacity="0" Grid.Row="1" Grid.RowSpan="4">
+                                                <Grid.Effect>
+                                                    <DropShadowEffect x:Name="Effect"
+                                                                            ShadowDepth="0"
+                                                                            Color= "White"
+                                                                            Opacity="0"
+                                                                            BlurRadius="20"/>
+                                                </Grid.Effect>
+                                            </Grid>
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualStateGroup.Transitions>
+                                                        <VisualTransition To="MouseOver" GeneratedDuration="0:0:0.2"/>
+                                                        <VisualTransition To="Pressed" GeneratedDuration="0:0:0.2"/>
+                                                    </VisualStateGroup.Transitions>
+                                                    <VisualState x:Name="Normal" />
+                                                    <VisualState x:Name="MouseOver">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="SideShade" Storyboard.TargetProperty="Width" To="20" />
+                                                            <DoubleAnimation Storyboard.TargetName="Shade" Storyboard.TargetProperty="Opacity" To="0.3" />
+                                                            <ColorAnimation Storyboard.TargetName="operatorText" Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)" To="Gold" />
+                                                            <DoubleAnimation Storyboard.TargetName="Effect" Storyboard.TargetProperty="Opacity" To="0.5" />
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Pressed">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="SideShade" Storyboard.TargetProperty="Width" To="80" />
+                                                            <DoubleAnimation Storyboard.TargetName="Shade" Storyboard.TargetProperty="Opacity" To="0.6" />
+                                                            <DoubleAnimation Storyboard.TargetName="Effect" Storyboard.TargetProperty="Opacity" To="0.8" />
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </DockPanel>
+</UserControl>

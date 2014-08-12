@@ -1093,4 +1093,25 @@
   <data name="txtHours" xml:space="preserve">
     <value>ساعت</value>
   </data>
+  <data name="txtRemainingValue" xml:space="preserve">
+    <value>میزان انحراف</value>
+  </data>
+  <data name="txtExecutionPercent" xml:space="preserve">
+    <value>درصد اجرای برنامه</value>
+  </data>
+  <data name="txtMajorDefection" xml:space="preserve">
+    <value>عمده نوع ضایعات</value>
+  </data>
+  <data name="txtMajorStoppage" xml:space="preserve">
+    <value>عمده علت توقف</value>
+  </data>
+  <data name="txtProductionPerHour" xml:space="preserve">
+    <value>تعداد استاندارد در ساعت</value>
+  </data>
+  <data name="txtProductionSupervisor" xml:space="preserve">
+    <value>سرپرست تولید</value>
+  </data>
+  <data name="txtSpecialEvents" xml:space="preserve">
+    <value>رویدادهای خاص و موارد بحرانی</value>
+  </data>
 </root>
