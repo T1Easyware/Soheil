@@ -262,6 +262,12 @@
 					<WrapPanel Grid.Column="7" IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=Login}"
                                Margin="0,0,120,0"
                                FlowDirection="RightToLeft">
+						<WrapPanel.Resources>
+							<Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+								<Setter Property="Height" Value="20"/>
+								<Setter Property="MinWidth" Value="60"/>
+							</Style>
+						</WrapPanel.Resources>
                         <ToggleButton Checked="QuickAccessMenuChecked"
                                       Content=""
                                       Visibility="Collapsed"

@@ -73,7 +73,7 @@ namespace Soheil
 			_newTabNumber = 1;
 
 			// temp
-			  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
+			//  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
 			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
