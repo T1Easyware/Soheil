@@ -1128,4 +1128,16 @@
     <value>مجموع انحرافات</value>
     <comment>TP - G1</comment>
   </data>
+  <data name="txtSupervisor" xml:space="preserve">
+    <value>سرپرست تولید</value>
+  </data>
+  <data name="txtNextDay" xml:space="preserve">
+    <value>روز بعد</value>
+  </data>
+  <data name="txtPreviousDay" xml:space="preserve">
+    <value>روز قبل</value>
+  </data>
+  <data name="txtShiftsInfo" xml:space="preserve">
+    <value>اطلاعات شیفتها</value>
+  </data>
 </root>

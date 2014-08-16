@@ -24,15 +24,5 @@ namespace Soheil.Views.Reporting
 		{
 			InitializeComponent();
 		}
-
-		private void TextBox_MouseEnter(object sender, MouseEventArgs e)
-		{
-			canvas.ClipToBounds = false;
-		}
-
-		private void TextBox_MouseLeave(object sender, MouseEventArgs e)
-		{
-			canvas.ClipToBounds = true;
-		}
 	}
 }

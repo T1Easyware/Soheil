@@ -1879,6 +1879,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to روز بعد.
+        /// </summary>
+        public static string txtNextDay {
+            get {
+                return ResourceManager.GetString("txtNextDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to اجرا نشده.
         /// </summary>
         public static string txtNotDone {
@@ -2172,6 +2181,15 @@ namespace Soheil.Common.Properties {
         public static string txtPositions {
             get {
                 return ResourceManager.GetString("txtPositions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to روز قبل.
+        /// </summary>
+        public static string txtPreviousDay {
+            get {
+                return ResourceManager.GetString("txtPreviousDay", resourceCulture);
             }
         }
         
@@ -2545,6 +2563,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to اطلاعات شیفتها.
+        /// </summary>
+        public static string txtShiftsInfo {
+            get {
+                return ResourceManager.GetString("txtShiftsInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مرکز مهارت.
         /// </summary>
         public static string txtSkillCenter {
@@ -2739,6 +2766,15 @@ namespace Soheil.Common.Properties {
         public static string txtStoppageValue {
             get {
                 return ResourceManager.GetString("txtStoppageValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to سرپرست تولید.
+        /// </summary>
+        public static string txtSupervisor {
+            get {
+                return ResourceManager.GetString("txtSupervisor", resourceCulture);
             }
         }
         

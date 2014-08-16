@@ -2,22 +2,27 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" Background="Transparent" TextBlock.Foreground="Black"
              d:DesignHeight="100" d:DesignWidth="600">
-	<StackPanel Orientation="Horizontal">
-		<Separator/>
-		<TextBlock Text="{Loc txtStart}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+	<DockPanel>
+		<TextBlock Text="{Loc txtDate}" VerticalAlignment="Center" Margin="10,0,0,0"/>
 		<cal:DatePicker SelectedDate="{Binding StartDate}" DisplayDate="{Binding StartDate}" VerticalAlignment="Center"/>
-		<TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" VerticalAlignment="Center" Margin="5,0"/>
-		<Separator/>
-		<TextBlock Text="{Loc txtSpecialEvents}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-		<Canvas Height="20" VerticalAlignment="Center" Width="80" Margin="0,10" x:Name="canvas">
-			<TextBox Text="{Binding Description}" AcceptsReturn="True" AcceptsTab="True" MinWidth="80" MouseEnter="TextBox_MouseEnter" MouseLeave="TextBox_MouseLeave"/>
-		</Canvas>
-		<Separator/>
-		<Button Content="{Loc txtBuildReport}" Command="{Binding RefreshCommand}" Padding="10,5" ToolBar.OverflowMode="Never" Margin="5,0,0,0"/>
-	</StackPanel>
+		<TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" VerticalAlignment="Center" Margin="5,0,10,0"/>
+        <Button Content="{Loc txtPreviousDay}" Command="{Binding ChangeDayCommand}" Padding="5,0" Foreground="Black">
+            <Button.CommandParameter>
+                <sys:Int32>-1</sys:Int32>
+            </Button.CommandParameter>
+        </Button>
+        <Button Content="{Loc txtNextDay}" Command="{Binding ChangeDayCommand}" Padding="5,0" Foreground="Black">
+            <Button.CommandParameter>
+                <sys:Int32>1</sys:Int32>
+            </Button.CommandParameter>
+        </Button>
+        <ToggleButton Content="{Loc txtShiftsInfo}" IsChecked="{Binding ShowDetails}" Padding="5,0" ToolBar.OverflowMode="Never" Foreground="Black"/>
+        <Button Content="{Loc txtBuildReport}" Command="{Binding RefreshCommand}" Padding="10,0" ToolBar.OverflowMode="Never" Foreground="Black"/>
+	</DockPanel>
 </UserControl>

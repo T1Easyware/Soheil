@@ -2569,11 +2569,50 @@
         <!-- 5.4. Daily Production Reports -->
         <DataTemplate x:Key="DailyReportTemplate" DataType="Reports:DailyReportVm"
                       xmlns:reportView="clr-namespace:Soheil.Views.Reporting">
-			<Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}">
-				<Grid>
-					<DocumentViewer Name="documentViewer" Document="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel.Document}" Loaded="DRdocumentViewer_Initialized"/>
-				</Grid>
-			</Grid>
+            <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}">
+                <Grid>
+                    <customControls:DocumentViewerWithPrint Document="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel.Document}" Loaded="DRdocumentViewer_Initialized" x:Name="documentViewer" PreviewPrint="dailyReportPrint"/>
+                </Grid>
+                <Grid Background="#2000" Visibility="{Binding ShowDetails, Converter={StaticResource booleanToVisibilityConverter}}">
+                    <Grid TextBlock.Foreground="Black">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="White" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Grid.RowSpan="4" Margin="-40,-40" BorderBrush="#4000" BorderThickness="1"/>
+                        <TextBlock Text="{Loc txtSupervisor}" VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="1"/>
+                        <TextBlock Text="{Loc txtSpecialEvents}" VerticalAlignment="Bottom" Grid.Column="3" Grid.Row="1"/>
+                        <ItemsControl ItemsSource="{Binding Shifts}" Grid.Column="1" Grid.Row="3">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding String1}" DockPanel.Dock="Left"/>
+                                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                                        <TextBox Text="{Binding String2}" MinWidth="150"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBox Text="{Binding Description}" AcceptsReturn="True" AcceptsTab="True" MinWidth="80" Grid.Column="3" Grid.Row="3"/>
+                        <WrapPanel Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3">
+                            <Button Content="درج اطلاعات در گزارش" Command="{Binding InsertShiftsInfoCommand}" Foreground="Black"/>
+                            <Button Content="{Loc txtCancel}" Command="{Binding CancelShiftsInfoCommand}" Foreground="Black"/>
+                            <Button Content="{Loc txtReset}" Command="{Binding ResetShiftsInfoCommand}" Foreground="Black"/>
+                        </WrapPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
         </DataTemplate>
         
         <!--................................................ 4.Options ...............................................-->

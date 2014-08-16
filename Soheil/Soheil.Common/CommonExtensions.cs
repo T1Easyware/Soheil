@@ -132,10 +132,6 @@ namespace Soheil.Common
 			foreach (var item in list)
 				collection.Remove(item);
 		}
-		public static List<T> DistinctBy<T, TKey>(this IList<T> collection, Func<T, TKey> selector)
-		{
-			return collection.GroupBy(selector).Select(grp => grp.First()).ToList();
-		}
 
 		/// <summary>
 		/// Returns true if no elements in collection, else return true if all specified values are equal

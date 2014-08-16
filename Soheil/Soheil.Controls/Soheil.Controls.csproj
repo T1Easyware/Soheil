@@ -124,6 +124,7 @@
     <Compile Include="CustomControls\ColorPicker\ColorUtils.cs" />
     <Compile Include="CustomControls\ColorPicker\HsvControl.cs" />
     <Compile Include="CustomControls\ColorPicker\SpectrumSlider.cs" />
+    <Compile Include="CustomControls\DocumentViewerWithPrint.cs" />
     <Compile Include="CustomControls\DurationBox.cs" />
     <Compile Include="CustomControls\FrameworkElementAdorner.cs" />
     <Compile Include="ControlExtensions.cs" />

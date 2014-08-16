@@ -5,6 +5,7 @@ using Soheil.Core.Interfaces;
 using Soheil.Core.Printing;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -21,21 +22,102 @@ namespace Soheil.Core.ViewModels.Reports
 		public DailyReportVm(AccessType access)
 		{
 			Access = access;
+
+			#region init Commands
 			NavigateNextCommand = new Command(NavigateNext);
+
 			NavigatePreviousCommand = new Command(NavigatePrevious);
+
 			RefreshCommand = new Command(Refresh, () => true);
+
+			ChangeDayCommand = new Command(offset =>
+			{
+				StartDate = StartDate.AddDays((int)offset);
+				LoadDailyReport();
+			});
+
+			InsertShiftsInfoCommand = new Command(o =>
+			{
+				if (_reportData == null) return;
+				var reportDocument = new Soheil.Core.Printing.ReportDocument();
+				var reader =
+					new StreamReader(new FileStream(@"Views\Reporting\DailyReportDocument.xaml", FileMode.Open, FileAccess.Read));
+				reportDocument.XamlData = reader.ReadToEnd();
+				reportDocument.XamlImagePath = Path.Combine(Environment.CurrentDirectory, @"Views\Reporting\");
+				reader.Close();
+
+
+				#region Summery table
+				_reportData.DataTables.RemoveWhere(x => x.TableName == "SummeryTable");
+				
+				var summeryTable = new DataTable("SummeryTable");
+				summeryTable.Columns.Add("Shift", typeof(string));
+				summeryTable.Columns.Add("Supervisor", typeof(string));
+				summeryTable.Columns.Add("OperatorsCount", typeof(string));
+				summeryTable.Columns.Add("Description", typeof(string));
+
+				bool flag = true;
+				if (_reports.Summery != null)
+				{
+					int idx = 0;
+					foreach (var item in _reports.Summery)
+					{
+						if (Shifts.Count >= idx)
+							summeryTable.Rows.Add(new object[]
+						{
+							item.Shift, 
+							Shifts[idx].String2,
+							item.OperatorsCount, 
+							flag?Description.Trim():""
+						});
+
+						idx++;
+						flag = false;
+					}
+				}
+				_reportData.DataTables.Add(summeryTable);
+				#endregion
+
+				XpsDocument xps = reportDocument.CreateXpsDocument(_reportData);
+				Document = xps.GetFixedDocumentSequence();
+				ShowDetails = false;
+				if (DocumentChanged != null) DocumentChanged();
+			}, () => _reportData != null);
+
+			CancelShiftsInfoCommand = new Command(o => ShowDetails = false);
+			ResetShiftsInfoCommand = new Command(o =>
+			{
+				foreach (var shift in Shifts)
+				{
+					shift.String2 = "";
+				}
+				Description = "";
+			});
+
+			#endregion
+
 			_workProfilePlanDataService = new DataServices.WorkProfilePlanDataService();
-			StartDate = DateTime.Now.Date;
-			EndDate = DateTime.Now.AddDays(1).Date;
+			StartDate = DateTime.Now.AddDays(-1).Date;
+			LoadDailyReport();
 		}
 
 
 		#region Properties
 		public AccessType Access { get; set; }
+
+		public event Action DocumentChanged;
 		public Command NavigateNextCommand { get; set; }
 		public Command NavigatePreviousCommand { get; set; }
 		public Command PrintCommand { get; set; }
 		public Command RefreshCommand { get; set; }
+		public Command ChangeDayCommand { get; set; }
+		public Command InsertShiftsInfoCommand { get; set; }
+		public Command CancelShiftsInfoCommand { get; set; }
+		public Command ResetShiftsInfoCommand { get; set; }
+		
+		ReportData _reportData;
+		Core.Reports.DailyReportData _reports;
+
 		DataServices.WorkProfilePlanDataService _workProfilePlanDataService;
 		#endregion		
 
@@ -62,6 +144,7 @@ namespace Soheil.Core.ViewModels.Reports
 				var vm = (DailyReportVm)d;
 				var val = (DateTime)e.NewValue;
 				vm.StartTime = vm._workProfilePlanDataService.GetShiftStartAt(val).TimeOfDay;
+				vm.EndDate = val.AddDays(1);
 			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates StartTime
@@ -119,7 +202,24 @@ namespace Soheil.Core.ViewModels.Reports
 			set { SetValue(DescriptionProperty, value); }
 		}
 		public static readonly DependencyProperty DescriptionProperty =
-			DependencyProperty.Register("Description", typeof(string), typeof(DailyReportVm), new UIPropertyMetadata(null));
+			DependencyProperty.Register("Description", typeof(string), typeof(DailyReportVm), new UIPropertyMetadata(""));
+
+		/// <summary>
+		/// Gets or sets a bindable collection of Shifts with supervisors
+		/// </summary>
+		public ObservableCollection<TwoStrings> Shifts { get { return _shifts; } }
+		private ObservableCollection<TwoStrings> _shifts = new ObservableCollection<TwoStrings>();
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ShowDetails
+		/// </summary>
+		public bool ShowDetails
+		{
+			get { return (bool)GetValue(ShowDetailsProperty); }
+			set { SetValue(ShowDetailsProperty, value); }
+		}
+		public static readonly DependencyProperty ShowDetailsProperty =
+			DependencyProperty.Register("ShowDetails", typeof(bool), typeof(DailyReportVm), new UIPropertyMetadata(false));
 		#endregion
 
 		#region Methods
@@ -140,7 +240,8 @@ namespace Soheil.Core.ViewModels.Reports
 		{
 			#region Init
 			var dataService = new DataServices.ProcessReportDataService();
-			var reports = dataService.GetDailyReport(StartDateTime, EndDateTime);
+			_reports = dataService.GetDailyReport(StartDateTime, EndDateTime);
+			_reportData = new ReportData();
 
 			var reportDocument = new Soheil.Core.Printing.ReportDocument();
 
@@ -150,10 +251,9 @@ namespace Soheil.Core.ViewModels.Reports
 			reportDocument.XamlImagePath = Path.Combine(Environment.CurrentDirectory, @"Views\Reporting\");
 			reader.Close();
 
-			var data = new ReportData();
 
 			// set constant document values
-			data.ReportDocumentValues.Add("PrintDate", DateTime.Now); 
+			_reportData.ReportDocumentValues.Add("PrintDate", DateTime.Now); 
 			#endregion
 
 			#region Title table
@@ -165,7 +265,7 @@ namespace Soheil.Core.ViewModels.Reports
 					Common.Properties.Resources.ResourceManager.GetString("txtEnd") + EndDateTime.ToPersianCompactDateString();
 			titleTabel.Rows.Add(new object[] { date });
 
-			data.DataTables.Add(titleTabel); 
+			_reportData.DataTables.Add(titleTabel); 
 			#endregion
 
 
@@ -186,7 +286,7 @@ namespace Soheil.Core.ViewModels.Reports
 			mainTable.Columns.Add("StoppageValue", typeof(string));
 			mainTable.Columns.Add("MajorStoppage", typeof(string));
 
-			foreach (var item in reports.Main)
+			foreach (var item in _reports.Main)
 			{
 				mainTable.Rows.Add(new object[]
 	            {
@@ -206,7 +306,7 @@ namespace Soheil.Core.ViewModels.Reports
 	            });
 			}
 
-			data.DataTables.Add(mainTable); 
+			_reportData.DataTables.Add(mainTable); 
 			#endregion
 
 
@@ -219,26 +319,36 @@ namespace Soheil.Core.ViewModels.Reports
 			summeryTable.Columns.Add("Description", typeof(string));
 
 			bool flag = true;
-			if(reports.Summery!=null)
-				foreach (var item in reports.Summery)
+			if (_reports.Summery != null)
+			{
+				int idx = 0;
+				foreach (var item in _reports.Summery)
 				{
+					if (Shifts.Count <= idx)
+						Shifts.Add(new TwoStrings(item.Shift, ""));
 					summeryTable.Rows.Add(new object[]
-                {
-                    item.Shift, item.Supervisor, item.OperatorsCount, flag?Description.Trim():""
-	            });
+					{
+						item.Shift, 
+						Shifts[idx].String2,
+						item.OperatorsCount, 
+						flag?Description.Trim():""
+					});
+					idx++;
 					flag = false;
 				}
-
-			data.DataTables.Add(summeryTable); 
+			}
+			_reportData.DataTables.Add(summeryTable); 
 			#endregion
 
 
 
-			XpsDocument xps = reportDocument.CreateXpsDocument(data);
-
+			XpsDocument xps = reportDocument.CreateXpsDocument(_reportData);
 			Document = xps.GetFixedDocumentSequence();
+			if(DocumentChanged!=null)DocumentChanged();
 		}
 
 		#endregion
+
+	
 	}
 }

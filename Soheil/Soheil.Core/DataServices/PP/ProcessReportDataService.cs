@@ -257,26 +257,27 @@ namespace Soheil.Core.DataServices
 		internal Core.Reports.DailyReportData GetDailyReport(DateTime StartDateTime, DateTime EndDateTime)
 		{
 			var data = new Core.Reports.DailyReportData();
-			var processReports = _processReportRepository.Find(x => x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime);
 
 			//find shifts
 			var tmp = new WorkProfilePlanDataService(Context).GetShiftsInRange(StartDateTime, EndDateTime);
 			if (tmp.Any())
 			{
-				var shifts = tmp.Select(x => new
+				var shifts = tmp.Where(x => x.Item2.Date < EndDateTime.Date).Select(x => new
 				{
 					start = x.Item2.AddSeconds(x.Item1.StartSeconds),
-					end = x.Item2.AddSeconds(x.Item1.StartSeconds),
+					end = x.Item2.AddSeconds(x.Item1.EndSeconds),
 					code = x.Item1.WorkShiftPrototype.Name
 				});
 
+				var processReports = _processReportRepository.GetAll();
 				//main query (with shift)
-				var prQuery = from processReport in processReports
-							  from shift in shifts
+				var prQuery = from shift in shifts
+							  from processReport in processReports.Where(x=>x.StartDateTime < shift.end && x.EndDateTime > shift.start)
 							  let start = (processReport.StartDateTime < shift.start) ? shift.start : processReport.StartDateTime
 							  let end = (processReport.EndDateTime > shift.end) ? shift.end : processReport.EndDateTime
 							  let durationSeconds = (end - start).TotalSeconds
 							  let ratio = durationSeconds / processReport.DurationSeconds
+							  where ratio > 0
 
 							  group new
 							  {
@@ -287,7 +288,6 @@ namespace Soheil.Core.DataServices
 								  processReport.Process.StateStationActivity,
 								  shiftCode = shift.code
 							  } into ssaGroup
-
 							  select new
 							  {
 								  ssaGroup.Key.shiftCode,
@@ -333,15 +333,34 @@ namespace Soheil.Core.DataServices
 						TargetValue = x.targetCount.ToString("0.#"),
 						ProductionPerHour = x.pph.ToString("0.#"),
 						ProductionValue = x.g1count.ToString("0.#"),
-						ExecutionPercent = (100 * x.g1count / x.targetCount).ToString("0.#"),
+						ExecutionPercent = (x.g1count / x.targetCount).ToString("0.# %"),
 						TotalDeviationValue = (x.targetCount - x.g1count).ToString("0.#"),
 						DefectionValue = x.defectionCount.ToString("0.#"),
 						StoppageValue = x.stoppageCount.ToString("0.#"),
+						MajorDefection = x.majorDefection,
+						MajorStoppage = x.majorStoppage
 					});
+
+				data.Summery = shifts.Select(x =>
+					new Reports.DailyReportData.SummeryData
+					{
+						Shift = x.code,
+						Supervisor = "",
+						OperatorsCount = processReports
+							.Where(p => p.StartDateTime < x.end && p.EndDateTime > x.start)
+							.SelectMany(p => p.Process.ProcessOperators)
+							.Select(p => p.Operator.Id)
+							.Distinct()
+							.Count()
+							.ToString()
+					}
+				);
 			}
-				//No shift is available
+			//No shift is available
 			else
 			{
+				var processReports = _processReportRepository.Find(x => x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime);
+
 				//main query (without shift)
 				var prQuery = from processReport in processReports
 							  let start = (processReport.StartDateTime < StartDateTime) ? StartDateTime : processReport.StartDateTime
@@ -399,12 +418,30 @@ namespace Soheil.Core.DataServices
 						TargetValue = x.targetCount.ToString("0.#"),
 						ProductionPerHour = x.pph.ToString("0.#"),
 						ProductionValue = x.g1count.ToString("0.#"),
-						ExecutionPercent = (100 * x.g1count / x.targetCount).ToString("0.#"),
+						ExecutionPercent = (x.g1count / x.targetCount).ToString("0.# %"),
 						TotalDeviationValue = (x.targetCount - x.g1count).ToString("0.#"),
 						DefectionValue = x.defectionCount.ToString("0.#"),
 						StoppageValue = x.stoppageCount.ToString("0.#"),
+						MajorDefection = x.majorDefection,
+						MajorStoppage = x.majorStoppage
 					});
+
+				data.Summery = new List<Reports.DailyReportData.SummeryData>()
+				{
+					new Reports.DailyReportData.SummeryData
+					{
+						Shift="-",
+						Supervisor="", 
+						OperatorsCount = processReports
+							.SelectMany(x=>x.Process.ProcessOperators)
+							.Select(x=>x.Operator.Id)
+							.Distinct()
+							.Count()
+							.ToString()
+					}
+				};
 			}
+
 			return data;
 		}
 	}

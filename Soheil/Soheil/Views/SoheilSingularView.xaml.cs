@@ -143,7 +143,7 @@ namespace Soheil.Views
 			_currentSlider = (FrameworkElement)sender;
 			_currentScrollViewer = (DateTimeScrollViewer)((FrameworkElement)_currentSlider.TemplatedParent).TemplatedParent;
 
-			double offset = (_currentSlider.Tag == "L") ? -0.2 : 0.2;
+			double offset = ((string)_currentSlider.Tag == "L") ? -0.2 : 0.2;
 			BarChartViewer.MoveCenterBy(5 * offset, _currentScrollViewer.ScrollableWidth);
 			//BarChartViewer.CenterPoint += (5 * offset);
 		}
@@ -440,6 +440,12 @@ namespace Soheil.Views
 		{
 			var dv = sender as DocumentViewer;
 			var dc = sender.GetDataContext<DailyReportVm>();
+			dc.DocumentChanged += () =>
+			{
+				dv.Document = null;
+				dv.Document = dc.Document;
+				dv.UpdateLayout();
+			};
 			if (dv == null)
 				return;
 
@@ -450,6 +456,12 @@ namespace Soheil.Views
 				Panel.SetZIndex(menu, 99);
 				tb.Items.Add(menu);
 			}
+		}
+
+		private void dailyReportPrint(Soheil.Controls.CustomControls.DocumentViewerWithPrint dv)
+		{
+			var dc = dv.GetDataContext<DailyReportVm>();
+			
 		}
 	}
 }

@@ -1120,4 +1120,16 @@
   <data name="txtTotalDeviation" xml:space="preserve">
     <value>Total deviation</value>
   </data>
+  <data name="txtSupervisor" xml:space="preserve">
+    <value>Production Supervisor</value>
+  </data>
+  <data name="txtNextDay" xml:space="preserve">
+    <value>Next Day</value>
+  </data>
+  <data name="txtPreviousDay" xml:space="preserve">
+    <value>Previous Day</value>
+  </data>
+  <data name="txtShiftsInfo" xml:space="preserve">
+    <value>Shifts info</value>
+  </data>
 </root>
