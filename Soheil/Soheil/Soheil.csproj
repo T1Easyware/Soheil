@@ -203,8 +203,8 @@
     <Compile Include="Views\PP\TaskReport.xaml.cs">
       <DependentUpon>TaskReport.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Reporting\DailyReport.xaml.cs">
-      <DependentUpon>DailyReport.xaml</DependentUpon>
+    <Compile Include="Views\Reporting\DailyReportToolbar.xaml.cs">
+      <DependentUpon>DailyReportToolbar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reporting\OperatorReport.xaml.cs">
       <DependentUpon>OperatorReport.xaml</DependentUpon>
@@ -376,15 +376,15 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Page Include="Views\Reporting\DailyReport.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Content Include="Views\Reporting\DailyReportDocument.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Page Include="Views\Reporting\DailyReportToolbar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Reporting\OperatorReport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

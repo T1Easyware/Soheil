@@ -62,5 +62,6 @@ namespace Soheil.Views.PM
 					c.Width = double.NaN;
 				}
 		}
+
 	}
 }

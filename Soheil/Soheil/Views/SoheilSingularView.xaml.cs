@@ -407,14 +407,14 @@ namespace Soheil.Views
 			}
 		}
 
-		private void documentViewer_Initialized(object sender, EventArgs e)
+		private void OPRdocumentViewer_Initialized(object sender, EventArgs e)
 		{
 			var dv = sender as DocumentViewer;
 			var dc = sender.GetDataContext<OperationReportsVm>();
 			if (dv == null)
 				return;
 
-			var tb = FindMenu(dv);
+			var tb = dv.FindDocumentMenu();
 			if (tb != null)
 			{
 				var cb = new ComboBox{ DataContext = dc, DisplayMemberPath = "Header"};
@@ -435,24 +435,21 @@ namespace Soheil.Views
 				tb.Items.Add(new Button { Content = "Return", Command = dv.GetDataContext<OperationReportsVm>().NavigateBackCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
 			}
 		}
-		ToolBar FindMenu(System.Windows.FrameworkElement root)
-		{
-			ToolBar target = null;
-			int c = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
-			for (int i = 0; i < c; i++)
-			{
-				var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i) as System.Windows.FrameworkElement;
-				if (child == null) continue;
 
-				var menu = child as ToolBar;
-				if (menu != null)
-					if (menu.Items.Count == 10)
-						return menu;
-				
-				target = FindMenu(child);
-				if (target != null) return target;
+		private void DRdocumentViewer_Initialized(object sender, RoutedEventArgs e)
+		{
+			var dv = sender as DocumentViewer;
+			var dc = sender.GetDataContext<DailyReportVm>();
+			if (dv == null)
+				return;
+
+			var tb = dv.FindDocumentMenu();
+			if (tb != null)
+			{
+				var menu = new Soheil.Views.Reporting.DailyReportToolbar();
+				Panel.SetZIndex(menu, 99);
+				tb.Items.Add(menu);
 			}
-			return target;
 		}
 	}
 }

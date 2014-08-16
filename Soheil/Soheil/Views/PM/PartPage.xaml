@@ -6,8 +6,7 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" x:Name="root"
-             d:DesignHeight="200" d:DesignWidth="300">
+             mc:Ignorable="d" x:Name="root" MinWidth="300" MinHeight="200">
     <Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -44,7 +43,7 @@
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>
-						<GridViewColumn Width="Auto">
+						<GridViewColumn Width="24">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<Grid Visibility="{Binding ElementName=root, Path=ShowAddButton, Converter={StaticResource booleanToVisibilityConverter}}">

@@ -901,10 +901,5 @@ namespace Soheil.Core.DataServices
 				(setup.EndDateTime >= block.EndDateTime) ? setup : null);
 		}
 
-		internal Core.Reports.DailyReportData GetDailyReport(DateTime StartDateTime, DateTime EndDateTime)
-		{
-			
-			return null;
-		}
 	}
 }

@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Windows.Threading;
 using System.Windows;
 using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Soheil.Common
 {
@@ -229,7 +230,26 @@ namespace Soheil.Common
 				if (target.Name == parentName) return target;
 			}
 			return null;
-		} 
+		}
+		public static ToolBar FindDocumentMenu(this System.Windows.FrameworkElement root)
+		{
+			ToolBar target = null;
+			int c = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+			for (int i = 0; i < c; i++)
+			{
+				var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i) as System.Windows.FrameworkElement;
+				if (child == null) continue;
+
+				var menu = child as ToolBar;
+				if (menu != null)
+					if (menu.Items.Count == 10)
+						return menu;
+
+				target = FindDocumentMenu(child);
+				if (target != null) return target;
+			}
+			return target;
+		}
 		#endregion
 	}
 }

@@ -35,13 +35,13 @@ namespace Soheil.Core.ViewModels.PM
 
 			SaveCommand = new Commands.Command(o =>
 			{
-                MachinesPage.InvokeRefresh();
-                MachinePartsPage.InvokeRefresh();
-                MachinePartMaintenancesPage.InvokeRefresh();
-                PartsPage.InvokeRefresh();
-                MaintenancesPage.InvokeRefresh();
-                RepairsPage.InvokeRefresh();
-                ReportsPage.InvokeRefresh();
+                MachinesPage.RaiseRefresh();
+                MachinePartsPage.RaiseRefresh();
+                MachinePartMaintenancesPage.RaiseRefresh();
+                PartsPage.RaiseRefresh();
+                MaintenancesPage.RaiseRefresh();
+                RepairsPage.RaiseRefresh();
+                ReportsPage.RaiseRefresh();
 				_uow.Commit();
 			});
 
@@ -348,7 +348,7 @@ namespace Soheil.Core.ViewModels.PM
 							ReportsPage.Items.Add(vm);
 						}
 						FocusOnReports = true;
-						ReportsPage.InvokeRefresh();
+						ReportsPage.RaiseRefresh();
 					});
 
                     machineVm.GotoRepairCommand = new Commands.Command(o =>
@@ -379,7 +379,7 @@ namespace Soheil.Core.ViewModels.PM
 							RepairsPage.Items.Add(vm);
 						}
 						FocusOnReports = false;
-						RepairsPage.InvokeRefresh();
+						RepairsPage.RaiseRefresh();
                     });
                 }
             }
@@ -405,7 +405,7 @@ namespace Soheil.Core.ViewModels.PM
 									MachinePartsPage.Items.LastOrDefault();
 
 						//update MachinePartPage layout when -mp
-						MachinePartsPage.InvokeRefresh();
+						MachinePartsPage.RaiseRefresh();
 						//update LinkCounter when -mp
 						var m = PartsPage.Items.FirstOrDefault(x => x.Id == id);
 						if (m != null) m.UpdateIsAdded(MachinesPage.SelectedItem);
@@ -463,7 +463,7 @@ namespace Soheil.Core.ViewModels.PM
                             ReportsPage.Items.Add(vm);
                         }
 						FocusOnReports = true;
-						ReportsPage.InvokeRefresh();
+						ReportsPage.RaiseRefresh();
 					});
 
 					machinePartVm.AddRepairCommand = new Commands.Command(o =>
@@ -487,7 +487,7 @@ namespace Soheil.Core.ViewModels.PM
 						RepairsPage.HideMachineParts = false;
 						RepairsPage.HideMachinePartMaintenances = false;
 						FocusOnReports = false;
-						RepairsPage.InvokeRefresh();
+						RepairsPage.RaiseRefresh();
 					}, () => machinePartVm.Model != null);
 
                     machinePartVm.GotoRepairCommand = new Commands.Command(o =>
@@ -537,11 +537,11 @@ namespace Soheil.Core.ViewModels.PM
 							RepairsPage.Items.Add(vm);
 						}
 						FocusOnReports = false;
-						RepairsPage.InvokeRefresh();
+						RepairsPage.RaiseRefresh();
                     });
                 }
             }
-            if (_isInitialized) MachinePartsPage.InvokeRefresh();
+            if (_isInitialized) MachinePartsPage.RaiseRefresh();
         }
         
         void MachinePartMaintenances_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -564,7 +564,7 @@ namespace Soheil.Core.ViewModels.PM
 							MachinePartMaintenancesPage.Items.LastOrDefault();
 
 						//update MachinePartMaintenancesPage layout when -mpm
-						MachinePartMaintenancesPage.InvokeRefresh();
+						MachinePartMaintenancesPage.RaiseRefresh();
 						//update LinkCounter when -mpm
 						var m = MaintenancesPage.Items.FirstOrDefault(x => x.Id == id);
 						if (m != null) m.UpdateIsAdded(MachinePartsPage.SelectedItem);
@@ -583,7 +583,7 @@ namespace Soheil.Core.ViewModels.PM
 						ReportsPage.HideMachineParts = true;
 						ReportsPage.HideMachinePartMaintenances = true;
 						FocusOnReports = true;
-						ReportsPage.InvokeRefresh();
+						ReportsPage.RaiseRefresh();
                     });
 
                     mpmVm.AddReportCommand = new Commands.Command(o =>
@@ -605,11 +605,11 @@ namespace Soheil.Core.ViewModels.PM
 						ReportsPage.HideMachineParts = false;
 						ReportsPage.HideMachinePartMaintenances = false;
 						FocusOnReports = true;
-						ReportsPage.InvokeRefresh();
+						ReportsPage.RaiseRefresh();
 					});
                 }
             }
-            if (_isInitialized) MachinePartMaintenancesPage.InvokeRefresh();
+            if (_isInitialized) MachinePartMaintenancesPage.RaiseRefresh();
         }
        
         void Parts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -643,7 +643,7 @@ namespace Soheil.Core.ViewModels.PM
                         //update LinkCounter when +machineParts
                         partVm.UpdateIsAdded(machineVm);
                         //update MachinePartsPage layout when +machineParts
-                        MachinePartsPage.InvokeRefresh();
+                        MachinePartsPage.RaiseRefresh();
                     },
                     //can execute
                     () => (MachinesPage.SelectedItem as MachineItemVm)!=null
@@ -651,7 +651,7 @@ namespace Soheil.Core.ViewModels.PM
                 }
             }
             //update PartsPage layout when +-part
-            if (_isInitialized) PartsPage.InvokeRefresh();
+            if (_isInitialized) PartsPage.RaiseRefresh();
         }
 
         void Maintenances_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -686,7 +686,7 @@ namespace Soheil.Core.ViewModels.PM
                         //update LinkCounter when +machinePartMaintenances
                         maintenanceVm.UpdateIsAdded(machinePartVm);
                         //update MachinePartMaintenancesPage layout when +machinePartMaintenances
-                        MachinePartMaintenancesPage.InvokeRefresh();
+                        MachinePartMaintenancesPage.RaiseRefresh();
                     },
                     //can execute
                     () => (MachinePartsPage.SelectedItem as MachinePartItemVm) != null
@@ -694,7 +694,7 @@ namespace Soheil.Core.ViewModels.PM
                 }
             }
             //update MaintenancesPage layout when +-maintenances
-            if (_isInitialized) MaintenancesPage.InvokeRefresh();
+            if (_isInitialized) MaintenancesPage.RaiseRefresh();
         }
 
         #endregion
@@ -744,8 +744,8 @@ namespace Soheil.Core.ViewModels.PM
                 part.UpdateIsAdded(machine);
             }
 
-            MachinePartsPage.InvokeRefresh();
-            PartsPage.InvokeRefresh();
+            MachinePartsPage.RaiseRefresh();
+            PartsPage.RaiseRefresh();
         }
 
         void MachinePartsPage_SelectedItemChanged(PmItemBase item_machinePart)
@@ -788,8 +788,8 @@ namespace Soheil.Core.ViewModels.PM
             {
                 pm.UpdateIsAdded(machinePart);
             }
-            MachinePartMaintenancesPage.InvokeRefresh();
-            MaintenancesPage.InvokeRefresh();
+            MachinePartMaintenancesPage.RaiseRefresh();
+            MaintenancesPage.RaiseRefresh();
         }
 
 		#endregion
@@ -878,7 +878,18 @@ namespace Soheil.Core.ViewModels.PM
 			set { SetValue(Ex1ExpandedProperty, value); }
 		}
 		public static readonly DependencyProperty Ex1ExpandedProperty =
-			DependencyProperty.Register("Ex1Expanded", typeof(bool), typeof(PmVm), new PropertyMetadata(false));
+			DependencyProperty.Register("Ex1Expanded", typeof(bool), typeof(PmVm), new PropertyMetadata(false, (d, e) =>
+			{
+				if ((bool)e.NewValue)
+				{
+					var vm = (PmVm)d;
+					foreach (var item in vm.PartsPage.Items)
+					{
+						item.UseCommand.RaiseCanExecuteChanged();
+					}
+					vm.PartsPage.RaiseRefresh();
+				}
+			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Ex2Expanded
 		/// </summary>
@@ -888,7 +899,18 @@ namespace Soheil.Core.ViewModels.PM
 			set { SetValue(Ex2ExpandedProperty, value); }
 		}
 		public static readonly DependencyProperty Ex2ExpandedProperty =
-			DependencyProperty.Register("Ex2Expanded", typeof(bool), typeof(PmVm), new PropertyMetadata(false));
+			DependencyProperty.Register("Ex2Expanded", typeof(bool), typeof(PmVm), new PropertyMetadata(false, (d, e) =>
+			{
+				if ((bool)e.NewValue)
+				{
+					var vm = (PmVm)d;
+					foreach (var item in vm.MaintenancesPage.Items)
+					{
+						item.UseCommand.RaiseCanExecuteChanged();
+					}
+					vm.MaintenancesPage.RaiseRefresh();
+				}
+			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates ExCollapse
 		/// </summary>	

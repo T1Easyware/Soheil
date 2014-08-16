@@ -8,6 +8,7 @@ using Soheil.Dal;
 using Soheil.Core.Interfaces;
 using Soheil.Core.Base;
 using Soheil.Common;
+using System.Collections;
 
 namespace Soheil.Core.DataServices
 {
@@ -252,6 +253,159 @@ namespace Soheil.Core.DataServices
 			Context.Commit();
 		}
 
-	
+
+		internal Core.Reports.DailyReportData GetDailyReport(DateTime StartDateTime, DateTime EndDateTime)
+		{
+			var data = new Core.Reports.DailyReportData();
+			var processReports = _processReportRepository.Find(x => x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime);
+
+			//find shifts
+			var tmp = new WorkProfilePlanDataService(Context).GetShiftsInRange(StartDateTime, EndDateTime);
+			if (tmp.Any())
+			{
+				var shifts = tmp.Select(x => new
+				{
+					start = x.Item2.AddSeconds(x.Item1.StartSeconds),
+					end = x.Item2.AddSeconds(x.Item1.StartSeconds),
+					code = x.Item1.WorkShiftPrototype.Name
+				});
+
+				//main query (with shift)
+				var prQuery = from processReport in processReports
+							  from shift in shifts
+							  let start = (processReport.StartDateTime < shift.start) ? shift.start : processReport.StartDateTime
+							  let end = (processReport.EndDateTime > shift.end) ? shift.end : processReport.EndDateTime
+							  let durationSeconds = (end - start).TotalSeconds
+							  let ratio = durationSeconds / processReport.DurationSeconds
+
+							  group new
+							  {
+								  processReport,
+								  ratio,
+							  } by new
+							  {
+								  processReport.Process.StateStationActivity,
+								  shiftCode = shift.code
+							  } into ssaGroup
+
+							  select new
+							  {
+								  ssaGroup.Key.shiftCode,
+								  activity = ssaGroup.Key.StateStationActivity.Activity.Name,
+								  station = ssaGroup.Key.StateStationActivity.StateStation.Station.Name,
+								  product = ssaGroup.Key.StateStationActivity.StateStation.State.OnProductRework.Product.Name,
+
+								  //process targetpoint
+								  targetCount = ssaGroup.Sum(x => x.processReport.ProcessReportTargetPoint * x.ratio),
+
+								  //standard production per hour
+								  pph = 3600 / ssaGroup.Key.StateStationActivity.CycleTime,
+
+								  g1count = ssaGroup.Sum(x => x.processReport.ProducedG1 * x.ratio),
+
+								  defectionCount = ssaGroup.Sum(x => x.processReport.DefectionReports.Sum(d => d.CountEquivalence) * x.ratio),
+								  stoppageCount = ssaGroup.Sum(x => x.processReport.StoppageReports.Sum(d => d.CountEquivalence) * x.ratio),
+
+								  majorDefection = ssaGroup.Any(x => x.processReport.DefectionReports.Any()) ?
+									ssaGroup
+									.SelectMany(x => x.processReport.DefectionReports)
+									.OrderByDescending(x => x.CountEquivalence)
+									.FirstOrDefault()
+									.ProductDefection.Defection.Name
+									: "",
+								  majorStoppage = ssaGroup.Any(x => x.processReport.StoppageReports.Any()) ?
+									ssaGroup
+									.SelectMany(x => x.processReport.StoppageReports)
+									.OrderByDescending(x => x.CountEquivalence)
+									.FirstOrDefault()
+									.Cause.Name
+									: "",
+							  };
+				data.Main = prQuery
+					.OrderBy(x => x.product)
+					.ThenBy(x => x.station)
+					.Select(x => new Reports.DailyReportData.MainData
+					{
+						Product = x.product,
+						Activity = x.activity,
+						Shift = x.shiftCode,
+						Station = x.station,
+						TargetValue = x.targetCount.ToString("0.#"),
+						ProductionPerHour = x.pph.ToString("0.#"),
+						ProductionValue = x.g1count.ToString("0.#"),
+						ExecutionPercent = (100 * x.g1count / x.targetCount).ToString("0.#"),
+						TotalDeviationValue = (x.targetCount - x.g1count).ToString("0.#"),
+						DefectionValue = x.defectionCount.ToString("0.#"),
+						StoppageValue = x.stoppageCount.ToString("0.#"),
+					});
+			}
+				//No shift is available
+			else
+			{
+				//main query (without shift)
+				var prQuery = from processReport in processReports
+							  let start = (processReport.StartDateTime < StartDateTime) ? StartDateTime : processReport.StartDateTime
+							  let end = (processReport.EndDateTime > EndDateTime) ? EndDateTime : processReport.EndDateTime
+							  let durationSeconds = (end - start).TotalSeconds
+							  let ratio = durationSeconds / processReport.DurationSeconds
+
+							  group new
+							  {
+								  processReport,
+								  ratio,
+							  } by processReport.Process.StateStationActivity into ssaGroup
+
+							  select new
+							  {
+								  activity = ssaGroup.Key.Activity.Name,
+								  station = ssaGroup.Key.StateStation.Station.Name,
+								  product = ssaGroup.Key.StateStation.State.OnProductRework.Product.Name,
+
+								  //process targetpoint
+								  targetCount = ssaGroup.Sum(x => x.processReport.ProcessReportTargetPoint * x.ratio),
+
+								  //standard production per hour
+								  pph = 3600 / ssaGroup.Key.CycleTime,
+
+								  g1count = ssaGroup.Sum(x => x.processReport.ProducedG1 * x.ratio),
+
+								  defectionCount = ssaGroup.Sum(x => x.processReport.DefectionReports.Sum(d => d.CountEquivalence) * x.ratio),
+								  stoppageCount = ssaGroup.Sum(x => x.processReport.StoppageReports.Sum(d => d.CountEquivalence) * x.ratio),
+
+								  majorDefection = ssaGroup.Any(x => x.processReport.DefectionReports.Any()) ?
+									ssaGroup
+									.SelectMany(x => x.processReport.DefectionReports)
+									.OrderByDescending(x => x.CountEquivalence)
+									.FirstOrDefault()
+									.ProductDefection.Defection.Name
+									: "",
+								  majorStoppage = ssaGroup.Any(x => x.processReport.StoppageReports.Any()) ?
+									ssaGroup
+									.SelectMany(x => x.processReport.StoppageReports)
+									.OrderByDescending(x => x.CountEquivalence)
+									.FirstOrDefault()
+									.Cause.Name
+									: "",
+							  };
+				data.Main = prQuery
+					.OrderBy(x => x.product)
+					.ThenBy(x => x.station)
+					.Select(x => new Reports.DailyReportData.MainData
+					{
+						Product = x.product,
+						Activity = x.activity,
+						Shift = "-",
+						Station = x.station,
+						TargetValue = x.targetCount.ToString("0.#"),
+						ProductionPerHour = x.pph.ToString("0.#"),
+						ProductionValue = x.g1count.ToString("0.#"),
+						ExecutionPercent = (100 * x.g1count / x.targetCount).ToString("0.#"),
+						TotalDeviationValue = (x.targetCount - x.g1count).ToString("0.#"),
+						DefectionValue = x.defectionCount.ToString("0.#"),
+						StoppageValue = x.stoppageCount.ToString("0.#"),
+					});
+			}
+			return data;
+		}
 	}
 }

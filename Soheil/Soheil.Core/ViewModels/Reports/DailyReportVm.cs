@@ -23,7 +23,7 @@ namespace Soheil.Core.ViewModels.Reports
 			Access = access;
 			NavigateNextCommand = new Command(NavigateNext);
 			NavigatePreviousCommand = new Command(NavigatePrevious);
-			RefreshCommand = new Command(Refresh);
+			RefreshCommand = new Command(Refresh, () => true);
 			_workProfilePlanDataService = new DataServices.WorkProfilePlanDataService();
 			StartDate = DateTime.Now.Date;
 			EndDate = DateTime.Now.AddDays(1).Date;
@@ -122,7 +122,6 @@ namespace Soheil.Core.ViewModels.Reports
 			DependencyProperty.Register("Description", typeof(string), typeof(DailyReportVm), new UIPropertyMetadata(null));
 		#endregion
 
-
 		#region Methods
 		void NavigateNext(object param)
 		{
@@ -140,7 +139,7 @@ namespace Soheil.Core.ViewModels.Reports
 		public void LoadDailyReport()
 		{
 			#region Init
-			var dataService = new DataServices.BlockDataService();
+			var dataService = new DataServices.ProcessReportDataService();
 			var reports = dataService.GetDailyReport(StartDateTime, EndDateTime);
 
 			var reportDocument = new Soheil.Core.Printing.ReportDocument();
@@ -220,14 +219,15 @@ namespace Soheil.Core.ViewModels.Reports
 			summeryTable.Columns.Add("Description", typeof(string));
 
 			bool flag = true;
-			foreach (var item in reports.Summery)
-			{
-				summeryTable.Rows.Add(new object[]
+			if(reports.Summery!=null)
+				foreach (var item in reports.Summery)
+				{
+					summeryTable.Rows.Add(new object[]
                 {
                     item.Shift, item.Supervisor, item.OperatorsCount, flag?Description.Trim():""
 	            });
-				flag = false;
-			}
+					flag = false;
+				}
 
 			data.DataTables.Add(summeryTable); 
 			#endregion

@@ -204,7 +204,7 @@ namespace Soheil.Core.DataServices
 		{
 			dateTime = dateTime.Date;
 			var wpp = workProfilePlanRepository.LastOrDefault(x =>
-				x.StartDate >= dateTime && x.EndDate <= dateTime,
+				x.StartDate <= dateTime && x.EndDate >= dateTime,
 				x => x.ModifiedDate);
 			var bizState = GetEffectiveBizState(dateTime, wpp);
 			if (wpp == null)
@@ -290,9 +290,9 @@ namespace Soheil.Core.DataServices
 		/// <summary>
 		/// Gets a list of active profile Shifts with their actual day start in the given time range
 		/// </summary>
-		/// <param name="startDate">this date&Time is considered</param>
-		/// <param name="endDate">this date&Time is considered</param>
-		/// <returns>Returns a list of Tuple&lt;<see cref="Soheil.Model.WorkShift"/>, DateTime&gt;</returns>
+		/// <param name="startDate">date and Time</param>
+		/// <param name="endDate">date and Time</param>
+		/// <returns>Returns a list of Tuples (Item1=shift model, Item2=date of shift which time-of-day equals startDate's)</returns>
 		public List<Tuple<WorkShift, DateTime>> GetShiftsInRange(DateTime startDate, DateTime endDate)
 		{
 			List<Tuple<WorkShift, DateTime>> list = new List<Tuple<WorkShift, DateTime>>();

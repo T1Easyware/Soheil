@@ -13,7 +13,7 @@ namespace Soheil.Core.ViewModels.PM
 		public event Action Refresh;
         public event Action<PmItemBase> SelectedItemChanged;
 
-        internal void InvokeRefresh() { if (Refresh != null) Refresh(); }
+        internal void RaiseRefresh() { if (Refresh != null) Refresh(); }
 
 		public PmPageBase()
 		{
