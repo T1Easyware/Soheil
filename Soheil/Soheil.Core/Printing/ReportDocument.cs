@@ -77,6 +77,16 @@ namespace Soheil.Core.Printing
             set { _reportTitle = value; }
         }
 
+		private string _companyName = "";
+		/// <summary>
+		/// Gets or sets the company name
+		/// </summary>
+		public string CompanyName
+		{
+			get { return _companyName; }
+			set { _companyName = value; }
+		}
+
         private string _xamlImagePath = "";
         /// <summary>
         /// XAML image path
@@ -185,7 +195,9 @@ namespace Soheil.Core.Printing
                 if (properties.Count > 1) throw new ArgumentException(String.Format("Flow document must have only one ReportProperties section, but it has {0}", properties.Count));
                 ReportProperties prop = properties[0];
                 if (prop.ReportName != null) ReportName = prop.ReportName;
-                if (prop.ReportTitle != null) ReportTitle = prop.ReportTitle;
+				if (prop.ReportTitle != null) ReportTitle = prop.ReportTitle;
+				CompanyName = Common.Properties.Resources.ResourceManager.GetString("_companyName");
+				prop.CompanyName = CompanyName;
                 if (headers.Count > 0) PageHeaderHeight = headers[0].PageHeaderHeight;
                 if (footers.Count > 0) PageFooterHeight = footers[0].PageFooterHeight;
 

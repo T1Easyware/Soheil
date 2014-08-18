@@ -1101,7 +1101,7 @@
     <value>ساختن گزارش</value>
   </data>
   <data name="txtDailyReport" xml:space="preserve">
-    <value>برنامه روزانه تولید</value>
+    <value>گزارش روزانه تولید</value>
   </data>
   <data name="txtExecutionPercent" xml:space="preserve">
     <value>درصد اجرای برنامه</value>
@@ -1139,5 +1139,17 @@
   </data>
   <data name="txtShiftsInfo" xml:space="preserve">
     <value>اطلاعات شیفتها</value>
+  </data>
+  <data name="txtDailyStationPlan" xml:space="preserve">
+    <value>برنامه روزانه ایستگاهها</value>
+  </data>
+  <data name="txtReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="txtEnd" xml:space="preserve">
+    <value>پایان</value>
+  </data>
+  <data name="_companyName" xml:space="preserve">
+    <value>شرکت صنعتی جهادین پرند</value>
   </data>
 </root>

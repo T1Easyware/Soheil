@@ -66,6 +66,8 @@
 			</Style.Triggers>
 		</Style>
 
+		
+		<!-- !@#$ -->
 		<DataTemplate x:Key="usersTemplate">
             <WrapPanel Grid.Column="2" FlowDirection="RightToLeft">
                 <CustomControls:ImageButton Background="Transparent"
@@ -215,6 +217,14 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/DailyReport.png"
                         Tag="44" />
+				<CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtDailyStationPlan}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/DailyStationPlan.png"
+                        Tag="45" />
             </WrapPanel>
         </DataTemplate>
         <DataTemplate x:Key="optionsTemplate">
@@ -244,11 +254,16 @@
             </WrapPanel>
         </DataTemplate>
     </Window.Resources>
+	
+	
     <Window.CommandBindings>
         <CommandBinding CanExecute="GoToPageCanExecuteHandler"
                         Command="NavigationCommands.GoToPage"
                         Executed="GoToPageExecuteHandler" />
     </Window.CommandBindings>
+	
+	
+	
     <Border UseLayoutRounding="True">
         <DockPanel>
             <DockPanel Margin="0,-38,0,0" DockPanel.Dock="Top">
@@ -265,7 +280,7 @@
                         <ColumnDefinition Width="20" />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Background="Transparent" />
+					<Border Grid.Column="0" Background="Transparent" />
                     <!--  Menu  -->
 					<WrapPanel Grid.Column="7" IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=Login}"
                                Margin="0,0,120,0"
@@ -313,17 +328,21 @@
                                     Grid.Column="4"
                                     FlowDirection="RightToLeft" />
 					<!-- login panel -->
-                    <Menu Grid.Column="2" Margin="0,-5,0,0" Background="Transparent" Height="25">
-                        <MenuItem Foreground="{StaticResource TextBrush}" Header="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=LoginHeader}">
-                            <WrapPanel>
-                                <TextBlock Margin="2" Foreground="{StaticResource TextBrush}" Text="{Loc txtUsername}"></TextBlock>
-                                <TextBox Style="{StaticResource SimpleTextBox}"  Margin="2"  Width="50" Text="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=Username}"></TextBox>
-                                <TextBlock Margin="2" Foreground="{StaticResource TextBrush}" Text="{Loc txtPassword}"></TextBlock>
-                                <PasswordBox Margin="2" x:Name="_loginPassword" Width="50" KeyDown="passwordBoxKeyDown"></PasswordBox>
-                                <Button Margin="2" Background="Transparent" Width="40" Height="20" Content="{Loc txtLogin}" FontSize="12"
+					<Menu Grid.Column="2" Margin="0,-5,0,0" Background="Transparent" Height="25" FocusManager.FocusedElement="{Binding ElementName=loginPanelUsername}" Focusable="False">
+						<MenuItem Foreground="{StaticResource TextBrush}"
+								  Header="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=LoginHeader}" 
+								  x:Name="loginPanel" SubmenuOpened="loginPanel_SubmenuOpened" Focusable="False"
+								  Command="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=LoginCommand}"
+                                        CommandParameter="{Binding ElementName=_loginPassword}">
+                            <UniformGrid Focusable="False" Rows="3" Columns="2" Margin="-22,2,-10,2" Height="80">
+								<TextBlock Margin="2" Foreground="{StaticResource TextBrush}" Text="{Loc txtUsername}" VerticalAlignment="Center"/>
+								<TextBox Style="{StaticResource SimpleTextBox}"  Margin="2"  Width="80" Text="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=Username}" x:Name="loginPanelUsername" Focusable="True"/>
+								<TextBlock Margin="2" Foreground="{StaticResource TextBrush}" Text="{Loc txtPassword}" VerticalAlignment="Center"/>
+								<PasswordBox Margin="2" x:Name="_loginPassword" Width="80" KeyDown="passwordBoxKeyDown" Focusable="True"/>
+                                <Button Margin="2,2,-82,2" Background="Transparent" Content="{Loc txtLogin}" FontSize="12" Grid.ColumnSpan="2"
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=LoginCommand}"
                                         CommandParameter="{Binding ElementName=_loginPassword}"/>
-                            </WrapPanel>
+                            </UniformGrid>
                         </MenuItem>
                     </Menu>
                     <!--  soheil button  -->
@@ -338,8 +357,9 @@
                             DockPanel.Dock="Left"
 							x:Name="soheilbutton"
                             Style="{StaticResource SoheilButton}">
-                        <Button.ContextMenu>
-                            <ContextMenu IsEnabled="True"
+						<!-- !@#$ -->
+						<Button.ContextMenu>
+							<ContextMenu IsEnabled="True"
                                          Placement="Bottom"
                                          PlacementTarget="{Binding ElementName=soheilbutton}">
                                 <MenuItem Header="{Loc txtOrganization}">
@@ -541,7 +561,12 @@
                                             <Image Source="/Soheil.Controls;component/Images/Menus/DailyReport.png"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                </MenuItem>
+									<MenuItem Header="{Loc txtDailyStationPlan}" Click="HandleAddTabAndSelect" Tag="45">
+										<MenuItem.Icon>
+											<Image Source="/Soheil.Controls;component/Images/Menus/DailyStationPlan.png"/>
+										</MenuItem.Icon>
+									</MenuItem>
+								</MenuItem>
                                 <MenuItem Header="{Loc txtOptions}">
                                     <MenuItem.Icon>
                                         <Image Source="/Soheil.Controls;component/Images/Menus/Setting.png"/>
@@ -624,6 +649,7 @@
 				</Grid>
             </DockPanel>
 
+			<!-- Start Page -->
 			<CustomControls:ChromeTabControl x:Name="chrometabs" IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=Login}">
 				<CustomControls:ChromeTabItem Header="{Loc txtStartPage}">
 					<View:StartPage AnyButtonClicked="HandleAddTabAndSelect"/>

@@ -204,6 +204,7 @@ namespace Soheil.Common
         ActualCostReportsSubMenu = 42,
         OperationReportsSubMenu = 43,
 		DailyReport = 44,
+		DailyStationPlan = 45,
         OptionsMenu = 5,
         SettingsSubMenu = 51,
         HelpSubMenu = 52,
@@ -254,6 +255,7 @@ namespace Soheil.Common
 	{
 		Acquiring, Simple, Report, Empty
 	}
+	
 
 
 	[TypeConverter(typeof(LocalizedEnumConverter))]

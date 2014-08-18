@@ -23,13 +23,14 @@
 
 	<document:ReportProperties>
 		<document:ReportProperties.ReportName>DailyReport</document:ReportProperties.ReportName>
-		<document:ReportProperties.ReportTitle>گزارش روزانه تولید - شرکت صنعتی جهادین پرند</document:ReportProperties.ReportTitle>
+		<document:ReportProperties.ReportTitle>گزارش روزانه تولید - </document:ReportProperties.ReportTitle>
 	</document:ReportProperties>
 
 	<Section Padding="80,10,40,10" FontSize="12">
 
         <Paragraph FontSize="24" FontWeight="Bold">
-            <document:InlineContextValue PropertyName="ReportTitle" />
+			<document:InlineContextValue PropertyName="ReportTitle" />
+			<document:InlineContextValue PropertyName="CompanyName" />
         </Paragraph>
         
         <document:SectionDataGroup DataGroupName="ItemList">

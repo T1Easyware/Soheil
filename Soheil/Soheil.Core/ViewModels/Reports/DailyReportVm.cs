@@ -66,7 +66,7 @@ namespace Soheil.Core.ViewModels.Reports
 							summeryTable.Rows.Add(new object[]
 						{
 							item.Shift, 
-							Shifts[idx].String2,
+							Shifts[idx].Supervisor,
 							item.OperatorsCount, 
 							flag?Description.Trim():""
 						});
@@ -81,7 +81,6 @@ namespace Soheil.Core.ViewModels.Reports
 				XpsDocument xps = reportDocument.CreateXpsDocument(_reportData);
 				Document = xps.GetFixedDocumentSequence();
 				ShowDetails = false;
-				if (DocumentChanged != null) DocumentChanged();
 			}, () => _reportData != null);
 
 			CancelShiftsInfoCommand = new Command(o => ShowDetails = false);
@@ -89,7 +88,7 @@ namespace Soheil.Core.ViewModels.Reports
 			{
 				foreach (var shift in Shifts)
 				{
-					shift.String2 = "";
+					shift.Supervisor = "";
 				}
 				Description = "";
 			});
@@ -105,7 +104,6 @@ namespace Soheil.Core.ViewModels.Reports
 		#region Properties
 		public AccessType Access { get; set; }
 
-		public event Action DocumentChanged;
 		public Command NavigateNextCommand { get; set; }
 		public Command NavigatePreviousCommand { get; set; }
 		public Command PrintCommand { get; set; }
@@ -128,7 +126,7 @@ namespace Soheil.Core.ViewModels.Reports
 			get { return (FixedDocumentSequence)GetValue(DocumentProperty); }
 			set { SetValue(DocumentProperty, value); }
 		}
-		public static readonly DependencyProperty DocumentProperty = DependencyProperty.Register("Document", typeof(FixedDocumentSequence), typeof(OperationReportsVm), new PropertyMetadata(default(FixedDocumentSequence)));
+		public static readonly DependencyProperty DocumentProperty = DependencyProperty.Register("Document", typeof(FixedDocumentSequence), typeof(DailyReportVm), new PropertyMetadata(default(FixedDocumentSequence)));
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates StartDate
@@ -207,8 +205,8 @@ namespace Soheil.Core.ViewModels.Reports
 		/// <summary>
 		/// Gets or sets a bindable collection of Shifts with supervisors
 		/// </summary>
-		public ObservableCollection<TwoStrings> Shifts { get { return _shifts; } }
-		private ObservableCollection<TwoStrings> _shifts = new ObservableCollection<TwoStrings>();
+		public ObservableCollection<ShiftVm> Shifts { get { return _shifts; } }
+		private ObservableCollection<ShiftVm> _shifts = new ObservableCollection<ShiftVm>();
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates ShowDetails
@@ -325,11 +323,11 @@ namespace Soheil.Core.ViewModels.Reports
 				foreach (var item in _reports.Summery)
 				{
 					if (Shifts.Count <= idx)
-						Shifts.Add(new TwoStrings(item.Shift, ""));
+						Shifts.Add(new ShiftVm(item.Shift, ""));
 					summeryTable.Rows.Add(new object[]
 					{
 						item.Shift, 
-						Shifts[idx].String2,
+						Shifts[idx].Supervisor,
 						item.OperatorsCount, 
 						flag?Description.Trim():""
 					});
@@ -344,7 +342,6 @@ namespace Soheil.Core.ViewModels.Reports
 
 			XpsDocument xps = reportDocument.CreateXpsDocument(_reportData);
 			Document = xps.GetFixedDocumentSequence();
-			if(DocumentChanged!=null)DocumentChanged();
 		}
 
 		#endregion

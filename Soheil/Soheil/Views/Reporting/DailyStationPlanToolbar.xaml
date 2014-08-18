@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Soheil.Views.Reporting.DailyReportToolbar"
+﻿<UserControl x:Class="Soheil.Views.Reporting.DailyStationPlanToolbar"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit"
@@ -24,7 +24,7 @@
 			</WrapPanel>
 		</Button>
 		<Button Command="{Binding ChangeDayCommand}" Padding="5,0" VerticalAlignment="Stretch" Margin="2,0">
-            <Button.CommandParameter>
+			<Button.CommandParameter>
                 <sys:Int32>-1</sys:Int32>
             </Button.CommandParameter>
 			<WrapPanel>
@@ -33,11 +33,11 @@
 			</WrapPanel>
 		</Button>
 
-		<Separator VerticalAlignment="Stretch" Width="1" Margin="10,0,0,0"/>
+		<Separator VerticalAlignment="Stretch" Width="1" Margin="10,0"/>
 		<ToggleButton IsChecked="{Binding ShowDetails}" Padding="5,0" ToolBar.OverflowMode="Never" VerticalAlignment="Stretch" Margin="2,0">
 			<WrapPanel>
-				<Image Style="{StaticResource Setting24Image}"/>
-				<TextBlock Text="{Loc txtShiftsInfo}" VerticalAlignment="Center"/>
+				<Image Style="{StaticResource StationImage}"/>
+				<TextBlock Text="{Loc txtStations}" VerticalAlignment="Center"/>
 			</WrapPanel>
 		</ToggleButton>
 		<Button Command="{Binding RefreshCommand}" Padding="10,0" ToolBar.OverflowMode="Never" MinWidth="120" VerticalAlignment="Stretch" Margin="2,0">

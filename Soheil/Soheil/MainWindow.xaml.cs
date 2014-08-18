@@ -72,17 +72,15 @@ namespace Soheil
 			LoginCommand = new Command(Login);
 			_newTabNumber = 1;
 
+
 			// temp
-			  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
+			//Login(null);
+			//SetValue(LoginProperty, true);
+			//SingularList = new Core.ViewModels.Reports.DailyStationPlanVm(AccessType.Full);
+			//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.DailyStationPlan), true);
 			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
-
-			//if (Keyboard.GetKeyStates(Key.LeftCtrl) == KeyStates.Down)
-			{
-				//SingularList = new Core.ViewModels.Reports.OperationReportsVm(AccessType.Full);
-				//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.PM), true);
-			}
 		}
 
         public ISplitList SplitList { get; set; }
@@ -273,6 +271,10 @@ namespace Soheil
                     break;
 				case SoheilEntityType.DailyReport:
 					SingularList = new DailyReportVm(access);
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+				case SoheilEntityType.DailyStationPlan:
+					SingularList = new DailyStationPlanVm(access);
 					chrometabs.AddTab(CreateSingularTab(type), true);
 					break;
                 case SoheilEntityType.OptionsMenu:
@@ -512,6 +514,9 @@ namespace Soheil
 					return Common.Properties.Resources.txtPerformance;
 				case SoheilEntityType.DailyReport:
 					return Common.Properties.Resources.txtDailyReport;
+				case SoheilEntityType.DailyStationPlan:
+					return Common.Properties.Resources.txtDailyStationPlan;
+
 				case SoheilEntityType.IndicesSubMenu:
                     return Common.Properties.Resources.txtIndices;
                 case SoheilEntityType.CostReportsSubMenu:
@@ -520,6 +525,7 @@ namespace Soheil
                     return Common.Properties.Resources.txtActualCostReports;
                 case SoheilEntityType.OperationReportsSubMenu:
                     return Common.Properties.Resources.txtOperationReports;
+
                 case SoheilEntityType.SettingsSubMenu:
                     return Common.Properties.Resources.txtSettings;
                 case SoheilEntityType.HelpSubMenu:
@@ -531,34 +537,64 @@ namespace Soheil
             }
         }
 
-        public void Login(object param)
-        {
-            var userInfo = _accessRuleDataService.VerifyLogin(Username, ((PasswordBox)param).Password);
-            LoginInfo.DataService = _userDataService;
-            if (userInfo.Item1 >=0)
-            {
-                AccessList = _accessRuleDataService.GetAccessOfUser(userInfo.Item1);
-                LoginHeader = userInfo.Item2;
+		public void Login(object param)
+		{
+			Tuple<int, string> userInfo;
+			if (param == null)
+			{
+				userInfo = _accessRuleDataService.VerifyLogin("admin", "fromdust");
+				AccessList = _accessRuleDataService.GetAccessOfAdmin(userInfo.Item1);
+				LoginHeader = userInfo.Item2;
 				SetValue(LoginProperty, true);
 				LoginInfo.Id = userInfo.Item1;
-                LoginInfo.Title = Username;
-                LoginInfo.Access = AccessList;
-            }
-            else
-            {
-                AccessList = new List<Tuple<string, AccessType>>();
-                LoginHeader = "Login Failed";
-				SetValue(LoginProperty, false);
-                LoginInfo.Id = -1;
-                LoginInfo.Title = string.Empty;
-                LoginInfo.Access = AccessList;
-            }
-        }
+				LoginInfo.Title = Username;
+				LoginInfo.Access = AccessList;
+			}
+			else
+			{
+				userInfo = _accessRuleDataService.VerifyLogin(Username, ((PasswordBox)param).Password);
+
+				LoginInfo.DataService = _userDataService;
+				if (userInfo.Item1 >= 0)
+				{
+					AccessList = _accessRuleDataService.GetAccessOfUser(userInfo.Item1);
+					LoginHeader = userInfo.Item2;
+					SetValue(LoginProperty, true);
+					LoginInfo.Id = userInfo.Item1;
+					LoginInfo.Title = Username;
+					LoginInfo.Access = AccessList;
+				}
+				else
+				{
+					AccessList = new List<Tuple<string, AccessType>>();
+					LoginHeader = "Login Failed";
+					SetValue(LoginProperty, false);
+					LoginInfo.Id = -1;
+					LoginInfo.Title = string.Empty;
+					LoginInfo.Access = AccessList;
+				}
+			}
+		}
 
 		private void passwordBoxKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Enter || e.Key == Key.Return)
 				Login(_loginPassword);
 		}
+
+		private void loginPanel_SubmenuOpened(object sender, RoutedEventArgs e)
+		{
+			FocusManager.SetIsFocusScope(loginPanelUsername, true);
+			FocusManager.SetFocusedElement(this, loginPanelUsername);
+			loginPanelUsername.Focus();
+			loginPanelUsername.SelectAll();
+		}
+
+		private void Menu_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			//loginPanelUsername.Focus();
+			//loginPanelUsername.SelectAll();
+		}
+
     }
 }

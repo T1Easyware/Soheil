@@ -1132,4 +1132,16 @@
   <data name="txtShiftsInfo" xml:space="preserve">
     <value>Shifts info</value>
   </data>
+  <data name="txtDailyStationPlan" xml:space="preserve">
+    <value>Daily Station Plan</value>
+  </data>
+  <data name="txtReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="txtEnd" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="_companyName" xml:space="preserve">
+    <value>Jahadin Parand</value>
+  </data>
 </root>

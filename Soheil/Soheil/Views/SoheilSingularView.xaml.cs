@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -417,7 +418,9 @@ namespace Soheil.Views
 			var tb = dv.FindDocumentMenu();
 			if (tb != null)
 			{
-				var cb = new ComboBox{ DataContext = dc, DisplayMemberPath = "Header"};
+				tb.FlowDirection = System.Windows.FlowDirection.RightToLeft;
+
+				var cb = new ComboBox { DataContext = dc, DisplayMemberPath = "Header" };
 				cb.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = dc.Bars });
 				Binding cmbBinding = new Binding();
 				cmbBinding.Mode = BindingMode.TwoWay;
@@ -440,28 +443,44 @@ namespace Soheil.Views
 		{
 			var dv = sender as DocumentViewer;
 			var dc = sender.GetDataContext<DailyReportVm>();
-			dc.DocumentChanged += () =>
-			{
-				dv.Document = null;
-				dv.Document = dc.Document;
-				dv.UpdateLayout();
-			};
 			if (dv == null)
 				return;
 
 			var tb = dv.FindDocumentMenu();
 			if (tb != null)
 			{
+				tb.FlowDirection = System.Windows.FlowDirection.RightToLeft;
 				var menu = new Soheil.Views.Reporting.DailyReportToolbar();
-				Panel.SetZIndex(menu, 99);
-				tb.Items.Add(menu);
+				var submenu = menu.Content as ToolBar;
+				var list = submenu.Items.OfType<FrameworkElement>().ToArray();
+				submenu.Items.Clear();
+				foreach (var item in list)
+				{
+					tb.Items.Add(item);
+				}
 			}
 		}
 
-		private void dailyReportPrint(Soheil.Controls.CustomControls.DocumentViewerWithPrint dv)
+		private void DSPdocumentViewer_Initialized(object sender, RoutedEventArgs e)
 		{
-			var dc = dv.GetDataContext<DailyReportVm>();
-			
+			var dv = sender as DocumentViewer;
+			var dc = sender.GetDataContext<DailyStationPlanVm>();
+			if (dv == null)
+				return;
+
+			var tb = dv.FindDocumentMenu();
+			if (tb != null)
+			{
+				tb.FlowDirection = System.Windows.FlowDirection.RightToLeft;
+				var menu = new Soheil.Views.Reporting.DailyStationPlanToolbar();
+				var submenu = menu.Content as ToolBar;
+				var list = submenu.Items.OfType<FrameworkElement>().ToArray();
+				submenu.Items.Clear();
+				foreach (var item in list)
+				{
+					tb.Items.Add(item);
+				}
+			}
 		}
 	}
 }

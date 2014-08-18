@@ -11,63 +11,58 @@ namespace Soheil.Core.ViewModels.MessageCenter
 {
 	public class NotificationArea : DependencyObject
 	{
-		static NotificationArea _singleton;
-
 		/// <summary>
-		/// Gets the only instance of this class
+		/// Gets or sets the only instance of this class
 		/// </summary>
-		public static NotificationArea Singleton
-		{
-			get
-			{
-				if (_singleton == null) _singleton = new NotificationArea();
-				return _singleton;
-			}
-		}
-
+		public static NotificationArea Singleton { get; set; }
+		public event Action Loaded;
 		/// <summary>
 		/// Instantiate and load information asyncly
 		/// </summary>
 		public NotificationArea()
 		{
-			Task.Run(() =>
-			{
-				//read data
-				var pmList = new DataServices.PM.MaintenanceDataService().GetAlarms().ToArray()//ToArray may be needed to execute the query and to update CalculatedDiffDays
-					.OrderBy(x=>x.CalculatedDiffDays);
-				var repairList = new DataServices.PM.RepairDataService().GetAlarms().ToArray();
-				
-				//count
-				int count = pmList.Count(x => x.CalculatedDiffDays <= 0d)
-					+ repairList.Count(x => x.RepairStatus == (byte)RepairStatus.Reported);
 
-				var pmTop10 = pmList.Take(10);
-				var repairTop10 = repairList.Take(10);
-
-				//create vm
-				Dispatcher.Invoke(() =>
-				{
-					if (pmTop10.Any())
-					{
-						List.Add(new NotificationVm { IsSeparator = true, Message = "PM" });
-						foreach (var item in pmTop10)
-						{
-							List.Add(new PMVm(item));
-						}
-					}
-					if (repairTop10.Any())
-					{
-						List.Add(new NotificationVm { IsSeparator = true, Message = "تعمیرات" });
-						foreach (var item in repairTop10)
-						{
-							List.Add(new RepairVm(item));
-						}
-					}
-					Count = count;
-				});
-			});
 		}
+		public void Load()
+		{
+			//Task.Run(() =>
+			//{
+			//read data
+			var pmList = new DataServices.PM.MaintenanceDataService().GetAlarms().ToArray()//ToArray may be needed to execute the query and to update CalculatedDiffDays
+				.OrderBy(x => x.CalculatedDiffDays);
+			var repairList = new DataServices.PM.RepairDataService().GetAlarms().ToArray();
 
+			//count
+			int count = pmList.Count(x => x.CalculatedDiffDays <= 0d)
+				+ repairList.Count(x => x.RepairStatus == (byte)RepairStatus.Reported);
+
+			var pmTop10 = pmList.Take(10);
+			var repairTop10 = repairList.Take(10);
+
+			//create vm
+			//Dispatcher.Invoke(() =>
+			//{
+			if (pmTop10.Any())
+			{
+				List.Add(new NotificationVm { IsSeparator = true, Message = "PM" });
+				foreach (var item in pmTop10)
+				{
+					List.Add(new PMVm(item));
+				}
+			}
+			if (repairTop10.Any())
+			{
+				List.Add(new NotificationVm { IsSeparator = true, Message = "تعمیرات" });
+				foreach (var item in repairTop10)
+				{
+					List.Add(new RepairVm(item));
+				}
+			}
+			Count = count;
+			//});
+			//});
+			if (Loaded != null) Loaded();
+		}
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Count
 		/// </summary>

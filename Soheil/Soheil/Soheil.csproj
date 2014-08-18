@@ -203,6 +203,9 @@
     <Compile Include="Views\PP\TaskReport.xaml.cs">
       <DependentUpon>TaskReport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Reporting\DailyStationPlanToolbar.xaml.cs">
+      <DependentUpon>DailyStationPlanToolbar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Reporting\DailyReportToolbar.xaml.cs">
       <DependentUpon>DailyReportToolbar.xaml</DependentUpon>
     </Compile>
@@ -226,6 +229,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\SplashScreen.xaml.cs">
+      <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
@@ -381,10 +387,19 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Page Include="Views\Reporting\DailyStationPlanToolbar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Reporting\DailyReportToolbar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Content Include="Views\Reporting\StationPlan.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Page Include="Views\Reporting\OperatorReport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -402,6 +417,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SoheilSplitView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SplashScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

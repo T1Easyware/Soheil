@@ -67,6 +67,7 @@
     <Compile Include="DataServices\PM\MachinePartDataService.cs" />
     <Compile Include="DataServices\PM\RepairDataService.cs" />
     <Compile Include="DataServices\PM\ReportDataService.cs" />
+    <Compile Include="Reports\DailyStationPlanData.cs" />
     <Compile Include="Reports\DailyReportData.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationArea.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationVm.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="ViewModels\PP\Report\RepairMachinePartVm.cs" />
     <Compile Include="ViewModels\PP\Report\RepairVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
+    <Compile Include="ViewModels\Reports\DailyStationPlanVm.cs" />
     <Compile Include="ViewModels\Reports\DailyReportVm.cs" />
     <Compile Include="ViewModels\Reports\OprActivityDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />
@@ -225,6 +227,8 @@
     <Compile Include="ViewModels\Reports\OperatorBarVm.cs" />
     <Compile Include="ViewModels\Reports\OprQualitativeDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OprTechnicalDetailVM.cs" />
+    <Compile Include="ViewModels\Reports\ShiftVm.cs" />
+    <Compile Include="ViewModels\Reports\StationVm.cs" />
     <Compile Include="ViewModels\SkillCenter\ActivityGroupColumnVm.cs" />
     <Compile Include="ViewModels\SkillCenter\ActivityColumnVm.cs" />
     <Compile Include="ViewModels\SkillCenter\BaseTreeItemVm.cs" />

@@ -5,12 +5,13 @@
     
     <document:ReportProperties>
         <document:ReportProperties.ReportName>OperatorProcessReport</document:ReportProperties.ReportName>
-		<document:ReportProperties.ReportTitle>گزارش عملکرد اپراتورها - شرکت تولیدی عصرجدید</document:ReportProperties.ReportTitle>
+		<document:ReportProperties.ReportTitle>گزارش عملکرد اپراتورها - </document:ReportProperties.ReportTitle>
     </document:ReportProperties>
     <Section Padding="80,10,40,10" FontSize="12">
         <Paragraph FontSize="24" FontWeight="Bold">
-            <document:InlineContextValue PropertyName="ReportTitle" />
-        </Paragraph>
+			<document:InlineContextValue PropertyName="ReportTitle" />
+			<document:InlineContextValue PropertyName="CompanyName" />
+		</Paragraph>
         <document:SectionDataGroup DataGroupName="ItemList">
             <!-- Title Table -->
             <Table CellSpacing="0" BorderBrush="Black" BorderThickness="0.02cm">
