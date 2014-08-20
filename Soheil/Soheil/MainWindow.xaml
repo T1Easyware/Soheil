@@ -217,7 +217,7 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/DailyReport.png"
                         Tag="44" />
-				<CustomControls:ImageButton Background="Transparent"
+                <CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtDailyStationPlan}"
@@ -225,6 +225,14 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/DailyStationPlan.png"
                         Tag="45" />
+                <CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtPMReports}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/PM.png"
+                        Tag="46" />
             </WrapPanel>
         </DataTemplate>
         <DataTemplate x:Key="optionsTemplate">
@@ -561,12 +569,17 @@
                                             <Image Source="/Soheil.Controls;component/Images/Menus/DailyReport.png"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-									<MenuItem Header="{Loc txtDailyStationPlan}" Click="HandleAddTabAndSelect" Tag="45">
-										<MenuItem.Icon>
-											<Image Source="/Soheil.Controls;component/Images/Menus/DailyStationPlan.png"/>
-										</MenuItem.Icon>
-									</MenuItem>
-								</MenuItem>
+                                    <MenuItem Header="{Loc txtDailyStationPlan}" Click="HandleAddTabAndSelect" Tag="45">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Soheil.Controls;component/Images/Menus/DailyStationPlan.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{Loc txtPMReports}" Click="HandleAddTabAndSelect" Tag="46">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Soheil.Controls;component/Images/Menus/PM.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </MenuItem>
                                 <MenuItem Header="{Loc txtOptions}">
                                     <MenuItem.Icon>
                                         <Image Source="/Soheil.Controls;component/Images/Menus/Setting.png"/>

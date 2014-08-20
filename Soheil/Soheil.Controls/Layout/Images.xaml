@@ -30,7 +30,6 @@
 	</Style>
 	<Style x:Key="Play24Image" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/play.png"/>
-		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="24"/>
 	</Style>
 

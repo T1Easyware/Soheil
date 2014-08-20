@@ -36,6 +36,12 @@ namespace Soheil.Common
 
 	public enum RepairStatus
 	{
+
+
+		//wanna change numbers? 
+		//search for #enum# in Core.ViewModels.Reports.PMReportVm.cs
+
+
 		/// <summary>
 		/// Repair Request is disabled
 		/// </summary>
@@ -205,6 +211,7 @@ namespace Soheil.Common
         OperationReportsSubMenu = 43,
 		DailyReport = 44,
 		DailyStationPlan = 45,
+		PMReport = 46,
         OptionsMenu = 5,
         SettingsSubMenu = 51,
         HelpSubMenu = 52,

@@ -1144,4 +1144,16 @@
   <data name="_companyName" xml:space="preserve">
     <value>Jahadin Parand</value>
   </data>
+  <data name="txtDiff" xml:space="preserve">
+    <value>Diff</value>
+  </data>
+  <data name="txtIsPMPerformed" xml:space="preserve">
+    <value>Is Performed</value>
+  </data>
+  <data name="txtPart" xml:space="preserve">
+    <value>Part</value>
+  </data>
+  <data name="txtRepairReport" xml:space="preserve">
+    <value>Repair Report</value>
+  </data>
 </root>

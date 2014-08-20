@@ -24,10 +24,6 @@ namespace Soheil.Core.ViewModels.Reports
 			Access = access;
 
 			#region init Commands
-			NavigateNextCommand = new Command(NavigateNext);
-
-			NavigatePreviousCommand = new Command(NavigatePrevious);
-
 			RefreshCommand = new Command(Refresh, () => true);
 
 			ChangeDayCommand = new Command(offset =>
@@ -102,9 +98,6 @@ namespace Soheil.Core.ViewModels.Reports
 		#region Properties
 		public AccessType Access { get; set; }
 
-		public Command NavigateNextCommand { get; set; }
-		public Command NavigatePreviousCommand { get; set; }
-		public Command PrintCommand { get; set; }
 		public Command RefreshCommand { get; set; }
 		public Command ChangeDayCommand { get; set; }
 		public Command InsertStationInfoCommand { get; set; }
@@ -217,14 +210,6 @@ namespace Soheil.Core.ViewModels.Reports
 		#endregion
 
 		#region Methods
-		void NavigateNext(object param)
-		{
-
-		}
-		void NavigatePrevious(object param)
-		{
-
-		}
 		void Refresh(object param)
 		{
 			LoadDailyStationPlan();
@@ -302,7 +287,6 @@ namespace Soheil.Core.ViewModels.Reports
 					});
 				}
 
-				_reportData.DataTables.Add(mainTable);
 				_reportData.DataTables.Add(mainTable);
 				#endregion
 

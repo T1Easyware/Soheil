@@ -409,7 +409,8 @@
     <value>ماشین آلات</value>
   </data>
   <data name="txtMaintenance" xml:space="preserve">
-    <value>تعمیر و نگهداری</value>
+    <value>PM</value>
+    <comment>eng: maintenance, fa:PM</comment>
   </data>
   <data name="txtMan" xml:space="preserve">
     <value>نیروی انسانی</value>
@@ -994,7 +995,7 @@
     <value>تعریف قطعات</value>
   </data>
   <data name="txtPeriodDays" xml:space="preserve">
-    <value>مدت دوره (روز)</value>
+    <value>دوره (روز)</value>
   </data>
   <data name="txtPMReports" xml:space="preserve">
     <value>گزارشات PM</value>
@@ -1067,6 +1068,7 @@
   </data>
   <data name="txtPM" xml:space="preserve">
     <value>تعمیرات و نگهداری</value>
+    <comment>eng: preventive maintenace, fa:تعمیرات و نگهداری</comment>
   </data>
   <data name="txtRequestDate" xml:space="preserve">
     <value>زمان ایجاد درخواست</value>
@@ -1151,5 +1153,17 @@
   </data>
   <data name="_companyName" xml:space="preserve">
     <value>شرکت صنعتی جهادین پرند</value>
+  </data>
+  <data name="txtDiff" xml:space="preserve">
+    <value>اختلاف</value>
+  </data>
+  <data name="txtIsPMPerformed" xml:space="preserve">
+    <value>انجام شده</value>
+  </data>
+  <data name="txtPart" xml:space="preserve">
+    <value>قطعه</value>
+  </data>
+  <data name="txtRepairReport" xml:space="preserve">
+    <value>گزارش تعمیرات</value>
   </data>
 </root>

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Soheil.Model;
 using Soheil.Dal;
+using Soheil.Common;
 
 namespace Soheil.Core.DataServices.PM
 {
@@ -39,8 +40,46 @@ namespace Soheil.Core.DataServices.PM
 		{
 			return new System.Collections.ObjectModel.ObservableCollection<MaintenanceReport>(
 				_reportRepository.GetAll()
-				.OrderByDescending(x=>x.PerformedDate));
+				.OrderByDescending(x => x.PerformedDate));
 		}
+		public Core.Reports.PMReportData GetAllReportsInRange(DateTime start, DateTime end)
+		{
+			var repairRepository = new Repository<Repair>(Context);
+			var data = new Core.Reports.PMReportData
+			{
+				PMList = _reportRepository
+					.Find(x => (x.MaintenanceDate >= start && x.MaintenanceDate <= end) || (x.PerformedDate >= start && x.PerformedDate <= end))
+					.OrderBy(x => x.MaintenanceDate)
+					.Select(x => new Core.Reports.PMReportData.PM
+					{
+						Machine = x.MachinePartMaintenance.MachinePart.Machine.Name,
+						Part = x.MachinePartMaintenance.MachinePart.IsMachine ? "---" : x.MachinePartMaintenance.MachinePart.Part.Name,
+						Maintenance = x.MachinePartMaintenance.Maintenance.Name,
+						MaintenanceDate = x.MaintenanceDate,
+						PerformedDate = x.PerformedDate,
+						LastMaintenanceDate = x.MachinePartMaintenance.LastMaintenanceDate,
+						Period = x.MachinePartMaintenance.IsOnDemand ? "---" : x.MachinePartMaintenance.PeriodDays.ToString(),
+						Delay = (int)x.MachinePartMaintenance.CalculatedDiffDays,
+						IsPerformed = x.PerformedDate.HasValue,
+						Description = x.Description,
+					}),
+				RepairList = repairRepository
+					.Find(x => (x.CreatedDate >= start && x.CreatedDate <= end) || (x.AcquiredDate >= start && x.AcquiredDate <= end) || (x.DeliveredDate >= start && x.DeliveredDate <= end))
+					.OrderBy(x => x.CreatedDate)
+					.Select(x => new Core.Reports.PMReportData.Repair
+					{
+						Machine = x.MachinePart.Machine.Name,
+						Part = x.MachinePart.IsMachine ? "---" : x.MachinePart.Part.Name,
+						CreatedDate = x.CreatedDate,
+						AcquiredDate = x.AcquiredDate,
+						DeliveredDate = x.DeliveredDate,
+						RepairStatus = x.RepairStatus,
+						Description = x.Description,
+					}),
+			};
+			return data;
+		}
+
 		public IEnumerable<Model.MaintenanceReport> GetActivesForMachine(Machine machineModel)
 		{
 			return _reportRepository.Find(x => x.MachinePartMaintenance.MachinePart.Machine.Id == machineModel.Id)

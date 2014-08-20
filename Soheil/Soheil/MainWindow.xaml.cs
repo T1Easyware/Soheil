@@ -75,7 +75,7 @@ namespace Soheil
 
 			// temp
 			//Login(null);
-			//SetValue(LoginProperty, true);
+			SetValue(LoginProperty, true);
 			//SingularList = new Core.ViewModels.Reports.DailyStationPlanVm(AccessType.Full);
 			//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.DailyStationPlan), true);
 			//.
@@ -255,6 +255,7 @@ namespace Soheil
                     SingularList = new IndicesVm(access);
                     chrometabs.AddTab(CreateSingularTab(type), true);
                     break;
+
                 case SoheilEntityType.ReportsMenu:
                     break;
                 case SoheilEntityType.CostReportsSubMenu:
@@ -277,6 +278,11 @@ namespace Soheil
 					SingularList = new DailyStationPlanVm(access);
 					chrometabs.AddTab(CreateSingularTab(type), true);
 					break;
+				case SoheilEntityType.PMReport:
+					SingularList = new PMReportVm(access);
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+
                 case SoheilEntityType.OptionsMenu:
                     break;
                 case SoheilEntityType.SettingsSubMenu:
@@ -516,6 +522,8 @@ namespace Soheil
 					return Common.Properties.Resources.txtDailyReport;
 				case SoheilEntityType.DailyStationPlan:
 					return Common.Properties.Resources.txtDailyStationPlan;
+				case SoheilEntityType.PMReport:
+					return Common.Properties.Resources.txtPMReports;
 
 				case SoheilEntityType.IndicesSubMenu:
                     return Common.Properties.Resources.txtIndices;

@@ -203,6 +203,9 @@
     <Compile Include="Views\PP\TaskReport.xaml.cs">
       <DependentUpon>TaskReport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Reporting\PMReportToolbar.xaml.cs">
+      <DependentUpon>PMReportToolbar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Reporting\DailyStationPlanToolbar.xaml.cs">
       <DependentUpon>DailyStationPlanToolbar.xaml</DependentUpon>
     </Compile>
@@ -387,6 +390,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Page Include="Views\Reporting\PMReportToolbar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Reporting\DailyStationPlanToolbar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -396,6 +403,11 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Content Include="Views\Reporting\StationPlan.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Reporting\PMReport.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

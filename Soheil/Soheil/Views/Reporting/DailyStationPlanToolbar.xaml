@@ -11,8 +11,8 @@
 	<ToolBar>
 		<Separator VerticalAlignment="Stretch" Width="1" Margin="10,0,0,0"/>
 		<TextBlock Text="{Loc txtDate}" VerticalAlignment="Center" Margin="10,0" Foreground="Black"/>
-		<cal:DatePicker SelectedDate="{Binding StartDate}" DisplayDate="{Binding StartDate}" VerticalAlignment="Center"/>
-		<TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" VerticalAlignment="Center" Margin="5,0,10,0" Foreground="Black"/>
+		<cal:DatePicker SelectedDate="{Binding StartDate}" DisplayDate="{Binding StartDate}" VerticalAlignment="Center" Language="fa-IR"/>
+        <TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" VerticalAlignment="Center" Margin="5,0,10,0" Foreground="Black" FlowDirection="LeftToRight"/>
 
 		<Button Command="{Binding ChangeDayCommand}" Padding="5,0" VerticalAlignment="Stretch" Margin="2,0">
 			<Button.CommandParameter>
