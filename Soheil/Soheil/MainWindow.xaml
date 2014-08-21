@@ -231,7 +231,7 @@
                         Content="{Loc txtPMReports}"
                         IsEnabled="{Binding Path=CanAddTab,
                                             ElementName=chrometabs}"
-                        ImageSource="/Soheil.Controls;component/Images/Menus/PM.png"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/PMReport.png"
                         Tag="46" />
             </WrapPanel>
         </DataTemplate>
@@ -344,7 +344,7 @@
                                         CommandParameter="{Binding ElementName=_loginPassword}">
                             <UniformGrid Focusable="False" Rows="3" Columns="2" Margin="-22,2,-10,2" Height="80">
 								<TextBlock Margin="2" Foreground="{StaticResource TextBrush}" Text="{Loc txtUsername}" VerticalAlignment="Center"/>
-								<TextBox Style="{StaticResource SimpleTextBox}"  Margin="2"  Width="80" Text="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=Username}" x:Name="loginPanelUsername" Focusable="True"/>
+                                <TextBox Style="{StaticResource SimpleTextBox}"  Margin="2"  Width="80" Text="{Binding RelativeSource={RelativeSource AncestorType=Soheil:MainWindow}, Path=Username, UpdateSourceTrigger=PropertyChanged}" KeyDown="passwordBoxKeyDown" x:Name="loginPanelUsername" Focusable="True"/>
 								<TextBlock Margin="2" Foreground="{StaticResource TextBrush}" Text="{Loc txtPassword}" VerticalAlignment="Center"/>
 								<PasswordBox Margin="2" x:Name="_loginPassword" Width="80" KeyDown="passwordBoxKeyDown" Focusable="True"/>
                                 <Button Margin="2,2,-82,2" Background="Transparent" Content="{Loc txtLogin}" FontSize="12" Grid.ColumnSpan="2"
@@ -576,7 +576,7 @@
                                     </MenuItem>
                                     <MenuItem Header="{Loc txtPMReports}" Click="HandleAddTabAndSelect" Tag="46">
                                         <MenuItem.Icon>
-                                            <Image Source="/Soheil.Controls;component/Images/Menus/PM.png"/>
+                                            <Image Source="/Soheil.Controls;component/Images/Menus/PMReport.png"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </MenuItem>

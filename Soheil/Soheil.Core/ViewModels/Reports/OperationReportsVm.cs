@@ -380,7 +380,7 @@ namespace Soheil.Core.ViewModels.Reports
             foreach (var item in Report.QualitiveItems)
             {
                 var wasteType = item.Status == QualitiveStatus.Waste ? 
-					Common.Properties.Resources.ResourceManager.GetString("txtDefection"):
+					Common.Properties.Resources.ResourceManager.GetString("txtWaste"):
 					Common.Properties.Resources.ResourceManager.GetString("txtSecondGrade");
 				var defection = CurrentType == OEType.TimeBased ? item.DefectionTime : item.DefectionCount;
                 qualitiveTable.Rows.Add(new object[]

@@ -1051,6 +1051,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to تایید شود؟.
+        /// </summary>
+        public static string txtConfirm {
+            get {
+                return ResourceManager.GetString("txtConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تایید کلمه عبور :.
         /// </summary>
         public static string txtConfirmPassword {

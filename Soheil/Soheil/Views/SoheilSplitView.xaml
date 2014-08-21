@@ -1695,15 +1695,19 @@
 							<!--Protos count-->
 							<TextBlock Margin="0,5" Style="{StaticResource EntryBoxHeader}" Text="{Loc txtNumberOfShifts}" Grid.Row="3"/>
 							<DockPanel Grid.Column="1" Grid.Row="3" Margin="5" IsEnabled="{Binding CurrentContent.IsReadonly, Converter={StaticResource inverter}}">
-								<Grid DockPanel.Dock="Left" Width="40">
-									<Button Margin="2" Command="{Binding CurrentContent.AskForIncreaseNumberOfShifts}"
+								<Grid DockPanel.Dock="Left">
+									<Button Margin="2" Command="{Binding CurrentContent.AskForIncreaseNumberOfShifts}" Width="40"
+                                            Visibility="{Binding CurrentContent.IsPrototypeChangeAskVisible, Converter={StaticResource booleanToInvisibilityConverter}}"
 											ToolTip="افزودن شیفت">
 										<Image Style="{StaticResource Add16Image}"/>
 									</Button>
 									<Button Margin="2" Command="{Binding CurrentContent.IncreaseNumberOfShifts}" Background="ForestGreen"
 											Visibility="{Binding CurrentContent.IsPrototypeChangeAskVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
 											ToolTip="{Loc txtSave}">
-										<Image Style="{StaticResource Save16Image}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Style="{StaticResource Save16Image}"/>
+                                            <TextBlock Text="{Loc txtConfirm}"/>
+                                        </StackPanel>
 									</Button>
 								</Grid>
 								<TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.NumberOfShiftsModifier, UpdateSourceTrigger=PropertyChanged}"/>
@@ -3645,9 +3649,11 @@
                     <HierarchicalDataTemplate x:Name="NodeTemplate" DataType="{x:Type Base:NodeContentViewModel}" ItemsSource="{Binding ChildNodes}">
                         <StackPanel Orientation="Horizontal" Background="{Binding IsDeleting, Converter={StaticResource deleteConverter}}">
                             <TextBlock Text="{Binding Title, Mode=TwoWay}"/>
-                            <Button Content="+" 
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.AddCommand}"
-                                        />
+                            <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.AddCommand}" CommandParameter="{Binding}"
+                                    Visibility="{Binding Level, Converter={StaticResource isEqualToInvisibilityConverter}, ConverterParameter={x:Static Common:CauseLevel.Level3}}">
+                                <Image Style="{StaticResource Add16Image}"/>
+                            </Button>
+                                        
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>

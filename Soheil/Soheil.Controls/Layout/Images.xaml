@@ -411,6 +411,12 @@
 		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
+
+    <Style x:Key="PMReportImage" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/PMReport.png"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
     <Style x:Key="Repair16Image" TargetType="Image">
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepair16.png"/>
 		<Setter Property="FlowDirection" Value="LeftToRight"/>
@@ -451,4 +457,15 @@
 		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
+
+    <Style x:Key="DailyReportImage" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/dailyReport.png"/>
+        <Setter Property="FlowDirection" Value="LeftToRight"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+    <Style x:Key="DailyStationPlanImage" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/dailyStationPlan.png"/>
+        <Setter Property="FlowDirection" Value="LeftToRight"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
 </ResourceDictionary>

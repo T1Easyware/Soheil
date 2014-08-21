@@ -27,7 +27,7 @@ namespace Soheil.Core.ViewModels
             {
                 if (item.ParentId == RootNode.Id)
                 {
-                    RootNode.ChildNodes.Add(item);
+					RootNode.ChildNodes.Add(item);
                     break;
                 }
             }
@@ -67,8 +67,9 @@ namespace Soheil.Core.ViewModels
             CauseDataService = new CauseDataService(UnitOfWork);
             CauseDataService.CauseAdded += OnCauseAdded;
             CauseDataService.CauseUpdated += OnCauseUpdated;
-
-            AddCommand = new Command(Add, CanAdd);RefreshCommand = new Command(CreateItems);
+			
+			RefreshCommand = new Command(CreateItems);
+			AddCommand = new Command(Add, CanAdd); 
             AddGroupCommand = new Command(Add, CanAddGroup);
             ViewCommand = new Command(View, CanView);
 
@@ -77,15 +78,16 @@ namespace Soheil.Core.ViewModels
 
         public override void Add(object parameter)
         {
-            if (CurrentContent is CauseVM)
-            {
-                var currentCause = (CauseVM)CurrentContent;
-                if (currentCause.Level == CauseLevel.Level3)
-                {
-                    return;
-                }
-                CauseVM.CreateNew(CauseDataService, ((ISplitNodeContent)CurrentContent).Id, currentCause.Level + 1);
-            }
+			var cause = parameter as CauseVM;
+			CurrentContent = cause;
+			if (cause != null)
+			{
+				if (cause.Level == CauseLevel.Level3)
+				{
+					return;
+				}
+				CauseVM.CreateNew(CauseDataService, cause.Id, cause.Level + 1);
+			}
         }
         public override void View(object content)
         {

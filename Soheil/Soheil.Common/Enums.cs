@@ -285,7 +285,8 @@ namespace Soheil.Common
         Print = 0x2,
         Update = 0x4,
         Insert = 0x8,
-        Full = 0x10
+        Full = 0x10,
+        All = 0xFF
     }
 
     [TypeConverter(typeof(LocalizedEnumConverter))]

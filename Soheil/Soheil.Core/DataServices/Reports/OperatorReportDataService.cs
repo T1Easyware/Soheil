@@ -48,7 +48,7 @@ namespace Soheil.Core.DataServices
 				var end = workProfilePlanDs.GetShiftStartAt(oprInfo.EndDate);
 				
 				var operatorRepository = new Repository<Operator>(context);
-				var oList = operatorRepository.GetAll();
+				var oList = operatorRepository.Find(x=>x.Status == (byte)Status.Active);
 
 				var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
 				var oprList = operatorProcessReportRepository.Find(x => x != null

@@ -1156,4 +1156,7 @@
   <data name="txtRepairReport" xml:space="preserve">
     <value>Repair Report</value>
   </data>
+  <data name="txtConfirm" xml:space="preserve">
+    <value>Confirm?</value>
+  </data>
 </root>

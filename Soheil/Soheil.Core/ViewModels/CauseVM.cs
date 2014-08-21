@@ -108,6 +108,7 @@ namespace Soheil.Core.ViewModels
             _model = entity;
             ParentId = entity.Parent == null ? 0 : entity.Parent.Id;
             Title = Name;
+			
             foreach (var child in entity.Children)
             {
                 if (child.Status != (decimal) Status.Deleted)

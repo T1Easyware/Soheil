@@ -68,6 +68,8 @@ namespace Soheil.Core.ViewModels.PM
 				_isInitialized = true;
 			});
 
+			//ReportCommand initialized in MainWindow.xaml.cs
+
 			ExCollapse = new Commands.Command(o =>
 			{
 				Ex1Expanded = false;
@@ -867,7 +869,16 @@ namespace Soheil.Core.ViewModels.PM
 		}
 		public static readonly DependencyProperty RefreshCommandProperty =
 			DependencyProperty.Register("RefreshCommand", typeof(Commands.Command), typeof(PmVm), new PropertyMetadata(null));
-
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ReportCommand
+		/// </summary>
+		public Commands.Command ReportCommand
+		{
+			get { return (Commands.Command)GetValue(ReportCommandProperty); }
+			set { SetValue(ReportCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ReportCommandProperty =
+			DependencyProperty.Register("ReportCommand", typeof(Commands.Command), typeof(PmVm), new UIPropertyMetadata(null));
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Ex1Expanded

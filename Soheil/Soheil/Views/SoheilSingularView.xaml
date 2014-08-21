@@ -697,7 +697,13 @@
 					
 					<!-- reports -->
 					<ToolBar Background="Transparent">
-						<Button Command="{Binding CloseBlockReportCommand}" Visibility="{Binding ShowBlockReport, Converter={StaticResource booleanToVisibilityConverter}}">
+                        <Button Command="{Binding DailyReportCommand}" ToolTip="{Loc txtDailyReport}">
+                            <Image Style="{StaticResource DailyReportImage}" Height="16"/>
+                        </Button>
+                        <Button Command="{Binding DailyStationPlanCommand}" ToolTip="{Loc txtDailyStationPlan}">
+                            <Image Style="{StaticResource DailyStationPlanImage}" Height="16"/>
+                        </Button>
+                        <Button Command="{Binding CloseBlockReportCommand}" Visibility="{Binding ShowBlockReport, Converter={StaticResource booleanToVisibilityConverter}}">
 							<DockPanel>
 								<Image DockPanel.Dock="Left" Style="{StaticResource ProcessReportImage}"/>
 								<TextBlock Text="Hide Activities" Style="{StaticResource TextBlock3DTextStyle}"/>
@@ -1785,13 +1791,19 @@
 							<TextBlock Text="{Loc txtSave}"/>
 						</WrapPanel>
 					</Button>
-					<Button Command="{Binding RefreshCommand}" Width="120">
-						<WrapPanel>
-							<Image Style="{StaticResource Refresh16Image}"/>
-							<TextBlock Text="{Loc txtRefresh}"/>
-						</WrapPanel>
-					</Button>
-				</ToolBar>
+                    <Button Command="{Binding RefreshCommand}" Width="120">
+                        <WrapPanel>
+                            <Image Style="{StaticResource Refresh16Image}"/>
+                            <TextBlock Text="{Loc txtRefresh}"/>
+                        </WrapPanel>
+                    </Button>
+                    <Button Command="{Binding ReportCommand}" Width="120">
+                        <WrapPanel>
+                            <Image Style="{StaticResource PMReportImage}" Height="16"/>
+                            <TextBlock Text="{Loc txtPMReports}"/>
+                        </WrapPanel>
+                    </Button>
+                </ToolBar>
 				
 				<!-- PM contents -->
 				<Grid TextBlock.FontSize="13">

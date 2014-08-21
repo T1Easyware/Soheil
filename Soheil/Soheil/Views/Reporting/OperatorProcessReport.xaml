@@ -115,10 +115,10 @@
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
                     <TableColumn Width="50" />
                 </Table.Columns>
                 <TableRowGroup Style="{StaticResource headerFooterRowStyle}">
@@ -264,12 +264,12 @@
                     </Style>
                 </Table.Resources>
                 <Table.Columns>
+                    <TableColumn Width="80" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
+                    <TableColumn Width="80" />
+                    <TableColumn Width="80" />
                 </Table.Columns>
                 <TableRowGroup Style="{StaticResource headerFooterRowStyle}">
                     <TableRow>
@@ -380,11 +380,11 @@
                     </Style>
                 </Table.Resources>
                 <Table.Columns>
+                    <TableColumn Width="80" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
                     <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
+                    <TableColumn Width="80" />
                 </Table.Columns>
                 <TableRowGroup Style="{StaticResource headerFooterRowStyle}">
                     <TableRow>

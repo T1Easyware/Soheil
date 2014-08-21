@@ -26,7 +26,7 @@ namespace Soheil.Views
 			InitializeComponent();
 			DataContext = this;
 			SetValue(Command1Property, new Command(o => AnyButtonClicked(new Control { Tag = 231 }, null)));
-			SetValue(Command2Property, new Command(o => AnyButtonClicked(new Control { Tag = 311 }, null)));
+			SetValue(Command2Property, new Command(o => AnyButtonClicked(new Control { Tag = 31 }, null)));
 			SetValue(Command3Property, new Command(o => AnyButtonClicked(new Control { Tag = 222 }, null)));
 			SetValue(Command4Property, new Command(o => AnyButtonClicked(new Control { Tag = 34 }, null)));
 			SetValue(Command5Property, new Command(o => AnyButtonClicked(new Control { Tag = 27 }, null)));

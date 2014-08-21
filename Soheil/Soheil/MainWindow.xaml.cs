@@ -39,7 +39,17 @@ namespace Soheil
             set { SetValue(LoginHeaderProperty, value); }
         }
 
-        public string Username { get; set; }
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Username
+		/// </summary>
+		public string Username
+		{
+			get { return (string)GetValue(UsernameProperty); }
+			set { SetValue(UsernameProperty, value); }
+		}
+		public static readonly DependencyProperty UsernameProperty =
+			DependencyProperty.Register("Username", typeof(string), typeof(MainWindow), new UIPropertyMetadata(null));
+
         public static readonly DependencyProperty AccessListProperty =
             DependencyProperty.Register("AccessList", typeof (List<Tuple<string,AccessType>>), typeof (MainWindow), null);
 
@@ -74,8 +84,8 @@ namespace Soheil
 
 
 			// temp
-			//Login(null);
-			SetValue(LoginProperty, true);
+			Login(null);
+			//SetValue(LoginProperty, true);
 			//SingularList = new Core.ViewModels.Reports.DailyStationPlanVm(AccessType.Full);
 			//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.DailyStationPlan), true);
 			//.
@@ -88,10 +98,14 @@ namespace Soheil
 
         private void HandleAddTabAndSelect(object sender, RoutedEventArgs e)
         {
-            string code = Convert.ToString(((Control)sender).Tag);
+			var type = (SoheilEntityType)Convert.ToInt32(((Control)sender).Tag);
+			HandleAddTabAndSelect(type);
+		}
+		private void HandleAddTabAndSelect(SoheilEntityType type)
+		{
+			string code = ((int)type).ToString();
             var accessItem = AccessList.FirstOrDefault(item => item.Item1 == code);
             var access = accessItem == null ? AccessType.None : accessItem.Item2;
-			var type = (SoheilEntityType)Convert.ToInt32(((Control)sender).Tag);
 
             foreach (ChromeTabItem item in chrometabs.Items)
             {
@@ -242,11 +256,16 @@ namespace Soheil
                     break;
                 case SoheilEntityType.ProductPlanSubMenu:
 				case SoheilEntityType.ProductPlanTable:
-					SingularList = new Core.ViewModels.PP.PPTableVm(access);
+					var ppvm = new Core.ViewModels.PP.PPTableVm(access);
+					ppvm.DailyStationPlanCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.DailyStationPlan));
+					ppvm.DailyReportCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.DailyReport));
+					SingularList = ppvm;
 					chrometabs.AddTab(CreateSingularTab(type), true);
 					break;
 				case SoheilEntityType.PM:
-					SingularList = new Core.ViewModels.PM.PmVm(access);
+					var pmvm = new Core.ViewModels.PM.PmVm(access);
+					pmvm.ReportCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.PMReport));
+					SingularList = pmvm;
 					chrometabs.AddTab(CreateSingularTab(type), true);
 					break;
 				case SoheilEntityType.PerformanceSubMenu:
@@ -551,7 +570,11 @@ namespace Soheil
 			if (param == null)
 			{
 				userInfo = _accessRuleDataService.VerifyLogin("admin", "fromdust");
-				AccessList = _accessRuleDataService.GetAccessOfAdmin(userInfo.Item1);
+				AccessList = new List<Tuple<string, AccessType>>();
+				for (int i = 0; i < 255; i++)
+				{
+					AccessList.Add(new Tuple<string, AccessType>(i.ToString(), AccessType.All));
+				}
 				LoginHeader = userInfo.Item2;
 				SetValue(LoginProperty, true);
 				LoginInfo.Id = userInfo.Item1;
@@ -603,6 +626,7 @@ namespace Soheil
 			//loginPanelUsername.Focus();
 			//loginPanelUsername.SelectAll();
 		}
+
 
     }
 }

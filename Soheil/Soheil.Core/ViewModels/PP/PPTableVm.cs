@@ -994,6 +994,27 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty ItemEditingTimeProperty =
 			DependencyProperty.Register("ItemEditingTime", typeof(TimeSpan), typeof(PPTableVm), new PropertyMetadata(TimeSpan.Zero));
 
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DailyStationPlanCommand
+		/// </summary>
+		public Commands.Command DailyStationPlanCommand
+		{
+			get { return (Commands.Command)GetValue(DailyStationPlanCommandProperty); }
+			set { SetValue(DailyStationPlanCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DailyStationPlanCommandProperty =
+			DependencyProperty.Register("DailyStationPlanCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DailyReportCommand
+		/// </summary>
+		public Commands.Command DailyReportCommand
+		{
+			get { return (Commands.Command)GetValue(DailyReportCommandProperty); }
+			set { SetValue(DailyReportCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DailyReportCommandProperty =
+			DependencyProperty.Register("DailyReportCommand", typeof(Commands.Command), typeof(PPTableVm), new UIPropertyMetadata(null));
+
 		#endregion
 
 		#region Toolbar extra items

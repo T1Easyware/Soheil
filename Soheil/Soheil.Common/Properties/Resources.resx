@@ -1166,4 +1166,7 @@
   <data name="txtRepairReport" xml:space="preserve">
     <value>گزارش تعمیرات</value>
   </data>
+  <data name="txtConfirm" xml:space="preserve">
+    <value>تایید شود؟</value>
+  </data>
 </root>
