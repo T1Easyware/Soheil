@@ -16,7 +16,10 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (values[0] == values[1]) return ((Brush[])parameter)[0];
+			if (values[0] == null && values[1] == null) return ((Brush[])parameter)[0];
+			if (values[0] == null || values[1] == null) return ((Brush[])parameter)[1];
+
+			if (values[0].Equals(values[1])) return ((Brush[])parameter)[0];
 			else return ((Brush[])parameter)[1];
 		}
 
@@ -69,6 +72,54 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+
+	public class RemainingColorConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			int v = (int)((double)value * 3);
+			if (v <= 100)
+			{
+				byte g = (byte)(v * 2.56);
+				byte b = (byte)(v / 2);
+				return new SolidColorBrush(Color.FromRgb(255, g, b));
+			}
+			else if (v <= 200)
+			{
+				byte r = (byte)((200 - v) * 2.56);
+				byte b = (byte)((200 - v) / 2);
+				return new SolidColorBrush(Color.FromRgb(r, 255, b));
+			}
+			else
+			{
+				byte b = (byte)((v - 200) * 2.56);
+				byte r = (byte)((v - 200) / 2);
+				byte a = (byte)(256 - r);
+				return new SolidColorBrush(Color.FromArgb(a, r, 255, b));
+			}
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+	public class BalanceToBrushConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			double d = System.Convert.ToDouble(value);
+			if (d < 0) return new SolidColorBrush(Colors.OrangeRed);
+			else if (d > 0) return new SolidColorBrush(Colors.Cyan);
+			else return new SolidColorBrush(Colors.Lime);
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 
 	public class ColorFixer : IValueConverter
 	{
@@ -138,7 +189,22 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (parameter == value) ? Visibility.Collapsed : Visibility.Visible;
+			if (parameter == null && value == null) return Visibility.Collapsed;
+			if (parameter == null || value == null) return Visibility.Visible;
+
+			return parameter.Equals(value) ? Visibility.Collapsed : Visibility.Visible;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+	public class IsInt32EqualToInvisibilityConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (System.Convert.ToInt32(parameter) == System.Convert.ToInt32(value)) ? Visibility.Collapsed : Visibility.Visible;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -150,7 +216,10 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (parameter == value) ? Visibility.Visible : Visibility.Collapsed;
+			if (parameter == null && value == null) return Visibility.Visible;
+			if (parameter == null || value == null) return Visibility.Collapsed;
+
+			return parameter.Equals(value) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -163,7 +232,10 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (values[0] == values[1]) ? Visibility.Collapsed : Visibility.Visible;
+			if (values[0] == null && values[1] == null) return Visibility.Collapsed;
+			if (values[0] == null || values[1] == null) return Visibility.Visible;
+			
+			return (values[0].Equals(values[1])) ? Visibility.Collapsed : Visibility.Visible;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -175,7 +247,10 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (values[0] == values[1]) ? Visibility.Visible : Visibility.Collapsed;
+			if (values[0] == null && values[1] == null) return Visibility.Visible;
+			if (values[0] == null || values[1] == null) return Visibility.Collapsed;
+			
+			return (values[0].Equals(values[1])) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -221,6 +296,20 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class VisibilityInverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if ((Visibility)value == Visibility.Visible) return Visibility.Collapsed;
+			return Visibility.Visible;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 	#endregion
 
 	#region PP coordinations
@@ -228,7 +317,10 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return new GridLength(System.Convert.ToDouble(value), GridUnitType.Star);
+			var val = System.Convert.ToDouble(value);
+			if (double.IsNaN(val)) return new GridLength(0d);
+			if (val < 0) return new GridLength(0d);
+			return new GridLength(val, GridUnitType.Star);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -654,7 +746,10 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (parameter == value);
+			if (parameter == null && value == null) return true;
+			if (parameter == null || value == null) return false;
+			
+			return parameter.Equals(value);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -668,7 +763,10 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			return values[0] == values[1];
+			if (values[0] == null && values[1] == null) return true;
+			if (values[0] == null || values[1] == null) return false;
+			
+			return values[0].Equals(values[1]);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -680,7 +778,10 @@ namespace Soheil.Controls.Converters.PP
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			return values[0] != values[1];
+			if (values[0] == null && values[1] == null) return false;
+			if (values[0] == null || values[1] == null) return true;
+
+			return !values[0].Equals(values[1]);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

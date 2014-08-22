@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="Soheil.Views.Reporting.PMReportToolbar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" Background="Transparent" TextBlock.Foreground="Black"
+             d:DesignHeight="50" d:DesignWidth="800">
+	<ToolBar>
+        <Separator VerticalAlignment="Stretch" Width="1" Margin="10,0"/>
+        <!-- time -->
+
+        <TextBlock Text="{Loc txtStartDate}" VerticalAlignment="Center" Margin="10,0" Foreground="Black"/>
+        <cal:DatePicker SelectedDate="{Binding StartDate}" DisplayDate="{Binding StartDate}" VerticalAlignment="Center" Language="fa-IR"/>
+        <TextBlock Text="{Binding StartTime, Converter={StaticResource timeSpanToStringConverter}}" VerticalAlignment="Center" Margin="5,0,10,0" Foreground="Black" FlowDirection="LeftToRight"/>
+
+        <ToggleButton IsChecked="{Binding IsOneDay}" Content="کل روز"/>
+        <ToggleButton IsChecked="{Binding IsOneWeek}" Content="کل هفته"/>
+        <ToggleButton IsChecked="{Binding IsManualEnd}" Content="تا ابتدای این تاریخ"/>
+        
+        <WrapPanel Visibility="{Binding IsManualEnd, Converter={StaticResource booleanToVisibilityConverter}}" VerticalAlignment="Center">
+            <TextBlock Text="{Loc txtEndDate}" VerticalAlignment="Center" Margin="10,0" Foreground="Black"/>
+            <cal:DatePicker SelectedDate="{Binding EndDate}" DisplayDate="{Binding EndDate}" VerticalAlignment="Center" Language="fa-IR"/>
+            <TextBlock Text="{Binding EndTime, Converter={StaticResource timeSpanToStringConverter}}" VerticalAlignment="Center" Margin="5,0,10,0" Foreground="Black" FlowDirection="LeftToRight"/>
+        </WrapPanel>
+        
+        <!--Button Command="{Binding ChangeDayCommand}" Padding="5,0" VerticalAlignment="Stretch" Margin="2,0" Visibility="{Binding CanNavigate, Converter={StaticResource booleanToVisibilityConverter}}">
+			<Button.CommandParameter>
+				<sys:Int32>1</sys:Int32>
+			</Button.CommandParameter>
+			<WrapPanel FlowDirection="LeftToRight">
+                <TextBlock Text="{Loc txtNext}" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding IntervalName}" VerticalAlignment="Center"/>
+                <Image Style="{StaticResource Forward16Image}"/>
+			</WrapPanel>
+		</Button>
+        <Button Command="{Binding ChangeDayCommand}" Padding="5,0" VerticalAlignment="Stretch" Margin="2,0" Visibility="{Binding CanNavigate, Converter={StaticResource booleanToVisibilityConverter}}">
+            <Button.CommandParameter>
+                <sys:Int32>-1</sys:Int32>
+            </Button.CommandParameter>
+            <WrapPanel FlowDirection="LeftToRight">
+                <Image Style="{StaticResource Back16Image}"/>
+                <TextBlock Text="{Loc txtPrevious}" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding IntervalName}" VerticalAlignment="Center"/>
+			</WrapPanel>
+		</Button-->
+
+		<Separator VerticalAlignment="Stretch" Width="1" Margin="10,0"/>
+
+		<Button Command="{Binding RefreshCommand}" Padding="10,0" ToolBar.OverflowMode="Never" MinWidth="120" VerticalAlignment="Stretch" Margin="2,0">
+			<WrapPanel>
+				<Image Style="{StaticResource Play24Image}"/>
+				<TextBlock Text="{Loc txtBuildReport}" VerticalAlignment="Center"/>
+			</WrapPanel>
+		</Button>
+	</ToolBar>
+</UserControl>

@@ -9,7 +9,7 @@ using Soheil.Dal;
 using Soheil.Model;
 using Soheil.Core.Base;
 
-namespace Soheil.Core.DataServices
+namespace Soheil.Core.DataServices.PM
 {
 	public class MachinePartDataService : DataServiceBase, IDataService<MachinePart>
     {
@@ -41,7 +41,7 @@ namespace Soheil.Core.DataServices
 
 		public ObservableCollection<MachinePart> GetAll()
         {
-			IEnumerable<MachinePart> entityList = _machinePartRepository.Find(machine => machine.Status != (decimal)Status.Deleted, "MachineFamily");
+			IEnumerable<MachinePart> entityList = _machinePartRepository.Find(machine => machine.Status != (decimal)Status.Deleted);
 			return new ObservableCollection<MachinePart>(entityList);
         }
 
@@ -84,8 +84,23 @@ namespace Soheil.Core.DataServices
 			Context.Commit();
         }
 
+		/// <summary>
+		/// Changes the status or physically delete the model
+		/// <para>Depends on if any Repairs or MachinePartMaintenances it has</para>
+		/// </summary>
+		/// <param name="model"></param>
         public void DeleteModel(MachinePart model)
         {
+			if (model.Repairs.Any() || model.MachinePartMaintenances.Any())
+			{
+				model.Status = (byte)Status.Deleted;
+				model.ModifiedDate = DateTime.Now;
+			}
+			else
+			{
+				_machinePartRepository.Delete(model);
+			}
+			Context.Commit();
         }
 
 		public void AttachModel(MachinePart model)
@@ -104,7 +119,7 @@ namespace Soheil.Core.DataServices
 
         public ObservableCollection<StationMachine> GetStations(int machineId)
         {
-			Machine entity = _machineRepository.FirstOrDefault(machine => machine.Id == machineId, "StationMachines.Station", "StationMachines.Machine");
+			Machine entity = _machineRepository.FirstOrDefault(machine => machine.Id == machineId);
 			return new ObservableCollection<StationMachine>(entity.StationMachines.Where(item => item.Station.Status == (decimal)Status.Active));
         }
 

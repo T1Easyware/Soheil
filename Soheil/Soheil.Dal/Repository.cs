@@ -35,7 +35,7 @@ namespace Soheil.Dal
 
         public IEnumerable<TModel> GetAll()
         {
-            return _context.CreateObjectSet<TModel>().ToList();
+            return _context.CreateObjectSet<TModel>();//.ToList();
         }
 
 		public IEnumerable<TModel> GetAll(params string[] includePath)

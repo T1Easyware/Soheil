@@ -27,6 +27,7 @@ namespace Soheil.Core.ViewModels.Reports
 	        set { SetValue(ValueProperty, value); }
 	    }
 
+
         public static readonly DependencyProperty ProductionValueProperty =
     DependencyProperty.Register("ProductionValue", typeof(double), typeof(OperatorBarVm), new PropertyMetadata(default(double)));
 
@@ -54,10 +55,24 @@ namespace Soheil.Core.ViewModels.Reports
             set { SetValue(StoppageValueProperty, value); }
         }
 
-	    public double RemainingValue
-	    {
-	        get { return Value - (ProductionValue + StoppageValue + DefectionValue); }
-	    }
+		public double RemainingValue
+		{
+			get { return Value - (ProductionValue + StoppageValue + DefectionValue); }
+		}
+
+		public static readonly DependencyProperty RemainingTipProperty =
+	DependencyProperty.Register("RemainingTip", typeof(string), typeof(OperatorBarVm), new PropertyMetadata(default(string)));
+
+		public string RemainingTip
+		{
+			get { return (string)GetValue(RemainingTipProperty); }
+			set { SetValue(RemainingTipProperty, value); }
+		}
+
+		public double FillingValue
+		{
+			get { return 1 - Value; }
+		}
 
 
 	    public static readonly DependencyProperty TipProperty =
@@ -142,7 +157,6 @@ namespace Soheil.Core.ViewModels.Reports
             get { return (ObservableCollection<OperatorBarInfo>)GetValue(MenuItemsProperty); }
 	        set { SetValue(MenuItemsProperty, value); }
 	    }
-
 	    public OperatorBarVm()
 	    {
             MenuItems = new ObservableCollection<OperatorBarInfo>();

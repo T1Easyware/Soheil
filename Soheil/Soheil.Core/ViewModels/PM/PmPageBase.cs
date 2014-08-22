@@ -10,43 +10,14 @@ namespace Soheil.Core.ViewModels.PM
 {
 	public class PmPageBase : DependencyObject
 	{
-		public event Action Selected;
+		public event Action Refresh;
+        public event Action<PmItemBase> SelectedItemChanged;
 
-		public PmPageBase(string title)
+        internal void RaiseRefresh() { if (Refresh != null) Refresh(); }
+
+		public PmPageBase()
 		{
-			Title = title;
 		}
-
-		/// <summary>
-		/// Gets or sets a bindable value that indicates IsSelected
-		/// </summary>
-		public bool IsSelected
-		{
-			get { return (bool)GetValue(IsSelectedProperty); }
-			set { SetValue(IsSelectedProperty, value); }
-		}
-		public static readonly DependencyProperty IsSelectedProperty =
-			DependencyProperty.Register("IsSelected", typeof(bool), typeof(PmPageBase),
-			new PropertyMetadata(false, (d, e) =>
-			{
-				var vm = (PmPageBase)d;
-				var val = (bool)e.NewValue;
-				if (vm.Selected != null)
-					vm.Selected();
-			}));
-
-
-		/// <summary>
-		/// Gets or sets a bindable value that indicates Title
-		/// </summary>
-		public string Title
-		{
-			get { return (string)GetValue(TitleProperty); }
-			set { SetValue(TitleProperty, value); }
-		}
-		public static readonly DependencyProperty TitleProperty =
-			DependencyProperty.Register("Title", typeof(string), typeof(PmPageBase), new PropertyMetadata(""));
-
 
 		/// <summary>
 		/// Gets or sets a bindable collection that indicates Items
@@ -68,9 +39,43 @@ namespace Soheil.Core.ViewModels.PM
 			{
 				var vm = (PmPageBase)d;
 				var val = (PmItemBase)e.NewValue;
+                if (val != null && vm.SelectedItemChanged != null)
+                    vm.SelectedItemChanged(val);
 			}));
 
+		#region Optional flags
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether to hide Machine column in GridView
+		/// </summary>
+		public bool HideMachines
+		{
+			get { return (bool)GetValue(HideMachinesProperty); }
+			set { SetValue(HideMachinesProperty, value); }
+		}
+		public static readonly DependencyProperty HideMachinesProperty =
+			DependencyProperty.Register("HideMachines", typeof(bool), typeof(PmPageBase), new PropertyMetadata(true));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether to hide MachinePart column in GridView
+		/// </summary>
+		public bool HideMachineParts
+		{
+			get { return (bool)GetValue(HideMachinePartsProperty); }
+			set { SetValue(HideMachinePartsProperty, value); }
+		}
+		public static readonly DependencyProperty HideMachinePartsProperty =
+			DependencyProperty.Register("HideMachineParts", typeof(bool), typeof(PmPageBase), new PropertyMetadata(true));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates whether to hide MachinePartMaintenance column in GridView
+		/// </summary>
+		public bool HideMachinePartMaintenances
+		{
+			get { return (bool)GetValue(HideMachinePartMaintenancesProperty); }
+			set { SetValue(HideMachinePartMaintenancesProperty, value); }
+		}
+		public static readonly DependencyProperty HideMachinePartMaintenancesProperty =
+			DependencyProperty.Register("HideMachinePartMaintenances", typeof(bool), typeof(PmPageBase), new PropertyMetadata(true));
 
+		#endregion
 
 		/// <summary>
 		/// Gets or sets a bindable command that adds a new source item to this page
@@ -82,6 +87,15 @@ namespace Soheil.Core.ViewModels.PM
 		}
 		public static readonly DependencyProperty AddCommandProperty =
 			DependencyProperty.Register("AddCommand", typeof(Commands.Command), typeof(PmPageBase), new PropertyMetadata(null));
-
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DeleteCommand
+		/// </summary>
+		public Commands.Command DeleteCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(PmPageBase), new PropertyMetadata(null));
 	}
 }

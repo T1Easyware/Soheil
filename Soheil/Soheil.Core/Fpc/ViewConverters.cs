@@ -48,6 +48,7 @@ namespace Soheil.Core.Fpc
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
+			if (value is string) return (string.IsNullOrWhiteSpace((string)value)) ? Visibility.Collapsed : Visibility.Visible;
 			return value == null ? Visibility.Collapsed : Visibility.Visible;
 		}
 

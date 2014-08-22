@@ -38,12 +38,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="PersianDate">
       <HintPath>..\External Assemblies\PersianDate.dll</HintPath>
     </Reference>
@@ -68,7 +62,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\AccessNodeViewModel.cs" />
-    <Compile Include="DataServices\Basics\MachinePartDataService.cs" />
+    <Compile Include="DataServices\PM\MaintenanceDataService.cs" />
+    <Compile Include="DataServices\PM\PartDataService.cs" />
+    <Compile Include="DataServices\PM\MachinePartDataService.cs" />
+    <Compile Include="DataServices\PM\RepairDataService.cs" />
+    <Compile Include="DataServices\PM\ReportDataService.cs" />
+    <Compile Include="Reports\PMReportData.cs" />
+    <Compile Include="Reports\DailyStationPlanData.cs" />
+    <Compile Include="Reports\DailyReportData.cs" />
+    <Compile Include="ViewModels\MessageCenter\NotificationArea.cs" />
+    <Compile Include="ViewModels\MessageCenter\NotificationVm.cs" />
+    <Compile Include="ViewModels\MessageCenter\PMVm.cs" />
+    <Compile Include="ViewModels\MessageCenter\RepairVm.cs" />
     <Compile Include="DataServices\Storage\RawMaterialUnitGroupDataService.cs" />
     <Compile Include="DataServices\Storage\UnitSetDataService.cs" />
     <Compile Include="DataServices\Storage\UnitGroupDataService.cs" />
@@ -77,9 +82,12 @@
     <Compile Include="DataServices\Storage\WarehouseDataService.cs" />
     <Compile Include="ViewModels\PM\MachineItemVm.cs" />
     <Compile Include="ViewModels\PM\MachinePartItemVm.cs" />
+    <Compile Include="ViewModels\PM\MaintenanceItemVm.cs" />
+    <Compile Include="ViewModels\PM\MPMItemVm.cs" />
+    <Compile Include="ViewModels\PM\PartItemVm.cs" />
+    <Compile Include="ViewModels\PM\PMBarVm.cs" />
     <Compile Include="ViewModels\PM\PmItemBase.cs" />
     <Compile Include="ViewModels\PM\PmPageBase.cs" />
-    <Compile Include="ViewModels\PM\PmLevelBase.cs" />
     <Compile Include="Base\ItemLinkViewModel.cs" />
     <Compile Include="Base\NodeLinkViewModel.cs" />
     <Compile Include="Base\NodeContentViewModel.cs" />
@@ -163,7 +171,14 @@
     <Compile Include="ViewModels\Index\OeeMachineVm.cs" />
     <Compile Include="ViewModels\Index\OeeVm.cs" />
     <Compile Include="ViewModels\PM\PmVm.cs" />
+    <Compile Include="ViewModels\PM\RepairItemVm.cs" />
+    <Compile Include="ViewModels\PM\ReportItemVm.cs" />
+    <Compile Include="ViewModels\PP\Report\RepairMachineVm.cs" />
+    <Compile Include="ViewModels\PP\Report\RepairMachinePartVm.cs" />
+    <Compile Include="ViewModels\PP\Report\RepairVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
+    <Compile Include="ViewModels\Reports\DailyStationPlanVm.cs" />
+    <Compile Include="ViewModels\Reports\DailyReportVm.cs" />
     <Compile Include="ViewModels\Reports\OprActivityDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OperatorProcessReportVM.cs" />
     <Compile Include="PP\PPRange.cs" />
@@ -219,6 +234,9 @@
     <Compile Include="ViewModels\Reports\OperatorBarVm.cs" />
     <Compile Include="ViewModels\Reports\OprQualitativeDetailVM.cs" />
     <Compile Include="ViewModels\Reports\OprTechnicalDetailVM.cs" />
+    <Compile Include="ViewModels\Reports\PMReportVm.cs" />
+    <Compile Include="ViewModels\Reports\ShiftVm.cs" />
+    <Compile Include="ViewModels\Reports\StationVm.cs" />
     <Compile Include="ViewModels\SkillCenter\ActivityGroupColumnVm.cs" />
     <Compile Include="ViewModels\SkillCenter\ActivityColumnVm.cs" />
     <Compile Include="ViewModels\SkillCenter\BaseTreeItemVm.cs" />

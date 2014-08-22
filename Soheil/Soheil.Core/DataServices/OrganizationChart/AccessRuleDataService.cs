@@ -197,55 +197,81 @@ namespace Soheil.Core.DataServices
                     : new Tuple<int, string>(currentUser.Id, currentUser.Title);
         }
 
-        public List<Tuple<string, AccessType>> GetAccessOfUser(int userId)
-        {
-            var list = new List<Tuple<string, AccessType>>();
+		public List<Tuple<string, AccessType>> GetAccessOfUser(int userId)
+		{
+			var userList = _userRepository.GetAll();
+			var accessList = _accessRuleRepository.GetAll();
+			var userAccessList = _userAccessRuleRepository.GetAll();
+			var positionAccessList = _positionAccessRuleRepository.GetAll();
+			var userPositionList = _userPositionRepository.GetAll();
 
-                var userList = _userRepository.GetAll();
-                var accessList = _accessRuleRepository.GetAll();
-                var userAccessList = _userAccessRuleRepository.GetAll();
-                var positionAccessList = _positionAccessRuleRepository.GetAll();
-                var userPositionList = _userPositionRepository.GetAll();
+			var userQuery = from user in userList.Where(u => u.Id == userId)
+							from userAccess in userAccessList.Where(ua => ua.User.Id == user.Id).DefaultIfEmpty()
+							from access in accessList.Where(a => (userAccess != null && a.Id == userAccess.AccessRule.Id))
+							let type = userAccess.Type
+							where type != null
+							select new
+						{
+							access.Id,
+							access.Code,
+							AccessType = (AccessType)type
+						};
 
-                var userQuery = from user in userList.Where(u => u.Id == userId)
-                                from userAccess in userAccessList.Where(ua => ua.User.Id == user.Id).DefaultIfEmpty()
-                                from access in accessList.Where(a => (userAccess != null && a.Id == userAccess.AccessRule.Id))
-                                let type = userAccess.Type
-                                where type != null
-                                select new
-                            {
-                                access.Id,
-                                access.Code,
-                                AccessType = (AccessType)type
-                            };
+			var positionQuery = from user in userList.Where(u => u.Id == userId)
+								from userPosition in userPositionList.Where(up => up.User.Id == user.Id && (user.BypassPositionAccess == null || user.BypassPositionAccess == false)).DefaultIfEmpty()
+								from positionAccess in positionAccessList.Where(pa => (userPosition != null && userPosition.Position != null && pa.Position.Id == userPosition.Position.Id && userPosition.Position.Status == (decimal)Status.Active)).DefaultIfEmpty()
+								from access in accessList.Where(a => ((positionAccess != null && a.Id == positionAccess.AccessRule.Id)))
+								let type = positionAccess == null ? 0 : access.Position_AccessRules.Select(item => item.Type).Aggregate((a, b) => (byte?)(a | b))
+								where type != null
+								select new
+							   {
+								   access.Id,
+								   access.Code,
+								   AccessType = (AccessType)type
+							   };
 
-                var positionQuery = from user in userList.Where(u => u.Id == userId)
-                                    from userPosition in userPositionList.Where(up => up.User.Id == user.Id  && (user.BypassPositionAccess == null || user.BypassPositionAccess == false)).DefaultIfEmpty()
-                                    from positionAccess in positionAccessList.Where(pa => (userPosition != null && userPosition.Position != null && pa.Position.Id == userPosition.Position.Id && userPosition.Position.Status == (decimal)Status.Active)).DefaultIfEmpty()
-                                    from access in accessList.Where(a => ((positionAccess != null && a.Id == positionAccess.AccessRule.Id)))
-                                    let type = positionAccess == null ? 0 : access.Position_AccessRules.Select(item => item.Type).Aggregate((a, b) => (byte?)(a | b))
-                                    where type != null
-                                    select new
-                                   {
-                                       access.Id,
-                                       access.Code,
-                                       AccessType = (AccessType)type
-                                   };
+			var query = from access in accessList
+						from user in userQuery.Where(u => u.Id == access.Id).DefaultIfEmpty().Distinct()
+						from position in positionQuery.Where(p => p.Id == access.Id).DefaultIfEmpty().Distinct()
+						let uType = user == null ? 0 : user.AccessType
+						let pType = position == null ? 0 : position.AccessType
+						select new
+						{
+							access.Id,
+							access.Code,
+							AccessType = uType | pType
+						};
+			var list = query.Select(record => new Tuple<string, AccessType>(record.Code, record.AccessType)).ToList();
+			return list;
+		}
+		public List<Tuple<string, AccessType>> GetAccessOfAdmin(int userId)
+		{
+			var accessList = _accessRuleRepository.GetAll();
+			var userAccessList = _userAccessRuleRepository.GetAll();
 
-                var query = from access in accessList
-                            from user in userQuery.Where(u => u.Id == access.Id).DefaultIfEmpty().Distinct()
-                            from position in positionQuery.Where(p => p.Id == access.Id).DefaultIfEmpty().Distinct()
-                            let uType = user == null ? 0 : user.AccessType
-                            let pType = position == null ? 0 : position.AccessType
-                            select new
-                            {
-                                access.Id,
-                                access.Code,
-                                AccessType = uType | pType
-                            };
-                list.AddRange(query.Select(record => new Tuple<string, AccessType>(record.Code, record.AccessType)));
-            return list;
-        }
+			var userQuery = from userAccess in userAccessList.Where(ua => ua.User.Id == userId).DefaultIfEmpty()
+							from access in accessList.Where(a => (userAccess != null && a.Id == userAccess.AccessRule.Id))
+							let type = userAccess.Type
+							where type != null
+							select new
+							{
+								access.Id,
+								access.Code,
+								AccessType = (AccessType)type
+							};
+
+			var query = from access in accessList
+						from userResult in userQuery.Where(u => u.Id == access.Id).DefaultIfEmpty().Distinct()
+						let uType = userResult == null ? 0 : userResult.AccessType
+						select new
+						{
+							access.Id,
+							access.Code,
+							AccessType = uType
+						};
+			var list = query.Select(record => new Tuple<string, AccessType>(record.Code, record.AccessType)).ToList();
+			return list;
+		}
         #region Overrides of RecursiveDataServiceBase
 
         public override ObservableCollection<IEntityNode> GetChildren(int id)

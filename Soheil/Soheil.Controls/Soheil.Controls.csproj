@@ -72,24 +72,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Xceed.Wpf.AvalonDock">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.1.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.1.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.1.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.1.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.1.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.1.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\BindableSelectedItemBehavior.cs" />
@@ -142,10 +124,12 @@
     <Compile Include="CustomControls\ColorPicker\ColorUtils.cs" />
     <Compile Include="CustomControls\ColorPicker\HsvControl.cs" />
     <Compile Include="CustomControls\ColorPicker\SpectrumSlider.cs" />
+    <Compile Include="CustomControls\DocumentViewerWithPrint.cs" />
     <Compile Include="CustomControls\DurationBox.cs" />
     <Compile Include="CustomControls\FrameworkElementAdorner.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="CustomControls\GridLengthAnimation.cs" />
+    <Compile Include="CustomControls\GridViewSort.cs" />
     <Compile Include="CustomControls\MultiLevelBar.cs" />
     <Compile Include="CustomControls\ImageRadioButton.cs" />
     <Compile Include="CustomControls\ImageButton.cs" />
@@ -520,7 +504,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\error16.png" />
-    <Resource Include="Images\warning16.png" />
+    <Resource Include="Images\Invalid16.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Fpc\locationLocked.png" />
@@ -584,11 +568,104 @@
     <Resource Include="Images\PP\ppe_setstart.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\PP\TaskCopy.png" />
+    <Resource Include="Images\PP\TaskMove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\document_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\back_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PMRepair16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\reportNotOk.png" />
+    <Resource Include="Images\reportOk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PMRepairAdd16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PMRepairNotOk16.png" />
+    <Resource Include="Images\PMRepairOk16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\report_link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\S.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\PM.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\Menus\SkillCenter.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\PP\TaskCopy.png" />
-    <Resource Include="Images\PP\TaskMove.png" />
+    <Resource Include="Images\StartPage\StartPage.png" />
+    <Resource Include="Images\StartPage\StartPageButtonDown.png" />
+    <Resource Include="Images\StartPage\StartPageButtonOver.png" />
+    <Resource Include="Images\StartPage\StartPage_i1.png" />
+    <Resource Include="Images\StartPage\StartPage_i2.png" />
+    <Resource Include="Images\StartPage\StartPage_i3.png" />
+    <Resource Include="Images\StartPage\StartPage_i4.png" />
+    <Resource Include="Images\StartPage\StartPage_i5.png" />
+    <Resource Include="Images\StartPage\StartPage_t1.png" />
+    <Resource Include="Images\StartPage\StartPage_t2.png" />
+    <Resource Include="Images\StartPage\StartPage_t3.png" />
+    <Resource Include="Images\StartPage\StartPage_t4.png" />
+    <Resource Include="Images\StartPage\StartPage_t5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\StartPage\StartPageLines.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\StartPage\StartPageSefam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\notification.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PMRepairReported16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\alarm16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\info16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\info.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\star.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Error.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\DailyReport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\font.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\DailyStationPlan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\comment.png" />
+    <Resource Include="Images\commentAdd.png" />
+    <Resource Include="Images\commentDelete.png" />
+    <Resource Include="Images\commentNotOk.png" />
+    <Resource Include="Images\commentOk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\PMReport.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Menus\rawmaterial.png" />

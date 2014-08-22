@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,8 @@ using Soheil.Core.ViewModels.Index;
 using Soheil.Core.ViewModels.Reports;
 using Soheil.Core.Virtualizing;
 using Soheil.Core.ViewModels.PP;
+using System.Windows.Data;
+using System.Windows.Controls.Primitives;
 
 namespace Soheil.Views
 {
@@ -141,7 +144,7 @@ namespace Soheil.Views
 			_currentSlider = (FrameworkElement)sender;
 			_currentScrollViewer = (DateTimeScrollViewer)((FrameworkElement)_currentSlider.TemplatedParent).TemplatedParent;
 
-			double offset = (_currentSlider.Tag == "L") ? -0.2 : 0.2;
+			double offset = ((string)_currentSlider.Tag == "L") ? -0.2 : 0.2;
 			BarChartViewer.MoveCenterBy(5 * offset, _currentScrollViewer.ScrollableWidth);
 			//BarChartViewer.CenterPoint += (5 * offset);
 		}
@@ -359,10 +362,6 @@ namespace Soheil.Views
         {
            
         }
-        private void OnDateChanged(object sender, RoutedEventArgs e)
-        {
-            ((OperationReportsVm)ViewModel).InitializeProviders(null);
-        }
 
         //private void OnEndDateChanged(object sender, RoutedEventArgs e)
         //{
@@ -400,5 +399,111 @@ namespace Soheil.Views
 				control.Tag = "general";
 		}
 
+		private void PMPageLoaded(object sender, EventArgs e)
+		{
+			var control = (sender as FrameworkElement);
+			if (control != null)
+			{
+				var dc = control.DataContext as Soheil.Core.ViewModels.PM.PmPageBase;
+			}
+		}
+
+		private void OPRdocumentViewer_Initialized(object sender, EventArgs e)
+		{
+			var dv = sender as DocumentViewer;
+			var dc = sender.GetDataContext<OperationReportsVm>();
+			if (dv == null)
+				return;
+
+			var tb = dv.FindDocumentMenu();
+			if (tb != null)
+			{
+				tb.FlowDirection = System.Windows.FlowDirection.RightToLeft;
+
+				var cb = new ComboBox { DataContext = dc, DisplayMemberPath = "Header" };
+				cb.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = dc.Bars });
+				Binding cmbBinding = new Binding();
+				cmbBinding.Mode = BindingMode.TwoWay;
+				cmbBinding.Source = dc;
+				cmbBinding.Path = new PropertyPath("SelectedBar");
+				cb.SetBinding(ComboBox.SelectedItemProperty, cmbBinding);
+				TextBlock.SetFontSize(cb, 14);
+
+				tb.Items.Add(new Separator { Width = 1, VerticalAlignment = System.Windows.VerticalAlignment.Stretch });
+				tb.Items.Add(new TextBlock { Text = "اپراتور", VerticalAlignment = System.Windows.VerticalAlignment.Center, Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black), FontSize = 14 });
+				tb.Items.Add(cb);
+				tb.Items.Add(new Button { Content = "Next", Command = dv.GetDataContext<OperationReportsVm>().NavigateNextCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
+				tb.Items.Add(new Button { Content = "Previous", Command = dv.GetDataContext<OperationReportsVm>().NavigatePreviousCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
+				tb.Items.Add(new Separator { Width = 1, VerticalAlignment = System.Windows.VerticalAlignment.Stretch });
+				tb.Items.Add(new Button { Content = "Return", Command = dv.GetDataContext<OperationReportsVm>().NavigateBackCommand, Margin = new Thickness(5, -5, 5, -5), Height = 22, Width = 60, FontSize = 14 });
+			}
+		}
+
+		private void DRdocumentViewer_Initialized(object sender, RoutedEventArgs e)
+		{
+			var dv = sender as DocumentViewer;
+			var dc = sender.GetDataContext<DailyReportVm>();
+			if (dv == null)
+				return;
+
+			var tb = dv.FindDocumentMenu();
+			if (tb != null)
+			{
+				tb.FlowDirection = System.Windows.FlowDirection.RightToLeft;
+				var menu = new Soheil.Views.Reporting.DailyReportToolbar();
+				var submenu = menu.Content as ToolBar;
+				var list = submenu.Items.OfType<FrameworkElement>().ToArray();
+				submenu.Items.Clear();
+				foreach (var item in list)
+				{
+					tb.Items.Add(item);
+				}
+			}
+		}
+
+		private void DSPdocumentViewer_Initialized(object sender, RoutedEventArgs e)
+		{
+			var dv = sender as DocumentViewer;
+			var dc = sender.GetDataContext<DailyStationPlanVm>();
+			if (dv == null)
+				return;
+
+			var tb = dv.FindDocumentMenu();
+			if (tb != null)
+			{
+				tb.FlowDirection = System.Windows.FlowDirection.RightToLeft;
+				var menu = new Soheil.Views.Reporting.DailyStationPlanToolbar();
+				var submenu = menu.Content as ToolBar;
+				var list = submenu.Items.OfType<FrameworkElement>().ToArray();
+				submenu.Items.Clear();
+				foreach (var item in list)
+				{
+					tb.Items.Add(item);
+				}
+			}
+		}
+
+		private void PMdocumentViewer_Initialized(object sender, RoutedEventArgs e)
+		{
+			var dv = sender as DocumentViewer;
+			var dc = sender.GetDataContext<PMReportVm>();
+			if (dv == null)
+				return;
+
+			var tb = dv.FindDocumentMenu();
+			if (tb != null)
+			{
+				tb.FlowDirection = System.Windows.FlowDirection.RightToLeft;
+				var menu = new Soheil.Views.Reporting.PMReportToolbar();
+				var submenu = menu.Content as ToolBar;
+				var list = submenu.Items.OfType<FrameworkElement>().ToArray();
+				submenu.Items.Clear();
+				foreach (var item in list)
+				{
+					tb.Items.Add(item);
+				}
+			}
+
+		}
 	}
 }

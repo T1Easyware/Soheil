@@ -31,12 +31,12 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual int PeriodHours
+        public virtual int PeriodDays
         {
-            get { return _periodHours; }
-            set { _periodHours = value; }
+            get { return _periodDays; }
+            set { _periodDays = value; }
         }
-        private int _periodHours = 720;
+        private int _periodDays = 720;
     
         public virtual string Description
         {
@@ -51,6 +51,25 @@ namespace Soheil.Model
         }
     
         public virtual System.DateTime ModifiedDate
+        {
+            get;
+            set;
+        }
+    
+        public virtual byte Status
+        {
+            get { return _status; }
+            set { _status = value; }
+        }
+        private byte _status = 1;
+    
+        public virtual System.DateTime LastMaintenanceDate
+        {
+            get;
+            set;
+        }
+    
+        public virtual string Code
         {
             get;
             set;

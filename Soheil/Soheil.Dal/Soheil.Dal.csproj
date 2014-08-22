@@ -38,12 +38,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -66,13 +60,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SoheilEdm.edmx</DependentUpon>
     </Compile>
+    <Compile Include="SoheilEdm1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SoheilEdm.edmx</DependentUpon>
+    </Compile>
     <Compile Include="SoheilEdmContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
     <EntityDeploy Include="SoheilEdm.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>SoheilEdm.Designer.cs</LastGenOutput>
+      <LastGenOutput>SoheilEdm1.Designer.cs</LastGenOutput>
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>

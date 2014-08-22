@@ -405,7 +405,7 @@
   <data name="txtIndexType" xml:space="preserve">
     <value>Index Type :</value>
   </data>
-  <data name="txtMachine" xml:space="preserve">
+  <data name="txtMachinery" xml:space="preserve">
     <value>Machine</value>
   </data>
   <data name="txtMaintenance" xml:space="preserve">
@@ -1008,5 +1008,194 @@
   </data>
   <data name="txtWarehouses" xml:space="preserve">
     <value>Warehouses</value>
+  </data>
+  <data name="txtAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="txtIsOnDemand" xml:space="preserve">
+    <value>On demand</value>
+  </data>
+  <data name="txtIsPeriodic" xml:space="preserve">
+    <value>Periodic</value>
+  </data>
+  <data name="txtMachinePartMaintenances" xml:space="preserve">
+    <value>Selected Machine Part's PMs</value>
+  </data>
+  <data name="txtMachineParts" xml:space="preserve">
+    <value>Machine Parts</value>
+  </data>
+  <data name="txtParts" xml:space="preserve">
+    <value>Parts Definition</value>
+  </data>
+  <data name="txtPeriodDays" xml:space="preserve">
+    <value>Period (Days)</value>
+  </data>
+  <data name="txtPMReports" xml:space="preserve">
+    <value>PM Reports</value>
+  </data>
+  <data name="txtPMType" xml:space="preserve">
+    <value>PM Type</value>
+  </data>
+  <data name="txtRepairs" xml:space="preserve">
+    <value>Repairs</value>
+  </data>
+  <data name="txtMaintenances" xml:space="preserve">
+    <value>PMs definition</value>
+  </data>
+  <data name="txtMachine" xml:space="preserve">
+    <value>Machine</value>
+  </data>
+  <data name="txtMachinePart" xml:space="preserve">
+    <value>Part</value>
+  </data>
+  <data name="txtMachinePartMaintenance" xml:space="preserve">
+    <value>PM</value>
+  </data>
+  <data name="txtDone" xml:space="preserve">
+    <value>Performed</value>
+  </data>
+  <data name="txtEarly" xml:space="preserve">
+    <value>Early</value>
+  </data>
+  <data name="txtInactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="txtLastPMDate" xml:space="preserve">
+    <value>Last Performed Date</value>
+  </data>
+  <data name="txtLate" xml:space="preserve">
+    <value>Late</value>
+  </data>
+  <data name="txtNotDone" xml:space="preserve">
+    <value>Not Performed</value>
+  </data>
+  <data name="txtOnTime" xml:space="preserve">
+    <value>OnTime</value>
+  </data>
+  <data name="txtDaysLeft" xml:space="preserve">
+    <value>Days Left</value>
+  </data>
+  <data name="txtPMDate" xml:space="preserve">
+    <value>PM Date</value>
+  </data>
+  <data name="txtPMPerformedDate" xml:space="preserve">
+    <value>Performed Date</value>
+  </data>
+  <data name="txtAcquiredDate" xml:space="preserve">
+    <value>Acquired Date</value>
+  </data>
+  <data name="txtAddPMReport" xml:space="preserve">
+    <value>Add PM Report</value>
+  </data>
+  <data name="txtAddRepair" xml:space="preserve">
+    <value>Add Repair Request</value>
+  </data>
+  <data name="txtDeletePartFromMachine" xml:space="preserve">
+    <value>Delete Part from Machine</value>
+  </data>
+  <data name="txtDeletePMFromPart" xml:space="preserve">
+    <value>Delete PM from Machine Part</value>
+  </data>
+  <data name="txtDeliveredDate" xml:space="preserve">
+    <value>Delivered Date</value>
+  </data>
+  <data name="txtPM" xml:space="preserve">
+    <value>Preventive Maintenance</value>
+  </data>
+  <data name="txtRequestDate" xml:space="preserve">
+    <value>Request Date</value>
+  </data>
+  <data name="txtStoppageCause" xml:space="preserve">
+    <value>Stoppage Cause</value>
+  </data>
+  <data name="txtStoppageReport" xml:space="preserve">
+    <value>Stoppage Report</value>
+  </data>
+  <data name="txtViewPMReports" xml:space="preserve">
+    <value>View PM Reports</value>
+  </data>
+  <data name="txtViewRepairs" xml:space="preserve">
+    <value>View Repair Requests</value>
+  </data>
+  <data name="txtReported" xml:space="preserve">
+    <value>Reported</value>
+  </data>
+  <data name="txtDefectionType" xml:space="preserve">
+    <value>Output Type</value>
+  </data>
+  <data name="txtHours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="txtRemainingValue" xml:space="preserve">
+    <value>Deviation</value>
+  </data>
+  <data name="txtBuildReport" xml:space="preserve">
+    <value>Build Report</value>
+  </data>
+  <data name="txtDailyReport" xml:space="preserve">
+    <value>Daily Production Report</value>
+  </data>
+  <data name="txtExecutionPercent" xml:space="preserve">
+    <value>Plan Execution Percent</value>
+  </data>
+  <data name="txtMajorDefection" xml:space="preserve">
+    <value>Major Defection Type</value>
+  </data>
+  <data name="txtMajorStoppage" xml:space="preserve">
+    <value>Major Stoppage Cause</value>
+  </data>
+  <data name="txtProductionPerHour" xml:space="preserve">
+    <value>Standard Production per hour</value>
+  </data>
+  <data name="txtProductionSupervisor" xml:space="preserve">
+    <value>Production Supervisor</value>
+  </data>
+  <data name="txtShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="txtSpecialEvents" xml:space="preserve">
+    <value>Special events and Crisis</value>
+  </data>
+  <data name="txtTotalDeviation" xml:space="preserve">
+    <value>Total deviation</value>
+  </data>
+  <data name="txtSupervisor" xml:space="preserve">
+    <value>Production Supervisor</value>
+  </data>
+  <data name="txtNextDay" xml:space="preserve">
+    <value>Next Day</value>
+  </data>
+  <data name="txtPreviousDay" xml:space="preserve">
+    <value>Previous Day</value>
+  </data>
+  <data name="txtShiftsInfo" xml:space="preserve">
+    <value>Shifts info</value>
+  </data>
+  <data name="txtDailyStationPlan" xml:space="preserve">
+    <value>Daily Station Plan</value>
+  </data>
+  <data name="txtReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="txtEnd" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="_companyName" xml:space="preserve">
+    <value>Jahadin Parand</value>
+  </data>
+  <data name="txtDiff" xml:space="preserve">
+    <value>Diff</value>
+  </data>
+  <data name="txtIsPMPerformed" xml:space="preserve">
+    <value>Is Performed</value>
+  </data>
+  <data name="txtPart" xml:space="preserve">
+    <value>Part</value>
+  </data>
+  <data name="txtRepairReport" xml:space="preserve">
+    <value>Repair Report</value>
+  </data>
+  <data name="txtConfirm" xml:space="preserve">
+    <value>Confirm?</value>
   </data>
 </root>

@@ -39,7 +39,17 @@ namespace Soheil
             set { SetValue(LoginHeaderProperty, value); }
         }
 
-        public string Username { get; set; }
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Username
+		/// </summary>
+		public string Username
+		{
+			get { return (string)GetValue(UsernameProperty); }
+			set { SetValue(UsernameProperty, value); }
+		}
+		public static readonly DependencyProperty UsernameProperty =
+			DependencyProperty.Register("Username", typeof(string), typeof(MainWindow), new UIPropertyMetadata(null));
+
         public static readonly DependencyProperty AccessListProperty =
             DependencyProperty.Register("AccessList", typeof (List<Tuple<string,AccessType>>), typeof (MainWindow), null);
 
@@ -72,17 +82,15 @@ namespace Soheil
 			LoginCommand = new Command(Login);
 			_newTabNumber = 1;
 
+
 			// temp
-            Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
+			Login(null);
+			//SetValue(LoginProperty, true);
+			//SingularList = new Core.ViewModels.Reports.DailyStationPlanVm(AccessType.Full);
+			//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.DailyStationPlan), true);
 			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
-
-			if (Environment.UserName == "Bizhan" || Environment.UserName == "Bizz")
-			{
-				//SingularList = new Core.ViewModels.PP.PPTableVm(AccessType.Full);
-				//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.ProductPlanTable), true);
-			}
 		}
 
         public ISplitList SplitList { get; set; }
@@ -90,10 +98,14 @@ namespace Soheil
 
         private void HandleAddTabAndSelect(object sender, RoutedEventArgs e)
         {
-            string code = Convert.ToString(((Control)e.Source).Tag);
+			var type = (SoheilEntityType)Convert.ToInt32(((Control)sender).Tag);
+			HandleAddTabAndSelect(type);
+		}
+		private void HandleAddTabAndSelect(SoheilEntityType type)
+		{
+			string code = ((int)type).ToString();
             var accessItem = AccessList.FirstOrDefault(item => item.Item1 == code);
             var access = accessItem == null ? AccessType.None : accessItem.Item2;
-            var type = (SoheilEntityType)Convert.ToInt32(((Control)e.Source).Tag);
 
             foreach (ChromeTabItem item in chrometabs.Items)
             {
@@ -244,15 +256,25 @@ namespace Soheil
                     break;
                 case SoheilEntityType.ProductPlanSubMenu:
 				case SoheilEntityType.ProductPlanTable:
-					SingularList = new Core.ViewModels.PP.PPTableVm(access);
-                    chrometabs.AddTab(CreateSingularTab(type), true);
-                    break;
-                case SoheilEntityType.PerformanceSubMenu:
+					var ppvm = new Core.ViewModels.PP.PPTableVm(access);
+					ppvm.DailyStationPlanCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.DailyStationPlan));
+					ppvm.DailyReportCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.DailyReport));
+					SingularList = ppvm;
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+				case SoheilEntityType.PM:
+					var pmvm = new Core.ViewModels.PM.PmVm(access);
+					pmvm.ReportCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.PMReport));
+					SingularList = pmvm;
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+				case SoheilEntityType.PerformanceSubMenu:
                     break;
                 case SoheilEntityType.IndicesSubMenu:
                     SingularList = new IndicesVm(access);
                     chrometabs.AddTab(CreateSingularTab(type), true);
                     break;
+
                 case SoheilEntityType.ReportsMenu:
                     break;
                 case SoheilEntityType.CostReportsSubMenu:
@@ -289,6 +311,19 @@ namespace Soheil
                     SplitList = new UnitSetsVM(access);
                     chrometabs.AddTab(CreateSplitTab(type), true);
                     break;
+				case SoheilEntityType.DailyReport:
+					SingularList = new DailyReportVm(access);
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+				case SoheilEntityType.DailyStationPlan:
+					SingularList = new DailyStationPlanVm(access);
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+				case SoheilEntityType.PMReport:
+					SingularList = new PMReportVm(access);
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+
                 case SoheilEntityType.OptionsMenu:
                     break;
                 case SoheilEntityType.SettingsSubMenu:
@@ -449,7 +484,8 @@ namespace Soheil
 		/// <returns></returns>
         private string GetTabHeader(SoheilEntityType type)
         {
-            switch (type)
+			//!@#$
+			switch (type)
             {
                 case SoheilEntityType.None:
                     return string.Empty;
@@ -515,6 +551,8 @@ namespace Soheil
 					return Common.Properties.Resources.txtSkillCenter;
 				case SoheilEntityType.SetupTimes:
 					return Common.Properties.Resources.txtSetupTimes;
+				case SoheilEntityType.PM:
+					return Common.Properties.Resources.txtPM;
 
                 case SoheilEntityType.CostsSubMenu:
                     return Common.Properties.Resources.txtCosts;
@@ -526,9 +564,16 @@ namespace Soheil
                     return Common.Properties.Resources.txtControl;
                 case SoheilEntityType.ProductPlanSubMenu:
                     return Common.Properties.Resources.txtProductPlan;
-                case SoheilEntityType.PerformanceSubMenu:
-                    return Common.Properties.Resources.txtPerformance;
-                case SoheilEntityType.IndicesSubMenu:
+				case SoheilEntityType.PerformanceSubMenu:
+					return Common.Properties.Resources.txtPerformance;
+				case SoheilEntityType.DailyReport:
+					return Common.Properties.Resources.txtDailyReport;
+				case SoheilEntityType.DailyStationPlan:
+					return Common.Properties.Resources.txtDailyStationPlan;
+				case SoheilEntityType.PMReport:
+					return Common.Properties.Resources.txtPMReports;
+
+				case SoheilEntityType.IndicesSubMenu:
                     return Common.Properties.Resources.txtIndices;
                 case SoheilEntityType.CostReportsSubMenu:
                     return Common.Properties.Resources.txtCostReports;
@@ -536,6 +581,7 @@ namespace Soheil
                     return Common.Properties.Resources.txtActualCostReports;
                 case SoheilEntityType.OperationReportsSubMenu:
                     return Common.Properties.Resources.txtOperationReports;
+
                 case SoheilEntityType.SettingsSubMenu:
                     return Common.Properties.Resources.txtSettings;
                 case SoheilEntityType.HelpSubMenu:
@@ -547,36 +593,69 @@ namespace Soheil
             }
         }
 
-        public void Login(object param)
-        {
-            var userInfo = _accessRuleDataService.VerifyLogin(Username, ((PasswordBox)param).Password);
-            //var userInfo = _accessRuleDataService.VerifyLogin("admin", "fromdust");
-
-            LoginInfo.DataService = _userDataService;
-            if (userInfo.Item1 >=0)
-            {
-                AccessList = _accessRuleDataService.GetAccessOfUser(userInfo.Item1);
-                LoginHeader = userInfo.Item2;
+		public void Login(object param)
+		{
+			Tuple<int, string> userInfo;
+			if (param == null)
+			{
+				userInfo = _accessRuleDataService.VerifyLogin("admin", "fromdust");
+				AccessList = new List<Tuple<string, AccessType>>();
+				for (int i = 0; i < 255; i++)
+				{
+					AccessList.Add(new Tuple<string, AccessType>(i.ToString(), AccessType.All));
+				}
+				LoginHeader = userInfo.Item2;
 				SetValue(LoginProperty, true);
 				LoginInfo.Id = userInfo.Item1;
-                LoginInfo.Title = Username;
-                LoginInfo.Access = AccessList;
-            }
-            else
-            {
-                AccessList = new List<Tuple<string, AccessType>>();
-                LoginHeader = "Login Failed";
-				SetValue(LoginProperty, false);
-                LoginInfo.Id = -1;
-                LoginInfo.Title = string.Empty;
-                LoginInfo.Access = AccessList;
-            }
-        }
+				LoginInfo.Title = Username;
+				LoginInfo.Access = AccessList;
+			}
+			else
+			{
+				userInfo = _accessRuleDataService.VerifyLogin(Username, ((PasswordBox)param).Password);
+
+				LoginInfo.DataService = _userDataService;
+				if (userInfo.Item1 >= 0)
+				{
+					AccessList = _accessRuleDataService.GetAccessOfUser(userInfo.Item1);
+					LoginHeader = userInfo.Item2;
+					SetValue(LoginProperty, true);
+					LoginInfo.Id = userInfo.Item1;
+					LoginInfo.Title = Username;
+					LoginInfo.Access = AccessList;
+				}
+				else
+				{
+					AccessList = new List<Tuple<string, AccessType>>();
+					LoginHeader = "Login Failed";
+					SetValue(LoginProperty, false);
+					LoginInfo.Id = -1;
+					LoginInfo.Title = string.Empty;
+					LoginInfo.Access = AccessList;
+				}
+			}
+		}
 
 		private void passwordBoxKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Enter || e.Key == Key.Return)
 				Login(_loginPassword);
 		}
+
+		private void loginPanel_SubmenuOpened(object sender, RoutedEventArgs e)
+		{
+			FocusManager.SetIsFocusScope(loginPanelUsername, true);
+			FocusManager.SetFocusedElement(this, loginPanelUsername);
+			loginPanelUsername.Focus();
+			loginPanelUsername.SelectAll();
+		}
+
+		private void Menu_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			//loginPanelUsername.Focus();
+			//loginPanelUsername.SelectAll();
+		}
+
+
     }
 }

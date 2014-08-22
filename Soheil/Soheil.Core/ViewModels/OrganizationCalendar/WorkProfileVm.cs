@@ -208,7 +208,8 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 				};
 				Week.Add(dow);
 			}
-			correctShifts(_model.WorkShiftPrototypes.Count);
+			NumberOfShiftsModifier = _model.WorkShiftPrototypes.Count;
+			//correctShifts(_model.WorkShiftPrototypes.Count);
 		}
 
 
@@ -311,7 +312,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 		}
 		public static readonly DependencyProperty NumberOfShiftsProperty =
 			DependencyProperty.Register("NumberOfShiftsModifier", typeof(int), typeof(WorkProfileVm),
-			new UIPropertyMetadata(1, (d, e) =>
+			new UIPropertyMetadata(0, (d, e) =>
 			{
 				var vm = (WorkProfileVm)d;
 				var val = (int)e.NewValue;
@@ -319,7 +320,7 @@ namespace Soheil.Core.ViewModels.OrganizationCalendar
 			}, (d, v) =>
 			{
 				if ((int)v < 1) return 1;
-				if ((int)v > 5) return 5;
+				//if ((int)v > 5) return 5;
 				return v;
 			}));
 

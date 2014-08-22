@@ -191,7 +191,7 @@ namespace Soheil.Core.DataServices
                     Root = currentRoot,
                     RootType = (byte)FishboneNodeType.Machines,
                     Parent = rootNode,
-                    Description = Common.Properties.Resources.txtMachine,
+                    Description = Common.Properties.Resources.txtMachinery,
                     Type = (byte)FishboneNodeType.Machines,
                     ModifiedDate = DateTime.Now
                 };

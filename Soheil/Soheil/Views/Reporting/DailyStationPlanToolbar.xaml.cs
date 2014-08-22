@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Soheil.Views.PM
+namespace Soheil.Views.Reporting
 {
 	/// <summary>
-	/// Interaction logic for Pm.xaml
+	/// Interaction logic for DailyReportToolbar.xaml
 	/// </summary>
-	public partial class Pm : UserControl
+	public partial class DailyStationPlanToolbar : UserControl
 	{
-		public Pm()
+		public DailyStationPlanToolbar()
 		{
 			InitializeComponent();
 		}

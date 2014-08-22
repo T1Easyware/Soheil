@@ -189,6 +189,37 @@ namespace Soheil.Core.DataServices
 				x => x.ModifiedDate);
 		}
 
+		internal WorkProfilePlan GetCurrentAt(DateTime dateTime)
+		{
+			return workProfilePlanRepository.LastOrDefault(x =>
+				x.StartDate >= dateTime && x.EndDate <= dateTime,
+				x => x.ModifiedDate);
+		}
+		/// <summary>
+		/// Gets the starting DateTime of the first Shift of the given Date
+		/// </summary>
+		/// <param name="dateTime">target Date</param>
+		/// <returns>dateTime.Date.Add([FirstShift in the date].StartSeconds)</returns>
+		internal DateTime GetShiftStartAt(DateTime dateTime)
+		{
+			dateTime = dateTime.Date;
+			var wpp = workProfilePlanRepository.LastOrDefault(x =>
+				x.StartDate <= dateTime && x.EndDate >= dateTime,
+				x => x.ModifiedDate);
+			var bizState = GetEffectiveBizState(dateTime, wpp);
+			if (wpp == null)
+				return dateTime;
+			if (wpp.WorkProfile == null)
+				return dateTime;
+			if (!wpp.WorkProfile.WorkDays.Any())
+				return dateTime;
+			var day = wpp.WorkProfile.WorkDays.First(x => x.BusinessState == bizState);
+			if (day == null)
+				return dateTime;
+			//add seconds (start of first shift) to dateTime (given date)
+			return dateTime.AddSeconds(day.WorkShifts.Min(x=>x.StartSeconds));
+		}
+
 		internal List<WorkProfilePlan> GetInRange(DateTime startDate, DateTime endDate)
 		{
 			var plans = workProfilePlanRepository.Find(x => !(x.EndDate < startDate || x.StartDate > endDate),
@@ -216,14 +247,14 @@ namespace Soheil.Core.DataServices
 		}
 
 
-        /// <summary>
-        /// Returns every day of the given range [start,end)
+		/// <summary>
+		/// Returns every day of the given range [start,end)
 		/// <para>where value of each day is its effective BusinessDayStates considering Holidays</para>
 		/// <para>Priority of states are as follows: Closed, Special1, Special2, Special3, HalfClosed, Open</para>
-        /// </summary>
-        /// <param name="startDate">Included start date</param>
-        /// <param name="endDate">Excluded end date</param>
-        /// <returns>an array of BusinessDayTypes, each element for one day</returns>
+		/// </summary>
+		/// <param name="startDate">Included start date</param>
+		/// <param name="endDate">Excluded end date</param>
+		/// <returns>an array of BusinessDayTypes, each element for one day</returns>
 		internal List<BusinessDayType> GetBusinessDayStatesInRange(DateTime startDate, DateTime endDate)
 		{
 			var plans = GetInRange(startDate, endDate);
@@ -234,7 +265,8 @@ namespace Soheil.Core.DataServices
 				list.Add(GetEffectiveBizState(date, plan));
 			}
 			return list;
-		}
+		}        
+
 		/// <summary>
         /// Returns every day of the given range [start,end)
 		/// <para>where value of each day is its effective color considering Holidays</para>
@@ -258,9 +290,9 @@ namespace Soheil.Core.DataServices
 		/// <summary>
 		/// Gets a list of active profile Shifts with their actual day start in the given time range
 		/// </summary>
-		/// <param name="startDate">this date&Time is considered</param>
-		/// <param name="endDate">this date&Time is considered</param>
-		/// <returns>Returns a list of Tuple&lt;<see cref="Soheil.Model.WorkShift"/>, DateTime&gt;</returns>
+		/// <param name="startDate">date and Time</param>
+		/// <param name="endDate">date and Time</param>
+		/// <returns>Returns a list of Tuples (Item1=shift model, Item2=date of shift which time-of-day equals startDate's)</returns>
 		public List<Tuple<WorkShift, DateTime>> GetShiftsInRange(DateTime startDate, DateTime endDate)
 		{
 			List<Tuple<WorkShift, DateTime>> list = new List<Tuple<WorkShift, DateTime>>();
@@ -284,5 +316,6 @@ namespace Soheil.Core.DataServices
 		}
 
 		#endregion	
+
 	}
 }

@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Windows.Threading;
 using System.Windows;
 using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Soheil.Common
 {
@@ -14,6 +15,11 @@ namespace Soheil.Common
 		#region Persian DateTime
 		private static readonly PersianCalendar _persianCalendar = new PersianCalendar();
 		public static PersianCalendar PersianCalendar { get { return _persianCalendar; } }
+		/// <summary>
+		/// e.g. 1393/05/29 06:22 ب.ظ
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
 		public static string ToPersianDateTimeString(this DateTime dateTime)
 		{
 			return _persianCalendar.GetYear(dateTime).ToString("0000") + "/"
@@ -27,16 +33,38 @@ namespace Soheil.Common
 				+ _persianCalendar.GetMonth(dateTime).ToString("00") + "/"
 				+ _persianCalendar.GetDayOfMonth(dateTime).ToString("00");
 		}
+		/// <summary>
+		/// e.g. 29 مرداد
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
 		public static string ToPersianCompactDateString(this DateTime dateTime)
 		{
 			return _persianCalendar.GetDayOfMonth(dateTime).ToString("00") + " " + dateTime.GetPersianMonth().ToString();
 		}
+		/// <summary>
+		/// e.g. 29 مرداد -18:22:43
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
 		public static string ToPersianCompactDateTimeString(this DateTime dateTime)
 		{
 			return string.Format("{0} {1} - {2}:{3}:{4}", 
 				_persianCalendar.GetDayOfMonth(dateTime), 
 				dateTime.GetPersianMonth(), 
 				dateTime.Hour, dateTime.Minute, dateTime.Second);
+		}
+		/// <summary>
+		/// e.g. 29مرداد 18:22
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
+		public static string ToPersianMinimalDateTimeString(this DateTime dateTime)
+		{
+			return string.Format("{0}{1} {2}:{3}",
+				_persianCalendar.GetDayOfMonth(dateTime),
+				dateTime.GetPersianMonth(),
+				dateTime.Hour, dateTime.Minute);
 		}
 		public static DateTime ToPersianDate(this string dtString)
 		{
@@ -130,10 +158,6 @@ namespace Soheil.Common
 			var list = collection.Where(where).ToList();
 			foreach (var item in list)
 				collection.Remove(item);
-		}
-		public static List<T> DistinctBy<T, TKey>(this IList<T> collection, Func<T, TKey> selector)
-		{
-			return collection.GroupBy(selector).Select(grp => grp.First()).ToList();
 		}
 
 		/// <summary>
@@ -229,7 +253,26 @@ namespace Soheil.Common
 				if (target.Name == parentName) return target;
 			}
 			return null;
-		} 
+		}
+		public static ToolBar FindDocumentMenu(this System.Windows.FrameworkElement root)
+		{
+			ToolBar target = null;
+			int c = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+			for (int i = 0; i < c; i++)
+			{
+				var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i) as System.Windows.FrameworkElement;
+				if (child == null) continue;
+
+				var menu = child as ToolBar;
+				if (menu != null)
+					if (menu.Items.Count == 10)
+						return menu;
+
+				target = FindDocumentMenu(child);
+				if (target != null) return target;
+			}
+			return target;
+		}
 		#endregion
 	}
 }

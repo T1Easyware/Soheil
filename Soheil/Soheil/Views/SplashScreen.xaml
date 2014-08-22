@@ -1,0 +1,48 @@
+﻿<Window x:Class="Soheil.Views.SplashScreen"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="root" FlowDirection="LeftToRight" Loaded="root_Loaded"
+        Title="SplashScreen" Width="480" Height="380" WindowStyle="None" BorderThickness="0" Background="Transparent" AllowsTransparency="True" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen" Cursor="Wait">
+	<Grid Margin="25">
+		<Border CornerRadius="6" Margin="5,115,10,5" TextBlock.Foreground="#0AA" BorderBrush="#000" BorderThickness=".1">
+			<Border.Effect>
+				<DropShadowEffect ShadowDepth="0" Color="White" Opacity="1" BlurRadius="1"/>
+			</Border.Effect>
+			<Border.Background>
+				<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
+					<GradientStop Offset="0.0" Color="#1EFF" />
+					<GradientStop Offset="0.5" Color="{DynamicResource BackGroundLightColor}" />
+					<GradientStop Offset="1.0" Color="{DynamicResource BackGroundDarkColor}" />
+				</LinearGradientBrush>
+			</Border.Background>
+			<StackPanel VerticalAlignment="Bottom">
+				<StackPanel.Effect>
+					<DropShadowEffect ShadowDepth="0"/> 
+				</StackPanel.Effect>
+				<WrapPanel HorizontalAlignment="Right" TextBlock.FontWeight="Bold" TextBlock.FontSize="14" DockPanel.Dock="Top" Margin="15,0">
+					<WrapPanel.RenderTransform>
+						<ScaleTransform ScaleY=".66"/>
+					</WrapPanel.RenderTransform>
+					<TextBlock Text="Version: "/>
+					<TextBlock Text="{Binding ElementName=root, Path=Version}"/>
+				</WrapPanel>
+				<TextBlock Text="Loading..." VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,5"/>
+			</StackPanel>
+		</Border>
+		<Image Margin="25,0,0,0" Source="/Soheil.Controls;component/Images/StartPage/StartPage.png" Width="400" Height="300" FlowDirection="LeftToRight" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" DockPanel.Dock="Top">
+			<Image.Effect>
+				<DropShadowEffect ShadowDepth="0" Opacity=".6"/>
+			</Image.Effect>
+		</Image>
+		<Border CornerRadius="6" Margin="5,115,10,5">
+			<Border.Background>
+				<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+					<GradientStop Offset="0" Color="#0EFF" />
+					<GradientStop Offset=".5" Color="#1EFF" />
+					<GradientStop Offset=".7" Color="#6EFF" />
+					<GradientStop Offset=".8" Color="#5EFF" />
+					<GradientStop Offset="1" Color="#1EFF" />
+				</LinearGradientBrush>
+			</Border.Background>
+		</Border>
+	</Grid>
+</Window>

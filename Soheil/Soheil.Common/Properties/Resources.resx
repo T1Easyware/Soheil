@@ -405,11 +405,12 @@
   <data name="txtIndexType" xml:space="preserve">
     <value>نوع شاخص :</value>
   </data>
-  <data name="txtMachine" xml:space="preserve">
+  <data name="txtMachinery" xml:space="preserve">
     <value>ماشین آلات</value>
   </data>
   <data name="txtMaintenance" xml:space="preserve">
-    <value>تعمیر و نگهداری</value>
+    <value>PM</value>
+    <comment>eng: maintenance, fa:PM</comment>
   </data>
   <data name="txtMan" xml:space="preserve">
     <value>نیروی انسانی</value>
@@ -1013,5 +1014,198 @@
   </data>
   <data name="txtWarehouses" xml:space="preserve">
     <value>انبارها</value>
+  </data>
+  <data name="txtAdd" xml:space="preserve">
+    <value>افزودن</value>
+  </data>
+  <data name="txtIsOnDemand" xml:space="preserve">
+    <value>برحسب نیاز</value>
+  </data>
+  <data name="txtIsPeriodic" xml:space="preserve">
+    <value>دوره ای</value>
+  </data>
+  <data name="txtMachinePartMaintenances" xml:space="preserve">
+    <value>PMهای قطعه ی انتخاب شده</value>
+  </data>
+  <data name="txtMachineParts" xml:space="preserve">
+    <value>قطعات ماشین</value>
+  </data>
+  <data name="txtParts" xml:space="preserve">
+    <value>تعریف قطعات</value>
+  </data>
+  <data name="txtPeriodDays" xml:space="preserve">
+    <value>دوره (روز)</value>
+  </data>
+  <data name="txtPMReports" xml:space="preserve">
+    <value>گزارشات PM</value>
+  </data>
+  <data name="txtPMType" xml:space="preserve">
+    <value>نوع PM</value>
+  </data>
+  <data name="txtRepairs" xml:space="preserve">
+    <value>تعمیرات</value>
+  </data>
+  <data name="txtMaintenances" xml:space="preserve">
+    <value>تعریف PM ها</value>
+  </data>
+  <data name="txtMachine" xml:space="preserve">
+    <value>ماشین</value>
+  </data>
+  <data name="txtMachinePart" xml:space="preserve">
+    <value>قطعه</value>
+  </data>
+  <data name="txtMachinePartMaintenance" xml:space="preserve">
+    <value>PM</value>
+  </data>
+  <data name="txtDone" xml:space="preserve">
+    <value>اجرا شده</value>
+  </data>
+  <data name="txtEarly" xml:space="preserve">
+    <value>زود</value>
+  </data>
+  <data name="txtInactive" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="txtLastPMDate" xml:space="preserve">
+    <value>آخرین زمان اجرا</value>
+  </data>
+  <data name="txtLate" xml:space="preserve">
+    <value>دیر</value>
+  </data>
+  <data name="txtNotDone" xml:space="preserve">
+    <value>اجرا نشده</value>
+  </data>
+  <data name="txtOnTime" xml:space="preserve">
+    <value>به موقع</value>
+  </data>
+  <data name="txtDaysLeft" xml:space="preserve">
+    <value>مهلت (روز باقیمانده)</value>
+  </data>
+  <data name="txtPMDate" xml:space="preserve">
+    <value>تاریخ PM</value>
+  </data>
+  <data name="txtPMPerformedDate" xml:space="preserve">
+    <value>تاریخ اجرا</value>
+  </data>
+  <data name="txtAcquiredDate" xml:space="preserve">
+    <value>زمان تحویل از تولید</value>
+  </data>
+  <data name="txtAddPMReport" xml:space="preserve">
+    <value>افزودن گزارش PM</value>
+  </data>
+  <data name="txtAddRepair" xml:space="preserve">
+    <value>افزودن درخواست تعمیر</value>
+  </data>
+  <data name="txtDeletePartFromMachine" xml:space="preserve">
+    <value>حذف قطعه از ماشین</value>
+  </data>
+  <data name="txtDeletePMFromPart" xml:space="preserve">
+    <value>حذف PM از قطعه ی ماشین</value>
+  </data>
+  <data name="txtDeliveredDate" xml:space="preserve">
+    <value>زمان تحویل به تولید</value>
+  </data>
+  <data name="txtPM" xml:space="preserve">
+    <value>تعمیرات و نگهداری</value>
+    <comment>eng: preventive maintenace, fa:تعمیرات و نگهداری</comment>
+  </data>
+  <data name="txtRequestDate" xml:space="preserve">
+    <value>زمان ایجاد درخواست</value>
+  </data>
+  <data name="txtStoppageCause" xml:space="preserve">
+    <value>علت توقف</value>
+  </data>
+  <data name="txtStoppageReport" xml:space="preserve">
+    <value>گزارش توقفات</value>
+  </data>
+  <data name="txtViewPMReports" xml:space="preserve">
+    <value>مشاهده گزارشات PM</value>
+  </data>
+  <data name="txtViewRepairs" xml:space="preserve">
+    <value>مشاهده درخواست های تعمیرات</value>
+  </data>
+  <data name="txtReported" xml:space="preserve">
+    <value>گزارش شده</value>
+    <comment>repair</comment>
+  </data>
+  <data name="txtDefectionType" xml:space="preserve">
+    <value>نوع خروجی</value>
+  </data>
+  <data name="txtHours" xml:space="preserve">
+    <value>ساعت</value>
+  </data>
+  <data name="txtRemainingValue" xml:space="preserve">
+    <value>میزان انحراف</value>
+    <comment>TP - G1 - defections - stoppages</comment>
+  </data>
+  <data name="txtBuildReport" xml:space="preserve">
+    <value>ساختن گزارش</value>
+  </data>
+  <data name="txtDailyReport" xml:space="preserve">
+    <value>گزارش روزانه تولید</value>
+  </data>
+  <data name="txtExecutionPercent" xml:space="preserve">
+    <value>درصد اجرای برنامه</value>
+  </data>
+  <data name="txtMajorDefection" xml:space="preserve">
+    <value>عمده نوع ضایعات</value>
+  </data>
+  <data name="txtMajorStoppage" xml:space="preserve">
+    <value>عمده علت توقف</value>
+  </data>
+  <data name="txtProductionPerHour" xml:space="preserve">
+    <value>تعداد استاندارد در ساعت</value>
+  </data>
+  <data name="txtProductionSupervisor" xml:space="preserve">
+    <value>سرپرست تولید</value>
+  </data>
+  <data name="txtShift" xml:space="preserve">
+    <value>شیفت</value>
+  </data>
+  <data name="txtSpecialEvents" xml:space="preserve">
+    <value>رویدادهای خاص و موارد بحرانی</value>
+  </data>
+  <data name="txtTotalDeviation" xml:space="preserve">
+    <value>مجموع انحرافات</value>
+    <comment>TP - G1</comment>
+  </data>
+  <data name="txtSupervisor" xml:space="preserve">
+    <value>سرپرست تولید</value>
+  </data>
+  <data name="txtNextDay" xml:space="preserve">
+    <value>روز بعد</value>
+  </data>
+  <data name="txtPreviousDay" xml:space="preserve">
+    <value>روز قبل</value>
+  </data>
+  <data name="txtShiftsInfo" xml:space="preserve">
+    <value>اطلاعات شیفتها</value>
+  </data>
+  <data name="txtDailyStationPlan" xml:space="preserve">
+    <value>برنامه روزانه ایستگاهها</value>
+  </data>
+  <data name="txtReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="txtEnd" xml:space="preserve">
+    <value>پایان</value>
+  </data>
+  <data name="_companyName" xml:space="preserve">
+    <value>شرکت صنعتی جهادین پرند</value>
+  </data>
+  <data name="txtDiff" xml:space="preserve">
+    <value>اختلاف</value>
+  </data>
+  <data name="txtIsPMPerformed" xml:space="preserve">
+    <value>انجام شده</value>
+  </data>
+  <data name="txtPart" xml:space="preserve">
+    <value>قطعه</value>
+  </data>
+  <data name="txtRepairReport" xml:space="preserve">
+    <value>گزارش تعمیرات</value>
+  </data>
+  <data name="txtConfirm" xml:space="preserve">
+    <value>تایید شود؟</value>
   </data>
 </root>

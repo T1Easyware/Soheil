@@ -169,8 +169,9 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="1" />
-        <Setter Property="Margin" Value="2"/>
-        <Setter Property="Template">
+		<Setter Property="Margin" Value="2"/>
+		<Setter Property="Height" Value="20"/>
+		<Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CustomControls:ImageButton}">
                     <ControlTemplate.Resources>
@@ -228,7 +229,9 @@
                        Opacity="1" RadiusX="3" RadiusY="3" Stroke="{x:Null}">
                         </Rectangle>
                         <DockPanel>
-                            <Image Source="{TemplateBinding ImageSource}" Width="16" Height="16" Stretch="Fill"/>
+							<Canvas Width="24">
+								<Image Source="{TemplateBinding ImageSource}" Width="24" Height="24" Stretch="Fill"/>
+							</Canvas>
                             <ContentPresenter Margin="1"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="Center" RecognizesAccessKey="True" />

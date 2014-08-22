@@ -177,6 +177,94 @@ namespace Soheil.Model
 			set { Status = (byte)value; }
 		}
 	}
+	public partial class Part
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+	}
+	public partial class MachinePartMaintenance
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+
+		public void UpdateLastDate()
+		{
+			var list = this.MaintenanceReports.Where(x => x.PerformedDate.HasValue);
+			if (list.Any())
+				LastMaintenanceDate = list.OrderByDescending(x => x.PerformedDate.Value).FirstOrDefault().PerformedDate.Value;
+		}
+
+		/// <summary>
+		/// NaN if first record
+		/// <para>+ if maintenance date is yet to come</para>
+		/// <para>0 if today is maintenance date</para>
+		/// <para>- if already late</para>
+		/// </summary>
+		public double CalculatedDiffDays { get; private set; }
+		/// <summary>
+		/// Updates CalculatedDiffDays (to use CalculatedDiffDays you must first call this method)
+		/// </summary>
+		public void UpdateDiffDays()
+		{
+			CalculatedDiffDays = LastMaintenanceDate
+						.AddDays(PeriodDays)
+						.Subtract(DateTime.Now.Date)
+							.TotalDays;
+		}
+	}
+	public partial class Maintenance
+	{
+		public Status RecordStatus
+		{
+			get { return (Status)Status; }
+			set { Status = (byte)value; }
+		}
+	}
+	public partial class MaintenanceReport
+	{
+		public MaintenanceStatus PerformanceStatus
+		{
+			get { return (MaintenanceStatus)this.Status; }
+			set { this.Status = (byte)value; }
+		}
+		/// <summary>
+		/// Returns the number of days passed since PMDate until PM is preformed (or now if isn't yet)
+		/// </summary>
+		/// <returns></returns>
+		public double UpdateStatus()
+		{
+			var perfenum = (MaintenanceStatus)this.Status;
+			var diff = 0d;
+			if (perfenum == (int)MaintenanceStatus.Inactive)
+			{
+			}
+			else if (perfenum.HasFlag(MaintenanceStatus.Done))
+			{
+				if(!PerformedDate.HasValue) PerformedDate = DateTime.Now.Date;
+				diff = (MaintenanceDate - PerformedDate.Value).TotalDays;
+				if (diff <= -1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Late;
+				else if (diff >= 1) perfenum = MaintenanceStatus.Done | MaintenanceStatus.Early;
+				else perfenum = MaintenanceStatus.Done | MaintenanceStatus.OnTime;
+			}
+			else if (perfenum.HasFlag(MaintenanceStatus.NotDone))
+			{
+				PerformedDate = null;
+				diff = (MaintenanceDate - DateTime.Now.Date).TotalDays;
+				if (diff <= -1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Late;
+				else if (diff >= 1) perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.Early;
+				else perfenum = MaintenanceStatus.NotDone | MaintenanceStatus.OnTime;
+				MachinePartMaintenance.UpdateLastDate();
+			}
+			PerformanceStatus = perfenum;
+			return diff;
+		}
+	}
 
 	public partial class Operator
 	{

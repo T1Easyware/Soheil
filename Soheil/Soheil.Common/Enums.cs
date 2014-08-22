@@ -12,12 +12,53 @@ namespace Soheil.Common
         Deleted = 0
     }
 
-    public enum ConfirmationStatus
-    {
-        New = 1,
-        Confirmed = 2,
-        Deleted = 0
-    }
+	public enum ConfirmationStatus
+	{
+		New = 1,
+		Confirmed = 2,
+		Deleted = 0
+	}
+
+	[Flags]
+	public enum MaintenanceStatus
+	{
+		//don't change numbers (see edmExtension)
+
+		Inactive = 0,
+		
+		NotDone = 1,
+		Done = 2,
+
+		Early = 4,
+		OnTime = 8,
+		Late = 16,
+	}
+
+	public enum RepairStatus
+	{
+
+
+		//wanna change numbers? 
+		//search for #enum# in Core.ViewModels.Reports.PMReportVm.cs
+
+
+		/// <summary>
+		/// Repair Request is disabled
+		/// </summary>
+		Inactive = 0,
+		/// <summary>
+		/// Repair Request is reported but not yet delivered
+		/// </summary>
+		Reported = 1,
+		/// <summary>
+		/// Repair Request is delivered but not yet completed
+		/// </summary>
+		NotDone = 2,
+		/// <summary>
+		/// Repair Request is completed
+		/// </summary>
+		Done = 3,
+	}
 
     [TypeConverter(typeof(LocalizedEnumConverter))]
     public enum ModificationStatus
@@ -162,11 +203,15 @@ namespace Soheil.Common
         ProductPlanSubMenu = 31,
 		ProductPlanTable = 311,
         PerformanceSubMenu = 32,
-        IndicesSubMenu = 33,
+		IndicesSubMenu = 33,
+		PM = 34,
         ReportsMenu = 4,
         CostReportsSubMenu = 41,
         ActualCostReportsSubMenu = 42,
         OperationReportsSubMenu = 43,
+		DailyReport = 44,
+		DailyStationPlan = 45,
+		PMReport = 46,
         OptionsMenu = 5,
         SettingsSubMenu = 51,
         HelpSubMenu = 52,
@@ -224,6 +269,7 @@ namespace Soheil.Common
 	{
 		Acquiring, Simple, Report, Empty
 	}
+	
 
 
 	[TypeConverter(typeof(LocalizedEnumConverter))]
@@ -246,7 +292,8 @@ namespace Soheil.Common
         Print = 0x2,
         Update = 0x4,
         Insert = 0x8,
-        Full = 0x10
+        Full = 0x10,
+        All = 0xFF
     }
 
     [TypeConverter(typeof(LocalizedEnumConverter))]
@@ -351,4 +398,20 @@ namespace Soheil.Common
         Waste,
         SecondGrade
     }
+
+	public enum NotificationType
+	{
+		/// <summary>
+		/// Late, Error, High priority
+		/// </summary>
+		Critical,
+		/// <summary>
+		/// OnTime, Warning, Low priority
+		/// </summary>
+		Alarm,
+		/// <summary>
+		/// Early, Information, No priority
+		/// </summary>
+		Info
+	}
 }

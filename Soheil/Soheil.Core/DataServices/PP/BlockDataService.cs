@@ -900,5 +900,6 @@ namespace Soheil.Core.DataServices
 			return new Tuple<Block, Setup>(block,
 				(setup.EndDateTime >= block.EndDateTime) ? setup : null);
 		}
+
 	}
 }

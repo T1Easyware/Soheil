@@ -25,19 +25,45 @@ namespace Soheil.Core.ViewModels.Reports
         public AccessType Access { get; set; }
 	    public Command InitializeProviderCommand { get; set; }
         public Command NavigateInsideCommand { get; set; }
-        public Command NavigateBackCommand { get; set; }
+		public Command NavigateBackCommand { get; set; }
+		public Command NavigateNextCommand { get; set; }
+		public Command NavigatePreviousCommand { get; set; }
         public Command PrintCommand { get; set; }
 	    public Command RefreshCommand { get; set; }
 
         private readonly Stack<OperatorBarInfo> _history; 
 
-        public IList<OperatorBarVm> Bars
-        {
-            get { return (IList<OperatorBarVm>)GetValue(BarsProperty); }
-            set { SetValue(BarsProperty, value); }
-        }
-        public static readonly DependencyProperty BarsProperty =
-            DependencyProperty.Register("Bars", typeof(IList<OperatorBarVm>), typeof(OperationReportsVm), new UIPropertyMetadata(null));
+		//public IList<OperatorBarVm> Bars
+		//{
+		//	get { return (IList<OperatorBarVm>)GetValue(BarsProperty); }
+		//	set { SetValue(BarsProperty, value); }
+		//}
+		//public static readonly DependencyProperty BarsProperty =
+		//	DependencyProperty.Register("Bars", typeof(IList<OperatorBarVm>), typeof(OperationReportsVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable collection that indicates Bars
+		/// </summary>
+		public ObservableCollection<OperatorBarVm> Bars { get { return _bars; } }
+		private ObservableCollection<OperatorBarVm> _bars = new ObservableCollection<OperatorBarVm>();
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates SelectedBar
+		/// </summary>
+		public OperatorBarVm SelectedBar
+		{
+			get { return (OperatorBarVm)GetValue(SelectedBarProperty); }
+			set { SetValue(SelectedBarProperty, value); }
+		}
+		public static readonly DependencyProperty SelectedBarProperty =
+			DependencyProperty.Register("SelectedBar", typeof(OperatorBarVm), typeof(OperationReportsVm), new PropertyMetadata(null, (d, e) =>
+			{
+				var vm = (OperationReportsVm)d;
+				if (vm._ignoreSelectedBarChanged) return;
+				var val = (OperatorBarVm)e.NewValue;
+				if (val == null) return;
+				vm.NavigateInside(val);
+			}));
+		private bool _ignoreSelectedBarChanged = false;
 
 	    public static readonly DependencyProperty ScalesProperty =
             DependencyProperty.Register("Scales", typeof(ObservableCollection<int>), typeof(OperationReportsVm), new PropertyMetadata(default(ObservableCollection<int>)));
@@ -57,7 +83,7 @@ namespace Soheil.Core.ViewModels.Reports
                 {
                     scaleHeaders.Add(CurrentType == OEType.CountBased
                         ? scale.ToString(CultureInfo.InvariantCulture)
-                        : Format.ConvertToHours(scale));
+                        : Format.ConvertToHM(scale));
                 }
                 return scaleHeaders;
 	        }   
@@ -99,16 +125,6 @@ namespace Soheil.Core.ViewModels.Reports
 	        set { SetValue(ScaleHeightProperty, value); }
 	    }
 
-
-	    public static readonly DependencyProperty HorizontalOffsetProperty =
-	        DependencyProperty.Register("HorizontalOffset", typeof (double), typeof (OperationReportsVm), new PropertyMetadata(default(double)));
-
-	    public double HorizontalOffset
-	    {
-	        get { return (double) GetValue(HorizontalOffsetProperty); }
-	        set { SetValue(HorizontalOffsetProperty, value); }
-	    }
-
 	    public static readonly DependencyProperty CurrentIntervalProperty =
 	        DependencyProperty.Register("CurrentInterval", typeof (DateTimeIntervals), typeof (OperationReportsVm), new PropertyMetadata(default(DateTimeIntervals)));
 
@@ -147,57 +163,143 @@ namespace Soheil.Core.ViewModels.Reports
             Scales = new ObservableCollection<int>();
             ScaleLines = new ObservableCollection<int>();
             InitializeProviders(null);
-            CenterDateChanged += OperationReportsVmCenterDateChanged;
             NavigateInsideCommand = new Command(NavigateInside, CanNavigateInside);
-            NavigateBackCommand = new Command(NavigateBack,CanNavigateBack);
+			NavigateBackCommand = new Command(NavigateBack, CanNavigateBack);
+			NavigateNextCommand = new Command(NavigateNext, CanNavigateNext);
+			NavigatePreviousCommand = new Command(NavigatePrevious, CanNavigatePrevious);
             InitializeProviderCommand = new Command(InitializeProviders);
             RefreshCommand = new Command(Refresh,CanRefresh);
         }
 
-        void OperationReportsVmCenterDateChanged(double barHOffset)
-        {
-            HorizontalOffset = barHOffset;
-        }
 
 		public void InitializeProviders(object param)
 		{
-            var barInfo = new OperatorBarInfo {StartDate = StartDate, EndDate = EndDate};
+			_barInfo = new OperatorBarInfo { StartDate = StartDate, EndDate = EndDate };
 
-		    if (param == null)
-		        _history.Push(new OperatorBarInfo());
-		    else
-                barInfo = (OperatorBarInfo)param;
+			if (param == null)
+				_history.Push(new OperatorBarInfo());
+			else
+				_barInfo = (OperatorBarInfo)param;
 
-		    barInfo.IsCountBase = CurrentType == OEType.CountBased;
+			_barInfo.CurrentType = CurrentType;
+			_currentInterval = CurrentInterval;
 
+			//LittleWindowWidth = 20;
+			//int intervalCount = GetIntervalCount();
+			//BarSlides = new VirtualizingCollection<BarSlideItemVm>(new OperatorBarSlideProvider(intervalCount), 100);
+			//var barProvider = new OperatorBarProvider(CurrentInterval, DataService, barInfo);
+			//Bars = new VirtualizingCollection<OperatorBarVm>(barProvider, 100);
 
-            LittleWindowWidth = 20;
+			if(_fetchingThread!=null)
+			{
+				if (_fetchingThread.IsAlive)
+					return;
+			}
 
-		    int intervalCount = GetIntervalCount();
-
-		    BarSlides = new VirtualizingCollection<BarSlideItemVm>(new OperatorBarSlideProvider(intervalCount), 100);
-
-		    var barProvider = new OperatorBarProvider(intervalCount, 600, CurrentInterval, DataService, barInfo);
-		    Bars = new VirtualizingCollection<OperatorBarVm>(barProvider, 100);
-
-		    Scales.Clear();
-		    ScaleLines.Clear();
-		    ScaleHeight = barProvider.ScaleHeight;
-
-		    for (int i = barProvider.MaxScale; i >= 0; i -= barProvider.StepScale)
-		    {
-		        Scales.Add(i);
-		        ScaleLines.Add(0);
-		    }
-		    ScaleLines.RemoveAt(0);
-		    
-		    OnPropertyChanged("ScaleHeaders");
+			_fetchingThread = new System.Threading.Thread(ReadBars);
+			_fetchingThread.Start();
 		}
 
-	    public void LoadOperatorProcessReport(int operatorId)
+		int _currentOperatorIndex = 0;
+		int _operatorsCount = 0;
+		int _maxValue = 0;
+		DateTimeIntervals _currentInterval;
+		OperatorBarInfo _barInfo;
+		List<OperatorBarInfo> _orderedList;
+		IList<OperatorBarInfo> _barInfos;
+		System.Threading.Thread _fetchingThread;
+
+		void ReadBars()
+		{
+			var barProvider = new OperatorBarProvider(_currentInterval, DataService, _barInfo);
+			_barInfos = barProvider.FetchAll();
+			_maxValue = barProvider.GetMaxScale();
+
+			if (_barInfo.CurrentType == OEType.TimeBased)
+				_orderedList = _barInfos.OrderByDescending(x => (float)x.Data[1] / (float)x.Data[0]).ToList();
+			else
+				_orderedList = _barInfos.OrderByDescending(x => (int)x.Data[5] / (double)((int)x.Data[4])).ToList();
+
+			_operatorsCount = _orderedList.Count;
+			for (int i = 0; i < _operatorsCount; i++)
+			{
+				var x = _orderedList[i];
+				x.Index = i;
+				_orderedList[i] = x;
+			}
+
+			Dispatcher.Invoke(AddBars);
+		}
+		void AddBars()
+		{
+			Scales.Clear();
+			ScaleLines.Clear();
+			for (int i = 10; i > 0; i--)
+			{
+				Scales.Add(i * _maxValue / 10);
+				ScaleLines.Add(i * _maxValue / 10);
+			}
+
+			Bars.Clear();
+			foreach (var barInfo in _orderedList)
+			{
+				var bar = new OperatorBarVm
+				{
+					Info = barInfo,
+					Header = barInfo.Text,
+					//MainColor
+					//MenuItems = GetMenuItems(currentInfo)
+				};
+				switch (_barInfo.CurrentType)
+				{
+					case OEType.None:
+						bar.Value = Convert.ToDouble(barInfo.Data[0]) / _maxValue;
+						bar.ProductionValue = Convert.ToDouble(barInfo.Data[1]) / _maxValue;
+						bar.DefectionValue = Convert.ToDouble(barInfo.Data[2]) / _maxValue;
+						bar.StoppageValue = Convert.ToDouble(barInfo.Data[3]) / _maxValue;
+						bar.Tip = Convert.ToString(barInfo.Data[4]);
+						bar.RemainingTip = Convert.ToString((int)barInfo.Data[4] - ((int)barInfo.Data[5] + (int)barInfo.Data[6] + (int)barInfo.Data[7]));
+						bar.ProductionTip = Convert.ToString(barInfo.Data[5]);
+						bar.DefectionTip = Convert.ToString(barInfo.Data[6]);
+						bar.StoppageTip = Convert.ToString(barInfo.Data[7]);
+						break;
+					case OEType.TimeBased:
+						bar.Value = Convert.ToDouble(barInfo.Data[0]) / _maxValue;
+						bar.ProductionValue = Convert.ToDouble(barInfo.Data[1]) / _maxValue;
+						bar.DefectionValue = Convert.ToDouble(barInfo.Data[2]) / _maxValue;
+						bar.StoppageValue = Convert.ToDouble(barInfo.Data[3]) / _maxValue;
+						bar.Tip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[0]));
+						bar.RemainingTip = Format.ConvertToHM((int)((float)barInfo.Data[0] - ((float)barInfo.Data[1] + (float)barInfo.Data[2] + (float)barInfo.Data[3])));
+						bar.ProductionTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[1]));
+						bar.DefectionTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[2]));
+						bar.StoppageTip = Format.ConvertToHM(Convert.ToInt32(barInfo.Data[3]));
+						break;
+					case OEType.CountBased:
+						bar.Value = Convert.ToDouble(barInfo.Data[4]) / _maxValue;
+						bar.ProductionValue = Convert.ToDouble(barInfo.Data[5]) / _maxValue;
+						bar.DefectionValue = Convert.ToDouble(barInfo.Data[6]) / _maxValue;
+						bar.StoppageValue = Convert.ToDouble(barInfo.Data[7]) / _maxValue;
+						bar.Tip = Convert.ToString(barInfo.Data[4]);
+						bar.RemainingTip = Convert.ToString((int)barInfo.Data[4] - ((int)barInfo.Data[5] + (int)barInfo.Data[6] + (int)barInfo.Data[7]));
+						bar.ProductionTip = Convert.ToString(barInfo.Data[5]);
+						bar.DefectionTip = Convert.ToString(barInfo.Data[6]);
+						bar.StoppageTip = Convert.ToString(barInfo.Data[7]);
+						break;
+					default:
+						break;
+				}
+				Bars.Add(bar);
+			}
+
+
+			OnPropertyChanged("ScaleHeaders");
+		}
+
+	    public void LoadOperatorProcessReport(OperatorBarInfo operatorInfo)
 	    {
+			_currentOperatorIndex = operatorInfo.Index;
 	        var dataService = new OperatorReportDataService();
-	        Report = dataService.GetOperatorProcessReport(operatorId, StartDate, EndDate);
+			Report = dataService.GetOperatorProcessReport(operatorInfo.Id, StartDate, EndDate);
 
 	        var reportDocument = new ReportDocument();
 
@@ -213,13 +315,13 @@ namespace Soheil.Core.ViewModels.Reports
 	        data.ReportDocumentValues.Add("PrintDate", DateTime.Now);
 
 	        var titleTabel = new DataTable("TitleTable");
-	        titleTabel.Columns.Add("ReportTitle", typeof(string));
-            var name = Common.Properties.Resources.ResourceManager.GetString("txtName") + Report.Title;
-            var code = Common.Properties.Resources.ResourceManager.GetString("txtCode") + Report.Code;
-	        var date = DateTime.Now.ToPersianCompactDateTimeString();
-            titleTabel.Rows.Add(new object[] { name });
-            titleTabel.Rows.Add(new object[] { code });
-            titleTabel.Rows.Add(new object[] { date });
+	        titleTabel.Columns.Add("ReportTitleName", typeof(string));
+			titleTabel.Columns.Add("ReportTitleCode", typeof(string));
+			titleTabel.Columns.Add("ReportTitleDate", typeof(string));
+			var name = Common.Properties.Resources.ResourceManager.GetString("txtName") + Report.Title;
+			var code = Common.Properties.Resources.ResourceManager.GetString("txtCode") + Report.Code;
+			var date = DateTime.Now.ToPersianCompactDateTimeString();
+			titleTabel.Rows.Add(new object[] { name, code, date });
 
             data.DataTables.Add(titleTabel);
 
@@ -251,16 +353,16 @@ namespace Soheil.Core.ViewModels.Reports
 
 	        foreach (var item in Report.ActivityItems)
 	        {
-	            activitiesTable.Rows.Add(CurrentType == OEType.CountBased
+	            activitiesTable.Rows.Add(CurrentType == OEType.TimeBased
 	                ? new object[]
 	                {
-	                    item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
-	                    item.DefectionCount, item.StoppageCount, item.IsRework
-	                }
-	                : new object[]
-	                {
-	                    item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
+	                    item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
 	                    item.DefectionTime, item.StoppageTime, item.IsRework
+	                }
+					: new object[]
+	                {
+	                    item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
+	                    item.DefectionCount, item.StoppageCount, item.IsRework
 	                });
 	        }
 
@@ -273,17 +375,17 @@ namespace Soheil.Core.ViewModels.Reports
             qualitiveTable.Columns.Add("Station", typeof(string));
             qualitiveTable.Columns.Add("Activity", typeof(string));
             qualitiveTable.Columns.Add("DefectionValue", typeof(string));
-            qualitiveTable.Columns.Add("SecondGrade", typeof(string));
-            qualitiveTable.Columns.Add("Waste", typeof(string));
+			qualitiveTable.Columns.Add("DefectionType", typeof(string));
 
             foreach (var item in Report.QualitiveItems)
             {
-                var waste = item.Status == QualitiveStatus.Waste ? "*" : string.Empty;
-                var secondGrade = item.Status == QualitiveStatus.SecondGrade ? "*" : string.Empty;
-                var defection = CurrentType == OEType.CountBased ? item.DefectionCount : item.DefectionTime;
+                var wasteType = item.Status == QualitiveStatus.Waste ? 
+					Common.Properties.Resources.ResourceManager.GetString("txtWaste"):
+					Common.Properties.Resources.ResourceManager.GetString("txtSecondGrade");
+				var defection = CurrentType == OEType.TimeBased ? item.DefectionTime : item.DefectionCount;
                 qualitiveTable.Rows.Add(new object[]
                     {
-                        item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, defection, secondGrade, waste
+                        item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, defection, wasteType
 	                });
             }
 
@@ -299,10 +401,10 @@ namespace Soheil.Core.ViewModels.Reports
 
             foreach (var item in Report.TechnicalItems)
             {
-                var stoppage = CurrentType == OEType.CountBased ? item.StoppageCount : item.StoppageTime;
+				var stoppage = CurrentType == OEType.TimeBased ? item.StoppageTime : item.StoppageCount;
                 technicalTable.Rows.Add(new object[]
                     {
-                        item.Date.ToShortDateString(), item.Product, item.Station, item.Activity, stoppage
+                        item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, stoppage
 	                });
             }
 
@@ -312,35 +414,34 @@ namespace Soheil.Core.ViewModels.Reports
 	        XpsDocument xps = reportDocument.CreateXpsDocument(data);
 
 	        Document = xps.GetFixedDocumentSequence();
-            
-	    }
-
-	    private int GetIntervalCount()
-	    {
-	        return DataService.GetOperatorsCount();
 	    }
 
 	    public void NavigateInside(object param)
         {
-            OperatorBarInfo indexId;
+			_ignoreSelectedBarChanged = true;
+			OperatorBarInfo indexId;
             if (param is OperatorBarVm)
             {
                 var barVm = param as OperatorBarVm;
                 if(barVm.MenuItems.Count > 0)
                     return;
 
-                indexId = barVm.Info;
+				SelectedBar = barVm;
+				indexId = barVm.Info;
             }
             else
             {
                 indexId = (OperatorBarInfo)param;
-            }
+				SelectedBar = Bars.FirstOrDefault(x => x.Info.Id == indexId.Id);
+			}
             indexId.Level++;
             _history.Push(indexId);
-            //InitializeProviders(indexId);
-            LoadOperatorProcessReport(indexId.Id);
+            
+			//InitializeProviders(indexId);
+            LoadOperatorProcessReport(indexId);
             OprVisibility = Visibility.Visible;
-        }
+			_ignoreSelectedBarChanged = false;
+		}
 
         public bool CanNavigateInside()
         {
@@ -357,6 +458,30 @@ namespace Soheil.Core.ViewModels.Reports
             return _history.Count > 1;
         }
 
+		public void NavigateNext(object param)
+		{
+			var item = _orderedList.FirstOrDefault(x => x.Index == _currentOperatorIndex + 1);
+			if (CanNavigateInside()) NavigateInside(item);
+			OprVisibility = Visibility.Visible;
+		}
+
+		public bool CanNavigateNext()
+		{
+			return _currentOperatorIndex + 1 < _operatorsCount;
+		}
+
+		public void NavigatePrevious(object param)
+		{
+			var item = _orderedList.FirstOrDefault(x => x.Index == _currentOperatorIndex - 1);
+			if (CanNavigateInside()) NavigateInside(item);
+			OprVisibility = Visibility.Visible;
+		}
+
+		public bool CanNavigatePrevious()
+		{
+			return _currentOperatorIndex > 0;
+		}
+
 	    public void Print(object param)
 	    {
 	    }
@@ -372,7 +497,7 @@ namespace Soheil.Core.ViewModels.Reports
 	        {
 	            var info = _history.Pop();
 	            _history.Push(info);
-	            LoadOperatorProcessReport(info.Id);
+	            LoadOperatorProcessReport(info);
 	        }
 	        else
 	            InitializeProviders(null);
@@ -384,13 +509,13 @@ namespace Soheil.Core.ViewModels.Reports
 
 	    #region Slide
 
-        public IList<BarSlideItemVm> BarSlides
-		{
-            get { return (IList<BarSlideItemVm>)GetValue(BarSlidesProperty); }
-			set { SetValue(BarSlidesProperty, value); }
-		}
-		public static readonly DependencyProperty BarSlidesProperty =
-            DependencyProperty.Register("BarSlides", typeof(IList<BarSlideItemVm>), typeof(OperationReportsVm), new UIPropertyMetadata(null));
+		//public IList<BarSlideItemVm> BarSlides
+		//{
+		//	get { return (IList<BarSlideItemVm>)GetValue(BarSlidesProperty); }
+		//	set { SetValue(BarSlidesProperty, value); }
+		//}
+		//public static readonly DependencyProperty BarSlidesProperty =
+		//	DependencyProperty.Register("BarSlides", typeof(IList<BarSlideItemVm>), typeof(OperationReportsVm), new UIPropertyMetadata(null));
 
 		public double BarWidth
 		{

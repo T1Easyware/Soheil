@@ -487,10 +487,6 @@
       <End Role="MachinePartMaintenance" EntitySet="MachinePartMaintenances" />
       <End Role="MaintenanceReport" EntitySet="MaintenanceReports" />
     </AssociationSet>
-    <AssociationSet Name="RepairMachinePart" Association="SoheilEdm.Store.RepairMachinePart">
-      <End Role="Repair" EntitySet="Repairs" />
-      <End Role="MachinePart" EntitySet="MachineParts" />
-    </AssociationSet>
     <AssociationSet Name="MachineMachinePart" Association="SoheilEdm.Store.MachineMachinePart">
       <End Role="Machine" EntitySet="Machines" />
       <End Role="MachinePart" EntitySet="MachineParts" />
@@ -534,6 +530,10 @@
     <AssociationSet Name="UnitGroupRawMaterialUnitGroup" Association="SoheilEdm.Store.UnitGroupRawMaterialUnitGroup">
       <End Role="UnitGroup" EntitySet="UnitGroups" />
       <End Role="RawMaterialUnitGroup" EntitySet="RawMaterialUnitGroups" />
+    </AssociationSet>
+    <AssociationSet Name="MachinePartRepair" Association="SoheilEdm.Store.MachinePartRepair">
+      <End Role="MachinePart" EntitySet="MachineParts" />
+      <End Role="Repair" EntitySet="Repairs" />
     </AssociationSet>
     <AssociationSet Name="FK_PM_inherits_NonProductiveTask" Association="SoheilEdm.Store.FK_PM_inherits_NonProductiveTask">
       <End Role="NonProductiveTask" EntitySet="NonProductiveTasks" />
@@ -1348,7 +1348,6 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="Part_Id" Type="int" Nullable="true" />
-    <Property Name="Repair_Id" Type="int" Nullable="false" />
     <Property Name="Machine_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Maintenances">
@@ -1357,9 +1356,11 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
   </EntityType>
   <EntityType Name="MachinePartMaintenances">
     <Key>
@@ -1367,10 +1368,13 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IsOnDemand" Type="bit" Nullable="false" />
-    <Property Name="PeriodHours" Type="int" Nullable="false" DefaultValue="720" />
+    <Property Name="PeriodDays" Type="int" Nullable="false" DefaultValue="720" />
     <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
+    <Property Name="LastMaintenanceDate" Type="datetime" Nullable="false" />
+    <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Maintenance_Id" Type="int" Nullable="false" />
     <Property Name="MachinePart_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -1380,9 +1384,12 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="MaintenanceDate" Type="datetime" Nullable="false" />
-    <Property Name="PerformedDate" Type="datetime" Nullable="false" />
+    <Property Name="PerformedDate" Type="datetime" Nullable="true" />
     <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="PerformanceStatus" Type="tinyint" Nullable="false" DefaultValue="0" />
+    <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="0" />
+    <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="MachinePartMaintenance_Id" Type="int" Nullable="false" />
@@ -1398,7 +1405,8 @@
     <Property Name="DeliveredDate" Type="datetime" Nullable="false" />
     <Property Name="RepairStatus" Type="tinyint" Nullable="false" DefaultValue="0" />
     <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="StoppageReport_Id" Type="int" Nullable="false" />
+    <Property Name="StoppageReport_Id" Type="int" Nullable="true" />
+    <Property Name="MachinePart_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="WarehouseTransactions">
     <Key>
@@ -2729,18 +2737,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="RepairMachinePart">
-    <End Role="Repair" Type="SoheilEdm.Store.Repairs" Multiplicity="1" />
-    <End Role="MachinePart" Type="SoheilEdm.Store.MachineParts" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Repair">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="MachinePart">
-        <PropertyRef Name="Repair_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="MachineMachinePart">
     <End Role="Machine" Type="SoheilEdm.Store.Machines" Multiplicity="1" />
     <End Role="MachinePart" Type="SoheilEdm.Store.MachineParts" Multiplicity="*" />
@@ -2754,7 +2750,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="StoppageReportRepair">
-    <End Role="StoppageReport" Type="SoheilEdm.Store.StoppageReports" Multiplicity="1" />
+    <End Role="StoppageReport" Type="SoheilEdm.Store.StoppageReports" Multiplicity="0..1" />
     <End Role="Repair" Type="SoheilEdm.Store.Repairs" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="StoppageReport">
@@ -2870,6 +2866,18 @@
       </Principal>
       <Dependent Role="RawMaterialUnitGroup">
         <PropertyRef Name="UnitGroup_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="MachinePartRepair">
+    <End Role="MachinePart" Type="SoheilEdm.Store.MachineParts" Multiplicity="1" />
+    <End Role="Repair" Type="SoheilEdm.Store.Repairs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="MachinePart">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Repair">
+        <PropertyRef Name="MachinePart_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -3402,10 +3410,6 @@
             <End Role="MachinePartMaintenance" EntitySet="MachinePartMaintenances" />
             <End Role="MaintenanceReport" EntitySet="MaintenanceReports" />
           </AssociationSet>
-          <AssociationSet Name="RepairMachinePart" Association="SoheilEdm.RepairMachinePart">
-            <End Role="Repair" EntitySet="Repairs" />
-            <End Role="MachinePart" EntitySet="MachineParts" />
-          </AssociationSet>
           <AssociationSet Name="MachineMachinePart" Association="SoheilEdm.MachineMachinePart">
             <End Role="Machine" EntitySet="Machines" />
             <End Role="MachinePart" EntitySet="MachineParts" />
@@ -3458,6 +3462,10 @@
           <AssociationSet Name="UnitGroupRawMaterialUnitGroup" Association="SoheilEdm.UnitGroupRawMaterialUnitGroup">
             <End Role="UnitGroup" EntitySet="UnitGroups" />
             <End Role="RawMaterialUnitGroup" EntitySet="RawMaterialUnitGroups" />
+          </AssociationSet>
+          <AssociationSet Name="MachinePartRepair" Association="SoheilEdm.MachinePartRepair">
+            <End Role="MachinePart" EntitySet="MachineParts" />
+            <End Role="Repair" EntitySet="Repairs" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Product">
@@ -4753,7 +4761,6 @@
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="Part" Relationship="SoheilEdm.PartMachinePart" FromRole="MachinePart" ToRole="Part" />
           <NavigationProperty Name="MachinePartMaintenances" Relationship="SoheilEdm.MachinePartMachinePartMaintenance" FromRole="MachinePart" ToRole="MachinePartMaintenance" />
-          <NavigationProperty Name="Repair" Relationship="SoheilEdm.RepairMachinePart" FromRole="MachinePart" ToRole="Repair" />
           <NavigationProperty Name="Machine" Relationship="SoheilEdm.MachineMachinePart" FromRole="MachinePart" ToRole="Machine" />
           <Property Name="IsMachine" Type="Boolean" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" Unicode="true" />
@@ -4762,6 +4769,7 @@
           <Property Name="Status" Type="Byte" Nullable="false" DefaultValue="1" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Repairs" Relationship="SoheilEdm.MachinePartRepair" FromRole="MachinePart" ToRole="Repair" />
         </EntityType>
         <EntityType Name="Maintenance">
           <Key>
@@ -4770,9 +4778,11 @@
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" Unicode="true" />
           <NavigationProperty Name="MachinePartMaintenances" Relationship="SoheilEdm.MaintenanceMachinePartMaintenance" FromRole="Maintenance" ToRole="MachinePartMaintenance" />
-          <Property Name="Description" Type="String" Nullable="false" Unicode="true" FixedLength="false" />
+          <Property Name="Code" Type="String" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="Byte" Nullable="false" DefaultValue="1" />
         </EntityType>
         <EntityType Name="MachinePartMaintenance">
           <Key>
@@ -4780,13 +4790,16 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="IsOnDemand" Type="Boolean" Nullable="false" />
-          <Property Name="PeriodHours" Type="Int32" Nullable="false" DefaultValue="720" />
+          <Property Name="PeriodDays" Type="Int32" Nullable="false" DefaultValue="720" />
           <NavigationProperty Name="Maintenance" Relationship="SoheilEdm.MaintenanceMachinePartMaintenance" FromRole="MachinePartMaintenance" ToRole="Maintenance" />
           <NavigationProperty Name="MachinePart" Relationship="SoheilEdm.MachinePartMachinePartMaintenance" FromRole="MachinePartMaintenance" ToRole="MachinePart" />
           <NavigationProperty Name="MaintenanceReports" Relationship="SoheilEdm.MachinePartMaintenanceMaintenanceReport" FromRole="MachinePartMaintenance" ToRole="MaintenanceReport" />
           <Property Name="Description" Type="String" Nullable="false" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="Byte" Nullable="false" DefaultValue="1" />
+          <Property Name="LastMaintenanceDate" Type="DateTime" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="MaintenanceReport">
           <Key>
@@ -4794,12 +4807,13 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="MaintenanceDate" Type="DateTime" Nullable="false" />
-          <Property Name="PerformedDate" Type="DateTime" Nullable="false" />
+          <Property Name="PerformedDate" Type="DateTime" Nullable="true" />
           <Property Name="Description" Type="String" Nullable="false" FixedLength="false" Unicode="true" />
-          <Property Name="PerformanceStatus" Type="Byte" Nullable="false" DefaultValue="0" />
+          <Property Name="Status" Type="Byte" Nullable="false" DefaultValue="0" />
           <NavigationProperty Name="MachinePartMaintenance" Relationship="SoheilEdm.MachinePartMaintenanceMaintenanceReport" FromRole="MaintenanceReport" ToRole="MachinePartMaintenance" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Code" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="Repair">
           <Key>
@@ -4812,8 +4826,8 @@
           <Property Name="DeliveredDate" Type="DateTime" Nullable="false" />
           <Property Name="RepairStatus" Type="Byte" Nullable="false" DefaultValue="0" />
           <Property Name="Description" Type="String" Nullable="false" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="MachineParts" Relationship="SoheilEdm.RepairMachinePart" FromRole="Repair" ToRole="MachinePart" />
           <NavigationProperty Name="StoppageReport" Relationship="SoheilEdm.StoppageReportRepair" FromRole="Repair" ToRole="StoppageReport" />
+          <NavigationProperty Name="MachinePart" Relationship="SoheilEdm.MachinePartRepair" FromRole="Repair" ToRole="MachinePart" />
         </EntityType>
         <Association Name="PartMachinePart">
           <End Type="SoheilEdm.Part" Role="Part" Multiplicity="0..1" />
@@ -4831,16 +4845,12 @@
           <End Type="SoheilEdm.MachinePartMaintenance" Role="MachinePartMaintenance" Multiplicity="1" />
           <End Type="SoheilEdm.MaintenanceReport" Role="MaintenanceReport" Multiplicity="*" />
         </Association>
-        <Association Name="RepairMachinePart">
-          <End Type="SoheilEdm.Repair" Role="Repair" Multiplicity="1" />
-          <End Type="SoheilEdm.MachinePart" Role="MachinePart" Multiplicity="*" />
-        </Association>
         <Association Name="MachineMachinePart">
           <End Type="SoheilEdm.Machine" Role="Machine" Multiplicity="1" />
           <End Type="SoheilEdm.MachinePart" Role="MachinePart" Multiplicity="*" />
         </Association>
         <Association Name="StoppageReportRepair">
-          <End Type="SoheilEdm.StoppageReport" Role="StoppageReport" Multiplicity="1" />
+          <End Type="SoheilEdm.StoppageReport" Role="StoppageReport" Multiplicity="0..1" />
           <End Type="SoheilEdm.Repair" Role="Repair" Multiplicity="*" />
         </Association>
         <EntityType Name="WarehouseTransaction">
@@ -4999,6 +5009,10 @@
         <Association Name="UnitGroupRawMaterialUnitGroup">
           <End Type="SoheilEdm.UnitGroup" Role="UnitGroup" Multiplicity="1" />
           <End Type="SoheilEdm.RawMaterialUnitGroup" Role="RawMaterialUnitGroup" Multiplicity="*" />
+        </Association>
+        <Association Name="MachinePartRepair">
+          <End Type="SoheilEdm.MachinePart" Role="MachinePart" Multiplicity="1" />
+          <End Type="SoheilEdm.Repair" Role="Repair" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -5805,9 +5819,11 @@
         <MappingFragment StoreEntitySet="Maintenances">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5816,10 +5832,13 @@
         <MappingFragment StoreEntitySet="MachinePartMaintenances">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="IsOnDemand" ColumnName="IsOnDemand" />
-          <ScalarProperty Name="PeriodHours" ColumnName="PeriodHours" />
+          <ScalarProperty Name="PeriodDays" ColumnName="PeriodDays" />
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="LastMaintenanceDate" ColumnName="LastMaintenanceDate" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -5830,7 +5849,10 @@
           <ScalarProperty Name="MaintenanceDate" ColumnName="MaintenanceDate" />
           <ScalarProperty Name="PerformedDate" ColumnName="PerformedDate" />
           <ScalarProperty Name="Description" ColumnName="Description" />
-          <ScalarProperty Name="PerformanceStatus" ColumnName="PerformanceStatus" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
         </MappingFragment>
@@ -6772,14 +6794,6 @@
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
-    <AssociationSetMapping Name="RepairMachinePart" TypeName="SoheilEdm.RepairMachinePart" StoreEntitySet="MachineParts">
-      <EndProperty Name="Repair">
-        <ScalarProperty Name="Id" ColumnName="Repair_Id" />
-      </EndProperty>
-      <EndProperty Name="MachinePart">
-        <ScalarProperty Name="Id" ColumnName="Id" />
-      </EndProperty>
-    </AssociationSetMapping>
     <AssociationSetMapping Name="MachineMachinePart" TypeName="SoheilEdm.MachineMachinePart" StoreEntitySet="MachineParts">
       <EndProperty Name="Machine">
         <ScalarProperty Name="Id" ColumnName="Machine_Id" />
@@ -6795,6 +6809,7 @@
       <EndProperty Name="Repair">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
+      <Condition ColumnName="StoppageReport_Id" IsNull="false" />
     </AssociationSetMapping>
     <AssociationSetMapping Name="WarehouseWarehouseTransaction" TypeName="SoheilEdm.WarehouseWarehouseTransaction" StoreEntitySet="WarehouseTransactions">
       <EndProperty Name="Warehouse">
@@ -6872,6 +6887,14 @@
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
+    <AssociationSetMapping Name="MachinePartRepair" TypeName="SoheilEdm.MachinePartRepair" StoreEntitySet="Repairs">
+      <EndProperty Name="MachinePart">
+        <ScalarProperty Name="Id" ColumnName="MachinePart_Id" />
+      </EndProperty>
+      <EndProperty Name="Repair">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -6893,7 +6916,6 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="SoheilEdm" ZoomLevel="74" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="5.25" PointX="32.875" PointY="25" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="42.75" PointY="26" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="75.625" PointY="49.5" Height="1.5956835937499996" FillColor="110, 100, 50" />
@@ -6915,7 +6937,7 @@
         <EntityTypeShape EntityType="SoheilEdm.Process" Width="3.25" PointX="57.375" PointY="47" Height="2.364889322916671" FillColor="64, 64, 64" />
         <EntityTypeShape EntityType="SoheilEdm.ProcessOperator" Width="1.875" PointX="70.375" PointY="69.625" Height="1.9802864583333335" IsExpanded="true" FillColor="YellowGreen" />
         <EntityTypeShape EntityType="SoheilEdm.ProcessReport" Width="5.125" PointX="68.875" PointY="47.375" Height="2.5571907552083326" FillColor="150, 150, 150" />
-        <EntityTypeShape EntityType="SoheilEdm.TaskReport" Width="4" PointX="69" PointY="38.875" Height="2.5571907552083353" FillColor="150, 150, 150" />
+        <EntityTypeShape EntityType="SoheilEdm.TaskReport" Width="4" PointX="69" PointY="39.25" Height="2.5571907552083353" FillColor="150, 150, 150" />
         <EntityTypeShape EntityType="SoheilEdm.StoppageReport" Width="4.5" PointX="66" PointY="54" Height="2.5571907552083317" FillColor="235, 200, 140" />
         <EntityTypeShape EntityType="SoheilEdm.OperatorStoppageReport" Width="2" PointX="68.25" PointY="62.125" Height="1.9802864583333353" FillColor="224, 247, 193" />
         <EntityTypeShape EntityType="SoheilEdm.OperatorDefectionReport" Width="2" PointX="74.875" PointY="61.875" Height="1.9802864583333353" FillColor="224, 247, 193" />
@@ -7161,7 +7183,6 @@
         <AssociationConnector Association="SoheilEdm.MaintenanceMachinePartMaintenance" />
         <AssociationConnector Association="SoheilEdm.MachinePartMachinePartMaintenance" />
         <AssociationConnector Association="SoheilEdm.MachinePartMaintenanceMaintenanceReport" />
-        <AssociationConnector Association="SoheilEdm.RepairMachinePart" />
         <AssociationConnector Association="SoheilEdm.MachineMachinePart" />
         <AssociationConnector Association="SoheilEdm.StoppageReportRepair" />
         <EntityTypeShape EntityType="SoheilEdm.WarehouseTransaction" Width="4" PointX="23.625" PointY="29.75" FillColor="64, 64, 64" />
@@ -7187,6 +7208,7 @@
         <EntityTypeShape EntityType="SoheilEdm.RawMaterialUnitGroup" Width="2.125" PointX="19.25" PointY="23.875" />
         <AssociationConnector Association="SoheilEdm.RawMaterialRawMaterialUnitGroup" />
         <AssociationConnector Association="SoheilEdm.UnitGroupRawMaterialUnitGroup" />
+        <AssociationConnector Association="SoheilEdm.MachinePartRepair" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

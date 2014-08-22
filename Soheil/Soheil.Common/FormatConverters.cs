@@ -99,17 +99,17 @@ namespace Soheil.Common
         public static string ConvertToHMS(int seconds)
         {
             var time = new TimeSpan(0, 0, seconds);
-            return string.Format("{0:00}:{1:00}:{2:00}", time.TotalHours, time.Minutes, time.Seconds);
+            return string.Format("{0:00}:{1:00}:{2:00}", (int)time.TotalHours, time.Minutes, time.Seconds);
         }
         public static string ConvertToHM(int seconds)
         {
             var time = new TimeSpan(0, 0, seconds);
-            return string.Format("{0:00}:{1:00}", time.TotalHours, time.Seconds > 30 ? time.Minutes + 1 : time.Minutes);
+            return string.Format("{0:00}:{1:00}", (int)time.TotalHours, time.Seconds > 30 ? time.Minutes + 1 : time.Minutes);
         }
         public static string ConvertToHours(int seconds)
         {
             var time = new TimeSpan(0, 0, seconds);
-            return string.Format("{0:0}", time.TotalHours);
+            return string.Format("{0:0}", (int)time.TotalHours);
         }
 	}
 	public abstract class BaseConverter : MarkupExtension

@@ -32,17 +32,27 @@ namespace Soheil.Core.Printing.Document
         public static readonly DependencyProperty ReportNameProperty =
             DependencyProperty.Register("ReportName", typeof(string), typeof(ReportProperties), new UIPropertyMetadata(null));
 
-        /// <summary>
-        /// Gets or sets the report title
-        /// </summary>
-        public string ReportTitle
-        {
-            get { return (string)GetValue(ReportTitleProperty); }
-            set { SetValue(ReportTitleProperty, value); }
-        }
+		/// <summary>
+		/// Gets or sets the report title
+		/// </summary>
+		public string ReportTitle
+		{
+			get { return (string)GetValue(ReportTitleProperty); }
+			set { SetValue(ReportTitleProperty, value); }
+		}
 
-        // Using a DependencyProperty as the backing store for ReportTitle.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ReportTitleProperty =
-            DependencyProperty.Register("ReportTitle", typeof(string), typeof(ReportProperties), new UIPropertyMetadata(null));
-    }
+		// Using a DependencyProperty as the backing store for ReportTitle.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty ReportTitleProperty =
+			DependencyProperty.Register("ReportTitle", typeof(string), typeof(ReportProperties), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets the CompanyName
+		/// </summary>
+		public string CompanyName
+		{
+			get { return (string)GetValue(CompanyNameProperty); }
+			set { SetValue(CompanyNameProperty, value); }
+		}
+		public static readonly DependencyProperty CompanyNameProperty =
+			DependencyProperty.Register("CompanyName", typeof(string), typeof(ReportProperties), new UIPropertyMetadata(null));
+	}
 }

@@ -24,8 +24,11 @@ namespace Soheil
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			//Exceptions.log
-			Application.Current.DispatcherUnhandledException +=
-				new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(Current_DispatcherUnhandledException);
+			if (Environment.UserName != "Bizz")
+			{
+				Application.Current.DispatcherUnhandledException +=
+					new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(Current_DispatcherUnhandledException);
+			}
 			if (!Directory.Exists(folder))
 				Directory.CreateDirectory(folder);
 

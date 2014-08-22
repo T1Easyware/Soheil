@@ -95,6 +95,11 @@ namespace Soheil.Core.ViewModels.PP.Report
 			TargetPointForOperator = Model.OperatorProcessReports.Any() ?
 				string.Format("{0:F2}", (float)Model.ProcessReportTargetPoint / Model.OperatorProcessReports.Count) :
 				"---";
+			TotalTargetPointForOperator = Model.OperatorProcessReports.Any() ?
+				string.Format("{0:F2}", (float)Model.Process.TargetCount / Model.OperatorProcessReports.Count) :
+				"---";
+			ProcessTargetPoint = model.Process.TargetCount;
+
 			//reports
 			OperatorReports = new OperatorReportCollection(this);
 			DefectionReports = new DefectionReportCollection(this);
@@ -165,6 +170,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 						throw new Exception("اپراتور مقصر در توقفات انتخاب نشده است");
 					if (DefectionReports.List.Any(x => x.GuiltyOperators.FilterBoxes.Any(f => f.SelectedItem == null)))
 						throw new Exception("اپراتور مقصر در ضایعات انتخاب نشده است");
+					if (StoppageReports.List.Any(x => x.Repairs.Any(r=>r.Machine == null || r.MachinePart == null)))
+						throw new Exception("ماشین و قطعه در تعمیرات انتخاب نشده است");
 					else
 						_processReportDataService.Save(Model);
 				}
@@ -275,6 +282,26 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty TargetPointForOperatorProperty =
 			DependencyProperty.Register("TargetPointForOperator", typeof(string), typeof(ProcessReportVm), new UIPropertyMetadata("0"));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates TotalTargetPointForOperator
+		/// </summary>
+		public string TotalTargetPointForOperator
+		{
+			get { return (string)GetValue(TotalTargetPointForOperatorProperty); }
+			set { SetValue(TotalTargetPointForOperatorProperty, value); }
+		}
+		public static readonly DependencyProperty TotalTargetPointForOperatorProperty =
+			DependencyProperty.Register("TotalTargetPointForOperator", typeof(string), typeof(ProcessReportVm), new PropertyMetadata("0"));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ProcessTargetPoint
+		/// </summary>
+		public int ProcessTargetPoint
+		{
+			get { return (int)GetValue(ProcessTargetPointProperty); }
+			set { SetValue(ProcessTargetPointProperty, value); }
+		}
+		public static readonly DependencyProperty ProcessTargetPointProperty =
+			DependencyProperty.Register("ProcessTargetPoint", typeof(int), typeof(ProcessReportVm), new PropertyMetadata(0));
 
 
 		#endregion

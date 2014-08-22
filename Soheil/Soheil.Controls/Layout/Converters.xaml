@@ -13,6 +13,7 @@
 
     <Border x:Key="fpcBackBrushVisual" BorderBrush="#5FFF" BorderThickness="0.1" Width="64" Height="64"/>
 	<VisualBrush x:Key="fpcBackBrush" Viewport="0,0,64,64" TileMode="Tile" ViewportUnits="Absolute" Visual="{StaticResource fpcBackBrushVisual}"/>
+	<ppconv:RemainingColorConverter x:Key="remainingColorConverter"/>
 
 	<Converters:AccessTypeToBooleanConverter x:Key="AccessTypeToBooleanConverter"/>
 	<Converters:InsertAccessTypeConverter x:Key="InsertAccessTypeConverter"/>
@@ -36,8 +37,7 @@
 
 	<!-- fpc -->
 	<sys:Double x:Key="shadowOpacity">0.3</sys:Double>
-	
-	
+
 	<format:SafeRound1FloatConverter x:Key="round1Converter"/>
 
 	<core:ConnectorLocationConverter x:Key="connectorLocationConverter"/>
@@ -69,12 +69,15 @@
 	<ppconv:IsEqual x:Key="isEqual"/>
 	<ppconv:IsEqualToInvisibilityConverter x:Key="isEqualToInvisibilityConverter"/>
 	<ppconv:IsEqualToVisibilityConverter x:Key="isEqualToVisibilityConverter"/>
+	<ppconv:IsInt32EqualToInvisibilityConverter x:Key="isInt32EqualToInvisibilityConverter"/>
 	<ppconv:IsEqual2 x:Key="isEqual2"/>
 	<ppconv:IsNotEqual2 x:Key="isNotEqual2"/>
 	<ppconv:IsEqualToInvisibilityConverter2 x:Key="isEqualToInvisibilityConverter2"/>
-	<ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
+    <ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
+    <ppconv:VisibilityInverter x:Key="visibilityInverter"/>
 
 
+	<ppconv:BalanceToBrushConverter x:Key="balanceToBrushConverter"/>
 	<ppconv:SumOfDoubles x:Key="sumOfDoubles"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier"/>
 	<ppconv:FloatMultiplier x:Key="floatMultiplier2"/>

@@ -31,6 +31,7 @@ namespace Soheil.Core.Printing
         /// <summary>
         /// Report title
         /// </summary>
-        ReportTitle
+        ReportTitle,
+		CompanyName
     }
 }

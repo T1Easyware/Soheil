@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Soheil.Views.PM
+namespace Soheil.Views.Reporting
 {
 	/// <summary>
-	/// Interaction logic for PmPage.xaml
+	/// Interaction logic for OperatorReport.xaml
 	/// </summary>
-	public partial class PmPage : UserControl
+	public partial class OperatorReport : UserControl
 	{
-		public PmPage()
+		public OperatorReport()
 		{
 			InitializeComponent();
 		}

@@ -421,10 +421,13 @@ namespace Soheil.Core.Printing
                         case ReportContextValueType.ReportName:
                             cv.Value = _report.ReportName;
                             break;
-                        case ReportContextValueType.ReportTitle:
-                            cv.Value = _report.ReportTitle;
-                            break;
-                    }
+						case ReportContextValueType.ReportTitle:
+							cv.Value = _report.ReportTitle;
+							break;
+						case ReportContextValueType.CompanyName:
+							cv.Value = _report.CompanyName;
+							break;
+					}
                 }
             }
         }

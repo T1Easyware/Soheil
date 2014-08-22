@@ -31,6 +31,12 @@ namespace Soheil.Model
             set;
         }
     
+        public virtual string Code
+        {
+            get;
+            set;
+        }
+    
         public virtual string Description
         {
             get;
@@ -48,6 +54,13 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual byte Status
+        {
+            get { return _status; }
+            set { _status = value; }
+        }
+        private byte _status = 1;
 
         #endregion
 

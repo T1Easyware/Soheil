@@ -10,6 +10,28 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/reload.png"/>
 		<Setter Property="Width" Value="18"/>
 	</Style>
+	<Style x:Key="A16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/font.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Setting24Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/Setting.png"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="Back16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/back_16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Forward16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/back_16.png"/>
+		<Setter Property="FlowDirection" Value="RightToLeft"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Play24Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/play.png"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
 
 	<Style x:Key="Add16Image" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Add16.png"/>
@@ -27,19 +49,34 @@
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Undo16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
-	<Style x:Key="Warning16Image" TargetType="Image">
-		<Setter Property="Source" Value="/Soheil.Controls;component/Images/warning16.png"/>
+	<Style x:Key="Invalid16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Invalid16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
-	<Style x:Key="Error16Image" TargetType="Image">
+	<Style x:Key="Error16Image" TargetType="Image" x:Shared="False">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/error16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Alarm16Image" TargetType="Image" x:Shared="False">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/alarm16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="Info16Image" TargetType="Image" x:Shared="False">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/info16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
 	<Style x:Key="Refresh16Image" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/reload.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
+	<Style x:Key="DocumentInfo16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/document_info.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
 
+	<BitmapImage x:Key="ErrorIconSource" UriSource="pack://application:,,,/Soheil.Controls;component/Images/error.ico" x:Shared="False"/>
+	<BitmapImage x:Key="StarIconSource" UriSource="pack://application:,,,/Soheil.Controls;component/Images/star.ico"  x:Shared="False"/>
+	<BitmapImage x:Key="InfoIconSource" UriSource="pack://application:,,,/Soheil.Controls;component/Images/info.ico"  x:Shared="False"/>
 	<!-- Fpc -->
 
 	<Style x:Key="SelectToolImage" TargetType="Image">
@@ -113,6 +150,10 @@
 	<Style x:Key="MachineImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/Machinery.png"/>
 		<Setter Property="Height" Value="16"/>
+	</Style>
+	<Style x:Key="StationImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/Station.png"/>
+		<Setter Property="Height" Value="24"/>
 	</Style>
 	<Style x:Key="TargetPointImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/TargetPoint.png"/>
@@ -225,6 +266,7 @@
 
 	<Style x:Key="ReportImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/Report.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
 	<Style x:Key="ViewReportImage" TargetType="Image">
@@ -242,6 +284,39 @@
 	<Style x:Key="ReportWarningImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/ReportWarning.png"/>
 		<Setter Property="Width" Value="15"/>
+	</Style>
+
+	<!-- Comment -->
+
+	<Style x:Key="CommentImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Comment.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+		<Setter Property="Margin" Value="0,-4"/>
+	</Style>
+	<Style x:Key="CommentOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/CommentOk.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+		<Setter Property="Margin" Value="0,-4"/>
+	</Style>
+	<Style x:Key="AddCommmentImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/CommentAdd.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Margin" Value="0,-4"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="DeleteCommentImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/CommentDelete.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Margin" Value="0,-4"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="CommentNotOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/CommentNotOk.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Margin" Value="0,-4"/>
+		<Setter Property="Width" Value="24"/>
 	</Style>
 
 	<!-- Process -->
@@ -333,6 +408,64 @@
 	
 	<Style x:Key="SkillCenterImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/SkillCenter.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
+
+    <Style x:Key="PMReportImage" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/PMReport.png"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <Style x:Key="Repair16Image" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepair16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="AddRepair16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepairAdd16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ReportOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/reportOk.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ReportNotOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/reportNotOk.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="RepairOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepairOk16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="RepairNotOkImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepairNotOk16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="RepairReportedImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepairReported16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="ReportLink" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/report_link.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+
+    <Style x:Key="DailyReportImage" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/dailyReport.png"/>
+        <Setter Property="FlowDirection" Value="LeftToRight"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+    <Style x:Key="DailyStationPlanImage" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/dailyStationPlan.png"/>
+        <Setter Property="FlowDirection" Value="LeftToRight"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
 </ResourceDictionary>

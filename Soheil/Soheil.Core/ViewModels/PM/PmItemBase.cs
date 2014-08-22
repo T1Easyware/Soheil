@@ -8,8 +8,12 @@ using Soheil.Common;
 
 namespace Soheil.Core.ViewModels.PM
 {
-	public class PmItemBase : DependencyObject
+	public abstract class PmItemBase : DependencyObject
 	{
+		protected bool _isInitialized = false;
+
+		public abstract int Id { get; }
+
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Name
 		/// </summary>
@@ -19,7 +23,8 @@ namespace Soheil.Core.ViewModels.PM
 			set { SetValue(NameProperty, value); }
 		}
 		public static readonly DependencyProperty NameProperty =
-			DependencyProperty.Register("Name", typeof(string), typeof(PmItemBase), new PropertyMetadata(""));
+			DependencyProperty.Register("Name", typeof(string), typeof(PmItemBase),
+			new PropertyMetadata("", (d, e) => { if (((PmItemBase)d)._isInitialized) ((PmItemBase)d).NameChanged((string)e.NewValue); }));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Code
 		/// </summary>
@@ -29,7 +34,8 @@ namespace Soheil.Core.ViewModels.PM
 			set { SetValue(CodeProperty, value); }
 		}
 		public static readonly DependencyProperty CodeProperty =
-			DependencyProperty.Register("Code", typeof(string), typeof(PmItemBase), new PropertyMetadata(""));
+			DependencyProperty.Register("Code", typeof(string), typeof(PmItemBase),
+			new PropertyMetadata("", (d, e) => { if (((PmItemBase)d)._isInitialized) ((PmItemBase)d).CodeChanged((string)e.NewValue); }));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Description
 		/// </summary>
@@ -39,7 +45,8 @@ namespace Soheil.Core.ViewModels.PM
 			set { SetValue(DescriptionProperty, value); }
 		}
 		public static readonly DependencyProperty DescriptionProperty =
-			DependencyProperty.Register("Description", typeof(string), typeof(PmItemBase), new PropertyMetadata(""));
+			DependencyProperty.Register("Description", typeof(string), typeof(PmItemBase),
+			new PropertyMetadata("", (d, e) => { if (((PmItemBase)d)._isInitialized) ((PmItemBase)d).DescriptionChanged((string)e.NewValue); }));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Status
 		/// </summary>
@@ -49,30 +56,45 @@ namespace Soheil.Core.ViewModels.PM
 			set { SetValue(StatusProperty, value); }
 		}
 		public static readonly DependencyProperty StatusProperty =
-			DependencyProperty.Register("Status", typeof(Status), typeof(PmItemBase), new PropertyMetadata(Status.Active));
+			DependencyProperty.Register("Status", typeof(Status), typeof(PmItemBase),
+			new PropertyMetadata(Status.Active, (d, e) => { if (((PmItemBase)d)._isInitialized) ((PmItemBase)d).StatusChanged((Status)e.NewValue); }));
+
+        /// <summary>
+        /// Gets or sets a bindable value that indicates Bar
+        /// </summary>
+        public PMBarVm Bar
+        {
+            get { return (PMBarVm)GetValue(BarProperty); }
+            set { SetValue(BarProperty, value); }
+        }
+        public static readonly DependencyProperty BarProperty =
+            DependencyProperty.Register("Bar", typeof(PMBarVm), typeof(PmItemBase), new PropertyMetadata(null));
 
 
 
 		/// <summary>
-		/// Gets or sets a bindable value that indicates SelectCommand
+		/// Gets or sets a bindable value that indicates IsAdded
 		/// </summary>
-		public Commands.Command SelectCommand
+		public bool IsAdded
 		{
-			get { return (Commands.Command)GetValue(SelectCommandProperty); }
-			set { SetValue(SelectCommandProperty, value); }
+			get { return (bool)GetValue(IsAddedProperty); }
+			set { SetValue(IsAddedProperty, value); }
 		}
-		public static readonly DependencyProperty SelectCommandProperty =
-			DependencyProperty.Register("SelectCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
 		/// <summary>
-		/// Gets or sets a bindable value that indicates DeleteCommand
+		/// Updates Link counter automatically (should be overriden if needed)
 		/// </summary>
-		public Commands.Command DeleteCommand
-		{
-			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
-			set { SetValue(DeleteCommandProperty, value); }
-		}
-		public static readonly DependencyProperty DeleteCommandProperty =
-			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+		/// <param name="machineId"></param>
+		public virtual void UpdateIsAdded(PmItemBase linkItemVm) { }
+		public static readonly DependencyProperty IsAddedProperty =
+			DependencyProperty.Register("IsAdded", typeof(bool), typeof(PmItemBase), new PropertyMetadata(false));
+
+		#region CallBacks
+		protected abstract void NameChanged(string val);
+		protected abstract void CodeChanged(string val);
+		protected abstract void DescriptionChanged(string val);
+		protected abstract void StatusChanged(Status val);
+
+		#endregion
 
 		/// <summary>
 		/// Gets or sets a bindable command that adds this item to collection of a previous page
@@ -84,5 +106,39 @@ namespace Soheil.Core.ViewModels.PM
 		}
 		public static readonly DependencyProperty UseCommandProperty =
 			DependencyProperty.Register("UseCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+      
+        /// <summary>
+        /// Gets or sets a bindable value that indicates GotoReportCommand
+        /// </summary>
+        public Commands.Command GotoReportCommand
+        {
+            get { return (Commands.Command)GetValue(GotoReportCommandProperty); }
+            set { SetValue(GotoReportCommandProperty, value); }
+        }
+        public static readonly DependencyProperty GotoReportCommandProperty =
+            DependencyProperty.Register("GotoReportCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets a bindable value that indicates GotoRepairCommand
+        /// </summary>
+        public Commands.Command GotoRepairCommand
+        {
+            get { return (Commands.Command)GetValue(GotoRepairCommandProperty); }
+            set { SetValue(GotoRepairCommandProperty, value); }
+        }
+        public static readonly DependencyProperty GotoRepairCommandProperty =
+            DependencyProperty.Register("GotoRepairCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DeleteCommand
+		/// </summary>
+		public Commands.Command DeleteCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(PmItemBase), new PropertyMetadata(null));
+
+
 	}
 }

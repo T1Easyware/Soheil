@@ -267,5 +267,127 @@ namespace Soheil.Core.DataServices
 		}
 
 
+
+		internal IEnumerable<Reports.DailyStationPlanData> GetDailyStationsPlan(DateTime StartDateTime, DateTime EndDateTime)
+		{
+			IEnumerable<Core.Reports.DailyStationPlanData> data;
+
+			//find shifts
+			var tmp = new WorkProfilePlanDataService(Context).GetShiftsInRange(StartDateTime, EndDateTime);
+			if (tmp.Any())
+			{
+				var shifts = tmp.Where(x => x.Item2.Date < EndDateTime.Date).Select(x => new
+				{
+					date = x.Item2,
+					start = x.Item2.AddSeconds(x.Item1.StartSeconds),
+					end = x.Item2.AddSeconds(x.Item1.EndSeconds),
+					code = x.Item1.WorkShiftPrototype.Name
+				});
+
+				var processes = _processRepository.GetAll();
+				//main query (with shift)
+				var prQuery = from shift in shifts
+							  from process in processes.Where(x=>x.StartDateTime < shift.end && x.EndDateTime > shift.start)
+
+							  let station = process.Task.Block.StateStation.Station
+							  let start = (process.StartDateTime < shift.start) ? shift.start : process.StartDateTime
+							  let end = (process.EndDateTime > shift.end) ? shift.end : process.EndDateTime
+							  let durationSeconds = (end - start).TotalSeconds
+							  let ratio = durationSeconds / process.DurationSeconds
+							  where ratio > 0
+
+							  group new
+							  {
+								  process,
+								  activity = process.StateStationActivity.Activity.Name,
+								  product = process.Task.Block.StateStation.State.OnProductRework.Name,
+								  ratio,
+							  } by new
+							  {
+								  station,
+								  shift
+							  } into sGroup
+							  select new
+							  {
+								  station = sGroup.Key.station,
+								  shiftCode = sGroup.Key.shift.code,
+								  items = sGroup,
+							  };
+				data = prQuery
+					.OrderBy(x => x.station.Index)
+					.ThenBy(x => x.shiftCode)
+					.Select(x => new Reports.DailyStationPlanData
+					{
+						Activities = x.items
+							.OrderBy(y=>y.activity)
+							.ThenBy(y=>y.product)
+							.Select(y=>new Reports.DailyStationPlanData.MainData
+							{
+								Activity = y.activity,
+								Product = y.product,
+								Shift = x.shiftCode,
+								Start = y.process.StartDateTime.TimeOfDay,
+								End = y.process.EndDateTime.TimeOfDay,
+								TargetValue = (y.process.TargetCount * y.ratio).ToString("0.#"),
+								Operators = y.process.ProcessOperators.Select(o=>o.Operator.Name),
+							}),
+						StationName = x.station.Name,
+						StationId = x.station.Id,
+						ShiftCode = x.shiftCode
+					});
+			}
+			//No shift is available
+			else
+			{
+				var processes = _processRepository.Find(x => x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime);
+
+				//main query (without shift)
+				var prQuery = from process in processes
+
+							  let station = process.Task.Block.StateStation.Station
+							  let start = (process.StartDateTime < StartDateTime) ? StartDateTime : process.StartDateTime
+							  let end = (process.EndDateTime > EndDateTime) ? EndDateTime : process.EndDateTime
+							  let durationSeconds = (end - start).TotalSeconds
+							  let ratio = durationSeconds / process.DurationSeconds
+
+							  group new
+							  {
+								  process,
+								  activity = process.StateStationActivity.Activity.Name,
+								  product = process.Task.Block.StateStation.State.OnProductRework.Name,
+								  ratio,
+							  } by station
+							  into sGroup
+							  select new
+							  {
+								  station = sGroup.Key,
+								  items = sGroup,
+							  };
+				data = prQuery
+					.OrderBy(x => x.station.Index)
+					.Select(x => new Reports.DailyStationPlanData
+					{
+						Activities = x.items
+							.OrderBy(y => y.activity)
+							.ThenBy(y => y.product)
+							.Select(y => new Reports.DailyStationPlanData.MainData
+							{
+								Activity = y.activity,
+								Product = y.product,
+								Shift = "-",
+								Start = y.process.StartDateTime.TimeOfDay,
+								End = y.process.EndDateTime.TimeOfDay,
+								TargetValue = y.process.TargetCount.ToString(),
+								Operators = y.process.ProcessOperators.Select(o => o.Operator.Name),
+							}),
+						StationName = x.station.Name,
+						StationId = x.station.Id,
+						ShiftCode = "-"
+					});
+
+			}
+
+			return data;
+		}
 	}
 }
