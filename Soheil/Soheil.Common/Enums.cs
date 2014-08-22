@@ -171,6 +171,13 @@ namespace Soheil.Common
         SettingsSubMenu = 51,
         HelpSubMenu = 52,
         AboutSubMenu = 53,
+        StorageMenu = 6,
+        WarehouseSubMenu = 61,
+        WarehouseTransactions = 62,
+        RawMaterialSubMenu = 63,
+        UnitsSubMenu = 64,
+        UnitSets = 641,
+        UnitConversions = 642
     }
 	public enum Direction
 	{

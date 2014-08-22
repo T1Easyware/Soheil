@@ -590,6 +590,11 @@
     <Resource Include="Images\PP\TaskCopy.png" />
     <Resource Include="Images\PP\TaskMove.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\rawmaterial.png" />
+    <Resource Include="Images\Menus\uc.png" />
+    <Resource Include="Images\Menus\unit.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

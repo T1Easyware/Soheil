@@ -125,8 +125,36 @@
                         Tag="33" />
 			</WrapPanel>
         </DataTemplate>
-        <DataTemplate x:Key="reportsTemplate">
+        <DataTemplate x:Key="storageTemplate">
             <WrapPanel Grid.Column="3" FlowDirection="RightToLeft">
+                <CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtWarehouses}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/warehouse.png"
+                        Tag="61" />
+                <CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtRawMaterials}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/rawmaterial.png"
+                        Tag="63" />
+                <CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtUnits}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/unit.png"
+                        Tag="64" />
+            </WrapPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="reportsTemplate">
+            <WrapPanel Grid.Column="4" FlowDirection="RightToLeft">
                 <!--CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
@@ -221,10 +249,14 @@
                                       Checked="QuickAccessMenuChecked"
                                       Content="{Loc txtProductControl}"
                                       Tag="3" />
+                        <ToggleButton x:Name="btnStorage"
+                                      Checked="QuickAccessMenuChecked"
+                                      Content="{Loc txtStorage}"
+                                      Tag="4" />
                         <ToggleButton x:Name="btnReports"
                                       Checked="QuickAccessMenuChecked"
                                       Content="{Loc txtReports}"
-                                      Tag="4" />
+                                      Tag="5" />
                         <!--ToggleButton x:Name="btnOptions"
                                       Checked="QuickAccessMenuChecked"
                                       Content="{Loc txtOptions}"

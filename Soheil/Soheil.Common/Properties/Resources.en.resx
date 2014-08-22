@@ -970,4 +970,43 @@
   <data name="txtIsRecurrentDesc" xml:space="preserve">
     <value>This holiday occurs each year</value>
   </data>
+  <data name="txtActualInventory" xml:space="preserve">
+    <value>Actual Inventory :</value>
+  </data>
+  <data name="txtAvailableInventory" xml:space="preserve">
+    <value>Available Inventory :</value>
+  </data>
+  <data name="txtHasFinalProduct" xml:space="preserve">
+    <value>Contains Final Product :</value>
+  </data>
+  <data name="txtHasRawMaterial" xml:space="preserve">
+    <value>Contains Raw Material :</value>
+  </data>
+  <data name="txtHasWIP" xml:space="preserve">
+    <value>Contains WIP :</value>
+  </data>
+  <data name="txtLocation" xml:space="preserve">
+    <value>Location :</value>
+  </data>
+  <data name="txtRawMaterials" xml:space="preserve">
+    <value>Raw Materials</value>
+  </data>
+  <data name="txtSafetyStock" xml:space="preserve">
+    <value>Safety Stock :</value>
+  </data>
+  <data name="txtStorage" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="txtUnitConversions" xml:space="preserve">
+    <value>Unit Conversions</value>
+  </data>
+  <data name="txtUnits" xml:space="preserve">
+    <value>Units</value>
+  </data>
+  <data name="txtUnitSets" xml:space="preserve">
+    <value>Unit Sets</value>
+  </data>
+  <data name="txtWarehouses" xml:space="preserve">
+    <value>Warehouses</value>
+  </data>
 </root>

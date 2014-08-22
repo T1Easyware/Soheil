@@ -202,6 +202,27 @@ namespace Soheil.Views
                 var tmpl = (DataTemplate)FindResource("ActionPlanTemplate");
                 _itemContentView.ContentTemplate = tmpl;
             }
+            else if (ViewModel.CurrentContent is WarehouseVM)
+            {
+                var tmpl = (DataTemplate)FindResource("WarehouseTemplate");
+                _itemContentView.ContentTemplate = tmpl;
+            }
+            else if (ViewModel.CurrentContent is RawMaterialVM)
+            {
+                var tmpl = (DataTemplate)FindResource("RawMaterialTemplate");
+                _itemContentView.ContentTemplate = tmpl;
+            }
+            else if (ViewModel.CurrentContent is UnitSetVM)
+            {
+                var tmpl = (DataTemplate)FindResource("UnitSetTemplate");
+                _itemContentView.ContentTemplate = tmpl;
+            }
+            else if (ViewModel.CurrentContent is UnitGroupVM)
+            {
+                var tmpl = (DataTemplate)FindResource("UnitGroupTemplate");
+                _itemContentView.ContentTemplate = tmpl;
+            }
+
         }
 
         private void ListUpdated(object sender, RoutedEventArgs e)
@@ -297,7 +318,13 @@ namespace Soheil.Views
                     ViewModel = new CostsVM(access);
                     break;
                 case SoheilEntityType.Warehouses:
-                    ViewModel = new PartWarehousesVM(access);
+                    ViewModel = new WarehousesVM(access);
+                    break;
+                case SoheilEntityType.RawMaterialSubMenu:
+                    ViewModel = new RawMaterialsVM(access);
+                    break;
+                case SoheilEntityType.UnitSets:
+                    ViewModel = new UnitSetsVM(access);
                     break;
                 case SoheilEntityType.ControlMenu:
                     break;

@@ -48,7 +48,14 @@ INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 	(38,'5','txtOptions',1),
 		(39,'51','txtSettings',37),
 		(40,'52','txtHelp',37),
-		(47,'53','txtAbout',37);
+		(47,'53','txtAbout',37),
+	(48,'6','txtStorage',1),
+		(49,'61','txtWarehouse',48),
+		(50,'62','txtWarehouseTransactions',48),
+		(51,'63','txtRawMaterials',48),
+		(52,'64','txtUnits',52),
+			(53,'641','txtUnitSets',52),
+			(54,'642','txtUnitConversions',52);
 
 
 
@@ -104,7 +111,15 @@ INSERT INTO User_AccessRules(AccessRule_Id, [User_Id], ModifiedBy,ModifiedDate,[
 (43,1,0,'2013-01-01',31),
 (44,1,0,'2013-01-01',31),
 (45,1,0,'2013-01-01',31),
-(46,1,0,'2013-01-01',31);
+(46,1,0,'2013-01-01',31),
+(47,1,0,'2013-01-01',31),
+(48,1,0,'2013-01-01',31),
+(49,1,0,'2013-01-01',31),
+(50,1,0,'2013-01-01',31),
+(51,1,0,'2013-01-01',31),
+(52,1,0,'2013-01-01',31),
+(53,1,0,'2013-01-01',31),
+(54,1,0,'2013-01-01',31);
 
 
 INSERT INTO Causes([Name],[Code],[Description],[ModifiedDate],[CreatedDate],[Status],[ModifiedBy],[Level]) VALUES
@@ -145,3 +160,46 @@ INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType
 (N'هزینه متفرقه',0,0,'2013-01-01',1,0,5);
 
 SET IDENTITY_INSERT dbo.COSTCENTERS OFF
+
+SET IDENTITY_INSERT dbo.UnitGroups ON
+insert into UnitGroups([Id],[ModifiedBy],[Name],[Status]) values
+(1,1,N'وزنی',1);
+
+insert into UnitGroups([Id],[ModifiedBy],[Name],[Status]) values
+(2,1,N'حجمی',1); 
+SET IDENTITY_INSERT dbo.UnitGroups OFF
+
+SET IDENTITY_INSERT dbo.unitsets ON
+
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(1,'gr', N'گرم',1,1,1); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(2,'kg', N'کیلوگرم',1,1,1); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(3,'Tn', N'تن',1,1,1); 
+
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(4,'cc', N'سی سی',1,1,2); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(5,'Lt', N'لیتر',1,1,2); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(6,'M3', N'متر مکعب',1,1,2); 
+
+SET IDENTITY_INSERT dbo.unitsets OFF
+
+
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(1,2,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(2,3,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(1,3,1000000,1,1);
+
+
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(4,5,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(5,6,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(4,6,1000000,1,1);
+

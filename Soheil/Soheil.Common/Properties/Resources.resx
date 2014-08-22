@@ -975,4 +975,43 @@
   <data name="txtIsRecurrentDesc" xml:space="preserve">
     <value>این تعطیلی هر سال اتفاق می افتد</value>
   </data>
+  <data name="txtActualInventory" xml:space="preserve">
+    <value>موجودی واقعی :</value>
+  </data>
+  <data name="txtAvailableInventory" xml:space="preserve">
+    <value>موجودی قابل برداشت :</value>
+  </data>
+  <data name="txtHasFinalProduct" xml:space="preserve">
+    <value>حاوی محصول نهایی :</value>
+  </data>
+  <data name="txtHasRawMaterial" xml:space="preserve">
+    <value>حاوی مواد خام :</value>
+  </data>
+  <data name="txtHasWIP" xml:space="preserve">
+    <value>حاوی WIP :</value>
+  </data>
+  <data name="txtLocation" xml:space="preserve">
+    <value>مکان :</value>
+  </data>
+  <data name="txtRawMaterials" xml:space="preserve">
+    <value>مواد خام</value>
+  </data>
+  <data name="txtSafetyStock" xml:space="preserve">
+    <value>حداقل موجودی :</value>
+  </data>
+  <data name="txtStorage" xml:space="preserve">
+    <value>انبارداری</value>
+  </data>
+  <data name="txtUnitConversions" xml:space="preserve">
+    <value>تبدیل واحد</value>
+  </data>
+  <data name="txtUnits" xml:space="preserve">
+    <value>واحدها</value>
+  </data>
+  <data name="txtUnitSets" xml:space="preserve">
+    <value>واحدها</value>
+  </data>
+  <data name="txtWarehouses" xml:space="preserve">
+    <value>انبارها</value>
+  </data>
 </root>

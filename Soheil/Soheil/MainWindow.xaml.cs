@@ -73,7 +73,7 @@ namespace Soheil
 			_newTabNumber = 1;
 
 			// temp
-			//  Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
+            Username = "admin"; _loginPassword.Password = "fromdust"; Login(_loginPassword);
 			//.
 
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
@@ -267,6 +267,28 @@ namespace Soheil
                     SingularList = new OperationReportsVm(access);
                     chrometabs.AddTab(CreateSingularTab(type), true);
                     break;
+                case SoheilEntityType.StorageMenu:
+                    break;
+                case SoheilEntityType.WarehouseSubMenu:
+                    SplitList = new WarehousesVM(access);
+                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    break;
+                case SoheilEntityType.WarehouseTransactions:
+                    SplitList = new SpecialSkillsVM(access);
+                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    break;
+                case SoheilEntityType.RawMaterialSubMenu:
+                    SplitList = new RawMaterialsVM(access);
+                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    break;
+                case SoheilEntityType.UnitsSubMenu:
+                    SplitList = new UnitSetsVM(access);
+                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    break;
+                case SoheilEntityType.UnitSets:
+                    SplitList = new UnitSetsVM(access);
+                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    break;
                 case SoheilEntityType.OptionsMenu:
                     break;
                 case SoheilEntityType.SettingsSubMenu:
@@ -349,32 +371,39 @@ namespace Soheil
                 case 1:
                     btnControls.IsChecked = false;
                     btnDefinitions.IsChecked = false;
-                    //btnOptions.IsChecked = false;
+                    btnStorage.IsChecked = false;
                     btnReports.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("usersTemplate");
                     break;
                 case 2:
                     btnControls.IsChecked = false;
                     btnUsers.IsChecked = false;
-                    //btnOptions.IsChecked = false;
+                    btnStorage.IsChecked = false;
                     btnReports.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("definitionsTemplate");
                     break;
                 case 3:
                     btnUsers.IsChecked = false;
                     btnDefinitions.IsChecked = false;
-                    //btnOptions.IsChecked = false;
+                    btnStorage.IsChecked = false;
                     btnReports.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("controlsTemplate");
                     break;
                 case 4:
                     btnUsers.IsChecked = false;
                     btnDefinitions.IsChecked = false;
-                    btnControls.IsChecked = false;
-                    //btnOptions.IsChecked = false;
-                    tmpl = (DataTemplate)FindResource("reportsTemplate");
+                    btnStorage.IsChecked = true;
+                    btnReports.IsChecked = false;
+                    tmpl = (DataTemplate)FindResource("storageTemplate");
                     break;
                 case 5:
+                    btnUsers.IsChecked = false;
+                    btnDefinitions.IsChecked = false;
+                    btnControls.IsChecked = false;
+                    btnStorage.IsChecked = false;
+                    tmpl = (DataTemplate)FindResource("reportsTemplate");
+                    break;
+                case 6:
                     btnUsers.IsChecked = false;
                     btnDefinitions.IsChecked = false;
                     btnControls.IsChecked = false;
@@ -521,6 +550,8 @@ namespace Soheil
         public void Login(object param)
         {
             var userInfo = _accessRuleDataService.VerifyLogin(Username, ((PasswordBox)param).Password);
+            //var userInfo = _accessRuleDataService.VerifyLogin("admin", "fromdust");
+
             LoginInfo.DataService = _userDataService;
             if (userInfo.Item1 >=0)
             {

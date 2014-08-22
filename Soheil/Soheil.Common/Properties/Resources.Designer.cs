@@ -880,11 +880,29 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to موجودی واقعی :.
+        /// </summary>
+        public static string txtActualInventory {
+            get {
+                return ResourceManager.GetString("txtActualInventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to روز بعد.
         /// </summary>
         public static string txtAdd1Day {
             get {
                 return ResourceManager.GetString("txtAdd1Day", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to موجودی قابل برداشت :.
+        /// </summary>
+        public static string txtAvailableInventory {
+            get {
+                return ResourceManager.GetString("txtAvailableInventory", resourceCulture);
             }
         }
         
@@ -1330,11 +1348,38 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to حاوی محصول نهایی :.
+        /// </summary>
+        public static string txtHasFinalProduct {
+            get {
+                return ResourceManager.GetString("txtHasFinalProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to آیا شاخص OEE برای این ماشین محاسبه می گردد؟.
         /// </summary>
         public static string txtHasOEE {
             get {
                 return ResourceManager.GetString("txtHasOEE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to حاوی مواد خام :.
+        /// </summary>
+        public static string txtHasRawMaterial {
+            get {
+                return ResourceManager.GetString("txtHasRawMaterial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to حاوی WIP :.
+        /// </summary>
+        public static string txtHasWIP {
+            get {
+                return ResourceManager.GetString("txtHasWIP", resourceCulture);
             }
         }
         
@@ -1470,6 +1515,15 @@ namespace Soheil.Common.Properties {
         public static string txtLevel {
             get {
                 return ResourceManager.GetString("txtLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to مکان :.
+        /// </summary>
+        public static string txtLocation {
+            get {
+                return ResourceManager.GetString("txtLocation", resourceCulture);
             }
         }
         
@@ -1960,6 +2014,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to مواد خام.
+        /// </summary>
+        public static string txtRawMaterials {
+            get {
+                return ResourceManager.GetString("txtRawMaterials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to بازیابی.
         /// </summary>
         public static string txtRefresh {
@@ -2055,6 +2118,15 @@ namespace Soheil.Common.Properties {
         public static string txtRules {
             get {
                 return ResourceManager.GetString("txtRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to حداقل موجودی :.
+        /// </summary>
+        public static string txtSafetyStock {
+            get {
+                return ResourceManager.GetString("txtSafetyStock", resourceCulture);
             }
         }
         
@@ -2320,6 +2392,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to انبارداری.
+        /// </summary>
+        public static string txtStorage {
+            get {
+                return ResourceManager.GetString("txtStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مقدار هدف.
         /// </summary>
         public static string txtTargetCount {
@@ -2518,11 +2599,38 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to تبدیل واحد.
+        /// </summary>
+        public static string txtUnitConversions {
+            get {
+                return ResourceManager.GetString("txtUnitConversions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to هزینه واحد :.
         /// </summary>
         public static string txtUnitCost {
             get {
                 return ResourceManager.GetString("txtUnitCost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to واحدها.
+        /// </summary>
+        public static string txtUnits {
+            get {
+                return ResourceManager.GetString("txtUnits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to واحدها.
+        /// </summary>
+        public static string txtUnitSets {
+            get {
+                return ResourceManager.GetString("txtUnitSets", resourceCulture);
             }
         }
         
@@ -2568,6 +2676,15 @@ namespace Soheil.Common.Properties {
         public static string txtUsersAccess {
             get {
                 return ResourceManager.GetString("txtUsersAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to انبارها.
+        /// </summary>
+        public static string txtWarehouses {
+            get {
+                return ResourceManager.GetString("txtWarehouses", resourceCulture);
             }
         }
         

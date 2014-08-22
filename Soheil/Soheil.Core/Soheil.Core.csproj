@@ -69,6 +69,12 @@
   <ItemGroup>
     <Compile Include="Base\AccessNodeViewModel.cs" />
     <Compile Include="DataServices\Basics\MachinePartDataService.cs" />
+    <Compile Include="DataServices\Storage\RawMaterialUnitGroupDataService.cs" />
+    <Compile Include="DataServices\Storage\UnitSetDataService.cs" />
+    <Compile Include="DataServices\Storage\UnitGroupDataService.cs" />
+    <Compile Include="DataServices\Storage\RawMaterialDataService.cs" />
+    <Compile Include="DataServices\Storage\UnitConversionDataService.cs" />
+    <Compile Include="DataServices\Storage\WarehouseDataService.cs" />
     <Compile Include="ViewModels\PM\MachineItemVm.cs" />
     <Compile Include="ViewModels\PM\MachinePartItemVm.cs" />
     <Compile Include="ViewModels\PM\PmItemBase.cs" />
@@ -230,6 +236,17 @@
     <Compile Include="ViewModels\SkillCenter\SkillCenterContentVm.cs" />
     <Compile Include="ViewModels\SkillCenter\SkillCenterVm.cs" />
     <Compile Include="ViewModels\StartPageVm.cs" />
+    <Compile Include="ViewModels\Storage\RawMaterialUnitGroupsVM.cs" />
+    <Compile Include="ViewModels\Storage\RawMaterialUnitGroupVM.cs" />
+    <Compile Include="ViewModels\Storage\UnitSetsVM.cs" />
+    <Compile Include="ViewModels\Storage\UnitGroupVM.cs" />
+    <Compile Include="ViewModels\Storage\UnitSetVM.cs" />
+    <Compile Include="ViewModels\Storage\UnitRelationTable.cs" />
+    <Compile Include="ViewModels\Storage\RawMaterialsVM.cs" />
+    <Compile Include="ViewModels\Storage\UnitRelation.cs" />
+    <Compile Include="ViewModels\Storage\WarehousesVM.cs" />
+    <Compile Include="ViewModels\Storage\RawMaterialVM.cs" />
+    <Compile Include="ViewModels\Storage\WarehouseVm.cs" />
     <Compile Include="ViewModels\WorkProfilePlansVM.cs" />
     <Compile Include="ViewModels\WorkProfilesVM.cs" />
     <Compile Include="ViewModels\InfoViewModels\ActivityInfoVM.cs" />

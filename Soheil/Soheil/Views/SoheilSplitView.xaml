@@ -545,6 +545,35 @@
             </Border>
         </DataTemplate>
 
+        <!-- RawMaterial-UnitGroup -->
+        <DataTemplate x:Key="RawMaterialUnitGroupTemplate">
+            <Border Style="{StaticResource SoheilItemBorder}">
+                <StackPanel>
+                    <ContentControl Template="{StaticResource ConfirmExcludeButton}"/>
+                    <ToggleButton IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                  CommandParameter="{Binding}"
+                                  Command="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, 
+                                    Path=ViewModel.CurrentContent.CurrentLink.ViewDetailsCommand}">
+                        <ContentPresenter>
+                            <ContentPresenter.ContentTemplate>
+                                <DataTemplate DataType="ViewModels:RawMaterialUnitGroupVM">
+                                    <StackPanel>
+                                        <TextBlock x:Name="CodeBlock" Foreground="{StaticResource CodeColor}" Text="{Binding Path=UnitGroupCode}" />
+                                        <TextBlock Text="{Binding Path=UnitGroupName}" />
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter TargetName="CodeBlock" Property="Foreground" Value="{StaticResource CodeColorGlow}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ContentPresenter.ContentTemplate>
+                        </ContentPresenter>
+                    </ToggleButton>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
         <TemplateSelectors:NavigationItemSelector x:Key="NavigationItemTemplateSelector"
                                                   ProductDefectionTemplate="{StaticResource ProductDefectionTemplate}"
                                                   DefectionProductTemplate="{StaticResource DefectionProductTemplate}"
@@ -560,6 +589,7 @@
                                                   MachineStationTemplate="{StaticResource MachineStationTemplate}"
                                                   ActionPlanFishboneNodeTemplate="{StaticResource ActionPlanFishboneNodeTemplate}"
                                                   FishboneNodeActionPlanTemplate="{StaticResource FishboneNodeActionPlanTemplate}"
+                                                  RawMaterialUnitGroupTemplate="{StaticResource RawMaterialUnitGroupTemplate}"
                                                   />
         <!--..........................................................................................................-->
 
@@ -3426,21 +3456,216 @@
             </GroupBox>
         </DataTemplate>
 
-		<!--..........................................................................................................-->
+        <!-- 6.1 Warehouse -->
+        <DataTemplate x:Key="WarehouseTemplate" DataType="ViewModels:WarehouseVM">
+            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
+                        <WrapPanel Margin="10"
+                                   HorizontalAlignment="Right"
+                                   DockPanel.Dock="Bottom">
+                        </WrapPanel>
+                    </Border>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBorder}">
+                            <UniformGrid Margin="5"
+                             Columns="2"
+                             Rows="7">
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}"  />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Code, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtLocation}" />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Location, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtHasFinalProduct}" />
+                                <CheckBox Margin="2" IsChecked="{Binding Path=CurrentContent.HasFinalProduct, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtHasRawMaterial}" />
+                                <CheckBox Margin="2" IsChecked="{Binding Path=CurrentContent.HasRawMaterial, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtHasWIP}" />
+                                <CheckBox Margin="2" IsChecked="{Binding Path=CurrentContent.HasWIP, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                            </UniformGrid>
+                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
+
+        <!-- 6.2 Transactions -->
+
+        <!-- 6.3 Raw Material -->
+        <DataTemplate x:Key="RawMaterialTemplate" DataType="ViewModels:RawMaterialVM">
+            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
+                        <WrapPanel Margin="10"
+                                   HorizontalAlignment="Right"
+                                   DockPanel.Dock="Bottom">
+                            <Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
+                                    CommandParameter="0"
+                                    Content="{Loc txtUnits}">
+                            </Button>
+                        </WrapPanel>
+                    </Border>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBorder}">
+                            <UniformGrid Margin="5"
+                             Columns="2"
+                             Rows="5">
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}"  />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Code, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtSafetyStock}" />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.SafetyStock, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                            </UniformGrid>
+                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
+        <DataTemplate x:Key="RawMaterialUnitGroupsTemplate" DataType="ContentControl">
+            <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView},  Path=ViewModel}"
+                       Visibility="{Binding CurrentContent.MainContentVisibility, Converter={StaticResource ReverseVisibilityConverter}}">
+                <GroupBox DockPanel.Dock="Right" Style="{StaticResource SoheilDetailViewBorder}" Header="{Loc txtSelecteds}">
+                    <ContentControl Template="{StaticResource ExcludeBox}"/>
+                </GroupBox>
+                <GroupBox Style="{StaticResource SoheilDetailListViewBorder}" Header="{Loc txtUnits}">
+                    <ContentControl Template="{StaticResource IncludeBox}"/>
+                </GroupBox>
+                <Canvas />
+            </DockPanel>
+        </DataTemplate>
+        
+        <!-- 6.4. Units -->
+        <DataTemplate x:Key="UnitsSubContentPanel">
+            <WrapPanel Height="22" Margin="2">
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                             IsChecked="True"
+                            Content="{Loc txtUnitSets}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/unit.png"
+                            Tag="641" />
+            </WrapPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="UnitSetTemplate" DataType="ViewModels:UnitSetVM">
+            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Description}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
+                        <WrapPanel Margin="10"
+                                   HorizontalAlignment="Right"
+                                   DockPanel.Dock="Bottom">
+                            <!--<Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
+                                    CommandParameter="0"
+                                    Content="{Loc txtGenSkills}">
+                            </Button>-->
+                        </WrapPanel>
+                    </Border>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBorder}">
+                            <UniformGrid Margin="5"
+                             Columns="2"
+                             Rows="2">
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}"  />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Code, ValidatesOnDataErrors=True, 
+                        UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtDescription}" />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Description, ValidatesOnDataErrors=True, 
+                        UpdateSourceTrigger=PropertyChanged}" />
+                            </UniformGrid>
+                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
+        <DataTemplate x:Key="UnitGroupTemplate" DataType="ViewModels:UnitGroupVM">
+            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}" />
+                    <DockPanel DockPanel.Dock="Top">
+                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBorder}">
+                            <UniformGrid Margin="5"
+                             Columns="2"
+                             Rows="2">
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtName}" />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Name, ValidatesOnDataErrors=True, 
+                        UpdateSourceTrigger=PropertyChanged}" />
+                            </UniformGrid>
+                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
+        <DataTemplate x:Key="UnitConversionTemplate" DataType="ViewModels:UnitConversionVM">
+            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
+                        <WrapPanel Margin="10"
+                                   HorizontalAlignment="Right"
+                                   DockPanel.Dock="Bottom">
+                            <Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
+                                    CommandParameter="0"
+                                    Content="{Loc txtProducts}">
+                            </Button>
+                        </WrapPanel>
+                    </Border>
+                    <DockPanel DockPanel.Dock="Top">
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
+        <!--..........................................................................................................-->
 
         <!-- Template Selectors -->
         <TemplateSelectors:SplitViewSubContentSelector x:Key="SubContentTemplateSelector"
                                                        UserSubContentTemplate="{StaticResource UsersSubContentPanel}"
                                                        ModuleSubContentPanel="{StaticResource ModulesSubContentPanel}"
                                                        OrganizationCalendarSubContentTemplate="{StaticResource OrganizationCalendarSubContentPanel}"
-                                                       
                                                        ProductSubContentTemplate="{StaticResource ProductsSubContentPanel}"
                                                        DefectionSubContentTemplate="{StaticResource DefectionsSubContentPanel}"
                                                        FpcSubContentTemplate="{StaticResource FpcSubContentPanel}"
                                                        OperatorSubContentTemplate="{StaticResource OperatorsSubContentPanel}"
                                                        CostSubContentTemplate="{StaticResource CostsSubContentPanel}"
-                                                        />
-
+                                                       UnitSubContentTemplate="{StaticResource UnitsSubContentPanel}"/>
         <!-- Main GridView and TreeView -->
         <DataTemplate x:Key="DataGridListTemplate">
             <DataGrid x:Name="dataGrid"
@@ -3702,6 +3927,7 @@
                                                  ReworkProductsTemplate="{StaticResource ReworkProductsTemplate}"
                                                  ActionPlanFishboneNodesTemplate="{StaticResource ActionPlanFishboneNodesTemplate}"
                                                  FishboneNodeActionPlansTemplate="{StaticResource FishboneNodeActionPlansTemplate}"
+                                                 RawMaterialUnitGroupsTemplate="{StaticResource RawMaterialUnitGroupsTemplate}"
                                                  />
     </UserControl.Resources>
     <Grid>
