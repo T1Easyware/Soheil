@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/12/2014 21:49:00
+-- Date Created: 08/22/2014 20:31:18
 -- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -341,8 +341,11 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_UnitGroupUnitSet]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UnitSets] DROP CONSTRAINT [FK_UnitGroupUnitSet];
 GO
-IF OBJECT_ID(N'[dbo].[FK_RawMaterialUnitGroup]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[UnitGroups] DROP CONSTRAINT [FK_RawMaterialUnitGroup];
+IF OBJECT_ID(N'[dbo].[FK_RawMaterialRawMaterialUnitGroup]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[RawMaterialUnitGroups] DROP CONSTRAINT [FK_RawMaterialRawMaterialUnitGroup];
+GO
+IF OBJECT_ID(N'[dbo].[FK_UnitGroupRawMaterialUnitGroup]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[RawMaterialUnitGroups] DROP CONSTRAINT [FK_UnitGroupRawMaterialUnitGroup];
 GO
 IF OBJECT_ID(N'[dbo].[FK_MachinePartRepair]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Repairs] DROP CONSTRAINT [FK_MachinePartRepair];
@@ -603,6 +606,9 @@ IF OBJECT_ID(N'[dbo].[UnitConversions]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[UnitGroups]', 'U') IS NOT NULL
     DROP TABLE [dbo].[UnitGroups];
+GO
+IF OBJECT_ID(N'[dbo].[RawMaterialUnitGroups]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[RawMaterialUnitGroups];
 GO
 IF OBJECT_ID(N'[dbo].[NonProductiveTasks_PM]', 'U') IS NOT NULL
     DROP TABLE [dbo].[NonProductiveTasks_PM];
@@ -1457,8 +1463,6 @@ CREATE TABLE [dbo].[MaintenanceReports] (
     [ModifiedBy] int  NOT NULL,
     [ModifiedDate] datetime  NOT NULL,
     [Code] nvarchar(max)  NOT NULL,
-    [ModifiedBy] int  NOT NULL,
-    [ModifiedDate] datetime  NOT NULL,
     [MachinePartMaintenance_Id] int  NOT NULL
 );
 GO

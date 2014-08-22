@@ -1390,8 +1390,6 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="ModifiedBy" Type="int" Nullable="false" />
-    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="MachinePartMaintenance_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Repairs">
@@ -5853,8 +5851,6 @@
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="Code" ColumnName="Code" />
-          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -6916,6 +6912,7 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
+      <Diagram Name="SoheilEdm" ZoomLevel="47" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="5.25" PointX="32.875" PointY="25" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="42.75" PointY="26" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="75.625" PointY="49.5" Height="1.5956835937499996" FillColor="110, 100, 50" />
