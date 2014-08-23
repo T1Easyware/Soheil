@@ -321,7 +321,6 @@
     <Resource Include="Images\Menus\userAccess.png" />
     <Resource Include="Images\Menus\users.png" />
     <Resource Include="Images\Menus\usersAccess.png" />
-    <Resource Include="Images\Menus\warehouse.png" />
     <Resource Include="Images\Menus\WorkingTime.png" />
   </ItemGroup>
   <ItemGroup>
@@ -671,6 +670,19 @@
     <Resource Include="Images\Menus\rawmaterial.png" />
     <Resource Include="Images\Menus\uc.png" />
     <Resource Include="Images\Menus\unit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\WarehouseIn.png" />
+    <Resource Include="Images\WarehouseOut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Menus\Warehouse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\WarehouseIn16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PP\StationOutput16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

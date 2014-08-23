@@ -6,6 +6,7 @@ using Soheil.Core.Interfaces;
 using Soheil.Dal;
 using Soheil.Model;
 using Soheil.Core.Base;
+using System.Collections.Generic;
 
 namespace Soheil.Core.DataServices
 {
@@ -84,6 +85,13 @@ namespace Soheil.Core.DataServices
 		}
 
         #endregion
-        
+
+
+		internal IEnumerable<Warehouse> GetActivesForPP()
+		{
+			return _warehouseRepository.Find(x => 
+				x.Status == (byte)Common.Status.Active
+				&& (x.HasWIP || x.HasFinalProduct));
+		}
 	}
 }

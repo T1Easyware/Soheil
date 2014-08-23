@@ -861,7 +861,7 @@
 
 						<!-- Activities headers -->
 						<DockPanel Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
-							<Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Height="20">
+							<Border DockPanel.Dock="Top" Width="{StaticResource StationOrActivityHeaderWidth}" HorizontalAlignment="Left" Height="45">
 								<TextBlock Text="گزارشهای ایستگاه" Foreground="Silver" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10"/>
 							</Border>
 
@@ -1154,201 +1154,6 @@
 							</ItemsControl.Template>
 						</ItemsControl>
 
-						<!-- Report system (+Exceptions Balloons) -->
-						<StackPanel Grid.Row="5" Grid.Column="1" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
-							<!-- TaskReport system -->
-							<ItemsControl ItemsSource="{Binding SelectedBlock.TaskList}" Height="20" ClipToBounds="True">
-								<ItemsControl.ItemTemplate>
-									<DataTemplate DataType="{x:Type vm:TaskVm}">
-										<Canvas>
-											<!-- Task range -->
-											<Border BorderBrush="Silver" BorderThickness="1,0,1,1" CornerRadius="0,0,3,3" Background="#0CC" 
-													x:Name="line" Height="15" Opacity="0.3" 
-													ToolTip="برای ایجاد گزارش بازه ای ایستگاه کلیک کنید">
-												<I:Interaction.Triggers>
-													<I:EventTrigger EventName="MouseDown">
-														<I:InvokeCommandAction Command="{Binding FillEmptySpacesCommand}"/>
-													</I:EventTrigger>
-												</I:Interaction.Triggers>
-												<Border.Triggers>
-													<EventTrigger RoutedEvent="MouseDown">
-														<BeginStoryboard>
-															<Storyboard Duration="0:0:0.2">
-																<DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0.1" To="1"/>
-															</Storyboard>
-														</BeginStoryboard>
-													</EventTrigger>
-													<EventTrigger RoutedEvent="MouseEnter">
-														<BeginStoryboard>
-															<Storyboard Duration="0:0:0.1">
-																<DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0.1" To="0.7"/>
-															</Storyboard>
-														</BeginStoryboard>
-													</EventTrigger>
-													<EventTrigger RoutedEvent="MouseLeave">
-														<BeginStoryboard>
-															<Storyboard Duration="0:0:0.2">
-																<DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.3"/>
-															</Storyboard>
-														</BeginStoryboard>
-													</EventTrigger>
-												</Border.Triggers>
-												<Border.Width>
-													<MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
-														<Binding Path="StartDateTime"/>
-														<Binding Path="EndDateTime"/>
-														<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-													</MultiBinding>
-												</Border.Width>
-												<Border.Margin>
-													<MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
-														<Binding Path="StartDateTime"/>
-														<Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
-													</MultiBinding>
-												</Border.Margin>
-											</Border>
-											<!-- TaskReports -->
-											<ItemsControl ItemsSource="{Binding TaskReports}">
-												<ItemsControl.ItemTemplate>
-													<DataTemplate DataType="{x:Type report:TaskReportVm}">
-														<!-- TaskReport range -->
-														<local:TaskReport 
-																DataContext="{Binding}"
-																TaskUI="{Binding ElementName=line}"
-																PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
-													</DataTemplate>
-												</ItemsControl.ItemTemplate>
-												<ItemsControl.ItemsPanel>
-													<ItemsPanelTemplate>
-														<Canvas/>
-													</ItemsPanelTemplate>
-												</ItemsControl.ItemsPanel>
-											</ItemsControl>
-										</Canvas>
-									</DataTemplate>
-								</ItemsControl.ItemTemplate>
-								<ItemsControl.Template>
-									<ControlTemplate>
-										<Canvas>
-											<ItemsPresenter>
-												<ItemsPresenter.Margin>
-													<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-														<Binding Path="HoursPassed"/>
-														<Binding Path="HourZoom"/>
-														<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-													</MultiBinding>
-												</ItemsPresenter.Margin>
-											</ItemsPresenter>
-										</Canvas>
-									</ControlTemplate>
-								</ItemsControl.Template>
-							</ItemsControl>
-
-							<!-- ProcessReport system -->
-							<Grid Margin="0,1,0,0">
-								<!-- RowsOfActivity -->
-								<ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ActivityList}">
-									<ItemsControl.Effect>
-										<DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
-									</ItemsControl.Effect>
-
-									<!-- = OneRowOfActivity ====== -->
-									<ItemsControl.ItemTemplate>
-										<DataTemplate DataType="{x:Type report:ActivityRowVm}">
-											<ItemsControl ItemsSource="{Binding SsaRowList}" MinHeight="42">
-												<ItemsControl.ItemTemplate>
-													<DataTemplate DataType="{x:Type report:SsaRowVm}">
-														<ItemsControl ItemsSource="{Binding ProcessList}">
-															<ItemsControl.ItemTemplate>
-																<DataTemplate DataType="{x:Type report:ProcessVm}">
-																	<Canvas>
-																		<local:Process DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
-																	</Canvas>
-																</DataTemplate>
-															</ItemsControl.ItemTemplate>
-															<ItemsControl.ItemsPanel>
-																<ItemsPanelTemplate>
-																	<Grid Height="{Binding RowsCount, Converter={StaticResource floatMultiplier}, ConverterParameter=42}"/>
-																</ItemsPanelTemplate>
-															</ItemsControl.ItemsPanel>
-														</ItemsControl>
-													</DataTemplate>
-												</ItemsControl.ItemTemplate>
-												<ItemsControl.ItemsPanel>
-													<ItemsPanelTemplate>
-														<StackPanel/>
-													</ItemsPanelTemplate>
-												</ItemsControl.ItemsPanel>
-											</ItemsControl>
-										</DataTemplate>
-									</ItemsControl.ItemTemplate>
-
-									<!--RowsOfActivity Template-->
-									<ItemsControl.Template>
-										<ControlTemplate>
-											<Grid ClipToBounds="True">
-												<ItemsPresenter>
-													<ItemsPresenter.Margin>
-														<MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
-															<Binding Path="HoursPassed"/>
-															<Binding Path="HourZoom"/>
-															<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-														</MultiBinding>
-													</ItemsPresenter.Margin>
-												</ItemsPresenter>
-											</Grid>
-										</ControlTemplate>
-									</ItemsControl.Template>
-
-								</ItemsControl>
-								<!--RowsOfActivity ExceptionTooltips-->
-								<ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ActivityList}" Margin="0,6,0,0">
-
-									<!-- = OneRowOfActivity Balloons ====== -->
-									<ItemsControl.ItemTemplate>
-										<DataTemplate DataType="{x:Type report:ActivityRowVm}">
-											<ItemsControl ItemsSource="{Binding SsaRowList}" 
-														Height="{Binding RowsCount, Converter={StaticResource floatMultiplier}, ConverterParameter=42}">
-												<ItemsControl.ItemTemplate>
-													<DataTemplate DataType="{x:Type report:SsaRowVm}">
-														<ItemsControl ItemsSource="{Binding ProcessList}" ItemTemplate="{StaticResource balloonTemplate}">
-															<ItemsControl.ItemsPanel>
-																<ItemsPanelTemplate>
-																	<Grid Height="{Binding RowsCount, Converter={StaticResource floatMultiplier}, ConverterParameter=42}"/>
-																</ItemsPanelTemplate>
-															</ItemsControl.ItemsPanel>
-														</ItemsControl>
-													</DataTemplate>
-												</ItemsControl.ItemTemplate>
-												<ItemsControl.ItemsPanel>
-													<ItemsPanelTemplate>
-														<StackPanel/>
-													</ItemsPanelTemplate>
-												</ItemsControl.ItemsPanel>
-											</ItemsControl>
-										</DataTemplate>
-									</ItemsControl.ItemTemplate>
-
-									<!--RowsOfActivity Template-->
-									<ItemsControl.Template>
-										<ControlTemplate>
-											<ItemsPresenter ClipToBounds="False">
-												<ItemsPresenter.Margin>
-													<MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
-														<Binding Path="HoursPassed"/>
-														<Binding Path="HourZoom"/>
-														<Binding Path="SelectedMonth.DaysFromStartOfYear"/>
-														<Binding Path="VerticalScreenOffset"/>
-													</MultiBinding>
-												</ItemsPresenter.Margin>
-											</ItemsPresenter>
-										</ControlTemplate>
-									</ItemsControl.Template>
-								</ItemsControl>
-							</Grid>
-
-						</StackPanel>
-
 						<!-- Blocks & NPTs -->
 						<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}">
 							<ItemsControl.Effect>
@@ -1411,7 +1216,202 @@
 							</ItemsControl.Template>
 						</ItemsControl>
 
-						<!-- Tasks,NPTs (Exceptions Balloons) -->
+                        <!-- Report system (+Exceptions Balloons) -->
+                        <StackPanel Grid.Row="5" Grid.Column="1" Visibility="{Binding SelectedBlock, Converter={StaticResource nullToInvisibilityConverter}}">
+                            <!-- TaskReport system -->
+                            <ItemsControl ItemsSource="{Binding SelectedBlock.TaskList}" Height="45" ClipToBounds="True">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:TaskVm}">
+                                        <Canvas>
+                                            <!-- Task range -->
+                                            <Border BorderBrush="Silver" BorderThickness="1,0,1,1" CornerRadius="0,0,3,3" Background="#0CC" 
+													x:Name="line" Height="15" Opacity="0.3" 
+													ToolTip="برای ایجاد گزارش بازه ای ایستگاه کلیک کنید">
+                                                <I:Interaction.Triggers>
+                                                    <I:EventTrigger EventName="MouseDown">
+                                                        <I:InvokeCommandAction Command="{Binding FillEmptySpacesCommand}"/>
+                                                    </I:EventTrigger>
+                                                </I:Interaction.Triggers>
+                                                <Border.Triggers>
+                                                    <EventTrigger RoutedEvent="MouseDown">
+                                                        <BeginStoryboard>
+                                                            <Storyboard Duration="0:0:0.2">
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0.1" To="1"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+                                                    <EventTrigger RoutedEvent="MouseEnter">
+                                                        <BeginStoryboard>
+                                                            <Storyboard Duration="0:0:0.1">
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0.1" To="0.7"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+                                                    <EventTrigger RoutedEvent="MouseLeave">
+                                                        <BeginStoryboard>
+                                                            <Storyboard Duration="0:0:0.2">
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0.2" To="0.3"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+                                                </Border.Triggers>
+                                                <Border.Width>
+                                                    <MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
+                                                        <Binding Path="StartDateTime"/>
+                                                        <Binding Path="EndDateTime"/>
+                                                        <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+                                                    </MultiBinding>
+                                                </Border.Width>
+                                                <Border.Margin>
+                                                    <MultiBinding Converter="{StaticResource ppTaskBorderMarginConverter}">
+                                                        <Binding Path="StartDateTime"/>
+                                                        <Binding ElementName="ppTable" Path="DataContext.HourZoom"/>
+                                                    </MultiBinding>
+                                                </Border.Margin>
+                                            </Border>
+                                            <!-- TaskReports -->
+                                            <ItemsControl ItemsSource="{Binding TaskReports}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type report:TaskReportVm}">
+                                                        <!-- TaskReport range -->
+                                                        <local:TaskReport 
+																DataContext="{Binding}"
+																TaskUI="{Binding ElementName=line}"
+																PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <Canvas/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </Canvas>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.Template>
+                                    <ControlTemplate>
+                                        <Canvas>
+                                            <ItemsPresenter>
+                                                <ItemsPresenter.Margin>
+                                                    <MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+                                                        <Binding Path="HoursPassed"/>
+                                                        <Binding Path="HourZoom"/>
+                                                        <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+                                                    </MultiBinding>
+                                                </ItemsPresenter.Margin>
+                                            </ItemsPresenter>
+                                        </Canvas>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                            </ItemsControl>
+
+                            <!-- ProcessReport system -->
+                            <Grid Margin="0,1,0,0">
+                                <!-- RowsOfActivity -->
+                                <ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ActivityList}">
+                                    <ItemsControl.Effect>
+                                        <DropShadowEffect Opacity="0.8" ShadowDepth="0"/>
+                                    </ItemsControl.Effect>
+
+                                    <!-- = OneRowOfActivity ====== -->
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type report:ActivityRowVm}">
+                                            <ItemsControl ItemsSource="{Binding SsaRowList}" MinHeight="42">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type report:SsaRowVm}">
+                                                        <ItemsControl ItemsSource="{Binding ProcessList}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate DataType="{x:Type report:ProcessVm}">
+                                                                    <Canvas>
+                                                                        <local:Process DataContext="{Binding}" PPTable="{Binding ElementName=ppTable, Path=DataContext}"/>
+                                                                    </Canvas>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <Grid Height="{Binding RowsCount, Converter={StaticResource floatMultiplier}, ConverterParameter=42}"/>
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                        </ItemsControl>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+
+                                    <!--RowsOfActivity Template-->
+                                    <ItemsControl.Template>
+                                        <ControlTemplate>
+                                            <Grid ClipToBounds="True">
+                                                <ItemsPresenter>
+                                                    <ItemsPresenter.Margin>
+                                                        <MultiBinding Converter="{StaticResource hoursPanelMarginConverter}">
+                                                            <Binding Path="HoursPassed"/>
+                                                            <Binding Path="HourZoom"/>
+                                                            <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+                                                        </MultiBinding>
+                                                    </ItemsPresenter.Margin>
+                                                </ItemsPresenter>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ItemsControl.Template>
+
+                                </ItemsControl>
+                                <!--RowsOfActivity ExceptionTooltips-->
+                                <ItemsControl ItemsSource="{Binding SelectedBlock.BlockReport.ActivityList}" Margin="0,6,0,0">
+
+                                    <!-- = OneRowOfActivity Balloons ====== -->
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type report:ActivityRowVm}">
+                                            <ItemsControl ItemsSource="{Binding SsaRowList}" 
+														Height="{Binding RowsCount, Converter={StaticResource floatMultiplier}, ConverterParameter=42}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type report:SsaRowVm}">
+                                                        <ItemsControl ItemsSource="{Binding ProcessList}" ItemTemplate="{StaticResource balloonTemplate}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <Grid Height="{Binding RowsCount, Converter={StaticResource floatMultiplier}, ConverterParameter=42}"/>
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                        </ItemsControl>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+
+                                    <!--RowsOfActivity Template-->
+                                    <ItemsControl.Template>
+                                        <ControlTemplate>
+                                            <ItemsPresenter ClipToBounds="False">
+                                                <ItemsPresenter.Margin>
+                                                    <MultiBinding Converter="{StaticResource mainPanelMarginConverter}">
+                                                        <Binding Path="HoursPassed"/>
+                                                        <Binding Path="HourZoom"/>
+                                                        <Binding Path="SelectedMonth.DaysFromStartOfYear"/>
+                                                        <Binding Path="VerticalScreenOffset"/>
+                                                    </MultiBinding>
+                                                </ItemsPresenter.Margin>
+                                            </ItemsPresenter>
+                                        </ControlTemplate>
+                                    </ItemsControl.Template>
+                                </ItemsControl>
+                            </Grid>
+
+                        </StackPanel>
+
+                        <!-- Tasks,NPTs (Exceptions Balloons) -->
 						<ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding PPItems}" ClipToBounds="False">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate DataType="{x:Type vm:StationVm}">

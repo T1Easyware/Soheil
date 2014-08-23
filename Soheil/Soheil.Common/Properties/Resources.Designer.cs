@@ -925,15 +925,6 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to موجودی قابل برداشت :.
-        /// </summary>
-        public static string txtAvailableInventory {
-            get {
-                return ResourceManager.GetString("txtAvailableInventory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to افزودن گزارش PM.
         /// </summary>
         public static string txtAddPMReport {
@@ -948,6 +939,15 @@ namespace Soheil.Common.Properties {
         public static string txtAddRepair {
             get {
                 return ResourceManager.GetString("txtAddRepair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to موجودی قابل برداشت :.
+        /// </summary>
+        public static string txtAvailableInventory {
+            get {
+                return ResourceManager.GetString("txtAvailableInventory", resourceCulture);
             }
         }
         
@@ -1546,7 +1546,7 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to حاوی WIP :.
+        ///   Looks up a localized string similar to حاوی محصول نیم ساخته :.
         /// </summary>
         public static string txtHasWIP {
             get {
@@ -2842,6 +2842,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to تعداد خروجی ایستگاه.
+        /// </summary>
+        public static string txtStationOutput {
+            get {
+                return ResourceManager.GetString("txtStationOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ایستگاه ها.
         /// </summary>
         public static string txtStations {
@@ -2928,6 +2937,15 @@ namespace Soheil.Common.Properties {
         public static string txtStorage {
             get {
                 return ResourceManager.GetString("txtStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to تعداد تحویل به انبار.
+        /// </summary>
+        public static string txtStoredCount {
+            get {
+                return ResourceManager.GetString("txtStoredCount", resourceCulture);
             }
         }
         
@@ -3229,15 +3247,6 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to انبارها.
-        /// </summary>
-        public static string txtWarehouses {
-            get {
-                return ResourceManager.GetString("txtWarehouses", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to مشاهده گزارشات PM.
         /// </summary>
         public static string txtViewPMReports {
@@ -3252,6 +3261,15 @@ namespace Soheil.Common.Properties {
         public static string txtViewRepairs {
             get {
                 return ResourceManager.GetString("txtViewRepairs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to انبارها.
+        /// </summary>
+        public static string txtWarehouses {
+            get {
+                return ResourceManager.GetString("txtWarehouses", resourceCulture);
             }
         }
         

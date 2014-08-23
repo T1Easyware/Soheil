@@ -170,7 +170,7 @@ namespace Soheil.Common
 		/// <returns></returns>
 		public static bool AreAllEqual<T, TKey>(this ICollection<T> collection, Func<T, TKey> selector)
 		{
-			if(collection.Count == null) return true;
+			if(collection.Count == 0) return true;
 			TKey val = selector(collection.First());
 			foreach (var item in collection)
 			{

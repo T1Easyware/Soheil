@@ -989,7 +989,7 @@
     <value>حاوی مواد خام :</value>
   </data>
   <data name="txtHasWIP" xml:space="preserve">
-    <value>حاوی WIP :</value>
+    <value>حاوی محصول نیم ساخته :</value>
   </data>
   <data name="txtLocation" xml:space="preserve">
     <value>مکان :</value>
@@ -1207,5 +1207,11 @@
   </data>
   <data name="txtConfirm" xml:space="preserve">
     <value>تایید شود؟</value>
+  </data>
+  <data name="txtStationOutput" xml:space="preserve">
+    <value>تعداد خروجی ایستگاه</value>
+  </data>
+  <data name="txtStoredCount" xml:space="preserve">
+    <value>تعداد تحویل به انبار</value>
   </data>
 </root>

@@ -37,13 +37,13 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual string Inventory
+        public virtual int Inventory
         {
             get;
             set;
         }
     
-        public virtual string SafetyStock
+        public virtual int SafetyStock
         {
             get;
             set;

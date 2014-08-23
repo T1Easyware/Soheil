@@ -67,6 +67,7 @@
     <Compile Include="DataServices\PM\MachinePartDataService.cs" />
     <Compile Include="DataServices\PM\RepairDataService.cs" />
     <Compile Include="DataServices\PM\ReportDataService.cs" />
+    <Compile Include="DataServices\Storage\WarehouseTransactionDataService.cs" />
     <Compile Include="Reports\PMReportData.cs" />
     <Compile Include="Reports\DailyStationPlanData.cs" />
     <Compile Include="Reports\DailyReportData.cs" />
@@ -176,6 +177,8 @@
     <Compile Include="ViewModels\PP\Report\RepairMachineVm.cs" />
     <Compile Include="ViewModels\PP\Report\RepairMachinePartVm.cs" />
     <Compile Include="ViewModels\PP\Report\RepairVm.cs" />
+    <Compile Include="ViewModels\PP\Report\WarehouseTransactionVm.cs" />
+    <Compile Include="ViewModels\PP\Report\WarehouseVm.cs" />
     <Compile Include="ViewModels\PP\TimingSet.cs" />
     <Compile Include="ViewModels\Reports\DailyStationPlanVm.cs" />
     <Compile Include="ViewModels\Reports\DailyReportVm.cs" />

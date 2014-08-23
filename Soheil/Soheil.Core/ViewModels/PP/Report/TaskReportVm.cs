@@ -48,6 +48,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 			StartDateTime = Model.ReportStartDateTime;
 			EndDateTime = Model.ReportEndDateTime;
 
+			WarehouseTransaction = new WarehouseTransactionVm(model);
+
 			_isInInitializingPhase = false;
 			IsUserDrag = false;
 
@@ -101,6 +103,17 @@ namespace Soheil.Core.ViewModels.PP.Report
 				vm.Model.TaskReportTargetPoint = (int)e.NewValue;
 				vm.Save();
 			}));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates WarehouseTransaction
+		/// </summary>
+		public WarehouseTransactionVm WarehouseTransaction
+		{
+			get { return (WarehouseTransactionVm)GetValue(WarehouseTransactionProperty); }
+			set { SetValue(WarehouseTransactionProperty, value); }
+		}
+		public static readonly DependencyProperty WarehouseTransactionProperty =
+			DependencyProperty.Register("WarehouseTransaction", typeof(WarehouseTransactionVm), typeof(TaskReportVm), new UIPropertyMetadata(null));
 
 
 		#region Start/End/Duration

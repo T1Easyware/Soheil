@@ -197,6 +197,13 @@ namespace Soheil.Core.ViewModels.PP
 						PPItems.Add(new StationVm { Text = stationModel.Name });
 					}
 
+					//Initialize warehouses
+					var warehouses = new DataServices.WarehouseDataService().GetActivesForPP();
+					foreach (var item in warehouses)
+					{
+						Warehouses.Add(new Report.WarehouseVm(item));
+					}
+
 					//Set advanced timeline components
 					SelectedMonth = Months[(int)currentDate.GetPersianMonth() - 1];
 					HoursPassed = currentDate.Subtract(SelectedMonth.Data).TotalHours;
@@ -476,7 +483,7 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		#endregion
 
-		#region Stations and their items
+		#region Warehouses, Stations and their items
 		/// <summary>
 		/// Gets bindable Number of active stations in PPTable
 		/// </summary>
@@ -498,6 +505,12 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty PPItemsProperty =
 			DependencyProperty.Register("PPItems", typeof(PPItemCollection), typeof(PPTableVm), new UIPropertyMetadata(null));
+
+		/// <summary>
+		/// Gets or sets a bindable collection of valid Warehouses
+		/// </summary>
+		public ObservableCollection<Report.WarehouseVm> Warehouses { get { return _warehouses; } }
+		private ObservableCollection<Report.WarehouseVm> _warehouses = new ObservableCollection<Report.WarehouseVm>();
 		#endregion
 
 		#region Report and Selected items

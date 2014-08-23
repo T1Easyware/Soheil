@@ -124,6 +124,36 @@ namespace Soheil.Model
             }
         }
         private RawMaterial _rawMaterial;
+    
+        public virtual ProductRework ProductRework
+        {
+            get { return _productRework; }
+            set
+            {
+                if (!ReferenceEquals(_productRework, value))
+                {
+                    var previousValue = _productRework;
+                    _productRework = value;
+                    FixupProductRework(previousValue);
+                }
+            }
+        }
+        private ProductRework _productRework;
+    
+        public virtual TaskReport TaskReport
+        {
+            get { return _taskReport; }
+            set
+            {
+                if (!ReferenceEquals(_taskReport, value))
+                {
+                    var previousValue = _taskReport;
+                    _taskReport = value;
+                    FixupTaskReport(previousValue);
+                }
+            }
+        }
+        private TaskReport _taskReport;
 
         #endregion
 
@@ -189,6 +219,38 @@ namespace Soheil.Model
                 if (!RawMaterial.WarehouseTransactions.Contains(this))
                 {
                     RawMaterial.WarehouseTransactions.Add(this);
+                }
+            }
+        }
+    
+        private void FixupProductRework(ProductRework previousValue)
+        {
+            if (previousValue != null && previousValue.WarehouseTransactions.Contains(this))
+            {
+                previousValue.WarehouseTransactions.Remove(this);
+            }
+    
+            if (ProductRework != null)
+            {
+                if (!ProductRework.WarehouseTransactions.Contains(this))
+                {
+                    ProductRework.WarehouseTransactions.Add(this);
+                }
+            }
+        }
+    
+        private void FixupTaskReport(TaskReport previousValue)
+        {
+            if (previousValue != null && previousValue.WarehouseTransactions.Contains(this))
+            {
+                previousValue.WarehouseTransactions.Remove(this);
+            }
+    
+            if (TaskReport != null)
+            {
+                if (!TaskReport.WarehouseTransactions.Contains(this))
+                {
+                    TaskReport.WarehouseTransactions.Add(this);
                 }
             }
         }

@@ -394,7 +394,22 @@ namespace Soheil.Controls.Converters.PP
 	}
 
 
+	public class PPTaskReportWidthConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return 0d;
+			var duration = (int)values[0];
+			var whole = (int)values[1];
+			var wholeWidth = (double)values[2];
+			return wholeWidth * duration / whole;
+		}
 
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
 	public class PPTaskBorderWidthConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

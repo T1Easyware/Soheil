@@ -90,7 +90,8 @@
 	<ppconv:PortionToStarConverter x:Key="portionToStarConverter"/>
 	<ppconv:TaskReportMargin x:Key="taskReportMargin"/>
 	<ppconv:TaskReportWidth x:Key="taskReportWidth"/>
-	<ppconv:PPTaskBorderWidthConverter x:Key="ppTaskBorderWidthConverter"/>
+    <ppconv:PPTaskReportWidthConverter x:Key="ppTaskReportWidthConverter"/>
+    <ppconv:PPTaskBorderWidthConverter x:Key="ppTaskBorderWidthConverter"/>
 	<ppconv:PPTaskBorderMarginConverter x:Key="ppTaskBorderMarginConverter"/>
 	<ppconv:PPBlockBorderMarginConverter x:Key="ppBlockBorderMarginConverter"/>
 	<ppconv:PPTaskBorderHeightConverter x:Key="ppTaskBorderHeightConverter"/>

@@ -1,0 +1,84 @@
+﻿using Soheil.Core.Base;
+using Soheil.Core.Interfaces;
+using Soheil.Model;
+using Soheil.Dal;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Soheil.Core.DataServices.Storage
+{
+	public class WarehouseTransactionDataService : DataServiceBase, IDataService<WarehouseTransaction>
+    {
+		private Repository<WarehouseTransaction> _repository;
+
+		public WarehouseTransactionDataService()
+			: this(new SoheilEdmContext())
+		{
+
+		}
+		public WarehouseTransactionDataService(SoheilEdmContext context)
+		{
+			this.Context = context;
+			_repository = new Repository<WarehouseTransaction>(Context);
+		}
+
+		#region IDataService
+		public WarehouseTransaction GetSingle(int id)
+		{
+			return _repository.Single(x=>x.Id == id);
+		}
+
+		public System.Collections.ObjectModel.ObservableCollection<WarehouseTransaction> GetAll()
+		{
+			return new System.Collections.ObjectModel.ObservableCollection<WarehouseTransaction>(_repository.GetAll());
+		}
+
+		public System.Collections.ObjectModel.ObservableCollection<WarehouseTransaction> GetActives()
+		{
+			throw new NotImplementedException();
+		}
+
+		public int AddModel(WarehouseTransaction model)
+		{
+			_repository.Add(model);
+			model.ModifiedBy = LoginInfo.Id;
+			model.RecordDateTime = DateTime.Now;
+
+			Context.Commit();
+			return model.Id;
+		}
+
+		public void UpdateModel(WarehouseTransaction model)
+		{
+			model.ModifiedBy = LoginInfo.Id;
+			model.RecordDateTime = DateTime.Now;
+
+			Context.Commit();
+		}
+
+		public void DeleteModel(WarehouseTransaction model)
+		{
+			if (model.WarehouseReceipt != null)
+				new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
+			_repository.Delete(model);
+
+			Context.Commit();
+		}
+
+		public void AttachModel(WarehouseTransaction model)
+		{
+			if (_repository.Exists(x => x.Id == model.Id))
+			{
+				UpdateModel(model);
+			}
+			else
+			{
+				AddModel(model);
+			}
+		} 
+		#endregion
+	}
+}

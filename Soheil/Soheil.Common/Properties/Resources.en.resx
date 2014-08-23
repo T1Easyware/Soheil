@@ -983,7 +983,7 @@
     <value>Contains Raw Material :</value>
   </data>
   <data name="txtHasWIP" xml:space="preserve">
-    <value>Contains WIP :</value>
+    <value>Contains Work-in-process Product :</value>
   </data>
   <data name="txtLocation" xml:space="preserve">
     <value>Location :</value>
@@ -1197,5 +1197,11 @@
   </data>
   <data name="txtConfirm" xml:space="preserve">
     <value>Confirm?</value>
+  </data>
+  <data name="txtStationOutput" xml:space="preserve">
+    <value>Station's output Count</value>
+  </data>
+  <data name="txtStoredCount" xml:space="preserve">
+    <value>Delivered to warehouse Count</value>
   </data>
 </root>

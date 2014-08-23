@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/22/2014 20:31:18
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 08/23/2014 18:31:10
+-- Generated from EDMX file: D:\Repo\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -349,6 +349,12 @@ IF OBJECT_ID(N'[dbo].[FK_UnitGroupRawMaterialUnitGroup]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_MachinePartRepair]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Repairs] DROP CONSTRAINT [FK_MachinePartRepair];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductReworkWarehouseTransaction]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_ProductReworkWarehouseTransaction];
+GO
+IF OBJECT_ID(N'[dbo].[FK_TaskReportWarehouseTransaction]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_TaskReportWarehouseTransaction];
 GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
@@ -962,6 +968,7 @@ CREATE TABLE [dbo].[ProductReworks] (
     [Name] nvarchar(max)  NOT NULL,
     [Status] tinyint  NOT NULL,
     [ModifiedBy] int  NOT NULL,
+    [Inventory] int  NOT NULL,
     [Product_Id] int  NOT NULL,
     [Rework_Id] int  NULL
 );
@@ -1493,7 +1500,9 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [Warehouse_Id] int  NOT NULL,
     [WarehouseReceipt_Id] int  NOT NULL,
     [Good_Id] int  NULL,
-    [RawMaterial_Id] int  NULL
+    [RawMaterial_Id] int  NULL,
+    [ProductRework_Id] int  NULL,
+    [TaskReport_Id] int  NULL
 );
 GO
 
@@ -1533,8 +1542,8 @@ CREATE TABLE [dbo].[Goods1] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
     [Code] nvarchar(max)  NOT NULL,
-    [Inventory] nvarchar(max)  NOT NULL,
-    [SafetyStock] nvarchar(max)  NOT NULL,
+    [Inventory] int  NOT NULL,
+    [SafetyStock] int  NOT NULL,
     [CreatedDate] datetime  NOT NULL,
     [ModifiedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
@@ -3692,6 +3701,34 @@ ADD CONSTRAINT [FK_MachinePartRepair]
 CREATE INDEX [IX_FK_MachinePartRepair]
 ON [dbo].[Repairs]
     ([MachinePart_Id]);
+GO
+
+-- Creating foreign key on [ProductRework_Id] in table 'WarehouseTransactions'
+ALTER TABLE [dbo].[WarehouseTransactions]
+ADD CONSTRAINT [FK_ProductReworkWarehouseTransaction]
+    FOREIGN KEY ([ProductRework_Id])
+    REFERENCES [dbo].[ProductReworks]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ProductReworkWarehouseTransaction'
+CREATE INDEX [IX_FK_ProductReworkWarehouseTransaction]
+ON [dbo].[WarehouseTransactions]
+    ([ProductRework_Id]);
+GO
+
+-- Creating foreign key on [TaskReport_Id] in table 'WarehouseTransactions'
+ALTER TABLE [dbo].[WarehouseTransactions]
+ADD CONSTRAINT [FK_TaskReportWarehouseTransaction]
+    FOREIGN KEY ([TaskReport_Id])
+    REFERENCES [dbo].[TaskReports]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TaskReportWarehouseTransaction'
+CREATE INDEX [IX_FK_TaskReportWarehouseTransaction]
+ON [dbo].[WarehouseTransactions]
+    ([TaskReport_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'
