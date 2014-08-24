@@ -46,8 +46,8 @@ namespace Soheil.Core.DataServices.Storage
 			_repository.Add(model);
 			model.ModifiedBy = LoginInfo.Id;
 			model.RecordDateTime = DateTime.Now;
-
-			Context.Commit();
+			if (model.Warehouse != null)
+				Context.Commit();
 			return model.Id;
 		}
 
@@ -63,9 +63,12 @@ namespace Soheil.Core.DataServices.Storage
 		{
 			if (model.WarehouseReceipt != null)
 				new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
+			bool flag = model.Warehouse != null;
+			model.TaskReport.WarehouseTransactions.Remove(model);
 			_repository.Delete(model);
 
-			Context.Commit();
+			if (flag)
+				Context.Commit();
 		}
 
 		public void AttachModel(WarehouseTransaction model)

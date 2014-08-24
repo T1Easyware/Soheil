@@ -254,7 +254,7 @@ namespace Soheil.Core.DataServices
 		}
 
 
-		internal Core.Reports.DailyReportData GetDailyReport(DateTime StartDateTime, DateTime EndDateTime)
+		internal Core.Reports.DailyReportData GetDailyReport(DateTime StartDateTime, DateTime EndDateTime, bool showAllActivities)
 		{
 			var data = new Core.Reports.DailyReportData();
 
@@ -272,7 +272,9 @@ namespace Soheil.Core.DataServices
 				var processReports = _processReportRepository.GetAll();
 				//main query (with shift)
 				var prQuery = from shift in shifts
-							  from processReport in processReports.Where(x=>x.StartDateTime < shift.end && x.EndDateTime > shift.start)
+							  from processReport in processReports.Where(x=>
+								  x.StartDateTime < shift.end && x.EndDateTime > shift.start 
+								  && (showAllActivities||x.Process.StateStationActivity.IsPrimaryOutput))
 							  let start = (processReport.StartDateTime < shift.start) ? shift.start : processReport.StartDateTime
 							  let end = (processReport.EndDateTime > shift.end) ? shift.end : processReport.EndDateTime
 							  let durationSeconds = (end - start).TotalSeconds

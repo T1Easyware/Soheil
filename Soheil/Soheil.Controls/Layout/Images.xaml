@@ -28,12 +28,16 @@
 		<Setter Property="FlowDirection" Value="RightToLeft"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
-	<Style x:Key="Play24Image" TargetType="Image">
-		<Setter Property="Source" Value="/Soheil.Controls;component/Images/play.png"/>
-		<Setter Property="Width" Value="24"/>
-	</Style>
+    <Style x:Key="Play24Image" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/play.png"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+    <Style x:Key="Auto24Image" TargetType="Image">
+        <Setter Property="Source" Value="/Soheil.Controls;component/Images/Auto.png"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
 
-	<Style x:Key="Add16Image" TargetType="Image">
+    <Style x:Key="Add16Image" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Add16.png"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>

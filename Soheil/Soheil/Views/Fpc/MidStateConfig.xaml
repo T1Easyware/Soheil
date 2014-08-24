@@ -87,15 +87,31 @@
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
 				</Grid.RowDefinitions>
 				<TextBlock Margin="4" Text="زمان سیکل(ثانیه)"/>
 				<TextBox Margin="2" IsReadOnly="{Binding IsFixed}" Text="{Binding CycleTime, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
-					<TextBlock Margin="4" Text="نفر ساعت" Grid.Row="1"/>
+				<TextBlock Margin="4" Text="نفر ساعت" Grid.Row="1"/>
 				<TextBox Margin="2" IsReadOnly="{Binding IsFixed}" Text="{Binding ManHour, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
-				<CheckBox Margin="4" Grid.Row="4" Grid.ColumnSpan="2" Content="{Loc txtIsMany}" IsChecked="{Binding IsMany}" IsEnabled="{Binding IsFixed, Converter={StaticResource inverter}}"/>
-			</Grid>
+                <CheckBox Margin="4" Grid.Row="2" Grid.ColumnSpan="2" Content="{Loc txtIsMany}" IsChecked="{Binding IsMany}" IsEnabled="{Binding IsFixed, Converter={StaticResource inverter}}">
+                    <CheckBox.ToolTip>
+                        <StackPanel FlowDirection="{Loc enumDirection}" MaxWidth="400">
+                            <TextBlock Text="{Loc txtIsManyInfo}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </CheckBox.ToolTip>
+                </CheckBox>
+                <CheckBox Margin="4" Grid.Row="3" Grid.ColumnSpan="2" Content="{Loc txtIsPrimaryOutput}" IsChecked="{Binding IsPrimaryOutput}" IsEnabled="{Binding IsFixed, Converter={StaticResource inverter}}" ToolTipService.ShowDuration="50000">
+                    <CheckBox.ToolTip>
+                        <StackPanel FlowDirection="{Loc enumDirection}" MaxWidth="400">
+                            <TextBlock Text="{Loc txtIsPrimaryOutput1}" TextWrapping="Wrap" Margin="0,2"/>
+                            <TextBlock Text="{Loc txtIsPrimaryOutput2}" TextWrapping="Wrap" Margin="0,2"/>
+                            <TextBlock Text="{Loc txtIsPrimaryOutput3}" TextWrapping="Wrap" Margin="0,2" FontStyle="Italic"/>
+                        </StackPanel>
+                    </CheckBox.ToolTip>
+                </CheckBox>
+            </Grid>
 		</StackPanel>
 	</DataTemplate>
 	<DataTemplate x:Key="machineSubItemTemplate" DataType="{x:Type vm:StateStationActivityMachineVm}">

@@ -943,6 +943,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to اِعمال.
+        /// </summary>
+        public static string txtApply {
+            get {
+                return ResourceManager.GetString("txtApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to موجودی قابل برداشت :.
         /// </summary>
         public static string txtAvailableInventory {
@@ -1663,11 +1672,20 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to بیش از یکبار قابل استفاده است.
+        ///   Looks up a localized string similar to متعدد است.
         /// </summary>
         public static string txtIsMany {
             get {
                 return ResourceManager.GetString("txtIsMany", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to آیا این آیتم فعالیت (با همین نفرساعت و زمان سیکل) می تواند چندین بار در همین ایستگاه استفاده شود؟.
+        /// </summary>
+        public static string txtIsManyInfo {
+            get {
+                return ResourceManager.GetString("txtIsManyInfo", resourceCulture);
             }
         }
         
@@ -1695,6 +1713,42 @@ namespace Soheil.Common.Properties {
         public static string txtIsPMPerformed {
             get {
                 return ResourceManager.GetString("txtIsPMPerformed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to فعالیت اصلی ایستگاه.
+        /// </summary>
+        public static string txtIsPrimaryOutput {
+            get {
+                return ResourceManager.GetString("txtIsPrimaryOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to آیا در گزارش روزانه، این فعالیت دیده شود؟.
+        /// </summary>
+        public static string txtIsPrimaryOutput1 {
+            get {
+                return ResourceManager.GetString("txtIsPrimaryOutput1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to آیا مقدار هدف ایستگاه معمولا برابر با مقدار هدف این فعالیت است؟.
+        /// </summary>
+        public static string txtIsPrimaryOutput2 {
+            get {
+                return ResourceManager.GetString("txtIsPrimaryOutput2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to اگر چند فعالیت خروجی اصلی باشند، کمترین مقدار هدف غیرصفر به عنوان خروجی ایستگاه منظور می شود.
+        /// </summary>
+        public static string txtIsPrimaryOutput3 {
+            get {
+                return ResourceManager.GetString("txtIsPrimaryOutput3", resourceCulture);
             }
         }
         
@@ -2671,6 +2725,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to تحویل به انبار.
+        /// </summary>
+        public static string txtSendToWarehouse {
+            get {
+                return ResourceManager.GetString("txtSendToWarehouse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تنظیمات.
         /// </summary>
         public static string txtSettings {
@@ -2721,6 +2784,24 @@ namespace Soheil.Common.Properties {
         public static string txtShiftsInfo {
             get {
                 return ResourceManager.GetString("txtShiftsInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to همه فعالیتها.
+        /// </summary>
+        public static string txtShowAllActivities {
+            get {
+                return ResourceManager.GetString("txtShowAllActivities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to نمایش تمام فعالیتها (بجای نمایش فقط فعالیتهای اصلی هر ایستگاه).
+        /// </summary>
+        public static string txtShowAllActivitiesInfo {
+            get {
+                return ResourceManager.GetString("txtShowAllActivitiesInfo", resourceCulture);
             }
         }
         

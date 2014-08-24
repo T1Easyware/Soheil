@@ -44,7 +44,7 @@
 							<TextBlock Text="{Loc PPE_TaskTP}" FontSize="14" FontWeight="Bold" Foreground="White"/>
 							<Grid MinWidth="60" Margin="5,0">
 								<!-- TP -->
-								<TextBox Grid.Column="0" Text="{Binding BlockTargetPoint, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Loc PPE_TaskTP}" TextAlignment="Right" VerticalAlignment="Center"/>
+								<TextBox Grid.Column="0" Text="{Binding BlockTargetPoint, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Loc PPE_TaskTP}" TextAlignment="Right" VerticalAlignment="Center" PreviewTextInput="TextBox_PreviewTextInput" TextChanged="TextBox_TextChanged"/>
 								<Image Style="{StaticResource TargetPointImage}" Margin="4,0" HorizontalAlignment="Left" IsHitTestVisible="False"/>
 							</Grid>
 						</WrapPanel>
@@ -129,7 +129,7 @@
 							</WrapPanel>
 						</ToggleButton>
 					</Grid>
-					<Grid DockPanel.Dock="Top">
+                    <Grid DockPanel.Dock="Top" ToolTip="{Loc PPE_SameStartTimeForActivities}" Background="Transparent">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="60"/>
 							<ColumnDefinition Width="*"/>
@@ -144,25 +144,25 @@
 						</WrapPanel>
 						<Button Margin="0,1" Grid.Column="2" Content="{Loc txtToday}" Command="{Binding SelectTodayCommand}" Style="{StaticResource Button3DTextStyle}"/>
 						<Button Margin="0,1" Grid.Column="3" Content="{Loc txtAdd1Day}" Command="{Binding SelectTomorrowCommand}" Style="{StaticResource Button3DTextStyle}"/>
-						<Button Command="{Binding SetStartForAllCommand}" Grid.Column="4" ToolTip="{Loc PPE_SameStartTimeForActivities}">
-							<Image Style="{StaticResource PPE_SetStart}"/>
+                        <Button Command="{Binding SetStartForAllCommand}" Grid.Column="4" ToolTip="{Loc txtApply}">
+                            <Image Style="{StaticResource PPE_SetStart}"/>
 						</Button>
 					</Grid>
 					<Grid DockPanel.Dock="Top">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="60"/>
 							<ColumnDefinition Width="60"/>
-							<ColumnDefinition Width="60"/>
-						</Grid.ColumnDefinitions>
-						<TextBlock Text="تغییر شروع:" Grid.Column="0" VerticalAlignment="Center"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="تغییر شروع:" Grid.Column="0" VerticalAlignment="Center"/>
 						<CustomControls:DurationBox Time="{Binding StartOffsetForAll, Mode=TwoWay}" Grid.Column="1" Margin="5,0"/>
 						<Button Command="{Binding SetOffsetForAllCommand}" ToolTip="{Loc PPE_SameStartOffsetForActivities}" Grid.Column="3">
-							<Image Style="{StaticResource PPE_SetOffset}"/>
+                                <Image Style="{StaticResource PPE_SetOffset}"/>
 						</Button>
 						<Button Command="{Binding SetOffsetForAllCommand}" CommandParameter="-" ToolTip="{Loc PPE_SameStartOffsetForActivitiesNegative}" Grid.Column="4">
-							<Image Style="{StaticResource PPE_SetOffset}" FlowDirection="RightToLeft"/>
+                                <Image Style="{StaticResource PPE_SetOffset}" FlowDirection="RightToLeft"/>
 						</Button>
 					</Grid>
 					<!-- Activity List -->

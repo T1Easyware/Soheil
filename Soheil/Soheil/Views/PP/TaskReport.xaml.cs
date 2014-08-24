@@ -141,5 +141,12 @@ namespace Soheil.Views.PP
 		{
 			openPopup(null);
 		}
+
+		private void CreateTransactionButton_Click(object sender, RoutedEventArgs e)
+		{
+			transactionPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+			transactionPopup.PlacementTarget = sender as UIElement;
+			openPopup(transactionPopup);
+		}
 	}
 }

@@ -800,7 +800,7 @@
     <value>ایستگاه</value>
   </data>
   <data name="txtIsMany" xml:space="preserve">
-    <value>بیش از یکبار قابل استفاده است</value>
+    <value>متعدد است</value>
   </data>
   <data name="txtOperatorsCount" xml:space="preserve">
     <value>تعداد اپراتورها</value>
@@ -1213,5 +1213,32 @@
   </data>
   <data name="txtStoredCount" xml:space="preserve">
     <value>تعداد تحویل به انبار</value>
+  </data>
+  <data name="txtApply" xml:space="preserve">
+    <value>اِعمال</value>
+  </data>
+  <data name="txtIsManyInfo" xml:space="preserve">
+    <value>آیا این آیتم فعالیت (با همین نفرساعت و زمان سیکل) می تواند چندین بار در همین ایستگاه استفاده شود؟</value>
+  </data>
+  <data name="txtIsPrimaryOutput" xml:space="preserve">
+    <value>فعالیت اصلی ایستگاه</value>
+  </data>
+  <data name="txtIsPrimaryOutput1" xml:space="preserve">
+    <value>آیا در گزارش روزانه، این فعالیت دیده شود؟</value>
+  </data>
+  <data name="txtIsPrimaryOutput2" xml:space="preserve">
+    <value>آیا مقدار هدف ایستگاه معمولا برابر با مقدار هدف این فعالیت است؟</value>
+  </data>
+  <data name="txtIsPrimaryOutput3" xml:space="preserve">
+    <value>اگر چند فعالیت خروجی اصلی باشند، کمترین مقدار هدف غیرصفر به عنوان خروجی ایستگاه منظور می شود</value>
+  </data>
+  <data name="txtSendToWarehouse" xml:space="preserve">
+    <value>تحویل به انبار</value>
+  </data>
+  <data name="txtShowAllActivities" xml:space="preserve">
+    <value>همه فعالیتها</value>
+  </data>
+  <data name="txtShowAllActivitiesInfo" xml:space="preserve">
+    <value>نمایش تمام فعالیتها (بجای نمایش فقط فعالیتهای اصلی هر ایستگاه)</value>
   </data>
 </root>

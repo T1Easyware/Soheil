@@ -127,6 +127,7 @@ namespace Soheil.Core.ViewModels.Fpc
 						ManHour = ssa.ManHour,
 						CycleTime = ssa.CycleTime,
 						IsMany = ssa.IsMany,
+						IsPrimaryOutput = ssa.IsPrimaryOutput,
 						Containment = new ActivityVm(ssa.Activity, null),
 						//CreatedDate
 						//ModifiedBy

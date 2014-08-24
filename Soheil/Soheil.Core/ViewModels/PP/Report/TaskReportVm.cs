@@ -1,6 +1,7 @@
 ﻿﻿using Soheil.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -48,7 +49,19 @@ namespace Soheil.Core.ViewModels.PP.Report
 			StartDateTime = Model.ReportStartDateTime;
 			EndDateTime = Model.ReportEndDateTime;
 
-			WarehouseTransaction = new WarehouseTransactionVm(model);
+			//Initialize warehouses
+			var warehouses = new DataServices.WarehouseDataService().GetActivesForPP();
+			foreach (var item in warehouses)
+			{
+				Warehouses.Add(new Report.WarehouseVm(item));
+			}
+			if (model.WarehouseTransactions.Any())
+			{
+				WarehouseTransaction = new WarehouseTransactionVm(model.WarehouseTransactions.First(), Warehouses, UOW);
+			}
+			else
+			{
+			}
 
 			_isInInitializingPhase = false;
 			IsUserDrag = false;
@@ -114,6 +127,11 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty WarehouseTransactionProperty =
 			DependencyProperty.Register("WarehouseTransaction", typeof(WarehouseTransactionVm), typeof(TaskReportVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable collection of valid Warehouses
+		/// </summary>
+		public ObservableCollection<Report.WarehouseVm> Warehouses { get { return _warehouses; } }
+		private ObservableCollection<Report.WarehouseVm> _warehouses = new ObservableCollection<Report.WarehouseVm>();
 
 
 		#region Start/End/Duration
@@ -342,6 +360,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 				else
 					TargetPoint = (int)Math.Round(DurationSeconds * remainingTp / (float)remainingDur);
 			});
+			AutoG1Command = new Commands.Command(o =>
+			{
+				ProducedG1 = _taskReportDataService.GuessG1(Model);
+			}, ()=>Model.Id > 0/*task model must be saved before calc*/);
+			CreateTransactionCommand = new Commands.Command(o =>
+			{
+				WarehouseTransaction = new WarehouseTransactionVm(Model, UOW);
+			}, ()=>Warehouses.Any());
 		}
 
 		/// <summary>
@@ -386,6 +412,26 @@ namespace Soheil.Core.ViewModels.PP.Report
 		public static readonly DependencyProperty AutoDurationCommandProperty =
 			DependencyProperty.Register("AutoDurationCommand", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
 
+		/// <summary>
+		/// Gets or sets a bindable value that indicates AutoG1Command
+		/// </summary>
+		public Commands.Command AutoG1Command
+		{
+			get { return (Commands.Command)GetValue(AutoG1CommandProperty); }
+			set { SetValue(AutoG1CommandProperty, value); }
+		}
+		public static readonly DependencyProperty AutoG1CommandProperty =
+			DependencyProperty.Register("AutoG1Command", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates CreateTransactionCommand
+		/// </summary>
+		public Commands.Command CreateTransactionCommand
+		{
+			get { return (Commands.Command)GetValue(CreateTransactionCommandProperty); }
+			set { SetValue(CreateTransactionCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CreateTransactionCommandProperty =
+			DependencyProperty.Register("CreateTransactionCommand", typeof(Commands.Command), typeof(TaskReportVm), new UIPropertyMetadata(null));
 		#endregion
 	}
 }

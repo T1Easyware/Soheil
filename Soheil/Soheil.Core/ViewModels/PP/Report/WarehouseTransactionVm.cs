@@ -10,10 +10,17 @@ namespace Soheil.Core.ViewModels.PP.Report
 	public class WarehouseTransactionVm : DependencyObject
 	{
 		bool _isInInitializingPhase = true;
+		DataServices.Storage.WarehouseTransactionDataService _dataService;
 		public Model.WarehouseTransaction Model { get; private set; }
+		public Dal.SoheilEdmContext UOW { get; protected set; }
 
-		public WarehouseTransactionVm(Model.TaskReport model)
+		public WarehouseTransactionVm(Model.TaskReport model, Dal.SoheilEdmContext uow)
 		{
+			//DataService
+			UOW = uow;
+			_dataService = new DataServices.Storage.WarehouseTransactionDataService(uow);
+
+			//Model
 			Model = new Soheil.Model.WarehouseTransaction
 			{
 				Code = model.Code,
@@ -23,23 +30,44 @@ namespace Soheil.Core.ViewModels.PP.Report
 				TransactionDateTime = model.ReportEndDateTime,
 				TransactionType = 0,
 			};
+			model.WarehouseTransactions.Add(Model);
+			_dataService.AddModel(Model);
+
+			//VM
 			Code = Model.Code;
 			Quantity = (int)Model.Quantity;
 			TransactionDate = Model.TransactionDateTime.Date;
 			TransactionTime = Model.TransactionDateTime.TimeOfDay;
 
+			initializeCommands();
 			_isInInitializingPhase = false;
 		}
-		public WarehouseTransactionVm(Model.WarehouseTransaction model, IEnumerable<WarehouseVm> all)
+		public WarehouseTransactionVm(Model.WarehouseTransaction model, IEnumerable<WarehouseVm> all, Dal.SoheilEdmContext uow)
 		{
+			//DataService
+			UOW = uow;
+			_dataService = new DataServices.Storage.WarehouseTransactionDataService(uow);
+
+			//Model
 			Model = model;
+			
+			//VM
 			Code = model.Code;
 			Quantity = (int)model.Quantity;
 			TransactionDate = model.TransactionDateTime.Date;
 			TransactionTime = model.TransactionDateTime.TimeOfDay;
 			Warehouse = all.FirstOrDefault(x => x.Model.Id == model.Id);
 
+			initializeCommands();
 			_isInInitializingPhase = false;
+		}
+
+		void initializeCommands()
+		{
+			DeleteCommand = new Commands.Command(o =>
+			{
+				_dataService.DeleteModel(Model);
+			});
 		}
 
 		/// <summary>
@@ -131,5 +159,16 @@ namespace Soheil.Core.ViewModels.PP.Report
 				var val = (TimeSpan)e.NewValue;
 				vm.Model.TransactionDateTime = vm.TransactionDate.Add(val);
 			}));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DeleteCommand
+		/// </summary>
+		public Commands.Command DeleteCommand
+		{
+			get { return (Commands.Command)GetValue(DeleteCommandProperty); }
+			set { SetValue(DeleteCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DeleteCommandProperty =
+			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(WarehouseTransactionVm), new UIPropertyMetadata(null));
 	}
 }

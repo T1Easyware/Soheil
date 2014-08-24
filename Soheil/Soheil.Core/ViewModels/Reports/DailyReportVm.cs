@@ -192,6 +192,16 @@ namespace Soheil.Core.ViewModels.Reports
 		public static readonly DependencyProperty IsOneDayProperty =
 			DependencyProperty.Register("IsOneDay", typeof(bool), typeof(DailyReportVm), new UIPropertyMetadata(true));
 		/// <summary>
+		/// Gets or sets a bindable value that indicates ShowAllActivities
+		/// </summary>
+		public bool ShowAllActivities
+		{
+			get { return (bool)GetValue(ShowAllActivitiesProperty); }
+			set { SetValue(ShowAllActivitiesProperty, value); }
+		}
+		public static readonly DependencyProperty ShowAllActivitiesProperty =
+			DependencyProperty.Register("ShowAllActivities", typeof(bool), typeof(DailyReportVm), new UIPropertyMetadata(false));
+		/// <summary>
 		/// Gets or sets a bindable value that indicates Description
 		/// </summary>
 		public string Description
@@ -238,7 +248,7 @@ namespace Soheil.Core.ViewModels.Reports
 		{
 			#region Init
 			var dataService = new DataServices.ProcessReportDataService();
-			_reports = dataService.GetDailyReport(StartDateTime, EndDateTime);
+			_reports = dataService.GetDailyReport(StartDateTime, EndDateTime, ShowAllActivities);
 			_reportData = new ReportData();
 
 			var reportDocument = new Soheil.Core.Printing.ReportDocument();

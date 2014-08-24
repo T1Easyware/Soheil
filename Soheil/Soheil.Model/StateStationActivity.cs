@@ -50,6 +50,12 @@ namespace Soheil.Model
             set { _isInJob = value; }
         }
         private bool _isInJob = true;
+    
+        public virtual bool IsPrimaryOutput
+        {
+            get;
+            set;
+        }
 
         #endregion
 

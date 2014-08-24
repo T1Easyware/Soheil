@@ -40,7 +40,14 @@
 				<TextBlock Text="{Loc txtShiftsInfo}" VerticalAlignment="Center"/>
 			</WrapPanel>
 		</ToggleButton>
-		<Button Command="{Binding RefreshCommand}" Padding="10,0" ToolBar.OverflowMode="Never" MinWidth="120" VerticalAlignment="Stretch" Margin="2,0">
+
+        <ToggleButton IsChecked="{Binding ShowAllActivities}" Padding="5,0" ToolBar.OverflowMode="Never" VerticalAlignment="Stretch" Margin="2,0">
+            <WrapPanel>
+                <Image Style="{StaticResource ActivityImage}" Width="24"/>
+                <TextBlock Text="{Loc txtShowAllActivities}" VerticalAlignment="Center" ToolTip="{Loc txtShowAllActivitiesInfo}"/>
+            </WrapPanel>
+        </ToggleButton>
+        <Button Command="{Binding RefreshCommand}" Padding="10,0" ToolBar.OverflowMode="Never" MinWidth="120" VerticalAlignment="Stretch" Margin="2,0">
 			<WrapPanel>
 				<Image Style="{StaticResource Play24Image}"/>
 				<TextBlock Text="{Loc txtBuildReport}" VerticalAlignment="Center"/>

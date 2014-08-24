@@ -1204,4 +1204,31 @@
   <data name="txtStoredCount" xml:space="preserve">
     <value>Delivered to warehouse Count</value>
   </data>
+  <data name="txtApply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="txtIsManyInfo" xml:space="preserve">
+    <value>Can this Activity item (with the same ManHour and CycleTime) be used multiple times in this Station?</value>
+  </data>
+  <data name="txtIsPrimaryOutput" xml:space="preserve">
+    <value>Is Primary Activity</value>
+  </data>
+  <data name="txtIsPrimaryOutput1" xml:space="preserve">
+    <value>Should this Activity be visible in Daily report?</value>
+  </data>
+  <data name="txtIsPrimaryOutput2" xml:space="preserve">
+    <value>Is this Station's target point is usually equal to this Activity's target point?</value>
+  </data>
+  <data name="txtIsPrimaryOutput3" xml:space="preserve">
+    <value>If more than one Activity is marked as the Primary Output, the smallest non-zero target point of primary activities is considered as the Station's target point</value>
+  </data>
+  <data name="txtSendToWarehouse" xml:space="preserve">
+    <value>Deliver to Warehouse</value>
+  </data>
+  <data name="txtShowAllActivities" xml:space="preserve">
+    <value>All Activities</value>
+  </data>
+  <data name="txtShowAllActivitiesInfo" xml:space="preserve">
+    <value>Show all activities (Not only primary activities of each station)</value>
+  </data>
 </root>

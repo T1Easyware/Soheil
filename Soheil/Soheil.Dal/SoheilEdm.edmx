@@ -1000,6 +1000,7 @@
     <Property Name="ManHour" Type="real" Nullable="false" />
     <Property Name="IsMany" Type="bit" Nullable="false" DefaultValue="true" />
     <Property Name="IsInJob" Type="bit" Nullable="false" DefaultValue="true" />
+    <Property Name="IsPrimaryOutput" Type="bit" Nullable="false" />
     <Property Name="StateStation_Id" Type="int" Nullable="false" />
     <Property Name="Activity_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -4099,6 +4100,7 @@
           <Property Name="IsInJob" Type="Boolean" Nullable="false" DefaultValue="True" />
           <NavigationProperty Name="OutExternalConnectors" Relationship="SoheilEdm.StateStationActivityExternalConnector" FromRole="StateStationActivity" ToRole="ExternalConnector" />
           <NavigationProperty Name="InExternalConnectors" Relationship="SoheilEdm.StateStationActivityExternalConnector1" FromRole="StateStationActivity" ToRole="ExternalConnector" />
+          <Property Name="IsPrimaryOutput" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="StateStationActivityMachine">
           <Key>
@@ -5505,6 +5507,7 @@
           <ScalarProperty Name="ManHour" ColumnName="ManHour" />
           <ScalarProperty Name="IsMany" ColumnName="IsMany" />
           <ScalarProperty Name="IsInJob" ColumnName="IsInJob" />
+          <ScalarProperty Name="IsPrimaryOutput" ColumnName="IsPrimaryOutput" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

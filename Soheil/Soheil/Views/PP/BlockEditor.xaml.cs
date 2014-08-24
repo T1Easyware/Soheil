@@ -24,5 +24,16 @@ namespace Soheil.Views.PP
 		{
 			InitializeComponent();
 		}
+
+		private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			(DataContext as Soheil.Core.ViewModels.PP.Editor.BlockEditorVm).DontUpdateBlockTargetPoint = true;
+		}
+
+		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if(string.IsNullOrWhiteSpace((sender as TextBox).Text))
+				(DataContext as Soheil.Core.ViewModels.PP.Editor.BlockEditorVm).DontUpdateBlockTargetPoint = false;
+		}
 	}
 }

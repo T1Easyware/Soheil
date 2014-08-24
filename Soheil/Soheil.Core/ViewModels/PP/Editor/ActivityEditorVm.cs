@@ -25,6 +25,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		public event Action<ProcessEditorVm, ChoiceEditorVm> SelectedChoiceChanged;
 		public Func<DateTime> GetTaskStart;
+		public Action<int> BlockTargetPointChangeDemanded;
 		public ActivityEditorVm(
 			Model.Task task, 
 			Dal.SoheilEdmContext uow,
@@ -58,7 +59,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			//Add existing processes
 			foreach (var process in task.Processes.Where(x => x.StateStationActivity.Activity.Id == ssaGroup.Key.Id))
 			{
-				ProcessList.Add(new ProcessEditorVm(process, Model, uow));
+				var processVm = new ProcessEditorVm(process, Model, uow);
+				processVm.BlockTargetPointChangeDemanded += tp =>
+				{
+					if (BlockTargetPointChangeDemanded != null)
+						BlockTargetPointChangeDemanded(tp);
+				};
+				ProcessList.Add(processVm);
 			}
 
 			//Add process command
@@ -86,6 +93,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						TargetCount = 0,
 						Task = task,
 					}, Model, uow);//activity Model is set here
+				processVm.BlockTargetPointChangeDemanded += tp =>
+				{
+					if (BlockTargetPointChangeDemanded != null)
+						BlockTargetPointChangeDemanded(tp);
+				};
 				ProcessList.Add(processVm);
 				processVm.IsSelected = true;
 			});

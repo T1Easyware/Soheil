@@ -1,4 +1,240 @@
-﻿use SoheilDb
+﻿
+USE [SoheilDb]
+INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
+
+(1,'0','txtSoheil',null),
+	(2,'1','txtUsers',1),
+		(3,'11','txtUserAccounts',2),
+			(4,'111','txtUsers',3),
+			(5,'112','txtPositions',3),
+			(6,'113','txtOrgCharts',3),
+		(7,'12','txtModules',2),
+			(8,'121','txtModules',7),
+		(41,'13','txtOrganizationCalendar',2),
+			(42,'131','txtWorkProfiles',41),
+			(43,'132','txtHolidays',41),
+			(44,'133','txtWorkProfilePlan',41),
+	(9,'2','txtDefinitions',1),
+		(10,'21','txtProducts',9),
+			(11,'211','txtProducts',10),
+			(12,'212','txtReworks',10),
+		(13,'22','txtDiagnosis',9),
+			(14,'221','txtDefections',13),
+			(15,'222','txtRoots',13),
+			(16,'223','txtActionPlans',13),
+			(17,'224','txtCauses',13),
+		(18,'23','txtFPC',9),
+			(19,'231','txtFPC',18),
+			(20,'232','txtStations',18),
+			(21,'233','txtMachines',18),
+			(22,'234','txtActivities',18),
+		(23,'24','txtOperators',9),
+			(24,'241','txtOperators',23),
+			(25,'242','txtGenSkills',23),
+			(26,'243','txtSpeSkills',23),
+		(27,'25','txtCosts',9),
+			(28,'251','txtCosts',27),
+			(29,'252','txtPartWarehouses',27),
+		(45,'26','txtSetupTimes',9),
+		(46,'27','txtSkillCenter',9),
+	(30,'3','txtControl',1),
+		(31,'31','txtProductPlan',30),
+		(32,'32','txtPerformance',30),
+		(33,'33','txtIndices',30),
+	(34,'4','txtReports',1),
+		(35,'41','txtCostReports',34),
+		(36,'42','txtActualCostReports',34),
+		(37,'43','txtOperationReports',34),
+	(38,'5','txtOptions',1),
+		(39,'51','txtSettings',37),
+		(40,'52','txtHelp',37),
+		(47,'53','txtAbout',37),
+	(48,'6','txtStorage',1),
+		(49,'61','txtWarehouse',48),
+		(50,'62','txtWarehouseTransactions',48),
+		(51,'63','txtRawMaterials',48),
+		(52,'64','txtUnits',52),
+			(53,'641','txtUnitSets',52),
+			(54,'642','txtUnitConversions',52);
+
+
+
+ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);
+
+
+INSERT INTO Users(Code,CreatedBy,CreatedDate,ModifiedBy,ModifiedDate,Username,[Password],Title,[Status]) VALUES
+(0,0,'2013-01-01',0,'2013-01-01','Admin','fromdust','Admin',1);
+
+INSERT INTO User_AccessRules(AccessRule_Id, [User_Id], ModifiedBy,ModifiedDate,[Type]) VALUES
+(1,1,0,'2013-01-01',31),
+(2,1,0,'2013-01-01',31),
+(3,1,0,'2013-01-01',31),
+(4,1,0,'2013-01-01',31),
+(5,1,0,'2013-01-01',31),
+(6,1,0,'2013-01-01',31),
+(7,1,0,'2013-01-01',31),
+(8,1,0,'2013-01-01',31),
+(9,1,0,'2013-01-01',31),
+(10,1,0,'2013-01-01',31),
+(11,1,0,'2013-01-01',31),
+(12,1,0,'2013-01-01',31),
+(13,1,0,'2013-01-01',31),
+(14,1,0,'2013-01-01',31),
+(15,1,0,'2013-01-01',31),
+(16,1,0,'2013-01-01',31),
+(17,1,0,'2013-01-01',31),
+(18,1,0,'2013-01-01',31),
+(19,1,0,'2013-01-01',31),
+(20,1,0,'2013-01-01',31),
+(21,1,0,'2013-01-01',31),
+(22,1,0,'2013-01-01',31),
+(23,1,0,'2013-01-01',31),
+(24,1,0,'2013-01-01',31),
+(25,1,0,'2013-01-01',31),
+(26,1,0,'2013-01-01',31),
+(27,1,0,'2013-01-01',31),
+(28,1,0,'2013-01-01',31),
+(29,1,0,'2013-01-01',31),
+(30,1,0,'2013-01-01',31),
+(31,1,0,'2013-01-01',31),
+(32,1,0,'2013-01-01',31),
+(33,1,0,'2013-01-01',31),
+(34,1,0,'2013-01-01',31),
+(35,1,0,'2013-01-01',31),
+(36,1,0,'2013-01-01',31),
+(37,1,0,'2013-01-01',31),
+(38,1,0,'2013-01-01',31),
+(39,1,0,'2013-01-01',31),
+(40,1,0,'2013-01-01',31),
+(41,1,0,'2013-01-01',31),
+(42,1,0,'2013-01-01',31),
+(43,1,0,'2013-01-01',31),
+(44,1,0,'2013-01-01',31),
+(45,1,0,'2013-01-01',31),
+(46,1,0,'2013-01-01',31),
+(47,1,0,'2013-01-01',31),
+(48,1,0,'2013-01-01',31),
+(49,1,0,'2013-01-01',31),
+(50,1,0,'2013-01-01',31),
+(51,1,0,'2013-01-01',31),
+(52,1,0,'2013-01-01',31),
+(53,1,0,'2013-01-01',31),
+(54,1,0,'2013-01-01',31);
+
+
+INSERT INTO Causes([Name],[Code],[Description],[ModifiedDate],[CreatedDate],[Status],[ModifiedBy],[Level]) VALUES
+('Causes',0,'','2013-01-01','2013-01-01',1,0,0);
+
+
+
+SET IDENTITY_INSERT dbo.COSTCENTERS ON
+
+INSERT INTO CostCenters([Id],[Name],[Description],[SourceType],[Status]) VALUES
+(1,N'ماشین ها','',1,1);
+
+INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
+(N'هزینه ماشین',0,0,'2013-01-01',1,0,1);
+
+INSERT INTO COSTCENTERS([Id],[Name],[Description],[SourceType],[Status]) VALUES
+(2,N'اپراتور ها','',2,1);
+
+INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
+(N'هزینه اپراتور',0,0,'2013-01-01',1,0,2);
+
+INSERT INTO COSTCENTERS([Id],[Name],[Description],[SourceType],[Status]) VALUES
+(3,N'ایستگاه ها','',3,1);
+
+INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
+(N'هزینه ایستگاه',0,0,'2013-01-01',1,0,3);
+
+INSERT INTO COSTCENTERS([Id],[Name],[Description],[SourceType],[Status]) VALUES
+(4,N'فعالیت ها','',4,1);
+
+INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
+(N'هزینه فعالیت',0,0,'2013-01-01',1,0,4);
+
+INSERT INTO COSTCENTERS([Id],[Name],[Description],[SourceType],[Status]) VALUES
+(5,N'سربار','',0,1);
+
+INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
+(N'هزینه متفرقه',0,0,'2013-01-01',1,0,5);
+
+SET IDENTITY_INSERT dbo.COSTCENTERS OFF
+
+SET IDENTITY_INSERT dbo.UnitGroups ON
+insert into UnitGroups([Id],[ModifiedBy],[Name],[Status]) values
+(1,1,N'وزنی',1);
+
+insert into UnitGroups([Id],[ModifiedBy],[Name],[Status]) values
+(2,1,N'حجمی',1); 
+SET IDENTITY_INSERT dbo.UnitGroups OFF
+
+SET IDENTITY_INSERT dbo.unitsets ON
+
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(1,'gr', N'گرم',1,1,1); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(2,'kg', N'کیلوگرم',1,1,1); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(3,'Tn', N'تن',1,1,1); 
+
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(4,'cc', N'سی سی',1,1,2); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(5,'Lt', N'لیتر',1,1,2); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(6,'M3', N'متر مکعب',1,1,2); 
+
+SET IDENTITY_INSERT dbo.unitsets OFF
+
+
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(1,2,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(2,3,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(1,3,1000000,1,1);
+
+
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(4,5,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(5,6,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(4,6,1000000,1,1);
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-----------------------------------------            Bizz             ---------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+use SoheilDb
 
 SET IDENTITY_INSERT dbo.ProductGroups ON
 insert into dbo.ProductGroups (Id, Code, Name, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
@@ -95,61 +331,61 @@ insert into dbo.Reworks (Id, Code, Name, ModifiedDate, CreatedDate, [Status], Mo
 SET IDENTITY_INSERT dbo.Reworks OFF
 
 SET IDENTITY_INSERT dbo.ProductReworks ON
-insert into dbo.ProductReworks (Id, Code, Name, Product_Id, Rework_Id, [Status], ModifiedBy) values 
-(1, 'Pr1Main', N'زانویی سمند', 1, NULL, 1, 1),
-(2, 'Pr1R1', N'زانویی سمند دوباره کاری 1', 1, 1, 1, 1),
-(3, 'Pr1R2', N'زانویی سمند دوباره کاری 2', 1, 2, 1, 1),
-(4, 'Pr2Main', N'زانویی L90', 2, NULL, 1, 1),
-(5, 'Pr2R1', N'زانویی L90 دوباره کاری 1', 2, 1, 1, 1),
-(6, 'Pr2R3', N'زانویی L90 دوباره کاری 3', 2, 3, 1, 1),
-(7, 'Pr3Main', N'داکت راست سمند', 3, NULL, 1, 1),
-(8, 'Pr4Main', N'داکت چپ سمند', 4, NULL, 1, 1),
-(9, 'Zan_pjo', N'زانویی پژو',6, NULL, 1, 1),
-(10, 'Zan_pjo', N'زانویی پژو سوراخ',6, 3, 1, 1),
-(11, 'RD_prd', N'داکت راست پراید',7, NULL, 1, 1),
-(12, 'RD_prd', N'داکت راست پراید نوع1',7, 1, 1, 1),
-(13, 'RD_prd', N'داکت راست پراید نوع2',7, 2, 1, 1),
-(14, 'RD_pjo', N'داکت راست پژو',8, NULL, 1, 1),
-(15, 'LD_prd', N'داکت چپ پراید', 9, NULL, 1, 1),
-(16, 'LD_prd', N'داکت چپ پراید خالخالی', 9, 4, 1, 1),
-(17, 'LD_pjo', N'داکت چپ پژو',10, NULL, 1, 1),
-(18, 'Prod1', N'محصول جدید 1',11, NULL, 1, 1),
-(19, 'Prod1', N'محصول جدید 1سفیدک',11, 4, 1, 1),
-(20, 'Prod1', N'محصول جدید 1دانه دار',11, 5, 1, 1),
-(21, 'Prod2', N'محصول جدید 2',12, NULL, 1, 1),
-(22, 'Prod2', N'محصول جدید خراب2',12, 5, 1, 1),
-(23, 'Prod3', N'محصول جدید 3',13, NULL, 1, 1),
-(24, 'Prod3', N'محصول جدید مشکل دار3',13, 3, 1, 1),
-(25, 'Prod4', N'محصول جدید 4',14, NULL, 1, 1),
-(26, 'Prod4', N'محصول جدید 4شل',14, 1, 1, 1),
-(27, 'Prod4', N'محصول جدید 4سفت',14, 2, 1, 1),
-(28, 'Prod4', N'محصول جدید 4کج',14, 3, 1, 1),
-(29, 'Prod5', N'محصول جدید 5',15, NULL, 1, 1),
-(30, 'Prod5', N'محصول جدید 5خراب',15, 3, 1, 1),
-(31, 'Prod5', N'محصول جدید 5دوباره کاری دارد',15, 5, 1, 1),
-(32, 'ProdNew1', N'محصول جدید دیگر 1',16, NULL, 1, 1),
-(33, 'ProdNew1', N'محصول جدید دیگر 1مشکل دارد',16, 3, 1, 1),
-(34, 'ProdNew1', N'محصول جدید دیگر 1بدون پیچ',16, 4, 1, 1),
-(35, 'ProdNew2', N'محصول جدید دیگر 2',17, NULL, 1, 1),
-(36, 'ProdNew2', N'محصول جدید دیگر 2شل',17, 4, 1, 1),
-(37, 'ProdNew2', N'محصول جدید دیگر کج2',17, 5, 1, 1),
-(38, 'ProdNew3', N'محصول جدید دیگر 3',18, NULL, 1, 1),
-(39, 'ProdNew3', N'محصول جدید دیگر 3شل',18, 1, 1, 1),
-(40, 'ProdNew4', N'محصول جدید دیگر 4',19, NULL, 1, 1),
-(41, 'ProdNew4', N'محصول جدید دیگر 4شل',19, 3, 1, 1),
-(42, 'ProdNew5', N'محصول جدید دیگر 5',20, NULL, 1, 1),
-(43, 'ProdOther1', N'باز هم محصول جدید دیگر 1',21, NULL, 1, 1),
-(44, 'ProdOther1', N'باز هم محصول جدید دیگر 1خرابی1',21, 4, 1, 1),
-(45, 'ProdOther1', N'باز هم محصول جدید دیگر 1خرابی2',21, 5, 1, 1),
-(46, 'ProdOther2', N'باز هم محصول جدید دیگر 2',22, NULL, 1, 1),
-(47, 'ProdOther2', N'باز هم محصول جدید دیگر 2خرابی1',22, 3, 1, 1),
-(48, 'ProdOther2', N'باز هم محصول جدید دیگر 2خرابی2',22, 4, 1, 1),
-(49, 'ProdOther2', N'باز هم محصول جدید دیگر 2خرابی3',22, 5, 1, 1),
-(50, 'ProdOther3', N'باز هم محصول جدید دیگر 3',23, NULL, 1, 1),
-(51, 'ProdOther3', N'باز هم محصول جدید دیگر 3خراب',23, 2, 1, 1),
-(52, 'ProdOther5', N'باز هم محصول جدید دیگر 5',25, NULL, 1, 1),
-(53, 'ProdOther5', N'باز هم محصول جدید دیگر 5خراب',25, 1, 1, 1),
-(54, 'Zan_prd', N'زانویی پراید',5, NULL, 1, 1);
+insert into dbo.ProductReworks (Id, Code, Name, Product_Id, Rework_Id, [Status], ModifiedBy, Inventory) values 
+(1, 'Pr1Main', N'زانویی سمند', 1, NULL, 1, 1,0),
+(2, 'Pr1R1', N'زانویی سمند دوباره کاری 1', 1, 1, 1, 1,0),
+(3, 'Pr1R2', N'زانویی سمند دوباره کاری 2', 1, 2, 1, 1,0),
+(4, 'Pr2Main', N'زانویی L90', 2, NULL, 1, 1,0),
+(5, 'Pr2R1', N'زانویی L90 دوباره کاری 1', 2, 1, 1, 1,0),
+(6, 'Pr2R3', N'زانویی L90 دوباره کاری 3', 2, 3, 1, 1,0),
+(7, 'Pr3Main', N'داکت راست سمند', 3, NULL, 1, 1,0),
+(8, 'Pr4Main', N'داکت چپ سمند', 4, NULL, 1, 1,0),
+(9, 'Zan_pjo', N'زانویی پژو',6, NULL, 1, 1,0),
+(10, 'Zan_pjo', N'زانویی پژو سوراخ',6, 3, 1, 1,0),
+(11, 'RD_prd', N'داکت راست پراید',7, NULL, 1, 1,0),
+(12, 'RD_prd', N'داکت راست پراید نوع1',7, 1, 1, 1,0),
+(13, 'RD_prd', N'داکت راست پراید نوع2',7, 2, 1, 1,0),
+(14, 'RD_pjo', N'داکت راست پژو',8, NULL, 1, 1,0),
+(15, 'LD_prd', N'داکت چپ پراید', 9, NULL, 1, 1,0),
+(16, 'LD_prd', N'داکت چپ پراید خالخالی', 9, 4, 1, 1,0),
+(17, 'LD_pjo', N'داکت چپ پژو',10, NULL, 1, 1,0),
+(18, 'Prod1', N'محصول جدید 1',11, NULL, 1, 1,0),
+(19, 'Prod1', N'محصول جدید 1سفیدک',11, 4, 1, 1,0),
+(20, 'Prod1', N'محصول جدید 1دانه دار',11, 5, 1, 1,0),
+(21, 'Prod2', N'محصول جدید 2',12, NULL, 1, 1,0),
+(22, 'Prod2', N'محصول جدید خراب2',12, 5, 1, 1,0),
+(23, 'Prod3', N'محصول جدید 3',13, NULL, 1, 1,0),
+(24, 'Prod3', N'محصول جدید مشکل دار3',13, 3, 1, 1,0),
+(25, 'Prod4', N'محصول جدید 4',14, NULL, 1, 1,0),
+(26, 'Prod4', N'محصول جدید 4شل',14, 1, 1, 1,0),
+(27, 'Prod4', N'محصول جدید 4سفت',14, 2, 1, 1,0),
+(28, 'Prod4', N'محصول جدید 4کج',14, 3, 1, 1,0),
+(29, 'Prod5', N'محصول جدید 5',15, NULL, 1, 1,0),
+(30, 'Prod5', N'محصول جدید 5خراب',15, 3, 1, 1,0),
+(31, 'Prod5', N'محصول جدید 5دوباره کاری دارد',15, 5, 1, 1,0),
+(32, 'ProdNew1', N'محصول جدید دیگر 1',16, NULL, 1, 1,0),
+(33, 'ProdNew1', N'محصول جدید دیگر 1مشکل دارد',16, 3, 1, 1,0),
+(34, 'ProdNew1', N'محصول جدید دیگر 1بدون پیچ',16, 4, 1, 1,0),
+(35, 'ProdNew2', N'محصول جدید دیگر 2',17, NULL, 1, 1,0),
+(36, 'ProdNew2', N'محصول جدید دیگر 2شل',17, 4, 1, 1,0),
+(37, 'ProdNew2', N'محصول جدید دیگر کج2',17, 5, 1, 1,0),
+(38, 'ProdNew3', N'محصول جدید دیگر 3',18, NULL, 1, 1,0),
+(39, 'ProdNew3', N'محصول جدید دیگر 3شل',18, 1, 1, 1,0),
+(40, 'ProdNew4', N'محصول جدید دیگر 4',19, NULL, 1, 1,0),
+(41, 'ProdNew4', N'محصول جدید دیگر 4شل',19, 3, 1, 1,0),
+(42, 'ProdNew5', N'محصول جدید دیگر 5',20, NULL, 1, 1,0),
+(43, 'ProdOther1', N'باز هم محصول جدید دیگر 1',21, NULL, 1, 1,0),
+(44, 'ProdOther1', N'باز هم محصول جدید دیگر 1خرابی1',21, 4, 1, 1,0),
+(45, 'ProdOther1', N'باز هم محصول جدید دیگر 1خرابی2',21, 5, 1, 1,0),
+(46, 'ProdOther2', N'باز هم محصول جدید دیگر 2',22, NULL, 1, 1,0),
+(47, 'ProdOther2', N'باز هم محصول جدید دیگر 2خرابی1',22, 3, 1, 1,0),
+(48, 'ProdOther2', N'باز هم محصول جدید دیگر 2خرابی2',22, 4, 1, 1,0),
+(49, 'ProdOther2', N'باز هم محصول جدید دیگر 2خرابی3',22, 5, 1, 1,0),
+(50, 'ProdOther3', N'باز هم محصول جدید دیگر 3',23, NULL, 1, 1,0),
+(51, 'ProdOther3', N'باز هم محصول جدید دیگر 3خراب',23, 2, 1, 1,0),
+(52, 'ProdOther5', N'باز هم محصول جدید دیگر 5',25, NULL, 1, 1,0),
+(53, 'ProdOther5', N'باز هم محصول جدید دیگر 5خراب',25, 1, 1, 1,0),
+(54, 'Zan_prd', N'زانویی پراید',5, NULL, 1, 1,0);
 SET IDENTITY_INSERT dbo.ProductReworks OFF
 
 
@@ -650,94 +886,94 @@ insert into dbo.StateStations (Id, State_Id, Station_Id, IsDefault) values
 SET IDENTITY_INSERT dbo.StateStations OFF
 
 SET IDENTITY_INSERT dbo.StateStationActivities ON
-insert into dbo.StateStationActivities (Id, CycleTime, ManHour, StateStation_Id, Activity_Id, IsMany, IsInJob) values 
-(1,60,2,1,1, 'True', 'True'),
-(2,90,1,1,2, 'False', 'False'),
-(3,60,2,2,1, 'True', 'True'),
-(4,85,1,2,2, 'False', 'False'),
-(5,40,1,3,3, 'True', 'False'),
-(6,50,1,3,4, 'False', 'False'),
-(7,60,1,3,5, 'True', 'False'),
-(8,60,3,4,3, 'True', 'True'),
-(9,110,1,4,4, 'True', 'False'),
-(10,60,1,5,2, 'True', 'True'),
-(11,60,1,6,1, 'True', 'True'),
-(12,60,1,7,1, 'False', 'True'),
-(13,60,1,8,1, 'True', 'True'),
-(14,60,1,9,1, 'True', 'True'),
-(15,60,1,10,2, 'True', 'True'),
-(16,60,1,11,1, 'True', 'True'),
-(17,60,1,12,2, 'False', 'True'),
-(18,60,1,13,1, 'True', 'True'),
-(19,60,1,14,1, 'True', 'True'),
-(20,60,1,21,2, 'True', 'True'),
-(21,60,1,15,2, 'False', 'True'),
-(22,60,1,16,1, 'True', 'True'),
-(23,60,1,16,2, 'True', 'False'),
-(24,60,1,16,5, 'True', 'False'),
-(25,60,1,17,2, 'False', 'True'),
-(26,60,1,17,3, 'True', 'False'),
-(27,60,1,17,4, 'False', 'False'),
-(28,60,1,18,4, 'True', 'True'),
-(29,60,1,18,2, 'True', 'False'),
-(30,60,1,19,3, 'True', 'True'),
-(31,60,1,19,1, 'True', 'False'),
-(32,60,1,20,1, 'False', 'True'),
-(33,60,1,20,2, 'True', 'False'),
-(34,60,1,22,3, 'False', 'True'),
-(35,60,1,22,1, 'True', 'False'),
-(36,60,1,23,4, 'False', 'True'),
-(37,60,1,23,1, 'False', 'False'),
-(38,60,1,24,3, 'True', 'True'),
-(39,60,1,25,4, 'True', 'True'),
-(40,60,1,26,3, 'True', 'True'),
-(41,60,1,27,4, 'False', 'True'),
-(42,60,1,28,1, 'True', 'True'),
-(43,60,1,29,1, 'True', 'True'),
-(44,60,1,30,3, 'True', 'True'),
-(45,60,1,31,1, 'True', 'True'),
-(46,60,1,32,1, 'True', 'True'),
-(47,60,1,33,3, 'False', 'True'),
-(48,333,1,34,1, 'True', 'True'),
-(49,222,1,35,1, 'True', 'True'),
-(50,60,1,36,1, 'True', 'True'),
-(51,111,1,36,2, 'True', 'True'),
-(52,60,1,37,1, 'True', 'True'),
-(53,60,1,39,2, 'False', 'True'),
-(54,60,1,40,1, 'True', 'True'),
-(55,60,1,41,2, 'False', 'True'),
-(56,60,1,42,3, 'False', 'True'),
-(57,60,1,43,3, 'False', 'True'),
-(58,60,1,44,1, 'True', 'True'),
-(59,60,1,45,5, 'True', 'True'),
-(60,60,1,46,1, 'True', 'True'),
-(61,60,1,47,3, 'True', 'True'),
-(62,60,1,48,1, 'True', 'True'),
-(63,60,1,48,2, 'True', 'False'),
-(64,120,1,49,2, 'True', 'True'),
-(65,60,1,50,1, 'True', 'True'),
-(66,60,1,51,3, 'True', 'True'),
-(67,60,1,52,4, 'True', 'True'),
-(68,60,1,53,3, 'True', 'True'),
-(69,60,1,54,4, 'True', 'True'),
-(70,60,1,55,3, 'True', 'True'),
-(71,60,1,56,4, 'True', 'True'),
-(72,60,1,60,1, 'True', 'True'),
-(73,60,1,61,3, 'True', 'True'),
-(74,60,1,64,1, 'True', 'True'),
-(75,60,1,65,2, 'True', 'True'),
-(76,60,1,67,1, 'True', 'True'),
-(77,60,1,68,1, 'True', 'True'),
-(78,60,2,69,3, 'True', 'True'),
-(79,85,8,69,4, 'False', 'True'),
-(80,45,3,1,1, 'True', 'True'),
-(81,30,4,1,1, 'True', 'False'),
-(82,60,2,1,2, 'True', 'False'),
-(83,40,3,1,2, 'True', 'False'),
-(84,44,3,2,1, 'True', 'True'),
-(85,22,4,2,1, 'True', 'False'),
-(86,99,1,2,1, 'True', 'False'),
-(87,75,1,1,1, 'True', 'True');
+insert into dbo.StateStationActivities (Id, CycleTime, ManHour, StateStation_Id, Activity_Id, IsMany, IsInJob, IsPrimaryOutput) values 
+(1,60,2,1,1, 'True', 'True', 'True'),
+(2,90,1,1,2, 'False', 'False', 'False'),
+(3,60,2,2,1, 'True', 'True', 'True'),
+(4,85,1,2,2, 'False', 'False', 'True'),
+(5,40,1,3,3, 'True', 'False', 'True'),
+(6,50,1,3,4, 'False', 'False', 'True'),
+(7,60,1,3,5, 'True', 'False', 'True'),
+(8,60,3,4,3, 'True', 'True', 'True'),
+(9,110,1,4,4, 'True', 'False', 'True'),
+(10,60,1,5,2, 'True', 'True', 'True'),
+(11,60,1,6,1, 'True', 'True', 'True'),
+(12,60,1,7,1, 'False', 'True', 'True'),
+(13,60,1,8,1, 'True', 'True', 'True'),
+(14,60,1,9,1, 'True', 'True', 'True'),
+(15,60,1,10,2, 'True', 'True', 'True'),
+(16,60,1,11,1, 'True', 'True', 'True'),
+(17,60,1,12,2, 'False', 'True', 'True'),
+(18,60,1,13,1, 'True', 'True', 'True'),
+(19,60,1,14,1, 'True', 'True', 'True'),
+(20,60,1,21,2, 'True', 'True', 'True'),
+(21,60,1,15,2, 'False', 'True', 'True'),
+(22,60,1,16,1, 'True', 'True', 'True'),
+(23,60,1,16,2, 'True', 'False', 'True'),
+(24,60,1,16,5, 'True', 'False', 'True'),
+(25,60,1,17,2, 'False', 'True', 'True'),
+(26,60,1,17,3, 'True', 'False', 'True'),
+(27,60,1,17,4, 'False', 'False', 'True'),
+(28,60,1,18,4, 'True', 'True', 'True'),
+(29,60,1,18,2, 'True', 'False', 'True'),
+(30,60,1,19,3, 'True', 'True', 'True'),
+(31,60,1,19,1, 'True', 'False', 'True'),
+(32,60,1,20,1, 'False', 'True', 'True'),
+(33,60,1,20,2, 'True', 'False', 'True'),
+(34,60,1,22,3, 'False', 'True', 'True'),
+(35,60,1,22,1, 'True', 'False', 'True'),
+(36,60,1,23,4, 'False', 'True', 'True'),
+(37,60,1,23,1, 'False', 'False', 'True'),
+(38,60,1,24,3, 'True', 'True', 'True'),
+(39,60,1,25,4, 'True', 'True', 'True'),
+(40,60,1,26,3, 'True', 'True', 'True'),
+(41,60,1,27,4, 'False', 'True', 'True'),
+(42,60,1,28,1, 'True', 'True', 'True'),
+(43,60,1,29,1, 'True', 'True', 'True'),
+(44,60,1,30,3, 'True', 'True', 'True'),
+(45,60,1,31,1, 'True', 'True', 'True'),
+(46,60,1,32,1, 'True', 'True', 'True'),
+(47,60,1,33,3, 'False', 'True', 'True'),
+(48,333,1,34,1, 'True', 'True', 'True'),
+(49,222,1,35,1, 'True', 'True', 'True'),
+(50,60,1,36,1, 'True', 'True', 'True'),
+(51,111,1,36,2, 'True', 'True', 'True'),
+(52,60,1,37,1, 'True', 'True', 'True'),
+(53,60,1,39,2, 'False', 'True', 'True'),
+(54,60,1,40,1, 'True', 'True', 'True'),
+(55,60,1,41,2, 'False', 'True', 'True'),
+(56,60,1,42,3, 'False', 'True', 'True'),
+(57,60,1,43,3, 'False', 'True', 'True'),
+(58,60,1,44,1, 'True', 'True', 'True'),
+(59,60,1,45,5, 'True', 'True', 'True'),
+(60,60,1,46,1, 'True', 'True', 'True'),
+(61,60,1,47,3, 'True', 'True', 'True'),
+(62,60,1,48,1, 'True', 'True', 'True'),
+(63,60,1,48,2, 'True', 'False', 'True'),
+(64,120,1,49,2, 'True', 'True', 'True'),
+(65,60,1,50,1, 'True', 'True', 'True'),
+(66,60,1,51,3, 'True', 'True', 'True'),
+(67,60,1,52,4, 'True', 'True', 'True'),
+(68,60,1,53,3, 'True', 'True', 'True'),
+(69,60,1,54,4, 'True', 'True', 'True'),
+(70,60,1,55,3, 'True', 'True', 'True'),
+(71,60,1,56,4, 'True', 'True', 'True'),
+(72,60,1,60,1, 'True', 'True', 'True'),
+(73,60,1,61,3, 'True', 'True', 'True'),
+(74,60,1,64,1, 'True', 'True', 'True'),
+(75,60,1,65,2, 'True', 'True', 'True'),
+(76,60,1,67,1, 'True', 'True', 'True'),
+(77,60,1,68,1, 'True', 'True', 'True'),
+(78,60,2,69,3, 'True', 'True', 'True'),
+(79,85,8,69,4, 'False', 'True', 'True'),
+(80,45,3,1,1, 'True', 'True', 'True'),
+(81,30,4,1,1, 'True', 'False', 'True'),
+(82,60,2,1,2, 'True', 'False', 'True'),
+(83,40,3,1,2, 'True', 'False', 'True'),
+(84,44,3,2,1, 'True', 'True', 'True'),
+(85,22,4,2,1, 'True', 'False', 'True'),
+(86,99,1,2,1, 'True', 'False', 'True'),
+(87,75,1,1,1, 'True', 'True', 'True');
 SET IDENTITY_INSERT dbo.StateStationActivities OFF
 
 SET IDENTITY_INSERT dbo.StateStationActivityMachines ON

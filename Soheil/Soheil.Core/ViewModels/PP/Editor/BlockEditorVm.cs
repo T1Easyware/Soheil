@@ -13,10 +13,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public Model.Block Model { get; protected set; }
 		public int StateId { get { return State.Id; } }
 		public int StationId { get { return StateStation == null ? 0 : StateStation.StationId; } }
+		
+		public bool DontUpdateBlockTargetPoint = false;
 
 		DataServices.BlockDataService _blockDataService;
 
 		Dal.SoheilEdmContext _uow;
+
 		bool _isInitializing;
 
 		#region Ctor & init
@@ -125,6 +128,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			foreach (var group in Model.StateStation.StateStationActivities.GroupBy(x => x.Activity))
 			{
 				var activityVm = new ActivityEditorVm(Model.Tasks.First(), _uow, group);
+				
+				//update block targetpoint
+				activityVm.BlockTargetPointChangeDemanded = tp =>
+				{
+					if (!DontUpdateBlockTargetPoint)
+						BlockTargetPoint = tp;
+				};
+
 				activityVm.GetTaskStart = () => StartDateForAll.Add(StartTimeForAll);
 
 				//refresh operator manager upon selecting a process
@@ -753,6 +764,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = d as BlockEditorVm;
 				var val = (int)e.NewValue;
 				vm.IsTargetPointFixed = true;
+				vm.BlockTargetPoint = val;
 				foreach (var activity in vm.ActivityList)
 				{
 					foreach (var process in activity.ProcessList)
@@ -790,7 +802,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(StartDateForAllProperty, value); }
 		}
 		public static readonly DependencyProperty StartDateForAllProperty =
-			DependencyProperty.Register("StartDateForAll", typeof(DateTime), typeof(BlockEditorVm), new UIPropertyMetadata(DateTime.Now.Date));
+			DependencyProperty.Register("StartDateForAll", typeof(DateTime), typeof(BlockEditorVm),
+			new UIPropertyMetadata(DateTime.Now.Date, (d, e) => ((BlockEditorVm)d).updateStartForAll()));
 		//StartTimeForAll Dependency Property
 		public TimeSpan StartTimeForAll
 		{
@@ -798,7 +811,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			set { SetValue(StartTimeForAllProperty, value); }
 		}
 		public static readonly DependencyProperty StartTimeForAllProperty =
-			DependencyProperty.Register("StartTimeForAll", typeof(TimeSpan), typeof(BlockEditorVm), new UIPropertyMetadata(TimeSpan.Zero));
+			DependencyProperty.Register("StartTimeForAll", typeof(TimeSpan), typeof(BlockEditorVm),
+			new UIPropertyMetadata(TimeSpan.Zero, (d, e) => ((BlockEditorVm)d).updateStartForAll()));
 		//StartOffsetForAll Dependency Property
 		public TimeSpan StartOffsetForAll
 		{
@@ -874,26 +888,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				else
 					StartTime = StartTime.Add(TimeSpan.FromHours(-1));
 			});
-			SetStartForAllCommand = new Commands.Command(o =>
-			{
-				var start = StartDateForAll.Add(StartTimeForAll);
-				var end = DateTime.MinValue;
-				foreach (var act in ActivityList)
-				{
-					foreach (var process in act.ProcessList)
-					{
-						if (!process.HasReport)
-							process.Timing.StartDateTime = start;
-						if (process.Timing.EndDateTime > end)
-							end = process.Timing.EndDateTime;
-					}
-				}
-				StartDate = start.Date;
-				StartTime = start.TimeOfDay;
-				EndDate = end.Date;
-				EndTime = end.TimeOfDay;
-				Duration = end - start;
-			});
+			SetStartForAllCommand = new Commands.Command(o => updateStartForAll());
 			SetOffsetForAllCommand = new Commands.Command(o =>
 			{
 				var start = DateTime.MaxValue;
@@ -918,7 +913,26 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				Duration = end - start;
 			});
 		}
-
+		void updateStartForAll()
+		{
+			var start = StartDateForAll.Add(StartTimeForAll);
+			var end = DateTime.MinValue;
+			foreach (var act in ActivityList)
+			{
+				foreach (var process in act.ProcessList)
+				{
+					if (!process.HasReport)
+						process.Timing.StartDateTime = start;
+					if (process.Timing.EndDateTime > end)
+						end = process.Timing.EndDateTime;
+				}
+			}
+			StartDate = start.Date;
+			StartTime = start.TimeOfDay;
+			EndDate = end.Date;
+			EndTime = end.TimeOfDay;
+			Duration = end - start;
+		}
 		/// <summary>
 		/// Gets or sets a bindable command to set StateStation of this block according to SelectedStateStation
 		/// </summary>
@@ -1014,6 +1028,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		public static readonly DependencyProperty SetOffsetForAllCommandProperty =
 			DependencyProperty.Register("SetOffsetForAllCommand", typeof(Commands.Command), typeof(BlockEditorVm), new UIPropertyMetadata(null));
 		#endregion
+
 
 	}
 }

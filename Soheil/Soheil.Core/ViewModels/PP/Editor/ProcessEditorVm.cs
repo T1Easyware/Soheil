@@ -41,6 +41,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// </summary>
 		public event Action<ProcessEditorVm> Selected;
 		public event Action<ProcessEditorVm> Deleted;
+		public event Action<int> BlockTargetPointChangeDemanded;
 		/// <summary>
 		/// Occurs when selected choice of SSAs for this Process is changed
 		/// <para>second parameter can be null</para>
@@ -85,7 +86,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			Timing.DurationChanged += v => Model.DurationSeconds = v;
 			Timing.StartChanged += v => Model.StartDateTime = v;
 			Timing.EndChanged += v => Model.EndDateTime = v;
-			Timing.TargetPointChanged += tp => Model.TargetCount = tp;
+			Timing.TargetPointChanged += tp =>
+			{
+				Model.TargetCount = tp;
+				var processes = Model.Task.Processes.Where(x => x.StateStationActivity.IsPrimaryOutput && x.TargetCount > 0);
+				if (processes.Any() && BlockTargetPointChangeDemanded != null)
+					BlockTargetPointChangeDemanded(processes.Min(x => x.TargetCount));
+			};
 			Timing.TimesChanged += (start, end) =>
 			{
 				if (TimesChanged != null) TimesChanged(this, start, end);

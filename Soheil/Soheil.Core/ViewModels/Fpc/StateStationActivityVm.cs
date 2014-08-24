@@ -80,6 +80,21 @@ namespace Soheil.Core.ViewModels.Fpc
 				((StateStationActivityVm)d).Model.IsMany = (bool)e.NewValue;
 				StateVm.AnyPropertyChangedCallback(d, e);
 			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates IsPrimaryOutput
+		/// </summary>
+		public bool IsPrimaryOutput
+		{
+			get { return (bool)GetValue(IsPrimaryOutputProperty); }
+			set { SetValue(IsPrimaryOutputProperty, value); }
+		}
+		public static readonly DependencyProperty IsPrimaryOutputProperty =
+			DependencyProperty.Register("IsPrimaryOutput", typeof(bool), typeof(StateStationActivityVm),
+			new UIPropertyMetadata(true, (d, e) =>
+			{
+				((StateStationActivityVm)d).Model.IsPrimaryOutput = (bool)e.NewValue;
+				StateVm.AnyPropertyChangedCallback(d, e);
+			}));
 
 		/// <summary>
 		/// Gets or sets Container of this StateStationActivity (cast to StateStationVm)

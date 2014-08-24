@@ -45,7 +45,7 @@
 		</Style>
 		
 		<DataTemplate x:Key="commonOperatorTemplate">
-			<DockPanel Background="#AAA" TextBlock.FontSize="12">
+			<DockPanel Background="#AAA" TextBlock.FontSize="14">
 				<DockPanel.Triggers>
 					<EventTrigger RoutedEvent="MouseEnter">
 						<BeginStoryboard>
@@ -202,7 +202,7 @@
 				<Border Style="{StaticResource columnHeaderStyle}">
 					<TextBlock Text="همه اپراتورها   (در این بازه زمانی)" Style="{StaticResource titleTextStyle}"/>
 				</Border>
-				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
 					<ItemsControl ItemsSource="{Binding OperatorsList}" ItemTemplate="{StaticResource commonOperatorTemplate}" Margin="2">
 						<ItemsControl.ItemsPanel>
 							<ItemsPanelTemplate>
