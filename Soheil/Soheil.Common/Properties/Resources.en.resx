@@ -1231,4 +1231,13 @@
   <data name="txtShowAllActivitiesInfo" xml:space="preserve">
     <value>Show all activities (Not only primary activities of each station)</value>
   </data>
+  <data name="txtSendToWarehouseDateTime" xml:space="preserve">
+    <value>Time of Delivery to warehouse</value>
+  </data>
+  <data name="txtTransactionCode" xml:space="preserve">
+    <value>Transaction Code</value>
+  </data>
+  <data name="txtWarehouse" xml:space="preserve">
+    <value>Warehouse</value>
+  </data>
 </root>

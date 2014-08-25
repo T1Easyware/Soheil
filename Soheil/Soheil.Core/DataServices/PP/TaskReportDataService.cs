@@ -81,6 +81,7 @@ namespace Soheil.Core.DataServices
 		internal int GuessG1(TaskReport model_)
 		{
 			var model = new Repository<TaskReport>(new SoheilEdmContext()).Single(x=>x.Id == model_.Id);
+			if (model == null) model = model_;
 			var processes = model.Task.Processes.Where(x => x.StateStationActivity.IsPrimaryOutput && x.TargetCount > 0);
 			if (!processes.Any()) return 0;
 			double guess = double.NaN;

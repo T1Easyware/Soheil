@@ -12,26 +12,15 @@ namespace Soheil.Core.ViewModels.PP.Report
 		bool _isInInitializingPhase = true;
 		DataServices.Storage.WarehouseTransactionDataService _dataService;
 		public Model.WarehouseTransaction Model { get; private set; }
-		public Dal.SoheilEdmContext UOW { get; protected set; }
 
-		public WarehouseTransactionVm(Model.TaskReport model, Dal.SoheilEdmContext uow)
+		/// <summary>
+		/// Uses its own UOW to create a new transaction model and add it to database
+		/// </summary>
+		/// <param name="model"></param>
+		public WarehouseTransactionVm(Model.TaskReport model)
 		{
-			//DataService
-			UOW = uow;
-			_dataService = new DataServices.Storage.WarehouseTransactionDataService(uow);
-
-			//Model
-			Model = new Soheil.Model.WarehouseTransaction
-			{
-				Code = model.Code,
-				ProductRework = model.Task.Block.StateStation.State.OnProductRework,
-				TaskReport = model,
-				Quantity = model.TaskProducedG1,
-				TransactionDateTime = model.ReportEndDateTime,
-				TransactionType = 0,
-			};
-			model.WarehouseTransactions.Add(Model);
-			_dataService.AddModel(Model);
+			_dataService = new DataServices.Storage.WarehouseTransactionDataService();
+			Model = _dataService.CreateTransactionFor(model);
 
 			//VM
 			Code = Model.Code;
@@ -42,13 +31,15 @@ namespace Soheil.Core.ViewModels.PP.Report
 			initializeCommands();
 			_isInInitializingPhase = false;
 		}
-		public WarehouseTransactionVm(Model.WarehouseTransaction model, IEnumerable<WarehouseVm> all, Dal.SoheilEdmContext uow)
+		/// <summary>
+		/// Uses its own UOW to 
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="all"></param>
+		public WarehouseTransactionVm(Model.WarehouseTransaction model, IEnumerable<WarehouseVm> all)
 		{
 			//DataService
-			UOW = uow;
-			_dataService = new DataServices.Storage.WarehouseTransactionDataService(uow);
-
-			//Model
+			_dataService = new DataServices.Storage.WarehouseTransactionDataService();
 			Model = model;
 			
 			//VM
@@ -67,6 +58,12 @@ namespace Soheil.Core.ViewModels.PP.Report
 			DeleteCommand = new Commands.Command(o =>
 			{
 				_dataService.DeleteModel(Model);
+			});
+			SaveCommand = new Commands.Command(o =>
+			{
+				var msg = _dataService.Save();
+				if (msg != null)
+					MessageBox.Show(msg,"Error");
 			});
 		}
 
@@ -122,7 +119,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (WarehouseVm)e.NewValue;
 				if (val == null) return;
-				vm.Model.Warehouse = val.Model;
+				vm.Model.Warehouse = vm._dataService.GetWarehouse(val.Model);
 			}));
 
 		/// <summary>
@@ -170,5 +167,16 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		public static readonly DependencyProperty DeleteCommandProperty =
 			DependencyProperty.Register("DeleteCommand", typeof(Commands.Command), typeof(WarehouseTransactionVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates SaveCommand
+		/// </summary>
+		public Commands.Command SaveCommand
+		{
+			get { return (Commands.Command)GetValue(SaveCommandProperty); }
+			set { SetValue(SaveCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SaveCommandProperty =
+			DependencyProperty.Register("SaveCommand", typeof(Commands.Command), typeof(WarehouseTransactionVm), new PropertyMetadata(null));
+
 	}
 }

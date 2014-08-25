@@ -1241,4 +1241,13 @@
   <data name="txtShowAllActivitiesInfo" xml:space="preserve">
     <value>نمایش تمام فعالیتها (بجای نمایش فقط فعالیتهای اصلی هر ایستگاه)</value>
   </data>
+  <data name="txtSendToWarehouseDateTime" xml:space="preserve">
+    <value>زمان تحویل به انبار</value>
+  </data>
+  <data name="txtTransactionCode" xml:space="preserve">
+    <value>کد تراکنش</value>
+  </data>
+  <data name="txtWarehouse" xml:space="preserve">
+    <value>انبار</value>
+  </data>
 </root>

@@ -10,12 +10,12 @@
              mc:Ignorable="d" Height="45"
 			 x:Name="root"
              d:DesignWidth="400">
-    <UserControl.Width>
-        <MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
+    <UserControl.Width>500
+        <!--<MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
             <Binding Path="StartDateTime"/>
             <Binding Path="EndDateTime"/>
             <Binding ElementName="root" Path="PPTable.HourZoom"/>
-        </MultiBinding>
+        </MultiBinding>-->
     </UserControl.Width>
     <UserControl.Effect>
         <DropShadowEffect ShadowDepth="0" BlurRadius="3"/>
@@ -78,54 +78,63 @@
                         <DockPanel>
                             <Image Style="{StaticResource StoredCountImage}" DockPanel.Dock="Left" Margin="4,0" VerticalAlignment="Center"/>
                             <Grid>
-                                <Button Command="{Binding CreateTransactionCommand}" Visibility="{Binding WarehouseTransaction, Converter={StaticResource isNullToVisibility}}" Click="CreateTransactionButton_Click">
-                                    <WrapPanel HorizontalAlignment="Center">
-                                        <Image Style="{StaticResource StoredCountImage}" Margin="0,-1"/>
-                                        <TextBlock Text="{Loc txtSendToWarehouse}"/>
-                                    </WrapPanel>
+                                <Button Command="{Binding CreateTransactionCommand}" Click="OpenTransactionButton_Click" Padding="0" Margin="0">
+                                        <TextBlock Text="{Loc txtSendToWarehouse}" Margin="0,-5" Foreground="Black"/>
                                 </Button>
                                 <Popup x:Name="transactionPopup" IsOpen="False">
-                                    <Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">
-                                        <Border.Effect>
-                                            <DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
-                                        </Border.Effect>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Text="{Loc txtStartDate}"/>
-                                            <cal:PersianDatePicker SelectedDate="{Binding StartDate}" Grid.Row="0" Grid.Column="1"/>
-                                            <TextBlock Text="{Loc txtStartTime}" Grid.Row="1"/>
-                                            <cc:TimeBox Time="{Binding StartTime}" Grid.Row="1" Grid.Column="1"/>
+									<Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">
+										<Border.Effect>
+											<DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
+										</Border.Effect>
+										<Grid>
+											<Grid.RowDefinitions>
+												<RowDefinition Height="25"/>
+												<RowDefinition Height="25"/>
+												<RowDefinition Height="25"/>
+												<RowDefinition Height="25"/>
+												<RowDefinition Height="25"/>
+												<RowDefinition Height="Auto"/>
+												<RowDefinition Height="Auto"/>
+											</Grid.RowDefinitions>
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="Auto" MaxWidth="120"/>
+												<ColumnDefinition Width="Auto"/>
+											</Grid.ColumnDefinitions>
 
-                                            <Button Click="PopupCloseButton_Click" Grid.Row="2">
-                                                <WrapPanel>
-                                                    <Image Style="{StaticResource Undo16Image}"/>
-                                                    <TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
-                                                </WrapPanel>
-                                            </Button>
-                                            <Button Command="{Binding SaveCommand}" Grid.Row="2" Grid.Column="1">
-                                                <WrapPanel>
-                                                    <Image Style="{StaticResource Save16Image}"/>
-                                                    <TextBlock Text="{Loc txtSave}" Foreground="Black"/>
-                                                </WrapPanel>
-                                            </Button>
-                                        </Grid>
-                                    </Border>
-                                </Popup>
-                                <DockPanel Visibility="{Binding WarehouseTransaction, Converter={StaticResource isNotNullToVisibility}}">
-                                    <Button DockPanel.Dock="Left" Margin="0" VerticalAlignment="Center" Command="{Binding WarehouseTransaction.DeleteCommand}">
-                                        <Image Style="{StaticResource Delete16Image}" Margin="0,-1"/>
-                                    </Button>
-                                    <ComboBox ItemsSource="{Binding Warehouses}" SelectedItem="{Binding WarehouseTransaction.Warehouse}" DisplayMemberPath="Name" Margin="0,1,3,1"/>
-                                    <TextBox Text="{Binding WarehouseTransaction.Quantity, UpdateSourceTrigger=PropertyChanged}"  FontSize="12" Margin="0,1,3,1"/>
-                                </DockPanel>
+											<TextBlock Text="{Loc txtSendToWarehouseDateTime}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" TextWrapping="Wrap"/>
+											<TextBlock Text="{Loc txtWarehouse}" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+											<TextBlock Text="{Loc txtQuantity}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+											<TextBlock Text="{Loc txtTransactionCode}" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
+
+											<cal:PersianDatePicker SelectedDate="{Binding WarehouseTransaction.TransactionDate}" Grid.Row="0" Grid.Column="1"/>
+											<cc:TimeBox Time="{Binding WarehouseTransaction.TransactionTime}" Grid.Row="1" Grid.Column="1"/>
+											<ComboBox ItemsSource="{Binding Warehouses}" SelectedItem="{Binding WarehouseTransaction.Warehouse}" DisplayMemberPath="Name" Grid.Row="2" Grid.Column="1" Margin="-1"/>
+											<TextBox Text="{Binding WarehouseTransaction.Quantity}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="1"/>
+											<TextBox Text="{Binding WarehouseTransaction.Code}" FlowDirection="LeftToRight" Grid.Row="4" Grid.Column="1"/>
+
+											<DockPanel Grid.Row="5" Grid.ColumnSpan="2">
+												<Button Command="{Binding DeleteCommand}">
+													<StackPanel>
+														<Image Style="{StaticResource Delete16Image}"/>
+														<TextBlock Text="{Loc txtDelete}" Foreground="Black"/>
+													</StackPanel>
+												</Button>
+												<Button Click="PopupCloseButton_Click">
+													<StackPanel>
+														<Image Style="{StaticResource Undo16Image}"/>
+														<TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
+													</StackPanel>
+												</Button>
+												<Button Command="{Binding SaveCommand}">
+													<StackPanel>
+														<Image Style="{StaticResource Save16Image}"/>
+														<TextBlock Text="{Loc txtSave}" Foreground="Black"/>
+													</StackPanel>
+												</Button>
+											</DockPanel>
+										</Grid>
+									</Border>
+								</Popup>
                             </Grid>
                         </DockPanel>
                     </Border>
@@ -187,58 +196,58 @@
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
-                <Popup x:Name="endPopup" IsOpen="False">
-                    <Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">
-                        <Border.Effect>
-                            <DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
-                        </Border.Effect>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+				<Popup x:Name="endPopup" IsOpen="False">
+					<Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">
+						<Border.Effect>
+							<DropShadowEffect ShadowDepth="0" BlurRadius="4"/>
+						</Border.Effect>
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="25"/>
+								<RowDefinition Height="25"/>
+								<RowDefinition Height="25"/>
+								<RowDefinition Height="25"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
 
-                            <TextBlock Text="{Loc txtEndDate}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
-                            <TextBlock Text="{Loc txtEndTime}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
-                            <TextBlock Text="مدت زمان گزارش" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
-                            <TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+							<TextBlock Text="{Loc txtEndDate}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+							<TextBlock Text="{Loc txtEndTime}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+							<TextBlock Text="مدت زمان گزارش" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+							<TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
 
-                            <cal:PersianDatePicker SelectedDate="{Binding EndDate}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
-                            <cc:TimeBox Time="{Binding EndTime}" Grid.Row="1" Grid.Column="2"/>
-                            <cc:TimeBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding ByEndDate}" Grid.Row="2" Grid.Column="2"/>
-                            <TextBox Text="{Binding TargetPoint}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="2"/>
+							<cal:PersianDatePicker SelectedDate="{Binding EndDate}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
+							<cc:TimeBox Time="{Binding EndTime}" Grid.Row="1" Grid.Column="2"/>
+							<cc:TimeBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding ByEndDate}" Grid.Row="2" Grid.Column="2"/>
+							<TextBox Text="{Binding TargetPoint}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="2"/>
 
-                            <Button Command="{Binding AutoDurationCommand}" ToolTip="محاسبه خودکار زمان از طریق مقدار هدف ایستگاه" Grid.Row="2" Grid.Column="1">
-                                <Image Style="{StaticResource Reload18Image}" Margin="-2"/>
-                            </Button>
-                            <Button Command="{Binding AutoTargetPointCommand}" ToolTip="محاسبه خودکار مقدار هدف ایستگاه از طریق زمان پایان" Grid.Row="3" Grid.Column="1">
-                                <Image Style="{StaticResource Reload18Image}" Margin="-2"/>
-                            </Button>
+							<Button Command="{Binding AutoDurationCommand}" ToolTip="محاسبه خودکار زمان از طریق مقدار هدف ایستگاه" Grid.Row="2" Grid.Column="1">
+								<Image Style="{StaticResource Reload18Image}" Margin="-2"/>
+							</Button>
+							<Button Command="{Binding AutoTargetPointCommand}" ToolTip="محاسبه خودکار مقدار هدف ایستگاه از طریق زمان پایان" Grid.Row="3" Grid.Column="1">
+								<Image Style="{StaticResource Reload18Image}" Margin="-2"/>
+							</Button>
 
-                            <Button Grid.Row="4" Grid.Column="0" Click="PopupCloseButton_Click">
-                                <WrapPanel>
-                                    <Image Style="{StaticResource Undo16Image}"/>
-                                    <TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
-                                </WrapPanel>
-                            </Button>
-                            <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Command="{Binding SaveCommand}">
-                                <WrapPanel>
-                                    <Image Style="{StaticResource Save16Image}"/>
-                                    <TextBlock Text="{Loc txtSave}" Foreground="Black"/>
-                                </WrapPanel>
-                            </Button>
-                        </Grid>
-                    </Border>
-                </Popup>
-            </Grid>
+							<Button Grid.Row="4" Grid.Column="0" Click="PopupCloseButton_Click">
+								<WrapPanel>
+									<Image Style="{StaticResource Undo16Image}"/>
+									<TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
+								</WrapPanel>
+							</Button>
+							<Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Command="{Binding SaveCommand}">
+								<WrapPanel>
+									<Image Style="{StaticResource Save16Image}"/>
+									<TextBlock Text="{Loc txtSave}" Foreground="Black"/>
+								</WrapPanel>
+							</Button>
+						</Grid>
+					</Border>
+				</Popup>
+			</Grid>
         </Border>
 
 
@@ -247,7 +256,7 @@
         <!-- produced G1 -->
         <Grid Margin="0,1" Height="10" Background="Transparent">
             <Grid.ToolTip>
-                <StackPanel FlowDirection="{Loc enumDirection}">
+                <StackPanel>
                     <DockPanel>
                         <Image Style="{StaticResource StationOutputImage}"/>
                         <TextBlock Text="{Loc txtStationOutput}" VerticalAlignment="Center" FontWeight="Bold"/>
@@ -274,8 +283,8 @@
         <!-- stored count -->
         <Grid Margin="0,1" Height="10" Background="Transparent">
             <Grid.ToolTip>
-                <StackPanel FlowDirection="{Loc enumDirection}">
-                    <DockPanel>
+				<StackPanel>
+					<DockPanel>
                         <Image Style="{StaticResource StoredCountImage}"/>
                         <TextBlock Text="{Loc txtStoredCount}" VerticalAlignment="Center" FontWeight="Bold"/>
                     </DockPanel>
