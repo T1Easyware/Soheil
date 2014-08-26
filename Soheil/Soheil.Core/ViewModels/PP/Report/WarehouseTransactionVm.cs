@@ -28,7 +28,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				TaskReport = model,
 				Quantity = model.TaskProducedG1,
 				TransactionDateTime = model.ReportEndDateTime,
-				TransactionType = 0,
+				Flow = 0,
 			};
 			model.WarehouseTransactions.Add(Model);
 			_dataService.AddModel(Model);

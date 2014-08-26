@@ -543,6 +543,10 @@
       <End Role="TaskReport" EntitySet="TaskReports" />
       <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
     </AssociationSet>
+    <AssociationSet Name="WarehouseTransactionUnitSet" Association="SoheilEdm.Store.WarehouseTransactionUnitSet">
+      <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
+      <End Role="UnitSet" EntitySet="UnitSets" />
+    </AssociationSet>
     <AssociationSet Name="FK_PM_inherits_NonProductiveTask" Association="SoheilEdm.Store.FK_PM_inherits_NonProductiveTask">
       <End Role="NonProductiveTask" EntitySet="NonProductiveTasks" />
       <End Role="PM" EntitySet="NonProductiveTasks_PM" />
@@ -1422,7 +1426,8 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="TransactionType" Type="tinyint" Nullable="false" />
+    <Property Name="Flow" Type="tinyint" Nullable="false" />
+    <Property Name="Type" Type="tinyint" Nullable="false" />
     <Property Name="RecordDateTime" Type="datetime" Nullable="false" />
     <Property Name="TransactionDateTime" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
@@ -1457,8 +1462,7 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="ActualInventory" Type="float" Nullable="false" />
-    <Property Name="AvailableInventory" Type="float" Nullable="false" />
+    <Property Name="Inventory" Type="float" Nullable="false" />
     <Property Name="SafetyStock" Type="int" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -1472,7 +1476,7 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Inventory" Type="int" Nullable="false" />
+    <Property Name="Inventory" Type="float" Nullable="false" />
     <Property Name="SafetyStock" Type="int" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -1484,6 +1488,8 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Type" Type="tinyint" Nullable="false" />
+    <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
     <Property Name="RecordDateTime" Type="datetime" Nullable="false" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -1501,6 +1507,7 @@
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="UnitGroup_Id" Type="int" Nullable="false" />
+    <Property Name="WarehouseTransaction_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="UnitConversions">
     <Key>
@@ -2915,6 +2922,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="WarehouseTransactionUnitSet">
+    <End Role="WarehouseTransaction" Type="SoheilEdm.Store.WarehouseTransactions" Multiplicity="1" />
+    <End Role="UnitSet" Type="SoheilEdm.Store.UnitSets" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WarehouseTransaction">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UnitSet">
+        <PropertyRef Name="WarehouseTransaction_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PM_inherits_NonProductiveTask">
     <End Role="NonProductiveTask" Type="SoheilEdm.Store.NonProductiveTasks" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -3508,6 +3527,10 @@
           <AssociationSet Name="TaskReportWarehouseTransaction" Association="SoheilEdm.TaskReportWarehouseTransaction">
             <End Role="TaskReport" EntitySet="TaskReports" />
             <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="WarehouseTransactionUnitSet" Association="SoheilEdm.WarehouseTransactionUnitSet">
+            <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
+            <End Role="UnitSet" EntitySet="UnitSets" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Product">
@@ -4905,7 +4928,8 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Code" Type="String" Nullable="false" />
-          <Property Name="TransactionType" Type="Byte" Nullable="false" />
+          <Property Name="Flow" Type="Byte" Nullable="false" />
+          <Property Name="Type" Type="Byte" Nullable="false" />
           <Property Name="RecordDateTime" Type="DateTime" Nullable="false" />
           <Property Name="TransactionDateTime" Type="DateTime" Nullable="false" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
@@ -4916,6 +4940,7 @@
           <NavigationProperty Name="RawMaterial" Relationship="SoheilEdm.RawMaterialWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="RawMaterial" />
           <NavigationProperty Name="ProductRework" Relationship="SoheilEdm.ProductReworkWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="ProductRework" />
           <NavigationProperty Name="TaskReport" Relationship="SoheilEdm.TaskReportWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="TaskReport" />
+          <NavigationProperty Name="UnitSets" Relationship="SoheilEdm.WarehouseTransactionUnitSet" FromRole="WarehouseTransaction" ToRole="UnitSet" />
         </EntityType>
         <EntityType Name="Warehouse">
           <Key>
@@ -4941,8 +4966,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" />
           <Property Name="Code" Type="String" Nullable="false" />
-          <Property Name="ActualInventory" Type="Double" Nullable="false" />
-          <Property Name="AvailableInventory" Type="Double" Nullable="false" />
+          <Property Name="Inventory" Type="Double" Nullable="false" />
           <Property Name="SafetyStock" Type="Int32" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -4958,7 +4982,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" />
           <Property Name="Code" Type="String" Nullable="false" />
-          <Property Name="Inventory" Type="Int32" Nullable="false" />
+          <Property Name="Inventory" Type="Double" Nullable="false" />
           <Property Name="SafetyStock" Type="Int32" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -4971,6 +4995,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Type" Type="Byte" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" />
           <Property Name="RecordDateTime" Type="DateTime" Nullable="false" />
           <Property Name="Code" Type="String" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -5007,6 +5033,7 @@
           <NavigationProperty Name="MajorUnits" Relationship="SoheilEdm.UnitSetUnitConversion" FromRole="UnitSet" ToRole="UnitConversion" />
           <NavigationProperty Name="MinorUnits" Relationship="SoheilEdm.UnitSetUnitConversion1" FromRole="UnitSet" ToRole="UnitConversion" />
           <NavigationProperty Name="UnitGroup" Relationship="SoheilEdm.UnitGroupUnitSet" FromRole="UnitSet" ToRole="UnitGroup" />
+          <NavigationProperty Name="WarehouseTransaction" Relationship="SoheilEdm.WarehouseTransactionUnitSet" FromRole="UnitSet" ToRole="WarehouseTransaction" />
         </EntityType>
         <EntityType Name="UnitConversion">
           <Key>
@@ -5069,6 +5096,10 @@
         <Association Name="TaskReportWarehouseTransaction">
           <End Type="SoheilEdm.TaskReport" Role="TaskReport" Multiplicity="0..1" />
           <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
+        </Association>
+        <Association Name="WarehouseTransactionUnitSet">
+          <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="1" />
+          <End Type="SoheilEdm.UnitSet" Role="UnitSet" Multiplicity="0..1" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -5932,7 +5963,8 @@
         <MappingFragment StoreEntitySet="WarehouseTransactions">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Code" ColumnName="Code" />
-          <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+          <ScalarProperty Name="Flow" ColumnName="Flow" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
           <ScalarProperty Name="RecordDateTime" ColumnName="RecordDateTime" />
           <ScalarProperty Name="TransactionDateTime" ColumnName="TransactionDateTime" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
@@ -5963,8 +5995,7 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Code" ColumnName="Code" />
-          <ScalarProperty Name="ActualInventory" ColumnName="ActualInventory" />
-          <ScalarProperty Name="AvailableInventory" ColumnName="AvailableInventory" />
+          <ScalarProperty Name="Inventory" ColumnName="Inventory" />
           <ScalarProperty Name="SafetyStock" ColumnName="SafetyStock" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
@@ -5992,6 +6023,8 @@
       <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.WarehouseReceipt)">
         <MappingFragment StoreEntitySet="WarehouseReceipts">
           <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="RecordDateTime" ColumnName="RecordDateTime" />
           <ScalarProperty Name="Code" ColumnName="Code" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
@@ -6969,6 +7002,14 @@
       </EndProperty>
       <Condition ColumnName="TaskReport_Id" IsNull="false" />
     </AssociationSetMapping>
+    <AssociationSetMapping Name="WarehouseTransactionUnitSet" TypeName="SoheilEdm.WarehouseTransactionUnitSet" StoreEntitySet="UnitSets">
+      <EndProperty Name="WarehouseTransaction">
+        <ScalarProperty Name="Id" ColumnName="WarehouseTransaction_Id" />
+      </EndProperty>
+      <EndProperty Name="UnitSet">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -7280,6 +7321,7 @@
         <AssociationConnector Association="SoheilEdm.MachinePartRepair" />
         <AssociationConnector Association="SoheilEdm.ProductReworkWarehouseTransaction" />
         <AssociationConnector Association="SoheilEdm.TaskReportWarehouseTransaction" />
+        <AssociationConnector Association="SoheilEdm.WarehouseTransactionUnitSet" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

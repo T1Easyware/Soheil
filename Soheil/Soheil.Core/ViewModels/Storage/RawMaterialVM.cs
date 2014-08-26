@@ -46,16 +46,10 @@ namespace Soheil.Core.ViewModels
             set { _model.Code = value; OnPropertyChanged("Code"); }
         }
 
-        public double AvailableInventory
+        public double Inventory
         {
-            get { return _model.AvailableInventory; }
-            set { _model.AvailableInventory = value; OnPropertyChanged("AvailableInventory"); }
-        }
-
-        public double ActualInventory
-        {
-            get { return _model.ActualInventory; }
-            set { _model.ActualInventory = value; OnPropertyChanged("ActualInventory"); }
+            get { return _model.Inventory; }
+            set { _model.Inventory = value; OnPropertyChanged("Inventory"); }
         }
 
         public int SafetyStock
@@ -145,7 +139,7 @@ namespace Soheil.Core.ViewModels
         public static RawMaterial CreateNew(RawMaterialDataService dataService)
         {
             int id = dataService.AddModel(new RawMaterial { Name = "جدید", Code = string.Empty, 
-                AvailableInventory = 0, ActualInventory = 0, SafetyStock = 0,
+                Inventory = 0, SafetyStock = 0,
                 CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now, Status = (byte)Status.Active});
             return dataService.GetSingle(id);
         }

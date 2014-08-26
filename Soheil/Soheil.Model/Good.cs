@@ -37,7 +37,7 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual int Inventory
+        public virtual double Inventory
         {
             get;
             set;

@@ -25,6 +25,18 @@ namespace Soheil.Model
             set;
         }
     
+        public virtual byte Type
+        {
+            get;
+            set;
+        }
+    
+        public virtual string Description
+        {
+            get;
+            set;
+        }
+    
         public virtual System.DateTime RecordDateTime
         {
             get;

@@ -132,6 +132,21 @@ namespace Soheil.Model
             }
         }
         private UnitGroup _unitGroup;
+    
+        public virtual WarehouseTransaction WarehouseTransaction
+        {
+            get { return _warehouseTransaction; }
+            set
+            {
+                if (!ReferenceEquals(_warehouseTransaction, value))
+                {
+                    var previousValue = _warehouseTransaction;
+                    _warehouseTransaction = value;
+                    FixupWarehouseTransaction(previousValue);
+                }
+            }
+        }
+        private WarehouseTransaction _warehouseTransaction;
 
         #endregion
 
@@ -150,6 +165,19 @@ namespace Soheil.Model
                 {
                     UnitGroup.UnitSets.Add(this);
                 }
+            }
+        }
+    
+        private void FixupWarehouseTransaction(WarehouseTransaction previousValue)
+        {
+            if (previousValue != null && ReferenceEquals(previousValue.UnitSets, this))
+            {
+                previousValue.UnitSets = null;
+            }
+    
+            if (WarehouseTransaction != null)
+            {
+                WarehouseTransaction.UnitSets = this;
             }
         }
     
