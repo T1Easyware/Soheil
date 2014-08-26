@@ -11,6 +11,10 @@ namespace Soheil.Core.DataServices
 {
     public class ProductActivitySkillDataService : DataServiceBase, IDataService<ProductActivitySkill>
     {
+		Repository<ProductActivitySkill> _productActivitySkillRepository;
+
+		public event EventHandler<ModelAddedEventArgs<ProductActivitySkill>> SpecialSkillAdded;
+
 		public ProductActivitySkillDataService()
 			:this(new SoheilEdmContext())
 		{
@@ -19,30 +23,29 @@ namespace Soheil.Core.DataServices
 		public ProductActivitySkillDataService(SoheilEdmContext context)
 		{
 			this.Context = context;
+			_productActivitySkillRepository = new Repository<ProductActivitySkill>(Context);
 		}
 
         #region IDataService<SpecialSkill> Members
 
 		public ProductActivitySkill GetSingle(int id)
-        {
+		{
 			ProductActivitySkill entity;
 
-				var specialSkillRepository = new Repository<ProductActivitySkill>(Context);
-                entity = specialSkillRepository.Single(specialSkill => specialSkill.Id == id);
+			entity = _productActivitySkillRepository.Single(specialSkill => specialSkill.Id == id);
 
-            return entity;
-        }
+			return entity;
+		}
 
 		public ObservableCollection<ProductActivitySkill> GetAll()
-        {
+		{
 			ObservableCollection<ProductActivitySkill> models;
 
-				var repository = new Repository<ProductActivitySkill>(Context);
-				IEnumerable<ProductActivitySkill> entityList = repository.GetAll();
-				models = new ObservableCollection<ProductActivitySkill>(entityList);
+			IEnumerable<ProductActivitySkill> entityList = _productActivitySkillRepository.GetAll();
+			models = new ObservableCollection<ProductActivitySkill>(entityList);
 
-            return models;
-        }
+			return models;
+		}
 
 		public ObservableCollection<ProductActivitySkill> GetActives()
         {
@@ -66,64 +69,88 @@ namespace Soheil.Core.DataServices
         }
 
 		public void UpdateModel(ProductActivitySkill model)
-        {
+		{
+			ProductActivitySkill entity = _productActivitySkillRepository.Single(specialSkill => specialSkill.Id == model.Id);
 
-				var specialSkillRepository = new Repository<ProductActivitySkill>(Context);
-				ProductActivitySkill entity = specialSkillRepository.Single(specialSkill => specialSkill.Id == model.Id);
+			// entity.Reserve1 = model.Reserve1;
+			//    entity.Reserve2 = model.Reserve2;
+			//  entity.Reserve3 = model.Reserve3;
+			entity.ModifiedBy = LoginInfo.Id;
+			Context.Commit();
 
-               // entity.Reserve1 = model.Reserve1;
-            //    entity.Reserve2 = model.Reserve2;
-              //  entity.Reserve3 = model.Reserve3;
-                entity.ModifiedBy = LoginInfo.Id;
-                Context.Commit();
-
-        }
+		}
 
 		public void DeleteModel(ProductActivitySkill model)
         {
         }
 
 		public void AttachModel(ProductActivitySkill model)
-        {
-
-				var repository = new Repository<ProductActivitySkill>(Context);
-                if (repository.Exists(specialSkill => specialSkill.Id == model.Id))
-                {
-                    UpdateModel(model);
-                }
-                else
-                {
-                    AddModel(model);
-                }
-
-        }
+		{
+			if (_productActivitySkillRepository.Exists(specialSkill => specialSkill.Id == model.Id))
+			{
+				UpdateModel(model);
+			}
+			else
+			{
+				AddModel(model);
+			}
+		}
 
         #endregion
 
-		public event EventHandler<ModelAddedEventArgs<ProductActivitySkill>> SpecialSkillAdded;
 
-		public ProductActivitySkill FindOrAdd(int productReworkId, int operatorId, int activityId)
+		public ProductActivitySkill TryFind(int productReworkId, int operatorId, int activityId)
 		{
-			var asModel = new ActivitySkillDataService(Context).FindOrAdd(operatorId, activityId);
-			var pasRepository = new Repository<ProductActivitySkill>(Context);
-			var model = pasRepository.FirstOrDefault(x =>
+			var model = _productActivitySkillRepository.FirstOrDefault(x =>
 				x.ProductRework.Id == productReworkId
-				&& x.ActivitySkill.Id == asModel.Id, "ActivitySkill.Operator", "ActivitySkill.Activity");
-			if (model == null)
-			{
-				var prModel = new Repository<ProductRework>(Context).Single(x => x.Id == productReworkId);
-				model = new ProductActivitySkill
-				{
-					ActivitySkill = asModel,
-					ProductRework = prModel,
-					CreatedDate = DateTime.Now,
-					ModifiedDate = DateTime.Now,
-					ModifiedBy = LoginInfo.Id,
-					IluoNr = 0,
-				};
-				Context.Commit();
-			}
+				&& x.ActivitySkill.Activity.Id == activityId
+				&& x.ActivitySkill.Operator.Id == operatorId);
 			return model;
 		}
-    }
+
+		internal void AddOrUpdateSkill(ViewModels.SkillCenter.ProductReworkActivitySkillVm vm)
+		{
+			if (vm.Model == null)
+			{
+				vm.Model = _productActivitySkillRepository.FirstOrDefault(x =>
+					x.ProductRework.Id == vm.ProductReworkId
+					&& x.ActivitySkill.Operator.Id == vm.OperatorId
+					&& x.ActivitySkill.Activity.Id == vm.ActivityId);
+				if (vm.Model == null)
+				{
+					var prModel = new Repository<ProductRework>(Context).Single(x => x.Id == vm.ProductReworkId);
+					var asModel = new Repository<ActivitySkill>(Context).Single(x => x.Operator.Id == vm.OperatorId && x.Activity.Id == vm.ActivityId);
+					
+					//Create ActivitySkill
+					if (asModel == null)
+					{
+						var actv = new Repository<Activity>(Context).Single(x => x.Id == vm.ActivityId);
+						var oper = new Repository<Operator>(Context).Single(x => x.Id == vm.OperatorId);
+						asModel = new ActivitySkill
+						{
+							Activity = actv,
+							Operator = oper,
+							IluoNr = (byte)Soheil.Common.ILUO.NA,
+							CreatedDate = DateTime.Now,
+							ModifiedDate = DateTime.Now,
+							ModifiedBy = LoginInfo.Id
+						};
+					}
+
+					//Create ProductActivitySkill
+					vm.Model = new ProductActivitySkill
+					{
+						ActivitySkill = asModel,
+						ProductRework = prModel,
+						CreatedDate = DateTime.Now,
+						ModifiedDate = DateTime.Now,
+						ModifiedBy = LoginInfo.Id,
+					};
+				}
+
+				vm.Model.IluoNr = (byte)vm.Data;
+				Context.Commit();
+			}
+		}
+	}
 }

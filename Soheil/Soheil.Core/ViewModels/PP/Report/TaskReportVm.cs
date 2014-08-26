@@ -57,7 +57,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			}
 			if (model.WarehouseTransactions.Any())
 			{
-				WarehouseTransaction = new WarehouseTransactionVm(model.WarehouseTransactions.First(), Warehouses, UOW);
+				WarehouseTransaction = new WarehouseTransactionVm(model.WarehouseTransactions.First(), Warehouses);
 			}
 			else
 			{
@@ -363,10 +363,10 @@ namespace Soheil.Core.ViewModels.PP.Report
 			AutoG1Command = new Commands.Command(o =>
 			{
 				ProducedG1 = _taskReportDataService.GuessG1(Model);
-			}, ()=>Model.Id > 0/*task model must be saved before calc*/);
+			});
 			CreateTransactionCommand = new Commands.Command(o =>
 			{
-				WarehouseTransaction = new WarehouseTransactionVm(Model, UOW);
+				WarehouseTransaction = new WarehouseTransactionVm(Model);
 			}, ()=>Warehouses.Any());
 		}
 

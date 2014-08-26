@@ -133,7 +133,7 @@ namespace Soheil.Core.DataServices
             {
 				IEnumerable<Activity> entityList = _activityRepository.Find(activity => 
 					activity.Status == (decimal)Status.Active 
-					&& activity.ActivitySkills.All(item=>item.Operator.Id != linkId), "ActivityGroup");
+					&& !activity.ActivitySkills.Any(item=>item.Operator.Id == linkId), "ActivityGroup");
 				return new ObservableCollection<Activity>(entityList);
             }
             return GetActives();

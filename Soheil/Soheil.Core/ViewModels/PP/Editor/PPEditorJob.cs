@@ -41,7 +41,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			Description = model.Description;
 			FpcId = model.FPC.Id;
 			Product = new ProductVm(model.ProductRework.Product, null);
-			ProductRework = new ProductReworkVm(model.ProductRework, Product);
+			ProductRework = Product.ProductReworks.FirstOrDefault(x => x.Id == model.ProductRework.Id);
 
 			initializeCommands();
 		}

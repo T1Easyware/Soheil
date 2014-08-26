@@ -169,7 +169,6 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				var vm = (StoppageReportVm)d;
 				var val = (string)e.NewValue;
-				if (val == null) return;
 				vm.Model.Description = val;
 			}));
 

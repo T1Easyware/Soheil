@@ -18,7 +18,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		/// Creates an instance of ProductActivitySkillVm and initializes the commands
 		/// </summary>
 		public ProductActivitySkillVm()
-			: base()
+			: base(0,0)
 		{
 			//Data = model.Iluo;
 			//Model = model;

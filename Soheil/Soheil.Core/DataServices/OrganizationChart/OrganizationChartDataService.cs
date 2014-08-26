@@ -87,7 +87,8 @@ namespace Soheil.Core.DataServices
             {
                     IEnumerable<OrganizationChart> entityList =
                         _orgChartRepository.Find(
-                            organizationChart => organizationChart.Status == (decimal)Status.Active && organizationChart.OrganizationChart_Positions.All(item=>item.Position.Id != linkId));
+                            organizationChart => organizationChart.Status == (decimal)Status.Active 
+								&& !organizationChart.OrganizationChart_Positions.Any(item=>item.Position.Id == linkId));
                     return new ObservableCollection<OrganizationChart>(entityList);
             }
             return GetActives();

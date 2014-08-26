@@ -156,7 +156,8 @@ namespace Soheil.Core.DataServices
             {
                     IEnumerable<User> entityList =
                         _userRepository.Find(
-                            user => user.Status == (decimal)Status.Active && user.User_Positions.All(up => up.Position.Id != linkId));
+                            user => user.Status == (decimal)Status.Active && 
+								!user.User_Positions.Any(up => up.Position.Id == linkId));
                     return new ObservableCollection<User>(entityList);
             }
             return GetActives();

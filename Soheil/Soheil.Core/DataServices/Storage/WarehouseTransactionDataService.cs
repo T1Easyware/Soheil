@@ -83,5 +83,46 @@ namespace Soheil.Core.DataServices.Storage
 			}
 		} 
 		#endregion
+
+		internal WarehouseTransaction CreateTransactionFor(TaskReport model)
+		{
+			//Model
+			var tr = new Repository<TaskReport>(Context).Single(x=>x.Id == model.Id);
+			var wt = new Soheil.Model.WarehouseTransaction
+			{
+				Code = model.Code,
+				ProductRework = new Repository<ProductRework>(Context).Single(x => x.Id == model.Task.Block.StateStation.State.OnProductRework.Id),
+				TaskReport = tr,
+				Quantity = model.TaskProducedG1,
+				TransactionDateTime = model.ReportEndDateTime,
+				TransactionType = 0,
+			};
+			tr.WarehouseTransactions.Add(wt);
+			AddModel(wt);
+			return wt;
+		}
+
+		/// <summary>
+		/// Returns the same warehouse but from within the current UOW
+		/// </summary>
+		/// <param name="warehouse"></param>
+		/// <returns></returns>
+		internal Warehouse GetWarehouse(Warehouse warehouse)
+		{
+			return new Repository<Warehouse>(Context).Single(x => x.Id == warehouse.Id);
+		}
+
+		internal string Save()
+		{
+			try
+			{
+				Context.Commit();
+			}
+			catch(Exception ex)
+			{
+				return ex.Message;
+			}
+			return null;
+		}
 	}
 }
