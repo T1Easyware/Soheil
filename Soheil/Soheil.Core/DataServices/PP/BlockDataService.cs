@@ -68,6 +68,8 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(Block model)
 		{
+			model.ModifiedBy = LoginInfo.Id;
+			model.ModifiedDate = DateTime.Now; 
 			if (!_blockRepository.Exists(x => x.Id == model.Id))
 				_blockRepository.Add(model);
 			return model.Id;

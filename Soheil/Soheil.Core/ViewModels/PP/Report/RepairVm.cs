@@ -36,6 +36,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			Model = model;
 			CreatedDate = model.CreatedDate.Date;
 			CreatedTime = model.CreatedDate.TimeOfDay;
+			Description = model.Description;
 			SetValue(CreatedDateTimeProperty, model.CreatedDate);
 			if (model.MachinePart != null)
 				Machine = Machines.FirstOrDefault(x => x.Model.Id == model.MachinePart.Machine.Id);

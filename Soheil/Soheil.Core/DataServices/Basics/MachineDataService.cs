@@ -182,7 +182,7 @@ namespace Soheil.Core.DataServices
             {
 				var entityList = _machineRepository.Find(machine => 
 					machine.Status == (decimal)Status.Active 
-					&& machine.StationMachines.All(item=>item.Station.Id != linkId), "MachineFamily");
+					&& !machine.StationMachines.Any(item=>item.Station.Id == linkId), "MachineFamily");
 				return new ObservableCollection<Machine>(entityList);
             }
             return GetActives();

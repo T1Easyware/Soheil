@@ -19,7 +19,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		public GeneralVm()
 		{
 			Id = -100;
-			Name = "همه";
+			Name = "مستقل از محصول";
 			Code = "...";
 			InitializeCommands();
 		}

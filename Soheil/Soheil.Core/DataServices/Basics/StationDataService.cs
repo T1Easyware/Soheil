@@ -157,7 +157,7 @@ namespace Soheil.Core.DataServices
 				IEnumerable<Station> entityList =
 					_stationRepository.Find(
 						station => (station.Status == (decimal)Status.Active)
-							&& station.StationMachines.All(item=>item.Machine.Id != linkId));
+							&& !station.StationMachines.Any(item=>item.Machine.Id == linkId));
 				models = new ObservableCollection<Station>(entityList);
 				return models;
 			}

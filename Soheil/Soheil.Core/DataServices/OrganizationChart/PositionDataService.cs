@@ -94,14 +94,16 @@ namespace Soheil.Core.DataServices
             {
                     IEnumerable<Position> entityList =
                         _positionRepository.Find(
-                            position => position.Status == (decimal)Status.Active && position.User_Positions.All(item=>item.User.Id != linkId));
+                            position => position.Status == (decimal)Status.Active &&
+								!position.User_Positions.Any(item=>item.User.Id == linkId));
                     return new ObservableCollection<Position>(entityList);
             }
             if (linkType == SoheilEntityType.OrganizationCharts)
             {
                     IEnumerable<Position> entityList =
                         _positionRepository.Find(
-                            position => position.Status == (decimal)Status.Active && position.OrganizationChart_Positions.All(item=> item.OrganizationChart.Id != linkId));
+                            position => position.Status == (decimal)Status.Active && 
+								!position.OrganizationChart_Positions.Any(item=> item.OrganizationChart.Id == linkId));
                     return new ObservableCollection<Position>(entityList);
             }
             return GetActives();

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP;assembly=Soheil.Core" 
              xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Editor;assembly=Soheil.Core" 
-             xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
+             xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit" 
+             xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
              xmlns:fpcView="clr-namespace:Soheil.Views.Fpc" 
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -18,27 +19,29 @@
 					<ColumnDefinition Width="10"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
-				<TextBlock Text="{Binding Name}"/>
-				<TextBlock Text="{Binding Code}" Grid.Column="2" Foreground="Gray"/>
-			</Grid>
-		</HierarchicalDataTemplate>
+                <TextBlock Text="{Binding Code}" Grid.Column="0" Foreground="Gray" FontWeight="Normal"/>
+                <TextBlock Text="{Binding Name}" Grid.Column="2" FontWeight="Bold"/>
+            </Grid>
+        </HierarchicalDataTemplate>
 		<DataTemplate DataType="{x:Type vm:JobProductVm}">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="15"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-				<Rectangle Margin="2">
-					<Rectangle.Fill>
-						<SolidColorBrush Color="{Binding Color}"/>
-					</Rectangle.Fill>
-				</Rectangle>
-				<TextBlock Text="{Binding Name}" Grid.Column="1"/>
-				<TextBlock Text="{Binding Code}" Grid.Column="2" Foreground="Gray"/>
-				<Button Content="افزودن به Jobها" Grid.Column="3" Command="{Binding CreateNewJob}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext}"/>
-			</Grid>
+            <Button Command="{Binding CreateNewJob}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext}"
+                    ToolTip="{Loc txtAddToJobs}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Margin="2">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding Color}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Text="{Binding Code}" Grid.Column="1" Foreground="Gray" FontWeight="Normal"/>
+                    <TextBlock Text="{Binding Name}" Grid.Column="2" Foreground="Black"/>
+                </Grid>
+            </Button>
 		</DataTemplate>
 
 		<DataTemplate x:Key="jobTemplate" DataType="{x:Type ppevm:PPEditorJob}">
@@ -56,18 +59,6 @@
 										 AccelerationRatio="1"
 										 To="0" Duration="0:0:0.2"/>
 					</Storyboard>
-					<!--Storyboard Duration="0:0:0.2" x:Key="wipeOpen" Completed="loadStoryboard_Completed">
-						<DoubleAnimation Storyboard.TargetName="panel"
-										 Storyboard.TargetProperty="Width"
-										 DecelerationRatio="0.7"
-										 From="0" To="250" Duration="0:0:0.4"/>
-					</Storyboard>
-					<Storyboard Duration="0:0:0.2" x:Key="wipeClose" Completed="unloadStoryboard_Completed">
-						<DoubleAnimation Storyboard.TargetName="panel"
-										 Storyboard.TargetProperty="Width"
-										 AccelerationRatio="0.5"
-										 From="250" To="0" Duration="0:0:0.4"/>
-					</Storyboard-->
 				</DockPanel.Resources>
 				<DockPanel DockPanel.Dock="Top">
 					<Canvas Height="32" DockPanel.Dock="Left" Width="0"/>
@@ -76,15 +67,10 @@
 							<SolidColorBrush Color="{Binding Product.Color}"/>
 						</Border.Background>
 						<WrapPanel Margin="2,0">
-							<Button HorizontalAlignment="Left" Command="{Binding DeleteJobCommand}" ToolTip="حذف این Job">
+							<Button HorizontalAlignment="Left" Command="{Binding DeleteJobCommand}" ToolTip="{Loc txtDelete}">
 								<Image Style="{StaticResource Delete16Image}"/>
-								<!--Button.Triggers>
-									<EventTrigger RoutedEvent="ButtonBase.Click">
-										<BeginStoryboard Storyboard="{StaticResource wipeClose}"/>
-									</EventTrigger>
-								</Button.Triggers-->
 							</Button>
-                            <Button HorizontalAlignment="Left" IsEnabled="{Binding IsSaved}" Command="{Binding SaveCommand}" ToolTip="ذخیره این Job">
+                            <Button HorizontalAlignment="Left" IsEnabled="{Binding IsSaved}" Command="{Binding SaveCommand}" ToolTip="{Loc txtSave}">
 								<Image Style="{StaticResource Save16Image}"/>
                             </Button>
                         </WrapPanel>
@@ -97,7 +83,7 @@
 					<DockPanel Margin="5">
 						<!--product info-->
 						<DockPanel DockPanel.Dock="Top">
-							<TextBlock Foreground="Gray" VerticalAlignment="Center" DockPanel.Dock="Left" Text="محصول"/>
+							<TextBlock Foreground="Gray" VerticalAlignment="Center" DockPanel.Dock="Left" Text="{Loc txtProduct}"/>
 							<WrapPanel VerticalAlignment="Center" Margin="3">
 								<TextBlock Text="{Binding Product.Name}" Foreground="Black"/>
 								<TextBlock Text="{Binding Product.Code}" Foreground="Gray" Margin="5,0,0,0"/>
@@ -106,11 +92,11 @@
 						<!--اهمیت، لگ و توضیحات-->
 						<StackPanel DockPanel.Dock="Bottom">
 							<DockPanel>
-								<TextBlock Foreground="Gray" VerticalAlignment="Center" DockPanel.Dock="Left" Text="اهمیت"/>
-								<TextBlock VerticalAlignment="Center" Foreground="{StaticResource HoverBrush}" Text="مهم" FontWeight="Bold" DockPanel.Dock="Right" Opacity="{Binding Weight, Converter={StaticResource floatMultiplier}, ConverterParameter=0.1}"/>
+								<TextBlock Foreground="Gray" VerticalAlignment="Center" DockPanel.Dock="Left" Text="{Loc txtPriority}"/>
+								<TextBlock VerticalAlignment="Center" Foreground="{StaticResource HoverBrush}" Text="{Loc txtImportant}" FontWeight="Bold" DockPanel.Dock="Right" Opacity="{Binding Weight, Converter={StaticResource floatMultiplier}, ConverterParameter=0.1}"/>
 								<Slider Margin="3" VerticalAlignment="Center" Minimum="0.1" Maximum="10" TickFrequency="2.5" TickPlacement="TopLeft" Value="{Binding Weight}"/>
 							</DockPanel>
-							<GroupBox Foreground="Gray" Header="تاخیر هر مرحله FPC" Margin="1,2">
+							<GroupBox Foreground="Gray" Header="{Loc txtJobDelay}" Margin="1,2">
 								<Grid>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="Auto"/>
@@ -119,14 +105,14 @@
 										<ColumnDefinition Width="*"/>
 										<ColumnDefinition Width="Auto"/>
 									</Grid.ColumnDefinitions>
-									<TextBlock Foreground="Gray" Text="تعداد"/>
-									<TextBox Grid.Column="1" Text="{Binding LagCount}" Opacity="{Binding LagCount, Converter={StaticResource opaqueIfPositiveInt}, UpdateSourceTrigger=PropertyChanged}"/>
-									<TextBlock Grid.Column="2" Foreground="Gray" Text="یا زمان"/>
-									<TextBox Grid.Column="3" Text="{Binding LagSeconds}" Opacity="{Binding LagSeconds, Converter={StaticResource opaqueIfPositiveInt}, UpdateSourceTrigger=PropertyChanged}"/>
-									<TextBlock Grid.Column="4" Text="ثانیه" Foreground="Gray"/>
+									<TextBlock Foreground="Gray" Text="{Loc txtQuantity}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding LagCount, UpdateSourceTrigger=PropertyChanged}" Opacity="{Binding LagCount, Converter={StaticResource opaqueIfPositiveInt}, UpdateSourceTrigger=PropertyChanged}"/>
+									<TextBlock Grid.Column="2" Foreground="Gray" Text="{Loc txtTime}"/>
+									<TextBox Grid.Column="3" Text="{Binding LagSeconds, UpdateSourceTrigger=PropertyChanged}" Opacity="{Binding LagSeconds, Converter={StaticResource opaqueIfPositiveInt}, UpdateSourceTrigger=PropertyChanged}"/>
+									<TextBlock Grid.Column="4" Text="{Loc txtSeconds}" Foreground="Gray"/>
 								</Grid>
 							</GroupBox>
-							<TextBlock Foreground="Gray" Text="توضیحات"/>
+							<TextBlock Foreground="Gray" Text="{Loc txtDescription}"/>
 							<TextBox Text="{Binding Description}" AcceptsReturn="True" TextWrapping="Wrap"/>
 						</StackPanel>
 						<!--Release and Deadline-->
@@ -140,12 +126,12 @@
 								<RowDefinition/>
 								<RowDefinition/>
 							</Grid.RowDefinitions>
-							<TextBlock Foreground="Gray" VerticalAlignment="Center" Text="شروع" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
-							<cal:PersianDatePicker Grid.Column="1" Margin="3" SelectedDate="{Binding ReleaseDate, Mode=TwoWay, Converter={StaticResource dateToPersianDateConverter}}" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
-                            <TextBox Grid.Column="2" Text="{Binding ReleaseTime, Converter={StaticResource timeSpanToStringConverter}}" MinWidth="30" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
-							<TextBlock Grid.Row="1" Foreground="Gray" VerticalAlignment="Center" Text="مهلت"/>
-							<cal:PersianDatePicker Grid.Row="1" Grid.Column="1" Margin="3" SelectedDate="{Binding DeadlineDate, Mode=TwoWay, Converter={StaticResource dateToPersianDateConverter}}"/>
-							<TextBox Grid.Row="1" Grid.Column="2" Text="{Binding DeadlineTime, Converter={StaticResource timeSpanToStringConverter}}" MinWidth="30"/>
+							<TextBlock Foreground="Gray" VerticalAlignment="Center" Text="{Loc txtReleaseTime}" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
+							<cal:DatePicker Grid.Column="1" Margin="3" SelectedDate="{Binding ReleaseDate}" DisplayDate="{Binding ReleaseDate}" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
+                            <cc:TimeBox Grid.Column="2" Time="{Binding ReleaseTime, Mode=TwoWay}" MinWidth="30" ToolTip="زودترین زمان مجاز برای شروع تولید"/>
+							<TextBlock Grid.Row="1" Foreground="Gray" VerticalAlignment="Center" Text="{Loc txtDeadline}"/>
+							<cal:DatePicker Grid.Row="1" Grid.Column="1" Margin="3" SelectedDate="{Binding DeadlineDate}" DisplayDate="{Binding DeadlineDate}"/>
+							<cc:TimeBox Grid.Row="1" Grid.Column="2" Time="{Binding DeadlineTime, Mode=TwoWay}" MinWidth="30"/>
 						</Grid>
 						<!--rework, qty, code-->
 						<Grid>
@@ -160,11 +146,11 @@
 								<RowDefinition/>
 								<RowDefinition/>
 							</Grid.RowDefinitions>
-							<TextBlock Foreground="Gray" VerticalAlignment="Center" Text="دوباره کاری"/>
+							<TextBlock Foreground="Gray" VerticalAlignment="Center" Text="{Loc txtRework}"/>
 							<ComboBox Grid.Column="1" Margin="3" ItemsSource="{Binding Product.ProductReworks}" SelectedItem="{Binding ProductRework}" DisplayMemberPath="Rework.Name"/>
-							<TextBlock Grid.Row="1" Foreground="Gray" VerticalAlignment="Center" Text="تعداد"/>
+							<TextBlock Grid.Row="1" Foreground="Gray" VerticalAlignment="Center" Text="{Loc txtTargetPoint}"/>
 							<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Quantity}"/>
-							<TextBlock Grid.Row="2" Foreground="Gray" VerticalAlignment="Center" Text="کد Job"/>
+							<TextBlock Grid.Row="2" Foreground="Gray" VerticalAlignment="Center" Text="{Loc txtCode}"/>
 							<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Code}"/>
 							<!--↑ ↓-->
 							<Border Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="3" BorderBrush="Silver" BorderThickness="1" Background="#4000"/>
@@ -195,15 +181,10 @@
 		<DockPanel.Effect>
 			<DropShadowEffect ShadowDepth="0" BlurRadius="6"/>
 		</DockPanel.Effect>
-		<!--DockPanel DockPanel.Dock="Top" LastChildFill="False" Height="30">
-			<Button DockPanel.Dock="Left" Content="پاک کردن همه Jobها" Command="{Binding ClearAllCommand}"/>
-			<Button DockPanel.Dock="Right" Content="انصراف و خروج" Command="{Binding ExitCommand}"/>
-			<Button DockPanel.Dock="Right" Content="ذخیره همه Jobها و خروج" Command="{Binding SaveAllCommand}"/>
-		</-->
 		<Border DockPanel.Dock="Left" Margin="5,5,0,5" BorderThickness="1" CornerRadius="1" 
 			BorderBrush="{StaticResource HeaderBorderBrush}" Background="{StaticResource HeaderBackground}">
 			<DockPanel>
-				<TextBlock Text="محصولات را اضافه کنید" DockPanel.Dock="Top" Foreground="Silver"/>
+				<TextBlock Text="{Loc txtProducts}" DockPanel.Dock="Top" Foreground="Silver"/>
 				<TreeView ItemsSource="{Binding AllProductGroups}"
 						x:Name="productsTv"
 						Background="{StaticResource HeaderBackground}"

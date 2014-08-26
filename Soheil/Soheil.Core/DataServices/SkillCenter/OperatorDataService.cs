@@ -48,7 +48,8 @@ namespace Soheil.Core.DataServices
 		{
 			if (linkType == SoheilEntityType.Activities)
 			{
-				IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (byte)Status.Active && opr.ActivitySkills.All(item => item.Activity.Id != linkId));
+				IEnumerable<Operator> entityList = _operatorRepository.Find(opr => opr.Status == (byte)Status.Active && 
+					!opr.ActivitySkills.Any(item => item.Activity.Id == linkId));
 				return new ObservableCollection<Operator>(entityList);
 			}
 			return GetActives();

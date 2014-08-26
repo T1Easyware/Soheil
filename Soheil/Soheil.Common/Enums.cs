@@ -83,11 +83,12 @@ namespace Soheil.Common
 
     public enum ILUO
     {
-        N = 0,
+		N = 0,
         I = 1,
         L = 2,
         U = 3,
-        O = 4
+        O = 4,
+		NA = 5,
     }
 
     [Flags]

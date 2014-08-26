@@ -689,7 +689,7 @@
     <value>تاریخ خاتمه</value>
   </data>
   <data name="txtReleaseTime" xml:space="preserve">
-    <value>Release time</value>
+    <value>زمان انتشار</value>
   </data>
   <data name="txtStartDate" xml:space="preserve">
     <value>تاریخ شروع</value>
@@ -1249,5 +1249,26 @@
   </data>
   <data name="txtWarehouse" xml:space="preserve">
     <value>انبار</value>
+  </data>
+  <data name="txtAddToJobs" xml:space="preserve">
+    <value>افزودن به Jobها</value>
+  </data>
+  <data name="txtImportant" xml:space="preserve">
+    <value>مهم</value>
+  </data>
+  <data name="txtJobDelay" xml:space="preserve">
+    <value>تاخیر بین ایستگاه</value>
+  </data>
+  <data name="txtPriority" xml:space="preserve">
+    <value>اولویت</value>
+  </data>
+  <data name="txtSeconds" xml:space="preserve">
+    <value>ثانیه</value>
+  </data>
+  <data name="txtGeneralSkillInfo1" xml:space="preserve">
+    <value>سطوح مهارت این قسمت، مهارت کلی اپراتورها را نشان می دهد</value>
+  </data>
+  <data name="txtGeneralSkillInfo2" xml:space="preserve">
+    <value>چنانچه سطح مهارت اپراتور در محصول مربوط تعریف نشده باشد، سطح مهارت این قسمت منظور می شود</value>
   </data>
 </root>

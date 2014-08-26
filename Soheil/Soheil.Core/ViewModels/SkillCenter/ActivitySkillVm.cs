@@ -15,16 +15,16 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		/// <summary>
 		/// Gets the model for this Vm
 		/// </summary>
-		public Model.ActivitySkill Model { get; protected set; }
+		public Model.ActivitySkill Model { get; set; }
 
 		/// <summary>
 		/// Creates an instance of ActivitySkillVm with the given model and initializes the commands
 		/// </summary>
 		/// <param name="model">Model and its ILUO value are used</param>
-		public ActivitySkillVm(Model.ActivitySkill model)
-			: base()
+		public ActivitySkillVm(Model.ActivitySkill model, int operatorId, int activityId)
+			: base(operatorId, activityId)
 		{
-			Data = model.Iluo;
+			Data = model == null ? ILUO.NA : model.Iluo;
 			Model = model;
 		}
 	}

@@ -200,6 +200,8 @@ namespace Soheil.Core.PP.Smart
 					Code = block.Code + ssa.Activity.Code,
 					TargetCount = Quantity,
 					StateStationActivity = ssa,
+					StartDateTime = block.StartDateTime,
+					EndDateTime = block.StartDateTime.AddSeconds(Quantity * ssa.CycleTime),
 				};
 				foreach (var ssam in ssa.StateStationActivityMachines)
 				{

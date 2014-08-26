@@ -20,20 +20,28 @@
 		<!-- tree -->
 		
 		<DataTemplate DataType="{x:Type vm:GeneralVm}">
-			<DockPanel ToolTip="مهارتهای هر اپراتور در این قسمت برای محصولاتی که مهارت آن اپراتور در آنها تعریف نشده است استفاده میشود">
-				<Image Source="/Soheil.Controls;component/Images/all.png" Width="32"/>
-				<TextBlock Text="{Binding Code}" Foreground="White" FontSize="18" FontWeight="Bold" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-				<TextBlock Text="{Binding Name}" Foreground="DarkGray" FontSize="18" FontWeight="Bold" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-				<Button Content="Select" Command="{Binding SelectCommand}" VerticalAlignment="Center"/>
-			</DockPanel>
-		</DataTemplate>
+            <Button Command="{Binding SelectCommand}" HorizontalAlignment="Stretch">
+                <Button.ToolTip>
+                    <StackPanel>
+                        <TextBlock Text="{Loc txtGeneralSkillInfo1}"/>
+                        <TextBlock Text="{Loc txtGeneralSkillInfo2}"/>
+                    </StackPanel>
+                </Button.ToolTip>
+                <DockPanel HorizontalAlignment="Left">
+                    <Image Source="/Soheil.Controls;component/Images/all.png" Width="32" DockPanel.Dock="Left"/>
+                    <Canvas Width="5"/>
+                    <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                </DockPanel>
+            </Button>
+        </DataTemplate>
 		<DataTemplate DataType="{x:Type vm:ProductGroupVm}">
 			<Expander Header="{Binding}">
 				<Expander.HeaderTemplate>
 					<DataTemplate>
 						<DockPanel>
-							<TextBlock Text="{Binding Code}" Foreground="White" FontSize="14" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-							<TextBlock Text="{Binding Name}" Foreground="DarkGray" FontSize="11" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Code}" Foreground="DarkGray" FontSize="14" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <Canvas Width="5"/>
+                            <TextBlock Text="{Binding Name}" Foreground="White" FontSize="12" DockPanel.Dock="Left" VerticalAlignment="Center"/>
 							<!--Button Content="Select" Command="{Binding SelectCommand}" VerticalAlignment="Center"/-->
 						</DockPanel>
 					</DataTemplate>
@@ -47,8 +55,9 @@
 					<DataTemplate>
 						<DockPanel>
 							<Rectangle Width="20" Height="20" Fill="{Binding Color, Converter={StaticResource colorFixer}}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-							<TextBlock Text="{Binding Code}" Foreground="White" FontSize="12" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-							<TextBlock Text="{Binding Name}" Foreground="DarkGray" FontSize="10" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Code}" Foreground="DarkGray" FontSize="13" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <Canvas Width="5"/>
+                            <TextBlock Text="{Binding Name}" Foreground="White" FontSize="11" DockPanel.Dock="Left" VerticalAlignment="Center"/>
 							<!--Button Content="Select" Command="{Binding SelectCommand}" VerticalAlignment="Center"/-->
 						</DockPanel>
 					</DataTemplate>
@@ -57,16 +66,20 @@
 			</Expander>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:ProductReworkVm}">
-			<DockPanel>
-				<Grid DockPanel.Dock="Left">
-					<!--Image Source="/Images/Fpc/default.png" Width="16" VerticalAlignment="Center" Visibility="{Binding IsMainProduct, Converter={StaticResource booleanToVisibilityConverter}}"/-->
-					<Image Style="{StaticResource ReworkImage}" VerticalAlignment="Center" Visibility="{Binding IsMainProduct, Converter={StaticResource booleanToInvisibilityConverter}}"/>
-				</Grid>
-				<TextBlock Text="{Binding Code}" Foreground="White" FontSize="11" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-				<TextBlock Text="{Binding Name}" Foreground="DarkGray" FontSize="9" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-				<Button Content="Select" Command="{Binding SelectCommand}" VerticalAlignment="Center"/>
-			</DockPanel>
-		</DataTemplate>
+            <Button Command="{Binding SelectCommand}" HorizontalAlignment="Stretch">
+                <Grid DockPanel.Dock="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Style="{StaticResource ReworkImage}" VerticalAlignment="Center" Visibility="{Binding IsMainProduct, Converter={StaticResource booleanToInvisibilityConverter}}"/>
+                    <TextBlock Text="{Binding Code}" Foreground="DarkGray" FontSize="12" Grid.Column="1" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Name}" Foreground="White" FontSize="10" Grid.Column="3" VerticalAlignment="Center"/>
+                </Grid>
+            </Button>
+        </DataTemplate>
 
 		<!-- headers -->
 
@@ -157,14 +170,21 @@
 						</I:EventTrigger>
 					</I:Interaction.Triggers>
 				</Polygon>
-				<Polygon x:Name="N" Points="10,10 10,30 20,30 20,10">
-					<I:Interaction.Triggers>
-						<I:EventTrigger EventName="MouseDown">
-							<I:InvokeCommandAction Command="{Binding ChangeCommand}" CommandParameter="{x:Static common:ILUO.N}"/>
-						</I:EventTrigger>
-					</I:Interaction.Triggers>
-				</Polygon>
-				<TextBlock Text="{Binding GeneralData}" Margin="10" FontWeight="Black" FontSize="16" IsHitTestVisible="False" x:Name="generalIluoText"/>
+                <Polygon x:Name="N" Points="10,18 10,22 20,22 20,18" IsHitTestVisible="False">
+                    <I:Interaction.Triggers>
+                        <I:EventTrigger EventName="MouseDown">
+                            <I:InvokeCommandAction Command="{Binding ChangeCommand}" CommandParameter="{x:Static common:ILUO.NA}"/>
+                        </I:EventTrigger>
+                    </I:Interaction.Triggers>
+                </Polygon>
+                <Polygon x:Name="NA" Points="10,10 10,30 20,30 20,10">
+                    <I:Interaction.Triggers>
+                        <I:EventTrigger EventName="MouseDown">
+                            <I:InvokeCommandAction Command="{Binding ChangeCommand}" CommandParameter="{x:Static common:ILUO.N}"/>
+                        </I:EventTrigger>
+                    </I:Interaction.Triggers>
+                </Polygon>
+                <TextBlock Text="{Binding GeneralData}" Margin="10" FontWeight="Black" FontSize="16" IsHitTestVisible="False" x:Name="generalIluoText"/>
 			</Canvas>
 			<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding Data}" Value="{x:Static common:ILUO.O}">
@@ -203,16 +223,25 @@
 						</Setter.Value>
 					</Setter>
 				</DataTrigger>
-				<DataTrigger Binding="{Binding Data}" Value="{x:Static common:ILUO.N}">
-					<Setter TargetName="N" Property="Style">
-						<Setter.Value>
-							<Style TargetType="Polygon">
-								<Setter Property="Fill" Value="#777"/>
-							</Style>
-						</Setter.Value>
-					</Setter>
-				</DataTrigger>
-				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.O}">
+                <DataTrigger Binding="{Binding Data}" Value="{x:Static common:ILUO.N}">
+                    <Setter TargetName="N" Property="Style">
+                        <Setter.Value>
+                            <Style TargetType="Polygon">
+                                <Setter Property="Fill" Value="#777"/>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Data}" Value="{x:Static common:ILUO.NA}">
+                    <Setter TargetName="NA" Property="Style">
+                        <Setter.Value>
+                            <Style TargetType="Polygon">
+                                <Setter Property="Fill" Value="#777"/>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.O}">
 					<Setter TargetName="generalIluoText" Property="Foreground" Value="#2C3"/>
 				</DataTrigger>
 				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.U}">
@@ -224,10 +253,13 @@
 				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.I}">
 					<Setter TargetName="generalIluoText" Property="Foreground" Value="#C22"/>
 				</DataTrigger>
-				<DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.N}">
-					<Setter TargetName="generalIluoText" Property="Foreground" Value="Transparent"/>
-				</DataTrigger>
-			</DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.N}">
+                    <Setter TargetName="generalIluoText" Property="Foreground" Value="#BBB"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding GeneralData}" Value="{x:Static common:ILUO.NA}">
+                    <Setter TargetName="generalIluoText" Property="Foreground" Value="Transparent"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
 		</DataTemplate>
 		<DataTemplate x:Key="operatorRow" DataType="{x:Type vm:OperatorRowVm}">
 			<Border BorderThickness="0,1" BorderBrush="Gray" Margin="0,1">

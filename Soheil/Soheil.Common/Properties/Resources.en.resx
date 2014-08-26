@@ -1240,4 +1240,25 @@
   <data name="txtWarehouse" xml:space="preserve">
     <value>Warehouse</value>
   </data>
+  <data name="txtAddToJobs" xml:space="preserve">
+    <value>Add to jobs</value>
+  </data>
+  <data name="txtImportant" xml:space="preserve">
+    <value>Important</value>
+  </data>
+  <data name="txtJobDelay" xml:space="preserve">
+    <value>Inter-Station Delay</value>
+  </data>
+  <data name="txtPriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="txtSeconds" xml:space="preserve">
+    <value>sec</value>
+  </data>
+  <data name="txtGeneralSkillInfo1" xml:space="preserve">
+    <value>Skill levels in this section represents the general skills of each operator.</value>
+  </data>
+  <data name="txtGeneralSkillInfo2" xml:space="preserve">
+    <value>If no skill level is defined for an operator in specific product, skill level in this section is considered.</value>
+  </data>
 </root>

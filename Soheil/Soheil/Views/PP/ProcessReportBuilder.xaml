@@ -576,7 +576,7 @@
 															<Image Style="{StaticResource Delete16Image}"/>
 														</Button>
 														<TextBlock Text="{Loc txtMachine}" DockPanel.Dock="Left" Foreground="Silver" VerticalAlignment="Center"/>
-														<ComboBox ItemsSource="{Binding Machines}" SelectedItem="{Binding Machine}" DockPanel.Dock="Left">
+														<ComboBox ItemsSource="{Binding Machines}" SelectedItem="{Binding Machine}" DockPanel.Dock="Left" VerticalAlignment="Center">
 															<ComboBox.ItemTemplate>
 																<DataTemplate>
 																	<WrapPanel>
@@ -587,7 +587,7 @@
 															</ComboBox.ItemTemplate>
 														</ComboBox>
 														<TextBlock Text="{Loc txtMachinePart}" DockPanel.Dock="Left" Foreground="Silver" VerticalAlignment="Center"/>
-														<ComboBox ItemsSource="{Binding Parts}" SelectedItem="{Binding MachinePart}" DockPanel.Dock="Left">
+														<ComboBox ItemsSource="{Binding Parts}" SelectedItem="{Binding MachinePart}" DockPanel.Dock="Left" VerticalAlignment="Center">
 															<ComboBox.ItemTemplate>
 																<DataTemplate>
 																	<WrapPanel>
@@ -598,8 +598,8 @@
 															</ComboBox.ItemTemplate>
 														</ComboBox>
 														<TextBlock Text="{Loc txtRequestDate}" DockPanel.Dock="Left" Foreground="Silver" VerticalAlignment="Center"/>
-														<cal:DatePicker DisplayDate="{Binding CreatedDate}" SelectedDate="{Binding CreatedDate}" DockPanel.Dock="Left"/>
-														<CustomControls:TimeBox Time="{Binding CreatedTime, Mode=TwoWay}" DockPanel.Dock="Left"/>
+														<cal:DatePicker DisplayDate="{Binding CreatedDate}" SelectedDate="{Binding CreatedDate}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+														<CustomControls:TimeBox Time="{Binding CreatedTime, Mode=TwoWay}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
 														<TextBlock Text="{Loc txtDescription}" DockPanel.Dock="Left" Foreground="Silver" VerticalAlignment="Center"/>
 														<TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"/>
 													</DockPanel>

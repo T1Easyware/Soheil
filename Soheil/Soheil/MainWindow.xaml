@@ -7,7 +7,7 @@
         xmlns:Soheil="clr-namespace:Soheil"
         xmlns:View="clr-namespace:Soheil.Views"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
-        Title="MasterPages" FontFamily="Tahoma"
+        Title="Soheil" FontFamily="Tahoma"
         Width="800"
         Height="600"
         Style="{DynamicResource SkinWindowStyle}"

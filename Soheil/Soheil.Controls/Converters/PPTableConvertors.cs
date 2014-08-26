@@ -951,8 +951,9 @@ namespace Soheil.Controls.Converters.PP
 			if (value == DependencyProperty.UnsetValue) return 0f;
 			float val1;
 			float val2;
-			if ((float.TryParse(value.ToString(), out val1))
-				&& (float.TryParse(parameter.ToString(), out val2)))
+			if (float.TryParse(parameter.ToString(), NumberStyles.Number, CultureInfo.CreateSpecificCulture("en-US"), out val1)
+				&&
+				float.TryParse(value.ToString(), NumberStyles.Number, CultureInfo.CreateSpecificCulture("en-US"), out val2))
 				return (val1 * val2);
 			else return 0f;
 		}

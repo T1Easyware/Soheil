@@ -10,12 +10,12 @@
              mc:Ignorable="d" Height="45"
 			 x:Name="root"
              d:DesignWidth="400">
-    <UserControl.Width>500
-        <!--<MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
+    <UserControl.Width>
+        <MultiBinding Converter="{StaticResource StartEndToWidthConverter}">
             <Binding Path="StartDateTime"/>
             <Binding Path="EndDateTime"/>
             <Binding ElementName="root" Path="PPTable.HourZoom"/>
-        </MultiBinding>-->
+        </MultiBinding>
     </UserControl.Width>
     <UserControl.Effect>
         <DropShadowEffect ShadowDepth="0" BlurRadius="3"/>
@@ -74,7 +74,7 @@
                             <TextBox Text="{Binding ProducedG1, UpdateSourceTrigger=PropertyChanged}"  FontSize="12" Margin="0,1,3,1"/>
                         </DockPanel>
                     </Border>
-                    <Border Background="#BAF" ToolTip="{Loc txtStoredCount}">
+                    <Border Background="#BAF" ToolTip="{Loc txtSendToWarehouse}">
                         <DockPanel>
                             <Image Style="{StaticResource StoredCountImage}" DockPanel.Dock="Left" Margin="4,0" VerticalAlignment="Center"/>
                             <Grid>
@@ -103,7 +103,7 @@
 
 											<TextBlock Text="{Loc txtSendToWarehouseDateTime}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" TextWrapping="Wrap"/>
 											<TextBlock Text="{Loc txtWarehouse}" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
-											<TextBlock Text="{Loc txtQuantity}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+                                            <TextBlock Text="{Loc txtStoredCount}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
 											<TextBlock Text="{Loc txtTransactionCode}" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
 
 											<cal:PersianDatePicker SelectedDate="{Binding WarehouseTransaction.TransactionDate}" Grid.Row="0" Grid.Column="1"/>
@@ -113,7 +113,7 @@
 											<TextBox Text="{Binding WarehouseTransaction.Code}" FlowDirection="LeftToRight" Grid.Row="4" Grid.Column="1"/>
 
 											<DockPanel Grid.Row="5" Grid.ColumnSpan="2">
-												<Button Command="{Binding DeleteCommand}">
+												<Button Command="{Binding WarehouseTransaction.DeleteCommand}">
 													<StackPanel>
 														<Image Style="{StaticResource Delete16Image}"/>
 														<TextBlock Text="{Loc txtDelete}" Foreground="Black"/>
@@ -125,7 +125,7 @@
 														<TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
 													</StackPanel>
 												</Button>
-												<Button Command="{Binding SaveCommand}">
+                                                <Button Command="{Binding WarehouseTransaction.SaveCommand}">
 													<StackPanel>
 														<Image Style="{StaticResource Save16Image}"/>
 														<TextBlock Text="{Loc txtSave}" Foreground="Black"/>

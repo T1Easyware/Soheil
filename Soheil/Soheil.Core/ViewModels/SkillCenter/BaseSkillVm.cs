@@ -16,13 +16,17 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		/// Occurs when user changes the ILUO value of this Vm (when ChangeCommand is fired)
 		/// </summary>
 		public event Action<BaseSkillVm> IluoChanged;
+		public int OperatorId { get; protected set; }
+		public int ActivityId { get; protected set; }
 
 		/// <summary>
 		/// Initializes an instance of BaseSkillVm (initializes the commands)
 		/// </summary>
-		protected BaseSkillVm()
+		protected BaseSkillVm(int operatorId, int activityId)
 		{
 			initializeCommands();
+			OperatorId = operatorId;
+			ActivityId = activityId;
 		}
 
 		/// <summary>
@@ -34,7 +38,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			set { SetValue(DataProperty, value); }
 		}
 		public static readonly DependencyProperty DataProperty =
-			DependencyProperty.Register("Data", typeof(ILUO), typeof(BaseSkillVm), new UIPropertyMetadata(ILUO.N));
+			DependencyProperty.Register("Data", typeof(ILUO), typeof(BaseSkillVm), new UIPropertyMetadata(ILUO.NA));
 
 		/// <summary>
 		/// Initializes the command(s)
@@ -49,7 +53,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 				//finds the new value for ILUO in any way possible
 
 				//command parameter is null
-				if (value == null) Data = ILUO.N;
+				if (value == null) Data = ILUO.NA;
 
 				//command parameter is enum
 				if (value is ILUO) Data = (ILUO)value;
@@ -57,7 +61,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 				//command parameter is string
 				else if (value is string)
 				{
-					if (string.IsNullOrWhiteSpace((string)value)) Data = ILUO.N;
+					if (string.IsNullOrWhiteSpace((string)value)) Data = ILUO.NA;
 					var c = ((string)value).ToUpper()[0];
 					switch (c)
 					{
@@ -66,7 +70,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 						case 'L': Data = ILUO.L; break;
 						case 'U': Data = ILUO.U; break;
 						case 'O': Data = ILUO.O; break;
-						default: Data = ILUO.N; break;
+						default: Data = ILUO.NA; break;
 					}
 				}
 

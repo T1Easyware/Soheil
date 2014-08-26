@@ -11,6 +11,7 @@ namespace Soheil.Core.DataServices
 	public class ActivitySkillDataService : DataServiceBase, IDataService<ActivitySkill>
     {
 		public event EventHandler<ModelAddedEventArgs<ActivitySkill>> ModelUpdated;
+		Repository<ActivitySkill> _activitySkillRepository;
 
 		public ActivitySkillDataService()
 			:this(new SoheilEdmContext())
@@ -20,6 +21,7 @@ namespace Soheil.Core.DataServices
 		public ActivitySkillDataService(SoheilEdmContext context)
 		{
 			this.Context = context;
+			_activitySkillRepository = new Repository<ActivitySkill>(Context);
 		}
 
         /// <summary>
@@ -30,8 +32,7 @@ namespace Soheil.Core.DataServices
         public ActivitySkill GetSingle(int id)
         {
             ActivitySkill entity;
-			var operatorRepository = new Repository<ActivitySkill>(Context);
-            entity = operatorRepository.FirstOrDefault(model => model.Id == id, "Operator","Activity");
+			entity = _activitySkillRepository.FirstOrDefault(model => model.Id == id, "Operator", "Activity");
             return entity;
         }
 
@@ -55,16 +56,14 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(ActivitySkill model)
         {
-			var repository = new Repository<ActivitySkill>(Context);
-			repository.Add(model);
+			_activitySkillRepository.Add(model);
 			Context.Commit();
 			return model.Id;
         }
 
 		public void UpdateModel(ActivitySkill model)
         {
-			var repository = new Repository<ActivitySkill>(Context);
-			ActivitySkill entity = repository.Single(generalActivitySkill => generalActivitySkill.Id == model.Id);
+			ActivitySkill entity = _activitySkillRepository.Single(generalActivitySkill => generalActivitySkill.Id == model.Id);
 
             entity.IluoNr = model.IluoNr;
 
@@ -82,28 +81,37 @@ namespace Soheil.Core.DataServices
             throw new System.NotImplementedException();
         }
 
-		public ActivitySkill FindOrAdd(int operatorId, int activityId)
+		public ActivitySkill TryFind(int operatorId, int activityId)
 		{
-			var operatorRepository = new Repository<ActivitySkill>(Context);
-			var model = operatorRepository.FirstOrDefault(x => 
-				x.Activity.Id == activityId 
+			var model = _activitySkillRepository.FirstOrDefault(x =>
+				x.Activity.Id == activityId
 				&& x.Operator.Id == operatorId, "Operator", "Activity");
-			if(model == null)
-			{
-				var actv = new Repository<Activity>(Context).Single(x => x.Id == activityId);
-				var oper = new Repository<Operator>(Context).Single(x => x.Id == operatorId);
-				model = new ActivitySkill
-				{
-					Activity = actv,
-					Operator = oper,
-					CreatedDate = DateTime.Now,
-					ModifiedDate = DateTime.Now,
-					ModifiedBy = LoginInfo.Id,
-					IluoNr = 0,
-				};
-				Context.Commit();
-			}
 			return model;
 		}
-    }
+
+		internal void AddOrUpdateSkill(ViewModels.SkillCenter.ActivitySkillVm vm)
+		{
+			if(vm.Model == null)
+			{
+				vm.Model = _activitySkillRepository.FirstOrDefault(x =>
+					x.Activity.Id == vm.ActivityId
+					&& x.Operator.Id == vm.OperatorId);
+				if (vm.Model == null)
+				{
+					var actv = new Repository<Activity>(Context).Single(x => x.Id == vm.ActivityId);
+					var oper = new Repository<Operator>(Context).Single(x => x.Id == vm.OperatorId);
+					vm.Model = new ActivitySkill
+					{
+						Activity = actv,
+						Operator = oper,
+						CreatedDate = DateTime.Now,
+						ModifiedDate = DateTime.Now,
+						ModifiedBy = LoginInfo.Id,
+					};
+				}
+			}
+			vm.Model.IluoNr = (byte)vm.Data;
+			Context.Commit();
+		}
+	}
 }
