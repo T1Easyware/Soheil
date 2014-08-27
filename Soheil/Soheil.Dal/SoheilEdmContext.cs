@@ -10,6 +10,11 @@ namespace Soheil.Dal
 		{
 			ContextOptions.LazyLoadingEnabled = true;
 		}
+		public SoheilEdmContext(string c)
+			: base(c, "EdmContainer")
+		{
+			ContextOptions.LazyLoadingEnabled = true;
+		}
 
         #region IUnitOfWork Members
 

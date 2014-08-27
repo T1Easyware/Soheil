@@ -95,7 +95,8 @@ namespace Soheil.Core.DataServices.Storage
 				TaskReport = tr,
 				Quantity = model.TaskProducedG1,
 				TransactionDateTime = model.ReportEndDateTime,
-				TransactionType = 0,
+				Flow = 0,
+				//WarehouseReceipt = new WarehouseReceipt { RecordDateTime = DateTime.Now, ModifiedDate = DateTime.Now, ModifiedBy = 0, CreatedDate = DateTime.Now }
 			};
 			tr.WarehouseTransactions.Add(wt);
 			AddModel(wt);

@@ -1,4 +1,5 @@
-﻿using Soheil.Common.SoheilException;
+﻿using Soheil.Common;
+using Soheil.Common.SoheilException;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,14 +15,9 @@ namespace Soheil.Core.ViewModels.SkillCenter
 	public class SkillCenterContentVm : DependencyObject
 	{
 		/// <summary>
-		/// Specifies the tree type of <see cref="BaseTreeItemVm"/> which initializes this instance of <see cref="SkillCenterContentVm"/>
-		/// </summary>
-		public enum TargetMode { General, ProductRework, Product, ProductGroup };
-		
-		/// <summary>
 		/// Specifies the content mode of current Vm
 		/// </summary>
-		TargetMode _targetMode;
+		public TargetMode Mode;
 
 		/// <summary>
 		/// Occures when an error occures in this Vm (parameter contains the error message)
@@ -44,23 +40,23 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		/// <summary>
 		/// Instance of <see cref="DataServices.OperatorDataService"/> initialized with local UOW
 		/// </summary>
-		DataServices.OperatorDataService _operatorDataService;
+		public DataServices.OperatorDataService OperatorDataService;
 		/// <summary>
 		/// Instance of <see cref="DataServices.ActivityDataService"/> initialized with local UOW
 		/// </summary>
-		DataServices.ActivityDataService _aDataService;
+		public DataServices.ActivityDataService ActivityDataService;
 		/// <summary>
 		/// Instance of <see cref="DataServices.ActivityGroupDataService"/> initialized with local UOW
 		/// </summary>
-		DataServices.ActivityGroupDataService _agDataService;
+		public DataServices.ActivityGroupDataService ActivityGroupDataService;
 		/// <summary>
 		/// Instance of <see cref="DataServices.ActivitySkillDataService"/> initialized with local UOW
 		/// </summary>
-		DataServices.ActivitySkillDataService _asDataService;
+		public DataServices.ActivitySkillDataService ActivitySkillDataService;
 		/// <summary>
 		/// Instance of <see cref="DataServices.ProductActivitySkillDataService"/> initialized with local UOW
 		/// </summary>
-		DataServices.ProductActivitySkillDataService _pasDataService; 
+		public DataServices.ProductActivitySkillDataService ProductActivitySkillDataService; 
 		#endregion
 
 		#region Table
@@ -83,51 +79,53 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		private ObservableCollection<ActivityColumnVm> _columns = new ObservableCollection<ActivityColumnVm>(); 
 		#endregion
 		
-		#region Ctor and Init
+		#region Init
 		/// <summary>
-		/// Instantiates an initializes this Vm with the given <see cref="BaseTreeItemVm"/> node
+		/// Initializes UOW and data services of this Vm with the given <see cref="BaseTreeItemVm"/> node
+		/// </summary>
+		public void InitializeDataService()
+		{
+			//Init DataServices
+			var uow = new Soheil.Dal.SoheilEdmContext();
+			OperatorDataService = new DataServices.OperatorDataService(uow);
+			ActivityDataService = new DataServices.ActivityDataService(uow);
+			ActivityGroupDataService = new DataServices.ActivityGroupDataService(uow);
+			ActivitySkillDataService = new DataServices.ActivitySkillDataService(uow);
+			ProductActivitySkillDataService = new DataServices.ProductActivitySkillDataService(uow);
+		}
+		/// <summary>
+		/// Initializes rows and columns of this Vm with the given <see cref="BaseTreeItemVm"/> node
+		/// <para>Fills the cells of the table according to type of the initializer node</para>
 		/// </summary>
 		/// <param name="node">A tree item that initializes the mode and data of this Vm</param>
-		public SkillCenterContentVm(BaseTreeItemVm node)
+		public void Initialize(BaseTreeItemVm node)
 		{
-			SelectedItem = node;
 			if (node is GeneralVm)
 			{
-				_targetMode = TargetMode.General;
+				Mode = TargetMode.General;
 			}
 			else if (node is ProductGroupVm)
 			{
-				_targetMode = TargetMode.ProductGroup;
+				Mode = TargetMode.ProductGroup;
 			}
 			else if (node is ProductVm)
 			{
-				_targetMode = TargetMode.Product;
+				Mode = TargetMode.Product;
 			}
 			else if (node is ProductReworkVm)
 			{
-				_targetMode = TargetMode.ProductRework;
+				Mode = TargetMode.ProductRework;
 			}
-			initializeData();
-		}
+			SelectedItem = node;
 
-		/// <summary>
-		/// Initializes UOW, data services, rows and columns of this Vm
-		/// <para>Fills the cells of the table according to type of the initializer node</para>
-		/// </summary>
-		void initializeData()
-		{
-			//Init DataServices
-
-			var uow = new Soheil.Dal.SoheilEdmContext();
-			_operatorDataService = new DataServices.OperatorDataService(uow);
-			_aDataService = new DataServices.ActivityDataService(uow);
-			_agDataService = new DataServices.ActivityGroupDataService(uow);
-			_asDataService = new DataServices.ActivitySkillDataService(uow);
-			_pasDataService = new DataServices.ProductActivitySkillDataService(uow);
 
 			//Init Data
+			Groups.Clear();
+			Columns.Clear();
+			Rows.Clear();
 
-			var a_g = _aDataService.GetActives().GroupBy(x => x.ActivityGroup);
+			//add columns
+			var a_g = ActivityDataService.GetActives().GroupBy(x => x.ActivityGroup);
 			foreach (var activityGroup in a_g)
 			{
 				Groups.Add(new ActivityGroupColumnVm(activityGroup.Key));
@@ -137,75 +135,73 @@ namespace Soheil.Core.ViewModels.SkillCenter
 				}
 			}
 
-			//add cells
-			var rows = _operatorDataService.GetActives().Select(operatorModel => 
+			//add rows
+			var rows = OperatorDataService.GetActives().Select(operatorModel =>
 				new OperatorRowVm(operatorModel));
 
-			switch (_targetMode)
+			//add cells
+			foreach (var row in rows)
 			{
-				case TargetMode.General:
-
-					//General mode
-					foreach (var row in rows)
+				foreach (var act in Columns)
+				{
+					BaseSkillVm skill;
+					switch (Mode)
 					{
-						foreach (var act in Columns)
-						{
-							var activitySkill = _asDataService.TryFind(row.Id, act.Id);
-							var skill = new ActivitySkillVm(activitySkill, row.Id, act.Id);
-							skill.IluoChanged += saveSkillToDatabase;
-							row.Cells.Add(skill);
-						}
-						Rows.Add(row);
+						case TargetMode.General:
+							skill = new ActivitySkillVm(row.Id, act.Id);
+							break;
+						case TargetMode.ProductRework:
+							skill = new ProductReworkActivitySkillVm(row.Id, act.Id, SelectedItem.Id);
+							break;
+						case TargetMode.Product:
+							return;
+						case TargetMode.ProductGroup:
+							return;
+						default:
+							return;
 					}
-					break;
-				case TargetMode.ProductRework:
-
-					//ProductRework mode
-					foreach (var row in rows)
-					{
-						foreach (var act in Columns)
-						{
-							var productActivitySkill = _pasDataService.TryFind(SelectedItem.Id, row.Id, act.Id);
-							var activitySkill = productActivitySkill == null ? _asDataService.TryFind(row.Id, act.Id) : productActivitySkill.ActivitySkill;
-							var skill = new ProductReworkActivitySkillVm(productActivitySkill, activitySkill, row.Id, act.Id, SelectedItem.Id);
-							skill.IluoChanged += saveSkillToDatabase;
-							row.Cells.Add(skill);
-						}
-						Rows.Add(row);
-					}
-					break;
-				case TargetMode.Product:
-
-					//Product mode
-					foreach (var row in rows)
-					{
-						foreach (var act in Columns)
-						{
-							//var productActivitySkill = _pasDataService.FindOrAdd(row.Id, act.Id);
-							var skill = new ProductActivitySkillVm();
-							skill.IluoChanged += saveSkillToDatabase;
-							row.Cells.Add(skill);
-						}
-						Rows.Add(row);
-					}
-					break;
-				case TargetMode.ProductGroup:
-
-					//ProductGroup mode
-					foreach (var row in rows)
-					{
-						foreach (var act in Columns)
-						{
-							//var activitySkill = _asDataService.FindOrAdd(row.Id, act.Id);
-							var skill = new ProductGroupActivitySkillVm();
-							skill.IluoChanged += saveSkillToDatabase;
-							row.Cells.Add(skill);
-						}
-						Rows.Add(row);
-					}
-					break;
-				default:
-					break;
+					skill.IluoChanged += saveSkillToDatabase;
+					row.Cells.Add(skill);
+				}
+				Rows.Add(row);
+			}
+		}
+		//General mode
+		public void InitializeData(IEnumerable<Model.ActivitySkill> skills)
+		{
+			if (Mode == TargetMode.General)
+			{
+				foreach (var skill in skills)
+				{
+					var row = Rows.FirstOrDefault(x => x.Id == skill.Operator.Id);
+					if (row == null) return;
+					var cell = row.Cells.FirstOrDefault(x => x.ActivityId == skill.Activity.Id) as ActivitySkillVm;
+					if (cell == null) return;
+					cell.Update(skill);
+				}
+			}
+			else
+			{
+				foreach (var gen in skills)
+				{
+					var row = Rows.FirstOrDefault(x => x.Id == gen.Operator.Id);
+					if (row == null) return;
+					var cell = row.Cells.FirstOrDefault(x => x.ActivityId == gen.Activity.Id) as ProductReworkActivitySkillVm;
+					if (cell == null) return;
+					cell.Update(gen);
+				}
+			}
+		}
+		//ProductRework mode
+		public void InitializeData(IEnumerable<Model.ProductActivitySkill> skills)
+		{
+			foreach (var skill in skills)
+			{
+				var row = Rows.FirstOrDefault(x => x.Id == skill.ActivitySkill.Operator.Id);
+				if (row == null) return;
+				var cell = row.Cells.FirstOrDefault(x => x.ActivityId == skill.ActivitySkill.Activity.Id) as ProductReworkActivitySkillVm;
+				if (cell == null) return;
+				cell.Update(skill);
 			}
 		}
 
@@ -222,11 +218,11 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			}
 			else if (skill is ActivitySkillVm)
 			{
-				_asDataService.AddOrUpdateSkill(skill as ActivitySkillVm);
+				ActivitySkillDataService.AddOrUpdateSkill(skill as ActivitySkillVm);
 			}
 			else if (skill is ProductReworkActivitySkillVm)
 			{
-				_pasDataService.AddOrUpdateSkill(skill as ProductReworkActivitySkillVm);
+				ProductActivitySkillDataService.AddOrUpdateSkill(skill as ProductReworkActivitySkillVm);
 			}
 			else
 			{

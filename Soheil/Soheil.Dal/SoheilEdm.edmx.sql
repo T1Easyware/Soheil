@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/26/2014 19:20:46
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 08/27/2014 19:16:01
+-- Generated from EDMX file: D:\Repo\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -1503,7 +1503,7 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [ModifiedBy] int  NOT NULL,
     [Quantity] float  NOT NULL,
     [Warehouse_Id] int  NOT NULL,
-    [WarehouseReceipt_Id] int  NOT NULL,
+    [WarehouseReceipt_Id] int  NULL,
     [Good_Id] int  NULL,
     [RawMaterial_Id] int  NULL,
     [ProductRework_Id] int  NULL,

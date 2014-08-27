@@ -1433,7 +1433,7 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="Quantity" Type="float" Nullable="false" />
     <Property Name="Warehouse_Id" Type="int" Nullable="false" />
-    <Property Name="WarehouseReceipt_Id" Type="int" Nullable="false" />
+    <Property Name="WarehouseReceipt_Id" Type="int" Nullable="true" />
     <Property Name="Good_Id" Type="int" Nullable="true" />
     <Property Name="RawMaterial_Id" Type="int" Nullable="true" />
     <Property Name="ProductRework_Id" Type="int" Nullable="true" />
@@ -2791,7 +2791,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="WarehouseReceiptWarehouseTransaction">
-    <End Role="WarehouseReceipt" Type="SoheilEdm.Store.WarehouseReceipts" Multiplicity="1" />
+    <End Role="WarehouseReceipt" Type="SoheilEdm.Store.WarehouseReceipts" Multiplicity="0..1" />
     <End Role="WarehouseTransaction" Type="SoheilEdm.Store.WarehouseTransactions" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="WarehouseReceipt">
@@ -5010,7 +5010,7 @@
           <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
         </Association>
         <Association Name="WarehouseReceiptWarehouseTransaction">
-          <End Type="SoheilEdm.WarehouseReceipt" Role="WarehouseReceipt" Multiplicity="1" />
+          <End Type="SoheilEdm.WarehouseReceipt" Role="WarehouseReceipt" Multiplicity="0..1" />
           <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
         </Association>
         <Association Name="GoodWarehouseTransaction">
@@ -6915,6 +6915,7 @@
       <EndProperty Name="WarehouseTransaction">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
+      <Condition ColumnName="WarehouseReceipt_Id" IsNull="false" />
     </AssociationSetMapping>
     <AssociationSetMapping Name="GoodWarehouseTransaction" TypeName="SoheilEdm.GoodWarehouseTransaction" StoreEntitySet="WarehouseTransactions">
       <EndProperty Name="Good">

@@ -39,6 +39,14 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		}
 		public static readonly DependencyProperty DataProperty =
 			DependencyProperty.Register("Data", typeof(ILUO), typeof(BaseSkillVm), new UIPropertyMetadata(ILUO.NA));
+		//GeneralData Dependency Property
+		public ILUO GeneralData
+		{
+			get { return (ILUO)GetValue(GeneralDataProperty); }
+			set { SetValue(GeneralDataProperty, value); }
+		}
+		public static readonly DependencyProperty GeneralDataProperty =
+			DependencyProperty.Register("GeneralData", typeof(ILUO), typeof(BaseSkillVm), new UIPropertyMetadata(ILUO.NA));
 
 		/// <summary>
 		/// Initializes the command(s)
@@ -90,5 +98,6 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		}
 		public static readonly DependencyProperty ChangeCommandProperty =
 			DependencyProperty.Register("ChangeCommand", typeof(Commands.Command), typeof(BaseSkillVm), new UIPropertyMetadata(null));
+
 	}
 }

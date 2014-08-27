@@ -23,17 +23,17 @@ namespace Soheil.Core.ViewModels.PP.Report
 			Model = _dataService.CreateTransactionFor(model);
 
 			//Model
-			Model = new Soheil.Model.WarehouseTransaction
-			{
-				Code = model.Code,
-				ProductRework = model.Task.Block.StateStation.State.OnProductRework,
-				TaskReport = model,
-				Quantity = model.TaskProducedG1,
-				TransactionDateTime = model.ReportEndDateTime,
-				Flow = 0,
-			};
-			model.WarehouseTransactions.Add(Model);
-			_dataService.AddModel(Model);
+			//Model = new Soheil.Model.WarehouseTransaction
+			//{
+			//	Code = model.Code,
+			//	ProductRework = model.Task.Block.StateStation.State.OnProductRework,
+			//	TaskReport = model,
+			//	Quantity = model.TaskProducedG1,
+			//	TransactionDateTime = model.ReportEndDateTime,
+			//	Flow = 0,
+			//};
+			//model.WarehouseTransactions.Add(Model);
+			//_dataService.AddModel(Model);
 
 			//VM
 			Code = Model.Code;

@@ -31,13 +31,26 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			ProductReworkId = productReworkId;
 			Model = model;
 		}
-		//GeneralData Dependency Property
-		public ILUO GeneralData
+		public ProductReworkActivitySkillVm(int operatorId, int activityId, int productReworkId)
+			: base(operatorId, activityId)
 		{
-			get { return (ILUO)GetValue(GeneralDataProperty); }
-			set { SetValue(GeneralDataProperty, value); }
+			ProductReworkId = productReworkId;
 		}
-		public static readonly DependencyProperty GeneralDataProperty =
-			DependencyProperty.Register("GeneralData", typeof(ILUO), typeof(ProductReworkActivitySkillVm), new UIPropertyMetadata(ILUO.NA));
+
+		internal void Update(Soheil.Model.ProductActivitySkill skill)
+		{
+			if (skill != null)
+			{
+				Model = skill;
+				Data = skill.Iluo;
+			}
+		}
+		internal void Update(Soheil.Model.ActivitySkill skill)
+		{
+			if (skill != null)
+			{
+				GeneralData = skill.Iluo;
+			}
+		}
 	}
 }

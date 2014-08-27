@@ -86,6 +86,10 @@
     <Style x:Key="RectBorderStyle" TargetType="Rectangle">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Fill" Value="Transparent" />
+        <Setter Property="Tag" Value="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+        <EventSetter Event="MouseLeftButtonDown" Handler="Resize_Init"/>
+        <EventSetter Event="MouseLeftButtonUp" Handler="Resize_End"/>
+        <EventSetter Event="MouseMove" Handler="Resizeing_Form"/>
     </Style>
 
     <!--  Window Template  -->
@@ -93,7 +97,7 @@
         <ControlTemplate.Resources>
             <GridLength x:Key="BorderWidth">7</GridLength>
         </ControlTemplate.Resources>
-
+    
         <Grid x:Name="WindowRoot"
               Loaded="OnWindowLoaded"
               SizeChanged="OnWindowSizeChanged"
@@ -197,18 +201,22 @@
                         <Rectangle x:Name="leftSizeGrip"
                                    Width="7"
                                    HorizontalAlignment="Left"
+                                   Cursor="SizeWE"
                                    Style="{StaticResource RectBorderStyle}" />
                         <Rectangle x:Name="rightSizeGrip"
                                    Width="7"
                                    HorizontalAlignment="Right"
+                                   Cursor="SizeWE"
                                    Style="{StaticResource RectBorderStyle}" />
                         <Rectangle x:Name="topSizeGrip"
                                    Height="7"
                                    VerticalAlignment="Top"
+                                   Cursor="SizeNS"
                                    Style="{StaticResource RectBorderStyle}" />
                         <Rectangle x:Name="bottomSizeGrip"
                                    Height="7"
                                    VerticalAlignment="Bottom"
+                                   Cursor="SizeNS"
                                    Style="{StaticResource RectBorderStyle}" />
                         <!--  Corners  -->
                         <Rectangle Name="topLeftSizeGrip"
@@ -216,24 +224,28 @@
                                    Height="7"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top"
+                                   Cursor="SizeNWSE"
                                    Style="{StaticResource RectBorderStyle}" />
                         <Rectangle Name="bottomRightSizeGrip"
                                    Width="7"
                                    Height="7"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Bottom"
+                                   Cursor="SizeNWSE"
                                    Style="{StaticResource RectBorderStyle}" />
                         <Rectangle Name="topRightSizeGrip"
                                    Width="7"
                                    Height="7"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
+                                   Cursor="SizeNESW"
                                    Style="{StaticResource RectBorderStyle}" />
                         <Rectangle Name="bottomLeftSizeGrip"
                                    Width="7"
                                    Height="7"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Bottom"
+                                   Cursor="SizeNESW"
                                    Style="{StaticResource RectBorderStyle}" />
                     </Grid>
                 </Border>
@@ -251,10 +263,13 @@
         <Setter Property="MinWidth" Value="250" />
         <Setter Property="Opacity" Value="1.0" />
         <Setter Property="Template" Value="{StaticResource WindowTemplate}" />
-
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding WindowState}" Value="Maximized" />
-        </Style.Triggers>
+        <!--<Style.Triggers>
+            <Trigger Property="WindowState" Value="Maximized" >
+                <Setter Property="WindowStyle" Value="None"/>
+                <Setter Property="AllowsTransparency" Value="True"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Trigger>
+        </Style.Triggers>-->
     </Style>
 
 </ResourceDictionary>
