@@ -31,6 +31,7 @@ namespace Soheil.Core.Fpc
 				return _treeItemTemplate;
 			}
 		}
+
 		public override DataTemplate SelectTemplate(object item, DependencyObject container)
 		{
 			var data = item as TreeItemVm;
@@ -162,6 +163,16 @@ namespace Soheil.Core.Fpc
 					_machineSubItemTemplate = Application.Current.FindResource("machineSubItemTemplate") as DataTemplate;
 				return _machineSubItemTemplate;
 			}
+		}		
+		private static DataTemplate _bomSubItemTemplate;
+		private static DataTemplate BomSubItemTemplate
+		{
+			get
+			{
+				if (_bomSubItemTemplate == null)
+					_bomSubItemTemplate = Application.Current.FindResource("bomSubItemTemplate") as DataTemplate;
+				return _bomSubItemTemplate;
+			}
 		}
 
 		public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -192,6 +203,7 @@ namespace Soheil.Core.Fpc
 				if (item is StateStationVm) return StationSubItemTemplate;
 				if (item is StateStationActivityVm) return ActivitySubItemTemplate;
 				if (item is StateStationActivityMachineVm) return MachineSubItemTemplate;
+				if (item is BomVm) return BomSubItemTemplate;
 			}
 			return null;
 		}

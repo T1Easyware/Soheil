@@ -145,7 +145,17 @@ namespace Soheil.Core.ViewModels.Fpc
 					}
 					stateStation.ContentsList.Add(stateStationActivity);
 				}
-				Config.ContentsList.Add(stateStation);
+				int idx = Config.ContentsList.OfType<StateStationVm>().Count();
+				Config.ContentsList.Insert(idx, stateStation);
+			}
+			foreach (var b in Model.BOMs)
+			{
+				var bom = new BomVm(ParentWindowVm, b)
+				{
+					Container = Config,
+					Containment = new RawMaterialVm(b.RawMaterial),
+				};
+				Config.ContentsList.Add(bom);
 			}
 		}
 
@@ -172,7 +182,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			Model.X = (float)this.Location.X;
 			Model.Y = (float)this.Location.Y;
 			//check for manhour duplication for ssa's with same activity defined in a stateStation
-			if (Config.ContentsList.Any(ss =>
+			if (Config.ContentsList.OfType<StateStationVm>().Any(ss =>
 				ss.ContentsList.GroupBy(ssa => ssa.Containment.Id)
 				.Any(ssaWithSameActivity =>
 					ssaWithSameActivity.GroupBy(x => ((StateStationActivityVm)x).ManHour)
@@ -196,7 +206,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty ParentWindowVmProperty =
 			DependencyProperty.Register("ParentWindowVm", typeof(FpcWindowVm), typeof(StateVm), new UIPropertyMetadata(null));
-		
+
 		/// <summary>
 		/// Gets or sets a bindable value for configuration of this state (which contains all children)
 		/// </summary>
@@ -207,6 +217,16 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty ConfigProperty =
 			DependencyProperty.Register("Config", typeof(StateConfigVm), typeof(StateVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value for BOMs of this state (which contains all children)
+		/// </summary>
+		public BomsVm BomConfig
+		{
+			get { return (BomsVm)GetValue(BomConfigProperty); }
+			set { SetValue(BomConfigProperty, value); }
+		}
+		public static readonly DependencyProperty BomConfigProperty =
+			DependencyProperty.Register("BomConfig", typeof(BomsVm), typeof(StateVm), new UIPropertyMetadata(null));
 		
 		/// <summary>
 		/// Gets or sets a bindable value that indicates whether this state is showing its details (<see cref="StateConfigVm"/>)

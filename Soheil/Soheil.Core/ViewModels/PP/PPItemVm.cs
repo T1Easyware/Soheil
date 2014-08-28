@@ -92,7 +92,14 @@ namespace Soheil.Core.ViewModels.PP
 		}
 		public static readonly DependencyProperty ViewModeProperty =
 			DependencyProperty.Register("ViewMode", typeof(PPViewMode), typeof(PPItemVm),
-			new UIPropertyMetadata(PPViewMode.Acquiring, (d, e) => { if (((PPItemVm)d).ViewModeChanged != null) ((PPItemVm)d).ViewModeChanged((PPViewMode)e.NewValue); })); 
+			new UIPropertyMetadata(PPViewMode.Acquiring, (d, e) => { 
+				if (((PPItemVm)d).ViewModeChanged != null) 
+					((PPItemVm)d).ViewModeChanged((PPViewMode)e.NewValue);
+				var vm = d as BlockVm;
+				if (vm != null)
+					if (vm.BlockReport != null)
+						vm.BlockReport.CorrectTransactions();
+			})); 
 		#endregion
 
 		#region Commands

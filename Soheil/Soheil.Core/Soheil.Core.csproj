@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\AccessNodeViewModel.cs" />
+    <Compile Include="DataServices\FPC\BomDataService.cs" />
     <Compile Include="DataServices\PM\MaintenanceDataService.cs" />
     <Compile Include="DataServices\PM\PartDataService.cs" />
     <Compile Include="DataServices\PM\MachinePartDataService.cs" />
@@ -71,6 +72,9 @@
     <Compile Include="Reports\PMReportData.cs" />
     <Compile Include="Reports\DailyStationPlanData.cs" />
     <Compile Include="Reports\DailyReportData.cs" />
+    <Compile Include="ViewModels\Fpc\BomsVm.cs" />
+    <Compile Include="ViewModels\Fpc\RawMaterialVm.cs" />
+    <Compile Include="ViewModels\Fpc\BomVm.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationArea.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationVm.cs" />
     <Compile Include="ViewModels\MessageCenter\PMVm.cs" />

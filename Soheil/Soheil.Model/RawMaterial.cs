@@ -141,6 +141,38 @@ namespace Soheil.Model
             }
         }
         private ICollection<RawMaterialUnitGroup> _rawMaterialUnitGroups;
+    
+        public virtual ICollection<BOM> BOMs
+        {
+            get
+            {
+                if (_bOMs == null)
+                {
+                    var newCollection = new FixupCollection<BOM>();
+                    newCollection.CollectionChanged += FixupBOMs;
+                    _bOMs = newCollection;
+                }
+                return _bOMs;
+            }
+            set
+            {
+                if (!ReferenceEquals(_bOMs, value))
+                {
+                    var previousValue = _bOMs as FixupCollection<BOM>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupBOMs;
+                    }
+                    _bOMs = value;
+                    var newValue = value as FixupCollection<BOM>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupBOMs;
+                    }
+                }
+            }
+        }
+        private ICollection<BOM> _bOMs;
 
         #endregion
 
@@ -181,6 +213,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (RawMaterialUnitGroup item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.RawMaterial, this))
+                    {
+                        item.RawMaterial = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupBOMs(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (BOM item in e.NewItems)
+                {
+                    item.RawMaterial = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (BOM item in e.OldItems)
                 {
                     if (ReferenceEquals(item.RawMaterial, this))
                     {

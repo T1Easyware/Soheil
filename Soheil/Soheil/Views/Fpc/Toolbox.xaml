@@ -89,6 +89,22 @@
 			</DataTemplate.Triggers>
 		</DataTemplate>
 
+        <DataTemplate x:Key="rawMaterialToolboxItemTemplate" DataType="{x:Type vm:RawMaterialVm}">
+            <Thumb DragStarted="ToolboxItem_DragStarted" DragDelta="ToolboxItem_DragDelta" DragCompleted="RawMaterial_DragCompleted"
+			   Visibility="{Binding IsVisible, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Border Style="{StaticResource toolboxItemBorderStyle}">
+                            <DockPanel LastChildFill="False">
+                                <TextBlock Text="{Binding Name}" Foreground="White" DockPanel.Dock="Left"/>
+                                <TextBlock Text="{Binding Code}" Foreground="Silver" TextAlignment="Left" DockPanel.Dock="Right"/>
+                            </DockPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+        </DataTemplate>
+        
 		<!--toolbox groups-->
 		<DataTemplate x:Key="activityGroupToolboxItemTemplate" DataType="{x:Type vm:ActivityGroupVm}">
 			<Border Style="{StaticResource toolboxGroupBorderStyle}">
@@ -128,7 +144,7 @@
 				</ScrollViewer>
 			</Expander>
 		</Border>
-		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8C86">
+		<Border Style="{StaticResource toolboxBorderStyle}" Background="#848C">
 			<Expander IsExpanded="True" Header=" فعالیت ها ">
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
@@ -139,7 +155,7 @@
 				</ScrollViewer>
 			</Expander>
 		</Border>
-		<Border Style="{StaticResource toolboxBorderStyle}" Background="#8BC8">
+        <Border Style="{StaticResource toolboxBorderStyle}" Background="#8C86">
 			<Expander IsExpanded="True" Header=" ماشین ها ">
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel>
@@ -161,5 +177,16 @@
 				</ScrollViewer>
 			</Expander>
 		</Border>
-	</WrapPanel>
+        <Border Style="{StaticResource toolboxBorderStyle}" Background="#8C8C">
+            <Expander IsExpanded="True" Header=" مواد اولیه ">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBox Text="{Binding RawMaterialQuery, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
+                        <ItemsControl ItemsSource="{Binding RawMaterials}"
+									  ItemTemplate="{StaticResource rawMaterialToolboxItemTemplate}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Expander>
+        </Border>
+    </WrapPanel>
 </UserControl>

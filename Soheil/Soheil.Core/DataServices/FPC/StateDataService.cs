@@ -194,7 +194,7 @@ namespace Soheil.Core.DataServices
 					var activityRepository = new Repository<Activity>(context);
 					var machineRepository = new Repository<Machine>(context);
 					viewModel.Config.ContentsList.RemoveWhere(x => x.IsDropIndicator);
-					foreach (StateStationVm ss in viewModel.Config.ContentsList)
+					foreach (StateStationVm ss in viewModel.Config.ContentsList.OfType<StateStationVm>())
 					{
 						var stateStation = new StateStation
 						{

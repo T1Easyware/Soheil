@@ -79,7 +79,7 @@ namespace Soheil.Views.Fpc
 
 				//find the target state config
 				var config =
-					VM.SelectedToolboxItem.GetUnderlyingStateConfig(mouse);
+					VM.SelectedToolboxItem.GetUnderlyingStateConfigForStation(mouse);
 
 				//add the machine to that state config
 				if (config != null)
@@ -135,12 +135,36 @@ namespace Soheil.Views.Fpc
 			}
 			VM.StopDragToolboxItem();
 		}
+		#endregion
 
+		#region Rework
 		private void Rework_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
 		{
 			if(VM.SelectedToolboxItem.CanDrop == true)
 			{
 				VM.AddRework(VM.SelectedToolboxItem);
+			}
+			VM.StopDragToolboxItem();
+		}
+		#endregion
+
+		#region RawMaterial
+		private void RawMaterial_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+		{
+			if (VM.SelectedToolboxItem.CanDrop == true)
+			{
+				//find mouse position
+				var mouse = Mouse.GetPosition(DrawingArea);
+
+				//find the target state config
+				var config =
+					VM.SelectedToolboxItem.GetUnderlyingStateConfigForRawMaterial(mouse);
+
+				//add the machine to that state config
+				if (config != null)
+					config.AddNewBOM(
+						VM,
+						VM.SelectedToolboxItem.ContentData as RawMaterialVm);
 			}
 			VM.StopDragToolboxItem();
 		}

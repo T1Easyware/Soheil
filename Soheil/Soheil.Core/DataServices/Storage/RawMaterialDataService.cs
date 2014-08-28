@@ -123,6 +123,11 @@ namespace Soheil.Core.DataServices
             UnitGroupRemoved(this, new ModelRemovedEventArgs(id));
         }
         #endregion
-        
+
+		//???don't mind this
+		internal RawMaterial GetRawMaterial__(int p)
+		{
+			return _rawMaterialRepository.Single(x => x.Id == p);
+		}
 	}
 }

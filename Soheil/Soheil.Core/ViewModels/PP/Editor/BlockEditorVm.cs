@@ -92,6 +92,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			EndDate = Model.EndDateTime.Date;
 			EndTime = Model.EndDateTime.TimeOfDay;
 			Duration = TimeSpan.FromSeconds(Model.DurationSeconds);
+			StartDateForAll = DateTime.Now.Date;
+			StartTimeForAll = TimeSpan.FromHours(DateTime.Now.TimeOfDay.Hours + 1);
 			
 			if (!Model.Tasks.Any())
 			{
@@ -929,9 +931,12 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			}
 			StartDate = start.Date;
 			StartTime = start.TimeOfDay;
-			EndDate = end.Date;
-			EndTime = end.TimeOfDay;
-			Duration = end - start;
+			if (end != DateTime.MinValue)
+			{
+				EndDate = end.Date;
+				EndTime = end.TimeOfDay;
+				Duration = end - start;
+			}
 		}
 		/// <summary>
 		/// Gets or sets a bindable command to set StateStation of this block according to SelectedStateStation

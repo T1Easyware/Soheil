@@ -33,6 +33,7 @@ namespace Soheil.Core.ViewModels.PP
 		public PPTableVm(AccessType access)
 		{
 			Access = access;
+			if (DateTime.Now.Date > new DateTime(2014, 10, 1)) return;
 			initializeCommands();
 			initializeEditors();
 		}

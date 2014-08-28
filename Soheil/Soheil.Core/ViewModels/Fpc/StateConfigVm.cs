@@ -58,10 +58,13 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				foreach (var item in e.OldItems)
 				{
-					var vm = item as StateStationVm;
-					if (vm != null)
+					if (item is StateStationVm)
 					{
-						Parent.fpcDataService.stateDataService.RemoveRecursive(vm.Model);
+						Parent.fpcDataService.stateDataService.RemoveRecursive((item as StateStationVm).Model);
+					}
+					else if (item is BomVm)
+					{
+						Parent.fpcDataService.bomDataService.DeleteModel((item as BomVm).Model);
 					}
 				}
 			}
@@ -70,10 +73,13 @@ namespace Soheil.Core.ViewModels.Fpc
 			{
 				foreach (var item in e.NewItems)
 				{
-					var vm = item as StateStationVm;
-					if (vm != null)
+					if (item is StateStationVm)
 					{
-						State.Model.StateStations.Add(vm.Model);
+						State.Model.StateStations.Add((item as StateStationVm).Model);
+					}
+					else if (item is BomVm)
+					{
+						State.Model.BOMs.Add((item as BomVm).Model);
 					}
 				}
 			}
@@ -126,10 +132,36 @@ namespace Soheil.Core.ViewModels.Fpc
 			};
 
 			//create vm for StateStation and add it
-			ContentsList.Add(new StateStationVm(fpc, ss)
+			int idx = ContentsList.OfType<StateStationVm>().Count();
+			ContentsList.Insert(idx, new StateStationVm(fpc, ss)
 			{
 				Container = this,
 				Containment = station,
+				IsExpanded = true,
+			});
+		}
+
+		/// <summary>
+		/// Adds the specified rawMaterial to this StateConfig
+		/// </summary>
+		/// <param name="VM"></param>
+		/// <param name="rawMaterial"></param>
+		public void AddNewBOM(FpcWindowVm fpc, RawMaterialVm rawMaterial)
+		{
+			//create model for BOM
+			var bom = new Soheil.Model.BOM
+			{
+				Code = rawMaterial.Code + "." + State.Code,
+				Name = rawMaterial.Name,
+				IsDefault = true,
+				RawMaterial = /*rawMaterialVm.Model???*/ Parent.fpcDataService.rawMaterialDataService.GetRawMaterial__(rawMaterial.Id),
+			};
+
+			//create vm for BOM and add it
+			ContentsList.Add(new BomVm(fpc, bom)
+			{
+				Container = this,
+				Containment = rawMaterial,
 				IsExpanded = true,
 			});
 		}

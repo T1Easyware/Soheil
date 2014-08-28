@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/27/2014 19:16:01
+-- Date Created: 08/28/2014 16:06:27
 -- Generated from EDMX file: D:\Repo\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -359,6 +359,12 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_WarehouseTransactionUnitSet]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UnitSets] DROP CONSTRAINT [FK_WarehouseTransactionUnitSet];
 GO
+IF OBJECT_ID(N'[dbo].[FK_StateBOM]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_StateBOM];
+GO
+IF OBJECT_ID(N'[dbo].[FK_RawMaterialBOM]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_RawMaterialBOM];
+GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
 GO
@@ -618,6 +624,9 @@ IF OBJECT_ID(N'[dbo].[UnitGroups]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[RawMaterialUnitGroups]', 'U') IS NOT NULL
     DROP TABLE [dbo].[RawMaterialUnitGroups];
+GO
+IF OBJECT_ID(N'[dbo].[BOMs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[BOMs];
 GO
 IF OBJECT_ID(N'[dbo].[NonProductiveTasks_PM]', 'U') IS NOT NULL
     DROP TABLE [dbo].[NonProductiveTasks_PM];
@@ -1609,6 +1618,18 @@ CREATE TABLE [dbo].[RawMaterialUnitGroups] (
 );
 GO
 
+-- Creating table 'BOMs'
+CREATE TABLE [dbo].[BOMs] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Code] nvarchar(max)  NOT NULL,
+    [Name] nvarchar(max)  NOT NULL,
+    [Quantity] real  NOT NULL,
+    [IsDefault] bit  NOT NULL,
+    [State_Id] int  NOT NULL,
+    [RawMaterial_Id] int  NOT NULL
+);
+GO
+
 -- Creating table 'NonProductiveTasks_PM'
 CREATE TABLE [dbo].[NonProductiveTasks_PM] (
     [Id] int  NOT NULL,
@@ -2125,6 +2146,12 @@ GO
 -- Creating primary key on [Id] in table 'RawMaterialUnitGroups'
 ALTER TABLE [dbo].[RawMaterialUnitGroups]
 ADD CONSTRAINT [PK_RawMaterialUnitGroups]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'BOMs'
+ALTER TABLE [dbo].[BOMs]
+ADD CONSTRAINT [PK_BOMs]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -3750,6 +3777,34 @@ ADD CONSTRAINT [FK_WarehouseTransactionUnitSet]
 CREATE INDEX [IX_FK_WarehouseTransactionUnitSet]
 ON [dbo].[UnitSets]
     ([WarehouseTransaction_Id]);
+GO
+
+-- Creating foreign key on [State_Id] in table 'BOMs'
+ALTER TABLE [dbo].[BOMs]
+ADD CONSTRAINT [FK_StateBOM]
+    FOREIGN KEY ([State_Id])
+    REFERENCES [dbo].[States]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_StateBOM'
+CREATE INDEX [IX_FK_StateBOM]
+ON [dbo].[BOMs]
+    ([State_Id]);
+GO
+
+-- Creating foreign key on [RawMaterial_Id] in table 'BOMs'
+ALTER TABLE [dbo].[BOMs]
+ADD CONSTRAINT [FK_RawMaterialBOM]
+    FOREIGN KEY ([RawMaterial_Id])
+    REFERENCES [dbo].[RawMaterials]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_RawMaterialBOM'
+CREATE INDEX [IX_FK_RawMaterialBOM]
+ON [dbo].[BOMs]
+    ([RawMaterial_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'

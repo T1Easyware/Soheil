@@ -138,6 +138,17 @@ insert into dbo.Warehouses (Id, Code, Name, ModifiedDate, CreatedDate, [Status],
 (3, '2', N'انبارنهایی', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,'Basement',1,1,0);
 SET IDENTITY_INSERT dbo.Warehouses OFF
 
+SET IDENTITY_INSERT dbo.RawMaterials ON
+insert into dbo.RawMaterials (Id, Code, Name, Inventory, CreatedDate, ModifiedDate, [Status], ModifiedBy, SafetyStock) values 
+(1, '1', N'ماده اول', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(2, '2', N'ماده دوم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(3, '3', N'ماده سوم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(4, '4', N'ماده چهارم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(5, '5', N'ماده پنجم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(6, '6', N'ماده ششم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0);
+SET IDENTITY_INSERT dbo.RawMaterials OFF
+
+
 SET IDENTITY_INSERT dbo.ProductGroups ON
 insert into dbo.ProductGroups (Id, Code, Name, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 
 (1, 'PG1', N'زانویی', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1),

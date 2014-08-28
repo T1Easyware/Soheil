@@ -43,6 +43,19 @@ namespace Soheil.Core.Fpc
 			return ((bool)value);
 		}
 	}
+	[ValueConversion(typeof(bool), typeof(Visibility))]
+	public class BooleanToVisibilityConverter1_3 : BaseConverter, IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			return ((int)value == 1 || (int)value == 3 || (int)value == 4) ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			return ((bool)value);
+		}
+	}
 	[ValueConversion(typeof(object), typeof(Visibility))]
 	public class NullToInvisibilityConverter : BaseConverter, IValueConverter
 	{

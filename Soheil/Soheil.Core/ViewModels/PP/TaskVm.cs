@@ -117,6 +117,8 @@ namespace Soheil.Core.ViewModels.PP
 					Model.TaskReports.Add(newModel);
 				}
 
+				UOW.Commit();
+
 				//reload reports
 				ReloadTaskReports();
 			});
@@ -212,5 +214,6 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty FillEmptySpacesCommandProperty =
 			DependencyProperty.Register("FillEmptySpacesCommand", typeof(Commands.Command), typeof(TaskVm), new UIPropertyMetadata(null));
 		#endregion
+
 	}
 }
