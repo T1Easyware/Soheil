@@ -219,7 +219,7 @@ namespace Soheil.Common
         AboutSubMenu = 53,
         StorageMenu = 6,
         WarehouseSubMenu = 61,
-        WarehouseTransactions = 62,
+        WarehouseReceiptSubMenu = 62,
         RawMaterialSubMenu = 63,
         UnitsSubMenu = 64,
         UnitSets = 641,
