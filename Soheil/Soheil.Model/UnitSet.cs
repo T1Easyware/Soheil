@@ -133,20 +133,37 @@ namespace Soheil.Model
         }
         private UnitGroup _unitGroup;
     
-        public virtual WarehouseTransaction WarehouseTransaction
+        public virtual ICollection<BOM> BOMs
         {
-            get { return _warehouseTransaction; }
+            get
+            {
+                if (_bOMs == null)
+                {
+                    var newCollection = new FixupCollection<BOM>();
+                    newCollection.CollectionChanged += FixupBOMs;
+                    _bOMs = newCollection;
+                }
+                return _bOMs;
+            }
             set
             {
-                if (!ReferenceEquals(_warehouseTransaction, value))
+                if (!ReferenceEquals(_bOMs, value))
                 {
-                    var previousValue = _warehouseTransaction;
-                    _warehouseTransaction = value;
-                    FixupWarehouseTransaction(previousValue);
+                    var previousValue = _bOMs as FixupCollection<BOM>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupBOMs;
+                    }
+                    _bOMs = value;
+                    var newValue = value as FixupCollection<BOM>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupBOMs;
+                    }
                 }
             }
         }
-        private WarehouseTransaction _warehouseTransaction;
+        private ICollection<BOM> _bOMs;
 
         #endregion
 
@@ -165,19 +182,6 @@ namespace Soheil.Model
                 {
                     UnitGroup.UnitSets.Add(this);
                 }
-            }
-        }
-    
-        private void FixupWarehouseTransaction(WarehouseTransaction previousValue)
-        {
-            if (previousValue != null && ReferenceEquals(previousValue.UnitSets, this))
-            {
-                previousValue.UnitSets = null;
-            }
-    
-            if (WarehouseTransaction != null)
-            {
-                WarehouseTransaction.UnitSets = this;
             }
         }
     
@@ -220,6 +224,28 @@ namespace Soheil.Model
                     if (ReferenceEquals(item.MinorUnit, this))
                     {
                         item.MinorUnit = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupBOMs(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (BOM item in e.NewItems)
+                {
+                    item.UnitSet = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (BOM item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.UnitSet, this))
+                    {
+                        item.UnitSet = null;
                     }
                 }
             }

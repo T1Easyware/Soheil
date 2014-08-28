@@ -75,6 +75,7 @@
     <Compile Include="ViewModels\Fpc\BomsVm.cs" />
     <Compile Include="ViewModels\Fpc\RawMaterialVm.cs" />
     <Compile Include="ViewModels\Fpc\BomVm.cs" />
+    <Compile Include="ViewModels\Fpc\UnitSetVm.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationArea.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationVm.cs" />
     <Compile Include="ViewModels\MessageCenter\PMVm.cs" />

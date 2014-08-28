@@ -7,6 +7,8 @@ using Soheil.Core.Interfaces;
 using Soheil.Dal;
 using Soheil.Model;
 using Soheil.Core.Base;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Soheil.Core.DataServices
 {
@@ -28,7 +30,10 @@ namespace Soheil.Core.DataServices
 			_rawMaterialRepository = new Repository<RawMaterial>(context);
 		}
 
-
+		public IEnumerable<UnitSet> GetUnitSets(RawMaterial model)
+		{
+			return model.RawMaterialUnitGroups.SelectMany(x => x.UnitGroup.UnitSets);
+		}
 
 		#region IDataService<RawMaterialVM> Members
 

@@ -37,7 +37,7 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual float Quantity
+        public virtual double Quantity
         {
             get;
             set;
@@ -82,6 +82,21 @@ namespace Soheil.Model
             }
         }
         private RawMaterial _rawMaterial;
+    
+        public virtual UnitSet UnitSet
+        {
+            get { return _unitSet; }
+            set
+            {
+                if (!ReferenceEquals(_unitSet, value))
+                {
+                    var previousValue = _unitSet;
+                    _unitSet = value;
+                    FixupUnitSet(previousValue);
+                }
+            }
+        }
+        private UnitSet _unitSet;
 
         #endregion
 
@@ -115,6 +130,22 @@ namespace Soheil.Model
                 if (!RawMaterial.BOMs.Contains(this))
                 {
                     RawMaterial.BOMs.Add(this);
+                }
+            }
+        }
+    
+        private void FixupUnitSet(UnitSet previousValue)
+        {
+            if (previousValue != null && previousValue.BOMs.Contains(this))
+            {
+                previousValue.BOMs.Remove(this);
+            }
+    
+            if (UnitSet != null)
+            {
+                if (!UnitSet.BOMs.Contains(this))
+                {
+                    UnitSet.BOMs.Add(this);
                 }
             }
         }

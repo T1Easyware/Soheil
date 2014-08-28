@@ -49,18 +49,41 @@ namespace Soheil.Core.ViewModels.Fpc
 		/// <summary>
 		/// Gets or sets a bindable value for Quantity
 		/// </summary>
-		public float Quantity
+		public double Quantity
 		{
-			get { return (float)GetValue(QuantityProperty); }
+			get { return (double)GetValue(QuantityProperty); }
 			set { SetValue(QuantityProperty, value); }
 		}
 		public static readonly DependencyProperty QuantityProperty =
-			DependencyProperty.Register("Quantity", typeof(float), typeof(BomVm),
-			new UIPropertyMetadata(0f, (d, e) =>
+			DependencyProperty.Register("Quantity", typeof(double), typeof(BomVm),
+			new UIPropertyMetadata(0d, (d, e) =>
 			{
-				((BomVm)d).Model.Quantity = (float)e.NewValue;
+				((BomVm)d).Model.Quantity = (double)e.NewValue;
 				StateVm.AnyPropertyChangedCallback(d, e);
 			}));
+
+		/// <summary>
+		/// Gets or sets a bindable collection that indicates Units
+		/// </summary>
+		public ObservableCollection<UnitSetVm> Units { get { return _units; } }
+		private ObservableCollection<UnitSetVm> _units = new ObservableCollection<UnitSetVm>();
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Unit
+		/// </summary>
+		public UnitSetVm Unit
+		{
+			get { return (UnitSetVm)GetValue(UnitProperty); }
+			set { SetValue(UnitProperty, value); }
+		}
+		public static readonly DependencyProperty UnitProperty =
+			DependencyProperty.Register("Unit", typeof(UnitSetVm), typeof(BomVm),
+			new PropertyMetadata(null, (d, e) =>
+			{
+				((BomVm)d).Model.UnitSet = ((UnitSetVm)e.NewValue).Model;
+				StateVm.AnyPropertyChangedCallback(d, e);
+			}));
+
+
 
 		private bool _isInitializing = true;
 
@@ -74,9 +97,19 @@ namespace Soheil.Core.ViewModels.Fpc
 			: base(parentWindowVm)
 		{
 			TreeLevel = 4;
+
+			var units = parentWindowVm.fpcDataService
+				.rawMaterialDataService.GetUnitSets(model.RawMaterial)
+				.Select(x => new UnitSetVm(x));
+			foreach (var unit in units)
+			{
+				Units.Add(unit);
+			}
+
 			Model = model;
 			_isInitializing = true;
 			IsDefault = model.IsDefault;
+			Unit = Units.FirstOrDefault(x => x.Model.Id == model.UnitSet.Id);
 			_isInitializing = false;
 		}
 

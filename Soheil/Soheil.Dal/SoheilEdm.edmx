@@ -544,16 +544,16 @@
       <End Role="TaskReport" EntitySet="TaskReports" />
       <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
     </AssociationSet>
-    <AssociationSet Name="WarehouseTransactionUnitSet" Association="SoheilEdm.Store.WarehouseTransactionUnitSet">
-      <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
-      <End Role="UnitSet" EntitySet="UnitSets" />
-    </AssociationSet>
     <AssociationSet Name="StateBOM" Association="SoheilEdm.Store.StateBOM">
       <End Role="State" EntitySet="States" />
       <End Role="BOM" EntitySet="BOMs" />
     </AssociationSet>
     <AssociationSet Name="RawMaterialBOM" Association="SoheilEdm.Store.RawMaterialBOM">
       <End Role="RawMaterial" EntitySet="RawMaterials" />
+      <End Role="BOM" EntitySet="BOMs" />
+    </AssociationSet>
+    <AssociationSet Name="UnitSetBOM" Association="SoheilEdm.Store.UnitSetBOM">
+      <End Role="UnitSet" EntitySet="UnitSets" />
       <End Role="BOM" EntitySet="BOMs" />
     </AssociationSet>
     <AssociationSet Name="FK_PM_inherits_NonProductiveTask" Association="SoheilEdm.Store.FK_PM_inherits_NonProductiveTask">
@@ -1516,7 +1516,6 @@
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="UnitGroup_Id" Type="int" Nullable="false" />
-    <Property Name="WarehouseTransaction_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="UnitConversions">
     <Key>
@@ -1553,10 +1552,11 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Quantity" Type="real" Nullable="false" />
+    <Property Name="Quantity" Type="float" Nullable="false" />
     <Property Name="IsDefault" Type="bit" Nullable="false" />
     <Property Name="State_Id" Type="int" Nullable="false" />
     <Property Name="RawMaterial_Id" Type="int" Nullable="false" />
+    <Property Name="UnitSet_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="NonProductiveTasks_PM">
     <Key>
@@ -2943,18 +2943,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="WarehouseTransactionUnitSet">
-    <End Role="WarehouseTransaction" Type="SoheilEdm.Store.WarehouseTransactions" Multiplicity="1" />
-    <End Role="UnitSet" Type="SoheilEdm.Store.UnitSets" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="WarehouseTransaction">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="UnitSet">
-        <PropertyRef Name="WarehouseTransaction_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="StateBOM">
     <End Role="State" Type="SoheilEdm.Store.States" Multiplicity="1" />
     <End Role="BOM" Type="SoheilEdm.Store.BOMs" Multiplicity="*" />
@@ -2976,6 +2964,18 @@
       </Principal>
       <Dependent Role="BOM">
         <PropertyRef Name="RawMaterial_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UnitSetBOM">
+    <End Role="UnitSet" Type="SoheilEdm.Store.UnitSets" Multiplicity="1" />
+    <End Role="BOM" Type="SoheilEdm.Store.BOMs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UnitSet">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BOM">
+        <PropertyRef Name="UnitSet_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -3573,10 +3573,6 @@
             <End Role="TaskReport" EntitySet="TaskReports" />
             <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
           </AssociationSet>
-          <AssociationSet Name="WarehouseTransactionUnitSet" Association="SoheilEdm.WarehouseTransactionUnitSet">
-            <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
-            <End Role="UnitSet" EntitySet="UnitSets" />
-          </AssociationSet>
           <EntitySet Name="BOMs" EntityType="SoheilEdm.BOM" />
           <AssociationSet Name="StateBOM" Association="SoheilEdm.StateBOM">
             <End Role="State" EntitySet="States" />
@@ -3584,6 +3580,10 @@
           </AssociationSet>
           <AssociationSet Name="RawMaterialBOM" Association="SoheilEdm.RawMaterialBOM">
             <End Role="RawMaterial" EntitySet="RawMaterials" />
+            <End Role="BOM" EntitySet="BOMs" />
+          </AssociationSet>
+          <AssociationSet Name="UnitSetBOM" Association="SoheilEdm.UnitSetBOM">
+            <End Role="UnitSet" EntitySet="UnitSets" />
             <End Role="BOM" EntitySet="BOMs" />
           </AssociationSet>
           </EntityContainer>
@@ -4995,7 +4995,6 @@
           <NavigationProperty Name="RawMaterial" Relationship="SoheilEdm.RawMaterialWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="RawMaterial" />
           <NavigationProperty Name="ProductRework" Relationship="SoheilEdm.ProductReworkWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="ProductRework" />
           <NavigationProperty Name="TaskReport" Relationship="SoheilEdm.TaskReportWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="TaskReport" />
-          <NavigationProperty Name="UnitSets" Relationship="SoheilEdm.WarehouseTransactionUnitSet" FromRole="WarehouseTransaction" ToRole="UnitSet" />
         </EntityType>
         <EntityType Name="Warehouse">
           <Key>
@@ -5089,7 +5088,7 @@
           <NavigationProperty Name="MajorUnits" Relationship="SoheilEdm.UnitSetUnitConversion" FromRole="UnitSet" ToRole="UnitConversion" />
           <NavigationProperty Name="MinorUnits" Relationship="SoheilEdm.UnitSetUnitConversion1" FromRole="UnitSet" ToRole="UnitConversion" />
           <NavigationProperty Name="UnitGroup" Relationship="SoheilEdm.UnitGroupUnitSet" FromRole="UnitSet" ToRole="UnitGroup" />
-          <NavigationProperty Name="WarehouseTransaction" Relationship="SoheilEdm.WarehouseTransactionUnitSet" FromRole="UnitSet" ToRole="WarehouseTransaction" />
+          <NavigationProperty Name="BOMs" Relationship="SoheilEdm.UnitSetBOM" FromRole="UnitSet" ToRole="BOM" />
         </EntityType>
         <EntityType Name="UnitConversion">
           <Key>
@@ -5153,10 +5152,6 @@
           <End Type="SoheilEdm.TaskReport" Role="TaskReport" Multiplicity="0..1" />
           <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
         </Association>
-        <Association Name="WarehouseTransactionUnitSet">
-          <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="1" />
-          <End Type="SoheilEdm.UnitSet" Role="UnitSet" Multiplicity="0..1" />
-        </Association>
         <EntityType Name="BOM">
           <Key>
             <PropertyRef Name="Id" />
@@ -5164,10 +5159,11 @@
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Code" Type="String" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" />
-          <Property Name="Quantity" Type="Single" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
           <NavigationProperty Name="State" Relationship="SoheilEdm.StateBOM" FromRole="BOM" ToRole="State" />
           <NavigationProperty Name="RawMaterial" Relationship="SoheilEdm.RawMaterialBOM" FromRole="BOM" ToRole="RawMaterial" />
           <Property Name="IsDefault" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="UnitSet" Relationship="SoheilEdm.UnitSetBOM" FromRole="BOM" ToRole="UnitSet" />
         </EntityType>
         <Association Name="StateBOM">
           <End Type="SoheilEdm.State" Role="State" Multiplicity="1" />
@@ -5175,6 +5171,10 @@
         </Association>
         <Association Name="RawMaterialBOM">
           <End Type="SoheilEdm.RawMaterial" Role="RawMaterial" Multiplicity="1" />
+          <End Type="SoheilEdm.BOM" Role="BOM" Multiplicity="*" />
+        </Association>
+        <Association Name="UnitSetBOM">
+          <End Type="SoheilEdm.UnitSet" Role="UnitSet" Multiplicity="1" />
           <End Type="SoheilEdm.BOM" Role="BOM" Multiplicity="*" />
         </Association>
         </Schema>
@@ -7090,14 +7090,6 @@
       </EndProperty>
       <Condition ColumnName="TaskReport_Id" IsNull="false" />
     </AssociationSetMapping>
-    <AssociationSetMapping Name="WarehouseTransactionUnitSet" TypeName="SoheilEdm.WarehouseTransactionUnitSet" StoreEntitySet="UnitSets">
-      <EndProperty Name="WarehouseTransaction">
-        <ScalarProperty Name="Id" ColumnName="WarehouseTransaction_Id" />
-      </EndProperty>
-      <EndProperty Name="UnitSet">
-        <ScalarProperty Name="Id" ColumnName="Id" />
-      </EndProperty>
-    </AssociationSetMapping>
     <AssociationSetMapping Name="StateBOM" TypeName="SoheilEdm.StateBOM" StoreEntitySet="BOMs">
       <EndProperty Name="State">
         <ScalarProperty Name="Id" ColumnName="State_Id" />
@@ -7109,6 +7101,14 @@
     <AssociationSetMapping Name="RawMaterialBOM" TypeName="SoheilEdm.RawMaterialBOM" StoreEntitySet="BOMs">
       <EndProperty Name="RawMaterial">
         <ScalarProperty Name="Id" ColumnName="RawMaterial_Id" />
+      </EndProperty>
+      <EndProperty Name="BOM">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="UnitSetBOM" TypeName="SoheilEdm.UnitSetBOM" StoreEntitySet="BOMs">
+      <EndProperty Name="UnitSet">
+        <ScalarProperty Name="Id" ColumnName="UnitSet_Id" />
       </EndProperty>
       <EndProperty Name="BOM">
         <ScalarProperty Name="Id" ColumnName="Id" />
@@ -7417,7 +7417,7 @@
         <EntityTypeShape EntityType="SoheilEdm.UnitConversion" Width="2" PointX="13.875" PointY="24.625" FillColor="ActiveCaption" />
         <AssociationConnector Association="SoheilEdm.UnitSetUnitConversion" />
         <AssociationConnector Association="SoheilEdm.UnitSetUnitConversion1" />
-        <EntityTypeShape EntityType="SoheilEdm.UnitGroup" Width="2" PointX="17.125" PointY="28.125" />
+        <EntityTypeShape EntityType="SoheilEdm.UnitGroup" Width="2" PointX="17.625" PointY="28.125" />
         <AssociationConnector Association="SoheilEdm.UnitGroupUnitSet" />
         <EntityTypeShape EntityType="SoheilEdm.RawMaterialUnitGroup" Width="2.125" PointX="20.375" PointY="28.125" />
         <AssociationConnector Association="SoheilEdm.RawMaterialRawMaterialUnitGroup" />
@@ -7425,10 +7425,10 @@
         <AssociationConnector Association="SoheilEdm.MachinePartRepair" />
         <AssociationConnector Association="SoheilEdm.ProductReworkWarehouseTransaction" />
         <AssociationConnector Association="SoheilEdm.TaskReportWarehouseTransaction" />
-        <AssociationConnector Association="SoheilEdm.WarehouseTransactionUnitSet" />
         <EntityTypeShape EntityType="SoheilEdm.BOM" Width="1.5" PointX="23.625" PointY="31.375" />
         <AssociationConnector Association="SoheilEdm.StateBOM" />
         <AssociationConnector Association="SoheilEdm.RawMaterialBOM" />
+        <AssociationConnector Association="SoheilEdm.UnitSetBOM" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -160,21 +160,6 @@ namespace Soheil.Model
             }
         }
         private TaskReport _taskReport;
-    
-        public virtual UnitSet UnitSets
-        {
-            get { return _unitSets; }
-            set
-            {
-                if (!ReferenceEquals(_unitSets, value))
-                {
-                    var previousValue = _unitSets;
-                    _unitSets = value;
-                    FixupUnitSets(previousValue);
-                }
-            }
-        }
-        private UnitSet _unitSets;
 
         #endregion
 
@@ -273,19 +258,6 @@ namespace Soheil.Model
                 {
                     TaskReport.WarehouseTransactions.Add(this);
                 }
-            }
-        }
-    
-        private void FixupUnitSets(UnitSet previousValue)
-        {
-            if (previousValue != null && ReferenceEquals(previousValue.WarehouseTransaction, this))
-            {
-                previousValue.WarehouseTransaction = null;
-            }
-    
-            if (UnitSets != null)
-            {
-                UnitSets.WarehouseTransaction = this;
             }
         }
 
