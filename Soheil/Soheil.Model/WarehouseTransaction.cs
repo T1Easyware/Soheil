@@ -278,14 +278,17 @@ namespace Soheil.Model
     
         private void FixupUnitSets(UnitSet previousValue)
         {
-            if (previousValue != null && ReferenceEquals(previousValue.WarehouseTransaction, this))
+            if (previousValue != null && previousValue.WarehouseTransaction.Contains(this))
             {
-                previousValue.WarehouseTransaction = null;
+                previousValue.WarehouseTransaction.Remove(this);
             }
     
             if (UnitSets != null)
             {
-                UnitSets.WarehouseTransaction = this;
+                if (!UnitSets.WarehouseTransaction.Contains(this))
+                {
+                    UnitSets.WarehouseTransaction.Add(this);
+                }
             }
         }
 

@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/26/2014 19:20:46
+-- Date Created: 08/26/2014 20:41:54
 -- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -357,7 +357,7 @@ IF OBJECT_ID(N'[dbo].[FK_TaskReportWarehouseTransaction]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_TaskReportWarehouseTransaction];
 GO
 IF OBJECT_ID(N'[dbo].[FK_WarehouseTransactionUnitSet]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[UnitSets] DROP CONSTRAINT [FK_WarehouseTransactionUnitSet];
+    ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_WarehouseTransactionUnitSet];
 GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
@@ -1503,11 +1503,12 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [ModifiedBy] int  NOT NULL,
     [Quantity] float  NOT NULL,
     [Warehouse_Id] int  NOT NULL,
-    [WarehouseReceipt_Id] int  NOT NULL,
+    [WarehouseReceipt_Id] int  NULL,
     [Good_Id] int  NULL,
     [RawMaterial_Id] int  NULL,
     [ProductRework_Id] int  NULL,
-    [TaskReport_Id] int  NULL
+    [TaskReport_Id] int  NULL,
+    [UnitSets_Id] int  NULL
 );
 GO
 
@@ -1576,8 +1577,7 @@ CREATE TABLE [dbo].[UnitSets] (
     [Description] nvarchar(max)  NOT NULL,
     [Status] tinyint  NOT NULL,
     [ModifiedBy] int  NOT NULL,
-    [UnitGroup_Id] int  NOT NULL,
-    [WarehouseTransaction_Id] int  NOT NULL
+    [UnitGroup_Id] int  NOT NULL
 );
 GO
 
@@ -3738,18 +3738,18 @@ ON [dbo].[WarehouseTransactions]
     ([TaskReport_Id]);
 GO
 
--- Creating foreign key on [WarehouseTransaction_Id] in table 'UnitSets'
-ALTER TABLE [dbo].[UnitSets]
+-- Creating foreign key on [UnitSets_Id] in table 'WarehouseTransactions'
+ALTER TABLE [dbo].[WarehouseTransactions]
 ADD CONSTRAINT [FK_WarehouseTransactionUnitSet]
-    FOREIGN KEY ([WarehouseTransaction_Id])
-    REFERENCES [dbo].[WarehouseTransactions]
+    FOREIGN KEY ([UnitSets_Id])
+    REFERENCES [dbo].[UnitSets]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_WarehouseTransactionUnitSet'
 CREATE INDEX [IX_FK_WarehouseTransactionUnitSet]
-ON [dbo].[UnitSets]
-    ([WarehouseTransaction_Id]);
+ON [dbo].[WarehouseTransactions]
+    ([UnitSets_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'

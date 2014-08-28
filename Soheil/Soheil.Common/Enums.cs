@@ -415,4 +415,23 @@ namespace Soheil.Common
 		/// </summary>
 		Info
 	}
+
+    public enum WarehouseTransactionType
+    {
+        None,
+        RawMaterial,
+        Product,
+        Good
+    }
+    public enum WarehouseTransactionFlow
+    {
+        In,Out
+    }
+    public enum WarehouseReceiptType
+    {
+        None,
+        Storage,
+        Transfer,
+        Discharge
+    }
 }

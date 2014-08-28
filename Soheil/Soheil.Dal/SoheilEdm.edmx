@@ -1433,11 +1433,12 @@
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="Quantity" Type="float" Nullable="false" />
     <Property Name="Warehouse_Id" Type="int" Nullable="false" />
-    <Property Name="WarehouseReceipt_Id" Type="int" Nullable="false" />
+    <Property Name="WarehouseReceipt_Id" Type="int" Nullable="true" />
     <Property Name="Good_Id" Type="int" Nullable="true" />
     <Property Name="RawMaterial_Id" Type="int" Nullable="true" />
     <Property Name="ProductRework_Id" Type="int" Nullable="true" />
     <Property Name="TaskReport_Id" Type="int" Nullable="true" />
+    <Property Name="UnitSets_Id" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="Warehouses">
     <Key>
@@ -1507,7 +1508,6 @@
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="UnitGroup_Id" Type="int" Nullable="false" />
-    <Property Name="WarehouseTransaction_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="UnitConversions">
     <Key>
@@ -2791,7 +2791,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="WarehouseReceiptWarehouseTransaction">
-    <End Role="WarehouseReceipt" Type="SoheilEdm.Store.WarehouseReceipts" Multiplicity="1" />
+    <End Role="WarehouseReceipt" Type="SoheilEdm.Store.WarehouseReceipts" Multiplicity="0..1" />
     <End Role="WarehouseTransaction" Type="SoheilEdm.Store.WarehouseTransactions" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="WarehouseReceipt">
@@ -2923,14 +2923,14 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="WarehouseTransactionUnitSet">
-    <End Role="WarehouseTransaction" Type="SoheilEdm.Store.WarehouseTransactions" Multiplicity="1" />
-    <End Role="UnitSet" Type="SoheilEdm.Store.UnitSets" Multiplicity="*" />
+    <End Role="WarehouseTransaction" Type="SoheilEdm.Store.WarehouseTransactions" Multiplicity="*" />
+    <End Role="UnitSet" Type="SoheilEdm.Store.UnitSets" Multiplicity="0..1" />
     <ReferentialConstraint>
-      <Principal Role="WarehouseTransaction">
+      <Principal Role="UnitSet">
         <PropertyRef Name="Id" />
       </Principal>
-      <Dependent Role="UnitSet">
-        <PropertyRef Name="WarehouseTransaction_Id" />
+      <Dependent Role="WarehouseTransaction">
+        <PropertyRef Name="UnitSets_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -5010,7 +5010,7 @@
           <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
         </Association>
         <Association Name="WarehouseReceiptWarehouseTransaction">
-          <End Type="SoheilEdm.WarehouseReceipt" Role="WarehouseReceipt" Multiplicity="1" />
+          <End Type="SoheilEdm.WarehouseReceipt" Role="WarehouseReceipt" Multiplicity="0..1" />
           <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
         </Association>
         <Association Name="GoodWarehouseTransaction">
@@ -5098,7 +5098,7 @@
           <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
         </Association>
         <Association Name="WarehouseTransactionUnitSet">
-          <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="1" />
+          <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
           <End Type="SoheilEdm.UnitSet" Role="UnitSet" Multiplicity="0..1" />
         </Association>
         </Schema>
@@ -6915,6 +6915,7 @@
       <EndProperty Name="WarehouseTransaction">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
+      <Condition ColumnName="WarehouseReceipt_Id" IsNull="false" />
     </AssociationSetMapping>
     <AssociationSetMapping Name="GoodWarehouseTransaction" TypeName="SoheilEdm.GoodWarehouseTransaction" StoreEntitySet="WarehouseTransactions">
       <EndProperty Name="Good">
@@ -7002,13 +7003,14 @@
       </EndProperty>
       <Condition ColumnName="TaskReport_Id" IsNull="false" />
     </AssociationSetMapping>
-    <AssociationSetMapping Name="WarehouseTransactionUnitSet" TypeName="SoheilEdm.WarehouseTransactionUnitSet" StoreEntitySet="UnitSets">
-      <EndProperty Name="WarehouseTransaction">
-        <ScalarProperty Name="Id" ColumnName="WarehouseTransaction_Id" />
-      </EndProperty>
+    <AssociationSetMapping Name="WarehouseTransactionUnitSet" TypeName="SoheilEdm.WarehouseTransactionUnitSet" StoreEntitySet="WarehouseTransactions">
       <EndProperty Name="UnitSet">
+        <ScalarProperty Name="Id" ColumnName="UnitSets_Id" />
+      </EndProperty>
+      <EndProperty Name="WarehouseTransaction">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
+      <Condition ColumnName="UnitSets_Id" IsNull="false" />
     </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>

@@ -95,7 +95,7 @@ namespace Soheil.Core.DataServices.Storage
 				TaskReport = tr,
 				Quantity = model.TaskProducedG1,
 				TransactionDateTime = model.ReportEndDateTime,
-				TransactionType = 0,
+				Flow = 0,
 			};
 			tr.WarehouseTransactions.Add(wt);
 			AddModel(wt);
