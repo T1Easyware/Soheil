@@ -207,6 +207,11 @@ namespace Soheil.Views
                 var tmpl = (DataTemplate)FindResource("WarehouseTemplate");
                 _itemContentView.ContentTemplate = tmpl;
             }
+            else if (ViewModel.CurrentContent is WarehouseReceiptVM)
+            {
+                var tmpl = (DataTemplate)FindResource("WarehouseReceiptTemplate");
+                _itemContentView.ContentTemplate = tmpl;
+            }
             else if (ViewModel.CurrentContent is RawMaterialVM)
             {
                 var tmpl = (DataTemplate)FindResource("RawMaterialTemplate");
@@ -319,6 +324,9 @@ namespace Soheil.Views
                     break;
                 case SoheilEntityType.Warehouses:
                     ViewModel = new WarehousesVM(access);
+                    break;
+                case SoheilEntityType.WarehouseReceiptSubMenu:
+                    ViewModel = new WarehouseReceiptsVM(access);
                     break;
                 case SoheilEntityType.RawMaterialSubMenu:
                     ViewModel = new RawMaterialsVM(access);
