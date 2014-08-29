@@ -43,7 +43,8 @@
 	<core:ConnectorLocationConverter x:Key="connectorLocationConverter"/>
 	<core:ConnectorAngleConverter x:Key="connectorAngleConverter"/>
 	<core:ConnectorLengthConverter x:Key="connectorLengthConverter"/>
-	<core:BooleanToVisibilityConverter x:Key="visibilityConverter"/>
+    <core:BooleanToVisibilityConverter x:Key="visibilityConverter"/>
+    <core:BooleanToVisibilityConverter1_3 x:Key="visibilityConverter1_3"/>
 	<core:BooleanToInvisibilityConverter x:Key="invisibilityConverter"/>
 	<core:NullToInvisibilityConverter x:Key="nullToInvisibilityConverter"/>
 	<core:StateTemplateSelector x:Key="stateTemplateSelector"/>

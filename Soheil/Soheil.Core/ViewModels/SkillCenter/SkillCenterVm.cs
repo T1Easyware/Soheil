@@ -78,6 +78,10 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			Access = access;
 			CanEdit = (int)Access >= (int)AccessType.Update;
 			Message = new EmbeddedException();
+			Content = new SkillCenterContentVm();
+			//prepare this page's Message to listen to errors of the Content
+			Content.ErrorOccured += msg => Dispatcher.Invoke(() => Message.AddEmbeddedException(msg));
+
 			InitializeData();
 			initializeCommands();
 		}
@@ -111,7 +115,7 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		}
 
 		/// <summary>
-		/// Selects the given <see cref="BaseTreeItemVm"/> and changes the Content to show the skills about that <see cref="BaseTreeItemVm"/>
+		/// Selects the given <see cref="BaseTreeItemVm"/> and update the Content to show the skills about that <see cref="BaseTreeItemVm"/>
 		/// </summary>
 		/// <remarks>
 		/// This method will be called from the Selected event in each <see cref="BaseTreeItemVm"/>
@@ -122,21 +126,52 @@ namespace Soheil.Core.ViewModels.SkillCenter
 		{
 			//exit if page is in Loading state
 			if (IsLoading) return;
-			
-			IsLoading = true;
-
 			//load the content with a delay
 			if (_loadingTimer != null) _loadingTimer.Dispose();
+			IsLoading = true;
+
+			Content.InitializeDataService();
+			ActivitySkillDataService ActivitySkillDataService = Content.ActivitySkillDataService;
+			ProductActivitySkillDataService ProductActivitySkillDataService = Content.ProductActivitySkillDataService;
+
+			TargetMode mode;
+			int selectedId = 0;
+			if (node is GeneralVm)
+			{
+				mode = TargetMode.General;
+			}
+			else if (node is ProductReworkVm)
+			{
+				mode = TargetMode.ProductRework;
+				selectedId = node.Id;
+			}
+			else return;
+
+
 			_loadingTimer = new Timer(
-				o => { 
-					Dispatcher.Invoke(() => 
+				o => {
+					//var dt = DateTime.Now;
+					//Reset the content to match the selected node
+					Dispatcher.Invoke(() => Content.Initialize(node));
+					
+					if(mode == TargetMode.General)
 					{
-						//Reset the content to match the selected node
-						Content = new SkillCenterContentVm(node);
-						//prepare this page's Message to listen to errors of the Content
-						Content.ErrorOccured += msg => Message.AddEmbeddedException(msg);
-						IsLoading = false;
-					});
+						var list = ActivitySkillDataService.TryFindAll().ToList();
+						Thread.Sleep(100);
+						Dispatcher.Invoke(() => Content.InitializeData(list));
+					}
+					else if(mode == TargetMode.ProductRework)
+					{
+						var list = ProductActivitySkillDataService.TryFindAll(selectedId).ToList();
+						var genlist = ActivitySkillDataService.TryFindAll().ToList();
+						Thread.Sleep(100);
+						Dispatcher.Invoke(() => Content.InitializeData(list));
+						Thread.Sleep(100);
+						Dispatcher.Invoke(() => Content.InitializeData(genlist));
+					}
+
+					Dispatcher.Invoke(() => IsLoading = false);
+					//System.Diagnostics.Debug.WriteLine(DateTime.Now.Subtract(dt).TotalSeconds);
 				}
 				, null, _loadingTimerDelay, System.Threading.Timeout.Infinite);
 		}

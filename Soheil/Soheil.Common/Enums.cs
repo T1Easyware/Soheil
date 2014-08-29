@@ -91,6 +91,11 @@ namespace Soheil.Common
 		NA = 5,
     }
 
+	/// <summary>
+	/// Specifies the tree type of <see cref="BaseTreeItemVm"/> which initializes this instance of <see cref="SkillCenterContentVm"/>
+	/// </summary>
+	public enum TargetMode { General, ProductRework, Product, ProductGroup };
+
     [Flags]
     public enum PPFlags
     {

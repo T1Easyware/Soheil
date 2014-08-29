@@ -16,13 +16,27 @@ namespace Soheil.Core.ViewModels.Fpc
 
 		FpcWindowVm _parentWindowVm;
 
-		public StateConfigVm GetUnderlyingStateConfig(Point mouse)
+		public StateConfigVm GetUnderlyingStateConfigForStation(Point mouse)
 		{
 			var states = _parentWindowVm.States.Where(x => x.ShowDetails && x.Config != null);
 			foreach (var state in states)
 			{
-				if (state.Config.ContentsList.Any(s => 
-					s.Containment.Id == ContentData.Id && 
+				if (state.Config.ContentsList.OfType<StateStationVm>().Any(s =>
+					s.Containment.Id == ContentData.Id &&
+					!s.IsDropIndicator)) continue;
+				Rect r = new Rect(state.Location.X, state.Location.Y, state.Width, state.Height);
+				if (r.Contains(mouse.X, mouse.Y))
+					return state.Config;
+			}
+			return null;
+		}
+		public StateConfigVm GetUnderlyingStateConfigForRawMaterial(Point mouse)
+		{
+			var states = _parentWindowVm.States.Where(x => x.ShowDetails && x.Config != null);
+			foreach (var state in states)
+			{
+				if (state.Config.ContentsList.OfType<BomVm>().Any(s =>
+					s.Containment.Id == ContentData.Id &&
 					!s.IsDropIndicator)) continue;
 				Rect r = new Rect(state.Location.X, state.Location.Y, state.Width, state.Height);
 				if (r.Contains(mouse.X, mouse.Y))
@@ -35,7 +49,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			var states = _parentWindowVm.States.Where(x => x.ShowDetails && x.Config != null);
 			foreach (var state in states)
 			{
-				var station = state.Config.ContentsList.SingleOrDefault(x => x.IsExpanded) as StateStationVm;
+				var station = state.Config.ContentsList.OfType<StateStationVm>().SingleOrDefault(x => x.IsExpanded) as StateStationVm;
 				if (station == null) continue;
 				/*if (station.ContentsList.Any(ss =>
 					ss.Containment.Id == ContentData.Id && 
@@ -54,11 +68,11 @@ namespace Soheil.Core.ViewModels.Fpc
 				TreeItemVm station;
 				if(_parentWindowVm.ShowAllMachines)
 				{
-					station = state.Config.ContentsList.SingleOrDefault(x => x.IsExpanded);
+					station = state.Config.ContentsList.OfType<StateStationVm>().SingleOrDefault(x => x.IsExpanded);
 				}
 				else
 				{
-					station = state.Config.ContentsList.SingleOrDefault(x => x.IsExpanded
+					station = state.Config.ContentsList.OfType<StateStationVm>().SingleOrDefault(x => x.IsExpanded
 						&& (x.Containment as StationVm).StationMachines.Any(y => y.Machine.Id == this.ContentData.Id));
 				}
 				if (station == null) continue;

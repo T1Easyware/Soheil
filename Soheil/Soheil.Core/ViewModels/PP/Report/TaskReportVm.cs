@@ -12,6 +12,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 	{
 		public event Action<TaskReportVm> TaskReportDeleted;
 		public event Action<TaskReportVm> EndDateTimeChanged;
+		public event Action WarehouseTransactionDeleted;
 
 		#region Members
 		/// <summary>
@@ -50,18 +51,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 			EndDateTime = Model.ReportEndDateTime;
 
 			//Initialize warehouses
-			var warehouses = new DataServices.WarehouseDataService().GetActivesForPP();
+			var warehouses = new DataServices.WarehouseDataService(UOW).GetActivesForPP();
 			foreach (var item in warehouses)
 			{
 				Warehouses.Add(new Report.WarehouseVm(item));
 			}
-			if (model.WarehouseTransactions.Any())
-			{
-				WarehouseTransaction = new WarehouseTransactionVm(model.WarehouseTransactions.First(), Warehouses);
-			}
-			else
-			{
-			}
+			WarehouseTransaction = WarehouseTransactionVm.CreateExisting(model, Warehouses, UOW);
+			if (WarehouseTransaction != null)
+				WarehouseTransaction.Deleted += WarehouseTransaction_Deleted;
 
 			_isInInitializingPhase = false;
 			IsUserDrag = false;
@@ -366,8 +363,16 @@ namespace Soheil.Core.ViewModels.PP.Report
 			});
 			CreateTransactionCommand = new Commands.Command(o =>
 			{
-				WarehouseTransaction = new WarehouseTransactionVm(Model);
+				WarehouseTransaction = WarehouseTransactionVm.CreateNew(Model, Warehouses, UOW);
+				WarehouseTransaction.Deleted += WarehouseTransaction_Deleted;
 			}, ()=>Warehouses.Any());
+		}
+
+		void WarehouseTransaction_Deleted()
+		{
+			WarehouseTransaction = null;
+			if (WarehouseTransactionDeleted != null)
+				WarehouseTransactionDeleted();
 		}
 
 		/// <summary>

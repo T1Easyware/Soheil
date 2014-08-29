@@ -184,6 +184,38 @@ namespace Soheil.Model
             }
         }
         private ProductRework _onProductRework;
+    
+        public virtual ICollection<BOM> BOMs
+        {
+            get
+            {
+                if (_bOMs == null)
+                {
+                    var newCollection = new FixupCollection<BOM>();
+                    newCollection.CollectionChanged += FixupBOMs;
+                    _bOMs = newCollection;
+                }
+                return _bOMs;
+            }
+            set
+            {
+                if (!ReferenceEquals(_bOMs, value))
+                {
+                    var previousValue = _bOMs as FixupCollection<BOM>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupBOMs;
+                    }
+                    _bOMs = value;
+                    var newValue = value as FixupCollection<BOM>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupBOMs;
+                    }
+                }
+            }
+        }
+        private ICollection<BOM> _bOMs;
 
         #endregion
 
@@ -282,6 +314,28 @@ namespace Soheil.Model
                     if (ReferenceEquals(item.EndState, this))
                     {
                         item.EndState = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupBOMs(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (BOM item in e.NewItems)
+                {
+                    item.State = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (BOM item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.State, this))
+                    {
+                        item.State = null;
                     }
                 }
             }

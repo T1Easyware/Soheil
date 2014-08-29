@@ -133,37 +133,37 @@ namespace Soheil.Model
         }
         private UnitGroup _unitGroup;
     
-        public virtual ICollection<WarehouseTransaction> WarehouseTransaction
+        public virtual ICollection<BOM> BOMs
         {
             get
             {
-                if (_warehouseTransaction == null)
+                if (_bOMs == null)
                 {
-                    var newCollection = new FixupCollection<WarehouseTransaction>();
-                    newCollection.CollectionChanged += FixupWarehouseTransaction;
-                    _warehouseTransaction = newCollection;
+                    var newCollection = new FixupCollection<BOM>();
+                    newCollection.CollectionChanged += FixupBOMs;
+                    _bOMs = newCollection;
                 }
-                return _warehouseTransaction;
+                return _bOMs;
             }
             set
             {
-                if (!ReferenceEquals(_warehouseTransaction, value))
+                if (!ReferenceEquals(_bOMs, value))
                 {
-                    var previousValue = _warehouseTransaction as FixupCollection<WarehouseTransaction>;
+                    var previousValue = _bOMs as FixupCollection<BOM>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupWarehouseTransaction;
+                        previousValue.CollectionChanged -= FixupBOMs;
                     }
-                    _warehouseTransaction = value;
-                    var newValue = value as FixupCollection<WarehouseTransaction>;
+                    _bOMs = value;
+                    var newValue = value as FixupCollection<BOM>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupWarehouseTransaction;
+                        newValue.CollectionChanged += FixupBOMs;
                     }
                 }
             }
         }
-        private ICollection<WarehouseTransaction> _warehouseTransaction;
+        private ICollection<BOM> _bOMs;
 
         #endregion
 
@@ -229,23 +229,23 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupWarehouseTransaction(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupBOMs(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (WarehouseTransaction item in e.NewItems)
+                foreach (BOM item in e.NewItems)
                 {
-                    item.UnitSets = this;
+                    item.UnitSet = this;
                 }
             }
     
             if (e.OldItems != null)
             {
-                foreach (WarehouseTransaction item in e.OldItems)
+                foreach (BOM item in e.OldItems)
                 {
-                    if (ReferenceEquals(item.UnitSets, this))
+                    if (ReferenceEquals(item.UnitSet, this))
                     {
-                        item.UnitSets = null;
+                        item.UnitSet = null;
                     }
                 }
             }

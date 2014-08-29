@@ -27,5 +27,18 @@ namespace Soheil.Core.ViewModels.SkillCenter
 			Data = model == null ? ILUO.NA : model.Iluo;
 			Model = model;
 		}
+		public ActivitySkillVm(int operatorId, int activityId)
+			: base(operatorId, activityId)
+		{
+		}
+
+		internal void Update(Soheil.Model.ActivitySkill skill)
+		{
+			if (skill != null)
+			{
+				Model = skill;
+				Data = skill.Iluo;
+			}
+		}
 	}
 }

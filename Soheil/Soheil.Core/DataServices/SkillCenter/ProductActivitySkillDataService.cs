@@ -152,5 +152,10 @@ namespace Soheil.Core.DataServices
 				Context.Commit();
 			}
 		}
+
+		internal IEnumerable<ProductActivitySkill> TryFindAll(int prId)
+		{
+			return _productActivitySkillRepository.Find(x => x.ProductRework.Id == prId, "ActivitySkill.Operator", "ActivitySkill.Activity");
+		}
 	}
 }

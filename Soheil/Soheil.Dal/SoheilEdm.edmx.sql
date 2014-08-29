@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/28/2014 19:38:21
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 08/28/2014 21:12:37
+-- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -359,6 +359,15 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_WarehouseTransactionUnitSet]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_WarehouseTransactionUnitSet];
 GO
+IF OBJECT_ID(N'[dbo].[FK_StateBOM]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_StateBOM];
+GO
+IF OBJECT_ID(N'[dbo].[FK_RawMaterialBOM]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_RawMaterialBOM];
+GO
+IF OBJECT_ID(N'[dbo].[FK_UnitSetBOM]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_UnitSetBOM];
+GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
 GO
@@ -618,6 +627,9 @@ IF OBJECT_ID(N'[dbo].[UnitGroups]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[RawMaterialUnitGroups]', 'U') IS NOT NULL
     DROP TABLE [dbo].[RawMaterialUnitGroups];
+GO
+IF OBJECT_ID(N'[dbo].[BOMs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[BOMs];
 GO
 IF OBJECT_ID(N'[dbo].[NonProductiveTasks_PM]', 'U') IS NOT NULL
     DROP TABLE [dbo].[NonProductiveTasks_PM];
@@ -1609,6 +1621,19 @@ CREATE TABLE [dbo].[RawMaterialUnitGroups] (
 );
 GO
 
+-- Creating table 'BOMs'
+CREATE TABLE [dbo].[BOMs] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Code] nvarchar(max)  NOT NULL,
+    [Name] nvarchar(max)  NOT NULL,
+    [Quantity] float  NOT NULL,
+    [IsDefault] bit  NOT NULL,
+    [State_Id] int  NOT NULL,
+    [RawMaterial_Id] int  NOT NULL,
+    [UnitSet_Id] int  NOT NULL
+);
+GO
+
 -- Creating table 'NonProductiveTasks_PM'
 CREATE TABLE [dbo].[NonProductiveTasks_PM] (
     [Id] int  NOT NULL,
@@ -2125,6 +2150,12 @@ GO
 -- Creating primary key on [Id] in table 'RawMaterialUnitGroups'
 ALTER TABLE [dbo].[RawMaterialUnitGroups]
 ADD CONSTRAINT [PK_RawMaterialUnitGroups]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'BOMs'
+ALTER TABLE [dbo].[BOMs]
+ADD CONSTRAINT [PK_BOMs]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -3738,18 +3769,46 @@ ON [dbo].[WarehouseTransactions]
     ([TaskReport_Id]);
 GO
 
--- Creating foreign key on [UnitSets_Id] in table 'WarehouseTransactions'
-ALTER TABLE [dbo].[WarehouseTransactions]
-ADD CONSTRAINT [FK_WarehouseTransactionUnitSet]
-    FOREIGN KEY ([UnitSets_Id])
+-- Creating foreign key on [State_Id] in table 'BOMs'
+ALTER TABLE [dbo].[BOMs]
+ADD CONSTRAINT [FK_StateBOM]
+    FOREIGN KEY ([State_Id])
+    REFERENCES [dbo].[States]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_StateBOM'
+CREATE INDEX [IX_FK_StateBOM]
+ON [dbo].[BOMs]
+    ([State_Id]);
+GO
+
+-- Creating foreign key on [RawMaterial_Id] in table 'BOMs'
+ALTER TABLE [dbo].[BOMs]
+ADD CONSTRAINT [FK_RawMaterialBOM]
+    FOREIGN KEY ([RawMaterial_Id])
+    REFERENCES [dbo].[RawMaterials]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_RawMaterialBOM'
+CREATE INDEX [IX_FK_RawMaterialBOM]
+ON [dbo].[BOMs]
+    ([RawMaterial_Id]);
+GO
+
+-- Creating foreign key on [UnitSet_Id] in table 'BOMs'
+ALTER TABLE [dbo].[BOMs]
+ADD CONSTRAINT [FK_UnitSetBOM]
+    FOREIGN KEY ([UnitSet_Id])
     REFERENCES [dbo].[UnitSets]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 
--- Creating non-clustered index for FOREIGN KEY 'FK_WarehouseTransactionUnitSet'
-CREATE INDEX [IX_FK_WarehouseTransactionUnitSet]
-ON [dbo].[WarehouseTransactions]
-    ([UnitSets_Id]);
+-- Creating non-clustered index for FOREIGN KEY 'FK_UnitSetBOM'
+CREATE INDEX [IX_FK_UnitSetBOM]
+ON [dbo].[BOMs]
+    ([UnitSet_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'

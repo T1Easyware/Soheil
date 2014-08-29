@@ -68,6 +68,9 @@
     <Compile Include="Block.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="BOM.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Cause.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>

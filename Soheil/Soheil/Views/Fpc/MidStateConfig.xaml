@@ -50,10 +50,10 @@
 				<RowDefinition/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
-			<TextBlock Margin="4" Text="کد مرحله" Grid.Row="2"/>
-			<TextBox Margin="2" Text="{Binding State.Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Stretch"/>
-			<TextBlock Margin="4" Text="نام مرحله" Grid.Row="1"/>
-			<TextBox Margin="2" Text="{Binding State.Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Stretch"/>
+			<TextBlock Margin="4" Text="کد مرحله" Grid.Row="1"/>
+			<TextBox Margin="2" Text="{Binding State.Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Stretch"/>
+			<TextBlock Margin="4" Text="نام مرحله" Grid.Row="2"/>
+			<TextBox Margin="2" Text="{Binding State.Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Stretch"/>
 			<CheckBox Margin="3" Grid.Row="3" Content="دوباره کاری"
 					  IsChecked="{Binding State.IsRework}" IsEnabled="{Binding IsFixed, Converter={StaticResource inverter}}"/>
             <ComboBox Grid.Row="3" Grid.Column="1" Margin="2,0" IsReadOnly="{Binding IsFixed}"
@@ -116,8 +116,28 @@
 	</DataTemplate>
 	<DataTemplate x:Key="machineSubItemTemplate" DataType="{x:Type vm:StateStationActivityMachineVm}">
 	</DataTemplate>
+    <DataTemplate x:Key="bomSubItemTemplate" DataType="{x:Type vm:BomVm}">
+        <Grid IsEnabled="{Binding 
+							RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, 
+							Path=DataContext.Access, 
+							Converter={StaticResource AccessTypeToBooleanConverter},
+							ConverterParameter={x:Static common:AccessType.Update}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*" MinWidth="50"/>
+				<ColumnDefinition Width="*" MinWidth="50"/>
+            </Grid.ColumnDefinitions>
+			<TextBlock Margin="4" Text="تعداد"/>
+            <TextBox Margin="2" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Stretch"/>
+			<ComboBox Grid.Column="2" Margin="2,0" IsReadOnly="{Binding IsFixed}"
+				ItemsSource="{Binding Units}" 
+				SelectedItem="{Binding Unit, Mode=TwoWay}" 
+					  DisplayMemberPath="Code">
+			</ComboBox>
+		</Grid>
+    </DataTemplate>
 
-	<!-- Tree -->
+    <!-- Tree -->
 
 	<DataTemplate x:Key="treeItemTemplate" DataType="{x:Type vm:TreeItemVm}">
 		<Expander
@@ -131,13 +151,8 @@
 					<TextBlock DockPanel.Dock="Left" VerticalAlignment="Center"
 							   Foreground="Black" TextWrapping="Wrap"
 							   Text="{Binding Name}" Opacity="{Binding TextOpacity}"/>
-					<ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsDefault}" ToolTip="آیا این ماشین بطور پیش فرض استفاده می شود؟"
-								  Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=3}"
-								  IsEnabled="{Binding RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, Path=DataContext.Access, Converter={StaticResource AccessTypeToBooleanConverter}, ConverterParameter={x:Static common:AccessType.Update}}">
-						<Image Style="{StaticResource IsDefaultImageStyle}"/>
-					</ToggleButton>
-					<ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsDefault}" ToolTip="آیا این ایستگاه بطور پیش فرض استفاده می شود؟"
-								  Visibility="{Binding Converter={StaticResource visibilityConverter}, Path=TreeLevel, ConverterParameter=1}"
+                    <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsDefault}" ToolTip="آیا بطور پیش فرض این آیتم در برنامه تولید استفاده شود؟"
+								  Visibility="{Binding Converter={StaticResource visibilityConverter1_3}, Path=TreeLevel}"
 								  IsEnabled="{Binding RelativeSource={RelativeSource AncestorType={x:Type v:FpcWindow}}, Path=DataContext.Access, Converter={StaticResource AccessTypeToBooleanConverter}, ConverterParameter={x:Static common:AccessType.Update}}">
 						<Image Style="{StaticResource IsDefaultImageStyle}"/>
 					</ToggleButton>

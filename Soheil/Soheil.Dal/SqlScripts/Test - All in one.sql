@@ -1,5 +1,6 @@
 ﻿
 USE [SoheilDb]
+INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 
 INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 (1,'0','txtSoheil',null),
@@ -58,6 +59,9 @@ INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 		(52,'64','txtUnits',52),
 			(53,'641','txtUnitSets',52),
 			(54,'642','txtUnitConversions',52);
+
+ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);
+
 
 ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);
 
@@ -127,114 +131,27 @@ INSERT INTO Causes([Name],[Code],[Description],[ModifiedDate],[CreatedDate],[Sta
 
 
 
-SET IDENTITY_INSERT dbo.COSTCENTERS ON
-
-INSERT INTO CostCenters([Id],[Name],[Description],[SourceType],[Status]) VALUES
-(1,N'ماشین ها','',1,1);
-
-INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
-(N'هزینه ماشین',0,0,'2013-01-01',1,0,1);
-
-INSERT INTO COSTCENTERS([Id],[Name],[Description],[SourceType],[Status]) VALUES
-(2,N'اپراتور ها','',2,1);
-
-INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
-(N'هزینه اپراتور',0,0,'2013-01-01',1,0,2);
-
-INSERT INTO COSTCENTERS([Id],[Name],[Description],[SourceType],[Status]) VALUES
-(3,N'ایستگاه ها','',3,1);
-
-INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
-(N'هزینه ایستگاه',0,0,'2013-01-01',1,0,3);
-
-INSERT INTO COSTCENTERS([Id],[Name],[Description],[SourceType],[Status]) VALUES
-(4,N'فعالیت ها','',4,1);
-
-INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
-(N'هزینه فعالیت',0,0,'2013-01-01',1,0,4);
-
-INSERT INTO COSTCENTERS([Id],[Name],[Description],[SourceType],[Status]) VALUES
-(5,N'سربار','',0,1);
-
-INSERT INTO COSTS([DESCRIPTION],[COSTVALUE],[QUANTITY],[DATE],[STATUS],[CostType],[CostCenter_Id]) VALUES
-(N'هزینه متفرقه',0,0,'2013-01-01',1,0,5);
-
-SET IDENTITY_INSERT dbo.COSTCENTERS OFF
-
-SET IDENTITY_INSERT dbo.UnitGroups ON
-insert into UnitGroups([Id],[ModifiedBy],[Name],[Status]) values
-(1,1,N'وزنی',1);
-
-insert into UnitGroups([Id],[ModifiedBy],[Name],[Status]) values
-(2,1,N'حجمی',1); 
-SET IDENTITY_INSERT dbo.UnitGroups OFF
-
-SET IDENTITY_INSERT dbo.unitsets ON
-
-insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
-(1,'gr', N'گرم',1,1,1); 
-insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
-(2,'kg', N'کیلوگرم',1,1,1); 
-insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
-(3,'Tn', N'تن',1,1,1); 
-
-insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
-(4,'cc', N'سی سی',1,1,2); 
-insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
-(5,'Lt', N'لیتر',1,1,2); 
-insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
-(6,'M3', N'متر مکعب',1,1,2); 
-
-SET IDENTITY_INSERT dbo.unitsets OFF
-
-
-insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
-(1,2,1000,1,1);
-insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
-(2,3,1000,1,1);
-insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
-(1,3,1000000,1,1);
-
-
-insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
-(4,5,1000,1,1);
-insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
-(5,6,1000,1,1);
-insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
-(4,6,1000000,1,1);
-
-
-
-
-
-
-
-
-
-
-
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
------------------------------------------            Bizz             ---------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------
 use SoheilDb
+
+SET IDENTITY_INSERT dbo.Warehouses ON
+insert into dbo.Warehouses (Id, Code, Name, ModifiedDate, CreatedDate, [Status], ModifiedBy, Location, HasFinalProduct, HasRawMaterial, HasWIP) values 
+(1, '1', N'اصلی', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,'Basement',1,1,1),
+(2, '2', N'نیم ساخته', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,'Basement',0,1,1),
+(3, '2', N'انبارنهایی', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,'Basement',1,1,0);
+SET IDENTITY_INSERT dbo.Warehouses OFF
+
+SET IDENTITY_INSERT dbo.RawMaterials ON
+insert into dbo.RawMaterials (Id, Code, Name, Inventory, CreatedDate, ModifiedDate, [Status], ModifiedBy, SafetyStock) values 
+(1, '1', N'ماده اول', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(2, '2', N'ماده دوم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(3, '3', N'ماده سوم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(4, '4', N'ماده چهارم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(5, '5', N'ماده پنجم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0),
+(6, '6', N'ماده ششم', 0, {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1,0);
+SET IDENTITY_INSERT dbo.RawMaterials OFF
+
 
 SET IDENTITY_INSERT dbo.ProductGroups ON
 insert into dbo.ProductGroups (Id, Code, Name, ModifiedDate, CreatedDate, [Status], ModifiedBy) values 

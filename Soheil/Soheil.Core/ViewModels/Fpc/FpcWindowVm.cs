@@ -260,6 +260,12 @@ namespace Soheil.Core.ViewModels.Fpc
 			foreach (var item in actgs)
 				ActivityGroups.Add(new ActivityGroupVm(item));
 
+			//RawMaterials
+			RawMaterials.Clear();
+			var rawMaterials = fpcDataService.rawMaterialDataService.GetActives();
+			foreach (var item in rawMaterials)
+				RawMaterials.Add(new RawMaterialVm(item));
+
 			//Drawing area
 			States.Clear();
 			Connectors.Clear();
@@ -577,6 +583,41 @@ namespace Soheil.Core.ViewModels.Fpc
 			}));
 
 		/// <summary>
+		/// Gets or sets the bindable text for filtering the rawMaterial list
+		/// </summary>
+		public string RawMaterialQuery
+		{
+			get { return (string)GetValue(RawMaterialQueryProperty); }
+			set { SetValue(RawMaterialQueryProperty, value); }
+		}
+		public static readonly DependencyProperty RawMaterialQueryProperty =
+			DependencyProperty.Register("RawMaterialQuery", typeof(string), typeof(FpcWindowVm),
+			new UIPropertyMetadata("", (d, e) =>
+			{
+				var vm = d as FpcWindowVm;
+				var val = e.NewValue as string;
+				if (string.IsNullOrEmpty(val))
+				{
+					foreach (var rm in vm.RawMaterials)
+					{
+						rm.IsVisible = true;
+					}
+				}
+				else
+				{
+					val = val.ToUpper();
+					foreach (var rm in vm.RawMaterials)
+					{
+						if (rm.Name.ToUpper().Contains(val) || rm.Model.Code.ToUpper().StartsWith(val))
+						{
+							rm.IsVisible = true;
+						}
+						else rm.IsVisible = false;
+					}
+				}
+			}));
+
+		/// <summary>
 		/// Gets a bindable collection of all Stations
 		/// </summary>
 		public ObservableCollection<StationVm> Stations { get { return _stations; } }
@@ -592,6 +633,13 @@ namespace Soheil.Core.ViewModels.Fpc
 		public ObservableCollection<MachineFamilyVm> MachineFamilies { get { return _machineFamilies; } }
 		private ObservableCollection<MachineFamilyVm> _machineFamilies = new ObservableCollection<MachineFamilyVm>();
 		List<MachineFamilyVm> _allMachineFamilies;
+
+		/// <summary>
+		/// Gets a bindable collection of all RawMaterials
+		/// </summary>
+		public ObservableCollection<RawMaterialVm> RawMaterials { get { return _rawMaterials; } }
+		private ObservableCollection<RawMaterialVm> _rawMaterials = new ObservableCollection<RawMaterialVm>();
+
 
 		/// <summary>
 		/// Gets a bindable collection of all Reworks representing ProductReworks of this FPC
@@ -741,10 +789,10 @@ namespace Soheil.Core.ViewModels.Fpc
 				if (state == null) { vm.FocusedStateStation = null; return; }
 				if (state.Config == null) { vm.FocusedStateStation = null; return; }
 				//find and change the focues station
-				var station = state.Config.ContentsList.FirstOrDefault(x => x.IsExpanded);
+				var station = state.Config.ContentsList.OfType<StateStationVm>().FirstOrDefault(x => x.IsExpanded);
 				if (station == null)
 				{
-					station = state.Config.ContentsList.FirstOrDefault();
+					station = state.Config.ContentsList.OfType<StateStationVm>().FirstOrDefault();
 					if (station != null) station.IsExpanded = true;
 				}
 				vm.FocusedStateStation = station as StateStationVm;
@@ -1110,7 +1158,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			//find the underlying tree item
 			TreeItemVm item = null;
 			if (SelectedToolboxItem.ContentData is StationVm)
-				item = SelectedToolboxItem.GetUnderlyingStateConfig(pos_drawingArea);
+				item = SelectedToolboxItem.GetUnderlyingStateConfigForStation(pos_drawingArea);
 			else if (SelectedToolboxItem.ContentData is ActivityVm)
 				item = SelectedToolboxItem.GetUnderlyingStateStation(pos_drawingArea);
 			else if (SelectedToolboxItem.ContentData is MachineVm)
@@ -1120,6 +1168,8 @@ namespace Soheil.Core.ViewModels.Fpc
 				SelectedToolboxItem.CanDrop = (SelectedToolboxItem.Location.X > 10 && SelectedToolboxItem.Location.Y > 10);
 				return;
 			}
+			else if (SelectedToolboxItem.ContentData is RawMaterialVm)
+				item = SelectedToolboxItem.GetUnderlyingStateConfigForRawMaterial(pos_drawingArea);
 
 			//remove the indicator if can't drop
 			if (item == null)

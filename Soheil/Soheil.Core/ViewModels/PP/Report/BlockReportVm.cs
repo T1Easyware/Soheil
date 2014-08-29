@@ -118,5 +118,24 @@ namespace Soheil.Core.ViewModels.PP.Report
 				}
 			}
 		}
+
+		/// <summary>
+		/// When Report is closed (or hidden) corrupted transaction are removed
+		/// </summary>
+		internal void CorrectTransactions()
+		{
+			var ds = new DataServices.Storage.WarehouseTransactionDataService(UOW);
+			foreach (var task in entity.Tasks)
+			{
+				foreach (var taskReport in task.TaskReports)
+				{
+					var wtrans = taskReport.WarehouseTransactions.Where(x=>x.Warehouse==null||x.Quantity ==0).ToArray();
+					foreach (var wtran in wtrans)
+					{
+						ds.DeleteModel(wtran);
+					}
+				}
+			}
+		}
 	}
 }

@@ -78,8 +78,17 @@
                         <DockPanel>
                             <Image Style="{StaticResource StoredCountImage}" DockPanel.Dock="Left" Margin="4,0" VerticalAlignment="Center"/>
                             <Grid>
-                                <Button Command="{Binding CreateTransactionCommand}" Click="OpenTransactionButton_Click" Padding="0" Margin="0">
+                                <Button Command="{Binding CreateTransactionCommand}" Click="OpenTransactionButton_Click" Padding="0" Margin="0" Visibility="{Binding WarehouseTransaction, Converter={StaticResource isNullToVisibility}}">
                                         <TextBlock Text="{Loc txtSendToWarehouse}" Margin="0,-5" Foreground="Black"/>
+                                </Button>
+                                <Button Command="{Binding OpenTransactionCommand}" Click="OpenTransactionButton_Click" Padding="0" Margin="0" Visibility="{Binding WarehouseTransaction, Converter={StaticResource isNotNullToVisibility}}">
+                                    <DockPanel>
+                                        <TextBlock Text="{Loc txtEditTransaction}" Margin="0,-5" Foreground="Black"/>
+                                        <Canvas Width="10"/>
+                                        <TextBlock Text="{Loc txtStoredCount}" Margin="0,-5" Foreground="Gray"/>
+                                        <TextBlock Text=":" Margin="0,-5" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding WarehouseTransaction.Quantity}" Margin="0,-5" Foreground="Black"/>
+                                    </DockPanel>
                                 </Button>
                                 <Popup x:Name="transactionPopup" IsOpen="False">
 									<Border BorderBrush="White" BorderThickness="1" CornerRadius="5" Background="#4FFF" FlowDirection="RightToLeft" Padding="5" Margin="0,5,0,0">

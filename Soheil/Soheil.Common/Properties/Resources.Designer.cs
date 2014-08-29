@@ -1411,6 +1411,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ویرایش تراکنش.
+        /// </summary>
+        public static string txtEditTransaction {
+            get {
+                return ResourceManager.GetString("txtEditTransaction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تحصیلات :.
         /// </summary>
         public static string txtEducation {

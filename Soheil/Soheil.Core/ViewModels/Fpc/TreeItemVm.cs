@@ -59,7 +59,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public FpcWindowVm Parent
 		{
 			get { return (FpcWindowVm)GetValue(ParentProperty); }
-			protected set { SetValue(ParentProperty, value); }
+			set { SetValue(ParentProperty, value); }
 		}
 		public static readonly DependencyProperty ParentProperty =
 			DependencyProperty.Register("Parent", typeof(FpcWindowVm), typeof(TreeItemVm), new UIPropertyMetadata(null));
@@ -74,7 +74,7 @@ namespace Soheil.Core.ViewModels.Fpc
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
-			protected set { SetValue(NameProperty, value); }
+			set { SetValue(NameProperty, value); }
 		}
 		public static readonly DependencyProperty NameProperty =
 			DependencyProperty.Register("Name", typeof(string), typeof(TreeItemVm), new UIPropertyMetadata(""));
@@ -154,6 +154,8 @@ namespace Soheil.Core.ViewModels.Fpc
 					return "فعالیت ها:";
 				case 2:
 					return "ماشین ها:";
+				case 4:
+					return "BOM:";
 				default:
 					return "";
 			}
@@ -180,11 +182,13 @@ namespace Soheil.Core.ViewModels.Fpc
 			switch (level)
 			{
 				case 0:
-					return new SolidColorBrush(Color.FromRgb(150, 150, 150)) { Opacity = 0.5 };
+					return new SolidColorBrush(Color.FromRgb(100, 220, 150)) { Opacity = 0.5 };
 				case 1:
-					return new SolidColorBrush(Color.FromRgb(220, 220, 180)) { Opacity = 0.5 };
+					return new SolidColorBrush(Color.FromRgb(60, 130, 220)) { Opacity = 0.5 };
 				case 2:
-					return new SolidColorBrush(Color.FromRgb(150, 210, 220)) { Opacity = 0.5 };
+					return new SolidColorBrush(Color.FromRgb(220, 130, 60)) { Opacity = 0.5 };
+				case 4:
+					return new SolidColorBrush(Color.FromRgb(220, 100, 220)) { Opacity = 0.5 };
 				default:
 					return new SolidColorBrush(Colors.Red);
 			}

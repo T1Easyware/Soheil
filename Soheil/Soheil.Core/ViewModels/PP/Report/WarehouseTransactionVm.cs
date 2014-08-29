@@ -9,56 +9,72 @@ namespace Soheil.Core.ViewModels.PP.Report
 	{
 	    readonly bool _isInInitializingPhase = true;
 	    readonly DataServices.Storage.WarehouseTransactionDataService _dataService;
+		public event Action Deleted;
 		public Model.WarehouseTransaction Model { get; private set; }
-
+		public Dal.SoheilEdmContext UOW { get; set; }
 		/// <summary>
-		/// Uses its own UOW to create a new transaction model and add it to database
+		/// Creates a new WarehouseTransaction model and adds it to database
+		/// <para>returns null if no Warehouse model is provided</para>
 		/// </summary>
-		/// <param name="model"></param>
-		public WarehouseTransactionVm(Model.TaskReport model)
+		/// <param name="all">all warehouses as itemsSource</param>
+		internal static WarehouseTransactionVm CreateNew(
+			Soheil.Model.TaskReport taskReportModel,
+			IEnumerable<WarehouseVm> all, 
+			Dal.SoheilEdmContext uow)
 		{
-			_dataService = new DataServices.Storage.WarehouseTransactionDataService();
-			Model = _dataService.CreateTransactionFor(model);
+			if(!all.Any()) return null;
 
-			//Model
-			Model = new Model.WarehouseTransaction
+			var model = new Soheil.Model.WarehouseTransaction
 			{
-				Code = model.Code,
-				ProductRework = model.Task.Block.StateStation.State.OnProductRework,
-				TaskReport = model,
-				Quantity = model.TaskProducedG1,
-				TransactionDateTime = model.ReportEndDateTime,
+				Code = taskReportModel.Code,
+				ProductRework = taskReportModel.Task.Block.StateStation.State.OnProductRework,
+				TaskReport = taskReportModel,
+				Warehouse = all.FirstOrDefault().Model,
+				Quantity = taskReportModel.TaskProducedG1,
+				TransactionDateTime = taskReportModel.ReportEndDateTime,
 				Flow = 0,
+				//WarehouseReceipt = new WarehouseReceipt { RecordDateTime = DateTime.Now, ModifiedDate = DateTime.Now, ModifiedBy = 0, CreatedDate = DateTime.Now }
 			};
-			model.WarehouseTransactions.Add(Model);
-			_dataService.AddModel(Model);
-
-			//VM
-			Code = Model.Code;
-			Quantity = (int)Model.Quantity;
-			TransactionDate = Model.TransactionDateTime.Date;
-			TransactionTime = Model.TransactionDateTime.TimeOfDay;
-
-			InitializeCommands();
-			_isInInitializingPhase = false;
+			var dataService = new DataServices.Storage.WarehouseTransactionDataService(uow);
+			dataService.AddModel(model);
+			
+			var vm = new WarehouseTransactionVm(model, all, uow, dataService);
+			return vm;
 		}
 		/// <summary>
-		/// Uses its own UOW to 
+		/// Creates a new VM for an existing WarehouseTransaction
+		/// <para>returns null if no WarehouseTransaction model is available</para>
 		/// </summary>
-		/// <param name="model"></param>
-		/// <param name="all"></param>
-		public WarehouseTransactionVm(Model.WarehouseTransaction model, IEnumerable<WarehouseVm> all)
+		/// <param name="all">all warehouses as itemsSource</param>
+		internal static WarehouseTransactionVm CreateExisting(
+			Soheil.Model.TaskReport taskReportModel, 
+			IEnumerable<WarehouseVm> all,
+			Dal.SoheilEdmContext uow)
+		{
+			var model = taskReportModel.WarehouseTransactions.FirstOrDefault();
+			if (model == null) return null;
+
+			var dataService = new DataServices.Storage.WarehouseTransactionDataService(uow);
+			var vm = new WarehouseTransactionVm(model, all, uow, dataService);
+			return vm;
+		}
+		private WarehouseTransactionVm(
+			Model.WarehouseTransaction model, 
+			IEnumerable<WarehouseVm> all,
+			Dal.SoheilEdmContext uow,
+			DataServices.Storage.WarehouseTransactionDataService dataService)
 		{
 			//DataService
-			_dataService = new DataServices.Storage.WarehouseTransactionDataService();
+			UOW = uow;
+			_dataService = dataService;
 			Model = model;
-			
+
 			//VM
 			Code = model.Code;
 			Quantity = (int)model.Quantity;
 			TransactionDate = model.TransactionDateTime.Date;
 			TransactionTime = model.TransactionDateTime.TimeOfDay;
-			Warehouse = all.FirstOrDefault(x => x.Model.Id == model.Id);
+			Warehouse = all.FirstOrDefault(x => x.Model.Id == model.Warehouse.Id);
 
 			InitializeCommands();
 			_isInInitializingPhase = false;
@@ -66,7 +82,13 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 		void InitializeCommands()
 		{
-			DeleteCommand = new Commands.Command(o => _dataService.DeleteModel(Model));
+			DeleteCommand = new Commands.Command(o =>
+			{
+				if(Model != null)
+					_dataService.DeleteModel(Model);
+				if (Deleted != null)
+					Deleted();
+			});
 			SaveCommand = new Commands.Command(o =>
 			{
 				var msg = _dataService.Save();
@@ -127,7 +149,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (WarehouseVm)e.NewValue;
 				if (val == null) return;
-				vm.Model.Warehouse = vm._dataService.GetWarehouse(val.Model);
+				vm.Model.Warehouse = val.Model;
 			}));
 
 		/// <summary>

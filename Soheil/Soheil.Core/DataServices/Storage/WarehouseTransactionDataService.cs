@@ -46,8 +46,12 @@ namespace Soheil.Core.DataServices.Storage
 			_repository.Add(model);
 			model.ModifiedBy = LoginInfo.Id;
 			model.RecordDateTime = DateTime.Now;
-			if (model.Warehouse != null)
-				Context.Commit();
+			if (model.Warehouse == null)
+			{
+				System.Windows.MessageBox.Show("No warehouse is selected.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+				return 0;
+			}
+			Context.Commit();
 			return model.Id;
 		}
 
@@ -100,16 +104,6 @@ namespace Soheil.Core.DataServices.Storage
 			tr.WarehouseTransactions.Add(wt);
 			AddModel(wt);
 			return wt;
-		}
-
-		/// <summary>
-		/// Returns the same warehouse but from within the current UOW
-		/// </summary>
-		/// <param name="warehouse"></param>
-		/// <returns></returns>
-		internal Warehouse GetWarehouse(Warehouse warehouse)
-		{
-			return new Repository<Warehouse>(Context).Single(x => x.Id == warehouse.Id);
 		}
 
 		internal string Save()

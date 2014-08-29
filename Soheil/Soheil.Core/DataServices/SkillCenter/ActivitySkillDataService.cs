@@ -5,6 +5,7 @@ using Soheil.Core.Interfaces;
 using Soheil.Dal;
 using Soheil.Model;
 using Soheil.Core.Base;
+using System.Collections.Generic;
 
 namespace Soheil.Core.DataServices
 {
@@ -112,6 +113,11 @@ namespace Soheil.Core.DataServices
 			}
 			vm.Model.IluoNr = (byte)vm.Data;
 			Context.Commit();
+		}
+
+		internal IEnumerable<ActivitySkill> TryFindAll()
+		{
+			return _activitySkillRepository.GetAll("Operator","Activity");
 		}
 	}
 }

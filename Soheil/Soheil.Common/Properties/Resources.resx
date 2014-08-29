@@ -1274,4 +1274,7 @@
   <data name="txtWarehouseTransactions" xml:space="preserve">
     <value>تراکنش های انبار</value>
   </data>
+  <data name="txtEditTransaction" xml:space="preserve">
+    <value>ویرایش تراکنش</value>
+  </data>
 </root>

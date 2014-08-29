@@ -26,6 +26,14 @@ namespace Soheil.Views.PP
 		public TaskReport()
 		{
 			InitializeComponent();
+			DataContextChanged += TaskReport_DataContextChanged;
+		}
+
+		void TaskReport_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var vm = e.NewValue as TaskReportVm;
+			if (vm != null)
+				vm.WarehouseTransactionDeleted += () => openPopup(null);
 		}
 
 		private static System.Windows.Controls.Primitives.Popup _openedPopup;

@@ -62,6 +62,27 @@ namespace Soheil.Core.DataServices
 		/// <param name="model">TaskReport Model to delete from its Task</param>
 		public void DeleteModel(TaskReport model)
 		{
+			if (model.WarehouseTransactions.Any())
+			{
+				var r = System.Windows.MessageBox.Show("Report contains a Warehouse Transaction.\nDelete the Warehouse Transaction too?", "Warehouse", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+				if (r == System.Windows.MessageBoxResult.Yes)
+				{
+					var wtrep = new Repository<WarehouseTransaction>(Context);
+					foreach (var wt in model.WarehouseTransactions.ToArray())
+					{
+						wtrep.Delete(wt);
+					}
+				}
+				else
+				{
+					foreach (var wt in model.WarehouseTransactions)
+					{
+						wt.TaskReport = null;
+					}
+				}
+			}
+
+
 			model.Task.TaskReports.Remove(model);
 			_taskReportRepository.Delete(model);
 			Context.Commit();
@@ -78,10 +99,10 @@ namespace Soheil.Core.DataServices
 		/// </summary>
 		/// <param name="model_"></param>
 		/// <returns></returns>
-		internal int GuessG1(TaskReport model_)
+		internal int GuessG1(TaskReport model)
 		{
-			var model = new Repository<TaskReport>(new SoheilEdmContext()).Single(x=>x.Id == model_.Id);
-			if (model == null) model = model_;
+			var ent = new Repository<TaskReport>(new Dal.SoheilEdmContext()).Single(x => x.Id == model.Id);
+			if (ent != null) model = ent;
 			var processes = model.Task.Processes.Where(x => x.StateStationActivity.IsPrimaryOutput && x.TargetCount > 0);
 			if (!processes.Any()) return 0;
 			double guess = double.NaN;
