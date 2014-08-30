@@ -264,7 +264,7 @@ namespace Soheil.Common
         AboutSubMenu = 53,
         StorageMenu = 6,
         WarehouseSubMenu = 61,
-        WarehouseTransactions = 62,
+        WarehouseReceiptSubMenu = 62,
         RawMaterialSubMenu = 63,
         UnitsSubMenu = 64,
         UnitSets = 641,
@@ -460,4 +460,23 @@ namespace Soheil.Common
 		/// </summary>
 		Info
 	}
+
+    public enum WarehouseTransactionType
+    {
+        None,
+        RawMaterial,
+        Product,
+        Good
+    }
+    public enum WarehouseTransactionFlow
+    {
+        In,Out
+    }
+    public enum WarehouseReceiptType
+    {
+        None,
+        Storage,
+        Transfer,
+        Discharge
+    }
 }

@@ -1447,6 +1447,7 @@
     <Property Name="RawMaterial_Id" Type="int" Nullable="true" />
     <Property Name="ProductRework_Id" Type="int" Nullable="true" />
     <Property Name="TaskReport_Id" Type="int" Nullable="true" />
+    <Property Name="UnitSets_Id" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="Warehouses">
     <Key>
@@ -7113,6 +7114,7 @@
       <EndProperty Name="BOM">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
+      <Condition ColumnName="UnitSets_Id" IsNull="false" />
     </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>

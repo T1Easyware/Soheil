@@ -2,6 +2,7 @@
 USE [SoheilDb]
 INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 
+INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 (1,'0','txtSoheil',null),
 	(2,'1','txtUsers',1),
 		(3,'11','txtUserAccounts',2),
@@ -52,11 +53,14 @@ INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 	(48,'6','txtStorage',1),
 		(49,'61','txtWarehouse',48),
 		(50,'62','txtWarehouseTransactions',48),
+			(55,'621','txtRawMaterialStorage',50),
+			(56,'622','txtStockDischarge',50),
 		(51,'63','txtRawMaterials',48),
 		(52,'64','txtUnits',52),
 			(53,'641','txtUnitSets',52),
 			(54,'642','txtUnitConversions',52);
 
+ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);
 
 
 ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);

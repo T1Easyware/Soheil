@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class WarehouseTransactionVm : DependencyObject
 	{
-		bool _isInInitializingPhase = true;
-		DataServices.Storage.WarehouseTransactionDataService _dataService;
+	    readonly bool _isInInitializingPhase = true;
+	    readonly DataServices.Storage.WarehouseTransactionDataService _dataService;
 		public event Action Deleted;
 		public Model.WarehouseTransaction Model { get; private set; }
 		public Dal.SoheilEdmContext UOW { get; set; }
@@ -78,11 +76,11 @@ namespace Soheil.Core.ViewModels.PP.Report
 			TransactionTime = model.TransactionDateTime.TimeOfDay;
 			Warehouse = all.FirstOrDefault(x => x.Model.Id == model.Warehouse.Id);
 
-			initializeCommands();
+			InitializeCommands();
 			_isInInitializingPhase = false;
 		}
 
-		void initializeCommands()
+		void InitializeCommands()
 		{
 			DeleteCommand = new Commands.Command(o =>
 			{
@@ -114,7 +112,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				var vm = (WarehouseTransactionVm)d;
 				if (vm._isInInitializingPhase) return;
 				var val = (int)e.NewValue;
-				vm.Model.Quantity = (double)val;
+				vm.Model.Quantity = val;
 			}));
 
 		/// <summary>

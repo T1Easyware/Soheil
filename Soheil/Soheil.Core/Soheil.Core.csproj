@@ -68,11 +68,15 @@
     <Compile Include="DataServices\PM\MachinePartDataService.cs" />
     <Compile Include="DataServices\PM\RepairDataService.cs" />
     <Compile Include="DataServices\PM\ReportDataService.cs" />
+    <Compile Include="DataServices\Storage\RawMaterialDataService - Copy.cs" />
     <Compile Include="DataServices\Storage\WarehouseTransactionDataService.cs" />
     <Compile Include="Reports\MaterialRequestData.cs" />
     <Compile Include="Reports\PMReportData.cs" />
     <Compile Include="Reports\DailyStationPlanData.cs" />
     <Compile Include="Reports\DailyReportData.cs" />
+    <Compile Include="ViewModels\InfoViewModels\UnitSetInfoVM.cs" />
+    <Compile Include="ViewModels\InfoViewModels\RawMaterialInfoVM.cs" />
+    <Compile Include="ViewModels\InfoViewModels\WarehouseInfoVM.cs" />
     <Compile Include="ViewModels\Fpc\BomsVm.cs" />
     <Compile Include="ViewModels\Fpc\RawMaterialVm.cs" />
     <Compile Include="ViewModels\Fpc\BomVm.cs" />
@@ -278,8 +282,11 @@
     <Compile Include="ViewModels\Storage\UnitRelationTable.cs" />
     <Compile Include="ViewModels\Storage\RawMaterialsVM.cs" />
     <Compile Include="ViewModels\Storage\UnitRelation.cs" />
+    <Compile Include="ViewModels\Storage\WarehouseReceiptsVM.cs" />
     <Compile Include="ViewModels\Storage\WarehousesVM.cs" />
     <Compile Include="ViewModels\Storage\RawMaterialVM.cs" />
+    <Compile Include="ViewModels\Storage\WarehouseReceiptVm.cs" />
+    <Compile Include="ViewModels\Storage\WarehouseTransactionVm.cs" />
     <Compile Include="ViewModels\Storage\WarehouseVm.cs" />
     <Compile Include="ViewModels\WorkProfilePlansVM.cs" />
     <Compile Include="ViewModels\WorkProfilesVM.cs" />

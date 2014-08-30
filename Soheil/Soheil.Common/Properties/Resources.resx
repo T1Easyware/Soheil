@@ -1271,6 +1271,9 @@
   <data name="txtGeneralSkillInfo2" xml:space="preserve">
     <value>چنانچه سطح مهارت اپراتور در محصول مربوط تعریف نشده باشد، سطح مهارت این قسمت منظور می شود</value>
   </data>
+  <data name="txtWarehouseTransactions" xml:space="preserve">
+    <value>تراکنش های انبار</value>
+  </data>
   <data name="txtEditTransaction" xml:space="preserve">
     <value>ویرایش تراکنش</value>
   </data>

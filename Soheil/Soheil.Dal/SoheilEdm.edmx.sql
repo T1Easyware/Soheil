@@ -357,7 +357,7 @@ IF OBJECT_ID(N'[dbo].[FK_TaskReportWarehouseTransaction]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_TaskReportWarehouseTransaction];
 GO
 IF OBJECT_ID(N'[dbo].[FK_WarehouseTransactionUnitSet]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[UnitSets] DROP CONSTRAINT [FK_WarehouseTransactionUnitSet];
+    ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_WarehouseTransactionUnitSet];
 GO
 IF OBJECT_ID(N'[dbo].[FK_StateBOM]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_StateBOM];
@@ -1519,7 +1519,8 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [Good_Id] int  NULL,
     [RawMaterial_Id] int  NULL,
     [ProductRework_Id] int  NULL,
-    [TaskReport_Id] int  NULL
+    [TaskReport_Id] int  NULL,
+    [UnitSets_Id] int  NULL
 );
 GO
 

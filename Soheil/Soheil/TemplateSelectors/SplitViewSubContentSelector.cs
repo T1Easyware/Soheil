@@ -24,6 +24,7 @@ namespace Soheil.TemplateSelectors
 
         public DataTemplate ModuleSubContentPanel { get; set; }
         public DataTemplate UnitSubContentTemplate { get; set; }
+        public DataTemplate WarehouseTransactionsSubContentTemplate { get; set; }
 
 		//!@#$
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -64,6 +65,10 @@ namespace Soheil.TemplateSelectors
             if (dataContext is UnitSetsVM)
             {
                 return UnitSubContentTemplate;
+            }
+            if (dataContext is WarehouseReceiptsVM)
+            {
+                return WarehouseTransactionsSubContentTemplate;
             }
             return new DataTemplate();
         }

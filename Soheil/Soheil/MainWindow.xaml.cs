@@ -300,8 +300,8 @@ namespace Soheil
                     SplitList = new WarehousesVM(access);
                     chrometabs.AddTab(CreateSplitTab(type), true);
                     break;
-                case SoheilEntityType.WarehouseTransactions:
-                    SplitList = new SpecialSkillsVM(access);
+                case SoheilEntityType.WarehouseReceiptSubMenu:
+                    SplitList = new WarehouseReceiptsVM(access);
                     chrometabs.AddTab(CreateSplitTab(type), true);
                     break;
                 case SoheilEntityType.RawMaterialSubMenu:
@@ -588,6 +588,15 @@ namespace Soheil
                     return Common.Properties.Resources.txtActualCostReports;
                 case SoheilEntityType.OperationReportsSubMenu:
                     return Common.Properties.Resources.txtOperationReports;
+
+                case SoheilEntityType.RawMaterialSubMenu:
+                    return Common.Properties.Resources.txtRawMaterials;
+                case SoheilEntityType.WarehouseSubMenu:
+                    return Common.Properties.Resources.txtWarehouse;
+                case SoheilEntityType.WarehouseReceiptSubMenu:
+                    return Common.Properties.Resources.txtWarehouseTransactions;
+                case SoheilEntityType.UnitsSubMenu:
+                    return Common.Properties.Resources.txtUnitSets;
 
                 case SoheilEntityType.SettingsSubMenu:
                     return Common.Properties.Resources.txtSettings;

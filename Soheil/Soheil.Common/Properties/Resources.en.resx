@@ -1261,6 +1261,9 @@
   <data name="txtGeneralSkillInfo2" xml:space="preserve">
     <value>If no skill level is defined for an operator in specific product, skill level in this section is considered.</value>
   </data>
+  <data name="txtWarehouseTransactions" xml:space="preserve">
+    <value>Warehouse Transactions</value>
+  </data>
   <data name="txtEditTransaction" xml:space="preserve">
     <value>Edit Transaction</value>
   </data>

@@ -204,6 +204,14 @@
                 <CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
+                        Content="{Loc txtWarehouseTransactions}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/warehouseTrans.png"
+                        Tag="62" />
+                <CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
                         Content="{Loc txtRawMaterials}"
                         IsEnabled="{Binding Path=CanAddTab,
                                             ElementName=chrometabs}"
