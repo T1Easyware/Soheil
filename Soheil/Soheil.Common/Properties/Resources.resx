@@ -1274,4 +1274,7 @@
   <data name="txtEditTransaction" xml:space="preserve">
     <value>ویرایش تراکنش</value>
   </data>
+  <data name="txtMaterialPlanning" xml:space="preserve">
+    <value>برنامه مواد</value>
+  </data>
 </root>

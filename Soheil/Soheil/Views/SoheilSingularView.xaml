@@ -1932,6 +1932,20 @@
                 </Grid>
 			</DockPanel>
 		</DataTemplate>
+		
+		<!-- 3.5. MaterialPlanning -->
+		<DataTemplate x:Key="MaterialPlanningTemplate" DataType="{x:Type mpvm:MaterialPlanningVm}"
+					  xmlns:mpvm="clr-namespace:Soheil.Core.ViewModels.MaterialPlanning;assembly=Soheil.Core"
+					  xmlns:mpv="clr-namespace:Soheil.Views.MaterialPlanning">
+			<DockPanel>
+				<ToolBar DockPanel.Dock="Top">
+					<Menu>
+						<cal:DatePicker SelectedDate="{Binding Date}" DisplayDate="{Binding Date}"/>
+					</Menu>
+				</ToolBar>
+				<mpv:MaterialPlanning/>
+			</DockPanel>
+		</DataTemplate>
 		<!--................................................ 5.Reports ...............................................-->
 
         <!-- 5.1. Cost Reports -->
@@ -2697,9 +2711,11 @@
 
         <!--..........................................................................................................-->
 		
+		<!--!@#$-->
 		<TemplateSelectors:SingularViewListSelector x:Key="ListTemplateSelector"
 													IndicesVmTemplate="{StaticResource IndexTemplate}"
 													PPTableVmTemplate="{StaticResource PPTableTemplate}"
+													MaterialPlanningVmTemplate="{StaticResource MaterialPlanningTemplate}"
 													PmVmTemplate="{StaticResource PmTemplate}"
 													SetupTimesVmTemplate="{StaticResource SetupTimesTemplate}"
 													SkillCenterVmTemplate="{StaticResource SkillCenterTemplate}"

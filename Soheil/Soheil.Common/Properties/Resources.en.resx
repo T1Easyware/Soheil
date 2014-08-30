@@ -1264,4 +1264,7 @@
   <data name="txtEditTransaction" xml:space="preserve">
     <value>Edit Transaction</value>
   </data>
+  <data name="txtMaterialPlanning" xml:space="preserve">
+    <value>Material Planning</value>
+  </data>
 </root>

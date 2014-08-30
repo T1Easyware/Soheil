@@ -136,6 +136,9 @@
     <Compile Include="Views\Index\OEE.xaml.cs">
       <DependentUpon>OEE.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MaterialPlanning\MaterialPlanning.xaml.cs">
+      <DependentUpon>MaterialPlanning.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\OrganizationCalendar\ShiftBoundary.xaml.cs">
       <DependentUpon>ShiftBoundary.xaml</DependentUpon>
     </Compile>
@@ -289,6 +292,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Index\OEE.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MaterialPlanning\MaterialPlanning.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -389,5 +389,63 @@ namespace Soheil.Core.DataServices
 
 			return data;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="startDt">Start date and time of the first shift of the desired Date</param>
+		/// <returns></returns>
+		internal Reports.MaterialRequestHour[] GetDailyMaterialPlan(DateTime StartDateTime, DateTime EndDateTime)
+		{
+			var data = new Reports.MaterialRequestHour[24];
+
+			var tasks = _taskRepository.Find(x => 
+				x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime 
+				&& x.Block.StateStation.State.BOMs.Any());
+
+			//itemQuery: collection of BOMs in specified date
+			var itemQuery = from task in tasks
+							from bom in task.Block.StateStation.State.BOMs
+							select new
+							{
+								task,
+								bom
+							};
+
+			EndDateTime = StartDateTime.AddHours(1);
+			for (int i = 0; i < 24; i++)
+			{
+				//rawmatQuery: collection of requests grouped by raw material
+				var rawmatQuery = from item in itemQuery
+								  let station = item.task.Block.StateStation.Station
+								  let start = (item.task.StartDateTime < StartDateTime) ? StartDateTime : item.task.StartDateTime
+								  let end = (item.task.EndDateTime > EndDateTime) ? EndDateTime : item.task.EndDateTime
+								  let durationSeconds = (end - start).TotalSeconds
+								  let ratio = durationSeconds / item.task.DurationSeconds
+								  group new
+								  {
+									  station,
+									  item.bom,
+									  qty = item.bom.Quantity * item.task.TaskTargetPoint * ratio
+								  } by item.bom.RawMaterial;
+
+				data[i] = new Core.Reports.MaterialRequestHour
+				{
+					Materials = rawmatQuery.Select(x => new Core.Reports.MaterialRequestMaterial
+					{
+						RawMaterial = x.Key,
+						Stations = x.Select(y => new Core.Reports.MaterialRequestStation
+						{
+							Bom = y.bom,
+							Station = y.station,
+							Quantity = y.qty
+						})
+					}),
+				};
+				StartDateTime = StartDateTime.AddHours(1);
+				EndDateTime = EndDateTime.AddHours(1);
+			}
+			return data;
+		}
 	}
 }

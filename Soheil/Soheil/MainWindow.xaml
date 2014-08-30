@@ -165,7 +165,15 @@
                                             ElementName=chrometabs}"
                         ImageSource="/Soheil.Controls;component/Images/Menus/pp.png"
                         Tag="31" />
-                <CustomControls:ImageButton Background="Transparent"
+				<CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtMaterialPlanning}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/Menus/MaterialPlanning.png"
+                        Tag="35" />
+				<CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtIndices}"
@@ -564,12 +572,17 @@
                                     <MenuItem.Icon>
                                         <Image Source="/Soheil.Controls;component/Images/Menus/PC.png"/>
                                     </MenuItem.Icon>
-                                    <MenuItem Header="{Loc txtProductPlan}" Click="HandleAddTabAndSelect" Tag="311">
-                                        <MenuItem.Icon>
-                                            <Image Source="/Soheil.Controls;component/Images/Menus/pp.png"/>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="{Loc txtPerformance}" >
+									<MenuItem Header="{Loc txtProductPlan}" Click="HandleAddTabAndSelect" Tag="311">
+										<MenuItem.Icon>
+											<Image Source="/Soheil.Controls;component/Images/Menus/pp.png"/>
+										</MenuItem.Icon>
+									</MenuItem>
+									<MenuItem Header="{Loc txtMaterialPlanning}" Click="HandleAddTabAndSelect" Tag="35">
+										<MenuItem.Icon>
+											<Image Source="/Soheil.Controls;component/Images/Menus/materialplanning.png"/>
+										</MenuItem.Icon>
+									</MenuItem>
+									<MenuItem Header="{Loc txtPerformance}" >
                                         <MenuItem.Icon>
                                             <Image Source="/Soheil.Controls;component/Images/Menus/Performance.png"/>
                                         </MenuItem.Icon>

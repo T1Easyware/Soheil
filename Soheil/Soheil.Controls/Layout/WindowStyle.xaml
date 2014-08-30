@@ -86,7 +86,8 @@
     <Style x:Key="RectBorderStyle" TargetType="Rectangle">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Fill" Value="Transparent" />
-        <Setter Property="Tag" Value="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+		<Setter Property="IsHitTestVisible" Value="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsRestored}" />
+		<Setter Property="Tag" Value="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
         <EventSetter Event="MouseLeftButtonDown" Handler="Resize_Init"/>
         <EventSetter Event="MouseLeftButtonUp" Handler="Resize_End"/>
         <EventSetter Event="MouseMove" Handler="Resizeing_Form"/>

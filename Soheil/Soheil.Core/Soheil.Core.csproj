@@ -69,6 +69,7 @@
     <Compile Include="DataServices\PM\RepairDataService.cs" />
     <Compile Include="DataServices\PM\ReportDataService.cs" />
     <Compile Include="DataServices\Storage\WarehouseTransactionDataService.cs" />
+    <Compile Include="Reports\MaterialRequestData.cs" />
     <Compile Include="Reports\PMReportData.cs" />
     <Compile Include="Reports\DailyStationPlanData.cs" />
     <Compile Include="Reports\DailyReportData.cs" />
@@ -76,6 +77,13 @@
     <Compile Include="ViewModels\Fpc\RawMaterialVm.cs" />
     <Compile Include="ViewModels\Fpc\BomVm.cs" />
     <Compile Include="ViewModels\Fpc\UnitSetVm.cs" />
+    <Compile Include="ViewModels\MaterialPlanning\CellVm.cs" />
+    <Compile Include="ViewModels\MaterialPlanning\RequestVm.cs" />
+    <Compile Include="ViewModels\MaterialPlanning\HourVm.cs" />
+    <Compile Include="ViewModels\MaterialPlanning\MaterialPlanningVm.cs" />
+    <Compile Include="ViewModels\MaterialPlanning\RawMaterialVm.cs" />
+    <Compile Include="ViewModels\MaterialPlanning\TransactionVm.cs" />
+    <Compile Include="ViewModels\MaterialPlanning\WarehouseVm.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationArea.cs" />
     <Compile Include="ViewModels\MessageCenter\NotificationVm.cs" />
     <Compile Include="ViewModels\MessageCenter\PMVm.cs" />

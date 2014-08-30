@@ -18,6 +18,7 @@ namespace Soheil.TemplateSelectors
 		public DataTemplate DailyReportVmTemplate { get; set; }
 		public DataTemplate DailyStationPlanVmTemplate { get; set; }
 		public DataTemplate PMReportVmTemplate { get; set; }
+		public DataTemplate MaterialPlanningVmTemplate { get; set; }
 		
 		//!@#$
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -32,6 +33,8 @@ namespace Soheil.TemplateSelectors
                 return OperationReportsVmTemplate;
 			if (item is Core.ViewModels.PP.PPTableVm)
 				return PPTableVmTemplate;
+			if (item is Core.ViewModels.MaterialPlanning.MaterialPlanningVm)
+				return MaterialPlanningVmTemplate;
 			if (item is Core.ViewModels.PM.PmVm)
 				return PmVmTemplate;
 			if (item is Core.ViewModels.SetupTime.SetupTimeTableVm)
