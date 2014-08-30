@@ -1,8 +1,6 @@
 ﻿
 USE [SoheilDb]
 INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
-
-INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 (1,'0','txtSoheil',null),
 	(2,'1','txtUsers',1),
 		(3,'11','txtUserAccounts',2),
@@ -59,8 +57,6 @@ INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 		(52,'64','txtUnits',52),
 			(53,'641','txtUnitSets',52),
 			(54,'642','txtUnitConversions',52);
-
-ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);
 
 
 ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);

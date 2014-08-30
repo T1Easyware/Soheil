@@ -1357,6 +1357,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to انبار مقصد.
+        /// </summary>
+        public static string txtDestinationWarehouse {
+            get {
+                return ResourceManager.GetString("txtDestinationWarehouse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to عیب یابی.
         /// </summary>
         public static string txtDiagnosis {
@@ -2572,6 +2581,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ورود مواد اولیه.
+        /// </summary>
+        public static string txtRawMaterialStorage {
+            get {
+                return ResourceManager.GetString("txtRawMaterialStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to بازیابی.
         /// </summary>
         public static string txtRefresh {
@@ -2923,6 +2941,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to انبار مبدا.
+        /// </summary>
+        public static string txtSourceWarehouse {
+            get {
+                return ResourceManager.GetString("txtSourceWarehouse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to رویدادهای خاص و موارد بحرانی.
         /// </summary>
         public static string txtSpecialEvents {
@@ -3036,6 +3063,15 @@ namespace Soheil.Common.Properties {
         public static string txtStock {
             get {
                 return ResourceManager.GetString("txtStock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to خروج کالا.
+        /// </summary>
+        public static string txtStockDischarge {
+            get {
+                return ResourceManager.GetString("txtStockDischarge", resourceCulture);
             }
         }
         

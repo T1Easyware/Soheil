@@ -57,7 +57,9 @@ namespace Soheil.Core.ViewModels
             set { _model.Quantity = value; OnPropertyChanged("Quantity"); }
         }
 
-        public RawMaterialInfoVM RawMaterial { get; set; }
+        public ObservableCollection<RawMaterialInfoVM> RawMaterials { get; set; }
+
+        public RawMaterialInfoVM SelectedRawMaterial { get; set; }
 
         public static readonly DependencyProperty SelectedUnitProperty = DependencyProperty.Register(
             "SelectedUnit", typeof(UnitSetInfoVM), typeof(WarehouseTransactionVM), new PropertyMetadata(default(UnitSetInfoVM)));
@@ -88,7 +90,6 @@ namespace Soheil.Core.ViewModels
   #endregion
 
         #region Methods
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductGroupVM"/> class initialized with default values.
         /// </summary>
@@ -107,6 +108,19 @@ namespace Soheil.Core.ViewModels
         {
             InitializeData(dataService);
             _model = entity;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProductVM"/> class from the model.
+        /// </summary>
+        /// <param name="entity">The model.</param>
+        /// <param name="access"></param>
+        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService, ObservableCollection<RawMaterialInfoVM> rawMaterials )
+            : base(access)
+        {
+            InitializeData(dataService);
+            _model = entity;
+            RawMaterials = rawMaterials;
         }
 
         private void InitializeData(WarehouseTransactionDataService dataService)

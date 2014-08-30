@@ -1267,4 +1267,16 @@
   <data name="txtEditTransaction" xml:space="preserve">
     <value>Edit Transaction</value>
   </data>
+  <data name="txtDestinationWarehouse" xml:space="preserve">
+    <value>Destination Warehouse</value>
+  </data>
+  <data name="txtRawMaterialStorage" xml:space="preserve">
+    <value>Raw Material Storage</value>
+  </data>
+  <data name="txtSourceWarehouse" xml:space="preserve">
+    <value>Source Warehouse</value>
+  </data>
+  <data name="txtStockDischarge" xml:space="preserve">
+    <value>Stock Discharge</value>
+  </data>
 </root>

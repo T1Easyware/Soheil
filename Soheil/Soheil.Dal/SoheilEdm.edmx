@@ -556,6 +556,10 @@
       <End Role="UnitSet" EntitySet="UnitSets" />
       <End Role="BOM" EntitySet="BOMs" />
     </AssociationSet>
+    <AssociationSet Name="UnitSetWarehouseTransaction" Association="SoheilEdm.Store.UnitSetWarehouseTransaction">
+      <End Role="UnitSet" EntitySet="UnitSets" />
+      <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
+    </AssociationSet>
     <AssociationSet Name="FK_PM_inherits_NonProductiveTask" Association="SoheilEdm.Store.FK_PM_inherits_NonProductiveTask">
       <End Role="NonProductiveTask" EntitySet="NonProductiveTasks" />
       <End Role="PM" EntitySet="NonProductiveTasks_PM" />
@@ -1447,7 +1451,7 @@
     <Property Name="RawMaterial_Id" Type="int" Nullable="true" />
     <Property Name="ProductRework_Id" Type="int" Nullable="true" />
     <Property Name="TaskReport_Id" Type="int" Nullable="true" />
-    <Property Name="UnitSets_Id" Type="int" Nullable="true" />
+    <Property Name="UnitSet_Id" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="Warehouses">
     <Key>
@@ -2980,6 +2984,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="UnitSetWarehouseTransaction">
+    <End Role="UnitSet" Type="SoheilEdm.Store.UnitSets" Multiplicity="0..1" />
+    <End Role="WarehouseTransaction" Type="SoheilEdm.Store.WarehouseTransactions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UnitSet">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WarehouseTransaction">
+        <PropertyRef Name="UnitSet_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PM_inherits_NonProductiveTask">
     <End Role="NonProductiveTask" Type="SoheilEdm.Store.NonProductiveTasks" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -3586,6 +3602,10 @@
           <AssociationSet Name="UnitSetBOM" Association="SoheilEdm.UnitSetBOM">
             <End Role="UnitSet" EntitySet="UnitSets" />
             <End Role="BOM" EntitySet="BOMs" />
+          </AssociationSet>
+          <AssociationSet Name="UnitSetWarehouseTransaction" Association="SoheilEdm.UnitSetWarehouseTransaction">
+            <End Role="UnitSet" EntitySet="UnitSets" />
+            <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Product">
@@ -4996,6 +5016,7 @@
           <NavigationProperty Name="RawMaterial" Relationship="SoheilEdm.RawMaterialWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="RawMaterial" />
           <NavigationProperty Name="ProductRework" Relationship="SoheilEdm.ProductReworkWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="ProductRework" />
           <NavigationProperty Name="TaskReport" Relationship="SoheilEdm.TaskReportWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="TaskReport" />
+          <NavigationProperty Name="UnitSet" Relationship="SoheilEdm.UnitSetWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="UnitSet" />
         </EntityType>
         <EntityType Name="Warehouse">
           <Key>
@@ -5090,6 +5111,7 @@
           <NavigationProperty Name="MinorUnits" Relationship="SoheilEdm.UnitSetUnitConversion1" FromRole="UnitSet" ToRole="UnitConversion" />
           <NavigationProperty Name="UnitGroup" Relationship="SoheilEdm.UnitGroupUnitSet" FromRole="UnitSet" ToRole="UnitGroup" />
           <NavigationProperty Name="BOMs" Relationship="SoheilEdm.UnitSetBOM" FromRole="UnitSet" ToRole="BOM" />
+          <NavigationProperty Name="WarehouseTransactions" Relationship="SoheilEdm.UnitSetWarehouseTransaction" FromRole="UnitSet" ToRole="WarehouseTransaction" />
         </EntityType>
         <EntityType Name="UnitConversion">
           <Key>
@@ -5177,6 +5199,10 @@
         <Association Name="UnitSetBOM">
           <End Type="SoheilEdm.UnitSet" Role="UnitSet" Multiplicity="1" />
           <End Type="SoheilEdm.BOM" Role="BOM" Multiplicity="*" />
+        </Association>
+        <Association Name="UnitSetWarehouseTransaction">
+          <End Type="SoheilEdm.UnitSet" Role="UnitSet" Multiplicity="0..1" />
+          <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -7114,7 +7140,15 @@
       <EndProperty Name="BOM">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
-      <Condition ColumnName="UnitSets_Id" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="UnitSetWarehouseTransaction" TypeName="SoheilEdm.UnitSetWarehouseTransaction" StoreEntitySet="WarehouseTransactions">
+      <EndProperty Name="UnitSet">
+        <ScalarProperty Name="Id" ColumnName="UnitSet_Id" />
+      </EndProperty>
+      <EndProperty Name="WarehouseTransaction">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="UnitSet_Id" IsNull="false" />
     </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
@@ -7431,6 +7465,7 @@
         <AssociationConnector Association="SoheilEdm.StateBOM" />
         <AssociationConnector Association="SoheilEdm.RawMaterialBOM" />
         <AssociationConnector Association="SoheilEdm.UnitSetBOM" />
+        <AssociationConnector Association="SoheilEdm.UnitSetWarehouseTransaction" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

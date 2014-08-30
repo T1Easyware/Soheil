@@ -164,6 +164,38 @@ namespace Soheil.Model
             }
         }
         private ICollection<BOM> _bOMs;
+    
+        public virtual ICollection<WarehouseTransaction> WarehouseTransactions
+        {
+            get
+            {
+                if (_warehouseTransactions == null)
+                {
+                    var newCollection = new FixupCollection<WarehouseTransaction>();
+                    newCollection.CollectionChanged += FixupWarehouseTransactions;
+                    _warehouseTransactions = newCollection;
+                }
+                return _warehouseTransactions;
+            }
+            set
+            {
+                if (!ReferenceEquals(_warehouseTransactions, value))
+                {
+                    var previousValue = _warehouseTransactions as FixupCollection<WarehouseTransaction>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupWarehouseTransactions;
+                    }
+                    _warehouseTransactions = value;
+                    var newValue = value as FixupCollection<WarehouseTransaction>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupWarehouseTransactions;
+                    }
+                }
+            }
+        }
+        private ICollection<WarehouseTransaction> _warehouseTransactions;
 
         #endregion
 
@@ -242,6 +274,28 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (BOM item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.UnitSet, this))
+                    {
+                        item.UnitSet = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupWarehouseTransactions(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (WarehouseTransaction item in e.NewItems)
+                {
+                    item.UnitSet = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (WarehouseTransaction item in e.OldItems)
                 {
                     if (ReferenceEquals(item.UnitSet, this))
                     {

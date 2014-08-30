@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/28/2014 21:12:37
--- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 08/29/2014 14:16:48
+-- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -355,9 +355,6 @@ IF OBJECT_ID(N'[dbo].[FK_ProductReworkWarehouseTransaction]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_TaskReportWarehouseTransaction]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_TaskReportWarehouseTransaction];
-GO
-IF OBJECT_ID(N'[dbo].[FK_WarehouseTransactionUnitSet]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_WarehouseTransactionUnitSet];
 GO
 IF OBJECT_ID(N'[dbo].[FK_StateBOM]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_StateBOM];
@@ -1520,7 +1517,7 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [RawMaterial_Id] int  NULL,
     [ProductRework_Id] int  NULL,
     [TaskReport_Id] int  NULL,
-    [UnitSets_Id] int  NULL
+    [UnitSet_Id] int  NULL
 );
 GO
 
@@ -3808,6 +3805,20 @@ ADD CONSTRAINT [FK_UnitSetBOM]
 -- Creating non-clustered index for FOREIGN KEY 'FK_UnitSetBOM'
 CREATE INDEX [IX_FK_UnitSetBOM]
 ON [dbo].[BOMs]
+    ([UnitSet_Id]);
+GO
+
+-- Creating foreign key on [UnitSet_Id] in table 'WarehouseTransactions'
+ALTER TABLE [dbo].[WarehouseTransactions]
+ADD CONSTRAINT [FK_UnitSetWarehouseTransaction]
+    FOREIGN KEY ([UnitSet_Id])
+    REFERENCES [dbo].[UnitSets]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_UnitSetWarehouseTransaction'
+CREATE INDEX [IX_FK_UnitSetWarehouseTransaction]
+ON [dbo].[WarehouseTransactions]
     ([UnitSet_Id]);
 GO
 
