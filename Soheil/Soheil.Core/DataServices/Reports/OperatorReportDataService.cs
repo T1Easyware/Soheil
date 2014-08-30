@@ -44,8 +44,8 @@ namespace Soheil.Core.DataServices
 			using (var context = new SoheilEdmContext())
 			{
 				var workProfilePlanDs = new DataServices.WorkProfilePlanDataService(context);
-				var start = workProfilePlanDs.GetShiftStartAt(oprInfo.StartDate);
-				var end = workProfilePlanDs.GetShiftStartAt(oprInfo.EndDate);
+				var start = workProfilePlanDs.GetShiftStartOn(oprInfo.StartDate);
+				var end = workProfilePlanDs.GetShiftStartOn(oprInfo.EndDate);
 				
 				var operatorRepository = new Repository<Operator>(context);
 				var oList = operatorRepository.Find(x=>x.Status == (byte)Status.Active);
@@ -191,8 +191,8 @@ namespace Soheil.Core.DataServices
                 var odrList = odrRepository.GetAll();
 
 				var workProfilePlanDs = new DataServices.WorkProfilePlanDataService(context);
-				var start = workProfilePlanDs.GetShiftStartAt(startDate);
-				var end = workProfilePlanDs.GetShiftStartAt(endDate);
+				var start = workProfilePlanDs.GetShiftStartOn(startDate);
+				var end = workProfilePlanDs.GetShiftStartOn(endDate);
 
 				var genQuery = from processReport in processReportList.Where(pr => pr.StartDateTime >= start && pr.EndDateTime <= end)
                                from process in processList.Where(p => processReport != null && processReport.Process != null && p.Id == processReport.Process.Id).DefaultIfEmpty()

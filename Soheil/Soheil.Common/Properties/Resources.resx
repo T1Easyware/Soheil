@@ -1280,4 +1280,31 @@
   <data name="txtMaterialPlanning" xml:space="preserve">
     <value>برنامه مواد</value>
   </data>
+  <data name="txtAuto" xml:space="preserve">
+    <value>خودکار</value>
+  </data>
+  <data name="txtDefectionReport" xml:space="preserve">
+    <value>گزارش کیفی (ضایعات)</value>
+  </data>
+  <data name="txtFrom" xml:space="preserve">
+    <value>از</value>
+  </data>
+  <data name="txtNow" xml:space="preserve">
+    <value>الان</value>
+  </data>
+  <data name="txtTo" xml:space="preserve">
+    <value>تا</value>
+  </data>
+  <data name="txtOperatorProducedG1" xml:space="preserve">
+    <value>تولید سالم اپراتور</value>
+  </data>
+  <data name="txtOperatorTargetPoint" xml:space="preserve">
+    <value>هدف هر اپراتور</value>
+  </data>
+  <data name="txtSafetyOption" xml:space="preserve">
+    <value>محدودیت زمانی گزارشات</value>
+  </data>
+  <data name="txtShowFilledReports" xml:space="preserve">
+    <value>مشاهده گزارشات کامل</value>
+  </data>
 </root>

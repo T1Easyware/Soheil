@@ -39,7 +39,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 			//hours
 			Hours.Clear();
 			//startDt = start date and time considering the shifts
-			var startDt = WorkProfilePlanDataService.GetShiftStartAt(Date);
+			var startDt = WorkProfilePlanDataService.GetShiftStartOn(Date);
 			//hourTs = start time of each hourVm
 			var hourTs = startDt.TimeOfDay;
 			var shifts = WorkProfilePlanDataService.GetShiftsInRange(Date, Date.AddDays(1));

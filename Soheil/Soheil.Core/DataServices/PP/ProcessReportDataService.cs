@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Soheil.Model;
 using Soheil.Dal;
 using Soheil.Core.Interfaces;
@@ -272,9 +271,9 @@ namespace Soheil.Core.DataServices
 				var processReports = _processReportRepository.GetAll();
 				//main query (with shift)
 				var prQuery = from shift in shifts
-							  from processReport in processReports.Where(x=>
-								  x.StartDateTime < shift.end && x.EndDateTime > shift.start 
-								  && (showAllActivities||x.Process.StateStationActivity.IsPrimaryOutput))
+							  from processReport in processReports.Where(x =>
+								  x.StartDateTime < shift.end && x.EndDateTime > shift.start
+								  && (showAllActivities || x.Process.StateStationActivity.IsPrimaryOutput))
 							  let start = (processReport.StartDateTime < shift.start) ? shift.start : processReport.StartDateTime
 							  let end = (processReport.EndDateTime > shift.end) ? shift.end : processReport.EndDateTime
 							  let durationSeconds = (end - start).TotalSeconds
@@ -445,6 +444,133 @@ namespace Soheil.Core.DataServices
 			}
 
 			return data;
+		}
+
+		public IEnumerable<ProcessReport> GetPendingProcessReports(DateTime date, int stationId, bool showAll, bool isSafe)
+		{
+			var processRepository = new Repository<Process>(Context);
+			var wppDs = new Core.DataServices.WorkProfilePlanDataService(Context);
+			var StartDateTime = wppDs.GetShiftStartOn(date);
+			var EndDateTime = StartDateTime.AddDays(1);
+
+			//get all processes in range
+			var processes = processRepository.Find(x => 
+				x.Task.Block.StateStation.Station.Id == stationId &&
+				x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime);
+
+			//fill gaps by processReports
+			foreach (var process in processes)
+			{
+				//check for remaining
+				var remDuration = process.DurationSeconds;
+				var remTP = process.TargetCount;
+				var reports = process.ProcessReports.OrderBy(x => x.StartDateTime).ToArray();
+
+				//init remainings
+				if (reports.Any())
+				{
+					remTP -= process.ProcessReports.Sum(x => x.ProcessReportTargetPoint);
+					remDuration -= process.ProcessReports.Sum(x => x.DurationSeconds);
+				}
+				//fill spaces before each report
+				var dt = process.StartDateTime;
+				foreach (var processReport in reports.ToArray())
+				{
+					//add one before
+					if (processReport.StartDateTime - dt > TimeSpan.FromSeconds(process.StateStationActivity.CycleTime))
+					{
+						//calculate duration and tp
+						var dur = (int)(processReport.StartDateTime - dt).TotalSeconds;
+						var tp = (int)(remTP * dur / remDuration);
+						dur = tp * (int)process.StateStationActivity.CycleTime;
+
+						//create processReport
+						var processReportModel = new Model.ProcessReport
+						{
+							Process = process,
+							StartDateTime = dt,
+							EndDateTime = dt.AddSeconds(dur),
+							DurationSeconds = dur,
+							ProcessReportTargetPoint = tp,
+							Code = process.Code,
+							ModifiedBy = LoginInfo.Id,
+						};
+
+						//fix remainings
+						remDuration -= dur;
+						remTP -= tp;
+
+						//create process operators
+						foreach (var po in process.ProcessOperators)
+						{
+							processReportModel.OperatorProcessReports.Add(new Model.OperatorProcessReport
+							{
+								ProcessReport = processReportModel,
+								ProcessOperator = po,
+							});
+						}
+
+						//add to processReports
+						process.ProcessReports.Add(processReportModel);
+					}
+					dt = processReport.EndDateTime;
+				}
+
+				//add one at the end
+				var now = DateTime.Now.AddMilliseconds(-DateTime.Now.Millisecond);
+				var end = process.EndDateTime < now ? process.EndDateTime : now;
+				var smallestTs = isSafe ? TimeSpan.FromMinutes(10) : TimeSpan.FromSeconds(process.StateStationActivity.CycleTime);
+				if (end - dt > smallestTs)
+				{
+					//calculate duration and tp
+					var dur = (int)(end - dt).TotalSeconds;
+					var tp = (int)(remTP * dur / remDuration);
+					dur = tp * (int)process.StateStationActivity.CycleTime;
+
+					//create processReport
+					var newModel = new Model.ProcessReport
+					{
+						Process = process,
+						Code = process.Code,
+						StartDateTime = dt,
+						EndDateTime = dt.AddSeconds(dur),
+						DurationSeconds = dur,
+						ProcessReportTargetPoint = tp,
+						ProducedG1 = 0,
+						ModifiedBy = LoginInfo.Id,
+					};
+
+					//create process operators
+					foreach (var po in process.ProcessOperators)
+					{
+						newModel.OperatorProcessReports.Add(new Model.OperatorProcessReport
+						{
+							ProcessReport = newModel,
+							ProcessOperator = po,
+							OperatorProducedG1 = 0,
+							ModifiedBy = LoginInfo.Id,
+						});
+					}
+
+					//add to processReports
+					process.ProcessReports.Add(newModel);
+				}
+
+			}
+			Context.Commit();
+			if(showAll)
+			{
+				return _processReportRepository.Find(x =>
+					x.Process.Task.Block.StateStation.Station.Id == stationId &&
+					x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime);
+			}
+			else
+			{
+				return _processReportRepository.Find(x =>
+					x.Process.Task.Block.StateStation.Station.Id == stationId &&
+					x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime
+					&& !x.OperatorProcessReports.Any(y => y.OperatorProducedG1 != 0));
+			}
 		}
 	}
 }

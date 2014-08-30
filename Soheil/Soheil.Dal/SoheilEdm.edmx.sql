@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/28/2014 21:12:37
--- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 08/30/2014 16:17:50
+-- Generated from EDMX file: D:\Repo\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -355,9 +355,6 @@ IF OBJECT_ID(N'[dbo].[FK_ProductReworkWarehouseTransaction]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_TaskReportWarehouseTransaction]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_TaskReportWarehouseTransaction];
-GO
-IF OBJECT_ID(N'[dbo].[FK_WarehouseTransactionUnitSet]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_WarehouseTransactionUnitSet];
 GO
 IF OBJECT_ID(N'[dbo].[FK_StateBOM]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_StateBOM];
@@ -1519,8 +1516,7 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [Good_Id] int  NULL,
     [RawMaterial_Id] int  NULL,
     [ProductRework_Id] int  NULL,
-    [TaskReport_Id] int  NULL,
-    [UnitSets_Id] int  NULL
+    [TaskReport_Id] int  NULL
 );
 GO
 
