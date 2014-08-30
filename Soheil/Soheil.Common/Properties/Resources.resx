@@ -1277,8 +1277,17 @@
   <data name="txtEditTransaction" xml:space="preserve">
     <value>ویرایش تراکنش</value>
   </data>
-  <data name="txtMaterialPlanning" xml:space="preserve">
-    <value>برنامه مواد</value>
+  <data name="txtDestinationWarehouse" xml:space="preserve">
+    <value>انبار مقصد</value>
+  </data>
+  <data name="txtRawMaterialStorage" xml:space="preserve">
+    <value>ورود مواد اولیه</value>
+  </data>
+  <data name="txtSourceWarehouse" xml:space="preserve">
+    <value>انبار مبدا</value>
+  </data>
+  <data name="txtStockDischarge" xml:space="preserve">
+    <value>خروج کالا</value>
   </data>
   <data name="txtAuto" xml:space="preserve">
     <value>خودکار</value>

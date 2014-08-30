@@ -848,7 +848,7 @@
         <DataTemplate x:Key="ColorCellTemplate">
             <Border Width="30" Background="{Binding Color, Converter={StaticResource ColorConverter}}"/>
         </DataTemplate>
-        <!--................................................ 1.Access ................................................-->
+       <!--................................................ 1.Access ................................................-->
 
         <!-- 1.1. Users Access -->
         <DataTemplate x:Key="UsersSubContentPanel">
@@ -3511,7 +3511,7 @@
                             ImageSource="/Soheil.Controls;component/Images/Menus/rawmaterialStorage.png"
                             Tag="621" />
                 <CustomControls:ImageRadioButton Click="ListUpdated"
-                             IsChecked="True"
+                             IsChecked="False"
                             Content="{Loc txtStockDischarge}"
                             ImageSource="/Soheil.Controls;component/Images/Menus/StockDischarge.png"
                             Tag="622" />
@@ -3534,54 +3534,124 @@
                             </Button>-->
                         </WrapPanel>
                     </Border>
-                    <DockPanel DockPanel.Dock="Top">
-                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBorder}">
-                            <UniformGrid Margin="5"
-                             Columns="2"
-                             Rows="2">
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}"  />
-                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Code, ValidatesOnDataErrors=True, 
-                        UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtDescription}" />
-                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Description, ValidatesOnDataErrors=True, 
-                        UpdateSourceTrigger=PropertyChanged}" />
-                            </UniformGrid>
+                    <Grid  DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Style="{StaticResource SoheilMediumCoverBorder}" >
+                            <DockPanel>
+                                <Border DockPanel.Dock="Top" Height="40"  Style="{StaticResource SoheilSimpleFillBorder}">
+                                    <TextBlock Margin="2,5,2,5" Text="{Loc txtSourceWarehouse}" Foreground="{StaticResource BlueHoverBrush}"/>
+                                </Border>
+                                <ListBox  ItemsSource="{Binding CurrentContent.Source}" 
+                                                 SelectedValue="{Binding CurrentContent.SelectedSource, Mode=TwoWay}"
+                                                 SelectedValuePath="."
+                                                 DisplayMemberPath="Name">
+                                </ListBox>
+                            </DockPanel>
                         </Border>
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
-                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserInfoContent}" />
-                    </DockPanel>
+                        <DockPanel Grid.Column="1">
+                            <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBorder}">
+                                <UniformGrid Margin="5"
+                                 Columns="2"
+                                 Rows="2">
+                                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}"  />
+                                    <TextBox Margin="2" Text="{Binding Path=CurrentContent.Code, ValidatesOnDataErrors=True, 
+                            UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtDescription}" />
+                                    <TextBox Margin="2" Text="{Binding Path=CurrentContent.Description, ValidatesOnDataErrors=True, 
+                            UpdateSourceTrigger=PropertyChanged}" />
+                                </UniformGrid>
+                            </Border>
+                            <Border DockPanel.Dock="Top" Style="{StaticResource SoheilMediumCoverBorder}" >
+                                <DataGrid x:Name="dataGrid"
+                                          FlowDirection="RightToLeft"
+                                          IsSynchronizedWithCurrentItem="True"
+                                          SelectionMode="Single"
+                                          ItemsSource="{Binding CurrentContent.Transactions}"
+                                          SelectedItem="{Binding CurrentContent.CurrentTransaction,
+                                                                  Mode=TwoWay,
+                                                                  UpdateSourceTrigger=PropertyChanged}"
+                                          SelectedValue="{Binding CurrentContent.CurrentTransaction,
+                                                                  Mode=TwoWay,
+                                                                  UpdateSourceTrigger=PropertyChanged}"
+                                          
+                                          SelectedValuePath="."
+                                          AutoGenerateColumns="False"
+                                          PreviewKeyDown="TransGridPreviewKeyDown"
+                                          VirtualizingStackPanel.IsVirtualizing="False"
+                                          ScrollViewer.CanContentScroll="False" 
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                    <DataGrid.Columns>
+                                        <DataGridTemplateColumn Header="{Loc txtCode}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox DisplayMemberPath="Code" BorderThickness="0"
+                                                              IsTextSearchEnabled="True"
+                                                              IsEditable="True"
+                                                          ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.RawMaterials}"
+                                                          SelectedValue="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentTransaction.SelectedRawMaterial,
+                                                                                  Mode=TwoWay}"
+                                                          SelectedValuePath="." />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="{Loc txtName}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox DisplayMemberPath="Name" BorderThickness="0"
+                                                          ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.RawMaterials}"
+                                                          SelectedValue="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentTransaction.SelectedRawMaterial,
+                                                                                  Mode=TwoWay}"
+                                                          SelectedValuePath="." />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="{Loc txtQuantity}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.Quantity}" BorderThickness="0"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="{Loc txtUnit}">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox DisplayMemberPath="Code" BorderThickness="0"
+                                                          ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentTransaction.SelectedRawMaterial.UnitSets}"
+                                                          SelectedValue="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel.CurrentContent.CurrentTransaction.SelectedUnit,
+                                                                                  Mode=TwoWay}"
+                                                          SelectedValuePath="." />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Border>
+                            <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                            <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserInfoContent}" />
+                        </DockPanel>
+                        <Border Grid.Column="2" Style="{StaticResource SoheilMediumCoverBorder}" >
+                            <DockPanel>
+                                <Border DockPanel.Dock="Top" Height="40"  Style="{StaticResource SoheilSimpleFillBorder}">
+                                    <TextBlock Margin="2,5,2,5" Text="{Loc txtDestinationWarehouse}" Foreground="{StaticResource BlueHoverBrush}"/>
+                                </Border>
+                                <ListBox  ItemsSource="{Binding CurrentContent.Destination}" 
+                                                 SelectedValue="{Binding CurrentContent.SelectedDestination, Mode=TwoWay}"
+                                                 SelectedValuePath="."
+                                                 DisplayMemberPath="Name">
+                                </ListBox>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
                     <Canvas DockPanel.Dock="Bottom" />
                 </DockPanel>
             </GroupBox>
         </DataTemplate>
-        <!--<DataTemplate x:Key="UnitConversionTemplate" DataType="ViewModels:UnitConversionVM">
-            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
-                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Name}">
-                <I:Interaction.Behaviors>
-                    <Behavior:ValidationExceptionBehavior />
-                </I:Interaction.Behaviors>
-                <DockPanel FlowDirection="{Loc enumDirection}">
-                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
-                        <WrapPanel Margin="10"
-                                   HorizontalAlignment="Right"
-                                   DockPanel.Dock="Bottom">
-                            <Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
-                                    CommandParameter="0"
-                                    Content="{Loc txtProducts}">
-                            </Button>
-                        </WrapPanel>
-                    </Border>
-                    <DockPanel DockPanel.Dock="Top">
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource CodeNameInfoContent}" />
-                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource StatusInfoContent}" />
-                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
-                    </DockPanel>
-                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
-                    <Canvas DockPanel.Dock="Bottom" />
-                </DockPanel>
-            </GroupBox>
-        </DataTemplate>-->
         
         <!-- 6.3 Raw Material -->
         <DataTemplate x:Key="RawMaterialTemplate" DataType="ViewModels:RawMaterialVM">

@@ -1,18 +1,16 @@
-﻿using Soheil.Core.Base;
+﻿using System.Collections.ObjectModel;
+using Soheil.Core.Base;
 using Soheil.Core.Interfaces;
 using Soheil.Model;
 using Soheil.Dal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Soheil.Core.DataServices.Storage
 {
 	public class WarehouseTransactionDataService : DataServiceBase, IDataService<WarehouseTransaction>
     {
-		private Repository<WarehouseTransaction> _repository;
+		private readonly Repository<WarehouseTransaction> _repository;
 
 		public WarehouseTransactionDataService()
 			: this(new SoheilEdmContext())
@@ -21,7 +19,7 @@ namespace Soheil.Core.DataServices.Storage
 		}
 		public WarehouseTransactionDataService(SoheilEdmContext context)
 		{
-			this.Context = context;
+			Context = context;
 			_repository = new Repository<WarehouseTransaction>(Context);
 		}
 
@@ -31,12 +29,12 @@ namespace Soheil.Core.DataServices.Storage
 			return _repository.Single(x=>x.Id == id);
 		}
 
-		public System.Collections.ObjectModel.ObservableCollection<WarehouseTransaction> GetAll()
+		public ObservableCollection<WarehouseTransaction> GetAll()
 		{
-			return new System.Collections.ObjectModel.ObservableCollection<WarehouseTransaction>(_repository.GetAll());
+			return new ObservableCollection<WarehouseTransaction>(_repository.GetAll());
 		}
 
-		public System.Collections.ObjectModel.ObservableCollection<WarehouseTransaction> GetActives()
+		public ObservableCollection<WarehouseTransaction> GetActives()
 		{
 			throw new NotImplementedException();
 		}
@@ -92,7 +90,7 @@ namespace Soheil.Core.DataServices.Storage
 		{
 			//Model
 			var tr = new Repository<TaskReport>(Context).Single(x=>x.Id == model.Id);
-			var wt = new Soheil.Model.WarehouseTransaction
+			var wt = new WarehouseTransaction
 			{
 				Code = model.Code,
 				ProductRework = new Repository<ProductRework>(Context).Single(x => x.Id == model.Task.Block.StateStation.State.OnProductRework.Id),
@@ -105,6 +103,13 @@ namespace Soheil.Core.DataServices.Storage
 			AddModel(wt);
 			return wt;
 		}
+
+	    public ObservableCollection<WarehouseTransaction> GetActives(int receiptId)
+	    {
+            IEnumerable<WarehouseTransaction> entityList = _repository.Find(transaction =>
+                transaction.WarehouseReceipt != null && transaction.WarehouseReceipt.Id == receiptId);
+            return new ObservableCollection<WarehouseTransaction>(entityList);
+	    }
 
 		internal string Save()
 		{

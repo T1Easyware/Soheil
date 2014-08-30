@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/30/2014 16:17:50
--- Generated from EDMX file: D:\Repo\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 08/29/2014 14:16:48
+-- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -1516,7 +1516,8 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [Good_Id] int  NULL,
     [RawMaterial_Id] int  NULL,
     [ProductRework_Id] int  NULL,
-    [TaskReport_Id] int  NULL
+    [TaskReport_Id] int  NULL,
+    [UnitSet_Id] int  NULL
 );
 GO
 
@@ -3804,6 +3805,20 @@ ADD CONSTRAINT [FK_UnitSetBOM]
 -- Creating non-clustered index for FOREIGN KEY 'FK_UnitSetBOM'
 CREATE INDEX [IX_FK_UnitSetBOM]
 ON [dbo].[BOMs]
+    ([UnitSet_Id]);
+GO
+
+-- Creating foreign key on [UnitSet_Id] in table 'WarehouseTransactions'
+ALTER TABLE [dbo].[WarehouseTransactions]
+ADD CONSTRAINT [FK_UnitSetWarehouseTransaction]
+    FOREIGN KEY ([UnitSet_Id])
+    REFERENCES [dbo].[UnitSets]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_UnitSetWarehouseTransaction'
+CREATE INDEX [IX_FK_UnitSetWarehouseTransaction]
+ON [dbo].[WarehouseTransactions]
     ([UnitSet_Id]);
 GO
 

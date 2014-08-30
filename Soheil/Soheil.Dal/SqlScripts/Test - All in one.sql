@@ -58,8 +58,6 @@ INSERT INTO AccessRules ([Id],[Code],[Name],[Parent_Id]) VALUES
 			(53,'641','txtUnitSets',52),
 			(54,'642','txtUnitConversions',52);
 
-ALTER TABLE USERS ADD CONSTRAINT USER_UNIQUE_CODE UNIQUE (CODE);
-
 
 
 INSERT INTO Users(Code,CreatedBy,CreatedDate,ModifiedBy,ModifiedDate,Username,[Password],Title,[Status]) VALUES

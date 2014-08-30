@@ -5,7 +5,9 @@ using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
+using Soheil.Core.DataServices.Storage;
 using Soheil.Core.Interfaces;
+using Soheil.Core.ViewModels.InfoViewModels;
 using Soheil.Dal;
 using Soheil.Model;
 
@@ -16,10 +18,15 @@ namespace Soheil.Core.ViewModels
         #region Properties
         public override void CreateItems(object param)
         {
+            var rawMaterials = new ObservableCollection<RawMaterialInfoVM>();
+            foreach (var model in RawMaterialDataService.GetActives())
+            {
+                rawMaterials.Add(new RawMaterialInfoVM(model));
+            }
             var viewModels = new ObservableCollection<WarehouseReceiptVM>();
             foreach (var model in WarehouseReceiptDataService.GetAll())
             {
-                viewModels.Add(new WarehouseReceiptVM(model, Access, WarehouseReceiptDataService));
+                viewModels.Add(new WarehouseReceiptVM(model, Access, WarehouseReceiptDataService, WarehouseReceiptType.Storage /* determine later*/, rawMaterials));
             }
             Items = new ListCollectionView(viewModels);
 
@@ -37,6 +44,7 @@ namespace Soheil.Core.ViewModels
         /// The data service.
         /// </value>
         public WarehouseReceiptDataService WarehouseReceiptDataService { get; set; }
+        public RawMaterialDataService RawMaterialDataService { get; set; }
         #endregion
 
         #region Methods
@@ -54,6 +62,7 @@ namespace Soheil.Core.ViewModels
             UnitOfWork = new SoheilEdmContext();
             WarehouseReceiptDataService = new WarehouseReceiptDataService(UnitOfWork);
             WarehouseReceiptDataService.WarehouseReceiptAdded += OnWarehouseReceiptAdded;
+            RawMaterialDataService = new RawMaterialDataService();
 
             ColumnHeaders = new List<ColumnInfo> 
             { 
@@ -86,7 +95,7 @@ namespace Soheil.Core.ViewModels
 
         private void OnWarehouseReceiptAdded(object sender, ModelAddedEventArgs<WarehouseReceipt> e)
         {
-            var newWarehouseReceiptVm = new WarehouseReceiptVM(e.NewModel, Access, WarehouseReceiptDataService);
+            var newWarehouseReceiptVm = new WarehouseReceiptVM(e.NewModel, Access, WarehouseReceiptDataService, WarehouseReceiptType.Storage /* determine later*/, new ObservableCollection<RawMaterialInfoVM>());
             Items.AddNewItem(newWarehouseReceiptVm);
             Items.CommitNew();
             CurrentContent = newWarehouseReceiptVm;

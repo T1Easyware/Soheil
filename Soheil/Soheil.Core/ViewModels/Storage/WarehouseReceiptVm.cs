@@ -5,6 +5,7 @@ using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
+using Soheil.Core.DataServices.Storage;
 using Soheil.Core.ViewModels.InfoViewModels;
 using Soheil.Model;
 
@@ -39,6 +40,8 @@ namespace Soheil.Core.ViewModels
         /// The data service.
         /// </value>
         public WarehouseReceiptDataService WarehouseReceiptDataService { get; set; }
+        public WarehouseTransactionDataService TransactionDataService { get; set; }
+        public WarehouseDataService WarehouseDataService { get; set; }
 
 // ReSharper disable PropertyNotResolved
         [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
@@ -84,6 +87,8 @@ namespace Soheil.Core.ViewModels
 
         public ObservableCollection<WarehouseTransactionVM> Transactions { get; set; }
 
+        public ObservableCollection<RawMaterialInfoVM> RawMaterials { get; set; }
+
         public static readonly DependencyProperty SelectedSourceProperty = DependencyProperty.Register(
             "SelectedSource", typeof (WarehouseInfoVM), typeof (WarehouseReceiptVM), new PropertyMetadata(default(WarehouseInfoVM)));
 
@@ -128,16 +133,42 @@ namespace Soheil.Core.ViewModels
         /// <param name="entity">The model.</param>
         /// <param name="access"></param>
         /// <param name="dataService"></param>
-        public WarehouseReceiptVM(WarehouseReceipt entity, AccessType access, WarehouseReceiptDataService dataService)
+        public WarehouseReceiptVM(WarehouseReceipt entity, AccessType access, WarehouseReceiptDataService dataService, WarehouseReceiptType type, ObservableCollection<RawMaterialInfoVM> rawMaterials )
             : base(access)
         {
-            InitializeData(dataService);
             _model = entity;
+            Type = type;
+            RawMaterials = rawMaterials;
+            InitializeData(dataService);
         }
 
         private void InitializeData(WarehouseReceiptDataService dataService)
         {
             WarehouseReceiptDataService = dataService;
+            TransactionDataService = new WarehouseTransactionDataService();
+            WarehouseDataService = new WarehouseDataService();
+
+            Transactions = new ObservableCollection<WarehouseTransactionVM>();
+            foreach (var transaction in TransactionDataService.GetActives(Id))
+            {
+                Transactions.Add(new WarehouseTransactionVM(transaction, Access, TransactionDataService, RawMaterials));
+            }
+
+            switch (Type)
+            {
+                case WarehouseReceiptType.Storage:
+                    Destination = new ObservableCollection<WarehouseInfoVM>();
+                    foreach (var model in WarehouseDataService.GetActives())
+                    {
+                        Destination.Add(new WarehouseInfoVM(model));
+                    }
+                    break;
+                case WarehouseReceiptType.Transfer:
+                    break;
+                case WarehouseReceiptType.Discharge:
+                    break;
+            }
+
             SaveCommand = new Command(Save, CanSave);
         }
 
@@ -145,6 +176,13 @@ namespace Soheil.Core.ViewModels
         {
             WarehouseReceiptDataService.AttachModel(_model);
             _model = WarehouseReceiptDataService.GetSingle(_model.Id); OnPropertyChanged("ModifiedBy");OnPropertyChanged("ModifiedDate");Mode = ModificationStatus.Saved;
+        }
+
+        public void AddBlank()
+        {
+            var model = WarehouseTransactionVM.CreateNew(TransactionDataService);
+            var blankVm = new WarehouseTransactionVM(model, Access, TransactionDataService);
+            Transactions.Add(blankVm);
         }
         public override void Delete(object param)
         {
