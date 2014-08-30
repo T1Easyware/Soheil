@@ -171,11 +171,15 @@
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/StationOutput16.png"/>
         <Setter Property="Width" Value="16"/>
     </Style>
-    <Style x:Key="StoredCountImage" TargetType="Image">
-        <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/WarehouseIn16.png"/>
-        <Setter Property="Width" Value="16"/>
-    </Style>
-    <Style x:Key="IndependentTPImage" TargetType="Image">
+	<Style x:Key="StoredCountImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/WarehouseIn16.png"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="WarehouseOutImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/WarehouseOut.png"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="IndependentTPImage" TargetType="Image">
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/PP/pp_independent.png"/>
         <Setter Property="Width" Value="16"/>
     </Style>

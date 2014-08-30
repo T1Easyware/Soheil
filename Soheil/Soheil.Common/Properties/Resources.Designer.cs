@@ -2023,6 +2023,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to برنامه مواد.
+        /// </summary>
+        public static string txtMaterialPlanning {
+            get {
+                return ResourceManager.GetString("txtMaterialPlanning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ویرایش کننده :.
         /// </summary>
         public static string txtMBy {

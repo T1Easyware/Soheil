@@ -93,5 +93,10 @@ namespace Soheil.Core.DataServices
 				x.Status == (byte)Common.Status.Active
 				&& (x.HasWIP || x.HasFinalProduct));
 		}
+
+		internal IEnumerable<Warehouse> GetActivesForMaterials()
+		{
+			return _warehouseRepository.Find(x => x.Status == (byte)Common.Status.Active && x.HasRawMaterial);
+		}
 	}
 }

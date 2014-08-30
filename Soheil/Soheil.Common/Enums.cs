@@ -108,12 +108,51 @@ namespace Soheil.Common
 
     public enum StateType
     {
+		/// <summary>
+		/// Start state of FPC (this is automatically created)
+		/// </summary>
         Start = 0,
+		/// <summary>
+		/// Normal state of FPC
+		/// </summary>
         Mid = 1,
-        Final = 2,
-        Rework = 3,
-        Temp = 4
+		/// <summary>
+		/// Final state of FPC (this is automatically created)
+		/// </summary>
+		Final = 2,
+		/// <summary>
+		/// Rework state of FPC (this is either automatically created or user can add custom reworks)
+		/// </summary>
+		Rework = 3,
+		/// <summary>
+		/// Temporary state of FPC (this only exists while user is dragging a connector)
+		/// </summary>
+		Temp = 4
     }
+
+	public enum MaterialRequestType
+	{
+		/// <summary>
+		/// Request is made but no transaction is yet created
+		/// </summary>
+		NoTransaction,
+		/// <summary>
+		/// Request is deleted but transaction isn't
+		/// </summary>
+		NoRequest,
+		/// <summary>
+		/// Transaction quantity matches the request quantity
+		/// </summary>
+		Ok,
+		/// <summary>
+		/// Transaction quantity is less than requested
+		/// </summary>
+		LessProvided,
+		/// <summary>
+		/// Transaction quantity is more than requested
+		/// </summary>
+		MoreProvided
+	}
 
 	public enum Bool3
 	{
@@ -211,7 +250,8 @@ namespace Soheil.Common
         PerformanceSubMenu = 32,
 		IndicesSubMenu = 33,
 		PM = 34,
-        ReportsMenu = 4,
+		MaterialPlanning = 35,
+		ReportsMenu = 4,
         CostReportsSubMenu = 41,
         ActualCostReportsSubMenu = 42,
         OperationReportsSubMenu = 43,

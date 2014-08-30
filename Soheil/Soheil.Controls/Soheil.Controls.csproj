@@ -688,6 +688,9 @@
     <Resource Include="Images\Auto.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Menus\materialplanning.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\Menus\warehouseTrans.png" />
   </ItemGroup>
   <ItemGroup>

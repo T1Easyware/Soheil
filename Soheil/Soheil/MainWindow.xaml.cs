@@ -90,6 +90,7 @@ namespace Soheil
 			//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.DailyStationPlan), true);
 			//.
 
+			this.StateChanged += (s, e) => IsRestored = WindowState == System.Windows.WindowState.Normal;
 			Closing += (s, e) => Soheil.Core.PP.PPItemManager.Abort();
 		}
 
@@ -260,6 +261,10 @@ namespace Soheil
 					ppvm.DailyStationPlanCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.DailyStationPlan));
 					ppvm.DailyReportCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.DailyReport));
 					SingularList = ppvm;
+					chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+				case SoheilEntityType.MaterialPlanning:
+					SingularList = new Core.ViewModels.MaterialPlanning.MaterialPlanningVm(access);
 					chrometabs.AddTab(CreateSingularTab(type), true);
 					break;
 				case SoheilEntityType.PM:
@@ -562,8 +567,10 @@ namespace Soheil
                     return Common.Properties.Resources.txtPartWarehouses;
                 case SoheilEntityType.ControlMenu:
                     return Common.Properties.Resources.txtControl;
-                case SoheilEntityType.ProductPlanSubMenu:
-                    return Common.Properties.Resources.txtProductPlan;
+				case SoheilEntityType.ProductPlanSubMenu:
+					return Common.Properties.Resources.txtProductPlan;
+				case SoheilEntityType.MaterialPlanning:
+					return Common.Properties.Resources.txtMaterialPlanning;
 				case SoheilEntityType.PerformanceSubMenu:
 					return Common.Properties.Resources.txtPerformance;
 				case SoheilEntityType.DailyReport:
@@ -665,6 +672,16 @@ namespace Soheil
 			//loginPanelUsername.SelectAll();
 		}
 
+		/// <summary>
+		/// Gets or sets a bindable value that indicates IsRestored
+		/// </summary>
+		public bool IsRestored
+		{
+			get { return (bool)GetValue(IsRestoredProperty); }
+			set { SetValue(IsRestoredProperty, value); }
+		}
+		public static readonly DependencyProperty IsRestoredProperty =
+			DependencyProperty.Register("IsRestored", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
     }
 }

@@ -156,6 +156,7 @@ namespace Soheil.Core.ViewModels.Fpc
 				IsDefault = true,
 				RawMaterial = /*rawMaterialVm.Model???*/ Parent.fpcDataService.rawMaterialDataService.GetRawMaterial__(rawMaterial.Id),
 			};
+			bom.UnitSet = Parent.fpcDataService.rawMaterialDataService.GetUnitSets(bom.RawMaterial).FirstOrDefault();
 
 			//create vm for BOM and add it
 			ContentsList.Add(new BomVm(fpc, bom)
