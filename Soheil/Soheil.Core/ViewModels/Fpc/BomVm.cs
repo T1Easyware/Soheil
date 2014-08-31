@@ -98,18 +98,24 @@ namespace Soheil.Core.ViewModels.Fpc
 		{
 			TreeLevel = 4;
 
+			_isInitializing = true;
+
 			var units = parentWindowVm.fpcDataService
 				.rawMaterialDataService.GetUnitSets(model.RawMaterial)
 				.Select(x => new UnitSetVm(x));
+			Units.Add(new UnitSetVm(null));
 			foreach (var unit in units)
 			{
 				Units.Add(unit);
 			}
 
 			Model = model;
-			_isInitializing = true;
+			Quantity = model.Quantity;
 			IsDefault = model.IsDefault;
-			Unit = Units.FirstOrDefault(x => x.Model.Id == model.UnitSet.Id);
+			if (model.UnitSet == null)
+				Unit = Units.First();
+			else
+				Unit = Units.FirstOrDefault(x => x.Model.Id == model.UnitSet.Id);
 			_isInitializing = false;
 		}
 

@@ -80,37 +80,37 @@ namespace Soheil.Model
         }
         private ICollection<UnitSet> _unitSets;
     
-        public virtual ICollection<RawMaterialUnitGroup> RawMaterialUnitGroups
+        public virtual ICollection<RawMaterial> RawMaterials
         {
             get
             {
-                if (_rawMaterialUnitGroups == null)
+                if (_rawMaterials == null)
                 {
-                    var newCollection = new FixupCollection<RawMaterialUnitGroup>();
-                    newCollection.CollectionChanged += FixupRawMaterialUnitGroups;
-                    _rawMaterialUnitGroups = newCollection;
+                    var newCollection = new FixupCollection<RawMaterial>();
+                    newCollection.CollectionChanged += FixupRawMaterials;
+                    _rawMaterials = newCollection;
                 }
-                return _rawMaterialUnitGroups;
+                return _rawMaterials;
             }
             set
             {
-                if (!ReferenceEquals(_rawMaterialUnitGroups, value))
+                if (!ReferenceEquals(_rawMaterials, value))
                 {
-                    var previousValue = _rawMaterialUnitGroups as FixupCollection<RawMaterialUnitGroup>;
+                    var previousValue = _rawMaterials as FixupCollection<RawMaterial>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupRawMaterialUnitGroups;
+                        previousValue.CollectionChanged -= FixupRawMaterials;
                     }
-                    _rawMaterialUnitGroups = value;
-                    var newValue = value as FixupCollection<RawMaterialUnitGroup>;
+                    _rawMaterials = value;
+                    var newValue = value as FixupCollection<RawMaterial>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupRawMaterialUnitGroups;
+                        newValue.CollectionChanged += FixupRawMaterials;
                     }
                 }
             }
         }
-        private ICollection<RawMaterialUnitGroup> _rawMaterialUnitGroups;
+        private ICollection<RawMaterial> _rawMaterials;
 
         #endregion
 
@@ -138,11 +138,11 @@ namespace Soheil.Model
             }
         }
     
-        private void FixupRawMaterialUnitGroups(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupRawMaterials(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (RawMaterialUnitGroup item in e.NewItems)
+                foreach (RawMaterial item in e.NewItems)
                 {
                     item.UnitGroup = this;
                 }
@@ -150,7 +150,7 @@ namespace Soheil.Model
     
             if (e.OldItems != null)
             {
-                foreach (RawMaterialUnitGroup item in e.OldItems)
+                foreach (RawMaterial item in e.OldItems)
                 {
                     if (ReferenceEquals(item.UnitGroup, this))
                     {

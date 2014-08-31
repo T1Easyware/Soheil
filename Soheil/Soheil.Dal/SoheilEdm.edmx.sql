@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/29/2014 14:16:48
--- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 08/31/2014 10:06:01
+-- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -341,12 +341,6 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_UnitGroupUnitSet]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UnitSets] DROP CONSTRAINT [FK_UnitGroupUnitSet];
 GO
-IF OBJECT_ID(N'[dbo].[FK_RawMaterialRawMaterialUnitGroup]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[RawMaterialUnitGroups] DROP CONSTRAINT [FK_RawMaterialRawMaterialUnitGroup];
-GO
-IF OBJECT_ID(N'[dbo].[FK_UnitGroupRawMaterialUnitGroup]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[RawMaterialUnitGroups] DROP CONSTRAINT [FK_UnitGroupRawMaterialUnitGroup];
-GO
 IF OBJECT_ID(N'[dbo].[FK_MachinePartRepair]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Repairs] DROP CONSTRAINT [FK_MachinePartRepair];
 GO
@@ -364,6 +358,12 @@ IF OBJECT_ID(N'[dbo].[FK_RawMaterialBOM]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_UnitSetBOM]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[BOMs] DROP CONSTRAINT [FK_UnitSetBOM];
+GO
+IF OBJECT_ID(N'[dbo].[FK_UnitSetWarehouseTransaction]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_UnitSetWarehouseTransaction];
+GO
+IF OBJECT_ID(N'[dbo].[FK_UnitGroupRawMaterial]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[RawMaterials] DROP CONSTRAINT [FK_UnitGroupRawMaterial];
 GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
@@ -621,9 +621,6 @@ IF OBJECT_ID(N'[dbo].[UnitConversions]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[UnitGroups]', 'U') IS NOT NULL
     DROP TABLE [dbo].[UnitGroups];
-GO
-IF OBJECT_ID(N'[dbo].[RawMaterialUnitGroups]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[RawMaterialUnitGroups];
 GO
 IF OBJECT_ID(N'[dbo].[BOMs]', 'U') IS NOT NULL
     DROP TABLE [dbo].[BOMs];
@@ -1547,7 +1544,8 @@ CREATE TABLE [dbo].[RawMaterials] (
     [CreatedDate] datetime  NOT NULL,
     [ModifiedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
-    [ModifiedBy] int  NOT NULL
+    [ModifiedBy] int  NOT NULL,
+    [UnitGroup_Id] int  NULL
 );
 GO
 
@@ -1610,14 +1608,6 @@ CREATE TABLE [dbo].[UnitGroups] (
 );
 GO
 
--- Creating table 'RawMaterialUnitGroups'
-CREATE TABLE [dbo].[RawMaterialUnitGroups] (
-    [Id] int IDENTITY(1,1) NOT NULL,
-    [RawMaterial_Id] int  NOT NULL,
-    [UnitGroup_Id] int  NOT NULL
-);
-GO
-
 -- Creating table 'BOMs'
 CREATE TABLE [dbo].[BOMs] (
     [Id] int IDENTITY(1,1) NOT NULL,
@@ -1627,7 +1617,7 @@ CREATE TABLE [dbo].[BOMs] (
     [IsDefault] bit  NOT NULL,
     [State_Id] int  NOT NULL,
     [RawMaterial_Id] int  NOT NULL,
-    [UnitSet_Id] int  NOT NULL
+    [UnitSet_Id] int  NULL
 );
 GO
 
@@ -2141,12 +2131,6 @@ GO
 -- Creating primary key on [Id] in table 'UnitGroups'
 ALTER TABLE [dbo].[UnitGroups]
 ADD CONSTRAINT [PK_UnitGroups]
-    PRIMARY KEY CLUSTERED ([Id] ASC);
-GO
-
--- Creating primary key on [Id] in table 'RawMaterialUnitGroups'
-ALTER TABLE [dbo].[RawMaterialUnitGroups]
-ADD CONSTRAINT [PK_RawMaterialUnitGroups]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -3696,34 +3680,6 @@ ON [dbo].[UnitSets]
     ([UnitGroup_Id]);
 GO
 
--- Creating foreign key on [RawMaterial_Id] in table 'RawMaterialUnitGroups'
-ALTER TABLE [dbo].[RawMaterialUnitGroups]
-ADD CONSTRAINT [FK_RawMaterialRawMaterialUnitGroup]
-    FOREIGN KEY ([RawMaterial_Id])
-    REFERENCES [dbo].[RawMaterials]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_RawMaterialRawMaterialUnitGroup'
-CREATE INDEX [IX_FK_RawMaterialRawMaterialUnitGroup]
-ON [dbo].[RawMaterialUnitGroups]
-    ([RawMaterial_Id]);
-GO
-
--- Creating foreign key on [UnitGroup_Id] in table 'RawMaterialUnitGroups'
-ALTER TABLE [dbo].[RawMaterialUnitGroups]
-ADD CONSTRAINT [FK_UnitGroupRawMaterialUnitGroup]
-    FOREIGN KEY ([UnitGroup_Id])
-    REFERENCES [dbo].[UnitGroups]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_UnitGroupRawMaterialUnitGroup'
-CREATE INDEX [IX_FK_UnitGroupRawMaterialUnitGroup]
-ON [dbo].[RawMaterialUnitGroups]
-    ([UnitGroup_Id]);
-GO
-
 -- Creating foreign key on [MachinePart_Id] in table 'Repairs'
 ALTER TABLE [dbo].[Repairs]
 ADD CONSTRAINT [FK_MachinePartRepair]
@@ -3820,6 +3776,20 @@ ADD CONSTRAINT [FK_UnitSetWarehouseTransaction]
 CREATE INDEX [IX_FK_UnitSetWarehouseTransaction]
 ON [dbo].[WarehouseTransactions]
     ([UnitSet_Id]);
+GO
+
+-- Creating foreign key on [UnitGroup_Id] in table 'RawMaterials'
+ALTER TABLE [dbo].[RawMaterials]
+ADD CONSTRAINT [FK_UnitGroupRawMaterial]
+    FOREIGN KEY ([UnitGroup_Id])
+    REFERENCES [dbo].[UnitGroups]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_UnitGroupRawMaterial'
+CREATE INDEX [IX_FK_UnitGroupRawMaterial]
+ON [dbo].[RawMaterials]
+    ([UnitGroup_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'

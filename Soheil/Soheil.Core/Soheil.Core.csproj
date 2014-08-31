@@ -92,7 +92,6 @@
     <Compile Include="ViewModels\MessageCenter\NotificationVm.cs" />
     <Compile Include="ViewModels\MessageCenter\PMVm.cs" />
     <Compile Include="ViewModels\MessageCenter\RepairVm.cs" />
-    <Compile Include="DataServices\Storage\RawMaterialUnitGroupDataService.cs" />
     <Compile Include="DataServices\Storage\UnitSetDataService.cs" />
     <Compile Include="DataServices\Storage\UnitGroupDataService.cs" />
     <Compile Include="DataServices\Storage\RawMaterialDataService.cs" />
@@ -274,8 +273,6 @@
     <Compile Include="ViewModels\SkillCenter\SkillCenterContentVm.cs" />
     <Compile Include="ViewModels\SkillCenter\SkillCenterVm.cs" />
     <Compile Include="ViewModels\StartPageVm.cs" />
-    <Compile Include="ViewModels\Storage\RawMaterialUnitGroupsVM.cs" />
-    <Compile Include="ViewModels\Storage\RawMaterialUnitGroupVM.cs" />
     <Compile Include="ViewModels\Storage\UnitSetsVM.cs" />
     <Compile Include="ViewModels\Storage\UnitGroupVM.cs" />
     <Compile Include="ViewModels\Storage\UnitSetVM.cs" />

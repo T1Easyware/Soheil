@@ -4,6 +4,7 @@ using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Model;
+using System.Windows;
 
 namespace Soheil.Core.ViewModels
 {
@@ -81,7 +82,17 @@ namespace Soheil.Core.ViewModels
             get { return LoginInfo.GetUsername(_model.ModifiedBy); }
         }
 
-        public RawMaterialUnitGroupsVM UnitGroupsVm { get; set; }
+		/// <summary>
+		/// Gets or sets a bindable value that indicates UnitGroupVm
+		/// </summary>
+		public UnitGroupVM UnitGroupVm
+		{
+			get { return (UnitGroupVM)GetValue(UnitGroupVmProperty); }
+			set { SetValue(UnitGroupVmProperty, value); }
+		}
+		public static readonly DependencyProperty UnitGroupVmProperty =
+			DependencyProperty.Register("UnitGroupVm", typeof(UnitGroupVM), typeof(RawMaterialVM), new PropertyMetadata(null));
+
         #endregion
 
         #region Methods
@@ -128,9 +139,9 @@ namespace Soheil.Core.ViewModels
 
         public override void ViewItemLink(object param)
         {
-            UnitGroupsVm = new RawMaterialUnitGroupsVM(this, Access);
-            CurrentLink = UnitGroupsVm;
-            base.ViewItemLink(param);
+            //UnitGroupVm = new UnitGroupVM(this._model.UnitGroup, Access, new UnitGroupDataService(this.RawMaterialDataService.Context));
+            //CurrentLink = UnitGroupVm;
+            //base.ViewItemLink(param);
         }
 
         #endregion

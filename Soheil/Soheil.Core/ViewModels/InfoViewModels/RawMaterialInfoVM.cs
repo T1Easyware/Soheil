@@ -31,20 +31,15 @@ namespace Soheil.Core.ViewModels.InfoViewModels
         /// Initializes a new instance of the <see cref="RawMaterialInfoVM"/> class from the model.
         /// </summary>
         /// <param name="entity">The model.</param>
-        public RawMaterialInfoVM(RawMaterial entity)
-        {
-            _model = entity;
-            UnitSets = new ObservableCollection<UnitSetInfoVM>();
-            foreach (var materialUnitGroup in entity.RawMaterialUnitGroups)
-            {
-                if (materialUnitGroup.UnitGroup != null)
-                {
-                    foreach (var unitSet in materialUnitGroup.UnitGroup.UnitSets)
-                    {
-                        UnitSets.Add(new UnitSetInfoVM(unitSet));
-                    }
-                }
-            }
-        }
+		public RawMaterialInfoVM(RawMaterial entity)
+		{
+			_model = entity;
+			UnitSets = new ObservableCollection<UnitSetInfoVM>();
+			if (entity.UnitGroup != null)
+				foreach (var unitSet in entity.UnitGroup.UnitSets)
+				{
+					UnitSets.Add(new UnitSetInfoVM(unitSet));
+				}
+		}
     }
 }
