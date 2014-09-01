@@ -1316,4 +1316,7 @@
   <data name="txtShowFilledReports" xml:space="preserve">
     <value>مشاهده گزارشات کامل</value>
   </data>
+  <data name="txtMaterialPlanning" xml:space="preserve">
+    <value>برنامه مواد</value>
+  </data>
 </root>

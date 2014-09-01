@@ -199,11 +199,11 @@ namespace Soheil.Core.DataServices
 
 		public List<Tuple<string, AccessType>> GetAccessOfUser(int userId)
 		{
-			var userList = _userRepository.GetAll();
-			var accessList = _accessRuleRepository.GetAll();
-			var userAccessList = _userAccessRuleRepository.GetAll();
-			var positionAccessList = _positionAccessRuleRepository.GetAll();
-			var userPositionList = _userPositionRepository.GetAll();
+			var userList = _userRepository.GetAll().ToArray();
+			var accessList = _accessRuleRepository.GetAll().ToArray();
+			var userAccessList = _userAccessRuleRepository.GetAll().ToArray();
+			var positionAccessList = _positionAccessRuleRepository.GetAll().ToArray();
+			var userPositionList = _userPositionRepository.GetAll().ToArray();
 
 			var userQuery = from user in userList.Where(u => u.Id == userId)
 							from userAccess in userAccessList.Where(ua => ua.User.Id == user.Id).DefaultIfEmpty()

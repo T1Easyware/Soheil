@@ -113,9 +113,10 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 						{
 							Quantity = station.Quantity,
 							StationName = station.Station.Name,
-							UnitCode = station.Bom.UnitSet.Code,
+							UnitCode = station.Bom.UnitSet == null ? "عدد" : station.Bom.UnitSet.Code,
 						});
 					}
+					material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count);
 					Cells.Add(cell);
 				}
 			}
@@ -138,6 +139,16 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 				//var val = (DateTime)e.NewValue;
 				vm.Refresh();
 			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Width
+		/// </summary>
+		public double Width
+		{
+			get { return (double)GetValue(WidthProperty); }
+			set { SetValue(WidthProperty, value); }
+		}
+		public static readonly DependencyProperty WidthProperty =
+			DependencyProperty.Register("Width", typeof(double), typeof(MaterialPlanningVm), new PropertyMetadata(2400d));
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates MaterialsCount

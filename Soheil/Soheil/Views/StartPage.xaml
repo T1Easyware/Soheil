@@ -96,7 +96,7 @@
             <!-- lines -->
             <Image Source="/Soheil.Controls;component/Images/StartPage/StartPageLines.png" Width="20" Height="700" FlowDirection="LeftToRight" HorizontalAlignment="Center" VerticalAlignment="Top" IsHitTestVisible="False" Margin="0,-94,0,0">
                 <Image.RenderTransform>
-                    <ScaleTransform ScaleX="100" CenterX="10"/>
+                    <ScaleTransform ScaleX="1000" CenterX="10"/>
                 </Image.RenderTransform>
             </Image>
 

@@ -24,5 +24,10 @@ namespace Soheil.Views.MaterialPlanning
 		{
 			InitializeComponent();
 		}
+
+		private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			hoursScrollViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
+		}
 	}
 }

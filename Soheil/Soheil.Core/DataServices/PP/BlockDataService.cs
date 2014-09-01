@@ -692,6 +692,11 @@ namespace Soheil.Core.DataServices
 						{
 							task.StartDateTime = task.StartDateTime.AddSeconds(delaySeconds);
 							task.EndDateTime = task.EndDateTime.AddSeconds(delaySeconds);
+							foreach (var process in task.Processes)
+							{
+								process.StartDateTime = process.StartDateTime.AddSeconds(delaySeconds);
+								process.EndDateTime = process.EndDateTime.AddSeconds(delaySeconds);
+							}
 						}
 					}
 					movingBlock.ModifiedDate = DateTime.Now;

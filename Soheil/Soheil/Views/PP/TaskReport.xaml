@@ -134,7 +134,7 @@
 														<TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
 													</StackPanel>
 												</Button>
-                                                <Button Command="{Binding WarehouseTransaction.SaveCommand}">
+												<Button Command="{Binding WarehouseTransaction.SaveCommand}" Click="PopupCloseButton_Click">
 													<StackPanel>
 														<Image Style="{StaticResource Save16Image}"/>
 														<TextBlock Text="{Loc txtSave}" Foreground="Black"/>

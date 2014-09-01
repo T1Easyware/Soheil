@@ -440,7 +440,7 @@ namespace Soheil.Core.DataServices
 							Station = y.station,
 							Quantity = y.qty
 						})
-					}),
+					}).ToArray(),
 				};
 				StartDateTime = StartDateTime.AddHours(1);
 				EndDateTime = EndDateTime.AddHours(1);

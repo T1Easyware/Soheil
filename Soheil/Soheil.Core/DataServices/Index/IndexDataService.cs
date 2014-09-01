@@ -198,10 +198,10 @@ namespace Soheil.Core.DataServices
                 var processReportRepository = new Repository<ProcessReport>(context);
                 var taskReportRepository = new Repository<TaskReport>(context);
 
-                var machineList = machineRepository.GetAll();
+                var machineList = machineRepository.GetAll().ToArray();
                 var selectedMachineList = selectedMachineRepository.GetAll();
-                var ssamList = ssamRepository.GetAll();
-                var ssaList = ssaRepository.GetAll();
+				var ssamList = ssamRepository.GetAll().ToArray();
+				var ssaList = ssaRepository.GetAll().ToArray();
                 var processList = processRepository.GetAll();
                 var processReportList = processReportRepository.GetAll();
                 var taskReportList = taskReportRepository.GetAll();
@@ -261,7 +261,7 @@ namespace Soheil.Core.DataServices
 				var processReportRepository = new Repository<ProcessReport>(context);
 
 				var selectedMachineList = selectedMachineRepository.GetAll();
-				var processReportList = processReportRepository.GetAll();
+				var processReportList = processReportRepository.Find(pr => pr.StartDateTime < record.End && pr.EndDateTime > record.Start).ToArray();
 
 				var pQuery = from selmachine in selectedMachineList.Where(x =>
 								x.StateStationActivityMachine != null &&
@@ -289,10 +289,7 @@ namespace Soheil.Core.DataServices
 							  from processReport in processReportList.Where(pr =>
 								  process != null &&
 								  pr.Process != null &&
-								  pr.Process.Id == process.model.Id &&
-								  pr.StartDateTime < record.End &&
-								  pr.EndDateTime > record.Start
-								  )
+								  pr.Process.Id == process.model.Id)
 							  let start = (processReport.StartDateTime < record.Start) ? record.Start : processReport.StartDateTime
 							  let end = (processReport.EndDateTime > record.End) ? record.End : processReport.EndDateTime
 							  let hours = (end - start).TotalHours
@@ -336,7 +333,7 @@ namespace Soheil.Core.DataServices
 				var causeRepository = new Repository<Cause>(context);
 
 				var selectedMachineList = selectedMachineRepository.GetAll();
-				var processReportList = processReportRepository.GetAll();
+				var processReportList = processReportRepository.Find(pr => pr.StartDateTime < record.End && pr.EndDateTime > record.Start).ToArray();
 				var causeList = causeRepository.GetAll();
 
 				var prQuery = from selmachine in selectedMachineList.Where(x =>
@@ -349,9 +346,7 @@ namespace Soheil.Core.DataServices
 							  from processReport in processReportList.Where(pr =>
 								  selmachine.Process != null &&
 								  pr.Process != null &&
-								  pr.Process.Id == selmachine.Process.Id &&
-								  pr.StartDateTime < record.End &&
-								  pr.EndDateTime > record.Start)
+								  pr.Process.Id == selmachine.Process.Id)
 							  from stpr in processReport.StoppageReports
 							  let start = (processReport.StartDateTime < record.Start) ? record.Start : processReport.StartDateTime
 							  let end = (processReport.EndDateTime > record.End) ? record.End : processReport.EndDateTime
@@ -457,7 +452,7 @@ namespace Soheil.Core.DataServices
 				var causeRepository = new Repository<Cause>(context);
 
 				var selectedMachineList = selectedMachineRepository.GetAll();
-				var processReportList = processReportRepository.GetAll();
+				var processReportList = processReportRepository.Find(pr => pr.StartDateTime < record.End && pr.EndDateTime > record.Start).ToArray();
 				var causeList = causeRepository.GetAll();
 
 
@@ -471,9 +466,7 @@ namespace Soheil.Core.DataServices
 							  from processReport in processReportList.Where(pr =>
 								  selmachine.Process != null &&
 								  pr.Process != null &&
-								  pr.Process.Id == selmachine.Process.Id &&
-								  pr.StartDateTime < record.End &&
-								  pr.EndDateTime > record.Start)
+								  pr.Process.Id == selmachine.Process.Id)
 							  from stpr in processReport.DefectionReports
 							  let start = (processReport.StartDateTime < record.Start) ? record.Start : processReport.StartDateTime
 							  let end = (processReport.EndDateTime > record.End) ? record.End : processReport.EndDateTime

@@ -149,10 +149,25 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				//update process Tp and duration upon changing choice
 				activityVm.SelectedChoiceChanged += activityVm_SelectedChoiceChanged;
 
+				//update process Tp and duration upon adding new Process
+				activityVm.ProcessAdded += activityVm_ProcessAdded;
+
 				ActivityList.Add(activityVm);
 			}
 
 			OperatorManager.refresh();
+		}
+
+		void activityVm_ProcessAdded(ProcessEditorVm processVm)
+		{
+			if (IsTargetPointFixed)
+			{
+				processVm.Timing.TargetPoint = FixedTargetPoint;
+			}
+			else if (IsDurationFixed)
+			{
+				processVm.Timing.DurationSeconds = FixedDurationSeconds;
+			}
 		}
 		#endregion
 
@@ -264,7 +279,50 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		}
 		#endregion
 
-		#region Methods (Save)
+		#region Methods
+		void updateStartForAll()
+		{
+			var start = StartDateForAll.Add(StartTimeForAll);
+			var end = DateTime.MinValue;
+			foreach (var act in ActivityList)
+			{
+				foreach (var process in act.ProcessList)
+				{
+					if (!process.HasReport)
+						process.Timing.StartDateTime = start;
+					if (process.Timing.EndDateTime > end)
+						end = process.Timing.EndDateTime;
+				}
+			}
+			StartDate = start.Date;
+			StartTime = start.TimeOfDay;
+			if (end != DateTime.MinValue)
+			{
+				EndDate = end.Date;
+				EndTime = end.TimeOfDay;
+				Duration = end - start;
+			}
+		}
+		private void updateTargetPointForAll()
+		{
+			foreach (var activity in ActivityList)
+			{
+				foreach (var process in activity.ProcessList)
+				{
+					process.Timing.TargetPoint = BlockTargetPoint;
+				}
+			}
+		}
+		private void updateDurationForAll()
+		{
+			foreach (var activity in ActivityList)
+			{
+				foreach (var process in activity.ProcessList)
+				{
+					process.Timing.DurationSeconds = FixedDurationSeconds;
+				}
+			}
+		}
 
 		internal void Move(TimeSpan diff)
 		{
@@ -717,6 +775,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					vm.IsDurationFixed = false;
 					vm.IsDeferred = false;
+					vm.updateTargetPointForAll();
 				}
 			}));
 		//IsDurationFixed Dependency Property
@@ -734,6 +793,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				{
 					vm.IsTargetPointFixed = false;
 					vm.IsDeferred = false;
+					vm.updateDurationForAll();
 				}
 			}));
 		//IsDeferred Dependency Property
@@ -767,13 +827,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var val = (int)e.NewValue;
 				vm.IsTargetPointFixed = true;
 				vm.BlockTargetPoint = val;
-				foreach (var activity in vm.ActivityList)
-				{
-					foreach (var process in activity.ProcessList)
-					{
-						process.Timing.TargetPoint = val;
-					}
-				}
+				vm.updateTargetPointForAll();
 			}));
 		//FixedDuration Dependency Property
 		public int FixedDurationSeconds
@@ -788,15 +842,8 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				var vm = d as BlockEditorVm;
 				var val = (int)e.NewValue;
 				vm.IsDurationFixed = true;
-				foreach (var activity in vm.ActivityList)
-				{
-					foreach (var process in activity.ProcessList)
-					{
-						process.Timing.DurationSeconds = val;
-					}
-				}
+				vm.updateDurationForAll();
 			}));
-
 		//StartDateForAll Dependency Property
 		public DateTime StartDateForAll
 		{
@@ -915,29 +962,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				Duration = end - start;
 			});
 		}
-		void updateStartForAll()
-		{
-			var start = StartDateForAll.Add(StartTimeForAll);
-			var end = DateTime.MinValue;
-			foreach (var act in ActivityList)
-			{
-				foreach (var process in act.ProcessList)
-				{
-					if (!process.HasReport)
-						process.Timing.StartDateTime = start;
-					if (process.Timing.EndDateTime > end)
-						end = process.Timing.EndDateTime;
-				}
-			}
-			StartDate = start.Date;
-			StartTime = start.TimeOfDay;
-			if (end != DateTime.MinValue)
-			{
-				EndDate = end.Date;
-				EndTime = end.TimeOfDay;
-				Duration = end - start;
-			}
-		}
+
 		/// <summary>
 		/// Gets or sets a bindable command to set StateStation of this block according to SelectedStateStation
 		/// </summary>

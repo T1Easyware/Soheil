@@ -1306,4 +1306,7 @@
   <data name="txtShowFilledReports" xml:space="preserve">
     <value>Show Filled Reports</value>
   </data>
+  <data name="txtMaterialPlanning" xml:space="preserve">
+    <value>Material Planning</value>
+  </data>
 </root>

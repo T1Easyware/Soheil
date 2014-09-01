@@ -10,7 +10,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 	public class RawMaterialVm : DependencyObject
 	{
 		public Model.RawMaterial Model { get; set; }
-		public static int ItemHeight = 30;
+		public static double ItemHeight = 50;
 		public RawMaterialVm(Model.RawMaterial model)
 		{
 			Model = model;
@@ -41,11 +41,11 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 		/// </summary>
 		public int NumberOfRequests
 		{
-			get { return (int)GetValue(HeightProperty) / ItemHeight; }
+			get { return (int)((double)GetValue(HeightProperty) / ItemHeight); }
 			set { SetValue(HeightProperty, value * ItemHeight); }
 		}
 		public static readonly DependencyProperty HeightProperty =
-			DependencyProperty.Register("Height", typeof(int), typeof(RawMaterialVm), new PropertyMetadata(0));
+			DependencyProperty.Register("Height", typeof(double), typeof(RawMaterialVm), new PropertyMetadata(0d));
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Name

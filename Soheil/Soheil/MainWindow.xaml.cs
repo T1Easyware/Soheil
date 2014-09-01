@@ -84,7 +84,7 @@ namespace Soheil
 
 
 			// temp
-			Login(null);
+			//Login(null);
 			//SetValue(LoginProperty, true);
 			//SingularList = new Core.ViewModels.Reports.DailyStationPlanVm(AccessType.Full);
 			//chrometabs.AddTab(CreateSingularTab(SoheilEntityType.DailyStationPlan), true);

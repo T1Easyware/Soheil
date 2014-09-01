@@ -166,7 +166,7 @@
                         ImageSource="/Soheil.Controls;component/Images/Menus/pp.png"
                         Tag="31" />
 				<CustomControls:ImageButton Background="Transparent"
-                                            Margin="5,0,5,0" Visibility="Collapsed"
+                                            Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
                         Content="{Loc txtMaterialPlanning}"
                         IsEnabled="{Binding Path=CanAddTab,

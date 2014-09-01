@@ -48,25 +48,25 @@ namespace Soheil.Core.DataServices
 				var end = workProfilePlanDs.GetShiftStartOn(oprInfo.EndDate);
 				
 				var operatorRepository = new Repository<Operator>(context);
-				var oList = operatorRepository.Find(x=>x.Status == (byte)Status.Active);
+				var oList = operatorRepository.Find(x => x.Status == (byte)Status.Active).ToArray();
 
 				var operatorProcessReportRepository = new Repository<OperatorProcessReport>(context);
 				var oprList = operatorProcessReportRepository.Find(x => x != null
 					&& x.ProcessOperator != null && x.ProcessOperator.Operator != null
 					&& x.ProcessReport != null && x.ProcessReport.StartDateTime>=start && x.ProcessReport.EndDateTime <=end
-					&& x.ProcessReport.Process != null && x.ProcessReport.Process.StateStationActivity != null);
+					&& x.ProcessReport.Process != null && x.ProcessReport.Process.StateStationActivity != null).ToArray();
 
 				var osrRepository = new Repository<OperatorStoppageReport>(context);
 				var osrList = osrRepository.Find(x => x != null
 					&& x.StoppageReport != null && x.StoppageReport.ProcessReport != null
 					&& x.StoppageReport.ProcessReport.StartDateTime>=start && x.StoppageReport.ProcessReport.EndDateTime <=end
-					&& x.Operator != null);
+					&& x.Operator != null).ToArray();
 
 				var odrRepository = new Repository<OperatorDefectionReport>(context);
 				var odrList = odrRepository.Find(x => x != null
 					&& x.DefectionReport != null && x.DefectionReport.ProcessReport != null
 					&& x.DefectionReport.ProcessReport.StartDateTime>=start && x.DefectionReport.ProcessReport.EndDateTime <=end
-					&& x.Operator != null);
+					&& x.Operator != null).ToArray();
 
 
 				var oprQuery = from opr in oprList
@@ -173,28 +173,28 @@ namespace Soheil.Core.DataServices
                 var drRepository = new Repository<DefectionReport>(context);
                 var odrRepository = new Repository<OperatorDefectionReport>(context);
 
+				var workProfilePlanDs = new DataServices.WorkProfilePlanDataService(context);
+				var start = workProfilePlanDs.GetShiftStartOn(startDate);
+				var end = workProfilePlanDs.GetShiftStartOn(endDate);
+
                 var oprList = operatorProcessReportRepository.GetAll();
-                var processReportList = processReportRepository.GetAll();
+				var processReportList = processReportRepository.Find(pr => pr.StartDateTime >= start && pr.EndDateTime <= end).ToArray();
                 var processList = processRepository.GetAll();
-                var ssaList = ssaRepository.GetAll();
-                var ssList = ssRepository.GetAll();
-                var stationList = stationRepository.GetAll();
-                var stateList = stateRepository.GetAll();
-                var fpcList = fpcRepository.GetAll();
-                var productList = productRepository.GetAll();
-                var productDefectionList = productDefectionRepository.GetAll();
-                var productReworkList = productReworkRepository.GetAll();
-                var activityList = activityRepository.GetAll();
+                var ssaList = ssaRepository.GetAll().ToArray();
+				var ssList = ssRepository.GetAll().ToArray();
+				var stationList = stationRepository.GetAll().ToArray();
+				var stateList = stateRepository.GetAll().ToArray();
+				var fpcList = fpcRepository.GetAll().ToArray();
+				var productList = productRepository.GetAll().ToArray();
+				var productDefectionList = productDefectionRepository.GetAll().ToArray();
+				var productReworkList = productReworkRepository.GetAll().ToArray();
+				var activityList = activityRepository.GetAll().ToArray();
                 var srList = srRepository.GetAll();
                 var osrList = osrRepository.GetAll();
                 var drList = drRepository.GetAll();
                 var odrList = odrRepository.GetAll();
 
-				var workProfilePlanDs = new DataServices.WorkProfilePlanDataService(context);
-				var start = workProfilePlanDs.GetShiftStartOn(startDate);
-				var end = workProfilePlanDs.GetShiftStartOn(endDate);
-
-				var genQuery = from processReport in processReportList.Where(pr => pr.StartDateTime >= start && pr.EndDateTime <= end)
+				var genQuery = from processReport in processReportList
                                from process in processList.Where(p => processReport != null && processReport.Process != null && p.Id == processReport.Process.Id).DefaultIfEmpty()
                                from ssActivity in ssaList.Where(ssa => process != null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
                                from stateStation in ssList.Where(ss=> ssActivity != null && ssActivity.StateStation != null && ss.Id == ssActivity.StateStation.Id).DefaultIfEmpty()
