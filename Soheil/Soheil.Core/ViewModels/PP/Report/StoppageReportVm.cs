@@ -10,13 +10,14 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class StoppageReportVm : DependencyObject
 	{
+		public Dal.SoheilEdmContext UOW { get; set; }
 		public Model.StoppageReport Model { get; protected set; }
 		readonly StoppageReportCollection Parent;
 
-		public StoppageReportVm(StoppageReportCollection parent, Model.StoppageReport model)
+		public StoppageReportVm(StoppageReportCollection parent, Model.StoppageReport model, Dal.SoheilEdmContext uow)
 		{
+			UOW = uow;
 			Model = model;
-			Index = parent.Parent.StoppageReports.List.Count + 1;
 			Parent = parent;
 			
 			int[] causeIds = null;
@@ -26,8 +27,8 @@ namespace Soheil.Core.ViewModels.PP.Report
 						causeIds = new int[3] { model.Cause.Parent.Parent.Id, model.Cause.Parent.Id, model.Cause.Id };
 			StoppageLevels = FilterBoxVmCollection.CreateForStoppageReport(this, causeIds);
 
-			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorStoppageReports, Parent.Parent.UOW);
-			var osrRepo = new Dal.Repository<Model.OperatorStoppageReport>(Parent.Parent.UOW);
+			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorStoppageReports, uow);
+			var osrRepo = new Dal.Repository<Model.OperatorStoppageReport>(uow);
 			GuiltyOperators.OperatorSelected += (vm, oldOp, newOp) =>
 			{
 				if (newOp.Model == null) return;
@@ -75,7 +76,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				//delete
 				Parent.List.Remove(this);
 				Model.ProcessReport.StoppageReports.Remove(Model);
-				new DataServices.ProcessReportDataService(Parent.Parent.UOW).Delete(Model);
+				new DataServices.ProcessReportDataService(uow).Delete(Model);
 
 				//reset indices
 				for (int i = 0; i < Parent.List.Count; i++)
@@ -106,19 +107,19 @@ namespace Soheil.Core.ViewModels.PP.Report
 		}
 		void AddRepair(Model.Repair model)
 		{
-			var vm = new RepairVm(model, Parent.Parent.UOW);
+			var vm = new RepairVm(model, UOW);
 			vm.DeleteCommand = new Commands.Command(o =>
 			{
 				Model.Repairs.Remove(vm.Model);
 				Repairs.Remove(vm);
-				new Soheil.Core.DataServices.PM.RepairDataService(Parent.Parent.UOW).Delete(vm.Model);
+				new Soheil.Core.DataServices.PM.RepairDataService(UOW).Delete(vm.Model);
 			});
 			Repairs.Add(vm);
 		}
 
 		internal void SelectCause(int causeId)
 		{
-			Model.Cause = new Dal.Repository<Model.Cause>(Parent.Parent.UOW).FirstOrDefault(x => x.Id == causeId);
+			Model.Cause = new Dal.Repository<Model.Cause>(UOW).FirstOrDefault(x => x.Id == causeId);
 		}
 
 		/// <summary>

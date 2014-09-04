@@ -309,7 +309,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 			{
 				foreach (var process in activity.ProcessList)
 				{
-					process.Timing.TargetPoint = BlockTargetPoint;
+					process.Timing.TargetPoint = FixedTargetPoint;
 				}
 			}
 		}

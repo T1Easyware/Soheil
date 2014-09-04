@@ -58,6 +58,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="TimeBox.cs" />
+    <Compile Include="VM\DurationCell.cs" />
     <Compile Include="VM\OperatorVm.cs" />
     <Compile Include="VM\PageVm.cs" />
     <Compile Include="VM\ReportVm.cs" />

@@ -82,14 +82,31 @@ namespace Soheil.Tablet.VM
 		#region Ctor and Init
 		public PageVm()
 		{
-			Reload();
 			RefreshCommand = new Core.Commands.Command(o => Reload());
+			ExitCommand = new Core.Commands.Command(o =>
+			{
+				HasMessage = true;
+				MessageText = "آیا مایلید از برنامه خارج شوید؟";
+				YesCommand = new Core.Commands.Command(oo =>
+				{
+					if (AutoSave)
+						if (SelectedStation != null)
+							if (SelectedStation.SelectedReport != null)
+								SaveReport(SelectedStation.SelectedReport);
+					Application.Current.MainWindow.Close();
+				});
+				NoCommand = new Core.Commands.Command(oo =>
+				{
+					HasMessage = false;
+				});
+			});
 		}
 		#endregion
 
 		#region Methods
 		public void Reload()
 		{
+			IsLoading = true;
 			UOW = new Dal.SoheilEdmContext();
 			StationDataService = new Core.DataServices.StationDataService(UOW);
 
@@ -97,13 +114,54 @@ namespace Soheil.Tablet.VM
 			SelectedStation = null;
 
 			Stations.Clear();
-			var stations = StationDataService.GetActives();
+			IEnumerable<Model.Station> stations = null;
+			Task.Factory.StartNew(() => stations = StationDataService.GetActives()).Wait();
+			if (stations == null) return;
 			foreach (var station in stations)
 			{
 				var stationVm = new StationVm(station);
 				stationVm.Selected += s => SelectedStation = s;
+				stationVm.ReportChanged += (oldval, newval) =>
+				{
+					if (oldval != null)
+					{
+						if (AutoSave)
+							SaveReport(oldval);
+						else
+						{
+							HasMessage = true;
+							MessageText = string.Format("آیا تغییرات گزارش {0} ذخیره شود؟", oldval.OperatorsText);
+							YesCommand = new Core.Commands.Command(o =>
+							{
+								SaveReport(oldval);
+								HasMessage = false;
+							});
+							NoCommand = new Core.Commands.Command(o =>
+							{
+								HasMessage = false;
+							});
+						}
+					}
+				};
 				Stations.Add(stationVm);
 			}
+			IsLoading = false;
+		}
+		void SaveReport(ReportVm val)
+		{
+			if (val.StoppageReports.List.Any(x => x.StoppageLevels.FilterBoxes.Last().SelectedItem == null))
+				MessageBox.Show("علت توقف سطح سوم انتخاب نشده است");
+			else if (val.DefectionReports.List.Any(x => x.ProductDefection.SelectedItem == null))
+				MessageBox.Show("نوع عیب انتخاب نشده است");
+			else if (val.StoppageReports.List.Any(x => x.GuiltyOperators.FilterBoxes.Any(f => f.SelectedItem == null)))
+				MessageBox.Show("اپراتور مقصر در توقفات انتخاب نشده است");
+			else if (val.DefectionReports.List.Any(x => x.GuiltyOperators.FilterBoxes.Any(f => f.SelectedItem == null)))
+				MessageBox.Show("اپراتور مقصر در ضایعات انتخاب نشده است");
+			//else if (oldval.StoppageReports.List.Any(x => x.Repairs.Any(r => r.Machine == null || r.MachinePart == null)))
+			//	MessageBox.Show("ماشین و قطعه در تعمیرات انتخاب نشده است");
+			else
+				new Core.DataServices.ProcessReportDataService(val.UOW).Save(val.Model);
+
 		}
 		#endregion
 
@@ -118,6 +176,78 @@ namespace Soheil.Tablet.VM
 		}
 		public static readonly DependencyProperty RefreshCommandProperty =
 			DependencyProperty.Register("RefreshCommand", typeof(Core.Commands.Command), typeof(PageVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ExitCommand
+		/// </summary>
+		public Core.Commands.Command ExitCommand
+		{
+			get { return (Core.Commands.Command)GetValue(ExitCommandProperty); }
+			set { SetValue(ExitCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ExitCommandProperty =
+			DependencyProperty.Register("ExitCommand", typeof(Core.Commands.Command), typeof(PageVm), new UIPropertyMetadata(null));
+
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates HasMessage
+		/// </summary>
+		public bool HasMessage
+		{
+			get { return (bool)GetValue(HasMessageProperty); }
+			set { SetValue(HasMessageProperty, value); }
+		}
+		public static readonly DependencyProperty HasMessageProperty =
+			DependencyProperty.Register("HasMessage", typeof(bool), typeof(PageVm), new UIPropertyMetadata(false));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates MessageText
+		/// </summary>
+		public string MessageText
+		{
+			get { return (string)GetValue(MessageTextProperty); }
+			set { SetValue(MessageTextProperty, value); }
+		}
+		public static readonly DependencyProperty MessageTextProperty =
+			DependencyProperty.Register("MessageText", typeof(string), typeof(PageVm), new UIPropertyMetadata(""));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates YesCommand
+		/// </summary>
+		public Core.Commands.Command YesCommand
+		{
+			get { return (Core.Commands.Command)GetValue(YesCommandProperty); }
+			set { SetValue(YesCommandProperty, value); }
+		}
+		public static readonly DependencyProperty YesCommandProperty =
+			DependencyProperty.Register("YesCommand", typeof(Core.Commands.Command), typeof(PageVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates NoCommand
+		/// </summary>
+		public Core.Commands.Command NoCommand
+		{
+			get { return (Core.Commands.Command)GetValue(NoCommandProperty); }
+			set { SetValue(NoCommandProperty, value); }
+		}
+		public static readonly DependencyProperty NoCommandProperty =
+			DependencyProperty.Register("NoCommand", typeof(Core.Commands.Command), typeof(PageVm), new UIPropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates IsLoading
+		/// </summary>
+		public bool IsLoading
+		{
+			get { return (bool)GetValue(IsLoadingProperty); }
+			set { SetValue(IsLoadingProperty, value); }
+		}
+		public static readonly DependencyProperty IsLoadingProperty =
+			DependencyProperty.Register("IsLoading", typeof(bool), typeof(PageVm), new UIPropertyMetadata(false));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates AutoSave
+		/// </summary>
+		public bool AutoSave
+		{
+			get { return (bool)GetValue(AutoSaveProperty); }
+			set { SetValue(AutoSaveProperty, value); }
+		}
+		public static readonly DependencyProperty AutoSaveProperty =
+			DependencyProperty.Register("AutoSave", typeof(bool), typeof(PageVm), new UIPropertyMetadata(true));
 		#endregion
 	}
 }

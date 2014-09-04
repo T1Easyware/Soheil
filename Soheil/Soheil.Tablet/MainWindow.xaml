@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:core="clr-namespace:Soheil.Core.Fpc;assembly=Soheil.Core"
+		xmlns:v="clr-namespace:Soheil.Tablet"
         xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit"
         Title="Soheil 3 - Activity Report" Height="350" Width="800" WindowState="Maximized" 
         WindowStyle="None" x:Name="root" 
@@ -10,17 +11,37 @@
     <!--
     FlowDirection="{Loc enumDirection}"
     -->
-    
+
     <Window.Resources>
+        <core:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <core:NullToInvisibilityConverter x:Key="nullToInvisibilityConverter"/>
-        
-        <SolidColorBrush Color="#DDD" x:Key="backLightBrush"/>
-        <SolidColorBrush Color="#99A" x:Key="backMediumBrush"/>
-        <SolidColorBrush Color="#86C" x:Key="backHardBrush"/>
+        <v:Inverter x:Key="inverter"/>
+
+        <SolidColorBrush Color="#CCC" x:Key="backLightBrush"/>
+        <SolidColorBrush Color="#77A" x:Key="backMediumBrush"/>
+        <SolidColorBrush Color="#84C" x:Key="backHardBrush"/>
+        <SolidColorBrush Color="#C44" x:Key="backRedBrush"/>
+        <SolidColorBrush Color="#48C" x:Key="backHighlightBrush"/>
         <SolidColorBrush Color="#80C" x:Key="borderHardBrush"/>
         <SolidColorBrush Color="#FFF" x:Key="fontHardBrush"/>
 
-        <Style TargetType="Button">
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Background" Value="{StaticResource backHardBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource borderHardBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Foreground" Value="{StaticResource fontHardBrush}"/>
+            <Setter Property="MinWidth" Value="30"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{StaticResource backHighlightBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="{x:Type ToggleButton}">
             <Setter Property="Margin" Value="3"/>
             <Setter Property="Background" Value="{StaticResource backHardBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource borderHardBrush}"/>
@@ -28,34 +49,43 @@
             <Setter Property="Foreground" Value="{StaticResource fontHardBrush}"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="Bold"/>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{StaticResource backHighlightBrush}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
-        <Style TargetType="ToggleButton">
-            <Setter Property="Margin" Value="3"/>
-            <Setter Property="Background" Value="{StaticResource backHardBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource borderHardBrush}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Foreground" Value="{StaticResource fontHardBrush}"/>
-            <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-        </Style>
-        <Style TargetType="TextBlock">
+        <Style TargetType="{x:Type TextBlock}">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="MinWidth" Value="200"/>
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontStretch" Value="Condensed"/>
+            <Setter Property="IsEditable" Value="False"/>
+            <Setter Property="DisplayMemberPath" Value="Text"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="MinWidth" Value="80"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="MinWidth" Value="100"/>
             <Setter Property="Height" Value="34"/>
             <Setter Property="FontSize" Value="20"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <EventSetter Event="UIElement.TouchDown" Handler="TextBox_TouchDown"/>
+            <EventSetter Event="UIElement.GotFocus" Handler="TextBox_Focused"/>
         </Style>
 
-        <Style x:Key="stationBorder" TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+        <Style x:Key="stationBorder" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
             <Setter Property="FontSize" Value="18"/>
         </Style>
-        <Style x:Key="taskBorder" TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+        <Style x:Key="taskBorder" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
             <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="#A000"/>
         </Style>
     </Window.Resources>
 
@@ -66,15 +96,16 @@
     <Grid>
         <DockPanel Background="{StaticResource backLightBrush}">
             <!-- menu -->
-            <Border DockPanel.Dock="Top" Height="40" Background="{StaticResource backMediumBrush}" Padding="4">
+            <Border DockPanel.Dock="Top" Height="60" Background="{StaticResource backMediumBrush}" Padding="4">
                 <DockPanel>
-                    <Border BorderBrush="{StaticResource borderHardBrush}" BorderThickness="2" Margin="3" DockPanel.Dock="Right">
-                        <cal:DatePicker SelectedDate="{Binding Date}" DisplayDate="{Binding Date}" VerticalAlignment="Center" Background="{StaticResource backHardBrush}" BorderThickness="0"/>
+                    <Border BorderBrush="{StaticResource borderHardBrush}" Background="{StaticResource backHardBrush}" BorderThickness="2" Margin="3" DockPanel.Dock="Right" TouchDown="DatePickerTouchDown">
+                        <cal:DatePicker SelectedDate="{Binding Date}" DisplayDate="{Binding Date}" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Background="{StaticResource backHardBrush}" BorderThickness="0"/>
                     </Border>
                     <ToggleButton Content="{Loc txtShowFilledReports}" IsChecked="{Binding ShowAll}" DockPanel.Dock="Right" FontSize="12"/>
                     <ToggleButton Content="{Loc txtSafetyOption}" IsChecked="{Binding IsSafe}" DockPanel.Dock="Right" FontSize="12"/>
+                    <ToggleButton Content="AutoSave" IsChecked="{Binding AutoSave}" DockPanel.Dock="Right"/>
                     <Button Content="{Loc txtRefresh}" Command="{Binding RefreshCommand}" DockPanel.Dock="Right"/>
-                    <Button Content="X" DockPanel.Dock="Left" Click="Button_Click" Foreground="#FA8" Width="40"/>
+                    <Button Content="X" DockPanel.Dock="Left" Foreground="{StaticResource borderHardBrush}" FontSize="25" Width="50" Command="{Binding ExitCommand}"/>
                     <TextBlock Text="{Binding ElementName=root, Path=Title}" DockPanel.Dock="Right" TextAlignment="Center" Foreground="Gainsboro"/>
                 </DockPanel>
             </Border>
@@ -97,88 +128,118 @@
 
             <!-- reports -->
             <ScrollViewer DockPanel.Dock="Left" HorizontalScrollBarVisibility="Disabled" MinWidth="100">
-                <ItemsControl ItemsSource="{Binding SelectedStation.Reports}">
-                    <ItemsControl.ItemTemplate>
+                <ListBox ItemsSource="{Binding SelectedStation.Reports}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <ToggleButton Style="{StaticResource taskBorder}" IsChecked="{Binding IsSelected}">
+                            <ToggleButton IsChecked="{Binding IsSelected}" Style="{StaticResource taskBorder}">
                                 <StackPanel TextBlock.TextAlignment="Center" MaxWidth="250">
                                     <StackPanel.Effect>
                                         <DropShadowEffect BlurRadius="3" ShadowDepth="0" Color="#80C"/>
                                     </StackPanel.Effect>
                                     <TextBlock Text="{Binding ActivityName}" TextWrapping="Wrap"/>
-                                    <TextBlock Text="{Binding OperatorsText}" FontSize="9" Foreground="Silver" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding OperatorsText}" FontSize="12" Foreground="Silver" TextWrapping="Wrap"/>
                                     <TextBlock Text="{Binding TimeRangeText}" FontSize="18" Foreground="WhiteSmoke"/>
                                 </StackPanel>
                             </ToggleButton>
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </ScrollViewer>
 
             <!-- basic report -->
-            <StackPanel DataContext="{Binding SelectedStation.SelectedReport}" DockPanel.Dock="Top"
-                        Visibility="{Binding Path=., Converter={StaticResource nullToInvisibilityConverter}}">
-                <Grid Margin="10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="40"/>
-                        <RowDefinition Height="40"/>
-                        <RowDefinition Height="40"/>
-                    </Grid.RowDefinitions>
+            <DockPanel DockPanel.Dock="Top">
+                <!-- numpad -->
+                <UniformGrid DockPanel.Dock="Right" Rows="4" Columns="3" Margin="5" FlowDirection="LeftToRight" Width="160" Background="{StaticResource backMediumBrush}">
+                    <UniformGrid.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <EventSetter Event="TouchDown" Handler="NumpadTouchDown"/>
+                            <EventSetter Event="Click" Handler="NumpadClick"/>
+                        </Style>
+                    </UniformGrid.Resources>
+                    <Button Content="7"/>
+                    <Button Content="8"/>
+                    <Button Content="9"/>
+                    <Button Content="4"/>
+                    <Button Content="5"/>
+                    <Button Content="6"/>
+                    <Button Content="1"/>
+                    <Button Content="2"/>
+                    <Button Content="3"/>
+                    <Button Content="0"/>
+                    <Button Content="←" Background="{StaticResource backRedBrush}"/>
+                    <Button Content="C" Background="{StaticResource backRedBrush}"/>
+                </UniformGrid>
 
-                    <TextBlock Text="{Loc txtFrom}"/>
-                    <TextBlock Text="{Loc txtTo}" Grid.Row="1"/>
-                    <TextBlock Text="{Loc txtDuration}" Grid.Row="2"/>
+                <StackPanel DataContext="{Binding SelectedStation.SelectedReport}" Visibility="{Binding Path=., Converter={StaticResource nullToInvisibilityConverter}}">
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
 
-                    <TextBox Text="{Binding FromTime}" Grid.Column="1"/>
-                    <TextBox Text="{Binding ToTime}" Grid.Column="1" Grid.Row="1"/>
-                    <TextBox Text="{Binding Duration}" Grid.Column="1" Grid.Row="2"/>
+                        <TextBlock Text="{Loc txtFrom}"/>
+                        <TextBlock Text="{Loc txtTo}" Grid.Row="1"/>
+                        <TextBlock Text="{Loc txtDuration}" Grid.Row="2"/>
 
-                    <UniformGrid Rows="1" Grid.Column="2">
-                        <Button Content="{Loc txtAuto}"/>
-                    </UniformGrid>
-                    <UniformGrid Rows="1" Grid.Column="2" Grid.Row="1">
-                        <Button Content="{Loc txtNow}"/>
-                        <Button Content="{Loc PPE_StartOfHour}"/>
-                    </UniformGrid>
-                    <UniformGrid Rows="1" Grid.Column="2" Grid.Row="2">
-                        <Button Content="{Loc txtAuto}"/>
-                        <Button Content="{Loc txtHalfHour}"/>
-                        <Button Content="{Loc txtOneHour}"/>
-                    </UniformGrid>
-                </Grid>
+                        <TextBox Text="{Binding Start.Text, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                        <TextBox Text="{Binding End.Text, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="1"/>
+                        <TextBox Text="{Binding Duration.Text, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="2"/>
+
+                        <UniformGrid Rows="1" Grid.Column="2">
+                            <Button Content="{Loc txtAuto}" Command="{Binding AutoStart}"/>
+                            <Button Content="{Loc PPE_StartOfHour}" Command="{Binding StartAtHour}"/>
+                        </UniformGrid>
+                        <UniformGrid Rows="1" Grid.Column="2" Grid.Row="1">
+                            <Button Content="{Loc txtNow}" Command="{Binding EndNow}"/>
+                            <Button Content="{Loc PPE_StartOfHour}" Command="{Binding EndAtHour}"/>
+                            <Button Content="تا انتها" Command="{Binding EndAtEnd}"/>
+                        </UniformGrid>
+                        <UniformGrid Rows="1" Grid.Column="2" Grid.Row="2">
+                            <ToggleButton Content="به نسبت زمان Task" IsChecked="{Binding IsTaskRatio}"/>
+                            <Button Content="{Loc txtHalfHour}" Command="{Binding HalfHour}"/>
+                            <Button Content="{Loc txtOneHour}" Command="{Binding OneHour}"/>
+                        </UniformGrid>
+                    </Grid>
 
 
-                <!-- producedG1 -->
-                <DockPanel LastChildFill="False" Margin="10,0">
-                    <Border BorderBrush="{StaticResource borderHardBrush}" Background="{StaticResource backHardBrush}"
+                    <!-- producedG1 -->
+                    <DockPanel LastChildFill="False" Margin="10,0">
+                        <Border BorderBrush="{StaticResource borderHardBrush}" Background="{StaticResource backHardBrush}"
 						BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left">
-                        <TextBlock Text="{Loc txtOperatorProducedG1}" Foreground="#8FF" Margin="2,2,2,0"/>
-                    </Border>
-                    <TextBlock Text="{Binding TargetPointPerOperator}" DockPanel.Dock="Right" Margin="10,0"/>
-                    <TextBlock Text="{Loc txtOperatorTargetPoint}" DockPanel.Dock="Right" FontSize="12" Foreground="{StaticResource borderHardBrush}"/>
-                </DockPanel>
-                <Border Grid.Row="4" BorderBrush="{StaticResource borderHardBrush}" Background="{StaticResource backLightBrush}"
+                            <TextBlock Text="{Loc txtOperatorProducedG1}" Foreground="#8FF" Margin="2,2,2,0"/>
+                        </Border>
+                        <TextBlock Text="{Binding TargetPointPerOperator}" DockPanel.Dock="Right" Margin="10,0"/>
+                        <TextBlock Text="{Loc txtOperatorTargetPoint}" DockPanel.Dock="Right" FontSize="12" Foreground="{StaticResource borderHardBrush}"/>
+                        <TextBlock Text="{Binding ProducedTime}" DockPanel.Dock="Right" Margin="10,0" Foreground="{StaticResource backRedBrush}"/>
+                    </DockPanel>
+                    <Border Grid.Row="4" BorderBrush="{StaticResource borderHardBrush}" Background="{StaticResource backLightBrush}"
                         BorderThickness="2" CornerRadius="0,2,2,2" Margin="10,0">
-                    <ItemsControl ItemsSource="{Binding Operators}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <DockPanel>
-                                    <TextBlock Text="{Binding Name}"/>
-                                    <TextBox Text="{Binding ProducedG1}"/>
-                                </DockPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Border>
-
-
-            </StackPanel>
-
+                        <ItemsControl ItemsSource="{Binding Operators}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding Name}"/>
+                                        <TextBox Text="{Binding ProducedG1, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+            
+            
             <!-- more report -->
             <Border Grid.Row="4" Grid.ColumnSpan="3" Margin="0,10,0,0" Background="#2000" DataContext="{Binding SelectedStation.SelectedReport}"
                      Visibility="{Binding Path=., Converter={StaticResource nullToInvisibilityConverter}}">
@@ -194,22 +255,23 @@
                     </DockPanel>
                     <Border Grid.Row="4" BorderBrush="{StaticResource borderHardBrush}" Background="{StaticResource backLightBrush}"
                         BorderThickness="2" CornerRadius="0,2,2,2" Margin="2,0,2,2">
-                        <ItemsControl ItemsSource="{Binding DefectionReports}">
+                        <ItemsControl ItemsSource="{Binding DefectionReports.List}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <WrapPanel>
-                                        <ComboBox ItemsSource="{Binding ProductDefection.FilteredList}"
-									        DisplayMemberPath="Text" IsEditable="False" Margin="3" MinWidth="80"
-									        SelectedItem="{Binding ProductDefection.SelectedItem}"/>
-                                        <TextBox Text="{Binding ProducedG1}"/>
-                                        <TextBox Text="{Binding FromTime}" Margin="5,0"/>
-                                        <ToggleButton Content="{Loc txtIsDefection}" IsChecked="{Binding IsDefection}" VerticalAlignment="Center"/>
+                                        <Button Content="X" DockPanel.Dock="Right" Command="{Binding DeleteCommand}" Background="{StaticResource backRedBrush}"/>
+                                        <ComboBox ItemsSource="{Binding ProductDefection.FilteredList}" SelectedItem="{Binding ProductDefection.SelectedItem}"/>
+                                        <TextBlock Text="زمان"/>
+                                        <TextBox Text="{Binding LostSeconds, Mode=TwoWay}"/>
+                                        <TextBlock Text="تعداد"/>
+                                        <TextBox Text="{Binding LostCount, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
+                                        <ToggleButton Content="{Loc txtIsDefection}" IsChecked="{Binding IsG2, Converter={StaticResource inverter}}" VerticalAlignment="Center"/>
                                         <ItemsControl ItemsSource="{Binding GuiltyOperators.FilterBoxes}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <DockPanel>
-                                                        <Button Content="X" DockPanel.Dock="Right" Command="{Binding DeleteCommand}"/>
-                                                        <ComboBox ItemsSource="{Binding FilteredList}" Grid.Column="2" DisplayMemberPath="Text" SelectedItem="{Binding SelectedItem}" IsEditable="False"/>
+                                                        <Button Content="X" DockPanel.Dock="Right" Command="{Binding DeleteCommand}" Background="{StaticResource backRedBrush}"/>
+                                                        <ComboBox ItemsSource="{Binding FilteredList}" Grid.Column="2" SelectedItem="{Binding SelectedItem}"/>
                                                     </DockPanel>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
@@ -237,10 +299,48 @@
                     </DockPanel>
                     <Border Grid.Row="4" BorderBrush="{StaticResource borderHardBrush}" Background="{StaticResource backLightBrush}"
                         BorderThickness="2" CornerRadius="0,2,2,2" Margin="2,0,2,2">
-                        <ItemsControl ItemsSource="{Binding StoppageReports}">
+                        <ItemsControl ItemsSource="{Binding StoppageReports.List}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-
+                                    <WrapPanel>
+                                        <Button Content="X" DockPanel.Dock="Right" Command="{Binding DeleteCommand}" Background="{StaticResource backRedBrush}"/>
+                                        <ItemsControl ItemsSource="{Binding StoppageLevels.FilterBoxes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox ItemsSource="{Binding FilteredList}" SelectedItem="{Binding SelectedItem}"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                        <TextBlock Text="کد"/>
+                                        <TextBox Text="{Binding SelectedCode}" TextChanged="CausesSelectedCode_TextChanged" FlowDirection="LeftToRight" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="30" x:Name="cd"/>
+                                        <Button Content="055050" FlowDirection="LeftToRight" Tag="{Binding ElementName=cd}" Click="QuickCauseButtonDown"/>
+                                        <Button Content="011010" FlowDirection="LeftToRight" Tag="{Binding ElementName=cd}" Click="QuickCauseButtonDown"/>
+                                        <TextBlock Text="زمان"/>
+                                        <TextBox Text="{Binding LostSeconds, Mode=TwoWay}"/>
+                                        <TextBlock Text="تعداد"/>
+                                        <TextBox Text="{Binding LostCount, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
+                                        <ItemsControl ItemsSource="{Binding GuiltyOperators.FilterBoxes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DockPanel>
+                                                        <Button DockPanel.Dock="Right" Command="{Binding DeleteCommand}" Content="X" Background="{StaticResource backRedBrush}"/>
+                                                        <ComboBox ItemsSource="{Binding FilteredList}" Grid.Column="2"	SelectedItem="{Binding SelectedItem}"/>
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                        <Button Content="+" Width="30" Command="{Binding GuiltyOperators.AddCommand}"/>
+                                    </WrapPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -252,8 +352,19 @@
         
         
         <!-- messages -->
-        <Grid>
-            
+        <Grid Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#6000">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="{StaticResource backLightBrush}">
+                <StackPanel>
+                    <TextBlock Text="{Binding MessageText}" Margin="20"/>
+                    <UniformGrid Columns="2" Rows="1" Height="100" Width="400">
+                        <Button Content="No" Command="{Binding NoCommand}"/>
+                        <Button Content="Yes" Command="{Binding YesCommand}"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
         </Grid>
+        <Border Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#8FFF">
+            <TextBlock Text="Loading..." FlowDirection="LeftToRight" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
     </Grid>
 </Window>

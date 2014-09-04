@@ -102,10 +102,53 @@ namespace Soheil.Core.ViewModels.PP.Report
 
 			//reports
 			OperatorReports = new OperatorReportCollection(this);
-			DefectionReports = new DefectionReportCollection(this);
+
+			DefectionReports = new DefectionReportCollection();
+			DefectionReports.CountChanged += sum => DefectionCount = sum;
 			DefectionCount = (int)Model.DefectionReports.Sum(x => x.CountEquivalence);
-			StoppageReports = new StoppageReportCollection(this);
+			DefectionReports.AddCommand = new Commands.Command(o =>
+			{
+				var DefectionReportsModel = new Model.DefectionReport
+				{
+					ProcessReport = Model,
+					LostCount = 0,
+					LostTime = 0,
+					ProductDefection = null,
+					ModifiedBy = LoginInfo.Id,
+				};
+				/*foreach (var po in Parent.Model.Process.ProcessOperators)
+				{
+					model.OperatorDefectionReports.Add(new Model.OperatorDefectionReport
+					{
+						Operator = po.Operator,
+						DefectionReport = model,
+						Code = po.Operator.Code,
+						ModifiedBy = LoginInfo.Id,
+					});
+				}*/
+				Model.DefectionReports.Add(DefectionReportsModel);
+				var vm = new DefectionReportVm(DefectionReports, DefectionReportsModel, UOW);
+				vm.Index = DefectionReports.List.Count + 1;
+				DefectionReports.List.Add(vm);
+			});
+			
+			StoppageReports = new StoppageReportCollection();
+			StoppageReports.CountChanged += sum => StoppageCount = sum;
 			StoppageCount = (int)Model.StoppageReports.Sum(x => x.CountEquivalence);
+			StoppageReports.AddCommand = new Commands.Command(o =>
+			{
+				var StoppageReportModel = new Model.StoppageReport
+				{
+					ProcessReport = Model,
+					LostCount = 0,
+					LostTime = 0,
+					Cause = null,
+					ModifiedBy = LoginInfo.Id,
+				};
+				var vm = new StoppageReportVm(StoppageReports, StoppageReportModel, UOW);
+				vm.Index = StoppageReports.List.Count + 1;
+				StoppageReports.List.Add(vm);
+			});
 
 			IsUserDrag = false;
 			_isInInitializingPhase = false;
@@ -133,14 +176,18 @@ namespace Soheil.Core.ViewModels.PP.Report
 			DefectionReports.Reset();
 			foreach (var def in Model.DefectionReports)
 			{
-				DefectionReports.List.Add(new DefectionReportVm(DefectionReports, def));
+				var vm = new DefectionReportVm(DefectionReports, def, UOW);
+				vm.Index = DefectionReports.List.Count + 1;
+				DefectionReports.List.Add(vm);
 			}
 			DefectionCount = (int)Model.DefectionReports.Sum(x => x.CountEquivalence);
 
 			StoppageReports.Reset();
 			foreach (var stp in Model.StoppageReports)
 			{
-				StoppageReports.List.Add(new StoppageReportVm(StoppageReports, stp));
+				var vm = new StoppageReportVm(StoppageReports, stp, UOW);
+				vm.Index = StoppageReports.List.Count + 1;
+				StoppageReports.List.Add(vm);
 			}
 			StoppageCount = (int)Model.StoppageReports.Sum(x => x.CountEquivalence);
 			_isInInitializingPhase = false;

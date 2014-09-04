@@ -59,6 +59,17 @@ namespace Soheil.Core.ViewModels.SetupTime
 					val %= 3600;
 					return string.Format("{0:D2}:{1:D2}:{2:D2}", year, val / 60, val % 60);
 				}
+				//in military format (003000)
+				if (str.Length == 6)
+				{
+					int h = 0, m = 0, s = 0;
+					if (!int.TryParse(str.Substring(0, 2), out h)) h = 0;
+					if (!int.TryParse(str.Substring(2, 2), out m)) m = 0;
+					if (!int.TryParse(str.Substring(4, 2), out s)) s = 0;
+					val = h * 3600 + m * 60 + s;
+					vm._seconds = val;
+					return string.Format("{0:D2}:{1:D2}:{2:D2}", h, m, s);
+				}
 				//in seconds
 				if (int.TryParse(str, out val))
 				{

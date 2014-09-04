@@ -12,6 +12,7 @@ namespace Soheil.Tablet.VM
 	{
 		#region Properties and Events
 		public event Action<StationVm> Selected;
+		public event Action<ReportVm, ReportVm> ReportChanged;
 		public Dal.SoheilEdmContext UOW { get; set; }
 		int stationId;
 		Core.DataServices.ProcessReportDataService ProcessReportDataService;
@@ -36,10 +37,14 @@ namespace Soheil.Tablet.VM
 			{
 				var vm = (StationVm)d;
 				var oldval = (ReportVm)e.OldValue;
-				if (oldval != null) oldval.IsSelected = false;
+				if (oldval != null) 
+					oldval.IsSelected = false;
 				var val = (ReportVm)e.NewValue;
-				if (val == null) return;
-				val.Load();
+				if (val != null)
+					val.Load();
+
+				if (vm.ReportChanged != null)
+					vm.ReportChanged(oldval, val);
 			}));
 
 		/// <summary>
@@ -92,7 +97,7 @@ namespace Soheil.Tablet.VM
 			var data = ProcessReportDataService.GetPendingProcessReports(date, stationId, showAll, isSafe);
 			foreach (var item in data)
 			{
-				var reportVm = new ReportVm(item, UOW);
+				var reportVm = new ReportVm(item);
 				reportVm.Selected += r => SelectedReport = r;
 				Reports.Add(reportVm);
 			}

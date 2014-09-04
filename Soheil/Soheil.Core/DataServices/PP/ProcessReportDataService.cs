@@ -453,6 +453,8 @@ namespace Soheil.Core.DataServices
 			var StartDateTime = wppDs.GetShiftStartOn(date);
 			var EndDateTime = StartDateTime.AddDays(1);
 
+			var results = new List<ProcessReport>();
+
 			//get all processes in range
 			var processes = processRepository.Find(x => 
 				x.Task.Block.StateStation.Station.Id == stationId &&
@@ -512,6 +514,7 @@ namespace Soheil.Core.DataServices
 
 						//add to processReports
 						process.ProcessReports.Add(processReportModel);
+						results.Add(processReportModel);
 					}
 					dt = processReport.EndDateTime;
 				}
@@ -554,22 +557,24 @@ namespace Soheil.Core.DataServices
 
 					//add to processReports
 					process.ProcessReports.Add(newModel);
+					results.Add(newModel);
 				}
 
 			}
-			Context.Commit();
 			if(showAll)
 			{
-				return _processReportRepository.Find(x =>
+				results.AddRange(_processReportRepository.Find(x =>
 					x.Process.Task.Block.StateStation.Station.Id == stationId &&
-					x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime);
+					x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime));
+				return results;//.GroupBy(x => x.Id).Select(grp => grp.First());
 			}
 			else
 			{
-				return _processReportRepository.Find(x =>
+				results.AddRange(_processReportRepository.Find(x =>
 					x.Process.Task.Block.StateStation.Station.Id == stationId &&
 					x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime
-					&& !x.OperatorProcessReports.Any(y => y.OperatorProducedG1 != 0));
+					&& !x.OperatorProcessReports.Any(y => y.OperatorProducedG1 != 0)));
+				return results;//.GroupBy(x => x.Id).Select(grp => grp.First());
 			}
 		}
 	}
