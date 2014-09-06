@@ -10,7 +10,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 	public class RawMaterialVm : DependencyObject
 	{
 		public Model.RawMaterial Model { get; set; }
-		public static double ItemHeight = 50;
+		public static double ItemHeight = 34;
 		public RawMaterialVm(Model.RawMaterial model)
 		{
 			Model = model;

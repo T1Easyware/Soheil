@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace Soheil.Core.Reports
 {
-	public class MaterialRequestHour
+	public class MaterialPlanHour
 	{
-		public IEnumerable<MaterialRequestMaterial> Materials;
+		public IEnumerable<MaterialPlanMaterial> Materials;
 	}
-	public class MaterialRequestMaterial
+	public class MaterialPlanMaterial
 	{
 		public Model.RawMaterial RawMaterial;
-		public IEnumerable<MaterialRequestStation> Stations;
+		public IEnumerable<MaterialPlanStation> Stations;
+		public IEnumerable<Model.WarehouseTransaction> Transactions;
 	}
-	public class MaterialRequestStation
+	public class MaterialPlanStation
 	{
 		public Model.BOM Bom;
 		public Model.Station Station;
 		public double Quantity;
 	}
-
 }

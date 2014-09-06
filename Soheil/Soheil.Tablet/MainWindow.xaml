@@ -363,8 +363,8 @@
                 </StackPanel>
             </Border>
         </Grid>
-        <Border Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#8FFF">
+        <!--<Border Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#8FFF">
             <TextBlock Text="Loading..." FlowDirection="LeftToRight" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </Border>
+        </Border>-->
     </Grid>
 </Window>

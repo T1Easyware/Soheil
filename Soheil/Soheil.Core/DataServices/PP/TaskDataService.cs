@@ -395,13 +395,16 @@ namespace Soheil.Core.DataServices
 		/// </summary>
 		/// <param name="startDt">Start date and time of the first shift of the desired Date</param>
 		/// <returns></returns>
-		internal Reports.MaterialRequestHour[] GetDailyMaterialPlan(DateTime StartDateTime, DateTime EndDateTime)
+		internal Reports.MaterialPlanHour[] GetDailyMaterialPlan(DateTime StartDateTime, DateTime EndDateTime)
 		{
-			var data = new Reports.MaterialRequestHour[24];
-
-			var tasks = _taskRepository.Find(x => 
-				x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime 
-				&& x.Block.StateStation.State.BOMs.Any());
+			var data = new Reports.MaterialPlanHour[24];
+			
+			var tasks = _taskRepository.Find(x =>
+				x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime
+				&& x.Block.StateStation.State.BOMs.Any()).ToArray();
+			var trans = new Repository<WarehouseTransaction>(Context).Find(x =>
+				x.TransactionDateTime < EndDateTime && x.TransactionDateTime >= StartDateTime
+				&& x.RawMaterial != null && x.Flow == 1).ToArray();
 
 			//itemQuery: collection of BOMs in specified date
 			var itemQuery = from task in tasks
@@ -409,7 +412,7 @@ namespace Soheil.Core.DataServices
 							select new
 							{
 								task,
-								bom
+								bom,
 							};
 
 			EndDateTime = StartDateTime.AddHours(1);
@@ -429,17 +432,21 @@ namespace Soheil.Core.DataServices
 									  qty = item.bom.Quantity * item.task.TaskTargetPoint * ratio
 								  } by item.bom.RawMaterial;
 
-				data[i] = new Core.Reports.MaterialRequestHour
+				data[i] = new Core.Reports.MaterialPlanHour
 				{
-					Materials = rawmatQuery.Select(x => new Core.Reports.MaterialRequestMaterial
+					Materials = rawmatQuery.Select(x => new Core.Reports.MaterialPlanMaterial
 					{
 						RawMaterial = x.Key,
-						Stations = x.Select(y => new Core.Reports.MaterialRequestStation
+						Stations = x.Select(y => new Core.Reports.MaterialPlanStation
 						{
 							Bom = y.bom,
 							Station = y.station,
-							Quantity = y.qty
-						})
+							Quantity = y.qty,
+						}),
+						Transactions = trans.Where(t =>
+							t.RawMaterial.Id == x.Key.Id &&
+							t.TransactionDateTime >= StartDateTime &&
+							t.TransactionDateTime < EndDateTime).ToArray()
 					}).ToArray(),
 				};
 				StartDateTime = StartDateTime.AddHours(1);

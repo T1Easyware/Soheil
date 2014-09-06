@@ -15,6 +15,11 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 		/// </summary>
 		public ObservableCollection<RequestVm> Requests { get { return _requests; } }
 		private ObservableCollection<RequestVm> _requests = new ObservableCollection<RequestVm>();
+		/// <summary>
+		/// Gets or sets a bindable collection of Transactions
+		/// </summary>
+		public ObservableCollection<TransactionVm> Transactions { get { return _transactions; } }
+		private ObservableCollection<TransactionVm> _transactions = new ObservableCollection<TransactionVm>();
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates RawMaterial

@@ -18,6 +18,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 		DataServices.WorkProfilePlanDataService WorkProfilePlanDataService;
 		DataServices.RawMaterialDataService RawMaterialDataService;
 		DataServices.WarehouseDataService WarehouseDataService;
+		DataServices.Storage.WarehouseTransactionDataService WarehouseTransactionDataService;
 		DataServices.TaskDataService TaskDataService;
 		public AccessType Access { get; private set; }
 		
@@ -33,6 +34,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 			WorkProfilePlanDataService = new DataServices.WorkProfilePlanDataService(UOW);
 			RawMaterialDataService = new DataServices.RawMaterialDataService(UOW);
 			WarehouseDataService = new DataServices.WarehouseDataService(UOW);
+			WarehouseTransactionDataService = new DataServices.Storage.WarehouseTransactionDataService(UOW);
 			TaskDataService = new DataServices.TaskDataService(UOW);
 
 			#region Hours
@@ -109,14 +111,31 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 					};
 					foreach (var station in mat.Stations)
 					{
-						cell.Requests.Add(new RequestVm
+						var reqvm = new RequestVm(station);
+						reqvm.CreateTransactionCommand = new Commands.Command(o =>
 						{
-							Quantity = station.Quantity,
-							StationName = station.Station.Name,
-							UnitCode = station.Bom.UnitSet == null ? "عدد" : station.Bom.UnitSet.Code,
+							var transactionModel = new Model.WarehouseTransaction
+							{
+								Quantity = reqvm.Quantity,
+								UnitSet = station.Bom.UnitSet,
+								Flow = 1,
+								Code = mat.RawMaterial.Code,
+								RawMaterial = mat.RawMaterial,
+								TransactionDateTime = DateTime.Now,
+								RecordDateTime = DateTime.Now,
+								Warehouse = Warehouses.Any() ? Warehouses.FirstOrDefault().Model : null
+							};
+							if (WarehouseTransactionDataService.AddModel(transactionModel) > 0)
+								cell.Transactions.Add(new TransactionVm(transactionModel, Warehouses));
+							material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count + cell.Transactions.Count);
 						});
+						cell.Requests.Add(reqvm);
 					}
-					material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count);
+					foreach (var tran in mat.Transactions)
+					{
+						cell.Transactions.Add(new TransactionVm(tran, Warehouses));
+					}
+					material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count + cell.Transactions.Count);
 					Cells.Add(cell);
 				}
 			}
