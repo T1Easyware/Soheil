@@ -123,7 +123,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 								RawMaterial = mat.RawMaterial,
 								TransactionDateTime = DateTime.Now,
 								RecordDateTime = DateTime.Now,
-								Warehouse = Warehouses.Any() ? Warehouses.FirstOrDefault().Model : null
+								DestWarehouse = Warehouses.Any() ? Warehouses.FirstOrDefault().Model : null
 							};
 							if (WarehouseTransactionDataService.AddModel(transactionModel) > 0)
 								cell.Transactions.Add(new TransactionVm(transactionModel, Warehouses));
