@@ -15,7 +15,8 @@ namespace Soheil.Core.DataServices
     public class RawMaterialDataService : DataServiceBase, IDataService<RawMaterial>
     {
 		public event EventHandler<ModelAddedEventArgs<RawMaterial>> RawMaterialAdded;
-       // public event EventHandler<ModelAddedEventArgs<RawMaterialUnitGroup>> UnitGroupAdded;
+        public event EventHandler<ModelAddedEventArgs<RawMaterial>> ModelUpdated;
+        // public event EventHandler<ModelAddedEventArgs<RawMaterialUnitGroup>> UnitGroupAdded;
       //  public event EventHandler<ModelRemovedEventArgs> UnitGroupRemoved;
         readonly Repository<RawMaterial> _rawMaterialRepository;
 
@@ -73,8 +74,12 @@ namespace Soheil.Core.DataServices
 		{
             model.ModifiedBy = LoginInfo.Id;
             model.ModifiedDate = DateTime.Now;
+            double factor = GetConversionFactor(model);
+            model.Inventory *= factor;
+		    model.SafetyStock *= factor;
             Context.Commit();
-		}
+            if (ModelUpdated != null) ModelUpdated(this, new ModelAddedEventArgs<RawMaterial>(model));
+        }
 
         public void DeleteModel(RawMaterial model)
         {
@@ -91,6 +96,39 @@ namespace Soheil.Core.DataServices
 				AddModel(model);
 			}
 		}
+
+        private double GetConversionFactor(RawMaterial model)
+        {
+            int baseId = model.BaseUnit.Id;
+            double factor = 1;
+            using (var context = new SoheilEdmContext())
+            {
+                var materialRepository = new Repository<RawMaterial>(context);
+                var convRepository = new Repository<UnitConversion>(context);
+
+                var prevBase = materialRepository.Single(m => m.Id == model.Id).BaseUnit;
+                if (prevBase != null)
+                {
+                    int prevBaseId = prevBase.Id;
+                    var query = convRepository.Find(c => c.Status != (decimal) Status.Deleted)
+                        .FirstOrDefault(
+                            c => c.MajorUnit.Id == prevBaseId && c.MinorUnit.Id == baseId);
+                    if (query == null)
+                    {
+                        query = convRepository.Find(c => c.Status != (decimal) Status.Deleted)
+                            .FirstOrDefault(
+                                c => c.MinorUnit.Id == prevBaseId && c.MajorUnit.Id == baseId);
+                        factor = 1/query.Factor;
+                    }
+                    else
+                    {
+                        factor = query.Factor;
+                    }
+                }
+
+            }
+            return factor;
+        }
 
 		//public ObservableCollection<RawMaterialUnitGroup> GetUnitGroups(int rawMaterialId)
 		//{

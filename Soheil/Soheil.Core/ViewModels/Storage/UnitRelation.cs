@@ -17,9 +17,9 @@ namespace Soheil.Core.ViewModels
 
         public int Id { get; private set; }
         //Name Dependency Property
-        public long Factor
+        public double Factor
         {
-            get { return (long) GetValue(FactorProperty); }
+            get { return (double)GetValue(FactorProperty); }
             set { SetValue(FactorProperty, value); }
         }
 

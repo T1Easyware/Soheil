@@ -127,6 +127,17 @@ namespace Soheil.Core.ViewModels
                 var val = (RawMaterialInfoVM)e.NewValue;
                 if (val == null) return;
                 vm._model.RawMaterial = val.Model;
+                if (val.Model.BaseUnit != null)
+                {
+                    foreach (var unitSet in val.UnitSets)
+                    {
+                        if (unitSet.Id == val.Model.BaseUnit.Id)
+                        {
+                            vm.SelectedUnit = unitSet;
+                            break;
+                        }
+                    }
+                }
             }));
 
         // ReSharper disable PropertyNotResolved

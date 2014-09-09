@@ -58,7 +58,7 @@ namespace Soheil.Core.ViewModels
             set { _model.Inventory = value; OnPropertyChanged("Inventory"); }
         }
 
-        public int SafetyStock
+        public double SafetyStock
         {
             get { return _model.SafetyStock; }
             set { _model.SafetyStock = value; OnPropertyChanged("SafetyStock"); OnPropertyChanged("InventoryStatusColor"); }
@@ -180,7 +180,14 @@ namespace Soheil.Core.ViewModels
         private void InitializeData(RawMaterialDataService dataService)
         {
             RawMaterialDataService = dataService;
+            RawMaterialDataService.ModelUpdated += OnModelUpdated;
             SaveCommand = new Command(Save, CanSave);
+        }
+
+        void OnModelUpdated(object sender, ModelAddedEventArgs<RawMaterial> e)
+        {
+            SafetyStock = e.NewModel.SafetyStock;
+            Inventory = e.NewModel.Inventory;
         }
 
         public override void Save(object param)

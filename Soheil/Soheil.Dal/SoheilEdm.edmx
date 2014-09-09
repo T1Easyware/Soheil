@@ -1481,7 +1481,7 @@
     <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Inventory" Type="float" Nullable="false" />
-    <Property Name="SafetyStock" Type="int" Nullable="false" />
+    <Property Name="SafetyStock" Type="float" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
@@ -1533,7 +1533,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Factor" Type="bigint" Nullable="false" />
+    <Property Name="Factor" Type="float" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="MajorUnit_Id" Type="int" Nullable="true" />
@@ -5058,7 +5058,7 @@
           <Property Name="Name" Type="String" Nullable="false" />
           <Property Name="Code" Type="String" Nullable="false" />
           <Property Name="Inventory" Type="Double" Nullable="false" />
-          <Property Name="SafetyStock" Type="Int32" Nullable="false" />
+          <Property Name="SafetyStock" Type="Double" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Status" Type="Byte" Nullable="false" cg:GetterAccess="Public" cg:SetterAccess="Public" DefaultValue="1" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
@@ -5135,7 +5135,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Name="Factor" Type="Int64" Nullable="false" />
+          <Property Name="Factor" Type="Double" Nullable="false" />
           <Property Name="Status" Type="Byte" Nullable="false" cg:GetterAccess="Public" cg:SetterAccess="Public" DefaultValue="1" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <NavigationProperty Name="MajorUnit" Relationship="SoheilEdm.UnitSetUnitConversion" FromRole="UnitConversion" ToRole="UnitSet" />
@@ -7190,7 +7190,7 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="SoheilEdm" ZoomLevel="53" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+      <Diagram Name="SoheilEdm" ZoomLevel="78" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="3.25" PointX="34.875" PointY="25" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="42.875" PointY="26.75" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="75.625" PointY="49.5" Height="1.5956835937499996" FillColor="110, 100, 50" />

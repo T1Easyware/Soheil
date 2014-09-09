@@ -43,7 +43,7 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual int SafetyStock
+        public virtual double SafetyStock
         {
             get;
             set;
