@@ -16,8 +16,8 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 			Model = model;
 			Quantity = model.Quantity;
 			UnitCode = model.UnitSet == null ? "عدد" : model.UnitSet.Code;
-			if (model.DestWarehouse != null)
-				Warehouse = all.FirstOrDefault(x => x.Model.Id == model.DestWarehouse.Id);
+			if (model.SrcWarehouse != null)
+				Warehouse = all.FirstOrDefault(x => x.Model.Id == model.SrcWarehouse.Id);
 			_isInitializing = false;
 		}
 		/// <summary>
@@ -64,7 +64,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 				var vm = (TransactionVm)d;
 				if (vm._isInitializing) return;
 				var val = (WarehouseVm)e.NewValue;
-				vm.Model.DestWarehouse = val.Model;
+				vm.Model.SrcWarehouse = val.Model;
 			}));
 
 	}

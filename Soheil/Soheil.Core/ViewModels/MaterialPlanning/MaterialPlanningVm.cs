@@ -123,15 +123,16 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 								RawMaterial = mat.RawMaterial,
 								TransactionDateTime = DateTime.Now,
 								RecordDateTime = DateTime.Now,
-								DestWarehouse = Warehouses.Any() ? Warehouses.FirstOrDefault().Model : null
+								SrcWarehouse = Warehouses.Any() ? Warehouses.FirstOrDefault().Model : null
 							};
 							if (WarehouseTransactionDataService.AddModel(transactionModel) > 0)
 								cell.Transactions.Add(new TransactionVm(transactionModel, Warehouses));
 							material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count + cell.Transactions.Count);
 						});
-						cell.Requests.Add(reqvm);
+						if(reqvm.Quantity > 0)
+							cell.Requests.Add(reqvm);
 					}
-					foreach (var tran in mat.Transactions)
+					foreach (var tran in mat.Transactions.Where(x=>x.Quantity > 0))
 					{
 						cell.Transactions.Add(new TransactionVm(tran, Warehouses));
 					}

@@ -51,7 +51,7 @@ namespace Soheil.Core.DataServices.Storage
 			_repository.Add(model);
 			model.ModifiedBy = LoginInfo.Id;
 			model.RecordDateTime = DateTime.Now;
-			if (model.DestWarehouse == null)
+			if (model.DestWarehouse == null&&model.SrcWarehouse==null)
 			{
 				System.Windows.MessageBox.Show("No warehouse is selected.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
 				return 0;
@@ -62,7 +62,7 @@ namespace Soheil.Core.DataServices.Storage
                 TransactionAdded(this, new ModelAddedEventArgs<WarehouseTransaction>(model));
 			return model.Id;
 		}
-
+		//???
 	    public int AddModel(WarehouseTransaction model, bool warehouseCheck)
         {
             _repository.Add(model);
@@ -93,7 +93,7 @@ namespace Soheil.Core.DataServices.Storage
 		{
 			if (model.WarehouseReceipt != null)
 				new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
-			bool flag = model.DestWarehouse != null;
+			bool flag = (model.DestWarehouse != null || model.SrcWarehouse!=null);
 			model.TaskReport.WarehouseTransactions.Remove(model);
 			_repository.Delete(model);
 
