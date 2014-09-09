@@ -422,176 +422,96 @@
         </Setter>
     </Style>
 
-
-	<Style TargetType="{x:Type CustomControls:TimeBox}">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type CustomControls:TimeBox}">
-					<ControlTemplate.Resources>
-						<Style x:Key="TimeComponents" TargetType="{x:Type TextBox}">
-							<Setter Property="SnapsToDevicePixels" Value="True" />
-							<Setter Property="OverridesDefaultStyle" Value="True" />
-							<Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle"/>
-							<Setter Property="MinWidth" Value="22"/>
-							<Setter Property="Height" Value="22"/>
-							<Setter Property="VerticalAlignment" Value="Center"/>
-							<Setter Property="Foreground" Value="White"/>
-							<!--Setter Property="ContextMenu">
-								<Setter.Value>
-									<ContextMenu FlowDirection="LeftToRight">
-										<MenuItem Header="Until work break" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
-											<MenuItem.Icon>
-												<Image Style="{StaticResource DurationFillToEnd}"/>
-											</MenuItem.Icon>
-											<MenuItem.CommandParameter>
-												<sys:Int32>0</sys:Int32>
-											</MenuItem.CommandParameter>
-										</MenuItem>
-										<MenuItem Header="15 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
-											<MenuItem.Icon>
-												<Image Style="{StaticResource DurationQuarterHour}"/>
-											</MenuItem.Icon>
-											<MenuItem.CommandParameter>
-												<sys:Int32>15</sys:Int32>
-											</MenuItem.CommandParameter>
-										</MenuItem>
-										<MenuItem Header="30 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
-											<MenuItem.Icon>
-												<Image Style="{StaticResource DurationHalfHour}"/>
-											</MenuItem.Icon>
-											<MenuItem.CommandParameter>
-												<sys:Int32>30</sys:Int32>
-											</MenuItem.CommandParameter>
-										</MenuItem>
-										<MenuItem Header="45 Minutes" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
-											<MenuItem.Icon>
-												<Image Style="{StaticResource Duration3QuratersHour}"/>
-											</MenuItem.Icon>
-											<MenuItem.CommandParameter>
-												<sys:Int32>45</sys:Int32>
-											</MenuItem.CommandParameter>
-										</MenuItem>
-										<MenuItem Header="1 Hour" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
-											<MenuItem.Icon>
-												<Image Style="{StaticResource Duration1Hour}"/>
-											</MenuItem.Icon>
-											<MenuItem.CommandParameter>
-												<sys:Int32>60</sys:Int32>
-											</MenuItem.CommandParameter>
-										</MenuItem>
-										<MenuItem Header="2 Hours" Command="{Binding Path=SetDurationMinutesCommand, RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}}">
-											<MenuItem.Icon>
-												<Image Style="{StaticResource Duration2Hours}"/>
-											</MenuItem.Icon>
-											<MenuItem.CommandParameter>
-												<sys:Int32>120</sys:Int32>
-											</MenuItem.CommandParameter>
-										</MenuItem>
-									</ContextMenu>
-								</Setter.Value>
-							</-->
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="{x:Type TextBoxBase}">
-										<Border Name="Border" CornerRadius="2" Padding="2" BorderThickness="1">
-											<Border.Background>
-												<SolidColorBrush Color="#4088"/>
-											</Border.Background>
-											<Border.BorderBrush>
-												<SolidColorBrush Color="#8088"/>
-											</Border.BorderBrush>
-											<VisualStateManager.VisualStateGroups>
-												<VisualStateGroup x:Name="CommonStates">
-													<VisualState x:Name="Normal"/>
-													<VisualState x:Name="Disabled">
-														<Storyboard>
-															<ColorAnimationUsingKeyFrames 
-														Storyboard.TargetName="Border"
-														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-																<EasingColorKeyFrame KeyTime="0" Value="Transparent"/>
-															</ColorAnimationUsingKeyFrames>
-															<ColorAnimationUsingKeyFrames 
-														Storyboard.TargetName="Border"
-														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
-																<EasingColorKeyFrame KeyTime="0" Value="Transparent"/>
-															</ColorAnimationUsingKeyFrames>
-														</Storyboard>
-													</VisualState>
-													<VisualState x:Name="ReadOnly">
-														<Storyboard>
-															<ColorAnimationUsingKeyFrames 
-														Storyboard.TargetName="Border"
-														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-																<EasingColorKeyFrame KeyTime="0" Value="Transparent" />
-															</ColorAnimationUsingKeyFrames>
-															<ColorAnimationUsingKeyFrames 
-														Storyboard.TargetName="Border"
-														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
-																<EasingColorKeyFrame KeyTime="0" Value="Transparent" />
-															</ColorAnimationUsingKeyFrames>
-														</Storyboard>
-													</VisualState>
-													<VisualState x:Name="MouseOver">
-														<Storyboard>
-															<ColorAnimationUsingKeyFrames 
-														Storyboard.TargetName="Border"
-														Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
-																<EasingColorKeyFrame KeyTime="0" Value="#88FF"/>
-															</ColorAnimationUsingKeyFrames>
-														</Storyboard>
-													</VisualState>
-													<VisualState x:Name="Focused">
-														<Storyboard>
-															<ColorAnimationUsingKeyFrames 
-														Storyboard.TargetName="Border"
-														Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-																<EasingColorKeyFrame KeyTime="0" Value="#C8FF"/>
-															</ColorAnimationUsingKeyFrames>
-														</Storyboard>
-													</VisualState>
-												</VisualStateGroup>
-											</VisualStateManager.VisualStateGroups>
-											<ScrollViewer Margin="0" x:Name="PART_ContentHost"/>
-										</Border>
-										<ControlTemplate.Triggers>
-											<Trigger Property="IsReadOnly" Value="True">
-												<Setter Property="Foreground">
-													<Setter.Value>
-														<SolidColorBrush Color="Gray"/>
-													</Setter.Value>
-												</Setter>
-											</Trigger>
-											<Trigger Property="IsFocused" Value="True">
-												<Setter Property="Foreground">
-													<Setter.Value>
-														<SolidColorBrush Color="Black"/>
-													</Setter.Value>
-												</Setter>
-											</Trigger>
-										</ControlTemplate.Triggers>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</Style>
-					</ControlTemplate.Resources>
-					<Grid FlowDirection="LeftToRight">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="*"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="*"/>
-						</Grid.ColumnDefinitions>
-						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Hour, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center"/>
-						<TextBlock Text=":" VerticalAlignment="Center" Grid.Column="1"/>
-						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Minute, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center" Grid.Column="2"/>
-						<TextBlock Text=":" VerticalAlignment="Center" Grid.Column="3"/>
-						<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=Second, StringFormat=D2}" IsReadOnly="{Binding RelativeSource={RelativeSource AncestorType={x:Type CustomControls:TimeBox}}, Path=IsReadOnly}" Style="{StaticResource TimeComponents}" FlowDirection="{TemplateBinding FlowDirection}" TextAlignment="Center" Grid.Column="4"/>
-					</Grid>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-
-
+    <Style TargetType="{x:Type CustomControls:AutoComboBox}">
+        <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+        <Setter Property="MinWidth" Value="60"/>
+        <Setter Property="MinHeight" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="tahoma" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CustomControls:AutoComboBox}">
+                    <Grid>
+                        <ToggleButton Name="ToggleButton" 
+                                      Template="{StaticResource ComboBoxToggleButton}" 
+                                      Grid.Column="2" 
+                                      Focusable="false" 
+                                      IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                      ClickMode="Press"/>
+                        <ContentPresenter Name="ContentSite" 
+                                          IsHitTestVisible="False"  
+                                          Content="{TemplateBinding SelectionBoxItem}" 
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" 
+                                          Margin="3,3,23,3" 
+                                          VerticalAlignment="Center" 
+                                          HorizontalAlignment="Stretch"/>
+                        <TextBox x:Name="PART_EditableTextBox" 
+                                 CaretBrush="{StaticResource Foreground}"
+                                 Style="{x:Null}" 
+                                 Template="{StaticResource ComboBoxTextBox}" 
+                                 HorizontalAlignment="Left" 
+                                 VerticalAlignment="Center" 
+                                 Margin="3,3,23,3" 
+                                 Focusable="True" 
+                                 Background="Transparent" 
+                                 Foreground="{StaticResource Foreground}" 
+                                 Visibility="Hidden" 
+                                 IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                        <Popup x:Name="PART_Popup" VerticalOffset="-1" SnapsToDevicePixels="True" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"  Focusable="False" PopupAnimation="Slide">
+                            <Grid Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border x:Name="DropDownBorder" Background="{StaticResource BackgroundNormal}" BorderThickness="1" BorderBrush="{StaticResource BorderBrushNormal}"/>
+                                <ScrollViewer SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasItems" Value="false">
+                            <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                        </Trigger>
+                        <Trigger Property="IsGrouping" Value="true">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </Trigger>
+                        <Trigger Property="IsEditable" Value="true">
+                            <Setter Property="IsTabStop" Value="false"/>
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Resources>
+            <Style TargetType="ComboBoxItem">
+                <Setter Property="SnapsToDevicePixels" Value="true"/>
+                <Setter Property="OverridesDefaultStyle" Value="true"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBoxItem">
+                            <Border Name="Border" Padding="2" SnapsToDevicePixels="true" BorderThickness="1">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsHighlighted" Value="true">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource BackgroundHighlighted}"/>
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource BorderBrushHighlighted}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+    </Style>
+    
+    
 </ResourceDictionary>

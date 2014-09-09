@@ -29,7 +29,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				Code = taskReportModel.Code,
 				ProductRework = taskReportModel.Task.Block.StateStation.State.OnProductRework,
 				TaskReport = taskReportModel,
-				Warehouse = all.FirstOrDefault().Model,
+				DestWarehouse = all.FirstOrDefault().Model,
 				Quantity = taskReportModel.TaskProducedG1,
 				TransactionDateTime = taskReportModel.ReportEndDateTime,
 				Flow = 0,
@@ -74,7 +74,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			Quantity = (int)model.Quantity;
 			TransactionDate = model.TransactionDateTime.Date;
 			TransactionTime = model.TransactionDateTime.TimeOfDay;
-			Warehouse = all.FirstOrDefault(x => x.Model.Id == model.Warehouse.Id);
+            Warehouse = all.FirstOrDefault(x => x.Model.Id == model.DestWarehouse.Id);
 
 			InitializeCommands();
 			_isInInitializingPhase = false;
@@ -149,7 +149,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (WarehouseVm)e.NewValue;
 				if (val == null) return;
-				vm.Model.Warehouse = val.Model;
+                vm.Model.DestWarehouse = val.Model;
 			}));
 
 		/// <summary>

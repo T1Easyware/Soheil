@@ -1,5 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
+using System.Security.Cryptography;
+using Soheil.Common;
 using Soheil.Core.Base;
+using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
 using Soheil.Model;
 using Soheil.Dal;
@@ -10,7 +14,9 @@ namespace Soheil.Core.DataServices.Storage
 {
 	public class WarehouseTransactionDataService : DataServiceBase, IDataService<WarehouseTransaction>
     {
-		private readonly Repository<WarehouseTransaction> _repository;
+        private readonly Repository<WarehouseTransaction> _repository;
+        private readonly Repository<RawMaterial> _materialRepository;
+        public event EventHandler<ModelAddedEventArgs<WarehouseTransaction>> TransactionAdded;
 
 		public WarehouseTransactionDataService()
 			: this(new SoheilEdmContext())
@@ -20,7 +26,8 @@ namespace Soheil.Core.DataServices.Storage
 		public WarehouseTransactionDataService(SoheilEdmContext context)
 		{
 			Context = context;
-			_repository = new Repository<WarehouseTransaction>(Context);
+            _repository = new Repository<WarehouseTransaction>(Context);
+            _materialRepository = new Repository<RawMaterial>(Context);
 		}
 
 		#region IDataService
@@ -44,19 +51,40 @@ namespace Soheil.Core.DataServices.Storage
 			_repository.Add(model);
 			model.ModifiedBy = LoginInfo.Id;
 			model.RecordDateTime = DateTime.Now;
-			if (model.Warehouse == null)
+			if (model.DestWarehouse == null)
 			{
 				System.Windows.MessageBox.Show("No warehouse is selected.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
 				return 0;
 			}
+		    CalculateInventory(model);
 			Context.Commit();
+            if (TransactionAdded != null)
+                TransactionAdded(this, new ModelAddedEventArgs<WarehouseTransaction>(model));
 			return model.Id;
 		}
+
+	    public int AddModel(WarehouseTransaction model, bool warehouseCheck)
+        {
+            _repository.Add(model);
+            model.ModifiedBy = LoginInfo.Id;
+            model.RecordDateTime = DateTime.Now;
+            if (warehouseCheck && model.DestWarehouse == null)
+            {
+                System.Windows.MessageBox.Show("No warehouse is selected.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return 0;
+            }
+            CalculateInventory(model);
+            Context.Commit();
+            if (TransactionAdded != null)
+                TransactionAdded(this, new ModelAddedEventArgs<WarehouseTransaction>(model));
+            return model.Id;
+        }
 
 		public void UpdateModel(WarehouseTransaction model)
 		{
 			model.ModifiedBy = LoginInfo.Id;
 			model.RecordDateTime = DateTime.Now;
+            CalculateInventory(model);
 
 			Context.Commit();
 		}
@@ -65,7 +93,7 @@ namespace Soheil.Core.DataServices.Storage
 		{
 			if (model.WarehouseReceipt != null)
 				new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
-			bool flag = model.Warehouse != null;
+			bool flag = model.DestWarehouse != null;
 			model.TaskReport.WarehouseTransactions.Remove(model);
 			_repository.Delete(model);
 
@@ -83,10 +111,52 @@ namespace Soheil.Core.DataServices.Storage
 			{
 				AddModel(model);
 			}
-		} 
+		}
+
 		#endregion
 
-		internal WarehouseTransaction CreateTransactionFor(TaskReport model)
+	    private void CalculateInventory(WarehouseTransaction model)
+	    {
+	        int sign = (WarehouseTransactionFlow) model.Flow == WarehouseTransactionFlow.In ? 1 : -1;
+	        var convRepository = new Repository<UnitConversion>(Context);
+	        double factor = 1;
+
+            var prevContext = new SoheilEdmContext();
+	        var prevRepository = new Repository<WarehouseTransaction>(prevContext);
+	        double prevQuantity = prevRepository.Single(t => t.Id == model.Id).Quantity;
+	        double reletiveQuantity = model.Quantity - prevQuantity;
+
+	        switch ((WarehouseTransactionType) model.Type)
+	        {
+	            case WarehouseTransactionType.None:
+	                break;
+	            case WarehouseTransactionType.RawMaterial:
+	                var query = convRepository.Find(c => c.Status != (decimal) Status.Deleted)
+	                    .FirstOrDefault(
+	                        c => c.MajorUnit.Id == model.UnitSet.Id && c.MinorUnit.Id == model.RawMaterial.BaseUnit.Id);
+	                if (query == null)
+	                {
+	                    query = convRepository.Find(c => c.Status != (decimal) Status.Deleted)
+	                        .FirstOrDefault(
+	                            c => c.MinorUnit.Id == model.UnitSet.Id && c.MajorUnit.Id == model.RawMaterial.BaseUnit.Id);
+                        factor = 1 / (double)query.Factor;
+	                }
+	                else
+	                {
+	                    factor = query.Factor;
+	                }
+                    model.RawMaterial.Inventory += reletiveQuantity * factor * sign;
+	                break;
+	            case WarehouseTransactionType.Product:
+	                break;
+	            case WarehouseTransactionType.Good:
+	                break;
+	            default:
+	                throw new ArgumentOutOfRangeException();
+	        }
+	    }
+
+	    internal WarehouseTransaction CreateTransactionFor(TaskReport model)
 		{
 			//Model
 			var tr = new Repository<TaskReport>(Context).Single(x=>x.Id == model.Id);

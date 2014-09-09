@@ -129,7 +129,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			{
 				foreach (var taskReport in task.TaskReports)
 				{
-					var wtrans = taskReport.WarehouseTransactions.Where(x=>x.Warehouse==null||x.Quantity ==0).ToArray();
+                    var wtrans = taskReport.WarehouseTransactions.Where(x => x.DestWarehouse == null || x.Quantity == 0).ToArray();
 					foreach (var wtran in wtrans)
 					{
 						ds.DeleteModel(wtran);

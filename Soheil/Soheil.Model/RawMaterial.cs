@@ -110,38 +110,6 @@ namespace Soheil.Model
         }
         private ICollection<WarehouseTransaction> _warehouseTransactions;
     
-        public virtual ICollection<RawMaterialUnitGroup> RawMaterialUnitGroups
-        {
-            get
-            {
-                if (_rawMaterialUnitGroups == null)
-                {
-                    var newCollection = new FixupCollection<RawMaterialUnitGroup>();
-                    newCollection.CollectionChanged += FixupRawMaterialUnitGroups;
-                    _rawMaterialUnitGroups = newCollection;
-                }
-                return _rawMaterialUnitGroups;
-            }
-            set
-            {
-                if (!ReferenceEquals(_rawMaterialUnitGroups, value))
-                {
-                    var previousValue = _rawMaterialUnitGroups as FixupCollection<RawMaterialUnitGroup>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupRawMaterialUnitGroups;
-                    }
-                    _rawMaterialUnitGroups = value;
-                    var newValue = value as FixupCollection<RawMaterialUnitGroup>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupRawMaterialUnitGroups;
-                    }
-                }
-            }
-        }
-        private ICollection<RawMaterialUnitGroup> _rawMaterialUnitGroups;
-    
         public virtual ICollection<BOM> BOMs
         {
             get
@@ -173,10 +141,72 @@ namespace Soheil.Model
             }
         }
         private ICollection<BOM> _bOMs;
+    
+        public virtual UnitGroup UnitGroup
+        {
+            get { return _unitGroup; }
+            set
+            {
+                if (!ReferenceEquals(_unitGroup, value))
+                {
+                    var previousValue = _unitGroup;
+                    _unitGroup = value;
+                    FixupUnitGroup(previousValue);
+                }
+            }
+        }
+        private UnitGroup _unitGroup;
+    
+        public virtual UnitSet BaseUnit
+        {
+            get { return _baseUnit; }
+            set
+            {
+                if (!ReferenceEquals(_baseUnit, value))
+                {
+                    var previousValue = _baseUnit;
+                    _baseUnit = value;
+                    FixupBaseUnit(previousValue);
+                }
+            }
+        }
+        private UnitSet _baseUnit;
 
         #endregion
 
         #region Association Fixup
+    
+        private void FixupUnitGroup(UnitGroup previousValue)
+        {
+            if (previousValue != null && previousValue.RawMaterials.Contains(this))
+            {
+                previousValue.RawMaterials.Remove(this);
+            }
+    
+            if (UnitGroup != null)
+            {
+                if (!UnitGroup.RawMaterials.Contains(this))
+                {
+                    UnitGroup.RawMaterials.Add(this);
+                }
+            }
+        }
+    
+        private void FixupBaseUnit(UnitSet previousValue)
+        {
+            if (previousValue != null && previousValue.RawMaterials.Contains(this))
+            {
+                previousValue.RawMaterials.Remove(this);
+            }
+    
+            if (BaseUnit != null)
+            {
+                if (!BaseUnit.RawMaterials.Contains(this))
+                {
+                    BaseUnit.RawMaterials.Add(this);
+                }
+            }
+        }
     
         private void FixupWarehouseTransactions(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -191,28 +221,6 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (WarehouseTransaction item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.RawMaterial, this))
-                    {
-                        item.RawMaterial = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupRawMaterialUnitGroups(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (RawMaterialUnitGroup item in e.NewItems)
-                {
-                    item.RawMaterial = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (RawMaterialUnitGroup item in e.OldItems)
                 {
                     if (ReferenceEquals(item.RawMaterial, this))
                     {

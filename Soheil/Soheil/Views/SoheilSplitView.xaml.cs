@@ -611,20 +611,19 @@ namespace Soheil.Views
             var grid = (DataGrid)sender;
             if (e.Key == Key.Enter)
             {
-                grid.CommitEdit(DataGridEditingUnit.Row, true);
-
-                //ViewModel.CurrentContent = (ISplitContent) grid.CurrentItem;
-                //_currentContent = (ISplitItemContent) ViewModel.CurrentContent;
-                var currentTransaction = (WarehouseTransactionVM) grid.CurrentItem;
-
-                if (/*currentTransaction.CanSave()*/true)
+                if (Equals(grid.CurrentCell.Column, grid.Columns[grid.Columns.Count - 1]))
                 {
-                    currentTransaction.Save(null);
-                    ((WarehouseReceiptVM)ViewModel.CurrentContent).AddBlank();
+                    grid.CommitEdit(DataGridEditingUnit.Row, true);
+                    var currentTransaction = (WarehouseTransactionVM) grid.CurrentItem;
+                    if (currentTransaction.CanSave())
+                    {
+                        currentTransaction.Save(null);
+                        if (grid.Items.IndexOf(grid.CurrentItem) == grid.Items.Count - 1)
+                            ((WarehouseReceiptVM) ViewModel.CurrentContent).AddBlankTransaction();
+                    }
+                    else
+                        currentTransaction.Mode = ModificationStatus.Unsaved;
                 }
-                else
-                    currentTransaction.Mode = ModificationStatus.Unsaved;
-
             }
         }
 

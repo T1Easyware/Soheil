@@ -19,7 +19,7 @@ namespace Soheil.Core.ViewModels
             var viewModels = new ObservableCollection<RawMaterialVM>();
             foreach (var model in RawMaterialDataService.GetAll())
             {
-                viewModels.Add(new RawMaterialVM(model, Access, RawMaterialDataService));
+                viewModels.Add(new RawMaterialVM(model, Access, RawMaterialDataService, UnitGroupDataService));
             }
             Items = new ListCollectionView(viewModels);
 
@@ -37,6 +37,7 @@ namespace Soheil.Core.ViewModels
         /// The data service.
         /// </value>
         public RawMaterialDataService RawMaterialDataService { get; set; }
+        public UnitGroupDataService UnitGroupDataService { get; set; }
         #endregion
 
         #region Methods
@@ -54,6 +55,7 @@ namespace Soheil.Core.ViewModels
             UnitOfWork = new SoheilEdmContext();
             RawMaterialDataService = new RawMaterialDataService(UnitOfWork);
             RawMaterialDataService.RawMaterialAdded += OnRawMaterialAdded;
+            UnitGroupDataService = new UnitGroupDataService(UnitOfWork);
 
             ColumnHeaders = new List<ColumnInfo> 
             { 
@@ -86,7 +88,7 @@ namespace Soheil.Core.ViewModels
 
         private void OnRawMaterialAdded(object sender, ModelAddedEventArgs<RawMaterial> e)
         {
-            var newRawMaterialVm = new RawMaterialVM(e.NewModel, Access, RawMaterialDataService);
+            var newRawMaterialVm = new RawMaterialVM(e.NewModel, Access, RawMaterialDataService, UnitGroupDataService);
             Items.AddNewItem(newRawMaterialVm);
             Items.CommitNew();
             CurrentContent = newRawMaterialVm;

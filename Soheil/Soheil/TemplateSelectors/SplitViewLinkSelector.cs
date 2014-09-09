@@ -25,7 +25,6 @@ namespace Soheil.TemplateSelectors
         public DataTemplate OrganizationChartPositionsTemplate { get; set; }
         public DataTemplate FishboneNodeActionPlansTemplate { get; set; }
         public DataTemplate ActionPlanFishboneNodesTemplate { get; set; }
-        public DataTemplate RawMaterialUnitGroupsTemplate { get; set; }
 
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -116,11 +115,6 @@ namespace Soheil.TemplateSelectors
             if (item is FishboneNodeActionPlansVM)
             {
                 return FishboneNodeActionPlansTemplate;
-
-            }
-            if (item is RawMaterialUnitGroupsVM)
-            {
-                return RawMaterialUnitGroupsTemplate;
 
             }
             return new DataTemplate();

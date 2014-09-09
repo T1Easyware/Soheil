@@ -5,8 +5,12 @@ namespace Soheil.Core.ViewModels.InfoViewModels
 {
     public class UnitSetInfoVM : ViewModelBase, IInfoViewModel
     {
-        private readonly UnitSet _model;
-
+        private UnitSet _model;
+        public UnitSet Model
+        {
+            get { return _model; }
+            set { _model = value; }
+        }
         public int Id
         {
             get { return _model.Id; } 
@@ -21,6 +25,10 @@ namespace Soheil.Core.ViewModels.InfoViewModels
         {
             get { return _model.Description; }
             set { _model.Description = value; OnPropertyChanged("Name"); }
+        }
+        public string Text
+        {
+            get { return _model.Code + "-" + _model.Description; }
         }
 
         /// <summary>

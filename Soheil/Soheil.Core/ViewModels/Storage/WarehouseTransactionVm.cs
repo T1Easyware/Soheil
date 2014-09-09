@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using Soheil.Common;
 using Soheil.Core.Base;
@@ -31,9 +33,7 @@ namespace Soheil.Core.ViewModels
         /// </value>
         public WarehouseTransactionDataService WarehouseTransactionDataService { get; set; }
 
-// ReSharper disable PropertyNotResolved
-        [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
-// ReSharper restore PropertyNotResolved
+
         public string Code
         {
             get { return _model.Code; }
@@ -51,24 +51,103 @@ namespace Soheil.Core.ViewModels
             set { _model.Flow = (byte)value; }
         }
 
+        // ReSharper disable PropertyNotResolved
+        [LocalizedRequired(ErrorMessageResourceName = @"txtQuantityRequired")]
+        // ReSharper restore PropertyNotResolved
         public double Quantity
         {
-            get { return _model.Quantity; }
-            set { _model.Quantity = value; OnPropertyChanged("Quantity"); }
+            get { return (double)GetValue(QuantityProperty); }
+            set { SetValue(QuantityProperty, value); }
         }
+        public static readonly DependencyProperty QuantityProperty =
+            DependencyProperty.Register("Quantity", typeof(double), typeof(WarehouseTransactionVM),
+            new PropertyMetadata(default(double), (d, e) =>
+            {
+                var vm = (WarehouseTransactionVM)d;
+                var val = (double)e.NewValue;
+                if (val < 0) return;
+                vm._model.Quantity = val;
+            }));
+          
+
+        public ObservableCollection<WarehouseInfoVM> Warehouses { get; set; }
 
         public ObservableCollection<RawMaterialInfoVM> RawMaterials { get; set; }
 
-        public RawMaterialInfoVM SelectedRawMaterial { get; set; }
+        /// <summary>
+        /// Gets or sets a bindable value that indicates SelectedSource
+        /// </summary>
+        public WarehouseInfoVM SelectedSource
+        {
+            get { return (WarehouseInfoVM)GetValue(SelectedSourceProperty); }
+            set { SetValue(SelectedSourceProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedSourceProperty =
+            DependencyProperty.Register("SelectedSource", typeof(WarehouseInfoVM), typeof(WarehouseTransactionVM),
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var vm = (WarehouseTransactionVM)d;
+                var val = (WarehouseInfoVM)e.NewValue;
+                if (val == null) return;
+                vm._model.SrcWarehouse = val.Model;
+            }));
 
-        public static readonly DependencyProperty SelectedUnitProperty = DependencyProperty.Register(
-            "SelectedUnit", typeof(UnitSetInfoVM), typeof(WarehouseTransactionVM), new PropertyMetadata(default(UnitSetInfoVM)));
+        // ReSharper disable PropertyNotResolved
+        [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
+        // ReSharper restore PropertyNotResolved
+        public WarehouseInfoVM SelectedDestination
+        {
+            get { return (WarehouseInfoVM)GetValue(SelectedDestinationProperty); }
+            set { SetValue(SelectedDestinationProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedDestinationProperty =
+            DependencyProperty.Register("SelectedDestination", typeof(WarehouseInfoVM), typeof(WarehouseTransactionVM),
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var vm = (WarehouseTransactionVM)d;
+                var val = (WarehouseInfoVM)e.NewValue;
+                if (val == null) return;
+                vm._model.DestWarehouse = val.Model;
+            }));
 
+
+        // ReSharper disable PropertyNotResolved
+        [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
+        // ReSharper restore PropertyNotResolved
+        public RawMaterialInfoVM SelectedRawMaterial
+        {
+            get { return (RawMaterialInfoVM)GetValue(SelectedRawMaterialProperty); }
+            set { SetValue(SelectedRawMaterialProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedRawMaterialProperty =
+            DependencyProperty.Register("SelectedRawMaterial", typeof(RawMaterialInfoVM), typeof(WarehouseTransactionVM),
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var vm = (WarehouseTransactionVM)d;
+                var val = (RawMaterialInfoVM)e.NewValue;
+                if (val == null) return;
+                vm._model.RawMaterial = val.Model;
+            }));
+
+        // ReSharper disable PropertyNotResolved
+        [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
+        // ReSharper restore PropertyNotResolved
         public UnitSetInfoVM SelectedUnit
         {
             get { return (UnitSetInfoVM)GetValue(SelectedUnitProperty); }
             set { SetValue(SelectedUnitProperty, value); }
         }
+        public static readonly DependencyProperty SelectedUnitProperty =
+            DependencyProperty.Register("SelectedUnit", typeof(UnitSetInfoVM), typeof(WarehouseTransactionVM),
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var vm = (WarehouseTransactionVM)d;
+                var val = (UnitSetInfoVM)e.NewValue;
+                if (val == null) return;
+                vm._model.UnitSet = val.Model;
+            }));
+
+
 
         public DateTime RecordDateTime
         {
@@ -87,6 +166,7 @@ namespace Soheil.Core.ViewModels
             get { return LoginInfo.GetUsername(_model.ModifiedBy); }
         }
 
+
   #endregion
 
         #region Methods
@@ -103,24 +183,22 @@ namespace Soheil.Core.ViewModels
         /// </summary>
         /// <param name="entity">The model.</param>
         /// <param name="access"></param>
-        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService)
+        /// <param name="dataService"></param>
+        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService, WarehouseReceipt groupModel, ObservableCollection<WarehouseInfoVM> warehouses, ObservableCollection<RawMaterialInfoVM> materials, WarehouseTransactionType type)
             : base(access)
         {
             InitializeData(dataService);
             _model = entity;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProductVM"/> class from the model.
-        /// </summary>
-        /// <param name="entity">The model.</param>
-        /// <param name="access"></param>
-        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService, ObservableCollection<RawMaterialInfoVM> rawMaterials )
-            : base(access)
-        {
-            InitializeData(dataService);
-            _model = entity;
-            RawMaterials = rawMaterials;
+            _model.WarehouseReceipt = groupModel;
+            Type = type;
+            Quantity = _model.Quantity;
+            Warehouses = warehouses;
+            RawMaterials = materials;
+            SelectedDestination = Warehouses.FirstOrDefault(dest => _model.DestWarehouse != null && dest.Id == _model.DestWarehouse.Id);
+            SelectedSource = Warehouses.FirstOrDefault(src => _model.SrcWarehouse != null && src.Id == _model.SrcWarehouse.Id);
+            SelectedRawMaterial = RawMaterials.FirstOrDefault(mat => _model.RawMaterial != null && mat.Id == _model.RawMaterial.Id);
+            if(SelectedRawMaterial != null)
+                SelectedUnit = SelectedRawMaterial.UnitSets.FirstOrDefault(unit => _model.UnitSet != null && unit.Id == _model.UnitSet.Id);
         }
 
         private void InitializeData(WarehouseTransactionDataService dataService)
@@ -149,9 +227,9 @@ namespace Soheil.Core.ViewModels
         #endregion
 
         #region Static Methods
-        public static WarehouseTransaction CreateNew(WarehouseTransactionDataService dataService)
+        public static WarehouseTransaction CreateNew(WarehouseTransactionDataService dataService, WarehouseReceipt groupModel)
         {
-            int id = dataService.AddModel(new WarehouseTransaction { Code = string.Empty, Quantity = 0, TransactionDateTime = DateTime.Now, RecordDateTime = DateTime.Now});
+            int id = dataService.AddModel(new WarehouseTransaction { WarehouseReceipt = groupModel,  Code = string.Empty, Quantity = 0, TransactionDateTime = DateTime.Now, RecordDateTime = DateTime.Now}, false);
             return dataService.GetSingle(id);
         }
         #endregion

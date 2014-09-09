@@ -213,9 +213,6 @@
     <Compile Include="RawMaterial.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
-    <Compile Include="RawMaterialUnitGroup.cs">
-      <DependentUpon>SoheilPOCO.tt</DependentUpon>
-    </Compile>
     <Compile Include="Repair.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>

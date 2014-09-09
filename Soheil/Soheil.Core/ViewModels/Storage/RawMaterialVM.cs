@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Media;
 using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
+using Soheil.Core.ViewModels.InfoViewModels;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -15,7 +20,6 @@ namespace Soheil.Core.ViewModels
         public override int Id
         {
             get { return _model.Id; } set{}
-            
         }
 
         public override string SearchItem {get {return Code + Name;} set{} }
@@ -36,6 +40,7 @@ namespace Soheil.Core.ViewModels
         /// The data service.
         /// </value>
         public RawMaterialDataService RawMaterialDataService { get; set; }
+        public UnitGroupDataService UnitGroupDataService { get; set; }
 
 // ReSharper disable PropertyNotResolved
         [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
@@ -55,7 +60,7 @@ namespace Soheil.Core.ViewModels
         public int SafetyStock
         {
             get { return _model.SafetyStock; }
-            set { _model.SafetyStock = value; OnPropertyChanged("SafetyStock"); }
+            set { _model.SafetyStock = value; OnPropertyChanged("SafetyStock"); OnPropertyChanged("InventoryStatusColor"); }
         }
 
         public Status Status
@@ -81,7 +86,52 @@ namespace Soheil.Core.ViewModels
             get { return LoginInfo.GetUsername(_model.ModifiedBy); }
         }
 
-        public RawMaterialUnitGroupsVM UnitGroupsVm { get; set; }
+        public SolidColorBrush InventoryStatusColor
+        {
+            get
+            {
+                return Inventory >= SafetyStock ? new SolidColorBrush(Colors.DarkSeaGreen) : new SolidColorBrush(Colors.IndianRed);
+            }
+        }
+        public ObservableCollection<UnitGroupInfoVM> UnitGroupsVm { get; set; }
+
+        /// <summary>
+        /// Gets or sets a bindable value that indicates SelectedUnitGroup
+        /// </summary>
+        public UnitGroupInfoVM SelectedUnitGroup
+        {
+            get { return (UnitGroupInfoVM)GetValue(SelectedUnitGroupProperty); }
+            set { SetValue(SelectedUnitGroupProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedUnitGroupProperty =
+            DependencyProperty.Register("SelectedUnitGroup", typeof(UnitGroupInfoVM), typeof(RawMaterialVM),
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var vm = (RawMaterialVM)d;
+                var val = (UnitGroupInfoVM)e.NewValue;
+                if (val == null) return;
+                vm._model.UnitGroup = val.Model; 
+            }));
+
+
+        /// <summary>
+        /// Gets or sets a bindable value that indicates BaseUnit
+        /// </summary>
+        public UnitSetInfoVM BaseUnit
+        {
+            get { return (UnitSetInfoVM)GetValue(BaseUnitProperty); }
+            set { SetValue(BaseUnitProperty, value); }
+        }
+        public static readonly DependencyProperty BaseUnitProperty =
+            DependencyProperty.Register("BaseUnit", typeof(UnitSetInfoVM), typeof(RawMaterialVM),
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var vm = (RawMaterialVM)d;
+                var val = (UnitSetInfoVM)e.NewValue;
+                if (val == null) return;
+                vm._model.BaseUnit = val.Model;
+            }));
+        
         #endregion
 
         #region Methods
@@ -99,11 +149,20 @@ namespace Soheil.Core.ViewModels
         /// </summary>
         /// <param name="entity">The model.</param>
         /// <param name="access"></param>
-        public RawMaterialVM(RawMaterial entity, AccessType access, RawMaterialDataService dataService)
+        public RawMaterialVM(RawMaterial entity, AccessType access, RawMaterialDataService dataService, UnitGroupDataService unitDataService)
             : base(access)
         {
-            InitializeData(dataService);
             _model = entity;
+            UnitGroupDataService = unitDataService;
+            UnitGroupsVm = new ObservableCollection<UnitGroupInfoVM>();
+            foreach (var unitGroup in UnitGroupDataService.GetActives())
+            {
+                UnitGroupsVm.Add(new UnitGroupInfoVM(unitGroup));
+            }
+            SelectedUnitGroup = UnitGroupsVm.FirstOrDefault(item => _model.UnitGroup != null && item.Id == _model.UnitGroup.Id);
+            if (SelectedUnitGroup != null)
+                BaseUnit = SelectedUnitGroup.UnitSets.FirstOrDefault(item => item.Id == _model.BaseUnit.Id);
+            InitializeData(dataService);
         }
 
         private void InitializeData(RawMaterialDataService dataService)
@@ -124,13 +183,6 @@ namespace Soheil.Core.ViewModels
         public override bool CanSave()
         {
             return AllDataValid() && base.CanSave();
-        }
-
-        public override void ViewItemLink(object param)
-        {
-            UnitGroupsVm = new RawMaterialUnitGroupsVM(this, Access);
-            CurrentLink = UnitGroupsVm;
-            base.ViewItemLink(param);
         }
 
         #endregion

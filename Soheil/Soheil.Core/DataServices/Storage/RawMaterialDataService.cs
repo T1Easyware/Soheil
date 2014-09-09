@@ -15,7 +15,6 @@ namespace Soheil.Core.DataServices
     public class RawMaterialDataService : DataServiceBase, IDataService<RawMaterial>
     {
 		public event EventHandler<ModelAddedEventArgs<RawMaterial>> RawMaterialAdded;
-        public event EventHandler<ModelAddedEventArgs<RawMaterialUnitGroup>> UnitGroupAdded;
         public event EventHandler<ModelRemovedEventArgs> UnitGroupRemoved;
         readonly Repository<RawMaterial> _rawMaterialRepository;
 
@@ -32,7 +31,7 @@ namespace Soheil.Core.DataServices
 
 		public IEnumerable<UnitSet> GetUnitSets(RawMaterial model)
 		{
-			return model.RawMaterialUnitGroups.SelectMany(x => x.UnitGroup.UnitSets);
+			return model.UnitGroup.UnitSets.SelectMany(x => x.UnitGroup.UnitSets);
 		}
 
 		#region IDataService<RawMaterialVM> Members
@@ -91,42 +90,6 @@ namespace Soheil.Core.DataServices
 			}
 		}
 
-        public ObservableCollection<RawMaterialUnitGroup> GetUnitGroups(int rawMaterialId)
-        {
-            RawMaterial entity = _rawMaterialRepository.FirstOrDefault(rawMaterial => rawMaterial.Id == rawMaterialId, "RawMaterialUnitGroups.UnitGroup", "RawMaterialUnitGroups.RawMaterial");
-            return new ObservableCollection<RawMaterialUnitGroup>(entity.RawMaterialUnitGroups.Where(item => item.UnitGroup.Status == (decimal)Status.Active));
-        }
-        public void AddUnitGroup(int rawMaterialId, int unitGroupId)
-        {
-
-            RawMaterial currentRawMaterial = _rawMaterialRepository.Single(rawMaterial => rawMaterial.Id == rawMaterialId);
-            if (currentRawMaterial.RawMaterialUnitGroups.Any(rawMaterialUnitGroup =>
-                rawMaterialUnitGroup.RawMaterial.Id == rawMaterialId
-                && rawMaterialUnitGroup.UnitGroup.Id == unitGroupId))
-                return;
-
-            var unitGroupRepository = new Repository<UnitGroup>(Context);
-            UnitGroup newUnitGroup = unitGroupRepository.Single(unitGroup => unitGroup.Id == unitGroupId);
-
-            var newRawMaterialUnitGroup = new RawMaterialUnitGroup { UnitGroup = newUnitGroup, RawMaterial = currentRawMaterial };
-            currentRawMaterial.RawMaterialUnitGroups.Add(newRawMaterialUnitGroup);
-            Context.Commit();
-            UnitGroupAdded(this, new ModelAddedEventArgs<RawMaterialUnitGroup>(newRawMaterialUnitGroup));
-        }
-
-        public void RemoveUnitGroup(int rawMaterialId, int unitGroupId)
-        {
-            var rawMaterialUnitGroupRepository = new Repository<RawMaterialUnitGroup>(Context);
-            RawMaterial currentRawMaterial = _rawMaterialRepository.Single(rawMaterial => rawMaterial.Id == rawMaterialId);
-            RawMaterialUnitGroup currentRawMaterialUnitGroup =
-                currentRawMaterial.RawMaterialUnitGroups.First(
-                    rawMaterialUnitGroup =>
-                    rawMaterialUnitGroup.RawMaterial.Id == rawMaterialId && rawMaterialUnitGroup.Id == unitGroupId);
-            int id = currentRawMaterialUnitGroup.Id;
-            rawMaterialUnitGroupRepository.Delete(currentRawMaterialUnitGroup);
-            Context.Commit();
-            UnitGroupRemoved(this, new ModelRemovedEventArgs(id));
-        }
         #endregion
 
 		//???don't mind this

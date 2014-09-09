@@ -71,20 +71,20 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual Warehouse Warehouse
+        public virtual Warehouse DestWarehouse
         {
-            get { return _warehouse; }
+            get { return _destWarehouse; }
             set
             {
-                if (!ReferenceEquals(_warehouse, value))
+                if (!ReferenceEquals(_destWarehouse, value))
                 {
-                    var previousValue = _warehouse;
-                    _warehouse = value;
-                    FixupWarehouse(previousValue);
+                    var previousValue = _destWarehouse;
+                    _destWarehouse = value;
+                    FixupDestWarehouse(previousValue);
                 }
             }
         }
-        private Warehouse _warehouse;
+        private Warehouse _destWarehouse;
     
         public virtual WarehouseReceipt WarehouseReceipt
         {
@@ -175,23 +175,38 @@ namespace Soheil.Model
             }
         }
         private UnitSet _unitSet;
+    
+        public virtual Warehouse SrcWarehouse
+        {
+            get { return _srcWarehouse; }
+            set
+            {
+                if (!ReferenceEquals(_srcWarehouse, value))
+                {
+                    var previousValue = _srcWarehouse;
+                    _srcWarehouse = value;
+                    FixupSrcWarehouse(previousValue);
+                }
+            }
+        }
+        private Warehouse _srcWarehouse;
 
         #endregion
 
         #region Association Fixup
     
-        private void FixupWarehouse(Warehouse previousValue)
+        private void FixupDestWarehouse(Warehouse previousValue)
         {
-            if (previousValue != null && previousValue.WarehouseTransactions.Contains(this))
+            if (previousValue != null && previousValue.DestWarehouseTransactions.Contains(this))
             {
-                previousValue.WarehouseTransactions.Remove(this);
+                previousValue.DestWarehouseTransactions.Remove(this);
             }
     
-            if (Warehouse != null)
+            if (DestWarehouse != null)
             {
-                if (!Warehouse.WarehouseTransactions.Contains(this))
+                if (!DestWarehouse.DestWarehouseTransactions.Contains(this))
                 {
-                    Warehouse.WarehouseTransactions.Add(this);
+                    DestWarehouse.DestWarehouseTransactions.Add(this);
                 }
             }
         }
@@ -288,6 +303,22 @@ namespace Soheil.Model
                 if (!UnitSet.WarehouseTransactions.Contains(this))
                 {
                     UnitSet.WarehouseTransactions.Add(this);
+                }
+            }
+        }
+    
+        private void FixupSrcWarehouse(Warehouse previousValue)
+        {
+            if (previousValue != null && previousValue.SrcWarehouseTransactions.Contains(this))
+            {
+                previousValue.SrcWarehouseTransactions.Remove(this);
+            }
+    
+            if (SrcWarehouse != null)
+            {
+                if (!SrcWarehouse.SrcWarehouseTransactions.Contains(this))
+                {
+                    SrcWarehouse.SrcWarehouseTransactions.Add(this);
                 }
             }
         }

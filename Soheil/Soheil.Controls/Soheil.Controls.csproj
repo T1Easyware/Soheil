@@ -130,6 +130,7 @@
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="CustomControls\GridLengthAnimation.cs" />
     <Compile Include="CustomControls\GridViewSort.cs" />
+    <Compile Include="CustomControls\AutoComboBox.cs" />
     <Compile Include="CustomControls\MultiLevelBar.cs" />
     <Compile Include="CustomControls\ImageRadioButton.cs" />
     <Compile Include="CustomControls\ImageButton.cs" />
@@ -697,6 +698,7 @@
     <Resource Include="Images\Menus\rawmaterialStorage.png" />
     <Resource Include="Images\Menus\StockDischarge.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

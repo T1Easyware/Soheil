@@ -1,11 +1,13 @@
-﻿using Soheil.Core.Base;
+﻿using System;
+using System.Collections.Generic;
+using Soheil.Core.Base;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels.InfoViewModels
 {
     public class WarehouseInfoVM : ViewModelBase, IInfoViewModel
     {
-        private readonly Warehouse _model;
+        private Warehouse _model;
 
         public int Id
         {
@@ -15,12 +17,23 @@ namespace Soheil.Core.ViewModels.InfoViewModels
         public string Code
         {
             get { return _model.Code; }
-            set { _model.Code = value; OnPropertyChanged("Code"); }
+            set { _model.Code = value; OnPropertyChanged("Code");  }
         }
         public string Name
         {
             get { return _model.Name; }
-            set { _model.Name = value; OnPropertyChanged("Name"); }
+            set { _model.Name = value; OnPropertyChanged("Name");  }
+        }
+
+        public string Text
+        {
+            get { return _model.Code + "-" + _model.Name; }
+        }
+
+        public Warehouse Model
+        {
+            get { return _model; }
+            set { _model = value; }
         }
 
         /// <summary>

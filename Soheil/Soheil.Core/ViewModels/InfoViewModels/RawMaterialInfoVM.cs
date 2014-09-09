@@ -7,7 +7,12 @@ namespace Soheil.Core.ViewModels.InfoViewModels
 {
     public class RawMaterialInfoVM : ViewModelBase, IInfoViewModel
     {
-        private readonly RawMaterial _model;
+        private RawMaterial _model;
+        public RawMaterial Model
+        {
+            get { return _model; }
+            set { _model = value; }
+        }
 
         public int Id
         {
@@ -24,7 +29,10 @@ namespace Soheil.Core.ViewModels.InfoViewModels
             get { return _model.Name; }
             set { _model.Name = value; OnPropertyChanged("Name"); }
         }
-
+        public string Text
+        {
+            get { return _model.Code + "-" + _model.Name; }
+        }
         public ObservableCollection<UnitSetInfoVM> UnitSets { get; set; }
 
         /// <summary>
@@ -35,14 +43,11 @@ namespace Soheil.Core.ViewModels.InfoViewModels
         {
             _model = entity;
             UnitSets = new ObservableCollection<UnitSetInfoVM>();
-            foreach (var materialUnitGroup in entity.RawMaterialUnitGroups)
+            if (entity.UnitGroup != null)
             {
-                if (materialUnitGroup.UnitGroup != null)
+                foreach (var unitSet in entity.UnitGroup.UnitSets)
                 {
-                    foreach (var unitSet in materialUnitGroup.UnitGroup.UnitSets)
-                    {
-                        UnitSets.Add(new UnitSetInfoVM(unitSet));
-                    }
+                    UnitSets.Add(new UnitSetInfoVM(unitSet));
                 }
             }
         }

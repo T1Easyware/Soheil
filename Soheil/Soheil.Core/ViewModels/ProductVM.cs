@@ -145,7 +145,7 @@ namespace Soheil.Core.ViewModels
 
         public override void Save(object param)
         {
-            ProductDataService.AttachModel(_model,SelectedGroupVM.Id);
+            ProductDataService.AttachModel(_model, SelectedGroupVM.Id);
             _model = ProductDataService.GetSingle(_model.Id);OnPropertyChanged("ModifiedBy");OnPropertyChanged("ModifiedDate");
             Mode = ModificationStatus.Saved;
         }

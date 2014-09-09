@@ -196,6 +196,38 @@ namespace Soheil.Model
             }
         }
         private ICollection<WarehouseTransaction> _warehouseTransactions;
+    
+        public virtual ICollection<RawMaterial> RawMaterials
+        {
+            get
+            {
+                if (_rawMaterials == null)
+                {
+                    var newCollection = new FixupCollection<RawMaterial>();
+                    newCollection.CollectionChanged += FixupRawMaterials;
+                    _rawMaterials = newCollection;
+                }
+                return _rawMaterials;
+            }
+            set
+            {
+                if (!ReferenceEquals(_rawMaterials, value))
+                {
+                    var previousValue = _rawMaterials as FixupCollection<RawMaterial>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupRawMaterials;
+                    }
+                    _rawMaterials = value;
+                    var newValue = value as FixupCollection<RawMaterial>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupRawMaterials;
+                    }
+                }
+            }
+        }
+        private ICollection<RawMaterial> _rawMaterials;
 
         #endregion
 
@@ -300,6 +332,28 @@ namespace Soheil.Model
                     if (ReferenceEquals(item.UnitSet, this))
                     {
                         item.UnitSet = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupRawMaterials(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (RawMaterial item in e.NewItems)
+                {
+                    item.BaseUnit = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (RawMaterial item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.BaseUnit, this))
+                    {
+                        item.BaseUnit = null;
                     }
                 }
             }

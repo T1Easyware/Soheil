@@ -1044,4 +1044,49 @@ SET IDENTITY_INSERT dbo.Causes OFF
 --('38','2',N'تنهایی انسان در عصر ماشینی','21', '12', {fn CURRENT_TIMESTAMP()}, {fn CURRENT_TIMESTAMP()}, 1, 1);
 --SET IDENTITY_INSERT dbo.xxxxxx OFF
 
+
+SET IDENTITY_INSERT dbo.UnitGroups ON
+insert into UnitGroups([Id],[ModifiedBy],[Name],[Status]) values
+(1,1,N'وزنی',1);
+
+insert into UnitGroups([Id],[ModifiedBy],[Name],[Status]) values
+(2,1,N'حجمی',1); 
+SET IDENTITY_INSERT dbo.UnitGroups OFF
+
+SET IDENTITY_INSERT dbo.unitsets ON
+
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(1,'gr', N'گرم',1,1,1); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(2,'kg', N'کیلوگرم',1,1,1); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(3,'Tn', N'تن',1,1,1); 
+
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(4,'cc', N'سی سی',1,1,2); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(5,'Lt', N'لیتر',1,1,2); 
+insert into UnitSets([Id],[Code],[Description],[ModifiedBy],[Status],[UnitGroup_Id]) values
+(6,'M3', N'متر مکعب',1,1,2); 
+
+SET IDENTITY_INSERT dbo.unitsets OFF
+
+
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(1,2,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(2,3,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(1,3,1000000,1,1);
+
+
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(4,5,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(5,6,1000,1,1);
+insert into UnitConversions([MinorUnit_Id],[MajorUnit_Id],[Factor],[ModifiedBy],[Status]) values
+(4,6,1000000,1,1);
+
+
+
 use SoheilDb

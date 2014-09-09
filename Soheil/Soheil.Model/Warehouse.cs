@@ -90,49 +90,81 @@ namespace Soheil.Model
 
         #region Navigation Properties
     
-        public virtual ICollection<WarehouseTransaction> WarehouseTransactions
+        public virtual ICollection<WarehouseTransaction> DestWarehouseTransactions
         {
             get
             {
-                if (_warehouseTransactions == null)
+                if (_destWarehouseTransactions == null)
                 {
                     var newCollection = new FixupCollection<WarehouseTransaction>();
-                    newCollection.CollectionChanged += FixupWarehouseTransactions;
-                    _warehouseTransactions = newCollection;
+                    newCollection.CollectionChanged += FixupDestWarehouseTransactions;
+                    _destWarehouseTransactions = newCollection;
                 }
-                return _warehouseTransactions;
+                return _destWarehouseTransactions;
             }
             set
             {
-                if (!ReferenceEquals(_warehouseTransactions, value))
+                if (!ReferenceEquals(_destWarehouseTransactions, value))
                 {
-                    var previousValue = _warehouseTransactions as FixupCollection<WarehouseTransaction>;
+                    var previousValue = _destWarehouseTransactions as FixupCollection<WarehouseTransaction>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupWarehouseTransactions;
+                        previousValue.CollectionChanged -= FixupDestWarehouseTransactions;
                     }
-                    _warehouseTransactions = value;
+                    _destWarehouseTransactions = value;
                     var newValue = value as FixupCollection<WarehouseTransaction>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupWarehouseTransactions;
+                        newValue.CollectionChanged += FixupDestWarehouseTransactions;
                     }
                 }
             }
         }
-        private ICollection<WarehouseTransaction> _warehouseTransactions;
+        private ICollection<WarehouseTransaction> _destWarehouseTransactions;
+    
+        public virtual ICollection<WarehouseTransaction> SrcWarehouseTransactions
+        {
+            get
+            {
+                if (_srcWarehouseTransactions == null)
+                {
+                    var newCollection = new FixupCollection<WarehouseTransaction>();
+                    newCollection.CollectionChanged += FixupSrcWarehouseTransactions;
+                    _srcWarehouseTransactions = newCollection;
+                }
+                return _srcWarehouseTransactions;
+            }
+            set
+            {
+                if (!ReferenceEquals(_srcWarehouseTransactions, value))
+                {
+                    var previousValue = _srcWarehouseTransactions as FixupCollection<WarehouseTransaction>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupSrcWarehouseTransactions;
+                    }
+                    _srcWarehouseTransactions = value;
+                    var newValue = value as FixupCollection<WarehouseTransaction>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupSrcWarehouseTransactions;
+                    }
+                }
+            }
+        }
+        private ICollection<WarehouseTransaction> _srcWarehouseTransactions;
 
         #endregion
 
         #region Association Fixup
     
-        private void FixupWarehouseTransactions(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupDestWarehouseTransactions(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
                 foreach (WarehouseTransaction item in e.NewItems)
                 {
-                    item.Warehouse = this;
+                    item.DestWarehouse = this;
                 }
             }
     
@@ -140,9 +172,31 @@ namespace Soheil.Model
             {
                 foreach (WarehouseTransaction item in e.OldItems)
                 {
-                    if (ReferenceEquals(item.Warehouse, this))
+                    if (ReferenceEquals(item.DestWarehouse, this))
                     {
-                        item.Warehouse = null;
+                        item.DestWarehouse = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupSrcWarehouseTransactions(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (WarehouseTransaction item in e.NewItems)
+                {
+                    item.SrcWarehouse = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (WarehouseTransaction item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.SrcWarehouse, this))
+                    {
+                        item.SrcWarehouse = null;
                     }
                 }
             }
