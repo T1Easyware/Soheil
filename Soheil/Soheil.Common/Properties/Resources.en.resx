@@ -1279,4 +1279,34 @@
   <data name="txtStockDischarge" xml:space="preserve">
     <value>Stock Discharge</value>
   </data>
+  <data name="txtAuto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="txtDefectionReport" xml:space="preserve">
+    <value>Qualitative Report (Defection)</value>
+  </data>
+  <data name="txtFrom" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="txtNow" xml:space="preserve">
+    <value>Now</value>
+  </data>
+  <data name="txtTo" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="txtOperatorProducedG1" xml:space="preserve">
+    <value>Operator's Produced G1</value>
+  </data>
+  <data name="txtOperatorTargetPoint" xml:space="preserve">
+    <value>Target Point per Operator</value>
+  </data>
+  <data name="txtSafetyOption" xml:space="preserve">
+    <value>Restrain Small Reports</value>
+  </data>
+  <data name="txtShowFilledReports" xml:space="preserve">
+    <value>Show Filled Reports</value>
+  </data>
+  <data name="txtMaterialPlanning" xml:space="preserve">
+    <value>Material Planning</value>
+  </data>
 </root>

@@ -1939,9 +1939,14 @@
 					  xmlns:mpv="clr-namespace:Soheil.Views.MaterialPlanning">
 			<DockPanel>
 				<ToolBar DockPanel.Dock="Top">
-					<Menu>
-						<cal:DatePicker SelectedDate="{Binding Date}" DisplayDate="{Binding Date}"/>
-					</Menu>
+					<cal:DatePicker SelectedDate="{Binding Date}" DisplayDate="{Binding Date}"/>
+					<WrapPanel VerticalAlignment="Center">
+						<Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
+						<Slider Margin="2" Maximum="4800" Minimum="600" Value="{Binding Width}" Width="200" VerticalAlignment="Center"/>
+						<WrapPanel.ToolTip>
+							<ToolTip>بزرگنمایی زمان</ToolTip>
+						</WrapPanel.ToolTip>
+					</WrapPanel>
 				</ToolBar>
 				<mpv:MaterialPlanning/>
 			</DockPanel>

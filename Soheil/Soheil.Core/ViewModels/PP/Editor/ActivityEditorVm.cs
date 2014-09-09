@@ -19,6 +19,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		/// <para>Also when last process is deleted and therefore no selected process exists</para>
 		/// </summary>
 		public event Action<ProcessEditorVm, bool> Selected;
+		public event Action<ProcessEditorVm> ProcessAdded;
 		/// <summary>
 		/// Occurs when selected choice of SSAs for this Process is changed
 		/// <para>second parameter can be null</para>
@@ -137,6 +138,10 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				//select the right choice based on SSA
 				processVm.SelectedChoice = Choices.FirstOrDefault(x => x.ManHour == processVm.Model.StateStationActivity.ManHour);
 			}
+
+			//update according to fixed TP or fixed Duration
+			if (ProcessAdded != null)
+				ProcessAdded(processVm);
 		}
 
 		void Process_Selected(ProcessEditorVm processVm)

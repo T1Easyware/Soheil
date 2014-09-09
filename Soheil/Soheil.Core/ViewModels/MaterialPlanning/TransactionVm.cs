@@ -10,11 +10,15 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 	public class TransactionVm : DependencyObject
 	{
 		public Model.WarehouseTransaction Model { get; set; }
-		public TransactionVm(Model.WarehouseTransaction model)
+		bool _isInitializing = true;
+		public TransactionVm(Model.WarehouseTransaction model, IEnumerable<WarehouseVm> all)
 		{
 			Model = model;
 			Quantity = model.Quantity;
-			//UnitCode = model.UnitSet.Code;
+			UnitCode = model.UnitSet == null ? "عدد" : model.UnitSet.Code;
+			if (model.Warehouse != null)
+				Warehouse = all.FirstOrDefault(x => x.Model.Id == model.Warehouse.Id);
+			_isInitializing = false;
 		}
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Quantity
@@ -25,7 +29,14 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 			set { SetValue(QuantityProperty, value); }
 		}
 		public static readonly DependencyProperty QuantityProperty =
-			DependencyProperty.Register("Quantity", typeof(double), typeof(TransactionVm), new PropertyMetadata(0d));
+			DependencyProperty.Register("Quantity", typeof(double), typeof(TransactionVm),
+			new PropertyMetadata(0d, (d, e) =>
+			{
+				var vm = (TransactionVm)d;
+				if (vm._isInitializing) return;
+				var val = (double)e.NewValue;
+				vm.Model.Quantity = val;
+			}));
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates UnitCode
@@ -47,7 +58,14 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 			set { SetValue(WarehouseProperty, value); }
 		}
 		public static readonly DependencyProperty WarehouseProperty =
-			DependencyProperty.Register("Warehouse", typeof(WarehouseVm), typeof(TransactionVm), new PropertyMetadata(null));
+			DependencyProperty.Register("Warehouse", typeof(WarehouseVm), typeof(TransactionVm),
+			new PropertyMetadata(null, (d, e) =>
+			{
+				var vm = (TransactionVm)d;
+				if (vm._isInitializing) return;
+				var val = (WarehouseVm)e.NewValue;
+				vm.Model.Warehouse = val.Model;
+			}));
 
 	}
 }

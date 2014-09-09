@@ -189,18 +189,18 @@ namespace Soheil.Core.DataServices
 				x => x.ModifiedDate);
 		}
 
-		internal WorkProfilePlan GetCurrentAt(DateTime dateTime)
+		internal WorkProfilePlan GetCurrentOn(DateTime dateTime)
 		{
 			return workProfilePlanRepository.LastOrDefault(x =>
 				x.StartDate >= dateTime && x.EndDate <= dateTime,
 				x => x.ModifiedDate);
 		}
 		/// <summary>
-		/// Gets the starting DateTime of the first Shift of the given Date
+		/// Gets the starting DateTime of the first Shift on the given Date
 		/// </summary>
 		/// <param name="dateTime">target Date</param>
 		/// <returns>dateTime.Date.Add([FirstShift in the date].StartSeconds)</returns>
-		internal DateTime GetShiftStartAt(DateTime dateTime)
+		internal DateTime GetShiftStartOn(DateTime dateTime)
 		{
 			dateTime = dateTime.Date;
 			var wpp = workProfilePlanRepository.LastOrDefault(x =>

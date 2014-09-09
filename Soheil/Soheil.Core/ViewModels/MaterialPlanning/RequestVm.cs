@@ -10,24 +10,12 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 {
 	public class RequestVm : DependencyObject
 	{
-		public RequestVm(Model.WarehouseTransaction model)
+		public RequestVm(Core.Reports.MaterialPlanStation station)
 		{
-
+			Quantity = station.Quantity;
+			StationName = station.Station.Name;
+			UnitCode = station.Bom.UnitSet == null ? "عدد" : station.Bom.UnitSet.Code;
 		}
-		public RequestVm()
-		{
-
-		}
-		/// <summary>
-		/// Gets or sets a bindable value that indicates RequestType
-		/// </summary>
-		public MaterialRequestType RequestType
-		{
-			get { return (MaterialRequestType)GetValue(RequestTypeProperty); }
-			set { SetValue(RequestTypeProperty, value); }
-		}
-		public static readonly DependencyProperty RequestTypeProperty =
-			DependencyProperty.Register("RequestType", typeof(MaterialRequestType), typeof(RequestVm), new PropertyMetadata(MaterialRequestType.NoTransaction));
 
 		/// <summary>
 		/// Gets or sets a bindable value that indicates StationName
@@ -40,17 +28,6 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 		public static readonly DependencyProperty StationNameProperty =
 			DependencyProperty.Register("StationName", typeof(string), typeof(RequestVm), new PropertyMetadata(""));
 		
-		/// <summary>
-		/// Gets or sets a bindable value that indicates Transaction
-		/// </summary>
-		public TransactionVm Transaction
-		{
-			get { return (TransactionVm)GetValue(TransactionProperty); }
-			set { SetValue(TransactionProperty, value); }
-		}
-		public static readonly DependencyProperty TransactionProperty =
-			DependencyProperty.Register("Transaction", typeof(TransactionVm), typeof(RequestVm), new PropertyMetadata(null));
-	
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Quantity
 		/// </summary>
@@ -72,5 +49,16 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 		}
 		public static readonly DependencyProperty UnitCodeProperty =
 			DependencyProperty.Register("UnitCode", typeof(string), typeof(RequestVm), new PropertyMetadata(""));
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates CreateTransactionCommand
+		/// </summary>
+		public Commands.Command CreateTransactionCommand
+		{
+			get { return (Commands.Command)GetValue(CreateTransactionCommandProperty); }
+			set { SetValue(CreateTransactionCommandProperty, value); }
+		}
+		public static readonly DependencyProperty CreateTransactionCommandProperty =
+			DependencyProperty.Register("CreateTransactionCommand", typeof(Commands.Command), typeof(RequestVm), new UIPropertyMetadata(null));
 	}
 }

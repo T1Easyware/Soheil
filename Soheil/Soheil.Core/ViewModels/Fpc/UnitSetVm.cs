@@ -23,7 +23,9 @@ namespace Soheil.Core.ViewModels.Fpc
 		public UnitSetVm(Model.UnitSet model)
 		{
 			Model = model;
-			Code = model.Code;
+			if (model == null) Code = "عدد";
+			else
+				Code = model.Code;
 		}
 	}
 }

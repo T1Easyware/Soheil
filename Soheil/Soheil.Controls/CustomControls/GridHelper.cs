@@ -171,10 +171,19 @@ namespace Soheil.Controls.CustomControls
 
 		private static void SetStarColumns(Grid grid)
 		{
-			string[] starColumns = GetStarColumns(grid).Split(',');
-			for (int i = 0; i < grid.ColumnDefinitions.Count; i++)
-				if (starColumns.Contains(i.ToString()))
+			var tmp = GetStarColumns(grid);
+			if (tmp == "*")
+			{
+				for (int i = 0; i < grid.ColumnDefinitions.Count; i++)
 					grid.ColumnDefinitions[i].Width = new GridLength(1, GridUnitType.Star);
+			}
+			else
+			{
+				string[] starColumns = tmp.Split(',');
+				for (int i = 0; i < grid.ColumnDefinitions.Count; i++)
+					if (starColumns.Contains(i.ToString()))
+						grid.ColumnDefinitions[i].Width = new GridLength(1, GridUnitType.Star);
+			}
 		}
 		#endregion
 

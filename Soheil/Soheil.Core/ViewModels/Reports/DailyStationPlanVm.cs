@@ -133,7 +133,7 @@ namespace Soheil.Core.ViewModels.Reports
 			{
 				var vm = (DailyStationPlanVm)d;
 				var val = (DateTime)e.NewValue;
-				vm.StartTime = vm._workProfilePlanDataService.GetShiftStartAt(val).TimeOfDay;
+				vm.StartTime = vm._workProfilePlanDataService.GetShiftStartOn(val).TimeOfDay;
 				vm.EndDate = val.AddDays(1);
 			}));
 		/// <summary>
@@ -160,7 +160,7 @@ namespace Soheil.Core.ViewModels.Reports
 			{
 				var vm = (DailyStationPlanVm)d;
 				var val = (DateTime)e.NewValue;
-				vm.EndTime = vm._workProfilePlanDataService.GetShiftStartAt(val).TimeOfDay;
+				vm.EndTime = vm._workProfilePlanDataService.GetShiftStartOn(val).TimeOfDay;
 			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates EndTime

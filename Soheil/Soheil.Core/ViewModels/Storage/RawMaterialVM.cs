@@ -9,6 +9,7 @@ using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.ViewModels.InfoViewModels;
 using Soheil.Model;
+using System.Windows;
 
 namespace Soheil.Core.ViewModels
 {
@@ -132,6 +133,17 @@ namespace Soheil.Core.ViewModels
                 vm._model.BaseUnit = val.Model;
             }));
         
+		/// <summary>
+		/// Gets or sets a bindable value that indicates UnitGroupVm
+		/// </summary>
+		public UnitGroupVM UnitGroupVm
+		{
+			get { return (UnitGroupVM)GetValue(UnitGroupVmProperty); }
+			set { SetValue(UnitGroupVmProperty, value); }
+		}
+		public static readonly DependencyProperty UnitGroupVmProperty =
+			DependencyProperty.Register("UnitGroupVm", typeof(UnitGroupVM), typeof(RawMaterialVM), new PropertyMetadata(null));
+
         #endregion
 
         #region Methods

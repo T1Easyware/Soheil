@@ -73,7 +73,7 @@
 				<!-- Operator produced G1 -->
 				<Border Grid.Row="1" BorderBrush="#CCC" Background="#08F"
 										    BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
-					<TextBlock Text="خروجی سالم هر اپراتور" Foreground="Black" Margin="2,2,2,0"/>
+                    <TextBlock Text="{Loc txtOperatorProducedG1}" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
 				<Border Grid.Row="2" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
@@ -183,7 +183,7 @@
 				<!-- Defections -->
 				<Border Grid.Row="3" BorderBrush="#CCC" Background="#E64"
 						BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
-					<TextBlock Text="گزارش کیفی (ضایعات)" Foreground="Black" Margin="2,2,2,0"/>
+                    <TextBlock Text="{Loc txtDefectionReport}" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
 				<Border Grid.Row="4" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>
@@ -366,7 +366,7 @@
 				<!-- Stoppage -->
 				<Border Grid.Row="5" BorderBrush="#CCC" Background="#FC0"
 										    BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" HorizontalAlignment="Left" Margin="2,2,2,0">
-					<TextBlock Text="گزارش توقفات" Foreground="Black" Margin="2,2,2,0"/>
+                    <TextBlock Text="{Loc txtStoppageReport}" Foreground="Black" Margin="2,2,2,0"/>
 				</Border>
 				<Border Grid.Row="6" BorderBrush="#CCC" BorderThickness="1" CornerRadius="0,2,2,2" Margin="2,0,2,2">
 					<DockPanel>

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:local="clr-namespace:Soheil.Views.PP"
 			 xmlns:ppevm="clr-namespace:Soheil.Core.ViewModels.PP.Report;assembly=Soheil.Core"
-             xmlns:cal="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls" 
+             xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit" 
              xmlns:cc="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" Height="45"
@@ -115,7 +115,7 @@
                                             <TextBlock Text="{Loc txtStoredCount}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
 											<TextBlock Text="{Loc txtTransactionCode}" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
 
-											<cal:PersianDatePicker SelectedDate="{Binding WarehouseTransaction.TransactionDate}" Grid.Row="0" Grid.Column="1"/>
+											<cal:DatePicker SelectedDate="{Binding WarehouseTransaction.TransactionDate}" Grid.Row="0" Grid.Column="1"/>
 											<cc:TimeBox Time="{Binding WarehouseTransaction.TransactionTime}" Grid.Row="1" Grid.Column="1"/>
 											<ComboBox ItemsSource="{Binding Warehouses}" SelectedItem="{Binding WarehouseTransaction.Warehouse}" DisplayMemberPath="Name" Grid.Row="2" Grid.Column="1" Margin="-1"/>
 											<TextBox Text="{Binding WarehouseTransaction.Quantity}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="1"/>
@@ -134,7 +134,7 @@
 														<TextBlock Text="{Loc txtCancel}" Foreground="Black"/>
 													</StackPanel>
 												</Button>
-                                                <Button Command="{Binding WarehouseTransaction.SaveCommand}">
+												<Button Command="{Binding WarehouseTransaction.SaveCommand}" Click="PopupCloseButton_Click">
 													<StackPanel>
 														<Image Style="{StaticResource Save16Image}"/>
 														<TextBlock Text="{Loc txtSave}" Foreground="Black"/>
@@ -175,7 +175,7 @@
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
                             <TextBlock Text="{Loc txtStartDate}"/>
-                            <cal:PersianDatePicker SelectedDate="{Binding StartDate}" Grid.Row="0" Grid.Column="1"/>
+                            <cal:DatePicker SelectedDate="{Binding StartDate}" Grid.Row="0" Grid.Column="1"/>
                             <TextBlock Text="{Loc txtStartTime}" Grid.Row="1"/>
                             <cc:TimeBox Time="{Binding StartTime}" Grid.Row="1" Grid.Column="1"/>
 
@@ -229,7 +229,7 @@
 							<TextBlock Text="مدت زمان گزارش" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
 							<TextBlock Text="مقدار هدف بازه" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
 
-							<cal:PersianDatePicker SelectedDate="{Binding EndDate}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
+							<cal:DatePicker SelectedDate="{Binding EndDate}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
 							<cc:TimeBox Time="{Binding EndTime}" Grid.Row="1" Grid.Column="2"/>
 							<cc:TimeBox DurationSeconds="{Binding DurationSeconds, Mode=TwoWay}" IsReadOnly="{Binding ByEndDate}" Grid.Row="2" Grid.Column="2"/>
 							<TextBox Text="{Binding TargetPoint}" FlowDirection="LeftToRight" Grid.Row="3" Grid.Column="2"/>

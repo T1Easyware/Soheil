@@ -1625,7 +1625,7 @@ CREATE TABLE [dbo].[BOMs] (
     [IsDefault] bit  NOT NULL,
     [State_Id] int  NOT NULL,
     [RawMaterial_Id] int  NOT NULL,
-    [UnitSet_Id] int  NOT NULL
+    [UnitSet_Id] int  NULL
 );
 GO
 

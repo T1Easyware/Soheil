@@ -9,28 +9,28 @@ namespace Soheil.Core.ViewModels.PP.Report
 {
 	public class DefectionReportVm : DependencyObject
 	{
+		public Dal.SoheilEdmContext UOW { get; set; }
 		public Model.DefectionReport Model { get; protected set; }
 		readonly DefectionReportCollection Parent;
 
-		public DefectionReportVm(DefectionReportCollection parent, Model.DefectionReport model)
+		public DefectionReportVm(DefectionReportCollection parent, Model.DefectionReport model, Dal.SoheilEdmContext uow)
 		{
-
+			UOW = uow;
 			Model = model;
-			Index = parent.Parent.DefectionReports.List.Count + 1;
 			Parent = parent;
 			IsG2 = model.IsG2;
 
 			ProductDefection = FilterBoxVm.CreateForProductDefections(
 				model.ProductDefection == null ? -1 : model.ProductDefection.Id, 
 				model.ProcessReport.Process.StateStationActivity.StateStation.State.FPC.Product.Id);
-			var pdrepo = new Dal.Repository<Model.ProductDefection>(Parent.Parent.UOW);
+			var pdrepo = new Dal.Repository<Model.ProductDefection>(uow);
 			ProductDefection.FilterableItemSelected += (s, old, v) => 
 				Model.ProductDefection = pdrepo.FirstOrDefault(x => x.Id == v.Id);
 			if (ProductDefection.SelectedItem == null) ProductDefection.SelectedItem = ProductDefection.FilteredList.FirstOrDefault();
 
 			//create and load OperatorDefectionReports
-			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorDefectionReports, Parent.Parent.UOW);
-			var odrRepo = new Dal.Repository<Model.OperatorDefectionReport>(Parent.Parent.UOW);
+			GuiltyOperators = FilterBoxVmCollection.CreateForGuiltyOperators(model.OperatorDefectionReports, uow);
+			var odrRepo = new Dal.Repository<Model.OperatorDefectionReport>(uow);
 			GuiltyOperators.OperatorSelected += (vm, oldOp, newOp) =>
 			{
 				if (newOp.Model == null) return;
@@ -78,7 +78,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				//delete
 				Parent.List.Remove(this);
 				Model.ProcessReport.DefectionReports.Remove(Model);
-				new DataServices.ProcessReportDataService(Parent.Parent.UOW).Delete(Model);
+				new DataServices.ProcessReportDataService(UOW).Delete(Model);
 
 				//reset indices
 				for (int i = 0; i < Parent.List.Count; i++)
