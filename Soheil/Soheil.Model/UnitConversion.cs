@@ -25,7 +25,7 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual long Factor
+        public virtual double Factor
         {
             get;
             set;

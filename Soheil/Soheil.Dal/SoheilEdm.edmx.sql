@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 09/07/2014 22:33:14
+-- Date Created: 09/09/2014 22:50:10
 -- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -1547,7 +1547,7 @@ CREATE TABLE [dbo].[RawMaterials] (
     [Name] nvarchar(max)  NOT NULL,
     [Code] nvarchar(max)  NOT NULL,
     [Inventory] float  NOT NULL,
-    [SafetyStock] int  NOT NULL,
+    [SafetyStock] float  NOT NULL,
     [CreatedDate] datetime  NOT NULL,
     [ModifiedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
@@ -1599,7 +1599,7 @@ GO
 -- Creating table 'UnitConversions'
 CREATE TABLE [dbo].[UnitConversions] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Factor] bigint  NOT NULL,
+    [Factor] float  NOT NULL,
     [Status] tinyint  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [MajorUnit_Id] int  NULL,

@@ -80,13 +80,13 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 		/// <summary>
 		/// Gets or sets a bindable value that indicates SafetyStock
 		/// </summary>
-		public int SafetyStock
+		public double SafetyStock
 		{
-			get { return (int)GetValue(SafetyStockProperty); }
+			get { return (double)GetValue(SafetyStockProperty); }
 			set { SetValue(SafetyStockProperty, value); }
 		}
 		public static readonly DependencyProperty SafetyStockProperty =
-			DependencyProperty.Register("SafetyStock", typeof(int), typeof(RawMaterialVm), new PropertyMetadata(0));
+			DependencyProperty.Register("SafetyStock", typeof(double), typeof(RawMaterialVm), new PropertyMetadata(0));
 
 	}
 }

@@ -123,7 +123,13 @@ namespace Soheil.Core.DataServices.Storage
 
             var prevContext = new SoheilEdmContext();
 	        var prevRepository = new Repository<WarehouseTransaction>(prevContext);
-	        double prevQuantity = prevRepository.Single(t => t.Id == model.Id).Quantity;
+	        var prevModel = prevRepository.Single(t => t.Id == model.Id);
+	        if (prevModel == null)
+	            return;
+            if (model.UnitSet.Id == model.RawMaterial.BaseUnit.Id)
+                return;
+
+            double prevQuantity = prevModel.Quantity;
 	        double reletiveQuantity = model.Quantity - prevQuantity;
 
 	        switch ((WarehouseTransactionType) model.Type)
@@ -139,7 +145,7 @@ namespace Soheil.Core.DataServices.Storage
 	                    query = convRepository.Find(c => c.Status != (decimal) Status.Deleted)
 	                        .FirstOrDefault(
 	                            c => c.MinorUnit.Id == model.UnitSet.Id && c.MajorUnit.Id == model.RawMaterial.BaseUnit.Id);
-                        factor = 1 / (double)query.Factor;
+                        factor = 1 / query.Factor;
 	                }
 	                else
 	                {
