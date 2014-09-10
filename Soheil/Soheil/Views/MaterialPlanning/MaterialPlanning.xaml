@@ -85,7 +85,7 @@
                                                         </TextBlock.Text>
                                                     </TextBlock>
                                                 </StackPanel>
-                                                <Button Command="{Binding CreateTransactionCommand}" Click="OpenTransactionButton_Click" Padding="0" Margin="0" Opacity="0" x:Name="btn">
+                                                <Button Command="{Binding CreateTransactionCommand}" Padding="0" Margin="0" Opacity="0" x:Name="btn">
                                                     <DockPanel>
                                                         <Image Style="{StaticResource WarehouseOutImage}" Margin="0"/>
                                                         <TextBlock Text="انتقال به تولید" TextWrapping="Wrap" FontSize="10"/>

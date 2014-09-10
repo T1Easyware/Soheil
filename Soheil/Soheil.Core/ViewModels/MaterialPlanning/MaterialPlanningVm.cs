@@ -112,6 +112,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 					foreach (var station in mat.Stations)
 					{
 						var reqvm = new RequestVm(station);
+						var reqDate = startDt.AddHours(i);
 						reqvm.CreateTransactionCommand = new Commands.Command(o =>
 						{
 							var transactionModel = new Model.WarehouseTransaction
@@ -121,19 +122,20 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 								Flow = 1,
 								Code = mat.RawMaterial.Code,
 								RawMaterial = mat.RawMaterial,
-								TransactionDateTime = DateTime.Now,
+								TransactionDateTime = reqDate,
 								RecordDateTime = DateTime.Now,
-								DestWarehouse = Warehouses.Any() ? Warehouses.FirstOrDefault().Model : null
+								SrcWarehouse = Warehouses.Any() ? Warehouses.FirstOrDefault().Model : null
 							};
 							if (WarehouseTransactionDataService.AddModel(transactionModel) > 0)
-								cell.Transactions.Add(new TransactionVm(transactionModel, Warehouses));
+								cell.Transactions.Add(new TransactionVm(transactionModel, Warehouses, UOW));
 							material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count + cell.Transactions.Count);
 						});
-						cell.Requests.Add(reqvm);
+						if(reqvm.Quantity > 0)
+							cell.Requests.Add(reqvm);
 					}
-					foreach (var tran in mat.Transactions)
+					foreach (var tran in mat.Transactions.Where(x=>x.Quantity > 0))
 					{
-						cell.Transactions.Add(new TransactionVm(tran, Warehouses));
+						cell.Transactions.Add(new TransactionVm(tran, Warehouses, UOW));
 					}
 					material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count + cell.Transactions.Count);
 					Cells.Add(cell);

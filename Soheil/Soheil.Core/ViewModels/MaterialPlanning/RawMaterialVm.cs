@@ -86,7 +86,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 			set { SetValue(SafetyStockProperty, value); }
 		}
 		public static readonly DependencyProperty SafetyStockProperty =
-			DependencyProperty.Register("SafetyStock", typeof(double), typeof(RawMaterialVm), new PropertyMetadata(0));
+			DependencyProperty.Register("SafetyStock", typeof(double), typeof(RawMaterialVm), new PropertyMetadata(0d));
 
 	}
 }
