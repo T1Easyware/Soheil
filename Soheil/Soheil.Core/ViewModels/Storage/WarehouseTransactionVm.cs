@@ -158,7 +158,16 @@ namespace Soheil.Core.ViewModels
                 vm._model.UnitSet = val.Model;
             }));
 
-
+        public bool IsEditable
+        {
+            get
+            {
+                return SelectedDestination == null ||
+                       SelectedRawMaterial == null ||
+                       SelectedUnit == null ||
+                       Quantity == 0;
+            }
+        }
 
         public DateTime RecordDateTime
         {

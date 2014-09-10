@@ -3566,7 +3566,12 @@
                                           ScrollViewer.CanContentScroll="False" 
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                                           ScrollViewer.HorizontalScrollBarVisibility="Auto">
-                                    <DataGrid.Columns>
+                                    <DataGrid.Resources>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="IsEnabled" Value="{Binding IsEditable}"/>
+                                        </Style>
+                                    </DataGrid.Resources>
+                                <DataGrid.Columns>
                                     <DataGridTemplateColumn Header="{Loc txtDestWCode}">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
