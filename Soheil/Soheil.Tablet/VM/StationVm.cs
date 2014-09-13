@@ -101,6 +101,8 @@ namespace Soheil.Tablet.VM
 				reportVm.Selected += r => SelectedReport = r;
 				Reports.Add(reportVm);
 			}
+			if (!data.Any())
+				MessageBox.Show(string.Format("{0} برای این روز وجود ندارد", showAll ? "هیچ برنامه ای" : "هیچ گزارش وارد نشده ای"));
 		}
 		#endregion
 

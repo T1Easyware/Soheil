@@ -179,7 +179,6 @@ namespace Soheil.Core.DataServices
 
                 var oprList = operatorProcessReportRepository.GetAll();
 				var processReportList = processReportRepository.Find(pr => pr.StartDateTime >= start && pr.EndDateTime <= end).ToArray();
-                var processList = processRepository.GetAll();
                 var ssaList = ssaRepository.GetAll().ToArray();
 				var ssList = ssRepository.GetAll().ToArray();
 				var stationList = stationRepository.GetAll().ToArray();
@@ -195,28 +194,24 @@ namespace Soheil.Core.DataServices
                 var odrList = odrRepository.GetAll();
 
 				var genQuery = from processReport in processReportList
-                               from process in processList.Where(p => processReport != null && processReport.Process != null && p.Id == processReport.Process.Id).DefaultIfEmpty()
-                               from ssActivity in ssaList.Where(ssa => process != null && process.StateStationActivity != null && ssa.Id == process.StateStationActivity.Id).DefaultIfEmpty()
-                               from stateStation in ssList.Where(ss=> ssActivity != null && ssActivity.StateStation != null && ss.Id == ssActivity.StateStation.Id).DefaultIfEmpty()
-                               from state in stateList.Where(s=> stateStation != null && stateStation.State != null && s.Id == stateStation.State.Id).DefaultIfEmpty()
-                               from fpc in fpcList.Where(f=> state != null && state.FPC != null && f.Id == state.FPC.Id).DefaultIfEmpty()
-                               from product in productList.Where(pd=> fpc != null && fpc.Product != null && pd.Id == fpc.Product.Id).DefaultIfEmpty()
-                               from productRework in productReworkList.Where(r=> state != null && state.OnProductRework != null && state.OnProductRework.Id == r.Id).DefaultIfEmpty()
-                               from station in stationList.Where(s=> stateStation != null && stateStation.Station != null && s.Id == stateStation.Station.Id).DefaultIfEmpty()
-                               from activity in activityList.Where(a=> ssActivity != null && ssActivity.Activity != null && a.Id == ssActivity.Activity.Id).DefaultIfEmpty()
+
+							   let ssa = processReport.Process.StateStationActivity
+							   let product = ssa.StateStation.State.FPC.Product
+							   let productRework = ssa.StateStation.State.OnProductRework
+
                                let prId = processReport == null ? -1 : processReport.Id
-                               let pdId = product == null ? -1 : product.Id
-                               let pdCode = product == null ? string.Empty : product.Code
-                               let pdName = product == null ? string.Empty : product.Name
-                               let snId = station == null ? -1 : station.Id
-                               let snName = station == null ? string.Empty : station.Name
-                               let aId = activity == null ? -1 : activity.Id
-                               let aCode = activity == null ? string.Empty : activity.Code
-                               let aName = activity == null ? string.Empty : activity.Name
+							   let pdId = product.Id
+							   let pdCode = product.Code
+							   let pdName = product.Name
+							   let snId = ssa.StateStation.Station.Id
+							   let snName = ssa.StateStation.Station.Name
+							   let aId = ssa.Activity.Id
+							   let aCode = ssa.Activity.Code
+                               let aName = ssa.Activity.Name
 							   let rId = productRework == null ? -1 : (productRework.Rework == null ? -1 : productRework.Rework.Id)
-                               let tp = process == null ? 0 : process.TargetCount
-                               let ct = ssActivity == null ? 0 : ssActivity.CycleTime
-                               let date = processReport == null ? DateTime.MinValue : processReport.StartDateTime
+							   let tp = processReport.Process.TargetCount
+							   let ct = ssa.CycleTime
+                               let date = processReport.StartDateTime
                                select new { prId, ct, pdId, pdCode, pdName, snId, snName, aId, aCode, aName, rId, tp, date };
 
                 var oprQuery = from opr in oprList.Where(opr => opr.ProcessOperator.Operator != null && opr.ProcessOperator.Operator.Id == operatorId)
@@ -318,13 +313,40 @@ namespace Soheil.Core.DataServices
                               let defectionCount = g.Any() ? g.Sum(item => item.lostCount) : 0
                               select new { g.Key.oId, g.Key.oprId, g.Key.prId, g.Key.productionTime, g.Key.ct, g.Key.stoppageTime, defectionTime, g.Key.productionCount, g.Key.stoppageCount, defectionCount, g.Key.pdId, g.Key.pdCode, g.Key.pdName, g.Key.snId, g.Key.snName, g.Key.aId, g.Key.aCode, g.Key.aName, g.Key.rId, g.Key.tp, g.Key.date };
 
-                var mainQuery = from opr in dgQuery
-                            from processReport in processReportList.Where(pr => opr.prId == pr.Id).DefaultIfEmpty()
-                            group processReport by new { opr.oId, opr.oprId, operatorId = opr.oId, opr.pdId, opr.pdCode, opr.pdName, opr.snId, opr.snName, opr.aId, opr.aCode, opr.aName, opr.rId, opr.tp, opr.date, opr.productionTime, opr.stoppageTime, opr.defectionTime, opr.productionCount, opr.stoppageCount, opr.defectionCount } into g
-                            let targetTime = g.Sum(item => item == null ? 0 : item.DurationSeconds / item.OperatorProcessReports.Count)
-                            let targetCount = g.Sum(item => item == null ? 0 : item.ProcessReportTargetPoint / item.OperatorProcessReports.Count)
-                            select new { g.Key.oprId, g.Key.operatorId, g.Key.pdId, g.Key.pdCode, g.Key.pdName, g.Key.snId, g.Key.snName, g.Key.aId, g.Key.aCode, g.Key.aName, g.Key.rId, g.Key.tp, g.Key.date, g.Key.productionTime, g.Key.stoppageTime, g.Key.defectionTime, targetTime, g.Key.productionCount, g.Key.stoppageCount, g.Key.defectionCount, targetCount };
-
+				var mainQuery = from opr in dgQuery.ToArray()
+								//group new
+								//{
+								//	processReport
+								//} by new {
+								//	opr.oId, opr.oprId, operatorId = opr.oId, 
+								//	opr.pdId, opr.pdCode, opr.pdName, 
+								//	opr.snId, opr.snName, 
+								//	opr.aId, opr.aCode, opr.aName, 
+								//	opr.rId, 
+								//	opr.tp, opr.date, 
+								//	opr.productionTime, opr.stoppageTime, opr.defectionTime, 
+								//	opr.productionCount, opr.stoppageCount, opr.defectionCount 
+								//} into g
+								//let targetTime = g.Sum(item => item == null ? 0 : item.DurationSeconds / item.OperatorProcessReports.Count)
+								//let targetCount = g.Sum(item => item == null ? 0 : item.ProcessReportTargetPoint / item.OperatorProcessReports.Count)
+								let targetTime = opr.tp * opr.ct
+								//select new
+								//{
+								//	g.Key.oprId, g.Key.operatorId, 
+								//	g.Key.pdId, g.Key.pdCode, g.Key.pdName, 
+								//	g.Key.snId, g.Key.snName, 
+								//	g.Key.aId, g.Key.aCode, g.Key.aName,
+								//	g.Key.rId,
+								//	g.Key.tp, g.Key.date, 
+								//	g.Key.productionTime, g.Key.stoppageTime, g.Key.defectionTime, targetTime,
+								//	g.Key.productionCount, g.Key.stoppageCount, g.Key.defectionCount, targetCount 
+								//};
+								select new
+								{
+									opr,
+									operatorId,
+									targetTime,
+								};
 
                 var qualitiveQuery = from dReport in drList
                                from pdReport in productDefectionList.Where(pd => dReport.ProductDefection != null && pd.Id == dReport.ProductDefection.Id)
@@ -371,51 +393,51 @@ namespace Soheil.Core.DataServices
                 result.Code = operatorRepository.FirstOrDefault(o => o.Id == operatorId).Code;
                 result.Title = operatorRepository.FirstOrDefault(o => o.Id == operatorId).Name;
 
-                var mainList = mainQuery.ToList();
+                var mainList = mainQuery.ToArray();
 
                 if (mainList.Any())
                 {
                     result.TotalTargetTime = mainList.Sum(record => record.targetTime);
-                    result.TotalProductionTime = mainList.Sum(record => record.productionTime);
+                    result.TotalProductionTime = mainList.Sum(record => record.opr.productionTime);
                     result.TotalExtraTime = result.TotalProductionTime > result.TotalTargetTime
                         ? result.TotalProductionTime - result.TotalTargetTime
                         : 0;
                     result.TotalShortageTime = result.TotalTargetTime > result.TotalProductionTime
                         ? result.TotalTargetTime - result.TotalProductionTime
                         : 0;
-                    result.TotalDefectionTime = mainList.Sum(record => record.defectionTime);
-                    result.TotalStoppageTime = mainList.Sum(record => record.stoppageTime);
+					result.TotalDefectionTime = mainList.Sum(record => record.opr.defectionTime);
+					result.TotalStoppageTime = mainList.Sum(record => record.opr.stoppageTime);
 
-                    result.TotalTargetCount = mainList.Sum(record => record.targetCount);
-                    result.TotalProductionCount = mainList.Sum(record => record.productionCount);
+					result.TotalTargetCount = mainList.Sum(record => record.opr.tp);
+					result.TotalProductionCount = mainList.Sum(record => record.opr.productionCount);
                     result.TotalExtraCount = result.TotalProductionCount > result.TotalTargetCount
                         ? result.TotalProductionCount - result.TotalTargetCount
                         : 0;
                     result.TotalShortageCount = result.TotalTargetCount > result.TotalProductionCount
                         ? result.TotalTargetCount - result.TotalProductionCount
                         : 0;
-                    result.TotalDefectionCount = mainList.Sum(record => record.defectionCount);
-                    result.TotalStoppageCount = mainList.Sum(record => record.stoppageCount);
+					result.TotalDefectionCount = mainList.Sum(record => record.opr.defectionCount);
+					result.TotalStoppageCount = mainList.Sum(record => record.opr.stoppageCount);
 
                     foreach (var line in mainList)
                     {
                         var mainDetail = new OprActivityDetailVM
                         {
-                            Id = line.oprId,
-                            Date = line.date,
-                            Product = line.pdCode + "-" + line.pdName,
-                            Station = line.snName,
-                            Activity = line.aCode + "-" + line.aName,
-                            IsRework = line.rId == -1 ? string.Empty : "*",
+							Id = line.opr.oprId,
+							Date = line.opr.date,
+							Product = line.opr.pdCode + "-" + line.opr.pdName,
+							Station = line.opr.snName,
+							Activity = line.opr.aCode + "-" + line.opr.aName,
+							IsRework = line.opr.rId == -1 ? string.Empty : "*",
 
-                            TargetTime = Format.ConvertToHMS(line.targetTime),
-                            DefectionTime = Format.ConvertToHMS((int)line.defectionTime),
-                            ProductionTime = Format.ConvertToHMS((int)line.productionTime),
-                            StoppageTime = Format.ConvertToHMS((int)line.stoppageTime),
-                            TargetCount = line.targetCount.ToString(CultureInfo.InvariantCulture),
-                            DefectionCount = line.defectionCount.ToString(CultureInfo.InvariantCulture),
-                            ProductionCount = line.productionCount.ToString(CultureInfo.InvariantCulture),
-                            StoppageCount = line.stoppageCount.ToString(CultureInfo.InvariantCulture)
+                            TargetTime = Format.ConvertToHMS((int)line.targetTime),
+							DefectionTime = Format.ConvertToHMS((int)line.opr.defectionTime),
+							ProductionTime = Format.ConvertToHMS((int)line.opr.productionTime),
+							StoppageTime = Format.ConvertToHMS((int)line.opr.stoppageTime),
+							TargetCount = line.opr.tp.ToString(CultureInfo.InvariantCulture),
+							DefectionCount = line.opr.defectionCount.ToString(CultureInfo.InvariantCulture),
+							ProductionCount = line.opr.productionCount.ToString(CultureInfo.InvariantCulture),
+							StoppageCount = line.opr.stoppageCount.ToString(CultureInfo.InvariantCulture)
                         };
                         result.ActivityItems.Add(mainDetail);
                     }

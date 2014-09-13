@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:core="clr-namespace:Soheil.Core.Fpc;assembly=Soheil.Core"
 		xmlns:v="clr-namespace:Soheil.Tablet"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:cal="http://schemas.microsoft.com/wpf/2008/toolkit"
         Title="Soheil 3 - Activity Report" Height="350" Width="800" WindowState="Maximized" 
         WindowStyle="None" x:Name="root" 
@@ -16,6 +17,8 @@
         <core:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <core:NullToInvisibilityConverter x:Key="nullToInvisibilityConverter"/>
         <v:Inverter x:Key="inverter"/>
+
+
 
         <SolidColorBrush Color="#CCC" x:Key="backLightBrush"/>
         <SolidColorBrush Color="#77A" x:Key="backMediumBrush"/>
@@ -262,7 +265,7 @@
                                         <Button Content="X" DockPanel.Dock="Right" Command="{Binding DeleteCommand}" Background="{StaticResource backRedBrush}"/>
                                         <ComboBox ItemsSource="{Binding ProductDefection.FilteredList}" SelectedItem="{Binding ProductDefection.SelectedItem}"/>
                                         <TextBlock Text="زمان"/>
-                                        <TextBox Text="{Binding LostSeconds, Mode=TwoWay}"/>
+                                        <v:DurationBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
                                         <TextBlock Text="تعداد"/>
                                         <TextBox Text="{Binding LostCount, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
                                         <ToggleButton Content="{Loc txtIsDefection}" IsChecked="{Binding IsG2, Converter={StaticResource inverter}}" VerticalAlignment="Center"/>
@@ -321,7 +324,7 @@
                                         <Button Content="055050" FlowDirection="LeftToRight" Tag="{Binding ElementName=cd}" Click="QuickCauseButtonDown"/>
                                         <Button Content="011010" FlowDirection="LeftToRight" Tag="{Binding ElementName=cd}" Click="QuickCauseButtonDown"/>
                                         <TextBlock Text="زمان"/>
-                                        <TextBox Text="{Binding LostSeconds, Mode=TwoWay}"/>
+                                        <v:DurationBox DurationSeconds="{Binding LostSeconds, Mode=TwoWay}"/>
                                         <TextBlock Text="تعداد"/>
                                         <TextBox Text="{Binding LostCount, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="40"/>
                                         <ItemsControl ItemsSource="{Binding GuiltyOperators.FilterBoxes}">
