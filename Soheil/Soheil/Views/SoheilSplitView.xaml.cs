@@ -294,9 +294,9 @@ namespace Soheil.Views
                     break;
                 case SoheilEntityType.FpcSubMenu:
                     break;
-                case SoheilEntityType.Fpc:
-                    ViewModel = new FpcsVm(access);
-                    break;
+				//case SoheilEntityType.Fpc:
+				//	ViewModel = new FpcsVm(access);
+				//	break;
                 case SoheilEntityType.Stations:
                     ViewModel = new StationsVM(access);
                     break;

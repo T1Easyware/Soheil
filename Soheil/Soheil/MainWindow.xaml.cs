@@ -202,12 +202,12 @@ namespace Soheil
                     //SplitList = new (access);
                     break;
                 case SoheilEntityType.FpcSubMenu:
-                    SplitList = new FpcsVm(access);
-                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    SingularList = new Soheil.Core.ViewModels.Fpc.FpcManagerVm(access);
+                    chrometabs.AddTab(CreateSingularTab(type), true);
                     break;
                 case SoheilEntityType.Fpc:
-                    SplitList = new FpcsVm(access);
-                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    SingularList = new Soheil.Core.ViewModels.Fpc.FpcManagerVm(access);
+                    chrometabs.AddTab(CreateSingularTab(type), true);
                     break;
                 case SoheilEntityType.Stations:
                     SplitList = new StationsVM(access);
@@ -432,7 +432,7 @@ namespace Soheil
                 case 4:
                     btnUsers.IsChecked = false;
                     btnDefinitions.IsChecked = false;
-                    btnStorage.IsChecked = true;
+					btnControls.IsChecked = false;
                     btnReports.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("storageTemplate");
                     break;

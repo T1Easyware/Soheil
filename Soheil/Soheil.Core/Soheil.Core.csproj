@@ -70,10 +70,19 @@
     <Compile Include="DataServices\PM\ReportDataService.cs" />
     <Compile Include="DataServices\Storage\WarehouseReceiptDataService.cs" />
     <Compile Include="DataServices\Storage\WarehouseTransactionDataService.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Reports\MaterialRequestData.cs" />
     <Compile Include="Reports\PMReportData.cs" />
     <Compile Include="Reports\DailyStationPlanData.cs" />
     <Compile Include="Reports\DailyReportData.cs" />
+    <Compile Include="ViewModels\Fpc\FpcManagerVm.cs" />
+    <Compile Include="ViewModels\Fpc\ListItems\FpcVm.cs" />
+    <Compile Include="ViewModels\Fpc\ListItems\ProductGroupVm.cs" />
+    <Compile Include="ViewModels\Fpc\ListItems\ProductVm.cs" />
     <Compile Include="ViewModels\InfoViewModels\UnitGroupInfoVM.cs" />
     <Compile Include="ViewModels\InfoViewModels\UnitSetInfoVM.cs" />
     <Compile Include="ViewModels\InfoViewModels\RawMaterialInfoVM.cs" />
@@ -545,6 +554,10 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Interfaces\BaseAndInterfaceDiagram.cd" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ViewModels\OrganizationCalendar\ClassDiagram1.cd" />
     <None Include="ViewModels\PP\Editor\seqDiag_ProcessEditor.sequencediagram" />
     <None Include="ViewModels\PP\Editor\seqDiag_Editor.sequencediagram" />

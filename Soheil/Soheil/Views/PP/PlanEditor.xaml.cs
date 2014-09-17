@@ -68,9 +68,5 @@ namespace Soheil.Views.PP
 			VM.SelectedBlock = block;
 		}
 		#endregion
-
-
-
 	}
-
 }

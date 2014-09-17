@@ -14,6 +14,8 @@ namespace Soheil.Core.ViewModels.Fpc
 {
 	public class FpcWindowVm : ViewModelBase
 	{
+		public event Action<int> DefaultChanged;
+		public event Action<Model.FPC> Duplicated;
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Access
 		/// </summary>
@@ -61,7 +63,40 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty IsLocationsLockedProperty =
 			DependencyProperty.Register("IsLocationsLocked", typeof(bool), typeof(FpcWindowVm), new UIPropertyMetadata(false));
-
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Name
+		/// </summary>
+		public string Name
+		{
+			get { return (string)GetValue(NameProperty); }
+			set { SetValue(NameProperty, value); }
+		}
+		public static readonly DependencyProperty NameProperty =
+			DependencyProperty.Register("Name", typeof(string), typeof(FpcWindowVm),
+			new UIPropertyMetadata(null, (d, e) =>
+			{
+				var vm = (FpcWindowVm)d;
+				var val = (string)e.NewValue;
+				if (val == null) return;
+				vm.Model.Name = val;
+			}));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates Code
+		/// </summary>
+		public string Code
+		{
+			get { return (string)GetValue(CodeProperty); }
+			set { SetValue(CodeProperty, value); }
+		}
+		public static readonly DependencyProperty CodeProperty =
+			DependencyProperty.Register("Code", typeof(string), typeof(FpcWindowVm),
+			new UIPropertyMetadata(null, (d, e) =>
+			{
+				var vm = (FpcWindowVm)d;
+				var val = (string)e.NewValue;
+				if (val == null) return;
+				vm.Model.Code = val;
+			}));
 		#region Ctor, ChangeFPC & Reset
 		/// <summary>
 		/// Creates an instance of FpcWindowVm with its own Unit of work
@@ -160,6 +195,8 @@ namespace Soheil.Core.ViewModels.Fpc
 				//-----------
 				//load basics
 				//-----------
+				Name = Model.Name;
+				Code = Model.Code;
 				IsDefault = Model.IsDefault;
 				Product = new ProductVm(Model.Product);
 
@@ -304,7 +341,9 @@ namespace Soheil.Core.ViewModels.Fpc
 				var vm = (FpcWindowVm)d;
 				try
 				{
-					vm.fpcDataService.ChangeDefault(vm.Model, (bool)e.NewValue);
+					int id = vm.fpcDataService.ChangeDefault(vm.Model, (bool)e.NewValue);
+					if (vm.DefaultChanged != null)
+						vm.DefaultChanged(id);
 				}
 				catch (Exception exp)
 				{
@@ -899,6 +938,12 @@ namespace Soheil.Core.ViewModels.Fpc
 						ExceptionLevel.Error);
 				}
 			});
+			DuplicateCommand = new Commands.Command(o =>
+			{
+				var clone = fpcDataService.CloneModelById(Id);
+				if (Duplicated != null)
+					Duplicated(clone);
+			});
 			ExpandAllCommand = new Commands.Command(o =>
 			{
 				var items = States.Where(x => x.StateType == StateType.Mid);
@@ -937,6 +982,16 @@ namespace Soheil.Core.ViewModels.Fpc
 		}
 		public static readonly DependencyProperty SaveAllCommandProperty =
 			DependencyProperty.Register("SaveAllCommand", typeof(Commands.Command), typeof(FpcWindowVm), new PropertyMetadata(null));
+		/// <summary>
+		/// Gets or sets a bindable value that indicates DuplicateCommand
+		/// </summary>
+		public Commands.Command DuplicateCommand
+		{
+			get { return (Commands.Command)GetValue(DuplicateCommandProperty); }
+			set { SetValue(DuplicateCommandProperty, value); }
+		}
+		public static readonly DependencyProperty DuplicateCommandProperty =
+			DependencyProperty.Register("DuplicateCommand", typeof(Commands.Command), typeof(FpcWindowVm), new UIPropertyMetadata(null));
 		/// <summary>
 		/// Gets or sets a bindable command to expand all states in this fpc
 		/// </summary>

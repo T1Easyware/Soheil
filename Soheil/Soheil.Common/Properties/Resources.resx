@@ -1319,4 +1319,13 @@
   <data name="txtMaterialPlanning" xml:space="preserve">
     <value>برنامه مواد</value>
   </data>
+  <data name="txtExtraValue" xml:space="preserve">
+    <value>تولید اضافه</value>
+  </data>
+  <data name="txtShortageValue" xml:space="preserve">
+    <value>کسری تولید</value>
+  </data>
+  <data name="txtDuplicate" xml:space="preserve">
+    <value>کپی گرفتن</value>
+  </data>
 </root>

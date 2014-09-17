@@ -7,6 +7,7 @@ namespace Soheil.TemplateSelectors
 {
     public class SingularViewListSelector : DataTemplateSelector
     {
+		public DataTemplate FpcManagerVmTemplate { get; set; }
         public DataTemplate IndicesVmTemplate { get; set; }
         public DataTemplate CostReportsVmTemplate { get; set; }
         public DataTemplate ActualCostReportsVmTemplate { get; set; }
@@ -23,9 +24,11 @@ namespace Soheil.TemplateSelectors
 		//!@#$
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is IndicesVm)
-                return IndicesVmTemplate;
-            if (item is CostReportsVm)
+			if (item is Soheil.Core.ViewModels.Fpc.FpcManagerVm)
+				return FpcManagerVmTemplate;
+			if (item is IndicesVm)
+				return IndicesVmTemplate;
+			if (item is CostReportsVm)
                 return CostReportsVmTemplate;
             if (item is ActualCostReportsVm)
                 return ActualCostReportsVmTemplate;

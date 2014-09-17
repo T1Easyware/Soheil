@@ -115,6 +115,9 @@
     <Compile Include="Views\Fpc\ExpanderTheme.xaml.cs">
       <DependentUpon>ExpanderTheme.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Fpc\FpcManager.xaml.cs">
+      <DependentUpon>FpcManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Fpc\FpcStateView.xaml.cs">
       <DependentUpon>FpcStateView.xaml</DependentUpon>
     </Compile>
@@ -262,6 +265,10 @@
     <Page Include="Views\Fpc\ExpanderTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Fpc\FpcManager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Fpc\FpcStateView.xaml">
       <SubType>Designer</SubType>

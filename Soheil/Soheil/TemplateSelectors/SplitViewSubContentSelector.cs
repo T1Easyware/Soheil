@@ -50,10 +50,10 @@ namespace Soheil.TemplateSelectors
             {
                 return DefectionSubContentTemplate;
             }
-			if (dataContext is FpcsVm)
-			{
-				return FpcSubContentTemplate;
-			}
+			//if (dataContext is FpcsVm)
+			//{
+			//	return FpcSubContentTemplate;
+			//}
             if (dataContext is OperatorsVM)
             {
                 return OperatorSubContentTemplate;

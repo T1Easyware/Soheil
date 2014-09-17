@@ -11,84 +11,106 @@
 
 	<Grid>
 		<DockPanel TextBlock.Foreground="WhiteSmoke" Margin="0,0,0,5" Background="{StaticResource fpcBackBrush}">
-			<ToolBar DockPanel.Dock="Top" Panel.ZIndex="999">
-				<!--main tools-->
-				<ToggleButton IsChecked="{Binding ToolSelection}">
-					<WrapPanel>
-						<Image Style="{StaticResource SelectToolImage}"/>
-						<TextBlock Text="انتخاب یا حرکت دادن" TextWrapping="Wrap" Width="50" FontSize="10"/>
-					</WrapPanel>
-				</ToggleButton>
-				<ToggleButton IsChecked="{Binding ToolState}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
-					<Grid>
-						<Rectangle Width="50" Height="20" Stroke="#00AAFF" Fill="#C0E0FF" RadiusX="5" RadiusY="5" />
-						<TextBlock Text="درج مرحله" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-					</Grid>
-				</ToggleButton>
-				<ToggleButton IsChecked="{Binding ToolConnector}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
-					<Grid>
-						<Line Width="40" Height="14"
+            <ToolBarTray DockPanel.Dock="Top" Panel.ZIndex="999">
+                <ToolBar ToolBarTray.IsLocked="True">
+                    <!--main tools-->
+                    <ToggleButton IsChecked="{Binding ToolSelection}" VerticalAlignment="Stretch" Margin="2,0">
+                        <WrapPanel>
+                            <Image Style="{StaticResource SelectToolImage}"/>
+                            <TextBlock Text="انتخاب یا حرکت دادن" TextWrapping="Wrap" Width="50" FontSize="10"/>
+                        </WrapPanel>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding ToolState}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}" VerticalAlignment="Stretch" Margin="2,0">
+                        <Grid>
+                            <Rectangle Width="50" Height="20" Stroke="#00AAFF" Fill="#C0E0FF" RadiusX="5" RadiusY="5" />
+                            <TextBlock Text="درج مرحله" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding ToolConnector}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}" VerticalAlignment="Stretch" Margin="2,0">
+                        <Grid>
+                            <Line Width="40" Height="14"
 								X1="40" Y1="0" X2="0" Y2="13" 
 								Stroke="{StaticResource cyanBrush}" StrokeThickness="2" />
-						<Line Width="40" Height="14"
+                            <Line Width="40" Height="14"
 								X1="6" Y1="8" X2="0" Y2="13" 
 								Stroke="{StaticResource cyanBrush}" StrokeThickness="2" />
-						<Line Width="40" Height="14"
+                            <Line Width="40" Height="14"
 								X1="8.5" Y1="13.5" X2="0" Y2="13" 
 								Stroke="{StaticResource cyanBrush}" StrokeThickness="2" />
-						<TextBlock Text="اتصال" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Top"/>
-					</Grid>
-				</ToggleButton>
-				<ToggleButton IsChecked="{Binding ShowToolbox}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
-					<Grid Width="68">
-						<Image Style="{StaticResource ActivityImage}" HorizontalAlignment="Left"/>
-						<TextBlock Text="نمایش اجزای سازنده FPC" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
-					</Grid>
-				</ToggleButton>
-				<ToggleButton IsChecked="{Binding ShowAllMachines}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
-					<Grid Width="65">
-						<Image Style="{StaticResource MachineImage}" HorizontalAlignment="Left"/>
-						<TextBlock Text="نمایش همه ماشین ها" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
-					</Grid>
-				</ToggleButton>
-				<ToggleButton IsChecked="{Binding ShowFpcReworks}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
-					<Grid Width="65">
-						<Image Style="{StaticResource ReworkImage}" HorizontalAlignment="Left"/>
-						<TextBlock Text="نمایش همه دوباره کاری ها" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
-					</Grid>
-				</ToggleButton>
-				<Separator/>
-				<!-- other options -->
-				<Button Width="80" Content="همه را باز کن" Command="{Binding ExpandAllCommand}"/>
-				<Button Width="80" Content="همه را ببند" Command="{Binding CollapseAllCommand}"/>
-				<ToggleButton Width="50" Content="سایه" IsChecked="True"
-					Checked="ShadowToggleButton_Checked" Unchecked="ShadowToggleButton_Unchecked"/>
-				<Button Width="80" Content="Reset Zoom" Command="{Binding ResetZoomCommand}"/>
-				<!--IsLocationsLocked Button-->
-				<ToggleButton IsChecked="{Binding IsLocationsLocked}">
-					<WrapPanel>
-						<TextBlock Text="قفل مختصات" VerticalAlignment="Center"/>
-						<Image Style="{StaticResource IsLocationsLockedImageStyle}" FlowDirection="LeftToRight"/>
-					</WrapPanel>
-				</ToggleButton>
-				<Separator/>
-				<!--save all Button-->
-				<Button Command="{Binding SaveAllCommand}"
+                            <TextBlock Text="اتصال" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                            <Canvas Visibility="{Binding ToolConnector, Converter={StaticResource booleanToVisibilityConverter}}" IsHitTestVisible="False">
+                                <TextBlock Text="برای حرکت دادن دوباره مراحل، گزینه انتخاب یا حرکت دادن را انتخاب کنید" Margin="50,25,0,0" FontSize="9" Background="#8FF8" Padding="3"/>
+                            </Canvas>
+                        </Grid>
+                    </ToggleButton>
+                    <Separator/>
+                    <TextBlock Text="{Loc txtName}" Foreground="Black" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" MinWidth="50"/>
+                    <TextBlock Text="{Loc txtCode}" Foreground="Black" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" MinWidth="50"/>
+                    <!--isDefault Button-->
+                    <ToggleButton IsChecked="{Binding IsDefault}" Visibility="{Binding Path=Access, Converter={StaticResource FullAccessTypeConverter}}" VerticalAlignment="Stretch">
+                        <WrapPanel>
+                            <TextBlock Text="FPC پیش فرض:" VerticalAlignment="Center"/>
+                            <Image Style="{StaticResource IsDefaultImageStyle}"/>
+                        </WrapPanel>
+                    </ToggleButton>
+                    <!--save all Button-->
+                    <Separator/>
+                    <Button Command="{Binding DuplicateCommand}" VerticalAlignment="Stretch" Margin="2,0">
+                        <DockPanel>
+                            <Image Style="{StaticResource DuplicateFpcImage}"/>
+                            <TextBlock Text="{Loc txtDuplicate}" VerticalAlignment="Center"/>
+                        </DockPanel>
+                    </Button>
+                    <Button Command="{Binding SaveAllCommand}" VerticalAlignment="Stretch" Margin="2,0"
 					Visibility="{Binding Path=Access, Converter={StaticResource FullAccessTypeConverter}}">
-					<WrapPanel>
-						<Image Style="{StaticResource SaveImage}"/>
-						<TextBlock Text="ذخیره تغییرات"/>
-					</WrapPanel>
-				</Button>
-				<Separator/>
-				<!--isDefault Button-->
-				<ToggleButton IsChecked="{Binding IsDefault}" Visibility="{Binding Path=Access, Converter={StaticResource FullAccessTypeConverter}}">
-					<WrapPanel>
-						<TextBlock Text="FPC پیش فرض:" VerticalAlignment="Center"/>
-						<Image Style="{StaticResource IsDefaultImageStyle}"/>
-					</WrapPanel>
-				</ToggleButton>
-			</ToolBar>
+                        <WrapPanel>
+                            <Image Style="{StaticResource SaveImage}"/>
+                            <TextBlock Text="ذخیره تغییرات" VerticalAlignment="Center"/>
+                        </WrapPanel>
+                    </Button>
+                </ToolBar>
+                <ToolBar ToolBarTray.IsLocked="False">
+                    <ToggleButton IsChecked="{Binding ShowToolbox}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
+                        <Grid Width="68">
+                            <Image Style="{StaticResource ActivityImage}" HorizontalAlignment="Left"/>
+                            <TextBlock Text="نمایش اجزای سازنده FPC" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
+                        </Grid>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding ShowAllMachines}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
+                        <Grid Width="65">
+                            <Image Style="{StaticResource MachineImage}" HorizontalAlignment="Left"/>
+                            <TextBlock Text="نمایش همه ماشین ها" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
+                        </Grid>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding ShowFpcReworks}" Visibility="{Binding Access, Converter={StaticResource UpdateAccessTypeConverter}}">
+                        <Grid Width="65">
+                            <Image Style="{StaticResource ReworkImage}" HorizontalAlignment="Left"/>
+                            <TextBlock Text="نمایش همه دوباره کاری ها" FontSize="10" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right"/>
+                        </Grid>
+                    </ToggleButton>
+                    <Separator/>
+                </ToolBar>
+                <ToolBar ToolBarTray.IsLocked="False">
+                    <!--IsLocationsLocked Button-->
+                    <ToggleButton IsChecked="{Binding IsLocationsLocked}" VerticalAlignment="Stretch">
+                        <WrapPanel>
+                            <TextBlock Text="قفل مختصات" VerticalAlignment="Center"/>
+                            <Image Style="{StaticResource IsLocationsLockedImageStyle}" FlowDirection="LeftToRight"/>
+                        </WrapPanel>
+                    </ToggleButton>
+                    <Separator Margin="2,0"/>
+                    <!-- other options -->
+                    <Button Width="80" Content="همه را باز کن" Command="{Binding ExpandAllCommand}" VerticalAlignment="Stretch"/>
+                    <Button Width="80" Content="همه را ببند" Command="{Binding CollapseAllCommand}" VerticalAlignment="Stretch"/>
+                    <ToggleButton Width="50" Content="سایه" IsChecked="True" VerticalAlignment="Stretch"
+					Checked="ShadowToggleButton_Checked" Unchecked="ShadowToggleButton_Unchecked"/>
+                    <Button Width="80" Content="Reset Zoom" Command="{Binding ResetZoomCommand}" VerticalAlignment="Stretch"/>
+
+                </ToolBar>
+
+            </ToolBarTray>
 			<!--WorkArea-->
 			<Border BorderBrush="#5FFF" BorderThickness="2,0,2,2" CornerRadius="0,0,2,2">
 				<DockPanel>

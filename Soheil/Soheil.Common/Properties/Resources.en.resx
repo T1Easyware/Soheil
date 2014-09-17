@@ -1309,4 +1309,13 @@
   <data name="txtMaterialPlanning" xml:space="preserve">
     <value>Material Planning</value>
   </data>
+  <data name="txtExtraValue" xml:space="preserve">
+    <value>Overproduction</value>
+  </data>
+  <data name="txtShortageValue" xml:space="preserve">
+    <value>Underproduction</value>
+  </data>
+  <data name="txtDuplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
 </root>

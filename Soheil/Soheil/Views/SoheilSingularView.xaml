@@ -127,8 +127,16 @@
 
 
 		<!--................................................ 2.Basic .................................................-->
-
-		<!-- 2.6. SetupTime Table -->
+        
+        <!-- 2.3.1. Fpcs -->
+        <DataTemplate x:Key="FpcManagerTemplate" 
+                     xmlns:fpcvm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
+                     xmlns:fpcv="clr-namespace:Soheil.Views.Fpc"
+                     DataType="fpcvm:FpcManagerVm">
+            <fpcv:FpcManager  FlowDirection="{Loc enumDirection}"/>
+        </DataTemplate>
+        
+        <!-- 2.6. SetupTime Table -->
 		<DataTemplate x:Key="SetupTimesTemplate" DataType="{x:Type vm:SetupTimeTableVm}"
 				xmlns:vm="clr-namespace:Soheil.Core.ViewModels.SetupTime;assembly=Soheil.Core"
 				xmlns:v="clr-namespace:Soheil.Views.SetupTime">
@@ -2718,7 +2726,8 @@
 		
 		<!--!@#$-->
 		<TemplateSelectors:SingularViewListSelector x:Key="ListTemplateSelector"
-													IndicesVmTemplate="{StaticResource IndexTemplate}"
+													FpcManagerVmTemplate="{StaticResource FpcManagerTemplate}"
+                                                    IndicesVmTemplate="{StaticResource IndexTemplate}"
 													PPTableVmTemplate="{StaticResource PPTableTemplate}"
 													MaterialPlanningVmTemplate="{StaticResource MaterialPlanningTemplate}"
 													PmVmTemplate="{StaticResource PmTemplate}"
