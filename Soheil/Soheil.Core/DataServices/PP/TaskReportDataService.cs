@@ -70,6 +70,7 @@ namespace Soheil.Core.DataServices
 					var wtrep = new Repository<WarehouseTransaction>(Context);
 					foreach (var wt in model.WarehouseTransactions.ToArray())
 					{
+						if (wt.ProductRework != null) wt.ProductRework.Inventory -= (int)wt.Quantity;
 						wtrep.Delete(wt);
 					}
 				}

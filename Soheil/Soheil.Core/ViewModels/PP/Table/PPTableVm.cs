@@ -190,7 +190,7 @@ namespace Soheil.Core.ViewModels.PP
 							SelectedNPT = null;
 					};
 
-					_suppressLoadRange = DateTime.Now.Date > new DateTime(2014, 9, 27, 13, 10, 0, 0);
+					_suppressLoadRange = DateTime.Now.Date > new DateTime(2015, 3, 20, 13, 10, 0, 0);
 					if (_suppressLoadRange)
 					{
 						System.Threading.Thread.Sleep(6000);

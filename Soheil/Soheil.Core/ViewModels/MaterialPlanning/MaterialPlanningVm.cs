@@ -25,7 +25,39 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 		public MaterialPlanningVm(AccessType access)
 		{
 			Access = access;
+			ChangeDayCommand = new Commands.Command(delta => Date = Date.AddDays((int)delta));
+			Cells.CollectionChanged += Cells_CollectionChanged;
 			Refresh();
+		}
+
+		void Cells_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			if (e.NewItems != null)
+				foreach (CellVm cell in e.NewItems)
+				{
+					cell.Transactions.CollectionChanged += (s, ee) =>
+					{
+						if (ee.NewItems != null)
+							foreach (TransactionVm tranVm in ee.NewItems)
+							{
+								tranVm.InvertoryChanged += OnInvertoryChanged;
+								tranVm.DeleteCommand = new Commands.Command(oo =>
+								{
+									try
+									{
+										WarehouseTransactionDataService.DeleteModel(tranVm.Model);
+										cell.Transactions.Remove(tranVm);
+										OnInvertoryChanged(cell.RawMaterial);
+										Refresh();
+										//cell.RawMaterial.NumberOfRequests = Math.Max(
+										//	cell.RawMaterial.NumberOfRequests,
+										//	cell.Requests.Count + cell.Transactions.Count);
+									}
+									catch { }
+								});
+							}
+					};
+				}
 		}
 
 		public void Refresh()
@@ -36,6 +68,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 			WarehouseDataService = new DataServices.WarehouseDataService(UOW);
 			WarehouseTransactionDataService = new DataServices.Storage.WarehouseTransactionDataService(UOW);
 			TaskDataService = new DataServices.TaskDataService(UOW);
+			Cells.Clear();
 
 			#region Hours
 			//hours
@@ -103,18 +136,35 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 			{
 				foreach (var mat in data[i].Materials)
 				{
+					//add a new cell
 					var material = Materials.FirstOrDefault(x => x.Model.Id == mat.RawMaterial.Id);
 					var cell = new CellVm
 					{
 						Hour = Hours[i],
 						RawMaterial = material,
 					};
+					Cells.Add(cell);//this must be prior to cell.Transactions.Add()
+
 					foreach (var station in mat.Stations)
 					{
 						var reqvm = new RequestVm(station);
+						if (reqvm.Quantity > 0)
+							cell.Requests.Add(reqvm);
+
+						#region Convert Request to Transaction
 						var reqDate = startDt.AddHours(i);
 						reqvm.CreateTransactionCommand = new Commands.Command(o =>
 						{
+							if (mat.RawMaterial.Inventory - reqvm.Quantity < 0)
+							{
+								if (MessageBox.Show("موجودی انبار برای انجام این تراکنش کافی نیست. آیا ادامه می دهید؟", "اتمام موجودی انبار", MessageBoxButton.YesNo, MessageBoxImage.Stop)
+									== MessageBoxResult.No) return;
+							}
+							else if (mat.RawMaterial.Inventory - reqvm.Quantity < mat.RawMaterial.SafetyStock)
+							{
+								if (MessageBox.Show("موجودی پس از انجام این تراکنش کمتر از نقطه سفارش خواهد بود. آیا ادامه می دهید؟", "Safety Stock reached.", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+									== MessageBoxResult.No) return;
+							}
 							var transactionModel = new Model.WarehouseTransaction
 							{
 								Quantity = reqvm.Quantity,
@@ -126,22 +176,41 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 								RecordDateTime = DateTime.Now,
 								SrcWarehouse = Warehouses.Any() ? Warehouses.FirstOrDefault().Model : null
 							};
+							mat.RawMaterial.Inventory -= reqvm.Quantity;
+							//add new transaction model
 							if (WarehouseTransactionDataService.AddModel(transactionModel) > 0)
-								cell.Transactions.Add(new TransactionVm(transactionModel, Warehouses, UOW));
+							{
+								var tranVm = new TransactionVm(transactionModel, Warehouses, UOW);
+								cell.Transactions.Add(tranVm);
+							}
+							//update height
 							material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count + cell.Transactions.Count);
+							OnInvertoryChanged(material.Model);
 						});
-						if(reqvm.Quantity > 0)
-							cell.Requests.Add(reqvm);
+						#endregion
 					}
-					foreach (var tran in mat.Transactions.Where(x=>x.Quantity > 0))
+					//add existing transaction models
+					foreach (var tran in mat.Transactions.Where(x => x.Quantity > 0))
 					{
-						cell.Transactions.Add(new TransactionVm(tran, Warehouses, UOW));
+						var tranVm = new TransactionVm(tran, Warehouses, UOW);
+						cell.Transactions.Add(tranVm);
 					}
+					//update height
 					material.NumberOfRequests = Math.Max(material.NumberOfRequests, cell.Requests.Count + cell.Transactions.Count);
-					Cells.Add(cell);
 				}
 			}
 			#endregion
+		}
+
+		private void OnInvertoryChanged(Model.RawMaterial rm)
+		{
+			if (rm != null)
+				OnInvertoryChanged(Materials.FirstOrDefault(x => x.Model.Id == rm.Id));
+		}
+		private void OnInvertoryChanged(RawMaterialVm rm)
+		{
+			if (rm != null)
+				rm.UpdateInventory();
 		}
 
 		/// <summary>
@@ -204,6 +273,17 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 		/// </summary>
 		public ObservableCollection<WarehouseVm> Warehouses { get { return _warehouses; } }
 		private ObservableCollection<WarehouseVm> _warehouses = new ObservableCollection<WarehouseVm>();
+
+		/// <summary>
+		/// Gets or sets a bindable value that indicates ChangeDayCommand
+		/// </summary>
+		public Commands.Command ChangeDayCommand
+		{
+			get { return (Commands.Command)GetValue(ChangeDayCommandProperty); }
+			set { SetValue(ChangeDayCommandProperty, value); }
+		}
+		public static readonly DependencyProperty ChangeDayCommandProperty =
+			DependencyProperty.Register("ChangeDayCommand", typeof(Commands.Command), typeof(MaterialPlanningVm), new PropertyMetadata(null));
 
 	}
 }

@@ -91,10 +91,27 @@ namespace Soheil.Core.DataServices.Storage
 
 		public void DeleteModel(WarehouseTransaction model)
 		{
+			bool flag = (model.DestWarehouse != null || model.SrcWarehouse != null);
+
 			if (model.WarehouseReceipt != null)
 				new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
-			bool flag = (model.DestWarehouse != null || model.SrcWarehouse!=null);
-			model.TaskReport.WarehouseTransactions.Remove(model);
+			if(model.TaskReport!=null) 
+				model.TaskReport.WarehouseTransactions.Remove(model);
+			if (model.ProductRework != null)
+			{
+				if(model.Flow == 0)//was stored
+					model.ProductRework.Inventory -= (int)model.Quantity;
+				else if(model.Flow == 1)//was brought out
+					model.ProductRework.Inventory += (int)model.Quantity;
+			}
+			if (model.RawMaterial != null)
+			{
+				if (model.Flow == 0)//was stored
+					model.RawMaterial.Inventory -= (int)model.Quantity;
+				else if (model.Flow == 1)//was brought out
+					model.RawMaterial.Inventory += (int)model.Quantity;
+			}
+			
 			_repository.Delete(model);
 
 			if (flag)
@@ -162,23 +179,23 @@ namespace Soheil.Core.DataServices.Storage
 	        }
 	    }
 
-	    internal WarehouseTransaction CreateTransactionFor(TaskReport model)
-		{
-			//Model
-			var tr = new Repository<TaskReport>(Context).Single(x=>x.Id == model.Id);
-			var wt = new WarehouseTransaction
-			{
-				Code = model.Code,
-				ProductRework = new Repository<ProductRework>(Context).Single(x => x.Id == model.Task.Block.StateStation.State.OnProductRework.Id),
-				TaskReport = tr,
-				Quantity = model.TaskProducedG1,
-				TransactionDateTime = model.ReportEndDateTime,
-				Flow = 0,
-			};
-			tr.WarehouseTransactions.Add(wt);
-			AddModel(wt);
-			return wt;
-		}
+		//internal WarehouseTransaction CreateTransactionFor(TaskReport model)
+		//{
+		//	//Model
+		//	var tr = new Repository<TaskReport>(Context).Single(x=>x.Id == model.Id);
+		//	var wt = new WarehouseTransaction
+		//	{
+		//		Code = model.Code,
+		//		ProductRework = new Repository<ProductRework>(Context).Single(x => x.Id == model.Task.Block.StateStation.State.OnProductRework.Id),
+		//		TaskReport = tr,
+		//		Quantity = model.TaskProducedG1,
+		//		TransactionDateTime = model.ReportEndDateTime,
+		//		Flow = 0,
+		//	};
+		//	tr.WarehouseTransactions.Add(wt);
+		//	AddModel(wt);
+		//	return wt;
+		//}
 
 	    public ObservableCollection<WarehouseTransaction> GetActives(int receiptId)
 	    {

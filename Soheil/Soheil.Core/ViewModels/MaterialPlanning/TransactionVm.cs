@@ -9,6 +9,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 {
 	public class TransactionVm : DependencyObject
 	{
+		public event Action<Model.RawMaterial> InvertoryChanged;
 		public Model.WarehouseTransaction Model { get; set; }
 		bool _isInitializing = true;
 		public Dal.SoheilEdmContext UOW { get; set; }
@@ -30,7 +31,7 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 				Model.RecordDateTime = DateTime.Now;
 				UOW.Commit();
 			});
-			DeleteCommand = new Commands.Command(o => new Soheil.Core.DataServices.Storage.WarehouseTransactionDataService(UOW).DeleteModel(Model));
+			//set DeleteCommand in parent
 		}
 		/// <summary>
 		/// Gets or sets a bindable value that indicates Quantity
@@ -48,6 +49,29 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 				if (vm._isInitializing) return;
 				var val = (double)e.NewValue;
 				vm.Model.Quantity = val;
+				if (vm.InvertoryChanged != null)
+					vm.InvertoryChanged(vm.Model.RawMaterial);
+			}, (d, v) =>
+			{
+				var vm = (TransactionVm)d;
+				if (vm._isInitializing) return v;
+				if (vm.Model.RawMaterial != null)
+				{
+					var mat = vm.Model.RawMaterial;
+					var delta = (double)v - vm.Quantity;
+					if (mat.Inventory - delta < 0)
+					{
+						if (MessageBox.Show("موجودی انبار برای انجام این تراکنش کافی نیست. آیا ادامه می دهید؟", "اتمام موجودی انبار", MessageBoxButton.YesNo, MessageBoxImage.Stop)
+							== MessageBoxResult.No) return vm.Quantity;
+					}
+					else if (mat.Inventory - delta < mat.SafetyStock)
+					{
+						if (MessageBox.Show("موجودی پس از انجام این تراکنش کمتر از نقطه سفارش خواهد بود. آیا ادامه می دهید؟", "Safety Stock reached.", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+							== MessageBoxResult.No) return vm.Quantity;
+					}
+					mat.Inventory -= delta;
+				}
+				return v;
 			}));
 
 		/// <summary>
@@ -76,7 +100,8 @@ namespace Soheil.Core.ViewModels.MaterialPlanning
 				var vm = (TransactionVm)d;
 				if (vm._isInitializing) return;
 				var val = (WarehouseVm)e.NewValue;
-				vm.Model.SrcWarehouse = val.Model;
+				if (val != null)
+					vm.Model.SrcWarehouse = val.Model;
 			}));
 		/// <summary>
 		/// Gets or sets a bindable value that indicates TransactionDate

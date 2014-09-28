@@ -1328,4 +1328,7 @@
   <data name="txtDuplicate" xml:space="preserve">
     <value>کپی گرفتن</value>
   </data>
+  <data name="txtSentCount" xml:space="preserve">
+    <value>تعداد تحویل از انبار</value>
+  </data>
 </root>

@@ -114,7 +114,8 @@
 	<ppconv:TaskProgressColorConverter x:Key="taskProgressColorConverter"/>
 	<ppconv:OpaqueIfPositiveInt x:Key="opaqueIfPositiveInt"/>
 	<ppconv:HasErrorToShadowColor x:Key="hasErrorToShadowColor"/>
-
+	<ppconv:BiggerToVisibility x:Key="biggerToVisibility"/>
+	
 	<ppconv:ZoomMathDayLittleWindowWidth x:Key="zoomMathDayLittleWindowWidth"/>
 	<ppconv:ZoomMathDayLittleWindowMargin x:Key="zoomMathDayLittleWindowMargin"/>
 	<ppconv:HoursPanelMarginConverter x:Key="hoursPanelMarginConverter"/>

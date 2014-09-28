@@ -1947,7 +1947,25 @@
 					  xmlns:mpv="clr-namespace:Soheil.Views.MaterialPlanning">
 			<DockPanel>
 				<ToolBar DockPanel.Dock="Top">
+					<Button Command="{Binding ChangeDayCommand}" Padding="5,0" VerticalAlignment="Stretch" Margin="2,0">
+						<Button.CommandParameter>
+							<System:Int32>-1</System:Int32>
+						</Button.CommandParameter>
+						<WrapPanel>
+							<Image Style="{StaticResource Back16Image}"/>
+							<TextBlock Text="{Loc txtPreviousDay}" VerticalAlignment="Center"/>
+						</WrapPanel>
+					</Button>
 					<cal:DatePicker SelectedDate="{Binding Date}" DisplayDate="{Binding Date}"/>
+					<Button Command="{Binding ChangeDayCommand}" Padding="5,0" VerticalAlignment="Stretch" Margin="2,0">
+						<Button.CommandParameter>
+							<System:Int32>1</System:Int32>
+						</Button.CommandParameter>
+						<WrapPanel>
+							<TextBlock Text="{Loc txtNextDay}" VerticalAlignment="Center"/>
+							<Image Style="{StaticResource Forward16Image}"/>
+						</WrapPanel>
+					</Button>
 					<WrapPanel VerticalAlignment="Center">
 						<Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
 						<Slider Margin="2" Maximum="4800" Minimum="600" Value="{Binding Width}" Width="200" VerticalAlignment="Center"/>
