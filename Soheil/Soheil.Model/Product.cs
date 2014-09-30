@@ -68,12 +68,6 @@ namespace Soheil.Model
             set;
         }
     
-        public virtual double Inventory
-        {
-            get;
-            set;
-        }
-    
         public virtual int AltColorNumber
         {
             get { return _altColorNumber; }

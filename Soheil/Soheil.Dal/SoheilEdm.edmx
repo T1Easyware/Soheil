@@ -601,7 +601,6 @@
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ColorNumber" Type="int" Nullable="false" />
-    <Property Name="Inventory" Type="float" Nullable="false" />
     <Property Name="AltColorNumber" Type="int" Nullable="false" DefaultValue="0" />
     <Property Name="ProductGroup_Id" Type="int" Nullable="false" />
     <Property Name="Parent_Id" Type="int" Nullable="true" />
@@ -3699,7 +3698,6 @@
           <NavigationProperty Name="ProductReworks" Relationship="SoheilEdm.ProductProductRework" FromRole="Product" ToRole="ProductRework" />
           <NavigationProperty Name="FPCs" Relationship="SoheilEdm.ProductFPC" FromRole="Product" ToRole="FPC" />
           <Property Type="Int32" Name="ColorNumber" Nullable="false" />
-          <Property Name="Inventory" Type="Double" Nullable="false" />
           <Property Type="Int32" Name="AltColorNumber" Nullable="false" DefaultValue="0" />
           <NavigationProperty Name="ProductPrices" Relationship="SoheilEdm.ProductProductPrice" FromRole="Product" ToRole="ProductPrice" />
           <NavigationProperty Name="WarehouseTransaction" Relationship="SoheilEdm.WarehouseTransactionProduct" FromRole="Product" ToRole="WarehouseTransaction" />
@@ -5322,7 +5320,6 @@
           <ScalarProperty Name="Status" ColumnName="Status" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ColorNumber" ColumnName="ColorNumber" />
-          <ScalarProperty Name="Inventory" ColumnName="Inventory" />
           <ScalarProperty Name="AltColorNumber" ColumnName="AltColorNumber" />
         </MappingFragment>
       </EntityTypeMapping>

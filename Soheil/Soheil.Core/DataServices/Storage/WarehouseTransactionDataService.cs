@@ -91,9 +91,6 @@ namespace Soheil.Core.DataServices.Storage
 
 		public void DeleteModel(WarehouseTransaction model)
 		{
-            // why ........... WHY?! 
-            //if (model.WarehouseReceipt != null)
-            //    new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
 		    int id = model.Id;
             bool flag = (model.DestWarehouse != null || model.SrcWarehouse != null);
             if (model.TaskReport != null)
@@ -103,28 +100,23 @@ namespace Soheil.Core.DataServices.Storage
                     model.TaskReport.WarehouseTransactions.Remove(model);
 		        }
 		    }
-			bool flag = (model.DestWarehouse != null || model.SrcWarehouse != null);
 
-			if (model.WarehouseReceipt != null)
-				new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
-			if(model.TaskReport!=null) 
-				model.TaskReport.WarehouseTransactions.Remove(model);
-			if (model.ProductRework != null)
-			{
-				if(model.Flow == 0)//was stored
-					model.ProductRework.Inventory -= (int)model.Quantity;
-				else if(model.Flow == 1)//was brought out
-					model.ProductRework.Inventory += (int)model.Quantity;
-			}
-			if (model.RawMaterial != null)
-			{
-				if (model.Flow == 0)//was stored
-					model.RawMaterial.Inventory -= (int)model.Quantity;
-				else if (model.Flow == 1)//was brought out
-					model.RawMaterial.Inventory += (int)model.Quantity;
-			}
+            //if (model.ProductRework != null)
+            //{
+            //    if(model.Flow == 0)//was stored
+            //        model.ProductRework.Inventory -= (int)model.Quantity;
+            //    else if(model.Flow == 1)//was brought out
+            //        model.ProductRework.Inventory += (int)model.Quantity;
+            //}
+            //if (model.RawMaterial != null)
+            //{
+            //    if (model.Flow == 0)//was stored
+            //        model.RawMaterial.Inventory -= (int)model.Quantity;
+            //    else if (model.Flow == 1)//was brought out
+            //        model.RawMaterial.Inventory += (int)model.Quantity;
+            //}
 			
-			_repository.Delete(model);
+            //_repository.Delete(model);
 
 		    if (flag)
 		    {
@@ -135,7 +127,6 @@ namespace Soheil.Core.DataServices.Storage
                     TransactionRemoved(this, new ModelRemovedEventArgs(id));
 
 		    }
-
 		}
 
 		public void AttachModel(WarehouseTransaction model)
@@ -190,7 +181,7 @@ namespace Soheil.Core.DataServices.Storage
 	                model.RawMaterial.Inventory += model.Quantity * factor * sign;
 	                break;
 	            case WarehouseTransactionType.Product:
-	                model.Product.Inventory += model.Quantity * factor * sign * -1;
+	                model.ProductRework.Inventory += Convert.ToInt32(model.Quantity * factor * sign * -1);
 	                break;
 	            case WarehouseTransactionType.Good:
 	                break;

@@ -99,9 +99,9 @@ namespace Soheil.Core.ViewModels
         {
             get
             {
-                if (_model.Product != null)
+                if (_model.ProductRework != null)
                 {
-                    return _model.Product.Inventory;
+                    return _model.ProductRework.Inventory;
                 }
                 return 0;
             }

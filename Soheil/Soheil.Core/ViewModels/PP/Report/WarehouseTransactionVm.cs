@@ -37,7 +37,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 			};
 			var dataService = new DataServices.Storage.WarehouseTransactionDataService(uow);
 			dataService.AddModel(model);
-			model.ProductRework.Inventory += taskReportModel.TaskProducedG1;
+            model.ProductRework.Inventory += taskReportModel.TaskProducedG1;
 			
 			var vm = new WarehouseTransactionVm(model, all, uow, dataService);
 			return vm;
@@ -114,7 +114,7 @@ namespace Soheil.Core.ViewModels.PP.Report
 				if (vm._isInInitializingPhase) return;
 				var val = (int)e.NewValue;
 				vm.Model.Quantity = val;
-				vm.Model.ProductRework.Inventory += (val - (int)e.OldValue);
+                vm.Model.ProductRework.Inventory += (val - (int)e.OldValue);
 			}));
 
 		/// <summary>

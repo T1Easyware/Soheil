@@ -598,7 +598,8 @@ namespace Soheil.Views
             _isSaving = false;
             var grid = (DataGrid)sender;
             grid.Focus();
-            grid.CurrentCell = new DataGridCellInfo(grid.Items[CurrentIndex],grid.Columns[0]);
+            if(CurrentIndex > 0)
+                grid.CurrentCell = new DataGridCellInfo(grid.Items[CurrentIndex],grid.Columns[0]);
         }
 
 		private void skillCenterLoaded(object sender, RoutedEventArgs e)

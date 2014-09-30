@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 09/29/2014 18:34:05
+-- Date Created: 09/30/2014 19:48:57
 -- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
@@ -667,7 +667,6 @@ CREATE TABLE [dbo].[Products] (
     [Status] tinyint  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [ColorNumber] int  NOT NULL,
-    [Inventory] float  NOT NULL,
     [AltColorNumber] int  NOT NULL,
     [ProductGroup_Id] int  NOT NULL,
     [Parent_Id] int  NULL

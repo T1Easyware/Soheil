@@ -19,7 +19,7 @@ namespace Soheil.Core.DataServices
                 var transactionRepository = new Repository<WarehouseTransaction>(context);
                 var rawMaterialRepository = new Repository<RawMaterial>(context);
                 var unitRepository = new Repository<UnitSet>(context);
-                var productRepository = new Repository<Product>(context);
+                var productRepository = new Repository<ProductRework>(context);
 
                 var transactionList = transactionRepository.Find(t => t.TransactionDateTime >= startDate && t.TransactionDateTime <= endDate).ToArray();
                 var warehouseList = warehouseRepository.GetAll();
