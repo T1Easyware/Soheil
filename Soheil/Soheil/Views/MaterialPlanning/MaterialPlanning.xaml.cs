@@ -29,6 +29,7 @@ namespace Soheil.Views.MaterialPlanning
 		private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
 		{
 			hoursScrollViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
+			materialsScrollViewer.ScrollToVerticalOffset(e.VerticalOffset);
 		}
 		private static System.Windows.Controls.Primitives.Popup _openedPopup;
 		private static void openPopup(System.Windows.Controls.Primitives.Popup newpopup, object dc = null)

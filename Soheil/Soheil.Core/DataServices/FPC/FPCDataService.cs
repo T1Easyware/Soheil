@@ -95,7 +95,9 @@ namespace Soheil.Core.DataServices
 
 		public int AddModel(FPC model)
 		{
-			throw new NotImplementedException();
+			_fpcRepository.Add(model);
+			Context.Commit();
+			return model.Id;
 		}
 
 		public int AddModel(FPC model, int groupId)
@@ -159,10 +161,10 @@ namespace Soheil.Core.DataServices
 		{
 			//clone FPC
 			var clone = new FPC();
-			clone.Name = model.Name;
-			clone.Code = model.Code;
+			clone.Name = model.Name + "_copy";
+			clone.Code = model.Code + "_";
 			clone.Product = model.Product;
-			clone.IsDefault = model.IsDefault;
+			clone.IsDefault = false;
 			clone.ModifiedBy = LoginInfo.Id;
 			clone.CreatedDate = DateTime.Now;
 			clone.ModifiedDate = DateTime.Now;
@@ -212,14 +214,18 @@ namespace Soheil.Core.DataServices
 		/// Change the IsDefault value of the specified FPC to newValue
 		/// <para>If set to true, undefaults the previously default fpcs</para>
 		/// <para>If set to false, tries to make another fpc default</para>
+		/// <para>returns the id of default fpc</para>
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="newValue"></param>
-		internal void ChangeDefault(FPC model, bool newValue)
+		internal int ChangeDefault(FPC model, bool newValue)
 		{
 			if (model.IsDefault == newValue)
-				return;
+			{
+				return 0;
+			}
 
+			int id = 0;
 			if (newValue)
 			{
 				// undefault the previously default fpcs
@@ -234,6 +240,7 @@ namespace Soheil.Core.DataServices
 
 				//apply the new value to the specified fpc (parameter)
 				model.IsDefault = true;
+				id = model.Id;
 			}
 			else
 			{
@@ -262,7 +269,9 @@ namespace Soheil.Core.DataServices
 					//if no other default fpc, make the first one default
 					if (!found)
 					{
-						otherModels.First().IsDefault = true;
+						var first = otherModels.First();
+						first.IsDefault = true;
+						id = first.Id;
 					}
 
 					//apply the new value to the specified fpc (parameter)
@@ -274,6 +283,7 @@ namespace Soheil.Core.DataServices
 			}
 
 			Context.Commit();
+			return id;
 		}
 
 		public IEnumerable<ProductRework> GetProductReworks(FPC model, bool includeMainProduct)

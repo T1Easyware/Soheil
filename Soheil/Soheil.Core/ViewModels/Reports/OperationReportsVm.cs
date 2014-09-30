@@ -329,12 +329,12 @@ namespace Soheil.Core.ViewModels.Reports
             totalTabel.Columns.Add("TimeTotal", typeof(string));
             totalTabel.Columns.Add("CountTotal", typeof(string));
 
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetTime") + Format.ConvertToHMS((int) Report.TotalTargetTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetCount") + Report.TotalTargetCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalProductionTime") + Format.ConvertToHMS((int)Report.TotalProductionTime), Common.Properties.Resources.ResourceManager.GetString("txTotalProductionCount") + Report.TotalProductionCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraTime") + Format.ConvertToHMS((int)Report.TotalExtraTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraCount") + Report.TotalExtraCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageTime") + Format.ConvertToHMS((int)Report.TotalShortageTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageCount") + Report.TotalShortageCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionTime") + Format.ConvertToHMS((int)Report.TotalDefectionTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionCount") + Report.TotalDefectionCount });
-            totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalWaste") + Report.TotalWaste, Common.Properties.Resources.ResourceManager.GetString("txtTotalSecondGrade") + Report.TotalSecondGrade });
+			totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetTime") + Format.ConvertToHMS((int)Report.TotalTargetTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalTargetCount") + Report.TotalTargetCount.ToString("##", CultureInfo.InvariantCulture) });
+			totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalProductionTime") + Format.ConvertToHMS((int)Report.TotalProductionTime), Common.Properties.Resources.ResourceManager.GetString("txTotalProductionCount") + Report.TotalProductionCount.ToString("##", CultureInfo.InvariantCulture) });
+			totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraTime") + Format.ConvertToHMS((int)Report.TotalExtraTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalExtraCount") + Report.TotalExtraCount.ToString("##", CultureInfo.InvariantCulture) });
+			totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageTime") + Format.ConvertToHMS((int)Report.TotalShortageTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalShortageCount") + Report.TotalShortageCount.ToString("##", CultureInfo.InvariantCulture) });
+			totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionTime") + Format.ConvertToHMS((int)Report.TotalDefectionTime), Common.Properties.Resources.ResourceManager.GetString("txtTotalDefectionCount") + Report.TotalDefectionCount.ToString("##", CultureInfo.InvariantCulture) });
+			totalTabel.Rows.Add(new object[] { Common.Properties.Resources.ResourceManager.GetString("txtTotalWaste") + Report.TotalWaste, Common.Properties.Resources.ResourceManager.GetString("txtTotalSecondGrade") + Report.TotalSecondGrade.ToString("##", CultureInfo.InvariantCulture) });
 
 
             data.DataTables.Add(totalTabel);
@@ -348,7 +348,9 @@ namespace Soheil.Core.ViewModels.Reports
 	        activitiesTable.Columns.Add("TargetValue", typeof (string));
 	        activitiesTable.Columns.Add("ProductionValue", typeof (string));
 	        activitiesTable.Columns.Add("DefectionValue", typeof (string));
-	        activitiesTable.Columns.Add("StoppageValue", typeof (string));
+			activitiesTable.Columns.Add("StoppageValue", typeof(string));
+			activitiesTable.Columns.Add("ShortageValue", typeof(string));
+			activitiesTable.Columns.Add("ExtraValue", typeof(string));
 	        activitiesTable.Columns.Add("IsRework", typeof (string));
 
 	        foreach (var item in Report.ActivityItems)
@@ -357,12 +359,12 @@ namespace Soheil.Core.ViewModels.Reports
 	                ? new object[]
 	                {
 	                    item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, item.TargetTime, item.ProductionTime,
-	                    item.DefectionTime, item.StoppageTime, item.IsRework
+	                    item.DefectionTime, item.StoppageTime, item.ShortageTime, item.ExtraTime, item.IsRework
 	                }
 					: new object[]
 	                {
 	                    item.Date.ToPersianCompactDateString(), item.Product, item.Station, item.Activity, item.TargetCount, item.ProductionCount,
-	                    item.DefectionCount, item.StoppageCount, item.IsRework
+	                    item.DefectionCount, item.StoppageCount, item.ShortageCount, item.ExtraCount, item.IsRework
 	                });
 	        }
 

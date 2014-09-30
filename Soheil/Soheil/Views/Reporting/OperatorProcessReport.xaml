@@ -113,8 +113,10 @@
                 <Table.Columns>
                     <TableColumn Width="80" />
                     <TableColumn Width="Auto" />
+                    <TableColumn Width="80" />
                     <TableColumn Width="Auto" />
-                    <TableColumn Width="Auto" />
+                    <TableColumn Width="60" />
+                    <TableColumn Width="60" />
                     <TableColumn Width="60" />
                     <TableColumn Width="60" />
                     <TableColumn Width="60" />
@@ -182,6 +184,20 @@
                         <TableCell>
                             <Paragraph TextAlignment="Center">
                                 <Bold>
+                                    <Run Text="{Loc txtShortageValue}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
+                                    <Run Text="{Loc txtExtraValue}"/>
+                                </Bold>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph TextAlignment="Center">
+                                <Bold>
                                     <Run Text="{Loc txtIsRework}"/>
                                 </Bold>
                             </Paragraph>
@@ -228,6 +244,16 @@
                         <TableCell>
                             <Paragraph>
                                 <document:InlineTableCellValue PropertyName="StoppageValue"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="ShortageValue"/>
+                            </Paragraph>
+                        </TableCell>
+                        <TableCell>
+                            <Paragraph>
+                                <document:InlineTableCellValue PropertyName="ExtraValue"/>
                             </Paragraph>
                         </TableCell>
                         <TableCell>

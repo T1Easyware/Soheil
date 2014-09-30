@@ -157,6 +157,21 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class BiggerToVisibility : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			int val = values[0] == DependencyProperty.UnsetValue ? 0 : System.Convert.ToInt32(values[0]);
+			int other = values[1] == DependencyProperty.UnsetValue ? 0 : System.Convert.ToInt32(values[1]);
+			if (val > other) return Visibility.Visible;
+			return Visibility.Collapsed;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 
 	public class HasErrorToShadowColor : IValueConverter

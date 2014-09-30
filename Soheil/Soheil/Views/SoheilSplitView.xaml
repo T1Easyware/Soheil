@@ -346,7 +346,7 @@
         <DataTemplate x:Key="ReworkProductTemplate">
             <Border Style="{StaticResource SoheilItemBorder}">
                 <StackPanel>
-                    <Border Style="{StaticResource SoheilDarkCoverBorder}" Background="DeepPink">
+                    <Border Style="{StaticResource SoheilDarkCoverBorder}">
                         <DockPanel>
                             <ToggleButton IsEnabled="{Binding CanExclude}" Style="{StaticResource ConfirmCancelButton}" DockPanel.Dock="Left" Width="20" Content="X" Margin="1">
                                 <I:Interaction.Triggers>

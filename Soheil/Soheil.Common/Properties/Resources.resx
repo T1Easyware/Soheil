@@ -1340,4 +1340,16 @@
   <data name="txtTotaProduction" xml:space="preserve">
     <value>مجموع تولید</value>
   </data>
+  <data name="txtExtraValue" xml:space="preserve">
+    <value>تولید اضافه</value>
+  </data>
+  <data name="txtShortageValue" xml:space="preserve">
+    <value>کسری تولید</value>
+  </data>
+  <data name="txtDuplicate" xml:space="preserve">
+    <value>کپی گرفتن</value>
+  </data>
+  <data name="txtSentCount" xml:space="preserve">
+    <value>تعداد تحویل از انبار</value>
+  </data>
 </root>

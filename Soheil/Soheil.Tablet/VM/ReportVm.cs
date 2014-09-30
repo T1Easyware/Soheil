@@ -290,7 +290,9 @@ namespace Soheil.Tablet.VM
 					var ts = TimeSpan.FromSeconds(Model.ProducedG1 * Model.Process.StateStationActivity.CycleTime);
 					ProducedTime = ts.ToString(@"hh\:mm\:ss");
 					UOW.Commit();
-				};
+				}; 
+				var ts1 = TimeSpan.FromSeconds(Model.ProducedG1 * Model.Process.StateStationActivity.CycleTime);
+				ProducedTime = ts1.ToString(@"hh\:mm\:ss");
 				Operators.Add(oprVm);
 			}
 			TargetPointPerOperator = (Model.ProcessReportTargetPoint / Model.Process.StateStationActivity.ManHour).ToString("0.#");

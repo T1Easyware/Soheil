@@ -47,7 +47,7 @@ namespace Soheil.Core.ViewModels.PP
 		public static readonly DependencyProperty CodeProperty =
 			DependencyProperty.Register("Code", typeof(string), typeof(ProductGroupVm), new UIPropertyMetadata(null));
 		//Products Observable Collection
-		private ObservableCollection<ProductVm> _products = new ObservableCollection<ProductVm>();
 		public ObservableCollection<ProductVm> Products { get { return _products; } }
+		private ObservableCollection<ProductVm> _products = new ObservableCollection<ProductVm>();
 	}
 }

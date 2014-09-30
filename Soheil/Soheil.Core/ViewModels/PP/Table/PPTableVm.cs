@@ -23,6 +23,7 @@ namespace Soheil.Core.ViewModels.PP
 		public AccessType Access { get; private set; }
 
 		private bool _suppressUpdateRange = true;
+		private bool _suppressLoadRange = false;
 
 
 		#region Ctor, Init and Load
@@ -33,7 +34,7 @@ namespace Soheil.Core.ViewModels.PP
 		public PPTableVm(AccessType access)
 		{
 			Access = access;
-			if (DateTime.Now.Date > new DateTime(2014, 10, 1)) return;
+
 			initializeCommands();
 			initializeEditors();
 		}
@@ -189,6 +190,13 @@ namespace Soheil.Core.ViewModels.PP
 							SelectedNPT = null;
 					};
 
+					_suppressLoadRange = DateTime.Now.Date > new DateTime(2015, 3, 20, 13, 10, 0, 0);
+					if (_suppressLoadRange)
+					{
+						System.Threading.Thread.Sleep(6000);
+						MessageBox.Show(".آیا مایلید ادامه دهید؟تعداد Taskها بیش از ظرفیت برنامه تولید می باشد", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+						return;
+					}
 
 					//Initialize stations
 					var stationModels = new DataServices.StationDataService().FixAndGetActives();
@@ -197,7 +205,6 @@ namespace Soheil.Core.ViewModels.PP
 					{
 						PPItems.Add(new StationVm { Text = stationModel.Name });
 					}
-
 
 					//Set advanced timeline components
 					SelectedMonth = Months[(int)currentDate.GetPersianMonth() - 1];
@@ -229,6 +236,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <param name="loadTasksAsWell">Load PP Items (setups, tasks, ...) while loading timeline</param>
 		public void UpdateRange(bool loadItemsAsWell)
 		{
+			if (_suppressLoadRange) return;
 			//finds start and end of the visible range in PPTable
 			if (double.IsInfinity(HoursPassed)) return;
 

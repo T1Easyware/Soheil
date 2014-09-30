@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="Soheil.Views.Fpc.FpcManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:fpcv="clr-namespace:Soheil.Views.Fpc" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MaxWidth="500" Width="210"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <Button Command="{Binding RefreshCommand}" ToolTip="{Loc txtRefresh}" DockPanel.Dock="Right">
+                    <Image Style="{StaticResource Refresh18Image}"/>
+                </Button>
+                <TextBlock Text="Select FPC:" Foreground="White" Margin="5"/>
+            </DockPanel>
+            
+			<ScrollViewer HorizontalScrollBarVisibility="Disabled">
+				<ItemsControl ItemsSource="{Binding ProductGroups}" >
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Expander Header="{Binding Name}" IsExpanded="{Binding IsExpanded}">
+								<ItemsControl ItemsSource="{Binding Products}">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<Expander x:Name="expander" IsExpanded="{Binding IsExpanded}">
+												<Expander.Background>
+													<SolidColorBrush Color="{Binding Color}"/>
+												</Expander.Background>
+												<Expander.Header>
+													<StackPanel Orientation="Horizontal" Background="Transparent">
+														<Button Command="{Binding AddCommand}" Padding="0" Click="Button_Click" Tag="{Binding ElementName=expander}" Margin="0">
+															<Image Style="{StaticResource Add18Image}"/>
+															<Button.ToolTip>
+																<DockPanel>
+																	<TextBlock Text="{Loc txtAdd}"/>
+																	<TextBlock Text="{Loc txtFPC}" Margin="2,0"/>
+																</DockPanel>
+															</Button.ToolTip>
+														</Button>
+														<Rectangle Width="10" Height="20">
+															<Rectangle.Fill>
+																<SolidColorBrush Color="{Binding Color}"/>
+															</Rectangle.Fill>
+														</Rectangle>
+														<TextBlock Text="{Binding Code}" FontSize="10" Opacity="0.7" Margin="2,0" VerticalAlignment="Center"/>
+														<TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
+													</StackPanel>
+												</Expander.Header>
+												<ListBox ItemsSource="{Binding Fpcs}" SelectedItem="{Binding SelectedFpc}" Background="Transparent">
+													<ListBox.ItemTemplate>
+														<DataTemplate>
+															<StackPanel Orientation="Horizontal" TextBlock.Foreground="White">
+																<Image Style="{StaticResource IsDefaultImageStyle}" Margin="2,0"/>
+																<TextBlock Text="{Binding Code}" FontSize="10" Opacity="0.7" Margin="10,0" VerticalAlignment="Center"/>
+																<TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
+															</StackPanel>
+														</DataTemplate>
+													</ListBox.ItemTemplate>
+												</ListBox>
+											</Expander>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</Expander>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+        </DockPanel>
+
+		<fpcv:FpcWindow Grid.Column="1" DataContext="{Binding SelectedFpc}" Visibility="{Binding SelectedFpc, Converter={StaticResource isNotNullToVisibility}}"/>
+        <GridSplitter Grid.Column="0" Width="5" VerticalAlignment="Stretch"/>
+    </Grid>
+</UserControl>

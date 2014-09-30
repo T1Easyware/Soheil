@@ -196,7 +196,14 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		{
 			SaveCommand = new Commands.Command(o =>
 			{
-				_jobDataService.SaveAndGenerateTasks(this);
+				try
+				{
+					_jobDataService.SaveAndGenerateTasks(this);
+				}
+				catch(Exception ex)
+				{
+					MessageBox.Show(ex.Message);
+				}
 				bool refresh = true;
 				if (o != null) if (o.GetType() == typeof(bool)) refresh = (bool)o;
 				if (refresh && RefreshPPTable != null)

@@ -1420,6 +1420,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to کپی گرفتن.
+        /// </summary>
+        public static string txtDuplicate {
+            get {
+                return ResourceManager.GetString("txtDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مدت.
         /// </summary>
         public static string txtDuration {
@@ -1515,6 +1524,15 @@ namespace Soheil.Common.Properties {
         public static string txtExit {
             get {
                 return ResourceManager.GetString("txtExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to تولید اضافه.
+        /// </summary>
+        public static string txtExtraValue {
+            get {
+                return ResourceManager.GetString("txtExtraValue", resourceCulture);
             }
         }
         
@@ -2923,6 +2941,15 @@ namespace Soheil.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to تعداد تحویل از انبار.
+        /// </summary>
+        public static string txtSentCount {
+            get {
+                return ResourceManager.GetString("txtSentCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تنظیمات.
         /// </summary>
         public static string txtSettings {
@@ -2973,6 +3000,15 @@ namespace Soheil.Common.Properties {
         public static string txtShiftsInfo {
             get {
                 return ResourceManager.GetString("txtShiftsInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to کسری تولید.
+        /// </summary>
+        public static string txtShortageValue {
+            get {
+                return ResourceManager.GetString("txtShortageValue", resourceCulture);
             }
         }
         

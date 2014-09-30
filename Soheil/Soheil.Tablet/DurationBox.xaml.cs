@@ -16,43 +16,34 @@ using System.Windows.Shapes;
 namespace Soheil.Tablet
 {
 	/// <summary>
-	/// Follow steps 1a or 1b and then 2 to use this custom control in a XAML file.
-	///
-	/// Step 1a) Using this custom control in a XAML file that exists in the current project.
-	/// Add this XmlNamespace attribute to the root element of the markup file where it is 
-	/// to be used:
-	///
-	///     xmlns:MyNamespace="clr-namespace:Soheil.Tablet"
-	///
-	///
-	/// Step 1b) Using this custom control in a XAML file that exists in a different project.
-	/// Add this XmlNamespace attribute to the root element of the markup file where it is 
-	/// to be used:
-	///
-	///     xmlns:MyNamespace="clr-namespace:Soheil.Tablet;assembly=Soheil.Tablet"
-	///
-	/// You will also need to add a project reference from the project where the XAML file lives
-	/// to this project and Rebuild to avoid compilation errors:
-	///
-	///     Right click on the target project in the Solution Explorer and
-	///     "Add Reference"->"Projects"->[Browse to and select this project]
-	///
-	///
-	/// Step 2)
-	/// Go ahead and use your control in the XAML file.
-	///
-	///     <MyNamespace:TimeBox/>
-	///
+	/// Interaction logic for DurationBox.xaml
 	/// </summary>
-	public class TimeBox : Control
+	public partial class DurationBox : UserControl
 	{
-		static TimeBox()
+		public DurationBox()
 		{
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(TimeBox), new FrameworkPropertyMetadata(typeof(TimeBox)));
+			InitializeComponent();
+			SetDurationMinutesCommand = new CustomCommand(this);
 		}
+
 		private bool _suppress = false;
+		//DurationSeconds Dependency Property
+		public int DurationSeconds
+		{
+			get { return (int)GetValue(DurationSecondsProperty); }
+			set { SetValue(DurationSecondsProperty, value); }
+		}
+		public static readonly DependencyProperty DurationSecondsProperty =
+			DependencyProperty.Register("DurationSeconds", typeof(int), typeof(DurationBox),
+			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
+			{
+				var vm = d as DurationBox;
 
+				if (e.NewValue == DependencyProperty.UnsetValue) return;
+				var val = (int)e.NewValue;
 
+				vm.Time = TimeSpan.FromSeconds(val);
+			}));
 		//Time Dependency Property
 		public TimeSpan Time
 		{
@@ -60,13 +51,15 @@ namespace Soheil.Tablet
 			set { SetValue(TimeProperty, value); }
 		}
 		public static readonly DependencyProperty TimeProperty =
-			DependencyProperty.Register("Time", typeof(TimeSpan), typeof(TimeBox),
+			DependencyProperty.Register("Time", typeof(TimeSpan), typeof(DurationBox),
 			new FrameworkPropertyMetadata(TimeSpan.Zero, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
-				var vm = (TimeBox)d;
+				var vm = (DurationBox)d;
 
 				if (e.NewValue == DependencyProperty.UnsetValue) return;
 				var val = (TimeSpan)e.NewValue;
+
+				if (vm.DurationSeconds != (int)val.TotalSeconds) vm.DurationSeconds = (int)val.TotalSeconds;
 
 				vm._suppress = true;
 				vm.Hour = (int)val.TotalHours;
@@ -82,10 +75,10 @@ namespace Soheil.Tablet
 			set { SetValue(HourProperty, value); }
 		}
 		public static readonly DependencyProperty HourProperty =
-			DependencyProperty.Register("Hour", typeof(int), typeof(TimeBox),
+			DependencyProperty.Register("Hour", typeof(int), typeof(DurationBox),
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
-				var vm = (TimeBox)d;
+				var vm = (DurationBox)d;
 				if (vm._suppress) return;
 				if (e.NewValue == DependencyProperty.UnsetValue) return;
 				var val = (int)e.NewValue;
@@ -93,7 +86,7 @@ namespace Soheil.Tablet
 				if ((int)vm.Time.TotalHours != val) vm.Time = new TimeSpan(val, vm.Minute, vm.Second);
 			}, (d, v) =>
 			{
-				var vm = (TimeBox)d;
+				var vm = (DurationBox)d;
 				if ((int)v >= 999) return 999;
 				if ((int)v <= 0) return 0;
 				return v;
@@ -105,10 +98,10 @@ namespace Soheil.Tablet
 			set { SetValue(MinuteProperty, value); }
 		}
 		public static readonly DependencyProperty MinuteProperty =
-			DependencyProperty.Register("Minute", typeof(int), typeof(TimeBox),
+			DependencyProperty.Register("Minute", typeof(int), typeof(DurationBox),
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
-				var vm = (TimeBox)d;
+				var vm = (DurationBox)d;
 				if (vm._suppress) return;
 				if (e.NewValue == DependencyProperty.UnsetValue) return;
 				var val = (int)e.NewValue;
@@ -116,7 +109,7 @@ namespace Soheil.Tablet
 				if (vm.Time.Minutes != val) vm.Time = new TimeSpan(vm.Hour, val, vm.Second);
 			}, (d, v) =>
 			{
-				var vm = (TimeBox)d;
+				var vm = (DurationBox)d;
 				if ((int)v >= 59) return 59;
 				if ((int)v <= 0) return 0;
 				return v;
@@ -128,10 +121,10 @@ namespace Soheil.Tablet
 			set { SetValue(SecondProperty, value); }
 		}
 		public static readonly DependencyProperty SecondProperty =
-			DependencyProperty.Register("Second", typeof(int), typeof(TimeBox),
+			DependencyProperty.Register("Second", typeof(int), typeof(DurationBox),
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) =>
 			{
-				var vm = (TimeBox)d;
+				var vm = (DurationBox)d;
 				if (vm._suppress) return;
 				if (e.NewValue == DependencyProperty.UnsetValue) return;
 				var val = (int)e.NewValue;
@@ -139,10 +132,54 @@ namespace Soheil.Tablet
 				if (vm.Time.Seconds != val) vm.Time = new TimeSpan(vm.Hour, vm.Minute, val);
 			}, (d, v) =>
 			{
-				var vm = (TimeBox)d;
+				var vm = (DurationBox)d;
 				if ((int)v >= 59) return 59;
 				if ((int)v <= 0) return 0;
 				return v;
 			}));
+
+		//IsReadOnly Dependency Property
+		public bool IsReadOnly
+		{
+			get { return (bool)GetValue(IsReadOnlyProperty); }
+			set { SetValue(IsReadOnlyProperty, value); }
+		}
+		public static readonly DependencyProperty IsReadOnlyProperty =
+			DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(DurationBox),
+			new UIPropertyMetadata(false, (d, e) =>
+			{
+				var vm = d as DurationBox;
+				if (vm.SetDurationMinutesCommand != null)
+					vm.SetDurationMinutesCommand.Changed();
+			}));
+
+		public CustomCommand SetDurationMinutesCommand
+		{
+			get { return (CustomCommand)GetValue(SetDurationMinutesCommandProperty); }
+			set { SetValue(SetDurationMinutesCommandProperty, value); }
+		}
+		public static readonly DependencyProperty SetDurationMinutesCommandProperty =
+			DependencyProperty.Register("SetDurationMinutesCommand", typeof(CustomCommand), typeof(DurationBox), new PropertyMetadata(null));
+		public class CustomCommand : ICommand
+		{
+			public bool CanExecute(object parameter)
+			{
+				return !_tb.IsReadOnly;
+			}
+			public void Changed() { if (CanExecuteChanged != null) CanExecuteChanged(this, new EventArgs()); }
+			public event EventHandler CanExecuteChanged;
+			public void Execute(object parameter)
+			{
+				if (_tb == null) return;
+				if (_tb.IsReadOnly) return;
+				_tb.DurationSeconds = (int)parameter * 60;
+			}
+			DurationBox _tb;
+			public CustomCommand(DurationBox tb)
+			{
+				_tb = tb;
+			}
+		}
+
 	}
 }

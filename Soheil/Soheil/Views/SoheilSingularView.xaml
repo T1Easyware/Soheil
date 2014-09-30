@@ -127,8 +127,16 @@
 
 
 		<!--................................................ 2.Basic .................................................-->
-
-		<!-- 2.6. SetupTime Table -->
+        
+        <!-- 2.3.1. Fpcs -->
+        <DataTemplate x:Key="FpcManagerTemplate" 
+                     xmlns:fpcvm="clr-namespace:Soheil.Core.ViewModels.Fpc;assembly=Soheil.Core"
+                     xmlns:fpcv="clr-namespace:Soheil.Views.Fpc"
+                     DataType="fpcvm:FpcManagerVm">
+            <fpcv:FpcManager  FlowDirection="{Loc enumDirection}"/>
+        </DataTemplate>
+        
+        <!-- 2.6. SetupTime Table -->
 		<DataTemplate x:Key="SetupTimesTemplate" DataType="{x:Type vm:SetupTimeTableVm}"
 				xmlns:vm="clr-namespace:Soheil.Core.ViewModels.SetupTime;assembly=Soheil.Core"
 				xmlns:v="clr-namespace:Soheil.Views.SetupTime">
@@ -1939,7 +1947,25 @@
 					  xmlns:mpv="clr-namespace:Soheil.Views.MaterialPlanning">
 			<DockPanel>
 				<ToolBar DockPanel.Dock="Top">
+					<Button Command="{Binding ChangeDayCommand}" Padding="5,0" VerticalAlignment="Stretch" Margin="2,0">
+						<Button.CommandParameter>
+							<System:Int32>-1</System:Int32>
+						</Button.CommandParameter>
+						<WrapPanel>
+							<Image Style="{StaticResource Back16Image}"/>
+							<TextBlock Text="{Loc txtPreviousDay}" VerticalAlignment="Center"/>
+						</WrapPanel>
+					</Button>
 					<cal:DatePicker SelectedDate="{Binding Date}" DisplayDate="{Binding Date}"/>
+					<Button Command="{Binding ChangeDayCommand}" Padding="5,0" VerticalAlignment="Stretch" Margin="2,0">
+						<Button.CommandParameter>
+							<System:Int32>1</System:Int32>
+						</Button.CommandParameter>
+						<WrapPanel>
+							<TextBlock Text="{Loc txtNextDay}" VerticalAlignment="Center"/>
+							<Image Style="{StaticResource Forward16Image}"/>
+						</WrapPanel>
+					</Button>
 					<WrapPanel VerticalAlignment="Center">
 						<Image Style="{StaticResource ZoomImage}" VerticalAlignment="Center"/>
 						<Slider Margin="2" Maximum="4800" Minimum="600" Value="{Binding Width}" Width="200" VerticalAlignment="Center"/>
@@ -2728,7 +2754,8 @@
 		
 		<!--!@#$-->
 		<TemplateSelectors:SingularViewListSelector x:Key="ListTemplateSelector"
-													IndicesVmTemplate="{StaticResource IndexTemplate}"
+													FpcManagerVmTemplate="{StaticResource FpcManagerTemplate}"
+                                                    IndicesVmTemplate="{StaticResource IndexTemplate}"
 													PPTableVmTemplate="{StaticResource PPTableTemplate}"
 													MaterialPlanningVmTemplate="{StaticResource MaterialPlanningTemplate}"
 													PmVmTemplate="{StaticResource PmTemplate}"
