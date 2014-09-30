@@ -68,6 +68,8 @@
     <Compile Include="DataServices\PM\MachinePartDataService.cs" />
     <Compile Include="DataServices\PM\RepairDataService.cs" />
     <Compile Include="DataServices\PM\ReportDataService.cs" />
+    <Compile Include="DataServices\Storage\WarehouseReportDataService.cs" />
+    <Compile Include="DataServices\Storage\ProductPriceDataService.cs" />
     <Compile Include="DataServices\Storage\WarehouseReceiptDataService.cs" />
     <Compile Include="DataServices\Storage\WarehouseTransactionDataService.cs" />
     <Compile Include="Reports\MaterialRequestData.cs" />
@@ -197,6 +199,8 @@
     <Compile Include="ViewModels\PP\Report\WarehouseTransactionVm.cs" />
     <Compile Include="ViewModels\PP\Report\WarehouseVm.cs" />
     <Compile Include="ViewModels\PP\Table\TimingSet.cs" />
+    <Compile Include="ViewModels\ProductPriceVM.cs" />
+    <Compile Include="ViewModels\Storage\WarehouseReportVm.cs" />
     <Compile Include="ViewModels\Reports\DailyStationPlanVm.cs" />
     <Compile Include="ViewModels\Reports\DailyReportVm.cs" />
     <Compile Include="ViewModels\Reports\OprActivityDetailVM.cs" />
@@ -274,6 +278,9 @@
     <Compile Include="ViewModels\SkillCenter\SkillCenterContentVm.cs" />
     <Compile Include="ViewModels\SkillCenter\SkillCenterVm.cs" />
     <Compile Include="ViewModels\StartPageVm.cs" />
+    <Compile Include="ViewModels\Storage\MaterialInventoryReportData.cs" />
+    <Compile Include="ViewModels\Storage\ProductInventoryReportData.cs" />
+    <Compile Include="ViewModels\Storage\WarehouseReportData.cs" />
     <Compile Include="ViewModels\Storage\UnitSetsVM.cs" />
     <Compile Include="ViewModels\Storage\UnitGroupVM.cs" />
     <Compile Include="ViewModels\Storage\UnitSetVM.cs" />

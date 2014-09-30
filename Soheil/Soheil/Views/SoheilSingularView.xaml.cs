@@ -505,5 +505,27 @@ namespace Soheil.Views
 			}
 
 		}
+
+        private void WRdocumentViewer_Initialized(object sender, RoutedEventArgs e)
+        {
+            var dv = sender as DocumentViewer;
+            var dc = sender.GetDataContext<WarehouseReportVm>();
+            if (dv == null)
+                return;
+
+            var tb = dv.FindDocumentMenu();
+            if (tb != null)
+            {
+                tb.FlowDirection = System.Windows.FlowDirection.RightToLeft;
+                var menu = new Soheil.Views.Reporting.WarehouseReportToolbar();
+                var submenu = menu.Content as ToolBar;
+                var list = submenu.Items.OfType<FrameworkElement>().ToArray();
+                submenu.Items.Clear();
+                foreach (var item in list)
+                {
+                    tb.Items.Add(item);
+                }
+            }
+        }
 	}
 }

@@ -2706,6 +2706,16 @@
                 </Grid>
             </Grid>
         </DataTemplate>
+
+        <!-- 5.7. Waqrehouse Reports -->
+        <DataTemplate x:Key="WarehouseReportTemplate" DataType="Reports:WarehouseReportVm"
+                      xmlns:reportView="clr-namespace:Soheil.Views.Reporting">
+            <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}">
+                <Grid>
+                    <DocumentViewer Document="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel.Document}" Loaded="WRdocumentViewer_Initialized" x:Name="documentViewer"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
         <!--................................................ 4.Options ...............................................-->
 
         <!-- 5.1. Settings and Configurations -->
@@ -2728,6 +2738,7 @@
 													ActualCostReportsVmTemplate="{StaticResource ActualCostReportTemplate}"
 													OperationReportsVmTemplate="{StaticResource OperationReportTemplate}"
 													DailyReportVmTemplate="{StaticResource DailyReportTemplate}"
+													WarehouseReportVmTemplate="{StaticResource WarehouseReportTemplate}"
 													DailyStationPlanVmTemplate="{StaticResource DailyStationPlanTemplate}"
 													PMReportVmTemplate="{StaticResource PMReportTemplate}"
                                                     />

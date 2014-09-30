@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Security.Cryptography;
+using System.Linq;
 using System.Windows;
 using Soheil.Common;
 using Soheil.Core.Base;
@@ -8,7 +10,6 @@ using Soheil.Core.Commands;
 using Soheil.Core.DataServices;
 using Soheil.Core.DataServices.Storage;
 using Soheil.Core.ViewModels.InfoViewModels;
-using Soheil.Dal;
 using Soheil.Model;
 
 namespace Soheil.Core.ViewModels
@@ -35,16 +36,32 @@ namespace Soheil.Core.ViewModels
             set { _model.Description = value; OnPropertyChanged("Description"); }
         }
 
+        public bool Transported
+        {
+            get { return _model.Transported; }
+            set { _model.Transported = value; OnPropertyChanged("Transported"); }
+        }
+
         /// <summary>
         /// Gets or sets the data service.
         /// </summary>
         /// <value>
         /// The data service.
         /// </value>
-        public RawMaterialDataService RawMaterialDataService { get; set; }
-        public WarehouseReceiptDataService WarehouseReceiptDataService { get; set; }
+
         public WarehouseTransactionDataService TransactionDataService { get; set; }
-        public WarehouseDataService WarehouseDataService { get; set; }
+
+        public WarehouseReceiptDataService WarehouseReceiptDataService { get; set; }
+
+        public UnitSetDataService UnitDataService { get; set; }
+
+        public IEnumerable<WarehouseInfoVM> Warehouses { get; set; }
+
+        public IEnumerable<RawMaterialInfoVM> RawMaterials { get; set; }
+
+        public IEnumerable<ProductInfoVM> Products { get; set; }
+
+        public IEnumerable<UnitSetInfoVM> UnitSets { get; set; }
 
 // ReSharper disable PropertyNotResolved
         [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
@@ -67,6 +84,8 @@ namespace Soheil.Core.ViewModels
             set { _model.Type = (byte)value; }
         }
 
+        public WarehouseTransactionType TransactionType { get; set; }
+
         public DateTime CreatedDate
         {
             get { return _model.CreatedDate; }
@@ -84,13 +103,7 @@ namespace Soheil.Core.ViewModels
             get { return LoginInfo.GetUsername(_model.ModifiedBy); }
         }
 
-        public ObservableCollection<WarehouseInfoVM> Sources { get; set; }
-
-        public ObservableCollection<WarehouseInfoVM> Destinations { get; set; }
-
         public ObservableCollection<WarehouseTransactionVM> Transactions { get; set; }
-
-        public ObservableCollection<RawMaterialInfoVM> RawMaterials { get; set; }
 
         public static readonly DependencyProperty SelectedSourceProperty = DependencyProperty.Register(
             "SelectedSource", typeof (WarehouseInfoVM), typeof (WarehouseReceiptVM), new PropertyMetadata(default(WarehouseInfoVM)));
@@ -127,7 +140,7 @@ namespace Soheil.Core.ViewModels
         /// </summary>
         public WarehouseReceiptVM(AccessType access, WarehouseReceiptDataService dataService):base(access)
         {
-            InitializeData(dataService);
+            //InitializeData(dataService, null);
         }
 
         /// <summary>
@@ -136,62 +149,78 @@ namespace Soheil.Core.ViewModels
         /// <param name="entity">The model.</param>
         /// <param name="access"></param>
         /// <param name="dataService"></param>
-        public WarehouseReceiptVM(WarehouseReceipt entity, AccessType access, WarehouseReceiptDataService dataService, WarehouseDataService warehouseDataService, RawMaterialDataService rawMaterialDataService, WarehouseTransactionDataService transactionDataService, WarehouseReceiptType type )
+        public WarehouseReceiptVM(WarehouseReceipt entity, AccessType access, WarehouseReceiptDataService dataService, WarehouseTransactionDataService transactionDataService, IEnumerable<WarehouseInfoVM> warehouses, IEnumerable<RawMaterialInfoVM> materials, IEnumerable<UnitSetInfoVM> units, WarehouseReceiptType type)
             : base(access)
         {
             _model = entity;
-            Type = type;
-            WarehouseDataService = warehouseDataService;
-            RawMaterialDataService = rawMaterialDataService;
             TransactionDataService = transactionDataService;
-            InitializeData(dataService);
-        }
-
-        private void InitializeData(WarehouseReceiptDataService dataService)
-        {
-            WarehouseReceiptDataService = dataService;
-
-            RawMaterials = new ObservableCollection<RawMaterialInfoVM>();
-            foreach (var model in RawMaterialDataService.GetActives())
-            {
-                RawMaterials.Add(new RawMaterialInfoVM(model));
-            }
-
-            switch (Type)
-            {
-                case WarehouseReceiptType.Storage:
-                    Destinations = new ObservableCollection<WarehouseInfoVM>();
-                    foreach (var model in WarehouseDataService.GetActives())
-                    {
-                        Destinations.Add(new WarehouseInfoVM(model));
-                    }
-                    break;
-                case WarehouseReceiptType.Transfer:
-                    break;
-                case WarehouseReceiptType.Discharge:
-                    break;
-            }
+            Type = type;
+            TransactionType = WarehouseTransactionType.RawMaterial;
+            TransactionDataService.TransactionRemoved += TransactionRemoved;
+            Warehouses = warehouses;
+            RawMaterials = materials;
+            UnitSets = units;
 
             Transactions = new ObservableCollection<WarehouseTransactionVM>();
             foreach (var transaction in TransactionDataService.GetActives(Id))
             {
-                Transactions.Add(new WarehouseTransactionVM(transaction, Access, TransactionDataService, _model, Destinations, RawMaterials, WarehouseTransactionType.RawMaterial));
+                Transactions.Add(new WarehouseTransactionVM(transaction, Access, TransactionDataService, _model, warehouses, materials, units));
             }
 
             SaveCommand = new Command(Save, CanSave);
         }
 
+        public WarehouseReceiptVM(WarehouseReceipt entity, AccessType access, WarehouseReceiptDataService dataService, WarehouseTransactionDataService transactionDataService, IEnumerable<WarehouseInfoVM> warehouses, IEnumerable<ProductInfoVM> products, WarehouseReceiptType type)
+            : base(access)
+        {
+            _model = entity;
+            TransactionDataService = transactionDataService;
+            Type = type;
+            TransactionType = WarehouseTransactionType.Product;
+            TransactionDataService.TransactionRemoved += TransactionRemoved;
+            Warehouses = warehouses;
+            Products = products;
+
+            Transactions = new ObservableCollection<WarehouseTransactionVM>();
+            foreach (var transaction in TransactionDataService.GetActives(Id))
+            {
+                Transactions.Add(new WarehouseTransactionVM(transaction, Access, TransactionDataService, _model, warehouses, products));
+            }
+
+            SaveCommand = new Command(Save, CanSave);
+        }
         public override void Save(object param)
         {
             WarehouseReceiptDataService.AttachModel(_model);
             _model = WarehouseReceiptDataService.GetSingle(_model.Id); OnPropertyChanged("ModifiedBy");OnPropertyChanged("ModifiedDate");Mode = ModificationStatus.Saved;
         }
 
+        void TransactionRemoved(object sender, ModelRemovedEventArgs e)
+        {
+            CurrentTransaction = Transactions.FirstOrDefault(item => item.Id != e.Id);
+            Transactions.RemoveWhere(item=> item.Id == e.Id);
+        }
         public void AddBlankTransaction()
         {
             var model = WarehouseTransactionVM.CreateNew(TransactionDataService, _model);
-            var blankVm = new WarehouseTransactionVM(model, Access, TransactionDataService, _model, Destinations, RawMaterials, WarehouseTransactionType.RawMaterial);
+            WarehouseTransactionVM blankVm = null;
+            switch (TransactionType)
+            {
+                case WarehouseTransactionType.None:
+                    break;
+                case WarehouseTransactionType.RawMaterial:
+                    blankVm = new WarehouseTransactionVM(model, Access, TransactionDataService, _model, Warehouses, RawMaterials, UnitSets);
+                    break;
+                case WarehouseTransactionType.Product:
+                    blankVm = new WarehouseTransactionVM(model, Access, TransactionDataService, _model, Warehouses, Products);
+                    break;
+                case WarehouseTransactionType.Good:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("TransactionType");
+            }
             Transactions.Add(blankVm);
+            CurrentTransaction = Transactions[0];
         }
         public override void Delete(object param)
         {
@@ -205,12 +234,13 @@ namespace Soheil.Core.ViewModels
         {
             base.ViewItemLink(param);
         }
+
         #endregion
 
         #region Static Methods
-        public static WarehouseReceipt CreateNew(WarehouseReceiptDataService dataService)
+        public static WarehouseReceipt CreateNew(WarehouseReceiptDataService dataService, WarehouseReceiptType type)
         {
-            int id = dataService.AddModel(new WarehouseReceipt { Description = "جدید", Code = string.Empty, Type = (byte) WarehouseReceiptType.None, RecordDateTime = DateTime.Now ,CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now, Status = (byte)Status.Active});
+            int id = dataService.AddModel(new WarehouseReceipt { Description = "جدید", Code = string.Empty, Type = (byte) type, RecordDateTime = DateTime.Now ,CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now, Status = (byte)Status.Active});
             return dataService.GetSingle(id);
             
         }

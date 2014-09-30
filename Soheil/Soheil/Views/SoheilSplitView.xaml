@@ -19,6 +19,7 @@
              xmlns:Interfaces="clr-namespace:Soheil.Core.Interfaces;assembly=Soheil.Core"
              xmlns:CustomControls="clr-namespace:Soheil.Controls.CustomControls;assembly=Soheil.Controls"
              xmlns:ColorPicker="clr-namespace:Soheil.Controls.CustomControls.ColorPicker;assembly=Soheil.Controls"
+             xmlns:persianDateControls="clr-namespace:Arash.PersianDateControls;assembly=PersianDateControls"
              D:DesignHeight="{Binding RelativeSource={RelativeSource AncestorType=Control},
                                       Path=ActualHeight}"
              D:DesignWidth="{Binding RelativeSource={RelativeSource AncestorType=Control},
@@ -760,7 +761,7 @@
                              Columns="2"
                              Rows="2">
                     <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtMBy}" />
-                    <TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.ModifiedBy}" />
+                    <TextBox Margin="2" IsReadOnly="True" Text="{Binding Path=CurrentContent.ModifiedBy, Mode=OneWay}" />
                 </UniformGrid>
 			</Expander>
         </ControlTemplate>
@@ -2011,6 +2012,46 @@
                                 </DockPanel>
                             </UniformGrid>
                         </Border>
+                        <!-- Oil Factory Temp -->
+                        <Expander DockPanel.Dock="Top" Style="{StaticResource SoheilContentLowerExpander}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <DockPanel Grid.Column="0">
+                                    <Border DockPanel.Dock="Top" Height="40"  Style="{StaticResource SoheilSimpleFillBorder}">
+                                        <TextBlock Margin="2,5,2,5" Text="{Loc txtPrices}" Foreground="{StaticResource BlueHoverBrush}"/>
+                                    </Border>
+                                    <DockPanel>
+                                        <WrapPanel DockPanel.Dock="Bottom">
+                                            <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/add.png" ToolTip="{Loc txtAdd}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.AddNewPriceCommand}" HorizontalAlignment="Right"/>
+                                        </WrapPanel>
+                                    <ListBox ItemsSource="{Binding CurrentContent.Prices}" 
+                                             SelectedValue="{Binding CurrentContent.SelectedPrice, Mode=TwoWay}"
+                                             SelectedValuePath="."
+                                             DisplayMemberPath="Text"
+                                             Height="300">
+                                    </ListBox>
+                                    </DockPanel>
+                                </DockPanel>
+                                <Border Grid.Column="1" Style="{StaticResource SoheilMediumCoverBorder}">
+                                    <UniformGrid Margin="5" Columns="3" Rows="1" Height="35" VerticalAlignment="Top">
+                                        <WrapPanel>
+                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtPrice}" />
+                                        <TextBox Width="100" Margin="2" Text="{Binding Path=CurrentContent.SelectedPrice.Value, ValidatesOnDataErrors=True, 
+                                                UpdateSourceTrigger=PropertyChanged}" />
+                                        </WrapPanel>
+                                        <WrapPanel>
+                                        <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtStartDate}" />
+                                        <DatePicker Foreground="Azure" SelectedDate="{Binding CurrentContent.SelectedPrice.StartDate}"/>
+                                        </WrapPanel>
+                                        <CustomControls:ImageButton ImageSource="/Soheil.Controls;component/Images/Check.png" ToolTip="{Loc txtEdit}" Style="{StaticResource ImageButtonDefaultStyle}" Command="{Binding CurrentContent.SelectedPrice.SaveCommand}" HorizontalAlignment="Right"/>
+                                    </UniformGrid>
+                                </Border>
+                            </Grid>
+                        </Expander>
+                        <!-- end -->
                         <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserDateInfoContent}" />
                     </DockPanel>
                     <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
@@ -3516,7 +3557,7 @@
                             Tag="622" />
             </WrapPanel>
         </DataTemplate>
-        <DataTemplate x:Key="WarehouseReceiptTemplate" DataType="ViewModels:WarehouseReceiptVM">
+        <DataTemplate x:Key="WarehouseStorageTemplate" DataType="ViewModels:WarehouseReceiptVM">
             <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
                       Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Description}">
                 <I:Interaction.Behaviors>
@@ -3558,7 +3599,9 @@
                                           SelectedValue="{Binding CurrentContent.CurrentTransaction,
                                                                   Mode=TwoWay,
                                                                   UpdateSourceTrigger=PropertyChanged}"
+
                                           SelectedValuePath="."
+                                          CanUserDeleteRows="False"
                                           AutoGenerateColumns="False"
                                           PreviewKeyDown="TransGridPreviewKeyDown"
                                           PreparingCellForEdit="DataGridOnPreparingCellForEdit"
@@ -3566,60 +3609,156 @@
                                           ScrollViewer.CanContentScroll="False" 
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                                           ScrollViewer.HorizontalScrollBarVisibility="Auto">
-                                    <DataGrid.Resources>
-                                        <Style TargetType="DataGridRow">
-                                            <Setter Property="IsEnabled" Value="{Binding IsEditable}"/>
-                                        </Style>
-                                    </DataGrid.Resources>
-                                <DataGrid.Columns>
-                                    <DataGridTemplateColumn Header="{Loc txtDestWCode}">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <ComboBox DisplayMemberPath="Text" BorderThickness="0"
-                                                            IsTextSearchEnabled="True"
-                                                            IsEditable="True"
-                                                        ItemsSource="{Binding Warehouses}"
-                                                        SelectedValue="{Binding SelectedDestination, UpdateSourceTrigger=PropertyChanged,
-                                                                                Mode=TwoWay}"
-                                                        
-                                                        SelectedValuePath="." />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
+                                    <I:Interaction.Behaviors>
+                                        <ControlBehaviors:DataGridRowReadOnlyBehavior/>
+                                    </I:Interaction.Behaviors>
+                                <DataGrid.Resources>
+                                    <Style TargetType="{x:Type DataGridRow}">
+                                        <Setter Property="Controls:DataGridRowDeleting.IsDeletingValue" Value="{Binding RelativeSource={RelativeSource Self}, Path=Item.IsDeleting}"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type DataGridRow}">
+                                                    <Border x:Name="DGR_Border" Background="{StaticResource ThemeDarkBrush}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" SnapsToDevicePixels="True">
+                                                        <SelectiveScrollingGrid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
 
-                                    <DataGridTemplateColumn Header="{Loc txtRawMaterialCode}">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                <ComboBox DisplayMemberPath="Text" BorderThickness="0"
-                                                              IsTextSearchEnabled="True"
-                                                              IsEditable="True"
-                                                          ItemsSource="{Binding RawMaterials}"
-                                                          SelectedValue="{Binding SelectedRawMaterial, UpdateSourceTrigger=PropertyChanged,
-                                                                                  Mode=TwoWay}"
-                                                          SelectedValuePath="." />
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="{Loc txtQuantity}">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" BorderThickness="0"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="{Loc txtUnit}">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <ComboBox DisplayMemberPath="Code" BorderThickness="0"
-                                                        ItemsSource="{Binding SelectedRawMaterial.UnitSets}"
-                                                        SelectedValue="{Binding SelectedUnit, UpdateSourceTrigger=PropertyChanged,
-                                                                                Mode=TwoWay}"
-                                                        SelectedValuePath="." />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                    </DataGrid.Columns>
-                                </DataGrid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="*" />
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
+                                                            <Rectangle x:Name="BackgroundRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource ThemeDarkBrush}" Opacity="1" />
+                                                            <Rectangle x:Name="SelectedRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource BackgroundSelected}" Opacity="0" />
+                                                            <Rectangle x:Name="HoverRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource BorderBrushSelected}" Opacity="0" />
+                                                            <Rectangle x:Name="DeletingRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource redBrush}" Opacity="0" />
+                                                            <DataGridRowHeader Grid.RowSpan="2"
+                                 SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical"
+                                 Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                                    Path=HeadersVisibility,
+                                                                    Converter={x:Static DataGrid.HeadersVisibilityConverter},
+                                                                    ConverterParameter={x:Static DataGridHeadersVisibility.Row}}" />
+                                                            <DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}"
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                            <DataGridDetailsPresenter x:Name="DetailsPresenter" Grid.Row="1" Grid.Column="1" 
+                                                                        SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding                                                                                 RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                                        Path=AreRowDetailsFrozen,
+                                                                        Converter={x:Static DataGrid.RowDetailsScrollingConverter},
+                                                                        ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}}"
+                                                                        Visibility="{TemplateBinding DetailsVisibility}">
+                                                                <DataGridDetailsPresenter.ContentTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock Background="Red" Text="{Loc msgDeleteConfirm}"/>
+                                                                    </DataTemplate>
+                                                                </DataGridDetailsPresenter.ContentTemplate>
+                                                            </DataGridDetailsPresenter>
+                                                            <Rectangle x:Name="BottomGridLine" Grid.Row="2" Grid.Column="1" Height="1"
+                                                        HorizontalAlignment="Stretch" />
+                                                        </SelectiveScrollingGrid>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="Controls:DataGridRowDeleting.IsDeletingValue" Value="True">
+                                                            <Setter Property="DetailsVisibility" Value="Visible"></Setter>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Trigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
+                                                        Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.EnterActions>
+                                                            <Trigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
+                                                   Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.ExitActions>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsReadOnly , UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                <Setter Property="ControlBehaviors:ReadOnlyService.IsReadOnly" Value="True"/>
+                                                <Setter Property="Foreground" Value="LightGray"/>
+                                                <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
+                                                <Setter Property="ToolTip" Value="Disabled in ViewModel"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridComboBoxColumn Header="{Loc txtDestWarehouse}" 
+                                                            SelectedValueBinding="{Binding Path=SelectedDestination, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                            SelectedValuePath="."
+                                                            DisplayMemberPath="Text">
+                                        <DataGridComboBoxColumn.ElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.Warehouses, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.ElementStyle>
+                                        <DataGridComboBoxColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="IsEditable" Value="True"/>
+                                                <Setter Property="IsSynchronizedWithCurrentItem" Value="True" />
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.Warehouses, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.EditingElementStyle>
+                                    </DataGridComboBoxColumn>
+                                    <DataGridComboBoxColumn Header="{Loc txtRawMaterial}" 
+                                                            SelectedValueBinding="{Binding Path=SelectedRawMaterial, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                            SelectedValuePath="."
+                                                            DisplayMemberPath="Text">
+                                        <DataGridComboBoxColumn.ElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.CurrentContent.RawMaterials, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.ElementStyle>
+                                        <DataGridComboBoxColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="IsEditable" Value="True"/>
+                                                <Setter Property="IsSynchronizedWithCurrentItem" Value="True" />
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.CurrentContent.RawMaterials, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.EditingElementStyle>
+                                    </DataGridComboBoxColumn>
+                                    <DataGridComboBoxColumn Header="{Loc txtUnit}" 
+                                                            SelectedValueBinding="{Binding Path=SelectedUnit, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                            SelectedValuePath="."
+                                                            DisplayMemberPath="Code">
+                                        <DataGridComboBoxColumn.ElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.CurrentContent.UnitSets, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.ElementStyle>
+                                        <DataGridComboBoxColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="IsEditable" Value="True"/>
+                                                <Setter Property="IsSynchronizedWithCurrentItem" Value="True" />
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.CurrentContent.UnitSets, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.EditingElementStyle>
+                                    </DataGridComboBoxColumn>
+                                    <DataGridTextColumn Header="{Loc txtQuantity}" Binding="{Binding Path= Quantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="{Loc txtInventory}" Binding="{Binding Path= MaterialInventory, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
                             </Border>
                             <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
                             <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserInfoContent}" />
@@ -3629,7 +3768,204 @@
                 </DockPanel>
             </GroupBox>
         </DataTemplate>
-        
+        <DataTemplate x:Key="WarehouseDischargeTemplate" DataType="ViewModels:WarehouseReceiptVM">
+            <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 
+                      Style="{StaticResource SoheilContentGroupBox}" Header="{Binding CurrentContent.Description}">
+                <I:Interaction.Behaviors>
+                    <Behavior:ValidationExceptionBehavior />
+                </I:Interaction.Behaviors>
+                <DockPanel FlowDirection="{Loc enumDirection}">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBarBorder}">
+                        <WrapPanel Margin="10"
+                                   HorizontalAlignment="Right"
+                                   DockPanel.Dock="Bottom">
+                            <!--<Button Command="{Binding CurrentContent.ViewItemLinkCommand}"
+                                    CommandParameter="0"
+                                    Content="{Loc txtGenSkills}">
+                            </Button>-->
+                        </WrapPanel>
+                    </Border>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilContentUpperBorder}">
+                            <UniformGrid Margin="5"
+                                 Columns="2"
+                                 Rows="2">
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtCode}"  />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Code, ValidatesOnDataErrors=True, 
+                            UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource EntryBoxHeader}" Text="{Loc txtDescription}" />
+                                <TextBox Margin="2" Text="{Binding Path=CurrentContent.Description, ValidatesOnDataErrors=True, 
+                            UpdateSourceTrigger=PropertyChanged}" />
+                            </UniformGrid>
+                        </Border>
+                        <Border DockPanel.Dock="Top" Style="{StaticResource SoheilMediumCoverBorder}" >
+                            <DataGrid x:Name="dataGrid"
+                                          FlowDirection="RightToLeft"
+                                          IsSynchronizedWithCurrentItem="True"
+                                          SelectionMode="Single"
+                                          ItemsSource="{Binding CurrentContent.Transactions}"
+                                          SelectedItem="{Binding CurrentContent.CurrentTransaction,
+                                                                  Mode=TwoWay,
+                                                                  UpdateSourceTrigger=PropertyChanged}"
+                                          SelectedValue="{Binding CurrentContent.CurrentTransaction,
+                                                                  Mode=TwoWay,
+                                                                  UpdateSourceTrigger=PropertyChanged}"
+
+                                          SelectedValuePath="."
+                                          CanUserDeleteRows="False"
+                                          AutoGenerateColumns="False"
+                                          PreviewKeyDown="TransGridPreviewKeyDown"
+                                          PreparingCellForEdit="DataGridOnPreparingCellForEdit"
+                                          VirtualizingStackPanel.IsVirtualizing="False"
+                                          ScrollViewer.CanContentScroll="False" 
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                <I:Interaction.Behaviors>
+                                    <ControlBehaviors:DataGridRowReadOnlyBehavior/>
+                                </I:Interaction.Behaviors>
+                                <DataGrid.Resources>
+                                    <Style TargetType="{x:Type DataGridRow}">
+                                        <Setter Property="Controls:DataGridRowDeleting.IsDeletingValue" Value="{Binding RelativeSource={RelativeSource Self}, Path=Item.IsDeleting}"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type DataGridRow}">
+                                                    <Border x:Name="DGR_Border" Background="{StaticResource ThemeDarkBrush}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" SnapsToDevicePixels="True">
+                                                        <SelectiveScrollingGrid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="*" />
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
+                                                            <Rectangle x:Name="BackgroundRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource ThemeDarkBrush}" Opacity="1" />
+                                                            <Rectangle x:Name="SelectedRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource BackgroundSelected}" Opacity="0" />
+                                                            <Rectangle x:Name="HoverRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource BorderBrushSelected}" Opacity="0" />
+                                                            <Rectangle x:Name="DeletingRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                         Fill="{StaticResource redBrush}" Opacity="0" />
+                                                            <DataGridRowHeader Grid.RowSpan="2"
+                                 SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical"
+                                 Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                                    Path=HeadersVisibility,
+                                                                    Converter={x:Static DataGrid.HeadersVisibilityConverter},
+                                                                    ConverterParameter={x:Static DataGridHeadersVisibility.Row}}" />
+                                                            <DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}"
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                            <DataGridDetailsPresenter x:Name="DetailsPresenter" Grid.Row="1" Grid.Column="1" 
+                                                                        SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding                                                                                 RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                                        Path=AreRowDetailsFrozen,
+                                                                        Converter={x:Static DataGrid.RowDetailsScrollingConverter},
+                                                                        ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}}"
+                                                                        Visibility="{TemplateBinding DetailsVisibility}">
+                                                                <DataGridDetailsPresenter.ContentTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock Background="Red" Text="{Loc msgDeleteConfirm}"/>
+                                                                    </DataTemplate>
+                                                                </DataGridDetailsPresenter.ContentTemplate>
+                                                            </DataGridDetailsPresenter>
+                                                            <Rectangle x:Name="BottomGridLine" Grid.Row="2" Grid.Column="1" Height="1"
+                                                        HorizontalAlignment="Stretch" />
+                                                        </SelectiveScrollingGrid>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="Controls:DataGridRowDeleting.IsDeletingValue" Value="True">
+                                                            <Setter Property="DetailsVisibility" Value="Visible"></Setter>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Trigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
+                                                        Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.EnterActions>
+                                                            <Trigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000"
+                                                   Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </Trigger.ExitActions>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsReadOnly , UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                <Setter Property="ControlBehaviors:ReadOnlyService.IsReadOnly" Value="True"/>
+                                                <Setter Property="Foreground" Value="LightGray"/>
+                                                <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
+                                                <Setter Property="ToolTip" Value="Disabled in ViewModel"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridComboBoxColumn Header="{Loc txtSrcWarehouse}" 
+                                                            SelectedValueBinding="{Binding Path=SelectedSource, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                            SelectedValuePath="."
+                                                            DisplayMemberPath="Text">
+                                        <DataGridComboBoxColumn.ElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.Warehouses, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.ElementStyle>
+                                        <DataGridComboBoxColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="IsEditable" Value="True"/>
+                                                <Setter Property="IsSynchronizedWithCurrentItem" Value="True" />
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.Warehouses, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.EditingElementStyle>
+                                    </DataGridComboBoxColumn>
+                                    <DataGridComboBoxColumn Header="{Loc txtProducts}" 
+                                                            SelectedValueBinding="{Binding Path=SelectedProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                            SelectedValuePath="."
+                                                            DisplayMemberPath="Text">
+                                        <DataGridComboBoxColumn.ElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.CurrentContent.Products, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.ElementStyle>
+                                        <DataGridComboBoxColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type ComboBox}">
+                                                <Setter Property="IsEditable" Value="True"/>
+                                                <Setter Property="IsSynchronizedWithCurrentItem" Value="True" />
+                                                <Setter Property="ItemsSource" Value="{Binding Path=ViewModel.CurrentContent.Products, RelativeSource={RelativeSource AncestorType={x:Type Views:SoheilSplitView}}}" />
+                                            </Style>
+                                        </DataGridComboBoxColumn.EditingElementStyle>
+                                    </DataGridComboBoxColumn>
+                                    <DataGridTextColumn Header="{Loc txtQuantity}" Binding="{Binding Path= Quantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="{Loc txtInventory}" Binding="{Binding Path= ProductInventory, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="{Loc txtCurrentPrice}" Binding="{Binding Path= Price, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="{Loc txtSalePrice}" Binding="{Binding Path= SalePrice, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="{Loc txtFee}" Binding="{Binding Path= Fee, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                        <ContentControl DockPanel.Dock="Top" Template="{StaticResource GroupStatusInfoContent}" />
+                        <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource UserInfoContent}" />
+                    </DockPanel>
+                    <ContentControl DockPanel.Dock="Bottom" Template="{StaticResource OperationPanel}" />
+                    <Canvas DockPanel.Dock="Bottom" />
+                </DockPanel>
+            </GroupBox>
+        </DataTemplate>
+
         <!-- 6.3 Raw Material -->
         <DataTemplate x:Key="RawMaterialTemplate" DataType="ViewModels:RawMaterialVM">
             <GroupBox DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSplitView}, Path=ViewModel}" 

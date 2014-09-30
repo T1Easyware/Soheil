@@ -1309,4 +1309,25 @@
   <data name="txtMaterialPlanning" xml:space="preserve">
     <value>Material Planning</value>
   </data>
+  <data name="txtDestWearhouse" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="txtRawMaterial" xml:space="preserve">
+    <value>Raw Material</value>
+  </data>
+  <data name="txtUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="txtTotalMatInv" xml:space="preserve">
+    <value>Total raw materials</value>
+  </data>
+  <data name="txtTotalPrdInv" xml:space="preserve">
+    <value>Total products</value>
+  </data>
+  <data name="txtTotalSale" xml:space="preserve">
+    <value>Total Sale</value>
+  </data>
+  <data name="txtTotaProduction" xml:space="preserve">
+    <value>Total Production</value>
+  </data>
 </root>

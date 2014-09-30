@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 09/09/2014 23:48:58
--- Generated from EDMX file: D:\Work\Soheil\Soheil\Soheil.Dal\SoheilEdm.edmx
+-- Date Created: 09/29/2014 18:34:05
+-- Generated from EDMX file: D:\Work\SoheilGit\Soheil\Soheil.Dal\SoheilEdm.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -371,6 +371,12 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_UnitSetRawMaterial]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[RawMaterials] DROP CONSTRAINT [FK_UnitSetRawMaterial];
 GO
+IF OBJECT_ID(N'[dbo].[FK_ProductProductPrice]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ProductPrices] DROP CONSTRAINT [FK_ProductProductPrice];
+GO
+IF OBJECT_ID(N'[dbo].[FK_WarehouseTransactionProduct]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[WarehouseTransactions] DROP CONSTRAINT [FK_WarehouseTransactionProduct];
+GO
 IF OBJECT_ID(N'[dbo].[FK_PM_inherits_NonProductiveTask]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[NonProductiveTasks_PM] DROP CONSTRAINT [FK_PM_inherits_NonProductiveTask];
 GO
@@ -631,6 +637,9 @@ GO
 IF OBJECT_ID(N'[dbo].[BOMs]', 'U') IS NOT NULL
     DROP TABLE [dbo].[BOMs];
 GO
+IF OBJECT_ID(N'[dbo].[ProductPrices]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ProductPrices];
+GO
 IF OBJECT_ID(N'[dbo].[NonProductiveTasks_PM]', 'U') IS NOT NULL
     DROP TABLE [dbo].[NonProductiveTasks_PM];
 GO
@@ -658,6 +667,7 @@ CREATE TABLE [dbo].[Products] (
     [Status] tinyint  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [ColorNumber] int  NOT NULL,
+    [Inventory] float  NOT NULL,
     [AltColorNumber] int  NOT NULL,
     [ProductGroup_Id] int  NOT NULL,
     [Parent_Id] int  NULL
@@ -1514,6 +1524,8 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [TransactionDateTime] datetime  NOT NULL,
     [ModifiedBy] int  NOT NULL,
     [Quantity] float  NOT NULL,
+    [Price] float  NOT NULL,
+    [Transported] bit  NOT NULL,
     [DestWarehouse_Id] int  NULL,
     [WarehouseReceipt_Id] int  NULL,
     [Good_Id] int  NULL,
@@ -1521,7 +1533,8 @@ CREATE TABLE [dbo].[WarehouseTransactions] (
     [ProductRework_Id] int  NULL,
     [TaskReport_Id] int  NULL,
     [UnitSet_Id] int  NULL,
-    [SrcWarehouse_Id] int  NULL
+    [SrcWarehouse_Id] int  NULL,
+    [Product_Id] int  NULL
 );
 GO
 
@@ -1581,6 +1594,7 @@ CREATE TABLE [dbo].[WarehouseReceipts] (
     [CreatedDate] datetime  NOT NULL,
     [ModifiedDate] datetime  NOT NULL,
     [Status] tinyint  NOT NULL,
+    [Transported] bit  NOT NULL,
     [ModifiedBy] int  NOT NULL
 );
 GO
@@ -1626,6 +1640,19 @@ CREATE TABLE [dbo].[BOMs] (
     [State_Id] int  NOT NULL,
     [RawMaterial_Id] int  NOT NULL,
     [UnitSet_Id] int  NULL
+);
+GO
+
+-- Creating table 'ProductPrices'
+CREATE TABLE [dbo].[ProductPrices] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Value] float  NOT NULL,
+    [StartDateTime] datetime  NOT NULL,
+    [ModifiedDate] datetime  NOT NULL,
+    [CreatedDate] datetime  NOT NULL,
+    [Status] tinyint  NOT NULL,
+    [ModifiedBy] int  NOT NULL,
+    [Product_Id] int  NOT NULL
 );
 GO
 
@@ -2145,6 +2172,12 @@ GO
 -- Creating primary key on [Id] in table 'BOMs'
 ALTER TABLE [dbo].[BOMs]
 ADD CONSTRAINT [PK_BOMs]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'ProductPrices'
+ALTER TABLE [dbo].[ProductPrices]
+ADD CONSTRAINT [PK_ProductPrices]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -3826,6 +3859,34 @@ ADD CONSTRAINT [FK_UnitSetRawMaterial]
 CREATE INDEX [IX_FK_UnitSetRawMaterial]
 ON [dbo].[RawMaterials]
     ([BaseUnit_Id]);
+GO
+
+-- Creating foreign key on [Product_Id] in table 'ProductPrices'
+ALTER TABLE [dbo].[ProductPrices]
+ADD CONSTRAINT [FK_ProductProductPrice]
+    FOREIGN KEY ([Product_Id])
+    REFERENCES [dbo].[Products]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ProductProductPrice'
+CREATE INDEX [IX_FK_ProductProductPrice]
+ON [dbo].[ProductPrices]
+    ([Product_Id]);
+GO
+
+-- Creating foreign key on [Product_Id] in table 'WarehouseTransactions'
+ALTER TABLE [dbo].[WarehouseTransactions]
+ADD CONSTRAINT [FK_WarehouseTransactionProduct]
+    FOREIGN KEY ([Product_Id])
+    REFERENCES [dbo].[Products]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_WarehouseTransactionProduct'
+CREATE INDEX [IX_FK_WarehouseTransactionProduct]
+ON [dbo].[WarehouseTransactions]
+    ([Product_Id]);
 GO
 
 -- Creating foreign key on [Id] in table 'NonProductiveTasks_PM'

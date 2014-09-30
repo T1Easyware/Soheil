@@ -87,6 +87,7 @@
     <EntitySet Name="UnitConversions" EntityType="SoheilEdm.Store.UnitConversions" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="UnitGroups" EntityType="SoheilEdm.Store.UnitGroups" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="BOMs" EntityType="SoheilEdm.Store.BOMs" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ProductPrices" EntityType="SoheilEdm.Store.ProductPrices" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_PM" EntityType="SoheilEdm.Store.NonProductiveTasks_PM" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_Education" EntityType="SoheilEdm.Store.NonProductiveTasks_Education" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonProductiveTasks_Setup" EntityType="SoheilEdm.Store.NonProductiveTasks_Setup" store:Type="Tables" Schema="dbo" />
@@ -563,6 +564,14 @@
       <End Role="UnitSet" EntitySet="UnitSets" />
       <End Role="RawMaterial" EntitySet="RawMaterials" />
     </AssociationSet>
+    <AssociationSet Name="ProductProductPrice" Association="SoheilEdm.Store.ProductProductPrice">
+      <End Role="Product" EntitySet="Products" />
+      <End Role="ProductPrice" EntitySet="ProductPrices" />
+    </AssociationSet>
+    <AssociationSet Name="WarehouseTransactionProduct" Association="SoheilEdm.Store.WarehouseTransactionProduct">
+      <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
+      <End Role="Product" EntitySet="Products" />
+    </AssociationSet>
     <AssociationSet Name="FK_PM_inherits_NonProductiveTask" Association="SoheilEdm.Store.FK_PM_inherits_NonProductiveTask">
       <End Role="NonProductiveTask" EntitySet="NonProductiveTasks" />
       <End Role="PM" EntitySet="NonProductiveTasks_PM" />
@@ -592,6 +601,7 @@
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="ColorNumber" Type="int" Nullable="false" />
+    <Property Name="Inventory" Type="float" Nullable="false" />
     <Property Name="AltColorNumber" Type="int" Nullable="false" DefaultValue="0" />
     <Property Name="ProductGroup_Id" Type="int" Nullable="false" />
     <Property Name="Parent_Id" Type="int" Nullable="true" />
@@ -1448,6 +1458,8 @@
     <Property Name="TransactionDateTime" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
     <Property Name="Quantity" Type="float" Nullable="false" />
+    <Property Name="Price" Type="float" Nullable="false" />
+    <Property Name="Transported" Type="bit" Nullable="false" />
     <Property Name="DestWarehouse_Id" Type="int" Nullable="true" />
     <Property Name="WarehouseReceipt_Id" Type="int" Nullable="true" />
     <Property Name="Good_Id" Type="int" Nullable="true" />
@@ -1456,6 +1468,7 @@
     <Property Name="TaskReport_Id" Type="int" Nullable="true" />
     <Property Name="UnitSet_Id" Type="int" Nullable="true" />
     <Property Name="SrcWarehouse_Id" Type="int" Nullable="true" />
+    <Property Name="Product_Id" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="Warehouses">
     <Key>
@@ -1515,6 +1528,7 @@
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
+    <Property Name="Transported" Type="bit" Nullable="false" />
     <Property Name="ModifiedBy" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="UnitSets">
@@ -1560,6 +1574,19 @@
     <Property Name="State_Id" Type="int" Nullable="false" />
     <Property Name="RawMaterial_Id" Type="int" Nullable="false" />
     <Property Name="UnitSet_Id" Type="int" Nullable="true" />
+  </EntityType>
+  <EntityType Name="ProductPrices">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Value" Type="float" Nullable="false" />
+    <Property Name="StartDateTime" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="Status" Type="tinyint" Nullable="false" DefaultValue="1" />
+    <Property Name="ModifiedBy" Type="int" Nullable="false" />
+    <Property Name="Product_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="NonProductiveTasks_PM">
     <Key>
@@ -3006,6 +3033,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="ProductProductPrice">
+    <End Role="Product" Type="SoheilEdm.Store.Products" Multiplicity="1" />
+    <End Role="ProductPrice" Type="SoheilEdm.Store.ProductPrices" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProductPrice">
+        <PropertyRef Name="Product_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="WarehouseTransactionProduct">
+    <End Role="WarehouseTransaction" Type="SoheilEdm.Store.WarehouseTransactions" Multiplicity="*" />
+    <End Role="Product" Type="SoheilEdm.Store.Products" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WarehouseTransaction">
+        <PropertyRef Name="Product_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PM_inherits_NonProductiveTask">
     <End Role="NonProductiveTask" Type="SoheilEdm.Store.NonProductiveTasks" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -3620,6 +3671,15 @@
             <End Role="UnitSet" EntitySet="UnitSets" />
             <End Role="RawMaterial" EntitySet="RawMaterials" />
           </AssociationSet>
+          <EntitySet Name="ProductPrices" EntityType="SoheilEdm.ProductPrice" />
+          <AssociationSet Name="ProductProductPrice" Association="SoheilEdm.ProductProductPrice">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="ProductPrice" EntitySet="ProductPrices" />
+          </AssociationSet>
+          <AssociationSet Name="WarehouseTransactionProduct" Association="SoheilEdm.WarehouseTransactionProduct">
+            <End Role="WarehouseTransaction" EntitySet="WarehouseTransactions" />
+            <End Role="Product" EntitySet="Products" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Product">
           <Key>
@@ -3639,7 +3699,10 @@
           <NavigationProperty Name="ProductReworks" Relationship="SoheilEdm.ProductProductRework" FromRole="Product" ToRole="ProductRework" />
           <NavigationProperty Name="FPCs" Relationship="SoheilEdm.ProductFPC" FromRole="Product" ToRole="FPC" />
           <Property Type="Int32" Name="ColorNumber" Nullable="false" />
+          <Property Name="Inventory" Type="Double" Nullable="false" />
           <Property Type="Int32" Name="AltColorNumber" Nullable="false" DefaultValue="0" />
+          <NavigationProperty Name="ProductPrices" Relationship="SoheilEdm.ProductProductPrice" FromRole="Product" ToRole="ProductPrice" />
+          <NavigationProperty Name="WarehouseTransaction" Relationship="SoheilEdm.WarehouseTransactionProduct" FromRole="Product" ToRole="WarehouseTransaction" />
         </EntityType>
         <EntityType Name="FPC">
           <Key>
@@ -5023,6 +5086,8 @@
           <Property Name="TransactionDateTime" Type="DateTime" Nullable="false" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Transported" Type="Boolean" Nullable="false" cg:GetterAccess="Public" cg:SetterAccess="Public" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <NavigationProperty Name="DestWarehouse" Relationship="SoheilEdm.WarehouseWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="Warehouse" />
           <NavigationProperty Name="WarehouseReceipt" Relationship="SoheilEdm.WarehouseReceiptWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="WarehouseReceipt" />
           <NavigationProperty Name="Good" Relationship="SoheilEdm.GoodWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="Good" />
@@ -5031,6 +5096,7 @@
           <NavigationProperty Name="TaskReport" Relationship="SoheilEdm.TaskReportWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="TaskReport" />
           <NavigationProperty Name="UnitSet" Relationship="SoheilEdm.UnitSetWarehouseTransaction" FromRole="WarehouseTransaction" ToRole="UnitSet" />
           <NavigationProperty Name="SrcWarehouse" Relationship="SoheilEdm.WarehouseWarehouseTransaction1" FromRole="WarehouseTransaction" ToRole="Warehouse" />
+          <NavigationProperty Name="Product" Relationship="SoheilEdm.WarehouseTransactionProduct" FromRole="WarehouseTransaction" ToRole="Product" />
         </EntityType>
         <EntityType Name="Warehouse">
           <Key>
@@ -5095,6 +5161,7 @@
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Status" Type="Byte" Nullable="false" cg:GetterAccess="Public" cg:SetterAccess="Public" DefaultValue="1" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+          <Property Name="Transported" Type="Boolean" Nullable="false" cg:GetterAccess="Public" cg:SetterAccess="Public" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
           <NavigationProperty Name="WarehouseTransactions" Relationship="SoheilEdm.WarehouseReceiptWarehouseTransaction" FromRole="WarehouseReceipt" ToRole="WarehouseTransaction" />
         </EntityType>
@@ -5217,6 +5284,27 @@
           <End Type="SoheilEdm.UnitSet" Role="UnitSet" Multiplicity="0..1" />
           <End Type="SoheilEdm.RawMaterial" Role="RawMaterial" Multiplicity="*" />
         </Association>
+        <EntityType Name="ProductPrice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" a:StoreGeneratedPattern="Identity" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Value" Type="Double" Nullable="false" />
+          <Property Name="StartDateTime" Type="DateTime" Nullable="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="Byte" Nullable="false" cg:GetterAccess="Public" cg:SetterAccess="Public" DefaultValue="1" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+          <Property Name="ModifiedBy" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Product" Relationship="SoheilEdm.ProductProductPrice" FromRole="ProductPrice" ToRole="Product" />
+        </EntityType>
+        <Association Name="ProductProductPrice">
+          <End Type="SoheilEdm.Product" Role="Product" Multiplicity="1" />
+          <End Type="SoheilEdm.ProductPrice" Role="ProductPrice" Multiplicity="*" />
+        </Association>
+        <Association Name="WarehouseTransactionProduct">
+          <End Type="SoheilEdm.WarehouseTransaction" Role="WarehouseTransaction" Multiplicity="*" />
+          <End Type="SoheilEdm.Product" Role="Product" Multiplicity="0..1" />
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5234,6 +5322,7 @@
           <ScalarProperty Name="Status" ColumnName="Status" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ColorNumber" ColumnName="ColorNumber" />
+          <ScalarProperty Name="Inventory" ColumnName="Inventory" />
           <ScalarProperty Name="AltColorNumber" ColumnName="AltColorNumber" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -6085,6 +6174,8 @@
           <ScalarProperty Name="TransactionDateTime" ColumnName="TransactionDateTime" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+          <ScalarProperty Name="Transported" ColumnName="Transported" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -6146,6 +6237,7 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Transported" ColumnName="Transported" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -6189,6 +6281,19 @@
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Quantity" ColumnName="Quantity" />
           <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ProductPrices">
+      <EntityTypeMapping TypeName="IsTypeOf(SoheilEdm.ProductPrice)">
+        <MappingFragment StoreEntitySet="ProductPrices">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Value" ColumnName="Value" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -7169,6 +7274,23 @@
       </EndProperty>
       <Condition ColumnName="BaseUnit_Id" IsNull="false" />
     </AssociationSetMapping>
+    <AssociationSetMapping Name="ProductProductPrice" TypeName="SoheilEdm.ProductProductPrice" StoreEntitySet="ProductPrices">
+      <EndProperty Name="Product">
+        <ScalarProperty Name="Id" ColumnName="Product_Id" />
+      </EndProperty>
+      <EndProperty Name="ProductPrice">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="WarehouseTransactionProduct" TypeName="SoheilEdm.WarehouseTransactionProduct" StoreEntitySet="WarehouseTransactions">
+      <EndProperty Name="Product">
+        <ScalarProperty Name="Id" ColumnName="Product_Id" />
+      </EndProperty>
+      <EndProperty Name="WarehouseTransaction">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="Product_Id" IsNull="false" />
+    </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -7190,7 +7312,7 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="SoheilEdm" ZoomLevel="78" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+      <Diagram Name="SoheilEdm" ZoomLevel="77" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
         <EntityTypeShape EntityType="SoheilEdm.Product" Width="3.25" PointX="34.875" PointY="25" Height="3.5186979166666656" FillColor="ForestGreen" />
         <EntityTypeShape EntityType="SoheilEdm.FPC" Width="2.625" PointX="42.875" PointY="26.75" Height="2.9417936197916674" FillColor="0, 122, 204" />
         <EntityTypeShape EntityType="SoheilEdm.ProductDefection" Width="3.125" PointX="75.625" PointY="49.5" Height="1.5956835937499996" FillColor="110, 100, 50" />
@@ -7457,7 +7579,7 @@
         <AssociationConnector Association="SoheilEdm.MachinePartMaintenanceMaintenanceReport" />
         <AssociationConnector Association="SoheilEdm.MachineMachinePart" />
         <AssociationConnector Association="SoheilEdm.StoppageReportRepair" />
-        <EntityTypeShape EntityType="SoheilEdm.WarehouseTransaction" Width="4" PointX="23.875" PointY="22.5" FillColor="64, 64, 64" />
+        <EntityTypeShape EntityType="SoheilEdm.WarehouseTransaction" Width="4" PointX="24" PointY="22" FillColor="64, 64, 64" />
         <EntityTypeShape EntityType="SoheilEdm.Warehouse" Width="2" PointX="20.875" PointY="22.5" FillColor="64, 64, 64" />
         <EntityTypeShape EntityType="SoheilEdm.RawMaterial" Width="1.75" PointX="23.5" PointY="27.25" FillColor="Green" />
         <EntityTypeShape EntityType="SoheilEdm.Good" Width="1.875" PointX="26.375" PointY="27.25" FillColor="Green" />
@@ -7485,6 +7607,9 @@
         <AssociationConnector Association="SoheilEdm.WarehouseWarehouseTransaction1" />
         <AssociationConnector Association="SoheilEdm.UnitGroupRawMaterial" />
         <AssociationConnector Association="SoheilEdm.UnitSetRawMaterial" />
+        <EntityTypeShape EntityType="SoheilEdm.ProductPrice" Width="2.125" PointX="39.25" PointY="23" FillColor="255, 255, 128" />
+        <AssociationConnector Association="SoheilEdm.ProductProductPrice" />
+        <AssociationConnector Association="SoheilEdm.WarehouseTransactionProduct" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

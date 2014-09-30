@@ -301,7 +301,15 @@ namespace Soheil
                     chrometabs.AddTab(CreateSplitTab(type), true);
                     break;
                 case SoheilEntityType.WarehouseReceiptSubMenu:
-                    SplitList = new WarehouseReceiptsVM(access);
+                    SplitList = new WarehouseReceiptsVM(access, WarehouseReceiptType.Storage, WarehouseTransactionType.RawMaterial);
+                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    break;
+                case SoheilEntityType.WarehouseStorageReceipt:
+                    SplitList = new WarehouseReceiptsVM(access, WarehouseReceiptType.Storage, WarehouseTransactionType.RawMaterial);
+                    chrometabs.AddTab(CreateSplitTab(type), true);
+                    break;
+                case SoheilEntityType.WarehouseDischargeReceipt:
+                    SplitList = new WarehouseReceiptsVM(access, WarehouseReceiptType.Discharge, WarehouseTransactionType.Product);
                     chrometabs.AddTab(CreateSplitTab(type), true);
                     break;
                 case SoheilEntityType.RawMaterialSubMenu:
@@ -328,6 +336,10 @@ namespace Soheil
 					SingularList = new PMReportVm(access);
 					chrometabs.AddTab(CreateSingularTab(type), true);
 					break;
+                case SoheilEntityType.WarehouseReport:
+                    SingularList = new WarehouseReportVm(access);
+                    chrometabs.AddTab(CreateSingularTab(type), true);
+                    break;
 
                 case SoheilEntityType.OptionsMenu:
                     break;
@@ -616,7 +628,8 @@ namespace Soheil
 			{
 				userInfo = _accessRuleDataService.VerifyLogin("admin", "fromdust");
 				AccessList = new List<Tuple<string, AccessType>>();
-				for (int i = 0; i < 255; i++)
+                // why 225?!
+				for (int i = 0; i < 1000; i++)
 				{
 					AccessList.Add(new Tuple<string, AccessType>(i.ToString(), AccessType.All));
 				}

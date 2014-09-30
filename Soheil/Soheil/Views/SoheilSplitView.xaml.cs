@@ -209,8 +209,22 @@ namespace Soheil.Views
             }
             else if (ViewModel.CurrentContent is WarehouseReceiptVM)
             {
-                var tmpl = (DataTemplate)FindResource("WarehouseReceiptTemplate");
-                _itemContentView.ContentTemplate = tmpl;
+                var content = (WarehouseReceiptVM) ViewModel.CurrentContent;
+                if (content.Type == WarehouseReceiptType.Storage)
+                {
+                    var tmpl = (DataTemplate)FindResource("WarehouseStorageTemplate");
+                    _itemContentView.ContentTemplate = tmpl;
+                }
+                else if (content.Type == WarehouseReceiptType.Discharge)
+                {
+                    var tmpl = (DataTemplate)FindResource("WarehouseDischargeTemplate");
+                    _itemContentView.ContentTemplate = tmpl;
+                }
+                else
+                {
+                    var tmpl = (DataTemplate)FindResource("WarehouseTransferTemplate");
+                    _itemContentView.ContentTemplate = tmpl;
+                }
             }
             else if (ViewModel.CurrentContent is RawMaterialVM)
             {
@@ -326,7 +340,12 @@ namespace Soheil.Views
                     ViewModel = new WarehousesVM(access);
                     break;
                 case SoheilEntityType.WarehouseReceiptSubMenu:
-                    ViewModel = new WarehouseReceiptsVM(access);
+                    break;
+                case SoheilEntityType.WarehouseStorageReceipt:
+                    ViewModel = new WarehouseReceiptsVM(access, WarehouseReceiptType.Storage, WarehouseTransactionType.RawMaterial);
+                    break;
+                case SoheilEntityType.WarehouseDischargeReceipt:
+                    ViewModel = new WarehouseReceiptsVM(access, WarehouseReceiptType.Discharge, WarehouseTransactionType.Product);
                     break;
                 case SoheilEntityType.RawMaterialSubMenu:
                     ViewModel = new RawMaterialsVM(access);
@@ -596,6 +615,17 @@ namespace Soheil.Views
         }
 
         #region Warehouse Transactions
+
+        public static readonly DependencyProperty TransactionIndexProperty = DependencyProperty.Register(
+            "TransactionIndex", typeof (int), typeof (SoheilSplitView), new PropertyMetadata(default(int)));
+
+        public int TransactionIndex
+        {
+            get { return (int) GetValue(TransactionIndexProperty); }
+            set { SetValue(TransactionIndexProperty, value); }
+        }
+
+        private WarehouseTransactionVM _currentTransaction;
         private void OnAutoGeneratingTransactionColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             throw new NotImplementedException();
@@ -609,21 +639,87 @@ namespace Soheil.Views
         private void TransGridPreviewKeyDown(object sender, KeyEventArgs e)
         {
             var grid = (DataGrid)sender;
-            if (e.Key == Key.Enter)
+            _currentTransaction = (WarehouseTransactionVM)grid.CurrentItem;
+            if (e.Key == Key.F2)
+            {
+                if (_cellEditingMode)
+                {
+                    grid.CommitEdit(DataGridEditingUnit.Cell, true);
+                    _cellEditingMode = false;
+                }
+                else
+                {
+                    grid.BeginEdit();
+                    _cellEditingMode = true;
+                }
+            }
+            else if (!_cellEditingMode && e.Key == Key.Left && Equals(grid.CurrentCell.Column, grid.Columns[grid.Columns.Count - 1]))
+            {
+                e.Handled = true;
+            }
+            else if (!_cellEditingMode && e.Key == Key.Right && Equals(grid.CurrentCell.Column, grid.Columns[0]))
+            {
+                e.Handled = true;
+            }
+            else if (!_cellEditingMode && e.Key == Key.Up && Equals(grid.SelectedIndex, 0))
+            {
+                e.Handled = true;
+            }
+            else if (!_cellEditingMode && e.Key == Key.Down && Equals(grid.SelectedIndex, grid.Items.Count - 1))
+            {
+                e.Handled = true;
+            }
+            else if (_cellEditingMode && e.Key == Key.Left || e.Key == Key.Right)
+            {
+                grid.CommitEdit(DataGridEditingUnit.Cell, true);
+                _cellEditingMode = false;
+            }
+            else if (e.Key == Key.Enter)
             {
                 if (Equals(grid.CurrentCell.Column, grid.Columns[grid.Columns.Count - 1]))
                 {
                     grid.CommitEdit(DataGridEditingUnit.Row, true);
-                    var currentTransaction = (WarehouseTransactionVM) grid.CurrentItem;
-                    if (currentTransaction.CanSave())
+                    if (_currentTransaction.CanSave())
                     {
-                        currentTransaction.Save(null);
+                        _currentTransaction.Save(null);
                         if (grid.Items.IndexOf(grid.CurrentItem) == grid.Items.Count - 1)
-                            ((WarehouseReceiptVM) ViewModel.CurrentContent).AddBlankTransaction();
+                            ((WarehouseReceiptVM)ViewModel.CurrentContent).AddBlankTransaction();
                     }
                     else
-                        currentTransaction.Mode = ModificationStatus.Unsaved;
+                        _currentTransaction.Mode = ModificationStatus.Unsaved;
                 }
+                _isSaving = true;
+                _cellEditingMode = false;
+            }
+            else if (!_cellEditingMode)
+            {
+                if (e.Key == Key.Delete)
+                {
+                    if (_currentTransaction.Transported || !_currentTransaction.IsReadOnly)
+                    {
+                        e.Handled = true;
+                    }
+                    else if (_currentTransaction.IsDeleting)
+                    {
+                        e.Handled = true;
+                        ((WarehouseReceiptVM)ViewModel.CurrentContent).CurrentTransaction.Delete(null);
+                    }
+                    else
+                    {
+                        e.Handled = true;
+                        _currentTransaction.IsDeleting = true;
+                    }
+                }
+                else if (e.Key == Key.Escape)
+                {
+                    _currentTransaction.IsDeleting = false;
+                }
+            }
+            if (e.Key >= Key.D0 && e.Key <= Key.D9 || e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9
+                || e.Key >= Key.A && e.Key <= Key.Z)
+            {
+                grid.BeginEdit();
+                _cellEditingMode = true;
             }
         }
 

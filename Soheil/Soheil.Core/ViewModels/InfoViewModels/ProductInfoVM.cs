@@ -5,8 +5,12 @@ namespace Soheil.Core.ViewModels.InfoViewModels
 {
     public class ProductInfoVM : ViewModelBase, IInfoViewModel
     {
-        private readonly Product _model;
-
+        private Product _model;
+        public Product Model
+        {
+            get { return _model; }
+            set { _model = value; }
+        }
         public int Id
         {
             get { return _model.Id; } 
@@ -22,7 +26,10 @@ namespace Soheil.Core.ViewModels.InfoViewModels
             get { return _model.Name; }
             set { _model.Name = value; OnPropertyChanged("Name"); }
         }
-
+        public string Text
+        {
+            get { return _model.Code + "-" + _model.Name; }
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductInfoVM"/> class from the model.
         /// </summary>

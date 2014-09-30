@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.Cryptography;
 using Soheil.Common;
 using Soheil.Core.Base;
 using Soheil.Core.Commands;
@@ -17,7 +16,8 @@ namespace Soheil.Core.DataServices.Storage
         private readonly Repository<WarehouseTransaction> _repository;
         private readonly Repository<RawMaterial> _materialRepository;
         public event EventHandler<ModelAddedEventArgs<WarehouseTransaction>> TransactionAdded;
-
+        public event EventHandler<ModelRemovedEventArgs> TransactionRemoved;
+        
 		public WarehouseTransactionDataService()
 			: this(new SoheilEdmContext())
 		{
@@ -91,14 +91,29 @@ namespace Soheil.Core.DataServices.Storage
 
 		public void DeleteModel(WarehouseTransaction model)
 		{
-			if (model.WarehouseReceipt != null)
-				new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
-			bool flag = (model.DestWarehouse != null || model.SrcWarehouse!=null);
-			model.TaskReport.WarehouseTransactions.Remove(model);
-			_repository.Delete(model);
+            // why ........... WHY?! 
+            //if (model.WarehouseReceipt != null)
+            //    new Repository<WarehouseReceipt>(Context).Delete(model.WarehouseReceipt);
+		    int id = model.Id;
+            bool flag = (model.DestWarehouse != null || model.SrcWarehouse != null);
+            if (model.TaskReport != null)
+		    {
+		        if (model.TaskReport.WarehouseTransactions.Contains(model))
+		        {
+                    model.TaskReport.WarehouseTransactions.Remove(model);
+		        }
+		    }
 
-			if (flag)
-				Context.Commit();
+		    if (flag)
+		    {
+                CalculateInventory(model, true);
+                _repository.Delete(model);
+                Context.Commit();
+		        if (TransactionRemoved != null)
+                    TransactionRemoved(this, new ModelRemovedEventArgs(id));
+
+		    }
+
 		}
 
 		public void AttachModel(WarehouseTransaction model)
@@ -115,21 +130,12 @@ namespace Soheil.Core.DataServices.Storage
 
 		#endregion
 
-	    private void CalculateInventory(WarehouseTransaction model)
+	    private void CalculateInventory(WarehouseTransaction model, bool rollBack = false)
 	    {
 	        int sign = (WarehouseTransactionFlow) model.Flow == WarehouseTransactionFlow.In ? 1 : -1;
-	        var convRepository = new Repository<UnitConversion>(Context);
-	        double factor = 1;
+	        if (rollBack) sign *= -1;
 
-            var prevContext = new SoheilEdmContext();
-	        var prevRepository = new Repository<WarehouseTransaction>(prevContext);
-	        var prevModel = prevRepository.Single(t => t.Id == model.Id);
-	        double prevQuantity = 0;
-	        if (prevModel != null)
-	        {
-                prevQuantity =prevModel.Quantity;
-	        }
-	        double reletiveQuantity = model.Quantity - prevQuantity;
+	        double factor = 1;
 
 	        switch ((WarehouseTransactionType) model.Type)
 	        {
@@ -141,7 +147,8 @@ namespace Soheil.Core.DataServices.Storage
 	                else
 	                {
 
-	                    var query = convRepository.Find(c => c.Status != (decimal) Status.Deleted)
+                        var convRepository = new Repository<UnitConversion>(Context);
+                        var query = convRepository.Find(c => c.Status != (decimal)Status.Deleted)
 	                        .FirstOrDefault(
 	                            c => c.MajorUnit.Id == model.UnitSet.Id && c.MinorUnit.Id == model.RawMaterial.BaseUnit.Id);
 	                    if (query == null)
@@ -158,9 +165,10 @@ namespace Soheil.Core.DataServices.Storage
 	                        factor = query.Factor;
 	                    }
 	                }
-	                model.RawMaterial.Inventory += reletiveQuantity * factor * sign;
+	                model.RawMaterial.Inventory += model.Quantity * factor * sign;
 	                break;
 	            case WarehouseTransactionType.Product:
+	                model.Product.Inventory += model.Quantity * factor * sign * -1;
 	                break;
 	            case WarehouseTransactionType.Good:
 	                break;

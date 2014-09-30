@@ -283,7 +283,7 @@ namespace Soheil.Core.ViewModels.Reports
 						item.Start.ToString(@"hh\:mm"), 
 						item.End.ToString(@"hh\:mm"),
 						item.TargetValue,
-						item.Operators.Aggregate((cur, next) => next + "، " + cur)
+                        //item.Operators.Aggregate((cur, next) => next + "، " + cur)
 					});
 				}
 

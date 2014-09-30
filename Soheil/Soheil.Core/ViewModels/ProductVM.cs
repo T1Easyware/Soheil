@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using Soheil.Common;
@@ -49,6 +51,7 @@ namespace Soheil.Core.ViewModels
         /// The product group data service.
         /// </value>
         public ProductGroupDataService GroupDataService { get; set; }
+        public ProductPriceDataService PriceDataService { get; set; }
 
 // ReSharper disable PropertyNotResolved
         [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
@@ -93,9 +96,38 @@ namespace Soheil.Core.ViewModels
 
         public ProductDefectionsVM DefectionsVM { get; set; }
         public ProductReworksVM ReworksVM { get; set; }
+
         #endregion
 
         #region Methods
+
+        #region Oil Factory Temp
+
+        public ObservableCollection<ProductPriceVM> Prices { get; set; }
+
+        /// <summary>
+        /// Gets or sets a bindable value that indicates SelectedPrice
+        /// </summary>
+        public ProductPriceVM SelectedPrice
+        {
+            get { return (ProductPriceVM)GetValue(SelectedPriceProperty); }
+            set { SetValue(SelectedPriceProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedPriceProperty =
+            DependencyProperty.Register("SelectedPrice", typeof(ProductPriceVM), typeof(ProductVM),
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var vm = (ProductVM)d;
+                var val = (ProductPriceVM)e.NewValue;
+            }));
+
+        public Command AddNewPriceCommand { get; set; }
+
+        public void AddNewPrice(object param)
+        {
+            SelectedPrice = new ProductPriceVM(ProductPriceVM.CreateNew(PriceDataService, Id), Access, PriceDataService);
+        }
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductVM"/> class from the model.
@@ -119,6 +151,21 @@ namespace Soheil.Core.ViewModels
                     break;
                 }
             }
+            AddNewPriceCommand = new Command(AddNewPrice);
+            PriceDataService = new ProductPriceDataService();
+            PriceDataService.ProductPriceAdded += OnProductPriceAdded;
+            Prices = new ObservableCollection<ProductPriceVM>();
+            foreach (var price in PriceDataService.GetProductActivePrices(Id))
+            {
+                Prices.Add(new ProductPriceVM(price, access, PriceDataService));
+            }
+            SelectedPrice = Prices.Any() ? Prices[0] : new ProductPriceVM(ProductPriceVM.CreateNew(
+                PriceDataService, Id), Access, PriceDataService);
+        }
+
+        void OnProductPriceAdded(object sender, ModelAddedEventArgs<ProductPrice> e)
+        {
+            Prices.Add(new ProductPriceVM(e.NewModel, Access, PriceDataService));
         }
 
         /// <summary>

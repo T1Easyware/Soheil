@@ -68,6 +68,12 @@ namespace Soheil.Model
         }
         private byte _status = 1;
     
+        public virtual bool Transported
+        {
+            get;
+            set;
+        }
+    
         public virtual int ModifiedBy
         {
             get;

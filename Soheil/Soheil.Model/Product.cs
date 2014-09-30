@@ -68,6 +68,12 @@ namespace Soheil.Model
             set;
         }
     
+        public virtual double Inventory
+        {
+            get;
+            set;
+        }
+    
         public virtual int AltColorNumber
         {
             get { return _altColorNumber; }
@@ -236,6 +242,70 @@ namespace Soheil.Model
             }
         }
         private ICollection<FPC> _fPCs;
+    
+        public virtual ICollection<ProductPrice> ProductPrices
+        {
+            get
+            {
+                if (_productPrices == null)
+                {
+                    var newCollection = new FixupCollection<ProductPrice>();
+                    newCollection.CollectionChanged += FixupProductPrices;
+                    _productPrices = newCollection;
+                }
+                return _productPrices;
+            }
+            set
+            {
+                if (!ReferenceEquals(_productPrices, value))
+                {
+                    var previousValue = _productPrices as FixupCollection<ProductPrice>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupProductPrices;
+                    }
+                    _productPrices = value;
+                    var newValue = value as FixupCollection<ProductPrice>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupProductPrices;
+                    }
+                }
+            }
+        }
+        private ICollection<ProductPrice> _productPrices;
+    
+        public virtual ICollection<WarehouseTransaction> WarehouseTransaction
+        {
+            get
+            {
+                if (_warehouseTransaction == null)
+                {
+                    var newCollection = new FixupCollection<WarehouseTransaction>();
+                    newCollection.CollectionChanged += FixupWarehouseTransaction;
+                    _warehouseTransaction = newCollection;
+                }
+                return _warehouseTransaction;
+            }
+            set
+            {
+                if (!ReferenceEquals(_warehouseTransaction, value))
+                {
+                    var previousValue = _warehouseTransaction as FixupCollection<WarehouseTransaction>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupWarehouseTransaction;
+                    }
+                    _warehouseTransaction = value;
+                    var newValue = value as FixupCollection<WarehouseTransaction>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupWarehouseTransaction;
+                    }
+                }
+            }
+        }
+        private ICollection<WarehouseTransaction> _warehouseTransaction;
 
         #endregion
 
@@ -352,6 +422,50 @@ namespace Soheil.Model
             if (e.OldItems != null)
             {
                 foreach (FPC item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Product, this))
+                    {
+                        item.Product = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupProductPrices(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ProductPrice item in e.NewItems)
+                {
+                    item.Product = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (ProductPrice item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Product, this))
+                    {
+                        item.Product = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupWarehouseTransaction(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (WarehouseTransaction item in e.NewItems)
+                {
+                    item.Product = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (WarehouseTransaction item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Product, this))
                     {

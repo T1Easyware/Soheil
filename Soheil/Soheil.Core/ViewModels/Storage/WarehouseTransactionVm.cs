@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Soheil.Common;
@@ -67,12 +66,77 @@ namespace Soheil.Core.ViewModels
                 var val = (double)e.NewValue;
                 if (val < 0) return;
                 vm._model.Quantity = val;
+                vm.OnPropertyChanged("Fee");
             }));
-          
 
-        public ObservableCollection<WarehouseInfoVM> Warehouses { get; set; }
+        public double Price
+        {
+            get
+            {
+                double value = 0;
+                if ( _model.Product != null && _model.Product.ProductPrices.Any())
+                {
+                    var pricesQuery = _model.Product.ProductPrices.Where(p => p.StartDateTime <= DateTime.Now);
+                    var prices = pricesQuery.ToList();
+                    if (prices.Any())
+                    {
+                        DateTime max = DateTime.MinValue;
+                        foreach (var price in prices)
+                        {
+                            if (price.StartDateTime > max)
+                            {
+                                max = price.StartDateTime;
+                                value = price.Value;
+                            }
+                        }
+                    }
+                }
+                return value;
+            }
+        }
 
-        public ObservableCollection<RawMaterialInfoVM> RawMaterials { get; set; }
+        public double ProductInventory
+        {
+            get
+            {
+                if (_model.Product != null)
+                {
+                    return _model.Product.Inventory;
+                }
+                return 0;
+            }
+        }
+
+        public double MaterialInventory
+        {
+            get
+            {
+                if (_model.RawMaterial != null)
+                {
+                    // value depends on selected unit
+                    return _model.RawMaterial.Inventory;
+                }
+                return 0;
+            }
+        }
+
+        public double Fee
+        {
+            get { return SalePrice == 0 ? Price*Quantity : SalePrice*Quantity; }
+        }
+
+        public double SalePrice
+        {
+            get { return _model.Price; }
+            set { _model.Price = value; OnPropertyChanged("SalePrice"); }
+        }
+
+        public bool Transported
+        {
+            get { return _model.Transported; }
+            set { _model.Transported = value; OnPropertyChanged("Transported"); }
+        }
+        public IEnumerable<UnitSetInfoVM> UnitSets { get; set; }
 
         /// <summary>
         /// Gets or sets a bindable value that indicates SelectedSource
@@ -92,9 +156,6 @@ namespace Soheil.Core.ViewModels
                 vm._model.SrcWarehouse = val.Model;
             }));
 
-        // ReSharper disable PropertyNotResolved
-        [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
-        // ReSharper restore PropertyNotResolved
         public WarehouseInfoVM SelectedDestination
         {
             get { return (WarehouseInfoVM)GetValue(SelectedDestinationProperty); }
@@ -111,9 +172,6 @@ namespace Soheil.Core.ViewModels
             }));
 
 
-        // ReSharper disable PropertyNotResolved
-        [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
-        // ReSharper restore PropertyNotResolved
         public RawMaterialInfoVM SelectedRawMaterial
         {
             get { return (RawMaterialInfoVM)GetValue(SelectedRawMaterialProperty); }
@@ -129,7 +187,7 @@ namespace Soheil.Core.ViewModels
                 vm._model.RawMaterial = val.Model;
                 if (val.Model.BaseUnit != null)
                 {
-                    foreach (var unitSet in val.UnitSets)
+                    foreach (var unitSet in vm.UnitSets)
                     {
                         if (unitSet.Id == val.Model.BaseUnit.Id)
                         {
@@ -138,11 +196,9 @@ namespace Soheil.Core.ViewModels
                         }
                     }
                 }
+                vm.OnPropertyChanged("MaterialInventory");
             }));
 
-        // ReSharper disable PropertyNotResolved
-        [LocalizedRequired(ErrorMessageResourceName = @"txtCodeRequired")]
-        // ReSharper restore PropertyNotResolved
         public UnitSetInfoVM SelectedUnit
         {
             get { return (UnitSetInfoVM)GetValue(SelectedUnitProperty); }
@@ -156,16 +212,53 @@ namespace Soheil.Core.ViewModels
                 var val = (UnitSetInfoVM)e.NewValue;
                 if (val == null) return;
                 vm._model.UnitSet = val.Model;
+                vm.OnPropertyChanged("MaterialInventory");
             }));
 
-        public bool IsEditable
+        /// <summary>
+        /// Gets or sets a bindable value that indicates SelectedProduct
+        /// </summary>
+        public ProductInfoVM SelectedProduct
+        {
+            get { return (ProductInfoVM)GetValue(SelectedProductProperty); }
+            set { SetValue(SelectedProductProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedProductProperty =
+            DependencyProperty.Register("SelectedProduct", typeof(ProductInfoVM), typeof(WarehouseTransactionVM),
+            new PropertyMetadata(null, (d, e) =>
+            {
+                var vm = (WarehouseTransactionVM)d;
+                var val = (ProductInfoVM)e.NewValue;
+                if (val == null) return;
+                vm._model.Product = val.Model;
+                vm.OnPropertyChanged("ProductInventory");
+                vm.OnPropertyChanged("Price");
+                vm.OnPropertyChanged("Fee");
+            }));
+        
+
+        public bool IsReadOnly
         {
             get
             {
-                return SelectedDestination == null ||
-                       SelectedRawMaterial == null ||
-                       SelectedUnit == null ||
-                       Quantity == 0;
+                switch (Type)
+                {
+                    case WarehouseTransactionType.None:
+                        return true;
+                    case WarehouseTransactionType.RawMaterial:
+                        return SelectedDestination != null &&
+                               SelectedRawMaterial != null &&
+                               SelectedUnit != null &&
+                               Quantity != 0;
+                    case WarehouseTransactionType.Product:
+                        return SelectedSource != null &&
+                               SelectedProduct != null &&
+                               Quantity != 0;
+                    case WarehouseTransactionType.Good:
+                        return true;
+                    default:
+                        return true;
+                }
             }
         }
 
@@ -204,21 +297,33 @@ namespace Soheil.Core.ViewModels
         /// <param name="entity">The model.</param>
         /// <param name="access"></param>
         /// <param name="dataService"></param>
-        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService, WarehouseReceipt groupModel, ObservableCollection<WarehouseInfoVM> warehouses, ObservableCollection<RawMaterialInfoVM> materials, WarehouseTransactionType type)
+        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService, WarehouseReceipt groupModel, IEnumerable<WarehouseInfoVM> warehouses, IEnumerable<RawMaterialInfoVM> materials, IEnumerable<UnitSetInfoVM> units)
             : base(access)
         {
             InitializeData(dataService);
             _model = entity;
             _model.WarehouseReceipt = groupModel;
-            Type = type;
+            Type = WarehouseTransactionType.RawMaterial;
             Quantity = _model.Quantity;
-            Warehouses = warehouses;
-            RawMaterials = materials;
-            SelectedDestination = Warehouses.FirstOrDefault(dest => _model.DestWarehouse != null && dest.Id == _model.DestWarehouse.Id);
-            SelectedSource = Warehouses.FirstOrDefault(src => _model.SrcWarehouse != null && src.Id == _model.SrcWarehouse.Id);
-            SelectedRawMaterial = RawMaterials.FirstOrDefault(mat => _model.RawMaterial != null && mat.Id == _model.RawMaterial.Id);
-            if(SelectedRawMaterial != null)
-                SelectedUnit = SelectedRawMaterial.UnitSets.FirstOrDefault(unit => _model.UnitSet != null && unit.Id == _model.UnitSet.Id);
+            UnitSets = units;
+
+            SelectedDestination = warehouses.FirstOrDefault(dest => _model.DestWarehouse != null && dest.Id == _model.DestWarehouse.Id);
+            SelectedSource = warehouses.FirstOrDefault(src => _model.SrcWarehouse != null && src.Id == _model.SrcWarehouse.Id);
+            SelectedRawMaterial = materials.FirstOrDefault(mat => _model.RawMaterial != null && mat.Id == _model.RawMaterial.Id);
+            SelectedUnit = UnitSets.FirstOrDefault(unit => _model.UnitSet != null && unit.Id == _model.UnitSet.Id);
+        }
+        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService, WarehouseReceipt groupModel, IEnumerable<WarehouseInfoVM> warehouses, IEnumerable<ProductInfoVM> products)
+            : base(access)
+        {
+            InitializeData(dataService);
+            _model = entity;
+            _model.WarehouseReceipt = groupModel;
+            Type = WarehouseTransactionType.Product;
+            Quantity = _model.Quantity;
+
+            SelectedDestination = warehouses.FirstOrDefault(dest => _model.DestWarehouse != null && dest.Id == _model.DestWarehouse.Id);
+            SelectedSource = warehouses.FirstOrDefault(src => _model.SrcWarehouse != null && src.Id == _model.SrcWarehouse.Id);
+            SelectedProduct = products.FirstOrDefault(prd => _model.Product != null && prd.Id == _model.Product.Id);
         }
 
         private void InitializeData(WarehouseTransactionDataService dataService)
@@ -229,20 +334,48 @@ namespace Soheil.Core.ViewModels
 
         public override void Save(object param)
         {
+            SalePrice = Price;
             WarehouseTransactionDataService.AttachModel(_model);
-            _model = WarehouseTransactionDataService.GetSingle(_model.Id); OnPropertyChanged("ModifiedBy");OnPropertyChanged("ModifiedDate");Mode = ModificationStatus.Saved;
+            _model = WarehouseTransactionDataService.GetSingle(_model.Id); 
+            OnPropertyChanged("ModifiedBy");
+            OnPropertyChanged("ModifiedDate");
+            OnPropertyChanged("IsReadOnly");
+            OnPropertyChanged("SalePrice");
+            OnPropertyChanged("ProductInventory");
+            OnPropertyChanged("MaterialInventory");
+            Mode = ModificationStatus.Saved;
         }
         public override void Delete(object param)
         {
-            //_model.Status = (byte)Status.Deleted; WarehouseTransactionDataService.AttachModel(_model);
+            WarehouseTransactionDataService.DeleteModel(_model);
+            OnPropertyChanged("ProductInventory");
+            OnPropertyChanged("MaterialInventory");
         }
         public override bool CanSave()
         {
-            return AllDataValid() && base.CanSave();
+            return AllDataValid() && IsReadOnly && CheckInventory() && base.CanSave();
         }
         public override void ViewItemLink(object param)
         {
             base.ViewItemLink(param);
+        }
+
+        private bool CheckInventory()
+        {
+            switch (Type)
+            {
+                case WarehouseTransactionType.None:
+                    return false;
+                case WarehouseTransactionType.RawMaterial:
+                    return true;
+                case WarehouseTransactionType.Product:
+                    if (ProductInventory > Quantity) return true;
+                    return false;
+                case WarehouseTransactionType.Good:
+                    return false;
+                default:
+                    return false;
+            }
         }
         #endregion
 

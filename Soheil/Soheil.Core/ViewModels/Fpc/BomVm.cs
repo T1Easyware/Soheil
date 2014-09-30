@@ -103,7 +103,7 @@ namespace Soheil.Core.ViewModels.Fpc
 			var units = parentWindowVm.fpcDataService
 				.rawMaterialDataService.GetUnitSets(model.RawMaterial)
 				.Select(x => new UnitSetVm(x));
-			Units.Add(new UnitSetVm(null));
+            //Units.Add(new UnitSetVm(null));
 			foreach (var unit in units)
 			{
 				Units.Add(unit);

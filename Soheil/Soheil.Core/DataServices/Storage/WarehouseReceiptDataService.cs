@@ -37,9 +37,15 @@ namespace Soheil.Core.DataServices
 
 		public ObservableCollection<WarehouseReceipt> GetAll()
 		{
-            var entityList = _warehouseReceiptRepository.Find(activity => activity.Status != (decimal)Status.Deleted );
+            var entityList = _warehouseReceiptRepository.Find(receipt => receipt.Status != (decimal)Status.Deleted );
             return new ObservableCollection<WarehouseReceipt>(entityList);
 		}
+
+        public ObservableCollection<WarehouseReceipt> GetAll(WarehouseReceiptType type)
+        {
+            var entityList = _warehouseReceiptRepository.Find(receipt => receipt.Status != (decimal)Status.Deleted && receipt.Type == (decimal) type);
+            return new ObservableCollection<WarehouseReceipt>(entityList);
+        }
 
 		/// <summary>
 		/// Gets all active WarehouseReceipt models.
@@ -47,7 +53,7 @@ namespace Soheil.Core.DataServices
 		/// <returns></returns>
 		public ObservableCollection<WarehouseReceipt> GetActives()
 		{
-            var entityList = _warehouseReceiptRepository.Find(activity => activity.Status == (byte)Status.Active);
+            var entityList = _warehouseReceiptRepository.Find(receipt => receipt.Status == (byte)Status.Active);
             return new ObservableCollection<WarehouseReceipt>(entityList);
 		}
 

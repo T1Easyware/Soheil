@@ -1191,7 +1191,7 @@
     <value>پایان</value>
   </data>
   <data name="_companyName" xml:space="preserve">
-    <value>شرکت صنعتی جهادین پرند</value>
+    <value>شرکت روغنکشی خرمشهر</value>
   </data>
   <data name="txtDiff" xml:space="preserve">
     <value>اختلاف</value>
@@ -1318,5 +1318,26 @@
   </data>
   <data name="txtMaterialPlanning" xml:space="preserve">
     <value>برنامه مواد</value>
+  </data>
+  <data name="txtDestWearhouse" xml:space="preserve">
+    <value>مقصد</value>
+  </data>
+  <data name="txtRawMaterial" xml:space="preserve">
+    <value>ماده خام</value>
+  </data>
+  <data name="txtUnit" xml:space="preserve">
+    <value>واحد</value>
+  </data>
+  <data name="txtTotalMatInv" xml:space="preserve">
+    <value>موجودی مواد اولیه</value>
+  </data>
+  <data name="txtTotalPrdInv" xml:space="preserve">
+    <value>موجودی کالا</value>
+  </data>
+  <data name="txtTotalSale" xml:space="preserve">
+    <value>مجموع فروش</value>
+  </data>
+  <data name="txtTotaProduction" xml:space="preserve">
+    <value>مجموع تولید</value>
   </data>
 </root>

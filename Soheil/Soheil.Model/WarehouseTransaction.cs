@@ -66,6 +66,18 @@ namespace Soheil.Model
             get;
             set;
         }
+    
+        public virtual double Price
+        {
+            get;
+            set;
+        }
+    
+        public virtual bool Transported
+        {
+            get;
+            set;
+        }
 
         #endregion
 
@@ -190,6 +202,21 @@ namespace Soheil.Model
             }
         }
         private Warehouse _srcWarehouse;
+    
+        public virtual Product Product
+        {
+            get { return _product; }
+            set
+            {
+                if (!ReferenceEquals(_product, value))
+                {
+                    var previousValue = _product;
+                    _product = value;
+                    FixupProduct(previousValue);
+                }
+            }
+        }
+        private Product _product;
 
         #endregion
 
@@ -319,6 +346,22 @@ namespace Soheil.Model
                 if (!SrcWarehouse.SrcWarehouseTransactions.Contains(this))
                 {
                     SrcWarehouse.SrcWarehouseTransactions.Add(this);
+                }
+            }
+        }
+    
+        private void FixupProduct(Product previousValue)
+        {
+            if (previousValue != null && previousValue.WarehouseTransaction.Contains(this))
+            {
+                previousValue.WarehouseTransaction.Remove(this);
+            }
+    
+            if (Product != null)
+            {
+                if (!Product.WarehouseTransaction.Contains(this))
+                {
+                    Product.WarehouseTransaction.Add(this);
                 }
             }
         }

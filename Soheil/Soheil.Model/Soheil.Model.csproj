@@ -206,6 +206,9 @@
     <Compile Include="ProductGroup.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProductPrice.cs">
+      <DependentUpon>SoheilPOCO.tt</DependentUpon>
+    </Compile>
     <Compile Include="ProductRework.cs">
       <DependentUpon>SoheilPOCO.tt</DependentUpon>
     </Compile>

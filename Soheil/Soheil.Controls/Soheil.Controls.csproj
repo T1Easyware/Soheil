@@ -75,9 +75,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\BindableSelectedItemBehavior.cs" />
+    <Compile Include="Behaviors\DataGridRowReadOnlyBehavior.cs" />
     <Compile Include="Behaviors\FocusSelectAllTextBoxBehavior.cs" />
     <Compile Include="Behaviors\IgnoreMouseWheelBehavior.cs" />
     <Compile Include="Behaviors\LinqToVisualTree.cs" />
+    <Compile Include="Behaviors\ReadOnlyService.cs" />
     <Compile Include="Behaviors\ScrollOffsetBinding.cs" />
     <Compile Include="Converters\AccessTypeToBooleanConverter.cs" />
     <Compile Include="Converters\BooleanToLengthConverter.cs" />
