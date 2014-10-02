@@ -218,19 +218,20 @@ namespace Soheil.Core.ViewModels
         /// <summary>
         /// Gets or sets a bindable value that indicates SelectedProduct
         /// </summary>
-        public ProductInfoVM SelectedProduct
+        public ProductReworkInfoVM SelectedProduct
         {
-            get { return (ProductInfoVM)GetValue(SelectedProductProperty); }
+            get { return (ProductReworkInfoVM)GetValue(SelectedProductProperty); }
             set { SetValue(SelectedProductProperty, value); }
         }
         public static readonly DependencyProperty SelectedProductProperty =
-            DependencyProperty.Register("SelectedProduct", typeof(ProductInfoVM), typeof(WarehouseTransactionVM),
+            DependencyProperty.Register("SelectedProduct", typeof(ProductReworkInfoVM), typeof(WarehouseTransactionVM),
             new PropertyMetadata(null, (d, e) =>
             {
                 var vm = (WarehouseTransactionVM)d;
-                var val = (ProductInfoVM)e.NewValue;
+                var val = (ProductReworkInfoVM)e.NewValue;
                 if (val == null) return;
-                vm._model.Product = val.Model;
+                vm._model.ProductRework = val.Model;
+                vm._model.Product = val.Model.Product;
                 vm.OnPropertyChanged("ProductInventory");
                 vm.OnPropertyChanged("Price");
                 vm.OnPropertyChanged("Fee");
@@ -312,7 +313,7 @@ namespace Soheil.Core.ViewModels
             SelectedRawMaterial = materials.FirstOrDefault(mat => _model.RawMaterial != null && mat.Id == _model.RawMaterial.Id);
             SelectedUnit = UnitSets.FirstOrDefault(unit => _model.UnitSet != null && unit.Id == _model.UnitSet.Id);
         }
-        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService, WarehouseReceipt groupModel, IEnumerable<WarehouseInfoVM> warehouses, IEnumerable<ProductInfoVM> products)
+        public WarehouseTransactionVM(WarehouseTransaction entity, AccessType access, WarehouseTransactionDataService dataService, WarehouseReceipt groupModel, IEnumerable<WarehouseInfoVM> warehouses, IEnumerable<ProductReworkInfoVM> products)
             : base(access)
         {
             InitializeData(dataService);

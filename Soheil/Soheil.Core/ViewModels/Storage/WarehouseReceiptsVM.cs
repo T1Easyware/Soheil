@@ -66,7 +66,7 @@ namespace Soheil.Core.ViewModels
         public WarehouseReceiptDataService WarehouseReceiptDataService { get; set; }
         public WarehouseTransactionDataService TransactionDataService { get; set; }
         public WarehouseDataService WarehouseDataService { get; set; }
-        public ProductDataService ProductDataService { get; set; }
+        public ProductReworkDataService ProductDataService { get; set; }
         public UnitSetDataService UnitDataService { get; set; }
 
         public ObservableCollection<WarehouseInfoVM> Warehouses { get; set; }
@@ -75,7 +75,7 @@ namespace Soheil.Core.ViewModels
 
         public ObservableCollection<UnitSetInfoVM> UnitSets { get; set; }
 
-        public ObservableCollection<ProductInfoVM> Products { get; set; }
+        public ObservableCollection<ProductReworkInfoVM> Products { get; set; }
 
         public WarehouseReceiptType ReceiptType { get; set; }
         public WarehouseTransactionType TransactionType { get; set; }
@@ -103,7 +103,7 @@ namespace Soheil.Core.ViewModels
             WarehouseDataService = new WarehouseDataService(UnitOfWork);
             RawMaterialDataService = new RawMaterialDataService(UnitOfWork);
             UnitDataService = new UnitSetDataService(UnitOfWork);
-            ProductDataService = new ProductDataService(UnitOfWork);
+            ProductDataService = new ProductReworkDataService(UnitOfWork);
 
             ColumnHeaders = new List<ColumnInfo>
             {
@@ -139,10 +139,10 @@ namespace Soheil.Core.ViewModels
                 case WarehouseReceiptType.Transfer:
                     break;
                 case WarehouseReceiptType.Discharge:
-                    Products = new ObservableCollection<ProductInfoVM>();
+                    Products = new ObservableCollection<ProductReworkInfoVM>();
                     foreach (var model in ProductDataService.GetActives())
                     {
-                        Products.Add(new ProductInfoVM(model));
+                        Products.Add(new ProductReworkInfoVM(model));
                     }
                     break;
             }

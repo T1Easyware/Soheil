@@ -59,7 +59,7 @@ namespace Soheil.Core.ViewModels
 
         public IEnumerable<RawMaterialInfoVM> RawMaterials { get; set; }
 
-        public IEnumerable<ProductInfoVM> Products { get; set; }
+        public IEnumerable<ProductReworkInfoVM> Products { get; set; }
 
         public IEnumerable<UnitSetInfoVM> UnitSets { get; set; }
 
@@ -170,7 +170,7 @@ namespace Soheil.Core.ViewModels
             SaveCommand = new Command(Save, CanSave);
         }
 
-        public WarehouseReceiptVM(WarehouseReceipt entity, AccessType access, WarehouseReceiptDataService dataService, WarehouseTransactionDataService transactionDataService, IEnumerable<WarehouseInfoVM> warehouses, IEnumerable<ProductInfoVM> products, WarehouseReceiptType type)
+        public WarehouseReceiptVM(WarehouseReceipt entity, AccessType access, WarehouseReceiptDataService dataService, WarehouseTransactionDataService transactionDataService, IEnumerable<WarehouseInfoVM> warehouses, IEnumerable<ProductReworkInfoVM> products, WarehouseReceiptType type)
             : base(access)
         {
             _model = entity;

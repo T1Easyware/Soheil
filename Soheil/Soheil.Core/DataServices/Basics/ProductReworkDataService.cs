@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using Soheil.Common;
 using Soheil.Common.Annotations;
 using Soheil.Core.Commands;
 using Soheil.Core.Interfaces;
@@ -56,7 +57,8 @@ namespace Soheil.Core.DataServices
 		/// <returns></returns>
 		public ObservableCollection<ProductRework> GetActives()
 		{
-			throw new NotImplementedException();
+            var entityList = _productReworkRepository.Find(price => price.Status == (byte)Status.Active);
+            return new ObservableCollection<ProductRework>(entityList);
 		}
 
 		public int AddModel(ProductRework model)

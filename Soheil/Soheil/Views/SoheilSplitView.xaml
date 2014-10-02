@@ -3102,14 +3102,18 @@
                             Content="{Loc txtOperators}"
                             ImageSource="/Soheil.Controls;component/Images/Menus/operator.png"
                             Tag="241" />
-                <!--<CustomControls:ImageRadioButton Click="ListUpdated"
-                            Content="{Loc txtGenSkills}"
-                            ImageSource="/Soheil.Controls;component/Images/Menus/Report.png"
-                            Tag="242" />
                 <CustomControls:ImageRadioButton Click="ListUpdated"
-                            Content="{Loc txtSpeSkills}"
-                            ImageSource="/Soheil.Controls;component/Images/Menus/Report.png"
-                            Tag="243" />-->
+                            Content="{Loc txtStations}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Station.png"
+                            Tag="232" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtMachines}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/Machinery.png"
+                            Tag="233" />
+                <CustomControls:ImageRadioButton Click="ListUpdated"
+                            Content="{Loc txtActivities}"
+                            ImageSource="/Soheil.Controls;component/Images/Menus/activity.png"
+                            Tag="234" />
             </WrapPanel>
         </DataTemplate>
 
