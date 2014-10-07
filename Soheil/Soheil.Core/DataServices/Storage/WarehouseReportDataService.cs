@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using Soheil.Core.ViewModels.Reports;
 using Soheil.Dal;
 using Soheil.Model;
@@ -31,6 +32,7 @@ namespace Soheil.Core.DataServices
                                       from transaction in transactionList.Where(t => material != null && t.RawMaterial != null && material.Id == t.RawMaterial.Id).DefaultIfEmpty()
                                       from warehouse in warehouseList.Where(w => transaction != null && transaction.DestWarehouse != null && w.Id == transaction.DestWarehouse.Id).DefaultIfEmpty()
                                       from unit in unitList.Where(ug => material != null && material.BaseUnit != null && ug.Id == material.BaseUnit.Id).DefaultIfEmpty()
+                                      let matId = material == null ? -1 : material.Id
                                       let matCode = material == null ? string.Empty : material.Code
                                       let matName = material == null ? string.Empty : material.Name
                                       let warehCode = warehouse == null ? string.Empty : warehouse.Code
@@ -38,7 +40,33 @@ namespace Soheil.Core.DataServices
                                       let unitCode = unit == null ? string.Empty : unit.Code
                                       let unitName = unit == null ? string.Empty : unit.Description
                                       let inventory = material == null ? 0 : material.Inventory
-                                      select new { matCode, matName, warehCode, warehName, unitCode, unitName, inventory };
+                                      select new { matId, matCode, matName, warehCode, warehName, unitCode, unitName, inventory };
+
+                var matGQuery = from mat in matStorageQuery
+                    group mat by
+                        new
+                        {
+                            mat.matId,
+                            mat.matCode,
+                            mat.matName,
+                            mat.warehCode,
+                            mat.warehName,
+                            mat.unitCode,
+                            mat.unitName
+                        }
+                    into g
+                    select new
+                    {
+                        g.Key.matId,
+                        g.Key.matCode,
+                        g.Key.matName,
+                        g.Key.warehCode,
+                        g.Key.warehName,
+                        g.Key.unitCode,
+                        g.Key.unitName,
+                        inventory = g.Any() ? g.Sum(item => item.inventory) : 0
+                    };
+
 
                 var productDischargeQuery = from product in productList
                                from transaction in transactionList.Where(t => product != null && t.Product != null && product.Id == t.Product.Id).DefaultIfEmpty()
@@ -54,10 +82,26 @@ namespace Soheil.Core.DataServices
                                let fee = price * qty
                                select new { prdId, prdCode, prdName, warehCode, warehName, inventory, price, qty, fee };
 
+                var prdGQuery = from prd in productDischargeQuery
+                                group prd by new { prd.prdId, prd.prdCode, prd.prdName, prd.warehCode, prd.warehName, prd.price, prd.qty, prd.fee }
+                                    into g
+                                    select new
+                                    {
+                                        g.Key.prdId,
+                                        g.Key.prdCode,
+                                        g.Key.prdName,
+                                        g.Key.warehCode,
+                                        g.Key.warehName,
+                                        g.Key.price,
+                                        g.Key.qty,
+                                        g.Key.fee,
+                                        inventory = g.Any() ? g.Sum(item => item.inventory) : 0
+                                    };
+
 
                 result.Title = DateTime.Now.ToShortDateString();
 
-                var matStrList = matStorageQuery.ToList();
+                var matStrList = matGQuery.ToList();
                 if (matStrList.Any())
                 {
                     result.TotalStorage = matStrList.Sum(record => record.inventory);
@@ -74,7 +118,7 @@ namespace Soheil.Core.DataServices
                     }
                 }
 
-                var prdDisList = productDischargeQuery.ToList();
+                var prdDisList = prdGQuery.ToList();
                 if (prdDisList.Any())
                 {
                     result.TotalDischarge = prdDisList.Sum(record => record.inventory);

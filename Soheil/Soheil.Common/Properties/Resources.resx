@@ -1352,4 +1352,37 @@
   <data name="txtSentCount" xml:space="preserve">
     <value>تعداد تحویل از انبار</value>
   </data>
+  <data name="txtBaseUnit" xml:space="preserve">
+    <value>واحد پیش فرض :</value>
+  </data>
+  <data name="txtCurrentPrice" xml:space="preserve">
+    <value>قیمت کنونی :</value>
+  </data>
+  <data name="txtDestWarehouse" xml:space="preserve">
+    <value>انبار مقصد :</value>
+  </data>
+  <data name="txtFee" xml:space="preserve">
+    <value>فی :</value>
+  </data>
+  <data name="txtInventory" xml:space="preserve">
+    <value>موجودی :</value>
+  </data>
+  <data name="txtPrice" xml:space="preserve">
+    <value>قیمت :</value>
+  </data>
+  <data name="txtProduction" xml:space="preserve">
+    <value>تولید :</value>
+  </data>
+  <data name="txtSalePrice" xml:space="preserve">
+    <value>قیمت فروش :</value>
+  </data>
+  <data name="txtSrcWarehouse" xml:space="preserve">
+    <value>انبار مبدا :</value>
+  </data>
+  <data name="txtUnitGroup" xml:space="preserve">
+    <value>گروه واحدها :</value>
+  </data>
+  <data name="txtWReport" xml:space="preserve">
+    <value>گزارش انبار</value>
+  </data>
 </root>

@@ -154,6 +154,7 @@ namespace Soheil.Core.ViewModels
         {
             _model = entity;
             TransactionDataService = transactionDataService;
+            WarehouseReceiptDataService = dataService;
             Type = type;
             TransactionType = WarehouseTransactionType.RawMaterial;
             TransactionDataService.TransactionRemoved += TransactionRemoved;
@@ -175,6 +176,7 @@ namespace Soheil.Core.ViewModels
         {
             _model = entity;
             TransactionDataService = transactionDataService;
+            WarehouseReceiptDataService = dataService;
             Type = type;
             TransactionType = WarehouseTransactionType.Product;
             TransactionDataService.TransactionRemoved += TransactionRemoved;

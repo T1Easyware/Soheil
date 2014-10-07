@@ -1339,4 +1339,37 @@
   <data name="txtDuplicate" xml:space="preserve">
     <value>Duplicate</value>
   </data>
+  <data name="txtBaseUnit" xml:space="preserve">
+    <value>Default Unit :</value>
+  </data>
+  <data name="txtCurrentPrice" xml:space="preserve">
+    <value>Current Price :</value>
+  </data>
+  <data name="txtDestWarehouse" xml:space="preserve">
+    <value>Destination Warehouse :</value>
+  </data>
+  <data name="txtFee" xml:space="preserve">
+    <value>Fee :</value>
+  </data>
+  <data name="txtInventory" xml:space="preserve">
+    <value>Inventory :</value>
+  </data>
+  <data name="txtPrice" xml:space="preserve">
+    <value>Price :</value>
+  </data>
+  <data name="txtProduction" xml:space="preserve">
+    <value>Production :</value>
+  </data>
+  <data name="txtSalePrice" xml:space="preserve">
+    <value>Sale Price :</value>
+  </data>
+  <data name="txtSrcWarehouse" xml:space="preserve">
+    <value>Source Warehouse :</value>
+  </data>
+  <data name="txtUnitGroup" xml:space="preserve">
+    <value>Unit Group :</value>
+  </data>
+  <data name="txtWReport" xml:space="preserve">
+    <value>Warehouse Report</value>
+  </data>
 </root>

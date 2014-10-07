@@ -75,16 +75,11 @@
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="F:\Soheil\SoheilEdm.edmx.txt" />
-    <Content Include="I:\SoheilEdm.edmx.sql">
-      <Link>SoheilEdm.edmx.sql</Link>
-    </Content>
+    <Content Include="SoheilEdm.edmx.sql" />
     <Content Include="SqlScripts\Create Login.sql" />
     <Content Include="SqlScripts\Test - All in one.sql" />
     <Content Include="SqlScripts\MultiInsertAccessRules.sql" />
-    <Content Include="I:\Test - oil factory.sql">
-      <Link>SqlScripts\Test - oil factory.sql</Link>
-    </Content>
+    <Content Include="SqlScripts\Test - oil factory.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Soheil.Common\Soheil.Common.csproj">

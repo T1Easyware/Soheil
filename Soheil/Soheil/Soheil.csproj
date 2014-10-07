@@ -407,11 +407,11 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Page Include="Views\Reporting\DailyReportDocument.xaml">
+    <Content Include="Views\Reporting\DailyReportDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Page>
+    </Content>
     <Page Include="Views\Reporting\WarehouseReportToolbar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
