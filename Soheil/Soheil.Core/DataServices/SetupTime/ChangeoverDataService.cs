@@ -88,6 +88,7 @@ namespace Soheil.Core.DataServices
 		}
 		public Changeover SmartFind(int fromProductReworkId, int toProductReworkId, int stationId)
 		{
+			if (fromProductReworkId == 0 || toProductReworkId == 0 || stationId == 0) return null;
 			using (var context = new SoheilEdmContext())
 			{
 				var changeoverRepos = new Repository<Changeover>(context);

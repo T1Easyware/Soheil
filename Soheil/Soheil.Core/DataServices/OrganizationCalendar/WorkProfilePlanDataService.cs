@@ -317,5 +317,25 @@ namespace Soheil.Core.DataServices
 
 		#endregion	
 
+	
+		internal List<PP.Smart.SmartRange> GetClosedTimesInRange(DateTime start, DateTime end)
+		{
+			List<PP.Smart.SmartRange> offs = new List<PP.Smart.SmartRange>();
+			var shifts = GetShiftsInRange(start.Date, end.Date);
+			foreach (var shift in shifts)
+			{
+				//set end to start of this new shift
+				end = shift.Item2.AddSeconds(shift.Item1.StartSeconds);
+
+				var dur = (int)(end - start).TotalSeconds;
+				if (dur > 1)
+					offs.Add(PP.Smart.SmartRange.NewForbidden(start, dur));
+
+				//set start to end of this bygone shift
+				start = shift.Item2.AddSeconds(shift.Item1.EndSeconds);
+			}
+
+			return offs;
+		}
 	}
 }

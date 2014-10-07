@@ -100,6 +100,7 @@ namespace Soheil.Core.DataServices
 		internal void SaveAndGenerateTasks(IList<ViewModels.PP.Editor.PPEditorJob> jobVms)
 		{
 			var taskDs = new TaskDataService(Context);
+			var wppDs = new WorkProfilePlanDataService(Context);
 
 			//for each replication happens the following:
 			//	create (or update) jobs
@@ -114,6 +115,8 @@ namespace Soheil.Core.DataServices
 
 			foreach (var jobVm in jobVms.OrderBy(x => 1 / x.Weight))
 			{
+				var shifts = wppDs.GetClosedTimesInRange(jobVm.ReleaseDT, jobVm.Deadline);
+
 				foreach (var replica in jobVm.Replications)
 				{
 					#region Auto Create/Edit Job
@@ -170,7 +173,7 @@ namespace Soheil.Core.DataServices
 							//Set the time
 							//first reload State (in smartJob it's loaded by DataService instead of this context)
 							step.State = new Repository<State>(Context).FirstOrDefault(x => x.Id == step.State.Id);
-							step.MakeTheBestFit();
+							step.MakeTheBestFit(shifts);
 
 							//Make the task
 							step.BestStateStation = new Repository<StateStation>(Context)
