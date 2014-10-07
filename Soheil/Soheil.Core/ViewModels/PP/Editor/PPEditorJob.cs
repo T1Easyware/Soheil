@@ -205,7 +205,9 @@ namespace Soheil.Core.ViewModels.PP.Editor
 					MessageBox.Show(ex.Message);
 				}
 				bool refresh = true;
-				if (o != null) if (o.GetType() == typeof(bool)) refresh = (bool)o;
+				if (o != null) 
+					if (o.GetType() == typeof(bool)) 
+						refresh = (bool)o;
 				if (refresh && RefreshPPTable != null)
 					RefreshPPTable();
 			});

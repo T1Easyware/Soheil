@@ -45,6 +45,8 @@ namespace Soheil.Core.PP.Smart
 					if (earliestPossibleReleaseTime < laggedRT) earliestPossibleReleaseTime = laggedRT;
 				}
 
+				if (ss.State.OnProductRework == null)
+					ss.State.OnProductRework = ss.State.FPC.Product.MainProductRework;
 				//find free space
 				var seq = _job.Manager.FindNextFreeSpace(
 					ss.Station.Id, ss.State.OnProductRework.Id, earliestPossibleReleaseTime, (int)DurationSeconds);
