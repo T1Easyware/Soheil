@@ -420,6 +420,7 @@ namespace Soheil.Core.ViewModels.PP.Editor
 						State.ProductRework.Id,
 						start, //put it after specifed time if it wasn't auto start
 						(int)Duration.TotalSeconds,
+						null,
 						Model);
 					var block = seq.FirstOrDefault(x => x.Type == Core.PP.Smart.SmartRange.RangeType.NewTask);
 

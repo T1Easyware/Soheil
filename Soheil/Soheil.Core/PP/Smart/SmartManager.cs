@@ -90,7 +90,13 @@ namespace Soheil.Core.PP.Smart
 		/// <param name="durationOftask"></param>
 		/// <param name="snapToLast">indicates if setups after an auto task should snap to its next task(true) or to the auto task(false)</param>
 		/// <returns></returns>
-		internal List<SmartRange> FindNextFreeSpace(int stationId, int productReworkId, DateTime startFrom, int durationOftask, Model.Block excludeModel = null)
+		internal List<SmartRange> FindNextFreeSpace(
+			int stationId, 
+			int productReworkId, 
+			DateTime startFrom, 
+			int durationOftask,
+			List<SmartRange> closedTimes,
+			Model.Block excludeModel = null)
 		{
 			//Find all tasks in database, which end after startFrom
 			var inRangeItems = _blockDataService.GetInRange(startFrom, stationId, excludeModel)
@@ -98,6 +104,7 @@ namespace Soheil.Core.PP.Smart
 			var inRangeNPTs = _nptDataService.GetInRange(startFrom, stationId)
 				.Select(x => SmartRange.ExistingSetup(x))
 				.Where(x => x != null).ToList();
+
 			//find the task and setup in database, which is just before startFrom
 			var previousItem = _blockDataService.FindPreviousBlock(stationId, startFrom);
 			var previousTask = SmartRange.ExistingBlock(previousItem.Item1);
@@ -110,6 +117,8 @@ namespace Soheil.Core.PP.Smart
 
 			PolynomialUnion(inRangeItems, inRangeNPTs);
 			PolynomialUnion(inRangeItems, reserve);
+			if (closedTimes != null)
+				PolynomialUnion(inRangeItems, closedTimes);
 			//*all are saved in inRangeItems*
 
 			TimeSpan minFreeSpace = TimeSpan.FromSeconds(durationOftask);
@@ -252,18 +261,19 @@ namespace Soheil.Core.PP.Smart
 					//    [      ]
 					// --|xTTTT--x1111 snapToLast
 					// --|xTTTTx--1111 snapToFirst
-					//check if after-task setup is needed
-					var warmup = only.ProductReworkId == productReworkId ?
-						null : new DataServices.WarmupDataService().SmartFind(only.ProductReworkId, stationId);
-					var changeover = only.ProductReworkId == productReworkId ?
-						null : new DataServices.ChangeoverDataService().SmartFind(productReworkId, only.ProductReworkId, stationId);
-					int reverseSetupDelay = only.ProductReworkId == productReworkId ?
-						0 : warmup.Seconds + changeover.Seconds;
-					
 					var seq = findSequenceOfSpotsBetween(startFrom, only.StartDT);
-					if(only.ProductReworkId != productReworkId)
-						seq.Add(SmartRange.NewSetup(only.StartDT.AddSeconds(-reverseSetupDelay), warmup, changeover, stationId));//???
+					if (only.ProductReworkId != productReworkId && only.ProductReworkId > 0)
+					{
+						//check if after-task setup is needed
+						var warmup = only.ProductReworkId == productReworkId ?
+							null : new DataServices.WarmupDataService().SmartFind(only.ProductReworkId, stationId);
+						var changeover = only.ProductReworkId == productReworkId ?
+							null : new DataServices.ChangeoverDataService().SmartFind(productReworkId, only.ProductReworkId, stationId);
+						int reverseSetupDelay = only.ProductReworkId == productReworkId ?
+							0 : warmup.Seconds + changeover.Seconds;
 
+						seq.Add(SmartRange.NewSetup(only.StartDT.AddSeconds(-reverseSetupDelay), warmup, changeover, stationId));//???
+					}
 					if(validateSequence(seq, (int)only.StartDT.Subtract(startFrom).TotalSeconds)) 
 						return seq;
 					//if not enough space between startFrom and the only task: use the end of it as start of sequence finding
@@ -285,17 +295,19 @@ namespace Soheil.Core.PP.Smart
 				// --|xTTTTx--1111 snapToFirst
 				if (first.StartDT > startFrom)
 				{
-					//check if after-task setup is needed
-					var warmup = first.ProductReworkId == productReworkId ?
-						null : new DataServices.WarmupDataService().SmartFind(first.ProductReworkId, stationId);
-					var changeover = first.ProductReworkId == productReworkId ?
-						null : new DataServices.ChangeoverDataService().SmartFind(productReworkId, first.ProductReworkId, stationId);
-					int reverseSetupDelay = first.ProductReworkId == productReworkId ?
-						0 : warmup.Seconds + changeover.Seconds;
-
 					var seq = findSequenceOfSpotsBetween(startFrom, first.StartDT);
-					if (first.ProductReworkId != productReworkId)
+					if (first.ProductReworkId != productReworkId && first.ProductReworkId > 0)
+					{
+						//check if after-task setup is needed
+						var warmup = first.ProductReworkId == productReworkId ?
+							null : new DataServices.WarmupDataService().SmartFind(first.ProductReworkId, stationId);
+						var changeover = first.ProductReworkId == productReworkId ?
+							null : new DataServices.ChangeoverDataService().SmartFind(productReworkId, first.ProductReworkId, stationId);
+						int reverseSetupDelay = first.ProductReworkId == productReworkId ?
+							0 : warmup.Seconds + changeover.Seconds;
+
 						seq.Add(SmartRange.NewSetup(first.StartDT.AddSeconds(-reverseSetupDelay), warmup, changeover, stationId));//???
+					}
 					
 					if (validateSequence(seq, (int)first.StartDT.Subtract(startFrom).TotalSeconds))
 						return seq;
@@ -314,17 +326,19 @@ namespace Soheil.Core.PP.Smart
 							//if enough space between i & i+1: use end of i as start of sequence finding
 							if (inRangeTask.StartDT.Subtract(prev.EndDT) >= minFreeSpace)
 							{
-								//check if after-task setup is needed
-								var warmup = inRangeTask.ProductReworkId == productReworkId ?
-									null : new DataServices.WarmupDataService().SmartFind(inRangeTask.ProductReworkId, stationId);
-								var changeover = inRangeTask.ProductReworkId == productReworkId ?
-									null : new DataServices.ChangeoverDataService().SmartFind(productReworkId, inRangeTask.ProductReworkId, stationId);
-								int reverseSetupDelay = inRangeTask.ProductReworkId == productReworkId ?
-									0 : warmup.Seconds + changeover.Seconds;
-
 								var seq = findSequenceOfSpotsBetween(prev.EndDT, inRangeTask.StartDT);
-								if(inRangeTask.ProductReworkId != productReworkId)
-								seq.Add(SmartRange.NewSetup(inRangeTask.StartDT.AddSeconds(-reverseSetupDelay), warmup, changeover, stationId));//???
+								if (inRangeTask.ProductReworkId != productReworkId && inRangeTask.ProductReworkId > 0)
+								{
+									//check if after-task setup is needed
+									var warmup = inRangeTask.ProductReworkId == productReworkId ?
+										null : new DataServices.WarmupDataService().SmartFind(inRangeTask.ProductReworkId, stationId);
+									var changeover = inRangeTask.ProductReworkId == productReworkId ?
+										null : new DataServices.ChangeoverDataService().SmartFind(productReworkId, inRangeTask.ProductReworkId, stationId);
+									int reverseSetupDelay = inRangeTask.ProductReworkId == productReworkId ?
+										0 : warmup.Seconds + changeover.Seconds;
+
+									seq.Add(SmartRange.NewSetup(inRangeTask.StartDT.AddSeconds(-reverseSetupDelay), warmup, changeover, stationId));//???
+								}
 
 								if (validateSequence(seq, (int)inRangeTask.StartDT.Subtract(prev.EndDT).TotalSeconds))
 									return seq;

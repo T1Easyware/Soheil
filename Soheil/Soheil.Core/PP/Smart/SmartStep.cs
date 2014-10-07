@@ -24,7 +24,7 @@ namespace Soheil.Core.PP.Smart
 					ParentSteps.Add(parentStep);
 		}
 
-		internal void MakeTheBestFit()
+		internal void MakeTheBestFit(List<SmartRange> shifts)
 		{
 			ActualReleaseTime = DateTime.Now;//best release time for current step
 			BestStateStation = null;//best stateStation for current step
@@ -45,9 +45,15 @@ namespace Soheil.Core.PP.Smart
 					if (earliestPossibleReleaseTime < laggedRT) earliestPossibleReleaseTime = laggedRT;
 				}
 
+				if (ss.State.OnProductRework == null)
+					ss.State.OnProductRework = ss.State.FPC.Product.MainProductRework;
 				//find free space
 				var seq = _job.Manager.FindNextFreeSpace(
-					ss.Station.Id, ss.State.OnProductRework.Id, earliestPossibleReleaseTime, (int)DurationSeconds);
+					ss.Station.Id, 
+					ss.State.OnProductRework.Id, 
+					earliestPossibleReleaseTime, 
+					(int)DurationSeconds,
+					shifts);
 
 				//find the newly added task
 				var taskseq = seq.FirstOrDefault(x => x.Type == SmartRange.RangeType.NewTask);
@@ -88,5 +94,6 @@ namespace Soheil.Core.PP.Smart
 		internal List<SmartRange> ChosenSequence;//{ get; private set; }
 		internal bool HasStateStation { get { return State.StateStations.Any(); } }
 		internal List<SmartStep> ParentSteps;
+
 	}
 }

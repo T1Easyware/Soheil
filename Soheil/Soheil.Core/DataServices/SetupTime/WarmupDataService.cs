@@ -60,6 +60,7 @@ namespace Soheil.Core.DataServices
 		}
 		public Warmup SmartFind(int productReworkId, int stationId)
 		{
+			if (productReworkId == 0 || stationId == 0) return null;
 			using (var context = new SoheilEdmContext())
 			{
 				var warmupRepos = new Repository<Warmup>(context);

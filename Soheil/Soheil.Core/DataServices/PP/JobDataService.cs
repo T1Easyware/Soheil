@@ -99,8 +99,8 @@ namespace Soheil.Core.DataServices
 		/// <param name="jobVms"></param>
 		internal void SaveAndGenerateTasks(IList<ViewModels.PP.Editor.PPEditorJob> jobVms)
 		{
-			//var lkvJobModels = new List<KeyValuePair<Job, Job>>();
 			var taskDs = new TaskDataService(Context);
+			var wppDs = new WorkProfilePlanDataService(Context);
 
 			//for each replication happens the following:
 			//	create (or update) jobs
@@ -115,6 +115,8 @@ namespace Soheil.Core.DataServices
 
 			foreach (var jobVm in jobVms.OrderBy(x => 1 / x.Weight))
 			{
+				var shifts = wppDs.GetClosedTimesInRange(jobVm.ReleaseDT, jobVm.Deadline);
+
 				foreach (var replica in jobVm.Replications)
 				{
 					#region Auto Create/Edit Job
@@ -158,7 +160,6 @@ namespace Soheil.Core.DataServices
 						#endregion
 					}
 					#endregion
-					//lkvJobModels.Add(new KeyValuePair<Job, Job>(replica, jobModel));
 
 					SmartJob smartJob = new SmartJob(manager, jobVm);
 					manager.SmartJobs.Add(smartJob);
@@ -172,7 +173,7 @@ namespace Soheil.Core.DataServices
 							//Set the time
 							//first reload State (in smartJob it's loaded by DataService instead of this context)
 							step.State = new Repository<State>(Context).FirstOrDefault(x => x.Id == step.State.Id);
-							step.MakeTheBestFit();
+							step.MakeTheBestFit(shifts);
 
 							//Make the task
 							step.BestStateStation = new Repository<StateStation>(Context)
@@ -203,15 +204,6 @@ namespace Soheil.Core.DataServices
 				setupDs.AddModelBySmart(item, Context);
 			}
 			Context.Commit();
-			/*foreach (var kvJM in lkvJobModels)
-			{
-				kvJM.Key.Id = kvJM.Value.Id;
-				if (JobAdded != null) JobAdded(this, new ModelAddedEventArgs<Job>(kvJM.Value));
-			}
-
-			if (JobAdded != null)
-				foreach (var job in jobVms)
-					JobAdded(this, new ModelAddedEventArgs<Job>(job.mo));*/
 		}
 
 

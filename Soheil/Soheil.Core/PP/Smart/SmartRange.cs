@@ -8,7 +8,7 @@ namespace Soheil.Core.PP.Smart
 {
 	public class SmartRange
 	{
-		public enum RangeType { Empty, NewTask, Task, NewSetup, DeleteSetup, Setup }
+		public enum RangeType { Empty, NewTask, Task, NewSetup, DeleteSetup, Setup, Forbidden }
 		public RangeType Type { get; protected set; }
 
 		public DateTime StartDT { get; protected set; }
@@ -111,7 +111,15 @@ namespace Soheil.Core.PP.Smart
 		{
 
 		}
-
+		internal static SmartRange NewForbidden(DateTime startTime, int durationSeconds)
+		{
+			return new SmartRange
+			{
+				Type = RangeType.Forbidden,
+				StartDT = startTime,
+				DurationSeconds = durationSeconds,
+			};
+		}
 		internal static SmartRange NewReserve(DateTime startTime, int durationSeconds, Model.StateStation stateStation)
 		{
 			return new SmartRange
