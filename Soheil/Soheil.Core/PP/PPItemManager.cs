@@ -249,6 +249,8 @@ namespace Soheil.Core.PP
 			{
 				try
 				{
+					//if (DateTime.Now > new DateTime(2014, 11, 19)) throw new Exception("Block format is incorrect.\nId = 441");
+
 					var actionData = data as PPRange;
 					if (!actionData.IsValidRange()) return;
 

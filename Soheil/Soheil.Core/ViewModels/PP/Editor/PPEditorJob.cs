@@ -14,10 +14,11 @@ namespace Soheil.Core.ViewModels.PP.Editor
 		internal event Action RefreshPPTable;
 		DataServices.JobDataService _jobDataService;
 		public int FpcId { get; set; }
+		//public Model.Job Model { get; private set; }
 
 		public static PPEditorJob CreateForProduct(Model.Product productModel, DataServices.JobDataService jobDataService)
 		{
-			return new PPEditorJob(new Model.Job
+			var model = new Model.Job
 			{
 				Code = productModel.Code,
 				Deadline = DateTime.Now.AddMonths(1),
@@ -26,11 +27,13 @@ namespace Soheil.Core.ViewModels.PP.Editor
 				Quantity = 0,
 				ReleaseTime = DateTime.Now,
 				Weight = 1,
-			}, jobDataService);
+			};
+			return new PPEditorJob(model, jobDataService);
 		}
 		public PPEditorJob(Model.Job model, DataServices.JobDataService jobDataService)
 		{
 			_jobDataService = jobDataService;
+			//Model = model;
 			Replications.Add(model);
 
 			Deadline = model.Deadline;

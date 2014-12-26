@@ -287,7 +287,7 @@ namespace Soheil.Core.DataServices
 				var processes = _processRepository.GetAll();
 				//main query (with shift)
 				var prQuery = from shift in shifts
-							  from process in processes.Where(x=>x.StartDateTime < shift.end && x.EndDateTime > shift.start)
+							  from process in processes.Where(x => x.StartDateTime < shift.end && x.EndDateTime > shift.start)
 
 							  let station = process.Task.Block.StateStation.Station
 							  let start = (process.StartDateTime < shift.start) ? shift.start : process.StartDateTime
@@ -319,9 +319,9 @@ namespace Soheil.Core.DataServices
 					.Select(x => new Reports.DailyStationPlanData
 					{
 						Activities = x.items
-							.OrderBy(y=>y.activity)
-							.ThenBy(y=>y.product)
-							.Select(y=>new Reports.DailyStationPlanData.MainData
+							.OrderBy(y => y.activity)
+							.ThenBy(y => y.product)
+							.Select(y => new Reports.DailyStationPlanData.MainData
 							{
 								Activity = y.activity,
 								Product = y.product,
@@ -329,7 +329,7 @@ namespace Soheil.Core.DataServices
 								Start = y.process.StartDateTime.TimeOfDay,
 								End = y.process.EndDateTime.TimeOfDay,
 								TargetValue = (y.process.TargetCount * y.ratio).ToString("0.#"),
-								Operators = y.process.ProcessOperators.Select(o=>o.Operator.Name),
+								Operators = y.process.ProcessOperators.Select(o => o.Operator.Name),
 							}),
 						StationName = x.station.Name,
 						StationId = x.station.Id,
@@ -357,12 +357,12 @@ namespace Soheil.Core.DataServices
 								  product = process.Task.Block.StateStation.State.OnProductRework.Name,
 								  ratio,
 							  } by station
-							  into sGroup
-							  select new
-							  {
-								  station = sGroup.Key,
-								  items = sGroup,
-							  };
+								  into sGroup
+								  select new
+								  {
+									  station = sGroup.Key,
+									  items = sGroup,
+								  };
 				data = prQuery
 					.OrderBy(x => x.station.Index)
 					.Select(x => new Reports.DailyStationPlanData
@@ -398,7 +398,7 @@ namespace Soheil.Core.DataServices
 		internal Reports.MaterialPlanHour[] GetDailyMaterialPlan(DateTime StartDateTime, DateTime EndDateTime)
 		{
 			var data = new Reports.MaterialPlanHour[24];
-			
+
 			var tasks = _taskRepository.Find(x =>
 				x.StartDateTime < EndDateTime && x.EndDateTime > StartDateTime
 				&& x.Block.StateStation.State.BOMs.Any()).ToArray();
@@ -454,5 +454,198 @@ namespace Soheil.Core.DataServices
 			}
 			return data;
 		}
+
+		/// <summary>
+		/// Init Stations, Tasks and their products (available in the given range)
+		/// </summary>
+		/// <param name="StartDateTime"></param>
+		/// <param name="duration">by seconds</param>
+		/// <returns></returns>
+		internal Core.PP.PlannerAI.Root GetItemsAndSpaces(DateTime StartDateTime, int duration)
+		{
+			Core.PP.PlannerAI.Root root = new PP.PlannerAI.Root();
+			DateTime EndDateTime = StartDateTime.AddSeconds(duration);
+
+			//find shifts
+			var tmp = new WorkProfilePlanDataService(Context).GetShiftsInRange(StartDateTime, EndDateTime);
+			if (!tmp.Any()) throw new Exception("No active Work Profile Plan is available");
+			var shifts = tmp.Where(x => x.Item2.Date < EndDateTime.Date).Select(x => new
+			{
+				date = x.Item2,
+				start = x.Item2.Date.AddSeconds(x.Item1.StartSeconds),
+				end = x.Item2.Date.AddSeconds(x.Item1.EndSeconds),
+				code = x.Item1.WorkShiftPrototype.Name
+			});
+
+			//init products
+			root.Products = new List<PP.PlannerAI.Product>();
+			var pQuery = from task in Context.CreateObjectSet<Task>()
+						 let product = task.Block.StateStation.State.OnProductRework.Product
+						 where (task.StartDateTime < EndDateTime && task.EndDateTime > StartDateTime)
+						 group new { } by product;
+
+			foreach (var task in pQuery)
+			{
+				root.Products.Add(new Core.PP.PlannerAI.Product(task.Key));
+			}
+
+			//set all stations
+			var stations = new Repository<Station>(Context).Find(x => x.Status == (byte)Status.Active);
+			root.Stations = stations
+				.OrderBy(x => x.Index)
+				.Select(x => new Core.PP.PlannerAI.Row(x.Id)
+				{
+					Items = new List<PP.PlannerAI.Item>()
+				})
+				.ToList();
+
+			//main query (with shift)
+			//fill pp items in time range
+			foreach (var shift in shifts)
+			{
+				//fill pp items in shift
+				int shiftStartSec = (int)(shift.start - StartDateTime).TotalSeconds;
+				foreach (var stationRecord in stations)
+				{
+					var station = root.Stations.FirstOrDefault(x => x.Id == stationRecord.Id);
+					if (station == null) continue;
+					//query
+					var items = from task in Context.CreateObjectSet<Task>()
+								where task.StartDateTime < shift.end && task.EndDateTime > shift.start
+								let start = (task.StartDateTime < shift.start)
+								? shift.start
+								: task.StartDateTime
+								let end = (task.EndDateTime > shift.end)
+								? shift.end
+								: task.EndDateTime
+								let product = task == null ? null : task.Block.StateStation.State.OnProductRework.Product
+
+								orderby start
+								select new
+								{
+									start,
+									end,
+									product
+								};
+
+
+					//find pp items in station
+					int e = shiftStartSec;
+					int shiftEnd = (int)(shift.end - StartDateTime).TotalSeconds;
+					foreach (var item in items)
+					{
+						//create PP items
+						bool addTask = true;
+						int T = (int)(item.start - StartDateTime).TotalSeconds;
+						int E = (int)(item.end - StartDateTime).TotalSeconds;
+						//	T  e E           |
+						//	TAS|K2           |
+						//-------------------------
+						//	   T e           |
+						//============ or ==============
+						//	|  T e E           |
+						//	|task1             |
+						//	|  TASK2           |
+						//-------------------------
+						//	|    T e           |
+						if (T < e && e < E )
+						{
+							T = e;
+							e = E;
+						}
+						//	T   E    e       |
+						//	TASK2    |       |
+						//-------------------------
+						//	                 |
+						//============ or ==============
+						//	|  T   E     e     |
+						//	|verylongtask1     |
+						//	|  TASK2           |
+						//-------------------------
+						//	|                  |
+						else if (T < e && E < e)
+						{
+							addTask = false;
+						}
+						//	e     T   E      |
+						//	|     TASK2      |
+						//-------------------------
+						//	|.....T   e      |
+						//============ or ==============
+						//	|    e   T   E     |
+						//	|task1             |
+						//	|        TASK2     |
+						//-------------------------
+						//	|     ...T   e     |
+						else
+						{
+							//add preItem
+							var preItem = new Core.PP.PlannerAI.Item
+							{
+								Start = e,
+								End = T,
+								IsFree = true,
+							};
+							station.Items.Add(preItem);
+							e = E;
+						}
+						if (addTask)
+						{
+							if (e > shiftEnd) e = shiftEnd;
+							//add Task
+							var p = root.Products.FirstOrDefault(x => x.Id == item.product.Id);
+							//var ss = p.Levels
+							//	.SelectMany(x => x.States)
+							//	.SelectMany(x => x.SSList)
+							//	.FirstOrDefault(x => x.Id == item.ss.Id);
+							var taskItem = new Core.PP.PlannerAI.Item
+							{
+								Start = T,
+								End = e,
+								IsFree = false,
+								Product = p,
+								//SS = ss,
+							};
+							station.Items.Add(taskItem);
+						}
+						//end of shift-station
+					}
+					//	|     T      e      |
+					//	|     lastTask      |
+					//-------------------------
+					//	|             ......|
+					if (e < shiftEnd)
+					{
+						//add postItem
+						var postItem = new Core.PP.PlannerAI.Item
+						{
+							Start = e,
+							End = shiftEnd,
+							IsFree = true,
+						};
+						station.Items.Add(postItem);
+					}
+					//	|               |
+					//	shiftStartSec   shiftEnd
+					//----------------------
+					//	|...............|
+					if (station.Items.Count == 0)
+					{
+						//add postItem
+						var item = new Core.PP.PlannerAI.Item
+						{
+							Start = shiftStartSec,
+							End = shiftEnd,
+							IsFree = true,
+						};
+						station.Items.Add(item);
+					}
+					//end of station
+				}
+				//end of shift
+			}
+			return root;
+		}
+
 	}
 }

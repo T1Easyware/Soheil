@@ -102,7 +102,7 @@ namespace Soheil
 			var type = (SoheilEntityType)Convert.ToInt32(((Control)sender).Tag);
 			HandleAddTabAndSelect(type);
 		}
-		private void HandleAddTabAndSelect(SoheilEntityType type)
+		private void HandleAddTabAndSelect(SoheilEntityType type, object param = null)
 		{
 			string code = ((int)type).ToString();
             var accessItem = AccessList.FirstOrDefault(item => item.Item1 == code);
@@ -257,7 +257,7 @@ namespace Soheil
                     break;
                 case SoheilEntityType.ProductPlanSubMenu:
 				case SoheilEntityType.ProductPlanTable:
-					var ppvm = new Core.ViewModels.PP.PPTableVm(access);
+					var ppvm = new Core.ViewModels.PP.PPTableVm(access, (Soheil.Core.ViewModels.PP.PricingAI.PricingVm)param);
 					ppvm.DailyStationPlanCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.DailyStationPlan));
 					ppvm.DailyReportCommand = new Command(o => HandleAddTabAndSelect(SoheilEntityType.DailyReport));
 					SingularList = ppvm;
@@ -341,6 +341,13 @@ namespace Soheil
                     chrometabs.AddTab(CreateSingularTab(type), true);
                     break;
 
+				case SoheilEntityType.PPAI:
+					var ppaiVm = new Soheil.Core.ViewModels.PP.PricingAI.PricingVm(access);
+					ppaiVm.MakeJobs += pricing => HandleAddTabAndSelect(SoheilEntityType.ProductPlanTable, pricing);
+					SingularList = ppaiVm;
+                    chrometabs.AddTab(CreateSingularTab(type), true);
+					break;
+
                 case SoheilEntityType.OptionsMenu:
                     break;
                 case SoheilEntityType.SettingsSubMenu:
@@ -413,7 +420,7 @@ namespace Soheil
             (sender as Button).ContextMenu.Placement = PlacementMode.Bottom;
             (sender as Button).ContextMenu.IsOpen = true;
         }
-
+		//!@#$
         private void QuickAccessMenuChecked(object sender, RoutedEventArgs e)
         {
             var tag = Convert.ToInt32(((ToggleButton)sender).Tag);
@@ -425,6 +432,7 @@ namespace Soheil
                     btnDefinitions.IsChecked = false;
                     btnStorage.IsChecked = false;
                     btnReports.IsChecked = false;
+                    btnManagement.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("usersTemplate");
                     break;
                 case 2:
@@ -432,6 +440,7 @@ namespace Soheil
                     btnUsers.IsChecked = false;
                     btnStorage.IsChecked = false;
                     btnReports.IsChecked = false;
+                    btnManagement.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("definitionsTemplate");
                     break;
                 case 3:
@@ -439,6 +448,7 @@ namespace Soheil
                     btnDefinitions.IsChecked = false;
                     btnStorage.IsChecked = false;
                     btnReports.IsChecked = false;
+                    btnManagement.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("controlsTemplate");
                     break;
                 case 4:
@@ -446,6 +456,7 @@ namespace Soheil
                     btnDefinitions.IsChecked = false;
 					btnControls.IsChecked = false;
                     btnReports.IsChecked = false;
+                    btnManagement.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("storageTemplate");
                     break;
                 case 5:
@@ -453,16 +464,26 @@ namespace Soheil
                     btnDefinitions.IsChecked = false;
                     btnControls.IsChecked = false;
                     btnStorage.IsChecked = false;
+                    btnManagement.IsChecked = false;
                     tmpl = (DataTemplate)FindResource("reportsTemplate");
                     break;
-                case 6:
-                    btnUsers.IsChecked = false;
-                    btnDefinitions.IsChecked = false;
-                    btnControls.IsChecked = false;
-                    btnReports.IsChecked = false;
-                    tmpl = (DataTemplate)FindResource("optionsTemplate");
-                    break;
-            }
+				case 6:
+					btnUsers.IsChecked = false;
+					btnDefinitions.IsChecked = false;
+					btnControls.IsChecked = false;
+					btnReports.IsChecked = false;
+					btnManagement.IsChecked = false;
+					tmpl = (DataTemplate)FindResource("optionsTemplate");
+					break;
+				case 7:
+					btnUsers.IsChecked = false;
+					btnDefinitions.IsChecked = false;
+					btnControls.IsChecked = false;
+					btnReports.IsChecked = false;
+					//btnOptions.IsChecked = false;
+					tmpl = (DataTemplate)FindResource("managementTemplate");
+					break;
+			}
             quickAccessSubMenu.ContentTemplate = tmpl;
         }
 
@@ -610,8 +631,11 @@ namespace Soheil
                 case SoheilEntityType.UnitsSubMenu:
                     return Common.Properties.Resources.txtUnitSets;
 
-                case SoheilEntityType.SettingsSubMenu:
-                    return Common.Properties.Resources.txtSettings;
+				case SoheilEntityType.PPAI:
+					return Common.Properties.Resources.txtPPAI;
+
+				case SoheilEntityType.SettingsSubMenu:
+					return Common.Properties.Resources.txtSettings;
                 case SoheilEntityType.HelpSubMenu:
                     return Common.Properties.Resources.txtHelp;
                 case SoheilEntityType.AboutSubMenu:

@@ -31,13 +31,14 @@ namespace Soheil.Core.ViewModels.PP
 		/// Instantiates and Initializes a new Instance of PPTable with given access level
 		/// </summary>
 		/// <param name="access">Access level used for the this instance of PPTable</param>
-		public PPTableVm(AccessType access)
+		public PPTableVm(AccessType access, Soheil.Core.ViewModels.PP.PricingAI.PricingVm jobsSource = null)
 		{
 			Access = access;
 
 			initializeCommands();
-			initializeEditors();
+			initializeEditors(jobsSource);
 		}
+
 		public void Dispose()
 		{
 			if (PPItems != null)
@@ -47,7 +48,7 @@ namespace Soheil.Core.ViewModels.PP
 		/// <summary>
 		/// Initializes TaskEditor, JobEditor and JobList
 		/// </summary>
-		void initializeEditors()
+		void initializeEditors(Soheil.Core.ViewModels.PP.PricingAI.PricingVm jobsSource = null)
 		{
 			TaskEditor = new PlanEditorVm();
 			TaskEditor.RefreshPPItems += () =>
@@ -70,7 +71,7 @@ namespace Soheil.Core.ViewModels.PP
 					SelectedBlock = newVm;
 			};*/
 
-			JobEditor = new JobEditorVm();
+			JobEditor = new JobEditorVm(jobsSource);
 			JobEditor.RefreshPPItems += () => PPItems.Manager.ForceReload();
 			/*refresh is enough.
 			 *JobEditor.JobAdded += model =>

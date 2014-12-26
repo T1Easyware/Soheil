@@ -1181,7 +1181,7 @@
     <value>End</value>
   </data>
   <data name="_companyName" xml:space="preserve">
-    <value>Jahadin Parand</value>
+    <value>Asre Jadid</value>
   </data>
   <data name="txtDiff" xml:space="preserve">
     <value>Diff</value>
@@ -1371,5 +1371,158 @@
   </data>
   <data name="txtWReport" xml:space="preserve">
     <value>Warehouse Report</value>
+  </data>
+  <data name="menuCloseAIConsole" xml:space="preserve">
+    <value>Close AI Console after completion</value>
+  </data>
+  <data name="menuExit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="menuExportAsJobs" xml:space="preserve">
+    <value>Export Results as Jobs</value>
+  </data>
+  <data name="menuExportDataAs" xml:space="preserve">
+    <value>Export Data As...</value>
+  </data>
+  <data name="menuExportParametersAs" xml:space="preserve">
+    <value>Export Parameters As...</value>
+  </data>
+  <data name="menuExportToText" xml:space="preserve">
+    <value>Export Data and Params As...</value>
+  </data>
+  <data name="menuFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="menuNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="menuOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="menuOptions" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="menuPrintResults" xml:space="preserve">
+    <value>Print Results</value>
+  </data>
+  <data name="menuReloadDatabase" xml:space="preserve">
+    <value>Reload Database</value>
+  </data>
+  <data name="menuReloadDataFile" xml:space="preserve">
+    <value>Reload Data file</value>
+  </data>
+  <data name="menuRestoreMRU" xml:space="preserve">
+    <value>Restore last data as startup</value>
+  </data>
+  <data name="menuSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="menuSaveAllAndRun" xml:space="preserve">
+    <value>Save all and Run...</value>
+  </data>
+  <data name="menuSaveAs" xml:space="preserve">
+    <value>Save As...</value>
+  </data>
+  <data name="menuShowAISettings" xml:space="preserve">
+    <value>Show AI Settings</value>
+  </data>
+  <data name="menuShowDisabledProducts" xml:space="preserve">
+    <value>Show Disabled Products</value>
+  </data>
+  <data name="menuShowPeriodSettings" xml:space="preserve">
+    <value>Show Periods Settings</value>
+  </data>
+  <data name="menuTasks" xml:space="preserve">
+    <value>Tasks</value>
+  </data>
+  <data name="txtAISettings" xml:space="preserve">
+    <value>A.I. Settings</value>
+  </data>
+  <data name="txtDurationDays" xml:space="preserve">
+    <value>Duration (days)</value>
+  </data>
+  <data name="txtFinishedCost" xml:space="preserve">
+    <value>Finished Cost</value>
+  </data>
+  <data name="txtHoldingCost" xml:space="preserve">
+    <value>Holding Cost</value>
+  </data>
+  <data name="txtInventoryCost" xml:space="preserve">
+    <value>Inventory Cost</value>
+  </data>
+  <data name="txtJob" xml:space="preserve">
+    <value>Job</value>
+  </data>
+  <data name="txtLostSalesCost" xml:space="preserve">
+    <value>Lost Sales Cost</value>
+  </data>
+  <data name="txtManagement" xml:space="preserve">
+    <value>Management</value>
+  </data>
+  <data name="txtMaxDemand" xml:space="preserve">
+    <value>Max Demand</value>
+  </data>
+  <data name="txtMaxProduction" xml:space="preserve">
+    <value>Maximum Production</value>
+  </data>
+  <data name="txtMinDemand" xml:space="preserve">
+    <value>Min Demand</value>
+  </data>
+  <data name="txtPeriod1" xml:space="preserve">
+    <value>Period1</value>
+  </data>
+  <data name="txtPeriod2" xml:space="preserve">
+    <value>Period2</value>
+  </data>
+  <data name="txtPeriod3" xml:space="preserve">
+    <value>Period3</value>
+  </data>
+  <data name="txtPeriod4" xml:space="preserve">
+    <value>Period4</value>
+  </data>
+  <data name="txtPeriodName" xml:space="preserve">
+    <value>Period Name</value>
+  </data>
+  <data name="txtPeriodsSettings" xml:space="preserve">
+    <value>Periods Settings</value>
+  </data>
+  <data name="txtPPAI" xml:space="preserve">
+    <value>Smart Planning</value>
+  </data>
+  <data name="txtPricePoint" xml:space="preserve">
+    <value>Price Point</value>
+  </data>
+  <data name="txtPricing" xml:space="preserve">
+    <value>Pricing</value>
+  </data>
+  <data name="txtProductionCost" xml:space="preserve">
+    <value>Production Cost</value>
+  </data>
+  <data name="txtProfit" xml:space="preserve">
+    <value>Profit</value>
+  </data>
+  <data name="txtResultPrice" xml:space="preserve">
+    <value>Suggested Price</value>
+  </data>
+  <data name="txtResultProduction" xml:space="preserve">
+    <value>Suggested Production</value>
+  </data>
+  <data name="txtResults" xml:space="preserve">
+    <value>Results</value>
+  </data>
+  <data name="txtResultSales" xml:space="preserve">
+    <value>Predicted Sales</value>
+  </data>
+  <data name="txtRevenue" xml:space="preserve">
+    <value>Revenue</value>
+  </data>
+  <data name="txtSpaceCoef" xml:space="preserve">
+    <value>Space coef.</value>
+  </data>
+  <data name="txtTotalBudget" xml:space="preserve">
+    <value>Total Budget</value>
+  </data>
+  <data name="txtTotalCapacity" xml:space="preserve">
+    <value>Total Capacity</value>
   </data>
 </root>

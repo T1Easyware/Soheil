@@ -271,7 +271,8 @@ namespace Soheil.Common
         RawMaterialSubMenu = 63,
         UnitsSubMenu = 64,
         UnitSets = 641,
-        UnitConversions = 642
+        UnitConversions = 642,
+		PPAI = 71,
     }
 	public enum Direction
 	{

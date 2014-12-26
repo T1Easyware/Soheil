@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Soheil.Controls.CustomControls.ParameterLabel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" x:Name="root"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<DockPanel>
+		<Button DockPanel.Dock="Left" Background="Transparent" BorderBrush="Transparent" ToolTip="Reset to default">
+			<Image Source="/Soheil.Controls;component/Images/PPAI/reset.png" Width="16"/>
+		</Button>
+		<Grid Background="Transparent"
+			  ToolTip="{Binding ElementName=root, Path=ToolTip}"
+			  	ToolTipService.BetweenShowDelay="0"
+				ToolTipService.HasDropShadow="True"
+				ToolTipService.InitialShowDelay="0"
+				ToolTipService.ShowDuration="30000">
+			<TextBlock
+				Text="{Binding ElementName=root, Path=Tag}"
+				Foreground="{StaticResource Foreground}"
+				TextWrapping="Wrap"
+				VerticalAlignment="Center"
+				IsHitTestVisible="False"
+				Margin="0,0,10,0"/>
+		</Grid>
+	</DockPanel>
+</UserControl>

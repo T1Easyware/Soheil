@@ -166,6 +166,9 @@
     <Compile Include="Views\PM\ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PPAI\PPAI.xaml.cs">
+      <DependentUpon>PPAI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PP\Block.xaml.cs">
       <DependentUpon>Block.xaml</DependentUpon>
     </Compile>
@@ -338,6 +341,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PM\ReportPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PPAI\PPAI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

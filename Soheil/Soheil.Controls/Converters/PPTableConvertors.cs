@@ -324,7 +324,18 @@ namespace Soheil.Controls.Converters.PP
 			throw new NotImplementedException();
 		}
 	}
+	public class GreaterThanOrEqualtoVisibility : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			return (int)value >= System.Convert.ToInt32(parameter) ? Visibility.Visible : Visibility.Collapsed;
+		}
 
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
 	#endregion
 
 	#region PP coordinations

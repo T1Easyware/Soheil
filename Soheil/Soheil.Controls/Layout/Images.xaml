@@ -435,17 +435,18 @@
 		<Setter Property="Width" Value="16"/>
 	</Style>
 	
+	<!-- SkillCenter -->
 	<Style x:Key="SkillCenterImage" TargetType="Image">
 		<Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/SkillCenter.png"/>
 		<Setter Property="FlowDirection" Value="LeftToRight"/>
 		<Setter Property="Width" Value="16"/>
 	</Style>
 
-    <Style x:Key="PMReportImage" TargetType="Image">
+	<!-- PM -->
+	<Style x:Key="PMReportImage" TargetType="Image">
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/PMReport.png"/>
         <Setter Property="Width" Value="24"/>
     </Style>
-
     <Style x:Key="Repair16Image" TargetType="Image">
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/PMRepair16.png"/>
 		<Setter Property="FlowDirection" Value="LeftToRight"/>
@@ -487,6 +488,7 @@
 		<Setter Property="Width" Value="16"/>
 	</Style>
 
+	<!-- Daily Reports -->
     <Style x:Key="DailyReportImage" TargetType="Image">
         <Setter Property="Source" Value="/Soheil.Controls;component/Images/Menus/dailyReport.png"/>
         <Setter Property="FlowDirection" Value="LeftToRight"/>
@@ -497,4 +499,86 @@
         <Setter Property="FlowDirection" Value="LeftToRight"/>
         <Setter Property="Width" Value="24"/>
     </Style>
+	
+	<!-- PPAI -->
+	<Style x:Key="PeriodImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/Period.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="Period16Image" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/Period16.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="16"/>
+	</Style>
+	<Style x:Key="PeriodCopyImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PeriodCopy.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PeriodDeleteImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PeriodDelete.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PeriodPasteImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PeriodPaste.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PriceImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/Price.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PriceAddImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PriceAdd.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PriceCopyImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PriceCopy.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PriceDeleteImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PriceDelete.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PricePasteImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PricePaste.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PriceUpImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PriceUp.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PriceDownImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PriceDown.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PricingImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/Pricing.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PricingCopyImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PricingCopy.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PricingDeleteImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PricingDelete.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
+	<Style x:Key="PricingPasteImage" TargetType="Image">
+		<Setter Property="Source" Value="/Soheil.Controls;component/Images/PPAI/PricingPaste.png"/>
+		<Setter Property="FlowDirection" Value="LeftToRight"/>
+		<Setter Property="Width" Value="24"/>
+	</Style>
 </ResourceDictionary>

@@ -430,6 +430,18 @@ namespace Soheil.Model
 					? Bool3.False : Bool3.True;
 			}
 		}
+		/// <summary>
+		/// Returns a collection of mid-states which are requisites of this state
+		/// </summary>
+		public IEnumerable<State> Requisites
+		{
+			get
+			{
+				return InConnectors
+					.Where(x => x.StartState.StateType == Common.StateType.Mid)
+					.Select(x => x.StartState);
+			}
+		}
 	}
 
 

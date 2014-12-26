@@ -34,7 +34,8 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <!--  Soheil Button  -->
+	
+	<!--  Soheil Button  -->
     <Style x:Key="SoheilButton" TargetType="{x:Type Button}">
         <Setter Property="OverridesDefaultStyle" Value="False" />
         <Setter Property="Template">

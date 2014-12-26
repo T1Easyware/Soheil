@@ -634,6 +634,19 @@
 									</StackPanel>
 								</Button.ToolTip>
 							</Button>
+
+							<Button DockPanel.Dock="Left" Margin="1" Command="{Binding JobEditor.AutoPlanCommand}">
+								<DockPanel>
+									<Image DockPanel.Dock="Left" Style="{StaticResource SaveWipeUpImage}"/>
+									<TextBlock Text="Automatic Planning" Style="{StaticResource TextBlock3DTextStyle}"/>
+								</DockPanel>
+								<Button.ToolTip>
+									<StackPanel>
+										<TextBlock Text="برنامه ریزی اتوماتیک"/>
+										<TextBlock Foreground="DarkGray" FontSize="10" Text="تمام برنامه های ویرایشگر Job به طور اتوماتیک ذخیره و ویرایشگر بسته می شود"/>
+									</StackPanel>
+								</Button.ToolTip>
+							</Button>
 						</DockPanel>
 						<Separator/>
 						<ToggleButton Margin="2" IsChecked="{Binding JobList.IsVisible}">
@@ -2749,8 +2762,19 @@
         <!-- 5.2. Help and Support  -->
 
         <!-- 5.3. About  -->
+		
+		<!--.............................................. 7.Management ...............................................-->
 
-        <!--..........................................................................................................-->
+		<!-- 7.1. Pricing and Planning Artifical Intelligence -->
+		<DataTemplate x:Key="PPAITemplate" DataType="{x:Type vm:PricingVm}"
+					  xmlns:v="clr-namespace:Soheil.Views.PPAI"
+                      xmlns:vm="clr-namespace:Soheil.Core.ViewModels.PP.PricingAI;assembly=Soheil.Core">
+			<Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=Views:SoheilSingularView}, Path=ViewModel}" FlowDirection="{Loc enumDirection}">
+				<v:PPAI/>
+			</Grid>
+		</DataTemplate>
+		
+		<!--..........................................................................................................-->
 		
 		<!--!@#$-->
 		<TemplateSelectors:SingularViewListSelector x:Key="ListTemplateSelector"
@@ -2768,6 +2792,7 @@
 													WarehouseReportVmTemplate="{StaticResource WarehouseReportTemplate}"
 													DailyStationPlanVmTemplate="{StaticResource DailyStationPlanTemplate}"
 													PMReportVmTemplate="{StaticResource PMReportTemplate}"
+													PPAIVmTemplate="{StaticResource PPAITemplate}"
                                                     />
 	</UserControl.Resources>
     <Grid>

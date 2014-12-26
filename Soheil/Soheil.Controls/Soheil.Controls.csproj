@@ -41,6 +41,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GrayscaleEffect, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External Assemblies\GrayscaleEffect.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External Assemblies\Microsoft.Expression.Interactions.dll</HintPath>
@@ -136,9 +140,15 @@
     <Compile Include="CustomControls\MultiLevelBar.cs" />
     <Compile Include="CustomControls\ImageRadioButton.cs" />
     <Compile Include="CustomControls\ImageButton.cs" />
+    <Compile Include="CustomControls\NumericBox.xaml.cs">
+      <DependentUpon>NumericBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\OEEVerticalBar.cs" />
     <Compile Include="CustomControls\OverlayMessageBox.xaml.cs">
       <DependentUpon>OverlayMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\ParameterLabel.xaml.cs">
+      <DependentUpon>ParameterLabel.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\TimeBox.cs" />
     <Compile Include="DataGridRowDeleting.cs" />
@@ -175,6 +185,14 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CustomControls\NumericBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\ParameterLabel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Layout\Converters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -702,6 +720,28 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Fpc\FPCDuplicate.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\PPAI\minus.png" />
+    <Resource Include="Images\PPAI\Period.png" />
+    <Resource Include="Images\PPAI\Period16.png" />
+    <Resource Include="Images\PPAI\PeriodCopy.png" />
+    <Resource Include="Images\PPAI\PeriodDelete.png" />
+    <Resource Include="Images\PPAI\PeriodPaste.png" />
+    <Resource Include="Images\PPAI\plus.png" />
+    <Resource Include="Images\PPAI\Price.png" />
+    <Resource Include="Images\PPAI\PriceAdd.png" />
+    <Resource Include="Images\PPAI\PriceCopy.png" />
+    <Resource Include="Images\PPAI\PriceDelete.png" />
+    <Resource Include="Images\PPAI\PriceDown.png" />
+    <Resource Include="Images\PPAI\PricePaste.png" />
+    <Resource Include="Images\PPAI\PriceUp.png" />
+    <Resource Include="Images\PPAI\Pricing.png" />
+    <Resource Include="Images\PPAI\PricingCopy.png" />
+    <Resource Include="Images\PPAI\PricingDelete.png" />
+    <Resource Include="Images\PPAI\PricingPaste.png" />
+    <Resource Include="Images\PPAI\reset.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

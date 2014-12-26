@@ -1191,7 +1191,7 @@
     <value>پایان</value>
   </data>
   <data name="_companyName" xml:space="preserve">
-    <value>شرکت روغنکشی خرمشهر</value>
+    <value>شرکت تولیدی عصر جدید</value>
   </data>
   <data name="txtDiff" xml:space="preserve">
     <value>اختلاف</value>
@@ -1384,5 +1384,158 @@
   </data>
   <data name="txtWReport" xml:space="preserve">
     <value>گزارش انبار</value>
+  </data>
+  <data name="menuCloseAIConsole" xml:space="preserve">
+    <value>بستن کنسول هوش مصنوعی پس از اتمام کار</value>
+  </data>
+  <data name="menuExit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="menuExportAsJobs" xml:space="preserve">
+    <value>صدور نتایج به شکل Job</value>
+  </data>
+  <data name="menuExportDataAs" xml:space="preserve">
+    <value>صدور اطلاعات</value>
+  </data>
+  <data name="menuExportParametersAs" xml:space="preserve">
+    <value>صدور تنظیمات هوش مصنوعی</value>
+  </data>
+  <data name="menuExportToText" xml:space="preserve">
+    <value>صدور اطلاعات و تنظیمات</value>
+  </data>
+  <data name="menuFile" xml:space="preserve">
+    <value>فایل</value>
+  </data>
+  <data name="menuNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="menuOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="menuOptions" xml:space="preserve">
+    <value>اختیارات</value>
+  </data>
+  <data name="menuPrintResults" xml:space="preserve">
+    <value>چاپ نتایج</value>
+  </data>
+  <data name="menuReloadDatabase" xml:space="preserve">
+    <value>بازنشانی اطلاعات از دیتابیس</value>
+  </data>
+  <data name="menuReloadDataFile" xml:space="preserve">
+    <value>بازنشانی اطلاعات از فایل</value>
+  </data>
+  <data name="menuRestoreMRU" xml:space="preserve">
+    <value>نمایش آخرین فایل به هنگام ورود</value>
+  </data>
+  <data name="menuSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="menuSaveAllAndRun" xml:space="preserve">
+    <value>ذخیره و اجرای هوش مصنوعی</value>
+  </data>
+  <data name="menuSaveAs" xml:space="preserve">
+    <value>Save As...</value>
+  </data>
+  <data name="menuShowAISettings" xml:space="preserve">
+    <value>نمایش تنظیمات هوش مصنوعی</value>
+  </data>
+  <data name="menuShowDisabledProducts" xml:space="preserve">
+    <value>نمایش محصولات غیرفعال</value>
+  </data>
+  <data name="menuShowPeriodSettings" xml:space="preserve">
+    <value>نمایش تنظیمات دوره ها</value>
+  </data>
+  <data name="menuTasks" xml:space="preserve">
+    <value>اعمال</value>
+  </data>
+  <data name="txtAISettings" xml:space="preserve">
+    <value>تنظیمات هوش منصوعی</value>
+  </data>
+  <data name="txtDurationDays" xml:space="preserve">
+    <value>مدت دوره (روز)</value>
+  </data>
+  <data name="txtFinishedCost" xml:space="preserve">
+    <value>قیمت تمام شده</value>
+  </data>
+  <data name="txtHoldingCost" xml:space="preserve">
+    <value>هزینه نگهداری</value>
+  </data>
+  <data name="txtInventoryCost" xml:space="preserve">
+    <value>هزینه انبارش</value>
+  </data>
+  <data name="txtJob" xml:space="preserve">
+    <value>Job</value>
+  </data>
+  <data name="txtLostSalesCost" xml:space="preserve">
+    <value>هزینه فروش از دست رفته</value>
+  </data>
+  <data name="txtManagement" xml:space="preserve">
+    <value>مدیریت</value>
+  </data>
+  <data name="txtMaxDemand" xml:space="preserve">
+    <value>حداکثر سفارش</value>
+  </data>
+  <data name="txtMaxProduction" xml:space="preserve">
+    <value>حداکثر تعداد تولید</value>
+  </data>
+  <data name="txtMinDemand" xml:space="preserve">
+    <value>حداقل سفارش</value>
+  </data>
+  <data name="txtPeriod1" xml:space="preserve">
+    <value>دوره اول</value>
+  </data>
+  <data name="txtPeriod2" xml:space="preserve">
+    <value>دوره دوم</value>
+  </data>
+  <data name="txtPeriod3" xml:space="preserve">
+    <value>دوره سوم</value>
+  </data>
+  <data name="txtPeriod4" xml:space="preserve">
+    <value>دوره چهارم</value>
+  </data>
+  <data name="txtPeriodName" xml:space="preserve">
+    <value>نام دوره</value>
+  </data>
+  <data name="txtPeriodsSettings" xml:space="preserve">
+    <value>تنظیمات دوره ها</value>
+  </data>
+  <data name="txtPPAI" xml:space="preserve">
+    <value>برنامه ریزی هوشمند</value>
+  </data>
+  <data name="txtPricePoint" xml:space="preserve">
+    <value>نقطه قیمت</value>
+  </data>
+  <data name="txtPricing" xml:space="preserve">
+    <value>قیمت گذاری</value>
+  </data>
+  <data name="txtProductionCost" xml:space="preserve">
+    <value>هزینه تولید</value>
+  </data>
+  <data name="txtProfit" xml:space="preserve">
+    <value>سود</value>
+  </data>
+  <data name="txtResultDemand" xml:space="preserve">
+    <value>تعداد فروش پیش بینی شده</value>
+  </data>
+  <data name="txtResultPrice" xml:space="preserve">
+    <value>قیمت پیشنهادی</value>
+  </data>
+  <data name="txtResultProduction" xml:space="preserve">
+    <value>تعداد تولید پیشنهادی</value>
+  </data>
+  <data name="txtResults" xml:space="preserve">
+    <value>نتایج</value>
+  </data>
+  <data name="txtRevenue" xml:space="preserve">
+    <value>درآمد</value>
+  </data>
+  <data name="txtSpaceCoef" xml:space="preserve">
+    <value>ضریب مصرف فضا</value>
+  </data>
+  <data name="txtTotalBudget" xml:space="preserve">
+    <value>سقف هزینه</value>
+  </data>
+  <data name="txtTotalCapacity" xml:space="preserve">
+    <value>سقف ظرفیت انبار</value>
   </data>
 </root>

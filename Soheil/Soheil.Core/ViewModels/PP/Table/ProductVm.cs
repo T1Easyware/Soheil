@@ -23,6 +23,7 @@ namespace Soheil.Core.ViewModels.PP
 		public ProductVm(Model.Product model, ProductGroupVm parentVm)
 		{
 			if (model == null) return;
+			Model = model;
 			Id = model.Id;
 			Name = model.Name;
 			Code = model.Code;
@@ -33,7 +34,7 @@ namespace Soheil.Core.ViewModels.PP
 				ProductReworks.Add(new ProductReworkVm(pr_model, this));
 			}
 		}
-
+		public Model.Product Model { get; private set; }
 		/// <summary>
 		/// Gets the model Id
 		/// </summary>

@@ -21,6 +21,9 @@ namespace Soheil.Core.DataServices
 		public event EventHandler<ModelRemovedEventArgs> ReworkRemoved;
 	    readonly Repository<Product> _productRepository;
 
+		public ProductDataService()
+			: this(new SoheilEdmContext())
+		{ }
 		public ProductDataService(SoheilEdmContext context)
 		{
 			Context = context ?? new SoheilEdmContext();

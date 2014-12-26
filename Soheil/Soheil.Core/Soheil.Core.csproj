@@ -72,6 +72,21 @@
     <Compile Include="DataServices\Storage\ProductPriceDataService.cs" />
     <Compile Include="DataServices\Storage\WarehouseReceiptDataService.cs" />
     <Compile Include="DataServices\Storage\WarehouseTransactionDataService.cs" />
+    <Compile Include="PP\PlannerAI\Item.cs" />
+    <Compile Include="PP\PlannerAI\Job.cs" />
+    <Compile Include="PP\PlannerAI\Level.cs" />
+    <Compile Include="PP\PlannerAI\Product.cs" />
+    <Compile Include="PP\PlannerAI\Root.cs" />
+    <Compile Include="PP\PlannerAI\Row.cs" />
+    <Compile Include="PP\PlannerAI\State.cs" />
+    <Compile Include="PP\PlannerAI\StateStation.cs" />
+    <Compile Include="PP\PricingAI\ClipboardHelper.cs" />
+    <Compile Include="PP\PricingAI\Params.cs" />
+    <Compile Include="PP\PricingAI\Period.cs" />
+    <Compile Include="PP\PricingAI\Price.cs" />
+    <Compile Include="PP\PricingAI\Product.cs" />
+    <Compile Include="PP\PricingAI\ProductPeriod.cs" />
+    <Compile Include="PP\PricingAI\Root.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -203,6 +218,13 @@
     <Compile Include="ViewModels\PM\PmVm.cs" />
     <Compile Include="ViewModels\PM\RepairItemVm.cs" />
     <Compile Include="ViewModels\PM\ReportItemVm.cs" />
+    <Compile Include="ViewModels\PP\PricingAI\ParamsVm.cs" />
+    <Compile Include="ViewModels\PP\PricingAI\PeriodVm.cs" />
+    <Compile Include="ViewModels\PP\PricingAI\PriceVm.cs" />
+    <Compile Include="ViewModels\PP\PricingAI\PricingVm.cs" />
+    <Compile Include="ViewModels\PP\PricingAI\ProductPeriodVm.cs" />
+    <Compile Include="ViewModels\PP\PricingAI\ProductVm.cs" />
+    <Compile Include="ViewModels\PP\PricingAI\ResultVm.cs" />
     <Compile Include="ViewModels\PP\Report\RepairMachineVm.cs" />
     <Compile Include="ViewModels\PP\Report\RepairMachinePartVm.cs" />
     <Compile Include="ViewModels\PP\Report\RepairVm.cs" />

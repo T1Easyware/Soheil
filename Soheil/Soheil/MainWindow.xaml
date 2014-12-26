@@ -287,8 +287,21 @@
                         Tag="47" />
             </WrapPanel>
         </DataTemplate>
+		<DataTemplate x:Key="managementTemplate">
+			<WrapPanel Grid.Column="6" FlowDirection="RightToLeft">
+				<CustomControls:ImageButton Background="Transparent"
+                                            Margin="5,0,5,0"
+                        Click="HandleAddTabAndSelect"
+                        Content="{Loc txtPPAI}"
+                        IsEnabled="{Binding Path=CanAddTab,
+                                            ElementName=chrometabs}"
+                        ImageSource="/Soheil.Controls;component/Images/PPAI/Pricing.png"
+                        Tag="71" />
+			</WrapPanel>
+		</DataTemplate>
+		
         <DataTemplate x:Key="optionsTemplate">
-            <WrapPanel Grid.Column="5" FlowDirection="RightToLeft">
+            <WrapPanel Grid.Column="7" FlowDirection="RightToLeft">
                 <CustomControls:ImageButton Background="Transparent"
                                             Margin="5,0,5,0"
                         Click="HandleAddTabAndSelect"
@@ -371,14 +384,18 @@
                                       Checked="QuickAccessMenuChecked"
                                       Content="{Loc txtStorage}"
                                       Tag="4" />
-                        <ToggleButton x:Name="btnReports"
+						<ToggleButton x:Name="btnReports"
                                       Checked="QuickAccessMenuChecked"
                                       Content="{Loc txtReports}"
                                       Tag="5" />
-                        <!--ToggleButton x:Name="btnOptions"
+						<ToggleButton x:Name="btnManagement"
+                                      Checked="QuickAccessMenuChecked"
+                                      Content="{Loc txtManagement}"
+                                      Tag="7" />
+						<!--ToggleButton x:Name="btnOptions"
                                       Checked="QuickAccessMenuChecked"
                                       Content="{Loc txtOptions}"
-                                      Tag="5" check xaml.cs too for commented codes /-->
+                                      Tag="6" check xaml.cs too for commented codes /-->
                     </WrapPanel>
                     <GridSplitter Grid.Column="5"
                                   Width="3"
@@ -641,7 +658,17 @@
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </MenuItem>
-                                <MenuItem Header="{Loc txtOptions}">
+								<MenuItem Header="{Loc txtManagement}">
+									<MenuItem.Icon>
+										<Image Source="/Soheil.Controls;component/Images/PPAI/Pricing.png"/>
+									</MenuItem.Icon>
+									<MenuItem Header="{Loc txtPPAI}" Click="HandleAddTabAndSelect" Tag="71">
+										<MenuItem.Icon>
+											<Image Source="/Soheil.Controls;component/Images/PPAI/Pricing.png"/>
+										</MenuItem.Icon>
+									</MenuItem>
+								</MenuItem>
+								<MenuItem Header="{Loc txtOptions}">
                                     <MenuItem.Icon>
                                         <Image Source="/Soheil.Controls;component/Images/Menus/Setting.png"/>
                                     </MenuItem.Icon>

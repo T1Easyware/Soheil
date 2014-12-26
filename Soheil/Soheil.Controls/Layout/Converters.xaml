@@ -22,6 +22,7 @@
 	<Converters:ViewAccessTypeConverter x:Key="ViewAccessTypeConverter"/>
 	<Converters:FullAccessTypeConverter x:Key="FullAccessTypeConverter"/>
 
+	
 	<!-- oee -->
 	<Converters:PercentConverter x:Key="percentConverter"/>
 	<Converters:OeeHoursConverter x:Key="oeeHoursConverter"/>
@@ -76,7 +77,6 @@
 	<ppconv:IsEqualToInvisibilityConverter2 x:Key="isEqualToInvisibilityConverter2"/>
     <ppconv:IsEqualToVisibilityConverter2 x:Key="isEqualToVisibilityConverter2"/>
     <ppconv:VisibilityInverter x:Key="visibilityInverter"/>
-
 
 	<ppconv:BalanceToBrushConverter x:Key="balanceToBrushConverter"/>
 	<ppconv:SumOfDoubles x:Key="sumOfDoubles"/>
@@ -135,6 +135,10 @@
 	<ppconv:DateToPersianDateConverter x:Key="dateToPersianDateConverter"/>
 	<ppconv:DateTimeToCompactConverter x:Key="dateTimeToCompactConverter"/>
 	
+	<!-- PPAI -->
+	<ppconv:GreaterThanOrEqualtoVisibility x:Key="GreaterThanOrEqualtoVisibility"/>
+
+
 	<SolidColorBrush x:Key="stationBorderBrush" Color="Silver"/>
 	<SolidColorBrush x:Key="activityBorderBrush" Color="Silver"/>
 	<SolidColorBrush x:Key="activityBackBrush" Color="#677"/>

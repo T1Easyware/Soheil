@@ -21,7 +21,7 @@ namespace Soheil.TemplateSelectors
 		public DataTemplate PMReportVmTemplate { get; set; }
 		public DataTemplate MaterialPlanningVmTemplate { get; set; }
         public DataTemplate WarehouseReportVmTemplate { get; set; }
-
+		public DataTemplate PPAIVmTemplate { get; set; }
         
 		
 		//!@#$
@@ -53,9 +53,11 @@ namespace Soheil.TemplateSelectors
 				return DailyStationPlanVmTemplate;
 			if (item is Core.ViewModels.Reports.PMReportVm)
 				return PMReportVmTemplate;
-            if (item is Core.ViewModels.Reports.WarehouseReportVm)
-                return WarehouseReportVmTemplate;
-            return null;
+			if (item is Core.ViewModels.Reports.WarehouseReportVm)
+				return WarehouseReportVmTemplate;
+			if (item is Core.ViewModels.PP.PricingAI.PricingVm)
+				return PPAIVmTemplate;
+			return null;
         }
     }
 }
